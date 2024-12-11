@@ -25,6 +25,7 @@ import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessVi
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
+import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
 import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
 import co.electriccoin.zcash.ui.screen.seed.viewmodel.SeedViewModel
@@ -95,6 +96,7 @@ val viewModelModule =
             )
         }
         viewModelOf(::ScanKeystoneSignInRequestViewModel)
+        viewModelOf(::ScanKeystonePCZTViewModel)
         viewModelOf(::IntegrationsViewModel)
         viewModelOf(::SendViewModel)
         viewModel { (args: SeedNavigationArgs) ->

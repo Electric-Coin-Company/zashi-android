@@ -1,7 +1,12 @@
 package co.electriccoin.zcash.di
 
+import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneShieldProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneZip321ProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.DecodeKeystoneSignInRequestUseCase
 import co.electriccoin.zcash.ui.common.usecase.DecodeUrToZashiAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddressUseCase
@@ -26,7 +31,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveKeystoneAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveKeystoneSendTransactionProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
@@ -34,6 +39,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveZashiAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.ParseKeystonePCZTUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
@@ -96,7 +102,6 @@ val useCaseModule =
         factoryOf(::ObserveWalletAccountsUseCase)
         factoryOf(::SelectWalletAccountUseCase)
         factoryOf(::ObserveSelectedWalletAccountUseCase)
-        factoryOf(::ObserveKeystoneAccountUseCase)
         factoryOf(::ObserveZashiAccountUseCase)
         factoryOf(::GetZashiAccountUseCase)
         factoryOf(::CreateKeystoneAccountUseCase)
@@ -106,4 +111,11 @@ val useCaseModule =
         factoryOf(::GetSelectedWalletAccountUseCase)
         singleOf(::ObserveClearSendUseCase)
         factoryOf(::ObserveCurrentTransactionsUseCase)
+        factoryOf(::CreateKeystoneProposalUseCase)
+        factoryOf(::CreateKeystoneZip321ProposalUseCase)
+        factoryOf(::CreateKeystoneShieldProposalUseCase)
+        factoryOf(::ParseKeystonePCZTUseCase)
+        factoryOf(::DecodeKeystoneSignInRequestUseCase)
+        factoryOf(::CancelKeystoneProposalFlowUseCase)
+        factoryOf(::ObserveKeystoneSendTransactionProposalUseCase)
     }

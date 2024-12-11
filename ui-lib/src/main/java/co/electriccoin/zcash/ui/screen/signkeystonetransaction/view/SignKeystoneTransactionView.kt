@@ -54,10 +54,10 @@ fun SignKeystoneTransactionView(state: SignKeystoneTransactionState) {
     ) {
         Column(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .scaffoldPadding(it)
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .scaffoldPadding(it)
         ) {
             ZashiAccountInfoListItem(state.accountInfo)
             Spacer(Modifier.height(32.dp))
@@ -124,10 +124,14 @@ private fun ZashiAccountInfoListItem(
 
 @Composable
 private fun ColumnScope.QrContent(state: SignKeystoneTransactionState) {
-    ZashiQr(qrData = state.qrData, modifier = Modifier.align(CenterHorizontally))
+    state.qrData?.let {
+        ZashiQr(qrData = it, modifier = Modifier.align(CenterHorizontally))
+    }
     LaunchedEffect(state.qrData) {
-        delay(100.milliseconds)
-        state.generateNextQrCode()
+        if (state.qrData != null) {
+            delay(100.milliseconds)
+            state.generateNextQrCode()
+        }
     }
 }
 
@@ -157,18 +161,18 @@ private fun Preview() =
     ZcashTheme {
         SignKeystoneTransactionView(
             state =
-                SignKeystoneTransactionState(
-                    accountInfo =
-                        ZashiAccountInfoListItemState(
-                            icon = R.drawable.ic_item_keystone,
-                            title = stringRes("title"),
-                            subtitle = stringRes("subtitle"),
-                        ),
-                    generateNextQrCode = {},
-                    qrData = "tralala",
-                    positiveButton = ButtonState(stringRes("Get Signature")),
-                    negativeButton = ButtonState(stringRes("Reject")),
-                    onBack = {}
-                )
+            SignKeystoneTransactionState(
+                accountInfo =
+                ZashiAccountInfoListItemState(
+                    icon = R.drawable.ic_item_keystone,
+                    title = stringRes("title"),
+                    subtitle = stringRes("subtitle"),
+                ),
+                generateNextQrCode = {},
+                qrData = "tralala",
+                positiveButton = ButtonState(stringRes("Get Signature")),
+                negativeButton = ButtonState(stringRes("Reject")),
+                onBack = {}
+            )
         )
     }

@@ -7,19 +7,19 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.WalletAccount
-import co.electriccoin.zcash.ui.common.repository.CompleteZecSend
-import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
-import co.electriccoin.zcash.ui.common.repository.RegularZecSend
-import co.electriccoin.zcash.ui.common.repository.Zip321ZecSend
+import co.electriccoin.zcash.ui.common.repository.RegularTransactionProposal
+import co.electriccoin.zcash.ui.common.repository.SendTransactionProposal
+import co.electriccoin.zcash.ui.common.repository.Zip321TransactionProposal
 import co.electriccoin.zcash.ui.common.usecase.GetLoadedExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveKeystoneSendTransactionProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.KeystoneSignTransaction
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,9 +31,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class ReviewKeystoneTransactionViewModel(
-    keystoneProposalRepository: KeystoneProposalRepository,
     observeContactByAddress: ObserveContactByAddressUseCase,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
+    observeKeystoneSendTransactionProposal: ObserveKeystoneSendTransactionProposalUseCase,
     private val getLoadedExchangeRate: GetLoadedExchangeRateUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
@@ -43,22 +43,22 @@ class ReviewKeystoneTransactionViewModel(
     val state =
         combine(
             observeSelectedWalletAccount.require(),
-            keystoneProposalRepository.completeZecSend,
+            observeKeystoneSendTransactionProposal(),
             isReceiverExpanded
         ) { wallet, zecSend, isReceiverExpanded ->
             Triple(wallet, zecSend, isReceiverExpanded)
-        }.flatMapLatest { (wallet, completeZecSend, isReceiverExpanded) ->
-            observeContactByAddress(completeZecSend?.destination?.address.orEmpty()).map { addressBookContact ->
-                when (completeZecSend) {
-                    is RegularZecSend ->
+        }.flatMapLatest { (wallet, proposal, isReceiverExpanded) ->
+            observeContactByAddress(proposal?.destination?.address.orEmpty()).map { addressBookContact ->
+                when (proposal) {
+                    is RegularTransactionProposal ->
                         createState(
-                            completeZecSend = completeZecSend,
+                            transactionProposal = proposal,
                             addressBookContact = addressBookContact,
                             wallet = wallet
                         )
-                    is Zip321ZecSend ->
+                    is Zip321TransactionProposal ->
                         createZip321State(
-                            completeZecSend = completeZecSend,
+                            transactionProposal = proposal,
                             addressBookContact = addressBookContact,
                             wallet = wallet,
                             isReceiverExpanded = isReceiverExpanded
@@ -73,7 +73,7 @@ class ReviewKeystoneTransactionViewModel(
         )
 
     private suspend fun createState(
-        completeZecSend: CompleteZecSend,
+        transactionProposal: SendTransactionProposal,
         addressBookContact: AddressBookContact?,
         wallet: WalletAccount
     ) = ReviewTransactionState(
@@ -82,13 +82,13 @@ class ReviewKeystoneTransactionViewModel(
             listOfNotNull(
                 AmountState(
                     title = stringRes(R.string.send_confirmation_amount),
-                    amount = completeZecSend.amount,
+                    amount = transactionProposal.amount,
                     exchangeRate = getLoadedExchangeRate(),
                 ),
                 ReceiverState(
                     title = stringRes(R.string.send_confirmation_address),
                     name = addressBookContact?.name?.let { stringRes(it) },
-                    address = stringRes(completeZecSend.destination.address)
+                    address = stringRes(transactionProposal.destination.address)
                 ),
                 SenderState(
                     title = stringRes(R.string.send_confirmation_address_from),
@@ -97,13 +97,13 @@ class ReviewKeystoneTransactionViewModel(
                 ),
                 FinancialInfoState(
                     title = stringRes(R.string.send_amount_label),
-                    amount = completeZecSend.amount
+                    amount = transactionProposal.amount
                 ),
                 FinancialInfoState(
                     title = stringRes(R.string.send_confirmation_fee),
-                    amount = completeZecSend.proposal.totalFeeRequired()
+                    amount = transactionProposal.proposal.totalFeeRequired()
                 ),
-                completeZecSend.memo.takeIf { it.value.isNotEmpty() }?.let {
+                transactionProposal.memo.takeIf { it.value.isNotEmpty() }?.let {
                     MessageState(
                         title = stringRes(R.string.send_memo_label),
                         message = stringRes(it.value)
@@ -124,7 +124,7 @@ class ReviewKeystoneTransactionViewModel(
     )
 
     private suspend fun createZip321State(
-        completeZecSend: CompleteZecSend,
+        transactionProposal: SendTransactionProposal,
         addressBookContact: AddressBookContact?,
         wallet: WalletAccount,
         isReceiverExpanded: Boolean,
@@ -134,7 +134,7 @@ class ReviewKeystoneTransactionViewModel(
             listOfNotNull(
                 AmountState(
                     title = null,
-                    amount = completeZecSend.amount,
+                    amount = transactionProposal.amount,
                     exchangeRate = getLoadedExchangeRate(),
                 ),
                 SenderState(
@@ -147,9 +147,9 @@ class ReviewKeystoneTransactionViewModel(
                     name = addressBookContact?.name?.let { stringRes(it) },
                     address =
                         if (isReceiverExpanded) {
-                            stringRes(completeZecSend.destination.address)
+                            stringRes(transactionProposal.destination.address)
                         } else {
-                            stringRes("${completeZecSend.destination.address.take(ADDRESS_MAX_LENGTH)}...")
+                            stringRes("${transactionProposal.destination.address.take(ADDRESS_MAX_LENGTH)}...")
                         },
                     showButton =
                         ZashiChipButtonState(
@@ -161,10 +161,10 @@ class ReviewKeystoneTransactionViewModel(
                         ZashiChipButtonState(
                             icon = R.drawable.ic_user_plus,
                             text = stringRes(R.string.payment_request_btn_save_contact),
-                            onClick = { onAddContactClick(completeZecSend.destination.address) }
+                            onClick = { onAddContactClick(transactionProposal.destination.address) }
                         ).takeIf { addressBookContact == null }
                 ),
-                completeZecSend.memo.takeIf { it.value.isNotEmpty() }?.let {
+                transactionProposal.memo.takeIf { it.value.isNotEmpty() }?.let {
                     MessageState(
                         title = stringRes(R.string.payment_request_memo),
                         message = stringRes(it.value)
@@ -172,7 +172,7 @@ class ReviewKeystoneTransactionViewModel(
                 },
                 FinancialInfoState(
                     title = stringRes(R.string.payment_request_fee),
-                    amount = completeZecSend.proposal.totalFeeRequired()
+                    amount = transactionProposal.proposal.totalFeeRequired()
                 )
             ),
         primaryButton =
@@ -201,7 +201,7 @@ class ReviewKeystoneTransactionViewModel(
     }
 
     private fun onConfirmClick() {
-        navigationRouter.forward(KeystoneSignTransaction)
+        navigationRouter.forward(SignKeystoneTransaction)
     }
 
     private fun onAddContactClick(address: String) {

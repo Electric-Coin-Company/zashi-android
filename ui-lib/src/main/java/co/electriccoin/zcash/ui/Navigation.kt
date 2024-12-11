@@ -95,7 +95,9 @@ import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewKeystoneTr
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
+import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneSignInRequest
+import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystonePCZTRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystoneSignInRequest
 import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
 import co.electriccoin.zcash.ui.screen.seed.WrapSeed
@@ -108,7 +110,7 @@ import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationAr
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeystoneTransaction
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.KeystoneSignTransaction
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.transactionprogress.AndroidKeystoneTransactionProgress
 import co.electriccoin.zcash.ui.screen.transactionprogress.KeystoneTransactionProgress
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
@@ -291,7 +293,10 @@ internal fun MainActivity.Navigation() {
         composable<ScanKeystoneSignInRequest> {
             WrapScanKeystoneSignInRequest()
         }
-        composable<KeystoneSignTransaction> {
+        composable<ScanKeystonePCZTRequest> {
+            WrapScanKeystonePCZTRequest()
+        }
+        composable<SignKeystoneTransaction> {
             AndroidSignKeystoneTransaction()
         }
         dialog<AccountList>(

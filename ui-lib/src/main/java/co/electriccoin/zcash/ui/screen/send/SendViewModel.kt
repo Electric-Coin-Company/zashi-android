@@ -10,10 +10,10 @@ import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.type.AddressType
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
-import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
+import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneZip321ProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
@@ -21,7 +21,6 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
-import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.send.model.SendAddressBookState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
@@ -43,10 +42,10 @@ class SendViewModel(
     private val observeContactByAddress: ObserveContactByAddressUseCase,
     private val observeContactPicked: ObserveContactPickedUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
-    private val keystoneProposalRepository: KeystoneProposalRepository,
     private val getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
-    private val navigationRouter: NavigationRouter,
     private val getZashiAccount: GetZashiAccountUseCase,
+    private val createKeystoneTransactionProposal: CreateKeystoneProposalUseCase,
+    private val createKeystoneZip321TransactionProposal: CreateKeystoneZip321ProposalUseCase
 ) : ViewModel() {
     val recipientAddressState = MutableStateFlow(RecipientAddressState.new("", null))
 
@@ -143,9 +142,7 @@ class SendViewModel(
     ) = viewModelScope.launch {
         when (getSelectedWalletAccount()) {
             is KeystoneAccount ->
-                if (keystoneProposalRepository.createProposal(newZecSend)) {
-                    navigationRouter.forward(ReviewKeystoneTransaction)
-                } else {
+                if (!createKeystoneTransactionProposal(newZecSend)) {
                     setSendStage(SendStage.SendFailure(""))
                 }
             is ZashiAccount -> {
@@ -173,9 +170,7 @@ class SendViewModel(
     ) = viewModelScope.launch {
         when (getSelectedWalletAccount()) {
             is KeystoneAccount ->
-                if (keystoneProposalRepository.createZip321Proposal(zip321Uri)) {
-                    navigationRouter.forward(ReviewKeystoneTransaction)
-                } else {
+                if (!createKeystoneZip321TransactionProposal(zip321Uri)) {
                     setSendStage(SendStage.SendFailure(""))
                 }
             is ZashiAccount ->

@@ -5,9 +5,12 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
+import co.electriccoin.zcash.ui.common.repository.SendTransactionProposal
+import co.electriccoin.zcash.ui.common.repository.ShieldTransactionProposal
 import co.electriccoin.zcash.ui.common.repository.SubmitProposalState
+import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
@@ -21,11 +24,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class KeystoneTransactionProgressViewModel(
+    private val getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
     private val keystoneProposalRepository: KeystoneProposalRepository,
-    private val observeClearSend: ObserveClearSendUseCase,
     private val navigationRouter: NavigationRouter,
     private val copyToClipboardUseCase: CopyToClipboardUseCase,
-    private val sendEmailUseCase: SendEmailUseCase
+    private val sendEmailUseCase: SendEmailUseCase,
+    private val cancelKeystoneProposalFlow: CancelKeystoneProposalFlowUseCase
 ) : ViewModel() {
     private val supportContacted = MutableStateFlow(false)
 
@@ -122,12 +126,15 @@ class KeystoneTransactionProgressViewModel(
         )
 
     private suspend fun getAddressAbbreviated(): String {
-        return "${keystoneProposalRepository.getCompleteZecSend().destination.address.take(ADDRESS_MAX_LENGTH)}..."
+        val address = when (val proposal = keystoneProposalRepository.getTransactionProposal()) {
+            is ShieldTransactionProposal -> getSelectedWalletAccount().unified.address.address
+            is SendTransactionProposal -> proposal.destination.address
+        }
+
+        return "${address.take(ADDRESS_MAX_LENGTH)}..."
     }
 
     private fun onBackToHomepageAndClearDataRequested() {
-        keystoneProposalRepository.clear()
-        observeClearSend.requestClear()
-        navigationRouter.backToRoot()
+        cancelKeystoneProposalFlow()
     }
 }

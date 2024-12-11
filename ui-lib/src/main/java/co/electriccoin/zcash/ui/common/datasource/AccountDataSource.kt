@@ -41,15 +41,11 @@ interface AccountDataSource {
 
     val zashiAccount: Flow<ZashiAccount?>
 
-    val keystoneAccount: Flow<KeystoneAccount?>
-
     suspend fun getAllAccounts(): List<WalletAccount>
 
     suspend fun getSelectedAccount(): WalletAccount
 
     suspend fun getZashiAccount(): ZashiAccount
-
-    suspend fun getKeystoneAccount(): KeystoneAccount
 
     suspend fun selectAccount(account: Account)
 
@@ -189,19 +185,11 @@ class AccountDataSourceImpl(
                 account?.filterIsInstance<ZashiAccount>()?.firstOrNull()
             }
 
-    override val keystoneAccount: Flow<KeystoneAccount?> =
-        allAccounts
-            .map { account ->
-                account?.filterIsInstance<KeystoneAccount>()?.firstOrNull()
-            }
-
     override suspend fun getAllAccounts() = allAccounts.filterNotNull().first()
 
     override suspend fun getSelectedAccount() = selectedAccount.filterNotNull().first()
 
     override suspend fun getZashiAccount() = zashiAccount.filterNotNull().first()
-
-    override suspend fun getKeystoneAccount() = keystoneAccount.filterNotNull().first()
 
     override suspend fun selectAccount(account: Account) =
         withContext(Dispatchers.IO) {

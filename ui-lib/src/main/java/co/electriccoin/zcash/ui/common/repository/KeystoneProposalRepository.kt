@@ -15,38 +15,71 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
+import co.electriccoin.zcash.ui.screen.balances.DEFAULT_SHIELDING_THRESHOLD
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
+import co.electriccoin.zcash.ui.util.zcash
+import com.keystone.sdk.KeystoneSDK
+import com.sparrowwallet.hummingbird.UR
+import com.sparrowwallet.hummingbird.UREncoder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.zecdev.zip321.ZIP321
-import kotlin.time.Duration.Companion.seconds
 
 interface KeystoneProposalRepository {
-    val completeZecSend: Flow<CompleteZecSend?>
+    val transactionProposal: Flow<TransactionProposal?>
 
     val submitState: Flow<SubmitProposalState?>
 
+    /**
+     * 1st step.
+     */
     suspend fun createProposal(zecSend: ZecSend): Boolean
 
+    /**
+     * 1st step for zip 321.
+     */
     suspend fun createZip321Proposal(zip321Uri: String): Boolean
 
-    suspend fun getCompleteZecSend(): CompleteZecSend
+    /**
+     * 1st step for shielding
+     */
+    suspend fun createShieldProposal(): Boolean
 
-    fun signAndCompleteProposalTemp()
+    /**
+     * 2nd step
+     */
+    suspend fun createPCZTFromProposal(): Boolean
 
-    fun signAndCompleteProposal(zecSendPart2: ZecSend)
+    /**
+     * 3rd step
+     */
+    suspend fun addPCZTToProofs(): Boolean
+
+    /**
+     * 4rd step - encode qr
+     */
+    suspend fun createPCZTEncoder(): UREncoder
+
+    /**
+     * 4rd step - parse qr
+     */
+    suspend fun parsePCZT(ur: UR): Boolean
+
+    /**
+     * 5th step - extract pczt
+     */
+    fun extractPCZT()
 
     fun clear()
+
+    suspend fun getTransactionProposal(): TransactionProposal
 }
 
 sealed interface SubmitProposalState {
@@ -60,112 +93,157 @@ class KeystoneProposalRepositoryImpl(
     private val accountDataSource: AccountDataSource,
     private val zashiSpendingKeyDataSource: ZashiSpendingKeyDataSource
 ) : KeystoneProposalRepository {
+
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    override val completeZecSend = MutableStateFlow<CompleteZecSend?>(null)
+    override val transactionProposal = MutableStateFlow<TransactionProposal?>(null)
+
     override val submitState = MutableStateFlow<SubmitProposalState?>(null)
 
-    override suspend fun createProposal(zecSend: ZecSend): Boolean =
-        withContext(NonCancellable) {
-            val result =
-                runCatching {
-                    val newProposal =
-                        synchronizerProvider.getSynchronizer().proposeSend(
-                            account = accountDataSource.getKeystoneAccount().sdkAccount,
-                            send = zecSend
-                        )
+    private val keystoneSDK = KeystoneSDK()
 
-                    RegularZecSend(
-                        destination = zecSend.destination,
-                        amount = zecSend.amount,
-                        memo = zecSend.memo,
-                        proposal = newProposal,
+    private val keystoneZcashSDK = keystoneSDK.zcash
+
+    private var pczt: ByteArray? = null
+
+    override suspend fun createProposal(zecSend: ZecSend): Boolean {
+        val result =
+            runCatching {
+                val newProposal =
+                    synchronizerProvider.getSynchronizer().proposeSend(
+                        account = accountDataSource.getSelectedAccount().sdkAccount,
+                        send = zecSend
                     )
-                }.getOrNull()
 
-            completeZecSend.update { result }
-            result != null
-        }
+                RegularTransactionProposal(
+                    destination = zecSend.destination,
+                    amount = zecSend.amount,
+                    memo = zecSend.memo,
+                    proposal = newProposal,
+                )
+            }.getOrNull()
 
-    override suspend fun createZip321Proposal(zip321Uri: String): Boolean =
-        withContext(NonCancellable) {
-            val synchronizer = synchronizerProvider.getSynchronizer()
-            val account = accountDataSource.getSelectedAccount()
+        transactionProposal.update { result }
+        return result != null
+    }
 
-            val request =
-                runCatching {
-                    // At this point there should by only a valid Zcash address coming
-                    ZIP321.request(zip321Uri, null)
-                }.onFailure {
-                    Twig.error(it) { "Failed to validate address" }
-                }.getOrNull()
-            val payment =
-                when (request) {
-                    // We support only one payment currently
-                    is ZIP321.ParserResult.Request -> {
-                        request.paymentRequest.payments[0]
-                    }
+    override suspend fun createZip321Proposal(zip321Uri: String): Boolean {
+        val synchronizer = synchronizerProvider.getSynchronizer()
+        val account = accountDataSource.getSelectedAccount()
 
-                    else -> {
-                        completeZecSend.update { null }
-                        return@withContext false
-                    }
+        val request =
+            runCatching {
+                // At this point there should by only a valid Zcash address coming
+                ZIP321.request(zip321Uri, null)
+            }.onFailure {
+                Twig.error(it) { "Failed to validate address" }
+            }.getOrNull()
+        val payment =
+            when (request) {
+                // We support only one payment currently
+                is ZIP321.ParserResult.Request -> {
+                    request.paymentRequest.payments[0]
                 }
-            val proposal =
-                runCatching {
-                    synchronizer.proposeFulfillingPaymentUri(account.sdkAccount, zip321Uri)
-                }.getOrNull()
 
-            if (proposal == null) {
-                completeZecSend.update { null }
-                return@withContext false
+                else -> {
+                    transactionProposal.update { null }
+                    return false
+                }
             }
 
-            val result =
-                runCatching {
-                    Zip321ZecSend(
-                        destination =
-                            synchronizer
-                                .validateAddress(payment.recipientAddress.value)
-                                .toWalletAddress(payment.recipientAddress.value),
-                        amount = payment.nonNegativeAmount.value.convertZecToZatoshi(),
-                        memo = Memo(payment.memo?.let { String(it.data, Charsets.UTF_8) } ?: ""),
-                        proposal = proposal,
-                    )
-                }.getOrNull()
+        val proposal =
+            runCatching {
+                synchronizer.proposeFulfillingPaymentUri(account.sdkAccount, zip321Uri)
+            }.getOrNull()
 
-            completeZecSend.update { result }
-            return@withContext result != null
+        if (proposal == null) {
+            transactionProposal.update { null }
+            return false
         }
 
-    override suspend fun getCompleteZecSend(): CompleteZecSend = completeZecSend.filterNotNull().first()
+        val result =
+            runCatching {
+                Zip321TransactionProposal(
+                    destination =
+                    synchronizer
+                        .validateAddress(payment.recipientAddress.value)
+                        .toWalletAddress(payment.recipientAddress.value),
+                    amount = payment.nonNegativeAmount.value.convertZecToZatoshi(),
+                    memo = Memo(payment.memo?.let { String(it.data, Charsets.UTF_8) } ?: ""),
+                    proposal = proposal,
+                )
+            }.getOrNull()
 
-    override fun signAndCompleteProposalTemp() {
-        scope.launch {
-            submitState.update { SubmitProposalState.Submitting }
-            // delay(5.seconds)
-            // submitState.update { SubmitProposalState.Result(SubmitResult.MultipleTrxFailure(listOf())) }
-            // delay(5.seconds)
-            // submitState.update {
-            //     SubmitProposalState.Result(SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther(RuntimeException()))
-            // }
-            delay(5.seconds)
-            submitState.update { SubmitProposalState.Result(SubmitResult.Success) }
+        transactionProposal.update { result }
+        return result != null
+    }
+
+    override suspend fun createShieldProposal(): Boolean {
+        val account = accountDataSource.getSelectedAccount()
+
+        val result =
+            runCatching {
+                val newProposal = synchronizerProvider.getSynchronizer().proposeShielding(
+                    account = account.sdkAccount,
+                    shieldingThreshold = Zatoshi(DEFAULT_SHIELDING_THRESHOLD),
+                    // Using empty string for memo to clear the default memo prefix value defined in the SDK
+                    memo = "",
+                    // Using null will select whichever of the account's trans. receivers has funds to shield
+                    transparentReceiver = null
+                )
+
+                newProposal?.let {
+                    ShieldTransactionProposal(
+                        proposal = it,
+                    )
+                }
+
+            }.getOrNull()
+
+        transactionProposal.update { result }
+        return result != null
+    }
+
+    override suspend fun createPCZTFromProposal(): Boolean {
+        // TODO keystone PCZT using our sdk
+        return true
+    }
+
+    override suspend fun addPCZTToProofs(): Boolean {
+        // TODO keystone PCZT using our sdk
+        return true
+    }
+
+    override suspend fun createPCZTEncoder(): UREncoder {
+        // TODO keystone PCZT using keystone sdk
+        return keystoneZcashSDK.generatePczt(TODO())
+    }
+
+    override suspend fun parsePCZT(ur: UR): Boolean {
+        return try {
+            keystoneZcashSDK.parsePczt(ur)
+            true
+        } catch (_: Exception) {
+            false
         }
     }
 
-    override fun signAndCompleteProposal(zecSendPart2: ZecSend) {
+    override fun extractPCZT() {
         scope.launch {
-            val proposal = completeZecSend.value?.proposal!!
+            // TODO keystone PCZT using keystone sdk
+            val proposal = transactionProposal.value?.proposal!!
             submitState.update { SubmitProposalState.Submitting }
             val result = submitTransaction(proposal)
             submitState.update { SubmitProposalState.Result(result) }
         }
     }
 
+    override suspend fun getTransactionProposal(): TransactionProposal = transactionProposal.filterNotNull().first()
+
     override fun clear() {
-        completeZecSend.update { null }
+        transactionProposal.update { null }
         submitState.update { null }
+        pczt = null
     }
 
     private suspend fun submitTransaction(proposal: Proposal): SubmitResult {
@@ -236,23 +314,32 @@ class KeystoneProposalRepositoryImpl(
         }
 }
 
-sealed interface CompleteZecSend {
-    val destination: WalletAddress
-    val amount: Zatoshi
-    val memo: Memo
+
+
+sealed interface TransactionProposal {
     val proposal: Proposal
 }
 
-data class RegularZecSend(
-    override val destination: WalletAddress,
-    override val amount: Zatoshi,
-    override val memo: Memo,
-    override val proposal: Proposal
-) : CompleteZecSend
+sealed interface SendTransactionProposal: TransactionProposal {
+    val destination: WalletAddress
+    val amount: Zatoshi
+    val memo: Memo
+}
 
-data class Zip321ZecSend(
+data class ShieldTransactionProposal(
+    override val proposal: Proposal,
+): TransactionProposal
+
+data class RegularTransactionProposal(
     override val destination: WalletAddress,
     override val amount: Zatoshi,
     override val memo: Memo,
     override val proposal: Proposal
-) : CompleteZecSend
+) : SendTransactionProposal
+
+data class Zip321TransactionProposal(
+    override val destination: WalletAddress,
+    override val amount: Zatoshi,
+    override val memo: Memo,
+    override val proposal: Proposal
+) : SendTransactionProposal

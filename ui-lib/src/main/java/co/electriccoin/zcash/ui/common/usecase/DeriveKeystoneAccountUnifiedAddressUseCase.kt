@@ -1,16 +1,17 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import cash.z.ecc.android.sdk.WalletCoordinator
+import cash.z.ecc.android.sdk.tool.DerivationTool
+import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import com.keystone.module.ZcashAccount
 
 class DeriveKeystoneAccountUnifiedAddressUseCase(
-    private val walletCoordinator: WalletCoordinator,
+    private val persistableWalletProvider: PersistableWalletProvider
 ) {
     suspend operator fun invoke(account: ZcashAccount): String {
         // TODO keystone derivation
         // return DerivationTool.getInstance().deriveUnifiedAddress(
         //     viewingKey = account.ufvk,
-        //     network = walletCoordinator.persistableWallet.filterNotNull().first().network
+        //     network = persistableWalletProvider.getPersistableWallet().network
         // )
         return "placeholder because sdk crashes" // TODO keystone
     }

@@ -287,6 +287,7 @@ private fun SendingTransaction(
                 fontWeight = FontWeight.SemiBold,
                 style = ZashiTypography.header5,
                 text = stringResource(id = R.string.send_confirmation_sending_title),
+                color = ZashiColors.Text.textPrimary
             )
 
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
@@ -296,7 +297,8 @@ private fun SendingTransaction(
                 style = ZashiTypography.textSm,
                 text = stringResource(id = R.string.send_confirmation_sending_subtitle, state.address),
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = ZashiColors.Text.textPrimary
             )
         }
     }
@@ -354,6 +356,7 @@ private fun SuccessfulTransaction(
                 fontWeight = FontWeight.SemiBold,
                 style = ZashiTypography.header5,
                 text = stringResource(id = R.string.send_confirmation_success_title),
+                color = ZashiColors.Text.textPrimary
             )
 
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
@@ -363,7 +366,8 @@ private fun SuccessfulTransaction(
                 style = ZashiTypography.textSm,
                 text = stringResource(id = R.string.send_confirmation_success_subtitle, state.address),
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = ZashiColors.Text.textPrimary
             )
 
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
@@ -435,6 +439,7 @@ private fun FailureTransaction(
                 fontWeight = FontWeight.SemiBold,
                 style = ZashiTypography.header5,
                 text = stringResource(id = R.string.send_confirmation_failure_title),
+                color = ZashiColors.Text.textPrimary
             )
 
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
@@ -444,7 +449,8 @@ private fun FailureTransaction(
                 style = ZashiTypography.textSm,
                 text = stringResource(id = R.string.send_confirmation_failure_subtitle),
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = ZashiColors.Text.textPrimary
             )
 
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
@@ -511,6 +517,7 @@ private fun GrpcFailureTransaction(modifier: Modifier = Modifier) {
                 fontWeight = FontWeight.SemiBold,
                 style = ZashiTypography.header5,
                 text = stringResource(id = R.string.send_confirmation_failure_grpc_title),
+                color = ZashiColors.Text.textPrimary
             )
 
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
@@ -520,7 +527,8 @@ private fun GrpcFailureTransaction(modifier: Modifier = Modifier) {
                 style = ZashiTypography.textSm,
                 text = stringResource(id = R.string.send_confirmation_failure_grpc_subtitle),
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = ZashiColors.Text.textPrimary
             )
         }
     }
