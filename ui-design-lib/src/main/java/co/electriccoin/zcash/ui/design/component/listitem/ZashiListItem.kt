@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.design.component.listitem
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,8 +11,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
@@ -53,15 +55,15 @@ fun ZashiListItem(
         modifier = modifier,
         contentPadding = contentPadding,
         state =
-            ZashiListItemState(
-                title = stringRes(title),
-                subtitle = subtitle?.let { stringRes(it) },
-                isEnabled = isEnabled,
-                onClick = onClick,
-                icon = icon,
-                titleIcons = titleIcons,
-                design = type
-            ),
+        ZashiListItemState(
+            title = stringRes(title),
+            subtitle = subtitle?.let { stringRes(it) },
+            isEnabled = isEnabled,
+            onClick = onClick,
+            icon = icon,
+            titleIcons = titleIcons,
+            design = type
+        ),
     )
 }
 
@@ -69,6 +71,29 @@ fun ZashiListItem(
 fun ZashiListItem(
     state: ZashiListItemState,
     modifier: Modifier = Modifier,
+    leading:  @Composable (Modifier) -> Unit = {
+        ZashiListItemDefaults.LeadingItem(
+            modifier = it,
+            icon = state.icon,
+            contentDescription = state.title.getValue()
+        )
+    },
+    content:  @Composable (Modifier) -> Unit = {
+        ZashiListItemDefaults.ContentItem(
+            modifier = it,
+            text = state.title.getValue(),
+            subtitle = state.subtitle?.getValue(),
+            titleIcons = state.titleIcons,
+            isEnabled = state.isEnabled
+        )
+    },
+    trailing:  @Composable (Modifier) -> Unit = {
+        ZashiListItemDefaults.TrailingItem(
+            modifier = it,
+            isEnabled = state.isEnabled && state.onClick != null,
+            contentDescription = state.title.getValue()
+        )
+    },
     contentPadding: PaddingValues = ZashiListItemDefaults.contentPadding,
 ) {
     val colors =
@@ -80,28 +105,9 @@ fun ZashiListItem(
     BaseListItem(
         modifier = modifier,
         contentPadding = contentPadding,
-        leading = {
-            ZashiListItemDefaults.LeadingItem(
-                modifier = it,
-                icon = state.icon,
-                contentDescription = state.title.getValue()
-            )
-        },
-        content = {
-            ZashiListItemDefaults.ContentItem(
-                modifier = it,
-                text = state.title.getValue(),
-                subtitle = state.subtitle?.getValue(),
-                titleIcons = state.titleIcons
-            )
-        },
-        trailing = {
-            ZashiListItemDefaults.TrailingItem(
-                modifier = it,
-                isEnabled = state.isEnabled && state.onClick != null,
-                contentDescription = state.title.getValue()
-            )
-        },
+        leading = leading,
+        content = content,
+        trailing = trailing,
         onClick = state.onClick.takeIf { state.isEnabled },
         border = colors.borderColor.takeIf { !it.isUnspecified }?.let { BorderStroke(1.dp, it) }
     )
@@ -113,16 +119,11 @@ private fun ZashiListLeadingItem(
     contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Image(
         modifier = modifier,
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            modifier = Modifier.sizeIn(maxWidth = 48.dp, maxHeight = 48.dp),
-            painter = painterResource(icon),
-            contentDescription = contentDescription,
-        )
-    }
+        painter = painterResource(icon),
+        contentDescription = contentDescription,
+    )
 }
 
 @Composable
@@ -149,28 +150,51 @@ private fun ZashiListContentItem(
     text: String,
     subtitle: String?,
     titleIcons: ImmutableList<Int>,
+    isEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
     ) {
-        Row {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
                 text = text,
                 style = ZashiTypography.textMd,
                 fontWeight = FontWeight.SemiBold,
-                color = ZashiColors.Text.textPrimary
+                color = if (isEnabled) {
+                    ZashiColors.Text.textPrimary
+                } else {
+                    ZashiColors.Text.textDisabled
+                }
             )
-            titleIcons.forEach {
-                Spacer(Modifier.width(6.dp))
-                Image(
-                    modifier =
+            titleIcons.forEachIndexed { index, icon ->
+                if (index == 0) {
+                    Spacer(Modifier.width(6.dp))
+                    Image(
+                        modifier =
                         Modifier
                             .size(20.dp)
                             .clip(CircleShape),
-                    painter = painterResource(it),
-                    contentDescription = null,
-                )
+                        painter = painterResource(icon),
+                        contentDescription = null,
+                    )
+                } else {
+                    Image(
+                        modifier =
+                        Modifier
+                            .offset(x = (-2).dp)
+                            .size(24.dp)
+                            .border(2.dp, ZashiColors.Surfaces.bgPrimary, CircleShape)
+                            .size(20.dp)
+                            .padding(2.dp)
+                            .clip(CircleShape),
+                        painter = painterResource(icon),
+                        contentDescription = null,
+                    )
+                }
+
             }
         }
         subtitle?.let {
@@ -221,8 +245,9 @@ object ZashiListItemDefaults {
         text: String,
         subtitle: String?,
         titleIcons: ImmutableList<Int>,
+        isEnabled: Boolean,
         modifier: Modifier = Modifier,
-    ) = ZashiListContentItem(text, subtitle, titleIcons, modifier)
+    ) = ZashiListContentItem(text, subtitle, titleIcons, isEnabled, modifier)
 
     @Composable
     fun primaryColors(borderColor: Color = Color.Unspecified): ZashiListItemColors {
@@ -248,7 +273,10 @@ private fun PrimaryPreview() =
                     subtitle = "Subtitle",
                     icon = R.drawable.ic_radio_button_checked,
                     onClick = {},
-                    titleIcons = persistentListOf(R.drawable.ic_radio_button_checked)
+                    titleIcons = persistentListOf(
+                        R.drawable.ic_radio_button_checked,
+                        R.drawable.ic_radio_button_checked,
+                    )
                 )
                 ZashiListItem(
                     title = "Test",

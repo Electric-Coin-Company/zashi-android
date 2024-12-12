@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.scankeystone.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.electriccoin.zcash.ui.common.usecase.DecodeKeystoneSignInRequestUseCase
+import co.electriccoin.zcash.ui.common.usecase.InvalidKeystoneSignInQR
 import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -24,9 +25,11 @@ internal class ScanKeystoneSignInRequestViewModel(
             mutex.withLock {
                 if (scanSuccess) return@withLock
 
-                if (decodeKeystoneSignInRequest(result)) {
-                    scanSuccess = true
-                } else {
+                try {
+                    if (decodeKeystoneSignInRequest(result)) {
+                        scanSuccess = true
+                    }
+                } catch (e: InvalidKeystoneSignInQR) {
                     state.update { ScanValidationState.INVALID }
                 }
             }

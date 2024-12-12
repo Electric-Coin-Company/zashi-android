@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import com.keystone.sdk.KeystoneSDK
 
@@ -21,10 +20,14 @@ class DecodeKeystoneSignInRequestUseCase(
 
             if (ur != null) {
                 navigationRouter.replace(SelectKeystoneAccount(ur))
+                true
+            } else {
+                false
             }
-            true
         } catch (_: Exception) {
-            false
+            throw InvalidKeystoneSignInQR()
         }
     }
 }
+
+class InvalidKeystoneSignInQR: Exception()

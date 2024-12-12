@@ -108,7 +108,8 @@ private fun ZashiAccountInfoListItem(
                 modifier = it,
                 text = state.title.getValue(),
                 subtitle = state.subtitle.getValue(),
-                titleIcons = persistentListOf()
+                titleIcons = persistentListOf(),
+                isEnabled = true
             )
         },
         trailing = {

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -31,6 +32,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDefaults
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -57,15 +59,22 @@ fun Integrations(
     ) { paddingValues ->
         Column(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .scaffoldScrollPadding(paddingValues),
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .scaffoldScrollPadding(paddingValues),
         ) {
             state.items.forEachIndexed { index, item ->
                 ZashiListItem(
                     state = item,
-                    modifier = Modifier.padding(horizontal = 4.dp)
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    leading = {
+                        ZashiListItemDefaults.LeadingItem(
+                            modifier = Modifier.size(40.dp),
+                            icon = item.icon,
+                            contentDescription = item.title.getValue()
+                        )
+                    },
                 )
                 if (index != state.items.lastIndex) {
                     ZashiHorizontalDivider(
@@ -83,9 +92,9 @@ fun Integrations(
             Spacer(modifier = Modifier.weight(1f))
             ZashiCard(
                 modifier =
-                    Modifier
-                        .padding(horizontal = 24.dp)
-                        .fillMaxWidth(),
+                Modifier
+                    .padding(horizontal = 24.dp)
+                    .fillMaxWidth(),
             ) {
                 Image(
                     modifier = Modifier.align(CenterHorizontally),
@@ -109,9 +118,9 @@ fun Integrations(
 private fun DisabledInfo(it: StringResource) {
     Row(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(

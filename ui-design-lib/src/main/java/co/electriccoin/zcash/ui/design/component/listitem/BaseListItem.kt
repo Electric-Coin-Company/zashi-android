@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
@@ -48,7 +49,7 @@ fun BaseListItem(
                 modifier = Modifier.padding(contentPadding),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                leading(Modifier)
+                leading(Modifier.sizeIn(maxWidth = 48.dp, maxHeight = 48.dp))
                 Spacer(modifier = Modifier.width(16.dp))
                 content(Modifier.weight(1f))
                 Spacer(modifier = Modifier.width(16.dp))
