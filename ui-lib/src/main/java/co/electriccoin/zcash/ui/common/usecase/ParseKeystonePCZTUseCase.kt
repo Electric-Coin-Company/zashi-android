@@ -4,7 +4,9 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.screen.transactionprogress.KeystoneTransactionProgress
+import com.keystone.module.DecodeResult
 import com.keystone.sdk.KeystoneSDK
+import kotlin.jvm.Throws
 
 class ParseKeystonePCZTUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
@@ -12,21 +14,30 @@ class ParseKeystonePCZTUseCase(
 ) {
     private val keystoneSDK = KeystoneSDK()
 
+    @Throws(InvalidKeystonePCZTQR::class)
     suspend operator fun invoke(result: String): Boolean {
-        return try {
-            val decodedResult = keystoneSDK.decodeQR(result)
-            Twig.debug { "=========> progress: " + decodedResult.progress }
+        val decodedResult = decodeResult(result)
+        Twig.debug { "=========> progress: " + decodedResult.progress }
 
-            val ur = decodedResult.ur
+        val ur = decodedResult.ur
 
-            if (ur != null && keystoneProposalRepository.parsePCZT(ur)) {
-                keystoneProposalRepository.extractPCZT()
-                navigationRouter.replace(KeystoneTransactionProgress)
-            }
-
+        return if (ur != null) {
+            keystoneProposalRepository.parsePCZT(ur)
+            keystoneProposalRepository.extractPCZT()
+            navigationRouter.replace(KeystoneTransactionProgress)
             true
-        } catch (_: Exception) {
+        } else {
             false
         }
     }
+
+    private fun decodeResult(result: String): DecodeResult {
+        return try {
+            keystoneSDK.decodeQR(result)
+        } catch (_: Exception) {
+            throw InvalidKeystonePCZTQR()
+        }
+    }
 }
+
+class InvalidKeystonePCZTQR : Exception()

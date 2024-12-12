@@ -1,11 +1,12 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.exception.PcztException
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.Memo
+import cash.z.ecc.android.sdk.model.Pczt
 import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
-import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.zecdev.zip321.ZIP321
+import kotlin.jvm.Throws
 
 interface KeystoneProposalRepository {
     val transactionProposal: Flow<TransactionProposal?>
@@ -40,47 +42,54 @@ interface KeystoneProposalRepository {
     /**
      * 1st step.
      */
-    suspend fun createProposal(zecSend: ZecSend): Boolean
+    suspend fun createProposal(zecSend: ZecSend)
 
     /**
      * 1st step for zip 321.
      */
-    suspend fun createZip321Proposal(zip321Uri: String): Boolean
+    suspend fun createZip321Proposal(zip321Uri: String)
 
     /**
      * 1st step for shielding
      */
-    suspend fun createShieldProposal(): Boolean
+    suspend fun createShieldProposal()
 
     /**
      * 2nd step
      */
-    suspend fun createPCZTFromProposal(): Boolean
+    @Throws(PcztException.AddProofsToPcztException::class, PcztException.CreatePcztFromProposalException::class)
+    suspend fun createPCZTFromProposal()
 
     /**
      * 3rd step
      */
-    suspend fun addPCZTToProofs(): Boolean
+    // suspend fun addPCZTToProofs()
 
     /**
      * 4rd step - encode qr
      */
+    @Throws(PcztNotCreatedException::class)
     suspend fun createPCZTEncoder(): UREncoder
 
     /**
      * 4rd step - parse qr
      */
-    suspend fun parsePCZT(ur: UR): Boolean
+    @Throws(ParsePCZTException::class)
+    suspend fun parsePCZT(ur: UR)
 
     /**
      * 5th step - extract pczt
      */
+    @Throws(PcztNotCreatedException::class)
     fun extractPCZT()
 
     fun clear()
 
     suspend fun getTransactionProposal(): TransactionProposal
 }
+
+class ParsePCZTException: Exception()
+class PcztNotCreatedException: Exception()
 
 sealed interface SubmitProposalState {
     data object Submitting : SubmitProposalState
@@ -103,9 +112,11 @@ class KeystoneProposalRepositoryImpl(
 
     private val keystoneZcashSDK = keystoneSDK.zcash
 
-    private var pczt: ByteArray? = null
+    private var proposalPczt: Pczt? = null
+    private var pcztWithProofs: Pczt? = null
+    private var pcztWithSignatures: Pczt? = null
 
-    override suspend fun createProposal(zecSend: ZecSend): Boolean {
+    override suspend fun createProposal(zecSend: ZecSend) {
         val result =
             runCatching {
                 val newProposal =
@@ -123,10 +134,9 @@ class KeystoneProposalRepositoryImpl(
             }.getOrNull()
 
         transactionProposal.update { result }
-        return result != null
     }
 
-    override suspend fun createZip321Proposal(zip321Uri: String): Boolean {
+    override suspend fun createZip321Proposal(zip321Uri: String) {
         val synchronizer = synchronizerProvider.getSynchronizer()
         val account = accountDataSource.getSelectedAccount()
 
@@ -146,7 +156,8 @@ class KeystoneProposalRepositoryImpl(
 
                 else -> {
                     transactionProposal.update { null }
-                    return false
+                    // return false // TODO
+                    return
                 }
             }
 
@@ -157,7 +168,8 @@ class KeystoneProposalRepositoryImpl(
 
         if (proposal == null) {
             transactionProposal.update { null }
-            return false
+            // return false // TODO
+            return
         }
 
         val result =
@@ -174,10 +186,10 @@ class KeystoneProposalRepositoryImpl(
             }.getOrNull()
 
         transactionProposal.update { result }
-        return result != null
+        // return result != null // TODO
     }
 
-    override suspend fun createShieldProposal(): Boolean {
+    override suspend fun createShieldProposal() {
         val account = accountDataSource.getSelectedAccount()
 
         val result =
@@ -200,39 +212,47 @@ class KeystoneProposalRepositoryImpl(
             }.getOrNull()
 
         transactionProposal.update { result }
-        return result != null
     }
 
-    override suspend fun createPCZTFromProposal(): Boolean {
-        // TODO keystone PCZT using our sdk
-        return true
+    override suspend fun createPCZTFromProposal() {
+        val proposalPczt = synchronizerProvider.getSynchronizer().createPcztFromProposal(
+            accountUuid = accountDataSource.getSelectedAccount().sdkAccount.accountUuid,
+            proposal = getTransactionProposal().proposal
+        )
+
+        val pcztWithProofs = synchronizerProvider.getSynchronizer().addProofsToPczt(proposalPczt)
+
+        this.proposalPczt = proposalPczt
+        this.pcztWithProofs = pcztWithProofs
     }
 
-    override suspend fun addPCZTToProofs(): Boolean {
-        // TODO keystone PCZT using our sdk
-        return true
-    }
+    // override suspend fun addPCZTToProofs() {
+    //     // TODO keystone PCZT using our sdk
+    // }
 
     override suspend fun createPCZTEncoder(): UREncoder {
-        // TODO keystone PCZT using keystone sdk
-        return keystoneZcashSDK.generatePczt(TODO())
+        val pczt = proposalPczt ?: throw PcztNotCreatedException()
+        return keystoneZcashSDK.generatePczt(pczt.toByteArray())
     }
 
-    override suspend fun parsePCZT(ur: UR): Boolean {
-        return try {
-            keystoneZcashSDK.parsePczt(ur)
-            true
+    override suspend fun parsePCZT(ur: UR) {
+        try {
+            pcztWithSignatures = Pczt(keystoneZcashSDK.parsePczt(ur))
         } catch (_: Exception) {
-            false
+            throw ParsePCZTException()
         }
     }
 
     override fun extractPCZT() {
+        val pcztWithProofs = pcztWithProofs ?: throw PcztNotCreatedException()
+        val pcztWithSignatures = pcztWithSignatures ?: throw PcztNotCreatedException()
+
         scope.launch {
-            // TODO keystone PCZT using keystone sdk
-            val proposal = transactionProposal.value?.proposal!!
             submitState.update { SubmitProposalState.Submitting }
-            val result = submitTransaction(proposal)
+            val result = submitTransaction(
+                pcztWithProofs = pcztWithProofs,
+                pcztWithSignatures = pcztWithSignatures
+            )
             submitState.update { SubmitProposalState.Result(result) }
         }
     }
@@ -242,17 +262,22 @@ class KeystoneProposalRepositoryImpl(
     override fun clear() {
         transactionProposal.update { null }
         submitState.update { null }
-        pczt = null
+        proposalPczt = null
+        pcztWithProofs = null
+        pcztWithSignatures = null
     }
 
-    private suspend fun submitTransaction(proposal: Proposal): SubmitResult {
+    private suspend fun submitTransaction(
+        pcztWithProofs: Pczt,
+        pcztWithSignatures: Pczt,
+    ): SubmitResult {
         val synchronizer = synchronizerProvider.getSdkSynchronizer()
 
         val submitResult =
             runCreateTransactions(
                 synchronizer = synchronizer,
-                spendingKey = zashiSpendingKeyDataSource.getZashiSpendingKey(),
-                proposal = proposal
+                pcztWithProofs = pcztWithProofs,
+                pcztWithSignatures = pcztWithSignatures
             )
 
         synchronizer.refreshTransactions()
@@ -263,15 +288,15 @@ class KeystoneProposalRepositoryImpl(
 
     private suspend fun runCreateTransactions(
         synchronizer: Synchronizer,
-        spendingKey: UnifiedSpendingKey,
-        proposal: Proposal
+        pcztWithProofs: Pczt,
+        pcztWithSignatures: Pczt,
     ): SubmitResult {
         val submitResults = mutableListOf<TransactionSubmitResult>()
 
         return runCatching {
-            synchronizer.createProposedTransactions(
-                proposal = proposal,
-                usk = spendingKey
+            synchronizer.createTransactionFromPczt(
+                pcztWithProofs = pcztWithProofs,
+                pcztWithSignatures = pcztWithSignatures
             ).collect { submitResult ->
                 Twig.info { "Transaction submit result: $submitResult" }
                 submitResults.add(submitResult)

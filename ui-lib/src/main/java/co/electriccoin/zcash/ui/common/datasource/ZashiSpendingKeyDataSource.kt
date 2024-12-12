@@ -17,23 +17,14 @@ class ZashiSpendingKeyDataSourceImpl(
     private val persistableWalletProvider: PersistableWalletProvider,
     private val accountDataSource: AccountDataSource,
 ) : ZashiSpendingKeyDataSource {
-    override suspend fun getZashiSpendingKey(): UnifiedSpendingKey {
-        return deriveSpendingKey(
-            persistableWalletProvider.getPersistableWallet()
-        )
-    }
+    override suspend fun getZashiSpendingKey(): UnifiedSpendingKey = withContext(Dispatchers.IO) {
+        val persistableWallet = persistableWalletProvider.getPersistableWallet()
 
-    private suspend fun deriveSpendingKey(persistableWallet: PersistableWallet): UnifiedSpendingKey {
-        val bip39Seed =
-            withContext(Dispatchers.IO) {
-                Mnemonics.MnemonicCode(persistableWallet.seedPhrase.joinToString()).toSeed()
-            }
-        val spendingKey =
-            DerivationTool.getInstance().deriveUnifiedSpendingKey(
-                seed = bip39Seed,
-                network = persistableWallet.network,
-                accountIndex = accountDataSource.getZashiAccount().hdAccountIndex,
-            )
-        return spendingKey
+        val bip39Seed = Mnemonics.MnemonicCode(persistableWallet.seedPhrase.joinToString()).toSeed()
+        DerivationTool.getInstance().deriveUnifiedSpendingKey(
+            seed = bip39Seed,
+            network = persistableWallet.network,
+            accountIndex = accountDataSource.getZashiAccount().hdAccountIndex,
+        )
     }
 }

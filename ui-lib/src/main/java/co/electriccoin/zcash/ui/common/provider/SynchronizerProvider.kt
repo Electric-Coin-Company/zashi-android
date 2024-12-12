@@ -32,8 +32,14 @@ class SynchronizerProviderImpl(walletCoordinator: WalletCoordinator) : Synchroni
     override val synchronizer: StateFlow<Synchronizer?> =
         walletCoordinator.synchronizer
             .mapLatest { synchronizer ->
-                synchronizer?.networkHeight?.filterNotNull()?.first()
-                synchronizer
+                if (synchronizer == null) {
+                    null
+                } else {
+                    synchronizer.networkHeight.filterNotNull().first()
+                    synchronizer.accountsFlow.filterNotNull().first()
+                    synchronizer.walletBalances.filterNotNull().first()
+                    synchronizer
+                }
             }.stateIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),

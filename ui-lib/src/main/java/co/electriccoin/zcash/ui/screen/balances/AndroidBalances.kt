@@ -178,18 +178,21 @@ internal fun WrapBalances(
             onShielding = {
                 lifecycleScope.launch {
                     when (val account = getSelectedWalletAccount()) {
-                        is KeystoneAccount ->
-                            if (!createKeystoneShieldProposal()) {
+                        is KeystoneAccount -> {
+                            try {
+                                createKeystoneShieldProposal()
+                            } catch (_: Exception) { // TODO keystone
                                 showShieldingError(
                                     ShieldState.Failed(
                                         error =
-                                            context.getString(
-                                                R.string.balances_shielding_dialog_error_text_below_threshold
-                                            ),
+                                        context.getString(
+                                            R.string.balances_shielding_dialog_error_text_below_threshold
+                                        ),
                                         stackTrace = ""
                                     )
                                 )
                             }
+                        }
                         is ZashiAccount -> {
                             val spendingKey = getZashiSpendingKey()
                             setShieldState(ShieldState.Running)

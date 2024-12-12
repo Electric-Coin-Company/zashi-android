@@ -9,16 +9,10 @@ class CreateKeystoneProposalUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
     private val navigationRouter: NavigationRouter
 ) {
-    suspend operator fun invoke(zecSend: ZecSend): Boolean {
-        return if (
-            keystoneProposalRepository.createProposal(zecSend) &&
-            keystoneProposalRepository.createPCZTFromProposal() &&
-            keystoneProposalRepository.addPCZTToProofs()
-        ) {
-            navigationRouter.forward(ReviewKeystoneTransaction)
-            true
-        } else {
-            false
-        }
+    suspend operator fun invoke(zecSend: ZecSend) {
+        keystoneProposalRepository.createProposal(zecSend)
+        keystoneProposalRepository.createPCZTFromProposal()
+        // keystoneProposalRepository.addPCZTToProofs()
+        navigationRouter.forward(ReviewKeystoneTransaction)
     }
 }

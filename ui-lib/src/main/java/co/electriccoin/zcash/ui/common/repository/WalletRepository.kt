@@ -347,8 +347,6 @@ class WalletRepositoryImpl(
     ) {
         scope.launch {
             walletMutex.withLock {
-                persistOnboardingStateInternal(OnboardingState.READY)
-
                 val restoredWallet =
                     PersistableWallet(
                         network = network,
@@ -362,6 +360,7 @@ class WalletRepositoryImpl(
                     standardPreferenceProvider(),
                     WalletRestoringState.RESTORING.toNumber()
                 )
+                persistOnboardingStateInternal(OnboardingState.READY)
             }
         }
     }

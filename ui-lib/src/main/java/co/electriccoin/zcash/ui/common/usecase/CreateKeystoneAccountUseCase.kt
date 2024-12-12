@@ -22,14 +22,15 @@ class CreateKeystoneAccountUseCase(
     ) {
         val createdAccount =
             accountDataSource.importAccountByUfvk(
-                purpose = AccountPurpose.Spending,
                 setup =
                     AccountImportSetup(
                         accountName = "",
                         keySource = "keystone",
                         ufvk = UnifiedFullViewingKey(account.ufvk),
-                        seedFingerprint = accounts.seedFingerprint.hexToByteArray(),
-                        zip32AccountIndex = account.name?.toLongOrNull()?.let { Zip32AccountIndex.new(it) }
+                        purpose = AccountPurpose.Spending(
+                            seedFingerprint = accounts.seedFingerprint.hexToByteArray(),
+                            zip32AccountIndex = account.name?.toLongOrNull()?.let { Zip32AccountIndex.new(it) }
+                        )
                     ),
             )
 

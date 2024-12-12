@@ -51,10 +51,7 @@ interface AccountDataSource {
 
     suspend fun selectAccount(account: WalletAccount)
 
-    suspend fun importAccountByUfvk(
-        purpose: AccountPurpose,
-        setup: AccountImportSetup
-    ): Account
+    suspend fun importAccountByUfvk(setup: AccountImportSetup): Account
 }
 
 class AccountDataSourceImpl(
@@ -204,12 +201,9 @@ class AccountDataSourceImpl(
             selectedAccountUUIDProvider.setUUID(account.sdkAccount.accountUuid)
         }
 
-    override suspend fun importAccountByUfvk(
-        purpose: AccountPurpose,
-        setup: AccountImportSetup
-    ): Account =
+    override suspend fun importAccountByUfvk(setup: AccountImportSetup): Account =
         withContext(Dispatchers.IO) {
-            synchronizerProvider.getSynchronizer().importAccountByUfvk(purpose, setup)
+            synchronizerProvider.getSynchronizer().importAccountByUfvk(setup)
         }
 }
 

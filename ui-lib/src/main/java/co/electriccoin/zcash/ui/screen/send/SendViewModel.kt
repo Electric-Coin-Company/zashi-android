@@ -141,10 +141,13 @@ class SendViewModel(
         setSendStage: (SendStage) -> Unit
     ) = viewModelScope.launch {
         when (getSelectedWalletAccount()) {
-            is KeystoneAccount ->
-                if (!createKeystoneTransactionProposal(newZecSend)) {
+            is KeystoneAccount -> {
+                try {
+                    createKeystoneTransactionProposal(newZecSend)
+                } catch (_: Exception) {
                     setSendStage(SendStage.SendFailure(""))
                 }
+            }
             is ZashiAccount -> {
                 Twig.debug { "Getting send transaction proposal" }
                 runCatching {
@@ -169,10 +172,13 @@ class SendViewModel(
         goPaymentRequest: (ZecSend, String) -> Unit,
     ) = viewModelScope.launch {
         when (getSelectedWalletAccount()) {
-            is KeystoneAccount ->
-                if (!createKeystoneZip321TransactionProposal(zip321Uri)) {
+            is KeystoneAccount -> {
+                try {
+                    createKeystoneZip321TransactionProposal(zip321Uri)
+                } catch (_: Exception) { // TODO keystone
                     setSendStage(SendStage.SendFailure(""))
                 }
+            }
             is ZashiAccount ->
                 onCreateZecSend321ZashiClick(
                     zip321Uri = zip321Uri,
