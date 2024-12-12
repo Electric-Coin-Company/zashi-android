@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.reviewtransaction
 
+import androidx.annotation.DrawableRes
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -51,3 +52,9 @@ data class MessageState(
     val title: StringResource,
     val message: StringResource
 ) : ReviewTransactionItemState
+
+data class MessagePlaceholderState(
+    @DrawableRes val icon: Int,
+    val title: StringResource,
+    val message: StringResource,
+): ReviewTransactionItemState

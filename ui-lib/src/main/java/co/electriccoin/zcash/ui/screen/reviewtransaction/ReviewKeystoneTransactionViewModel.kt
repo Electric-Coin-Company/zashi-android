@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.reviewtransaction
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
@@ -105,12 +106,19 @@ class ReviewKeystoneTransactionViewModel(
                     title = stringRes(R.string.send_confirmation_fee),
                     amount = transactionProposal.proposal.totalFeeRequired()
                 ),
-                transactionProposal.memo.takeIf { it.value.isNotEmpty() }?.let {
-                    MessageState(
-                        title = stringRes(R.string.send_memo_label),
-                        message = stringRes(it.value)
-                    )
-                }
+                transactionProposal.memo.takeIf { it.value.isNotEmpty() }
+                    ?.let {
+                        MessageState(
+                            title = stringRes(R.string.send_memo_label),
+                            message = stringRes(it.value)
+                        )
+                    }
+                    ?.takeIf { transactionProposal.destination !is WalletAddress.Transparent },
+                MessagePlaceholderState(
+                    title = stringRes(R.string.send_memo_label),
+                    message = stringRes(R.string.send_transparent_memo),
+                    icon = R.drawable.ic_confirmation_message_info,
+                ).takeIf { transactionProposal.destination is WalletAddress.Transparent },
             ),
         primaryButton =
             ButtonState(

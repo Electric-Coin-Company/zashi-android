@@ -17,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -103,6 +105,11 @@ fun ReviewTransactionView(state: ReviewTransactionState) {
                             Spacer(Modifier.height(16.dp))
                             MessageWidget(item)
                         }
+
+                        is MessagePlaceholderState -> {
+                            Spacer(Modifier.height(16.dp))
+                            MessagePlaceholderWidget(item)
+                        }
                     }
                 }
 
@@ -114,7 +121,7 @@ fun ReviewTransactionView(state: ReviewTransactionState) {
 }
 
 @Composable
-fun ReceiverExpandedWidget(state: ReceiverExpandedState) {
+private fun ReceiverExpandedWidget(state: ReceiverExpandedState) {
     Column {
         Text(
             state.title.getValue(),
@@ -159,7 +166,7 @@ fun ReceiverExpandedWidget(state: ReceiverExpandedState) {
 }
 
 @Composable
-fun SenderWidget(state: SenderState) {
+private fun SenderWidget(state: SenderState) {
     Column {
         Text(
             text = state.title.getValue(),
@@ -190,7 +197,7 @@ fun SenderWidget(state: SenderState) {
 }
 
 @Composable
-fun ReceiverWidget(state: ReceiverState) {
+private fun ReceiverWidget(state: ReceiverState) {
     Column {
         Text(
             state.title.getValue(),
@@ -220,7 +227,7 @@ fun ReceiverWidget(state: ReceiverState) {
 }
 
 @Composable
-fun MessageWidget(state: MessageState) {
+private fun MessageWidget(state: MessageState) {
     Column {
         Text(
             state.title.getValue(),
@@ -250,7 +257,50 @@ fun MessageWidget(state: MessageState) {
 }
 
 @Composable
-fun FinancialInfoWidget(state: FinancialInfoState) {
+private fun MessagePlaceholderWidget(state: MessagePlaceholderState) {
+    Column {
+        Text(
+            state.title.getValue(),
+            style = ZashiTypography.textSm,
+            fontWeight = FontWeight.Medium,
+            color = ZashiColors.Text.textTertiary
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        ZashiTextField(
+            state = TextFieldState(value = stringRes(""), isEnabled = false) {},
+            modifier =
+            Modifier
+                .fillMaxWidth(),
+            colors =
+            ZashiTextFieldDefaults.defaultColors(
+                disabledTextColor = ZashiColors.Inputs.Filled.text,
+                disabledHintColor = ZashiColors.Inputs.Disabled.hint,
+                disabledBorderColor = Color.Unspecified,
+                disabledContainerColor = ZashiColors.Inputs.Disabled.bg,
+                disabledPlaceholderColor = ZashiColors.Inputs.Disabled.text,
+            ),
+            placeholder = {
+                Text(
+                    text = state.message.getValue(),
+                    style = ZashiTypography.textSm,
+                    color = ZashiColors.Utility.Gray.utilityGray700
+                )
+            },
+            leadingIcon = {
+                Image(
+                    painter = painterResource(state.icon),
+                    contentDescription = "",
+                    colorFilter = ColorFilter.tint(ZashiColors.Utility.Gray.utilityGray500)
+                )
+            }
+        )
+    }
+}
+
+@Composable
+private fun FinancialInfoWidget(state: FinancialInfoState) {
     Row {
         Text(
             modifier = Modifier.weight(1f),
@@ -277,7 +327,7 @@ fun FinancialInfoWidget(state: FinancialInfoState) {
 }
 
 @Composable
-fun AmountWidget(state: AmountState) {
+private fun AmountWidget(state: AmountState) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -370,7 +420,7 @@ private fun Preview() =
                             ),
                             MessageState(
                                 title = stringRes("Message"),
-                                message = stringRes("Message")
+                                message = stringRes("Message"),
                             )
                         ),
                     primaryButton =
@@ -385,6 +435,70 @@ private fun Preview() =
                 )
         )
     }
+
+@PreviewScreens
+@Composable
+private fun TransparentPreview() =
+    ZcashTheme {
+        ReviewTransactionView(
+            state =
+            ReviewTransactionState(
+                title = stringRes("Review"),
+                items =
+                listOf(
+                    AmountState(
+                        title = stringRes("Total Amount"),
+                        amount = ZatoshiFixture.new(),
+                        exchangeRate =
+                        ExchangeRateState.Data(
+                            currencyConversion =
+                            FiatCurrencyConversion(
+                                timestamp = Clock.System.now(),
+                                priceOfZec = 50.0
+                            ),
+                            isLoading = false,
+                            isStale = false,
+                            isRefreshEnabled = false,
+                            onRefresh = {}
+                        ),
+                    ),
+                    ReceiverState(
+                        title = stringRes("Total Amount"),
+                        name = stringRes("Receiver Name"),
+                        address = stringRes("Receiver Address")
+                    ),
+                    SenderState(
+                        title = stringRes("Sending from"),
+                        icon = R.drawable.ic_item_keystone,
+                        name = stringRes("Keystone wallet"),
+                    ),
+                    FinancialInfoState(
+                        title = stringRes("Amount"),
+                        amount = ZatoshiFixture.new()
+                    ),
+                    FinancialInfoState(
+                        title = stringRes("Fee"),
+                        amount = ZatoshiFixture.new()
+                    ),
+                    MessagePlaceholderState(
+                        title = stringRes("Message"),
+                        message = stringRes(co.electriccoin.zcash.ui.R.string.send_transparent_memo),
+                        icon = co.electriccoin.zcash.ui.R.drawable.ic_confirmation_message_info,
+                    )
+                ),
+                primaryButton =
+                ButtonState(
+                    stringRes("Confirm with Keystone")
+                ),
+                negativeButton =
+                ButtonState(
+                    stringRes("Cancel")
+                ),
+                onBack = {},
+            )
+        )
+    }
+
 
 @PreviewScreens
 @Composable
@@ -440,7 +554,7 @@ private fun Zip321Preview() =
                             ),
                             MessageState(
                                 title = stringRes(co.electriccoin.zcash.ui.R.string.payment_request_memo),
-                                message = stringRes("Message")
+                                message = stringRes("Message"),
                             ),
                             FinancialInfoState(
                                 title = stringRes(co.electriccoin.zcash.ui.R.string.payment_request_fee),
