@@ -8,9 +8,11 @@ class CancelKeystoneProposalFlowUseCase(
     private val navigationRouter: NavigationRouter,
     private val observeClearSend: ObserveClearSendUseCase
 ) {
-    operator fun invoke() {
+    operator fun invoke(clearSendForm: Boolean = true) {
         keystoneProposalRepository.clear()
-        observeClearSend.requestClear()
+        if (clearSendForm) {
+            observeClearSend.requestClear()
+        }
         navigationRouter.backToRoot()
     }
 }

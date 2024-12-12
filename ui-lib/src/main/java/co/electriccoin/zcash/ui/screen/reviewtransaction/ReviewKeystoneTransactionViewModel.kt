@@ -10,6 +10,7 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.repository.RegularTransactionProposal
 import co.electriccoin.zcash.ui.common.repository.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.repository.Zip321TransactionProposal
+import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetLoadedExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveKeystoneSendTransactionProposalUseCase
@@ -34,6 +35,7 @@ class ReviewKeystoneTransactionViewModel(
     observeContactByAddress: ObserveContactByAddressUseCase,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     observeKeystoneSendTransactionProposal: ObserveKeystoneSendTransactionProposalUseCase,
+    private val cancelKeystoneProposalFlow: CancelKeystoneProposalFlowUseCase,
     private val getLoadedExchangeRate: GetLoadedExchangeRateUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
@@ -193,11 +195,11 @@ class ReviewKeystoneTransactionViewModel(
     }
 
     private fun onBack() {
-        navigationRouter.backToRoot()
+        cancelKeystoneProposalFlow(clearSendForm = false)
     }
 
     private fun onCancelClick() {
-        navigationRouter.backToRoot()
+        cancelKeystoneProposalFlow(clearSendForm = false)
     }
 
     private fun onConfirmClick() {
