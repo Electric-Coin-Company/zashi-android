@@ -5,7 +5,7 @@
     <string name="connect_keystone_subtitle_clickable">View Keystone tutorial</string>
     <string name="connect_keystone_item_1">Unlock your Keystone</string>
     <string name="connect_keystone_item_2">Tap the menu icon</string>
-    <string name="connect_keystone_item_3">Select Watch-only Wallet</string>
+    <string name="connect_keystone_item_3">Tap on Connect Software Wallet</string>
     <string name="connect_keystone_item_4">Select Zashi app and scan QR code</string>
     <string name="connect_keystone_item_title">Instructions:</string>
     <string name="connect_keystone_positive">Ready to Scan</string>
