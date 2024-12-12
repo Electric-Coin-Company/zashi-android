@@ -30,4 +30,4 @@ class DecodeKeystoneSignInRequestUseCase(
     }
 }
 
-class InvalidKeystoneSignInQR: Exception()
+class InvalidKeystoneSignInQR : Exception()

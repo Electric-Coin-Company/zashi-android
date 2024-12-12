@@ -59,10 +59,10 @@ fun Integrations(
     ) { paddingValues ->
         Column(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .scaffoldScrollPadding(paddingValues),
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .scaffoldScrollPadding(paddingValues),
         ) {
             state.items.forEachIndexed { index, item ->
                 ZashiListItem(
@@ -92,9 +92,9 @@ fun Integrations(
             Spacer(modifier = Modifier.weight(1f))
             ZashiCard(
                 modifier =
-                Modifier
-                    .padding(horizontal = 24.dp)
-                    .fillMaxWidth(),
+                    Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxWidth(),
             ) {
                 Image(
                     modifier = Modifier.align(CenterHorizontally),
@@ -118,9 +118,9 @@ fun Integrations(
 private fun DisabledInfo(it: StringResource) {
     Row(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(

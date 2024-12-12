@@ -93,7 +93,6 @@ class KeystoneProposalRepositoryImpl(
     private val accountDataSource: AccountDataSource,
     private val zashiSpendingKeyDataSource: ZashiSpendingKeyDataSource
 ) : KeystoneProposalRepository {
-
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override val transactionProposal = MutableStateFlow<TransactionProposal?>(null)
@@ -165,9 +164,9 @@ class KeystoneProposalRepositoryImpl(
             runCatching {
                 Zip321TransactionProposal(
                     destination =
-                    synchronizer
-                        .validateAddress(payment.recipientAddress.value)
-                        .toWalletAddress(payment.recipientAddress.value),
+                        synchronizer
+                            .validateAddress(payment.recipientAddress.value)
+                            .toWalletAddress(payment.recipientAddress.value),
                     amount = payment.nonNegativeAmount.value.convertZecToZatoshi(),
                     memo = Memo(payment.memo?.let { String(it.data, Charsets.UTF_8) } ?: ""),
                     proposal = proposal,
@@ -183,21 +182,21 @@ class KeystoneProposalRepositoryImpl(
 
         val result =
             runCatching {
-                val newProposal = synchronizerProvider.getSynchronizer().proposeShielding(
-                    account = account.sdkAccount,
-                    shieldingThreshold = Zatoshi(DEFAULT_SHIELDING_THRESHOLD),
-                    // Using empty string for memo to clear the default memo prefix value defined in the SDK
-                    memo = "",
-                    // Using null will select whichever of the account's trans. receivers has funds to shield
-                    transparentReceiver = null
-                )
+                val newProposal =
+                    synchronizerProvider.getSynchronizer().proposeShielding(
+                        account = account.sdkAccount,
+                        shieldingThreshold = Zatoshi(DEFAULT_SHIELDING_THRESHOLD),
+                        // Using empty string for memo to clear the default memo prefix value defined in the SDK
+                        memo = "",
+                        // Using null will select whichever of the account's trans. receivers has funds to shield
+                        transparentReceiver = null
+                    )
 
                 newProposal?.let {
                     ShieldTransactionProposal(
                         proposal = it,
                     )
                 }
-
             }.getOrNull()
 
         transactionProposal.update { result }
@@ -314,13 +313,11 @@ class KeystoneProposalRepositoryImpl(
         }
 }
 
-
-
 sealed interface TransactionProposal {
     val proposal: Proposal
 }
 
-sealed interface SendTransactionProposal: TransactionProposal {
+sealed interface SendTransactionProposal : TransactionProposal {
     val destination: WalletAddress
     val amount: Zatoshi
     val memo: Memo
@@ -328,7 +325,7 @@ sealed interface SendTransactionProposal: TransactionProposal {
 
 data class ShieldTransactionProposal(
     override val proposal: Proposal,
-): TransactionProposal
+) : TransactionProposal
 
 data class RegularTransactionProposal(
     override val destination: WalletAddress,

@@ -10,7 +10,6 @@ class ParseKeystonePCZTUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
     private val navigationRouter: NavigationRouter
 ) {
-
     private val keystoneSDK = KeystoneSDK()
 
     suspend operator fun invoke(result: String): Boolean {

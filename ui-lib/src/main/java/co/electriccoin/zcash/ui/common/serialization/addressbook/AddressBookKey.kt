@@ -69,7 +69,7 @@ class AddressBookKey(val key: SecretBytes) {
                     contextString = "ZashiAddressBookEncryptionV1".toByteArray(),
                     seed = seedPhrase.toByteArray(),
                     network = network,
-                    accountIndex = account.hdAccountIndex, // TODO keystone
+                    accountIndex = account.hdAccountIndex,
                 )
             return AddressBookKey(SecretBytes.copyFrom(key, InsecureSecretKeyAccess.get()))
         }

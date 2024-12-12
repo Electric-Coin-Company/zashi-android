@@ -178,17 +178,18 @@ internal fun WrapBalances(
             onShielding = {
                 lifecycleScope.launch {
                     when (val account = getSelectedWalletAccount()) {
-                        is KeystoneAccount -> if (!createKeystoneShieldProposal()) {
-                            showShieldingError(
-                                ShieldState.Failed(
-                                    error =
-                                    context.getString(
-                                        R.string.balances_shielding_dialog_error_text_below_threshold
-                                    ),
-                                    stackTrace = ""
+                        is KeystoneAccount ->
+                            if (!createKeystoneShieldProposal()) {
+                                showShieldingError(
+                                    ShieldState.Failed(
+                                        error =
+                                            context.getString(
+                                                R.string.balances_shielding_dialog_error_text_below_threshold
+                                            ),
+                                        stackTrace = ""
+                                    )
                                 )
-                            )
-                        }
+                            }
                         is ZashiAccount -> {
                             val spendingKey = getZashiSpendingKey()
                             setShieldState(ShieldState.Running)
@@ -199,9 +200,11 @@ internal fun WrapBalances(
                                 synchronizer.proposeShielding(
                                     account = account.sdkAccount,
                                     shieldingThreshold = Zatoshi(DEFAULT_SHIELDING_THRESHOLD),
-                                    // Using empty string for memo to clear the default memo prefix value defined in the SDK
+                                    // Using empty string for memo to clear the default memo prefix value defined in
+                                    // the SDK
                                     memo = "",
-                                    // Using null will select whichever of the account's trans. receivers has funds to shield
+                                    // Using null will select whichever of the account's trans. receivers has funds
+                                    // to shield
                                     transparentReceiver = null
                                 )
                             }.onSuccess { newProposal ->
@@ -211,9 +214,9 @@ internal fun WrapBalances(
                                     showShieldingError(
                                         ShieldState.Failed(
                                             error =
-                                            context.getString(
-                                                R.string.balances_shielding_dialog_error_text_below_threshold
-                                            ),
+                                                context.getString(
+                                                    R.string.balances_shielding_dialog_error_text_below_threshold
+                                                ),
                                             stackTrace = ""
                                         )
                                     )
@@ -225,8 +228,8 @@ internal fun WrapBalances(
                                             proposal = newProposal
                                         )
 
-                                    // Triggering the transaction history and balances refresh to be notified immediately
-                                    // about the wallet's updated state
+                                    // Triggering the transaction history and balances refresh to be notified
+                                    // immediately about the wallet's updated state
                                     (synchronizer as SdkSynchronizer).run {
                                         refreshTransactions()
                                         refreshAllBalances()
@@ -251,7 +254,9 @@ internal fun WrapBalances(
                                             )
                                         }
                                         is SubmitResult.MultipleTrxFailure -> {
-                                            Twig.warn { "Shielding failed with multi-transactions-submission-error handling" }
+                                            Twig.warn {
+                                                "Shielding failed with multi-transactions-submission-error handling"
+                                            }
                                             goMultiTrxSubmissionFailure()
                                         }
                                     }

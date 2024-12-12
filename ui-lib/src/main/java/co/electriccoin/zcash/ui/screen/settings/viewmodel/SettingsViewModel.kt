@@ -138,16 +138,18 @@ class SettingsViewModel(
                 ),
                 ZashiListItemState(
                     title = stringRes(R.string.settings_integrations),
-                    icon = when (selectedAccount) {
-                        is KeystoneAccount -> R.drawable.ic_settings_integrations_disabled
-                        is ZashiAccount -> R.drawable.ic_settings_integrations
-                        null -> R.drawable.ic_settings_integrations
-                    },
+                    icon =
+                        when (selectedAccount) {
+                            is KeystoneAccount -> R.drawable.ic_settings_integrations_disabled
+                            is ZashiAccount -> R.drawable.ic_settings_integrations
+                            null -> R.drawable.ic_settings_integrations
+                        },
                     onClick = ::onIntegrationsClick,
                     isEnabled = selectedAccount is ZashiAccount,
-                    subtitle = stringRes(R.string.settings_integrations_subtitle_disabled).takeIf {
-                        selectedAccount !is ZashiAccount
-                    },
+                    subtitle =
+                        stringRes(R.string.settings_integrations_subtitle_disabled).takeIf {
+                            selectedAccount !is ZashiAccount
+                        },
                     titleIcons =
                         listOfNotNull(
                             when (selectedAccount) {

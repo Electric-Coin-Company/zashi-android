@@ -30,7 +30,6 @@ class SignKeystoneTransactionViewModel(
     private val createKeystoneProposalPCZTEncoder: CreateKeystoneProposalPCZTEncoderUseCase,
     private val cancelKeystoneProposalFlow: CancelKeystoneProposalFlowUseCase
 ) : ViewModel() {
-
     private var encoder: UREncoder? = null
 
     private val currentQrPart = MutableStateFlow<String?>(null)
@@ -39,23 +38,23 @@ class SignKeystoneTransactionViewModel(
         combine(observeSelectedWalletAccount.require(), currentQrPart) { wallet, qrData ->
             SignKeystoneTransactionState(
                 accountInfo =
-                ZashiAccountInfoListItemState(
-                    icon = R.drawable.ic_settings_info,
-                    title = wallet.name,
-                    subtitle = stringRes("${wallet.unified.address.address.take(ADDRESS_MAX_LENGTH)}...")
-                ),
+                    ZashiAccountInfoListItemState(
+                        icon = R.drawable.ic_settings_info,
+                        title = wallet.name,
+                        subtitle = stringRes("${wallet.unified.address.address.take(ADDRESS_MAX_LENGTH)}...")
+                    ),
                 generateNextQrCode = { currentQrPart.update { encoder?.nextPart() } },
                 qrData = qrData,
                 positiveButton =
-                ButtonState(
-                    text = stringRes(R.string.sign_keystone_transaction_positive),
-                    onClick = ::onSignTransactionClick
-                ),
+                    ButtonState(
+                        text = stringRes(R.string.sign_keystone_transaction_positive),
+                        onClick = ::onSignTransactionClick
+                    ),
                 negativeButton =
-                ButtonState(
-                    text = stringRes(R.string.sign_keystone_transaction_negative),
-                    onClick = ::onRejectClick
-                ),
+                    ButtonState(
+                        text = stringRes(R.string.sign_keystone_transaction_negative),
+                        onClick = ::onRejectClick
+                    ),
                 onBack = ::onBack
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)

@@ -126,10 +126,11 @@ class KeystoneTransactionProgressViewModel(
         )
 
     private suspend fun getAddressAbbreviated(): String {
-        val address = when (val proposal = keystoneProposalRepository.getTransactionProposal()) {
-            is ShieldTransactionProposal -> getSelectedWalletAccount().unified.address.address
-            is SendTransactionProposal -> proposal.destination.address
-        }
+        val address =
+            when (val proposal = keystoneProposalRepository.getTransactionProposal()) {
+                is ShieldTransactionProposal -> getSelectedWalletAccount().unified.address.address
+                is SendTransactionProposal -> proposal.destination.address
+            }
 
         return "${address.take(ADDRESS_MAX_LENGTH)}..."
     }

@@ -52,15 +52,16 @@ class ZashiMainTopAppBarViewModel(
         currentAccount: WalletAccount?,
         isHideBalances: Boolean?
     ) = ZashiMainTopAppBarState(
-        accountSwitchState = AccountSwitchState(
-            accountType =
-            when (currentAccount) {
-                is KeystoneAccount -> ZashiMainTopAppBarState.AccountType.KEYSTONE
-                is ZashiAccount -> ZashiMainTopAppBarState.AccountType.ZASHI
-                null -> ZashiMainTopAppBarState.AccountType.ZASHI
-            },
-            onAccountTypeClick = ::onAccountTypeClicked,
-        ),
+        accountSwitchState =
+            AccountSwitchState(
+                accountType =
+                    when (currentAccount) {
+                        is KeystoneAccount -> ZashiMainTopAppBarState.AccountType.KEYSTONE
+                        is ZashiAccount -> ZashiMainTopAppBarState.AccountType.ZASHI
+                        null -> ZashiMainTopAppBarState.AccountType.ZASHI
+                    },
+                onAccountTypeClick = ::onAccountTypeClicked,
+            ),
         balanceVisibilityButton =
             IconButtonState(
                 icon =

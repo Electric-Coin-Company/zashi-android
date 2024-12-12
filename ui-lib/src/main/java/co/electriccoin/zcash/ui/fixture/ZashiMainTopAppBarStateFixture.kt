@@ -8,10 +8,11 @@ import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
 object ZashiMainTopAppBarStateFixture {
     fun new() =
         ZashiMainTopAppBarState(
-            accountSwitchState = AccountSwitchState(
-                accountType = ZashiMainTopAppBarState.AccountType.ZASHI,
-                onAccountTypeClick = {}
-            ),
+            accountSwitchState =
+                AccountSwitchState(
+                    accountType = ZashiMainTopAppBarState.AccountType.ZASHI,
+                    onAccountTypeClick = {}
+                ),
             balanceVisibilityButton = IconButtonState(R.drawable.ic_app_bar_balances_hide) {},
             settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {},
         )

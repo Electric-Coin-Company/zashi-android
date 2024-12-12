@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import cash.z.ecc.android.sdk.tool.DerivationTool
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import com.keystone.module.ZcashAccount
 

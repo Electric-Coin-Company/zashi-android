@@ -46,14 +46,14 @@ class AccountListViewModel(
                                 ZashiAccountListItemState(
                                     title = account.name,
                                     subtitle =
-                                    stringRes(
-                                        "${account.unified.address.address.take(ADDRESS_MAX_LENGTH)}...",
-                                    ),
+                                        stringRes(
+                                            "${account.unified.address.address.take(ADDRESS_MAX_LENGTH)}...",
+                                        ),
                                     icon =
-                                    when (account) {
-                                        is KeystoneAccount -> R.drawable.ic_item_keystone
-                                        is ZashiAccount -> R.drawable.ic_item_zashi
-                                    },
+                                        when (account) {
+                                            is KeystoneAccount -> R.drawable.ic_item_keystone
+                                            is ZashiAccount -> R.drawable.ic_item_zashi
+                                        },
                                     isSelected = account.isSelected,
                                     onClick = { onAccountClicked(account) }
                                 )
@@ -63,9 +63,9 @@ class AccountListViewModel(
                         ZashiListItemState(
                             title = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_title),
                             subtitle =
-                            stringRes(
-                                co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_subtitle,
-                            ),
+                                stringRes(
+                                    co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_subtitle,
+                                ),
                             icon = R.drawable.ic_item_keystone,
                             design = ZashiListItemDesignType.SECONDARY,
                             onClick = ::onAddWalletButtonClicked

@@ -55,15 +55,15 @@ fun ZashiListItem(
         modifier = modifier,
         contentPadding = contentPadding,
         state =
-        ZashiListItemState(
-            title = stringRes(title),
-            subtitle = subtitle?.let { stringRes(it) },
-            isEnabled = isEnabled,
-            onClick = onClick,
-            icon = icon,
-            titleIcons = titleIcons,
-            design = type
-        ),
+            ZashiListItemState(
+                title = stringRes(title),
+                subtitle = subtitle?.let { stringRes(it) },
+                isEnabled = isEnabled,
+                onClick = onClick,
+                icon = icon,
+                titleIcons = titleIcons,
+                design = type
+            ),
     )
 }
 
@@ -71,14 +71,14 @@ fun ZashiListItem(
 fun ZashiListItem(
     state: ZashiListItemState,
     modifier: Modifier = Modifier,
-    leading:  @Composable (Modifier) -> Unit = {
+    leading: @Composable (Modifier) -> Unit = {
         ZashiListItemDefaults.LeadingItem(
             modifier = it,
             icon = state.icon,
             contentDescription = state.title.getValue()
         )
     },
-    content:  @Composable (Modifier) -> Unit = {
+    content: @Composable (Modifier) -> Unit = {
         ZashiListItemDefaults.ContentItem(
             modifier = it,
             text = state.title.getValue(),
@@ -87,7 +87,7 @@ fun ZashiListItem(
             isEnabled = state.isEnabled
         )
     },
-    trailing:  @Composable (Modifier) -> Unit = {
+    trailing: @Composable (Modifier) -> Unit = {
         ZashiListItemDefaults.TrailingItem(
             modifier = it,
             isEnabled = state.isEnabled && state.onClick != null,
@@ -163,38 +163,38 @@ private fun ZashiListContentItem(
                 text = text,
                 style = ZashiTypography.textMd,
                 fontWeight = FontWeight.SemiBold,
-                color = if (isEnabled) {
-                    ZashiColors.Text.textPrimary
-                } else {
-                    ZashiColors.Text.textDisabled
-                }
+                color =
+                    if (isEnabled) {
+                        ZashiColors.Text.textPrimary
+                    } else {
+                        ZashiColors.Text.textDisabled
+                    }
             )
             titleIcons.forEachIndexed { index, icon ->
                 if (index == 0) {
                     Spacer(Modifier.width(6.dp))
                     Image(
                         modifier =
-                        Modifier
-                            .size(20.dp)
-                            .clip(CircleShape),
+                            Modifier
+                                .size(20.dp)
+                                .clip(CircleShape),
                         painter = painterResource(icon),
                         contentDescription = null,
                     )
                 } else {
                     Image(
                         modifier =
-                        Modifier
-                            .offset(x = (-2).dp)
-                            .size(24.dp)
-                            .border(2.dp, ZashiColors.Surfaces.bgPrimary, CircleShape)
-                            .size(20.dp)
-                            .padding(2.dp)
-                            .clip(CircleShape),
+                            Modifier
+                                .offset(x = (-2).dp)
+                                .size(24.dp)
+                                .border(2.dp, ZashiColors.Surfaces.bgPrimary, CircleShape)
+                                .size(20.dp)
+                                .padding(2.dp)
+                                .clip(CircleShape),
                         painter = painterResource(icon),
                         contentDescription = null,
                     )
                 }
-
             }
         }
         subtitle?.let {
@@ -273,10 +273,11 @@ private fun PrimaryPreview() =
                     subtitle = "Subtitle",
                     icon = R.drawable.ic_radio_button_checked,
                     onClick = {},
-                    titleIcons = persistentListOf(
-                        R.drawable.ic_radio_button_checked,
-                        R.drawable.ic_radio_button_checked,
-                    )
+                    titleIcons =
+                        persistentListOf(
+                            R.drawable.ic_radio_button_checked,
+                            R.drawable.ic_radio_button_checked,
+                        )
                 )
                 ZashiListItem(
                     title = "Test",

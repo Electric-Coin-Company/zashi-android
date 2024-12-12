@@ -32,4 +32,3 @@ internal class ScanKeystonePCZTViewModel(
             }
         }
 }
-
