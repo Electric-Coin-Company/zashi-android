@@ -182,12 +182,25 @@ class WalletViewModel(
         }
     }
 
-    /**
-     * Persists a wallet asynchronously.  Clients observe [secretState]
-     * to see the side effects.  This would be used for a user restoring a wallet from a backup.
-     */
-    fun persistExistingWallet(persistableWallet: PersistableWallet) {
-        walletRepository.persistWallet(persistableWallet)
+    fun persistNewWalletAndRestoringState(state: WalletRestoringState) {
+        val application = getApplication<Application>()
+
+        viewModelScope.launch {
+            val zcashNetwork = ZcashNetwork.fromResources(application)
+            val newWallet =
+                PersistableWallet.new(
+                    application = application,
+                    zcashNetwork = zcashNetwork,
+                    endpoint = getAvailableServers().first(),
+                    walletInitMode = WalletInitMode.NewWallet
+                )
+            walletRepository.persistWallet(newWallet)
+
+            StandardPreferenceKeys.WALLET_RESTORING_STATE.putValue(
+                standardPreferenceProvider(),
+                state.toNumber()
+            )
+        }
     }
 
     /**

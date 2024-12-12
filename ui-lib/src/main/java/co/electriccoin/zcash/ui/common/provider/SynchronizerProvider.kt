@@ -36,7 +36,6 @@ class SynchronizerProviderImpl(walletCoordinator: WalletCoordinator) : Synchroni
                     null
                 } else {
                     synchronizer.networkHeight.filterNotNull().first()
-                    synchronizer.accountsFlow.filterNotNull().first()
                     synchronizer.walletBalances.filterNotNull().first()
                     synchronizer
                 }
