@@ -9,6 +9,7 @@ data class SignKeystoneTransactionState(
     val accountInfo: ZashiAccountInfoListItemState,
     val qrData: String?,
     val generateNextQrCode: () -> Unit,
+    val shareButton: ButtonState?,
     val positiveButton: ButtonState,
     val negativeButton: ButtonState,
 )

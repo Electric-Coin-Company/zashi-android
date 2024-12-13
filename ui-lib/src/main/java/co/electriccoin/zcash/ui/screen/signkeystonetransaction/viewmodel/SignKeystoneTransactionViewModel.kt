@@ -3,11 +3,13 @@ package co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneProposalPCZTEncoderUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
@@ -28,7 +30,8 @@ class SignKeystoneTransactionViewModel(
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val navigationRouter: NavigationRouter,
     private val createKeystoneProposalPCZTEncoder: CreateKeystoneProposalPCZTEncoderUseCase,
-    private val cancelKeystoneProposalFlow: CancelKeystoneProposalFlowUseCase
+    private val cancelKeystoneProposalFlow: CancelKeystoneProposalFlowUseCase,
+    private val sharePCZT: SharePCZTUseCase
 ) : ViewModel() {
     private var encoder: UREncoder? = null
 
@@ -55,6 +58,10 @@ class SignKeystoneTransactionViewModel(
                         text = stringRes(R.string.sign_keystone_transaction_negative),
                         onClick = ::onRejectClick
                     ),
+                shareButton = ButtonState(
+                    text = stringRes("Share PCZT"),
+                    onClick = ::onSharePCZTClick
+                ).takeIf { BuildConfig.DEBUG },
                 onBack = ::onBack
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
@@ -69,6 +76,11 @@ class SignKeystoneTransactionViewModel(
             }
         }
     }
+
+    private fun onSharePCZTClick() =
+        viewModelScope.launch {
+            sharePCZT()
+        }
 
     private fun onBack() {
         cancelKeystoneProposalFlow()

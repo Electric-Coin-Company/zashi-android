@@ -21,4 +21,8 @@
         name="root_testnet_debug"
         path="/data/data/co.electriccoin.zcash.testnet.debug/."
     />
+
+    <files-path
+        name="files"
+        path="."/>
 </paths>

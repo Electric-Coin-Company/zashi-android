@@ -3,6 +3,7 @@ package co.electriccoin.zcash.di
 import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneProposalPCZTEncoderUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneShieldProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneZip321ProposalUseCase
@@ -50,6 +51,7 @@ import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendSupportEmailUseCase
 import co.electriccoin.zcash.ui.common.usecase.SensitiveSettingsVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
+import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameUseCase
@@ -118,4 +120,6 @@ val useCaseModule =
         factoryOf(::ParseKeystoneSignInRequestUseCase)
         factoryOf(::CancelKeystoneProposalFlowUseCase)
         factoryOf(::ObserveKeystoneSendTransactionProposalUseCase)
+        factoryOf(::SharePCZTUseCase)
+        factoryOf(::CreateKeystoneProposalPCZTEncoderUseCase)
     }

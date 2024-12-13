@@ -14,7 +14,6 @@ import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
-import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.screen.balances.DEFAULT_SHIELDING_THRESHOLD
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
@@ -32,7 +31,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.zecdev.zip321.ZIP321
-import kotlin.jvm.Throws
 
 interface KeystoneProposalRepository {
     val transactionProposal: Flow<TransactionProposal?>
@@ -60,6 +58,8 @@ interface KeystoneProposalRepository {
     fun clear()
 
     suspend fun getTransactionProposal(): TransactionProposal
+
+    fun getProposalPCZT(): Pczt?
 }
 
 class ParsePCZTException : Exception()
@@ -75,7 +75,6 @@ sealed interface SubmitProposalState {
 class KeystoneProposalRepositoryImpl(
     private val synchronizerProvider: SynchronizerProvider,
     private val accountDataSource: AccountDataSource,
-    private val zashiSpendingKeyDataSource: ZashiSpendingKeyDataSource
 ) : KeystoneProposalRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -231,6 +230,8 @@ class KeystoneProposalRepositoryImpl(
     }
 
     override suspend fun getTransactionProposal(): TransactionProposal = transactionProposal.filterNotNull().first()
+
+    override fun getProposalPCZT(): Pczt? = proposalPczt
 
     override fun clear() {
         transactionProposal.update { null }

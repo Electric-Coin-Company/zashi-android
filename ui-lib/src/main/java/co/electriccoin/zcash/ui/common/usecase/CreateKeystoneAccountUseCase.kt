@@ -30,7 +30,7 @@ class CreateKeystoneAccountUseCase(
                         purpose =
                             AccountPurpose.Spending(
                                 seedFingerprint = accounts.seedFingerprint.hexToByteArray(),
-                                zip32AccountIndex = account.name?.toLongOrNull()?.let { Zip32AccountIndex.new(it) }
+                                zip32AccountIndex = Zip32AccountIndex.new(account.index.toLong())
                             )
                     ),
             )

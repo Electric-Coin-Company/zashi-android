@@ -144,6 +144,13 @@ private fun BottomSection(
     Column(
         modifier
     ) {
+        if (state.shareButton != null) {
+            ZashiButton(
+                modifier = Modifier.fillMaxWidth(),
+                state = state.shareButton,
+                colors = ZashiButtonDefaults.secondaryColors()
+            )
+        }
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
             state = state.positiveButton
@@ -171,9 +178,33 @@ private fun Preview() =
                         ),
                     generateNextQrCode = {},
                     qrData = "tralala",
+                    shareButton = null,
                     positiveButton = ButtonState(stringRes("Get Signature")),
                     negativeButton = ButtonState(stringRes("Reject")),
-                    onBack = {}
+                    onBack = {},
                 )
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun DebugPreview() =
+    ZcashTheme {
+        SignKeystoneTransactionView(
+            state =
+            SignKeystoneTransactionState(
+                accountInfo =
+                ZashiAccountInfoListItemState(
+                    icon = R.drawable.ic_item_keystone,
+                    title = stringRes("title"),
+                    subtitle = stringRes("subtitle"),
+                ),
+                generateNextQrCode = {},
+                qrData = "tralala",
+                shareButton = ButtonState(stringRes("Share PCZT")),
+                positiveButton = ButtonState(stringRes("Get Signature")),
+                negativeButton = ButtonState(stringRes("Reject")),
+                onBack = {},
+            )
         )
     }
