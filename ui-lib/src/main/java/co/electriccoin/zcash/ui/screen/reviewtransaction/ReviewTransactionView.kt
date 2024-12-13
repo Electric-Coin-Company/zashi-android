@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -271,16 +270,16 @@ private fun MessagePlaceholderWidget(state: MessagePlaceholderState) {
         ZashiTextField(
             state = TextFieldState(value = stringRes(""), isEnabled = false) {},
             modifier =
-            Modifier
-                .fillMaxWidth(),
+                Modifier
+                    .fillMaxWidth(),
             colors =
-            ZashiTextFieldDefaults.defaultColors(
-                disabledTextColor = ZashiColors.Inputs.Filled.text,
-                disabledHintColor = ZashiColors.Inputs.Disabled.hint,
-                disabledBorderColor = Color.Unspecified,
-                disabledContainerColor = ZashiColors.Inputs.Disabled.bg,
-                disabledPlaceholderColor = ZashiColors.Inputs.Disabled.text,
-            ),
+                ZashiTextFieldDefaults.defaultColors(
+                    disabledTextColor = ZashiColors.Inputs.Filled.text,
+                    disabledHintColor = ZashiColors.Inputs.Disabled.hint,
+                    disabledBorderColor = Color.Unspecified,
+                    disabledContainerColor = ZashiColors.Inputs.Disabled.bg,
+                    disabledPlaceholderColor = ZashiColors.Inputs.Disabled.text,
+                ),
             placeholder = {
                 Text(
                     text = state.message.getValue(),
@@ -442,63 +441,62 @@ private fun TransparentPreview() =
     ZcashTheme {
         ReviewTransactionView(
             state =
-            ReviewTransactionState(
-                title = stringRes("Review"),
-                items =
-                listOf(
-                    AmountState(
-                        title = stringRes("Total Amount"),
-                        amount = ZatoshiFixture.new(),
-                        exchangeRate =
-                        ExchangeRateState.Data(
-                            currencyConversion =
-                            FiatCurrencyConversion(
-                                timestamp = Clock.System.now(),
-                                priceOfZec = 50.0
+                ReviewTransactionState(
+                    title = stringRes("Review"),
+                    items =
+                        listOf(
+                            AmountState(
+                                title = stringRes("Total Amount"),
+                                amount = ZatoshiFixture.new(),
+                                exchangeRate =
+                                    ExchangeRateState.Data(
+                                        currencyConversion =
+                                            FiatCurrencyConversion(
+                                                timestamp = Clock.System.now(),
+                                                priceOfZec = 50.0
+                                            ),
+                                        isLoading = false,
+                                        isStale = false,
+                                        isRefreshEnabled = false,
+                                        onRefresh = {}
+                                    ),
                             ),
-                            isLoading = false,
-                            isStale = false,
-                            isRefreshEnabled = false,
-                            onRefresh = {}
+                            ReceiverState(
+                                title = stringRes("Total Amount"),
+                                name = stringRes("Receiver Name"),
+                                address = stringRes("Receiver Address")
+                            ),
+                            SenderState(
+                                title = stringRes("Sending from"),
+                                icon = R.drawable.ic_item_keystone,
+                                name = stringRes("Keystone wallet"),
+                            ),
+                            FinancialInfoState(
+                                title = stringRes("Amount"),
+                                amount = ZatoshiFixture.new()
+                            ),
+                            FinancialInfoState(
+                                title = stringRes("Fee"),
+                                amount = ZatoshiFixture.new()
+                            ),
+                            MessagePlaceholderState(
+                                title = stringRes("Message"),
+                                message = stringRes(co.electriccoin.zcash.ui.R.string.send_transparent_memo),
+                                icon = co.electriccoin.zcash.ui.R.drawable.ic_confirmation_message_info,
+                            )
                         ),
-                    ),
-                    ReceiverState(
-                        title = stringRes("Total Amount"),
-                        name = stringRes("Receiver Name"),
-                        address = stringRes("Receiver Address")
-                    ),
-                    SenderState(
-                        title = stringRes("Sending from"),
-                        icon = R.drawable.ic_item_keystone,
-                        name = stringRes("Keystone wallet"),
-                    ),
-                    FinancialInfoState(
-                        title = stringRes("Amount"),
-                        amount = ZatoshiFixture.new()
-                    ),
-                    FinancialInfoState(
-                        title = stringRes("Fee"),
-                        amount = ZatoshiFixture.new()
-                    ),
-                    MessagePlaceholderState(
-                        title = stringRes("Message"),
-                        message = stringRes(co.electriccoin.zcash.ui.R.string.send_transparent_memo),
-                        icon = co.electriccoin.zcash.ui.R.drawable.ic_confirmation_message_info,
-                    )
-                ),
-                primaryButton =
-                ButtonState(
-                    stringRes("Confirm with Keystone")
-                ),
-                negativeButton =
-                ButtonState(
-                    stringRes("Cancel")
-                ),
-                onBack = {},
-            )
+                    primaryButton =
+                        ButtonState(
+                            stringRes("Confirm with Keystone")
+                        ),
+                    negativeButton =
+                        ButtonState(
+                            stringRes("Cancel")
+                        ),
+                    onBack = {},
+                )
         )
     }
-
 
 @PreviewScreens
 @Composable

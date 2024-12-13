@@ -30,6 +30,7 @@ internal fun WrapScanKeystoneSignInRequest() {
     val viewModel = koinViewModel<ScanKeystoneSignInRequestViewModel>()
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
+    val validationResult by viewModel.validationState.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     BackHandler {
@@ -44,7 +45,7 @@ internal fun WrapScanKeystoneSignInRequest() {
     } else {
         ScanKeystoneView(
             snackbarHostState = snackbarHostState,
-            validationResult = state,
+            validationResult = validationResult,
             onBack = { navigationRouter.back() },
             onScanned = {
                 viewModel.onScanned(it)
@@ -64,6 +65,7 @@ internal fun WrapScanKeystoneSignInRequest() {
             },
             onScanStateChanged = {},
             topAppBarSubTitleState = walletState,
+            state = state,
         )
     }
 }

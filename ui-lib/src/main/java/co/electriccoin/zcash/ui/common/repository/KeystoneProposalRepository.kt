@@ -39,47 +39,21 @@ interface KeystoneProposalRepository {
 
     val submitState: Flow<SubmitProposalState?>
 
-    /**
-     * 1st step.
-     */
     suspend fun createProposal(zecSend: ZecSend)
 
-    /**
-     * 1st step for zip 321.
-     */
     suspend fun createZip321Proposal(zip321Uri: String)
 
-    /**
-     * 1st step for shielding
-     */
     suspend fun createShieldProposal()
 
-    /**
-     * 2nd step
-     */
     @Throws(PcztException.AddProofsToPcztException::class, PcztException.CreatePcztFromProposalException::class)
     suspend fun createPCZTFromProposal()
 
-    /**
-     * 3rd step
-     */
-    // suspend fun addPCZTToProofs()
-
-    /**
-     * 4rd step - encode qr
-     */
     @Throws(PcztNotCreatedException::class)
     suspend fun createPCZTEncoder(): UREncoder
 
-    /**
-     * 4rd step - parse qr
-     */
     @Throws(ParsePCZTException::class)
     suspend fun parsePCZT(ur: UR)
 
-    /**
-     * 5th step - extract pczt
-     */
     @Throws(PcztNotCreatedException::class)
     fun extractPCZT()
 
@@ -88,8 +62,9 @@ interface KeystoneProposalRepository {
     suspend fun getTransactionProposal(): TransactionProposal
 }
 
-class ParsePCZTException: Exception()
-class PcztNotCreatedException: Exception()
+class ParsePCZTException : Exception()
+
+class PcztNotCreatedException : Exception()
 
 sealed interface SubmitProposalState {
     data object Submitting : SubmitProposalState
@@ -215,10 +190,11 @@ class KeystoneProposalRepositoryImpl(
     }
 
     override suspend fun createPCZTFromProposal() {
-        val proposalPczt = synchronizerProvider.getSynchronizer().createPcztFromProposal(
-            accountUuid = accountDataSource.getSelectedAccount().sdkAccount.accountUuid,
-            proposal = getTransactionProposal().proposal
-        )
+        val proposalPczt =
+            synchronizerProvider.getSynchronizer().createPcztFromProposal(
+                accountUuid = accountDataSource.getSelectedAccount().sdkAccount.accountUuid,
+                proposal = getTransactionProposal().proposal
+            )
 
         val pcztWithProofs = synchronizerProvider.getSynchronizer().addProofsToPczt(proposalPczt)
 
@@ -245,10 +221,11 @@ class KeystoneProposalRepositoryImpl(
 
         scope.launch {
             submitState.update { SubmitProposalState.Submitting }
-            val result = submitTransaction(
-                pcztWithProofs = pcztWithProofs,
-                pcztWithSignatures = pcztWithSignatures
-            )
+            val result =
+                submitTransaction(
+                    pcztWithProofs = pcztWithProofs,
+                    pcztWithSignatures = pcztWithSignatures
+                )
             submitState.update { SubmitProposalState.Result(result) }
         }
     }

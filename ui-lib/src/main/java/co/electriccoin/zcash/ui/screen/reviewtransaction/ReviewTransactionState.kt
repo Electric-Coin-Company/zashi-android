@@ -57,4 +57,4 @@ data class MessagePlaceholderState(
     @DrawableRes val icon: Int,
     val title: StringResource,
     val message: StringResource,
-): ReviewTransactionItemState
+) : ReviewTransactionItemState

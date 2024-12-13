@@ -78,14 +78,18 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiLinearProgressIndicator
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
 import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
 import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
+import co.electriccoin.zcash.ui.screen.scankeystone.model.ScanKeystoneState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
@@ -108,7 +112,8 @@ fun ScanKeystoneView(
     onOpenSettings: () -> Unit,
     onScanStateChanged: (ScanScreenState) -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
-    validationResult: ScanValidationState
+    validationResult: ScanValidationState,
+    state: ScanKeystoneState,
 ) = ZcashTheme(forceDarkMode = true) { // forces dark theme for this screen
     val permissionState =
         if (LocalInspectionMode.current) {
@@ -148,6 +153,7 @@ fun ScanKeystoneView(
     ) { _ ->
         Box {
             ScanMainContent(
+                state = state,
                 validationResult = validationResult,
                 onScanned = onScanned,
                 onOpenSettings = onOpenSettings,
@@ -180,6 +186,7 @@ fun ScanKeystoneView(
 
 @Composable
 fun ScanBottomItems(
+    state: ScanKeystoneState,
     validationResult: ScanValidationState,
     scanState: ScanScreenState,
     onOpenSettings: () -> Unit,
@@ -209,7 +216,7 @@ fun ScanBottomItems(
         Text(
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
-            text = stringResource(R.string.scan_keystone_info),
+            text = state.message.getValue(),
             style = ZashiTypography.textXl,
             fontWeight = FontWeight.SemiBold
         )
@@ -309,6 +316,7 @@ data class FramePosition(
 )
 @Composable
 private fun ScanMainContent(
+    state: ScanKeystoneState,
     validationResult: ScanValidationState,
     onScanned: (String) -> Unit,
     onOpenSettings: () -> Unit,
@@ -438,6 +446,37 @@ private fun ScanMainContent(
                             .fillMaxWidth()
                             .offset(
                                 x = 0.dp,
+                                y = with(density) { framePosition.top.toDp() - 84.dp }
+                            ),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    if (state.progress != null) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "${state.progress}%",
+                                style = ZashiTypography.textMd,
+                                fontWeight = FontWeight.SemiBold,
+                                color = ZashiColors.Text.textPrimary
+                            )
+
+                            Spacer(Modifier.height(8.dp))
+
+                            ZashiLinearProgressIndicator(
+                                modifier = Modifier.padding(horizontal = 100.dp),
+                                progress = state.progress / 100f
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .offset(
+                                x = 0.dp,
                                 y = with(density) { framePosition.bottom.toDp() }
                             )
                             .padding(top = 36.dp),
@@ -512,6 +551,7 @@ private fun ScanMainContent(
                     .constrainAs(bottomItems) { bottom.linkTo(parent.bottom) }
         ) {
             ScanBottomItems(
+                state = state,
                 validationResult = validationResult,
                 onBack = onBack,
                 onOpenSettings = onOpenSettings,
@@ -725,6 +765,36 @@ private fun ScanPreview() =
                 onScanStateChanged = {},
                 topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 validationResult = ScanValidationState.INVALID,
+                state =
+                    ScanKeystoneState(
+                        message = stringRes("Message"),
+                        progress = null,
+                    )
+            )
+        }
+    }
+
+@PreviewScreens
+@Composable
+private fun ScanProgressPreview() =
+    ZcashTheme {
+        Surface(
+            color = Color.Blue,
+            shape = RectangleShape,
+        ) {
+            ScanKeystoneView(
+                snackbarHostState = SnackbarHostState(),
+                onBack = {},
+                onScanned = {},
+                onOpenSettings = {},
+                onScanStateChanged = {},
+                topAppBarSubTitleState = TopAppBarSubTitleState.None,
+                validationResult = ScanValidationState.INVALID,
+                state =
+                    ScanKeystoneState(
+                        message = stringRes("Message"),
+                        progress = 50
+                    )
             )
         }
     }

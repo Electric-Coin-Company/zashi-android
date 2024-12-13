@@ -17,7 +17,7 @@ class ParseKeystonePCZTUseCase(
     private val keystoneSDK = KeystoneSDK()
 
     @Throws(InvalidKeystonePCZTQRException::class, PcztNotCreatedException::class, ParsePCZTException::class)
-    suspend operator fun invoke(result: String): Boolean {
+    suspend operator fun invoke(result: String): ParseKeystoneQrResult {
         val decodedResult = decodeResult(result)
         val ur = decodedResult.ur
 
@@ -27,9 +27,15 @@ class ParseKeystonePCZTUseCase(
             keystoneProposalRepository.parsePCZT(ur)
             keystoneProposalRepository.extractPCZT()
             navigationRouter.replace(KeystoneTransactionProgress)
-            true
+            ParseKeystoneQrResult(
+                progress = decodedResult.progress,
+                isFinished = true
+            )
         } else {
-            false
+            ParseKeystoneQrResult(
+                progress = decodedResult.progress,
+                isFinished = false
+            )
         }
     }
 

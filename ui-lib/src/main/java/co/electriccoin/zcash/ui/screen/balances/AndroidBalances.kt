@@ -185,9 +185,9 @@ internal fun WrapBalances(
                                 showShieldingError(
                                     ShieldState.Failed(
                                         error =
-                                        context.getString(
-                                            R.string.balances_shielding_dialog_error_text_below_threshold
-                                        ),
+                                            context.getString(
+                                                R.string.balances_shielding_dialog_error_text_below_threshold
+                                            ),
                                         stackTrace = ""
                                     )
                                 )

@@ -27,10 +27,11 @@ class CreateKeystoneAccountUseCase(
                         accountName = "",
                         keySource = "keystone",
                         ufvk = UnifiedFullViewingKey(account.ufvk),
-                        purpose = AccountPurpose.Spending(
-                            seedFingerprint = accounts.seedFingerprint.hexToByteArray(),
-                            zip32AccountIndex = account.name?.toLongOrNull()?.let { Zip32AccountIndex.new(it) }
-                        )
+                        purpose =
+                            AccountPurpose.Spending(
+                                seedFingerprint = accounts.seedFingerprint.hexToByteArray(),
+                                zip32AccountIndex = account.name?.toLongOrNull()?.let { Zip32AccountIndex.new(it) }
+                            )
                     ),
             )
 

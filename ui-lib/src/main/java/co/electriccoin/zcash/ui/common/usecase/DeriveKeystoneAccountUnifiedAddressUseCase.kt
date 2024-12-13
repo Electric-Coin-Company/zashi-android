@@ -9,10 +9,11 @@ class DeriveKeystoneAccountUnifiedAddressUseCase(
     private val persistableWalletProvider: PersistableWalletProvider
 ) {
     suspend operator fun invoke(account: ZcashAccount): String {
-        val address = DerivationTool.getInstance().deriveUnifiedAddress(
-            viewingKey = account.ufvk,
-            network = persistableWalletProvider.getPersistableWallet().network
-        )
+        val address =
+            DerivationTool.getInstance().deriveUnifiedAddress(
+                viewingKey = account.ufvk,
+                network = persistableWalletProvider.getPersistableWallet().network
+            )
         return "${address.take(ADDRESS_MAX_LENGTH)}..."
     }
 }
