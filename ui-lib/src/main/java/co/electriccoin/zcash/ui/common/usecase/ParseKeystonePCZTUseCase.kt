@@ -8,6 +8,8 @@ import co.electriccoin.zcash.ui.common.repository.PcztNotCreatedException
 import co.electriccoin.zcash.ui.screen.transactionprogress.KeystoneTransactionProgress
 import com.keystone.module.DecodeResult
 import com.keystone.sdk.KeystoneSDK
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.jvm.Throws
 
 class ParseKeystonePCZTUseCase(
@@ -17,13 +19,13 @@ class ParseKeystonePCZTUseCase(
     private val keystoneSDK = KeystoneSDK()
 
     @Throws(InvalidKeystonePCZTQRException::class, PcztNotCreatedException::class, ParsePCZTException::class)
-    suspend operator fun invoke(result: String): ParseKeystoneQrResult {
+    suspend operator fun invoke(result: String): ParseKeystoneQrResult = withContext(Dispatchers.Default) {
         val decodedResult = decodeResult(result)
         val ur = decodedResult.ur
 
         Twig.info { "=========> progress ur: ${decodedResult.progress}" }
 
-        return if (ur != null) {
+        if (ur != null) {
             keystoneProposalRepository.parsePCZT(ur)
             keystoneProposalRepository.extractPCZT()
             navigationRouter.replace(KeystoneTransactionProgress)

@@ -6,6 +6,8 @@ import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccou
 import com.keystone.module.DecodeResult
 import com.keystone.sdk.KeystoneSDK
 import com.sparrowwallet.hummingbird.UR
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.jvm.Throws
 
 class ParseKeystoneSignInRequestUseCase(
@@ -14,14 +16,14 @@ class ParseKeystoneSignInRequestUseCase(
     private val keystoneSDK = KeystoneSDK()
 
     @Throws(InvalidKeystoneSignInQRException::class)
-    operator fun invoke(result: String): ParseKeystoneQrResult {
+    suspend operator fun invoke(result: String): ParseKeystoneQrResult = withContext(Dispatchers.Default) {
         val decodedResult = decodeResult(result)
 
         Twig.debug { "=========> progress: " + decodedResult.progress }
 
         val ur = decodedResult.ur
 
-        return if (ur != null) {
+        if (ur != null) {
             tryParse(ur)
             navigationRouter.replace(SelectKeystoneAccount(ur.toString()))
             ParseKeystoneQrResult(
