@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
@@ -39,7 +40,8 @@ class SynchronizerProviderImpl(walletCoordinator: WalletCoordinator) : Synchroni
                     synchronizer.walletBalances.filterNotNull().first()
                     synchronizer
                 }
-            }.stateIn(
+            }.flowOn(Dispatchers.IO)
+            .stateIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
                 initialValue = null

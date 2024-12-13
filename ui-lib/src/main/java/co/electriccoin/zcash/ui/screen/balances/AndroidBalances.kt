@@ -7,6 +7,7 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -129,10 +130,12 @@ internal fun WrapBalances(
         }
 
     val (shieldState, setShieldState) =
-        rememberSaveable(stateSaver = ShieldState.Saver) { mutableStateOf(ShieldState.None) }
+        rememberSaveable(walletSnapshot?.isZashi, stateSaver = ShieldState.Saver) { mutableStateOf(ShieldState.None) }
 
     // Keep the state always up-to-date with the latest transparent balance
-    setShieldState(updateTransparentBalanceState(shieldState, walletSnapshot))
+    LaunchedEffect(shieldState, walletSnapshot) {
+        setShieldState(updateTransparentBalanceState(shieldState, walletSnapshot))
+    }
 
     val (isShowingErrorDialog, setShowErrorDialog) = rememberSaveable { mutableStateOf(false) }
 

@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.zecdev.zip321.ZIP321
 
 interface KeystoneProposalRepository {
@@ -90,7 +91,7 @@ class KeystoneProposalRepositoryImpl(
     private var pcztWithProofs: Pczt? = null
     private var pcztWithSignatures: Pczt? = null
 
-    override suspend fun createProposal(zecSend: ZecSend) {
+    override suspend fun createProposal(zecSend: ZecSend) = withContext(Dispatchers.IO)  {
         val result =
             runCatching {
                 val newProposal =
@@ -110,7 +111,7 @@ class KeystoneProposalRepositoryImpl(
         transactionProposal.update { result }
     }
 
-    override suspend fun createZip321Proposal(zip321Uri: String) {
+    override suspend fun createZip321Proposal(zip321Uri: String) = withContext(Dispatchers.IO)  {
         val synchronizer = synchronizerProvider.getSynchronizer()
         val account = accountDataSource.getSelectedAccount()
 
@@ -131,7 +132,7 @@ class KeystoneProposalRepositoryImpl(
                 else -> {
                     transactionProposal.update { null }
                     // return false // TODO
-                    return
+                    return@withContext
                 }
             }
 
@@ -143,7 +144,7 @@ class KeystoneProposalRepositoryImpl(
         if (proposal == null) {
             transactionProposal.update { null }
             // return false // TODO
-            return
+            return@withContext
         }
 
         val result =
@@ -163,7 +164,7 @@ class KeystoneProposalRepositoryImpl(
         // return result != null // TODO
     }
 
-    override suspend fun createShieldProposal() {
+    override suspend fun createShieldProposal() = withContext(Dispatchers.IO)  {
         val account = accountDataSource.getSelectedAccount()
 
         val result =
@@ -188,25 +189,27 @@ class KeystoneProposalRepositoryImpl(
         transactionProposal.update { result }
     }
 
-    override suspend fun createPCZTFromProposal() {
+    override suspend fun createPCZTFromProposal() = withContext(Dispatchers.IO) {
+        val synchronizer = synchronizerProvider.getSynchronizer()
+
         val proposalPczt =
-            synchronizerProvider.getSynchronizer().createPcztFromProposal(
+            synchronizer.createPcztFromProposal(
                 accountUuid = accountDataSource.getSelectedAccount().sdkAccount.accountUuid,
                 proposal = getTransactionProposal().proposal
             )
 
-        val pcztWithProofs = synchronizerProvider.getSynchronizer().addProofsToPczt(proposalPczt)
+        val pcztWithProofs = synchronizer.addProofsToPczt(proposalPczt)
 
-        this.proposalPczt = proposalPczt
-        this.pcztWithProofs = pcztWithProofs
+        this@KeystoneProposalRepositoryImpl.proposalPczt = proposalPczt
+        this@KeystoneProposalRepositoryImpl.pcztWithProofs = pcztWithProofs
     }
 
-    override suspend fun createPCZTEncoder(): UREncoder {
+    override suspend fun createPCZTEncoder(): UREncoder = withContext(Dispatchers.IO)  {
         val pczt = proposalPczt ?: throw PcztNotCreatedException()
-        return keystoneZcashSDK.generatePczt(pczt.toByteArray())
+        keystoneZcashSDK.generatePczt(pczt.toByteArray())
     }
 
-    override suspend fun parsePCZT(ur: UR) {
+    override suspend fun parsePCZT(ur: UR)  = withContext(Dispatchers.IO) {
         try {
             pcztWithSignatures = Pczt(keystoneZcashSDK.parsePczt(ur))
         } catch (_: Exception) {

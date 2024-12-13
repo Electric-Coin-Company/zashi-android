@@ -72,20 +72,20 @@ class AccountDataSourceImpl(
                                 InternalAccountWithAddresses(
                                     sdkAccount = account,
                                     unifiedAddress =
-                                        WalletAddress.Unified.new(synchronizer.getUnifiedAddress(account)),
+                                    WalletAddress.Unified.new(synchronizer.getUnifiedAddress(account)),
                                     saplingAddress = null,
                                     transparentAddress =
-                                        WalletAddress.Transparent.new(synchronizer.getTransparentAddress(account)),
+                                    WalletAddress.Transparent.new(synchronizer.getTransparentAddress(account)),
                                 )
                             } else {
                                 InternalAccountWithAddresses(
                                     sdkAccount = account,
                                     unifiedAddress =
-                                        WalletAddress.Unified.new(synchronizer.getUnifiedAddress(account)),
+                                    WalletAddress.Unified.new(synchronizer.getUnifiedAddress(account)),
                                     saplingAddress =
-                                        WalletAddress.Sapling.new(synchronizer.getSaplingAddress(account)),
+                                    WalletAddress.Sapling.new(synchronizer.getSaplingAddress(account)),
                                     transparentAddress =
-                                        WalletAddress.Transparent.new(synchronizer.getTransparentAddress(account)),
+                                    WalletAddress.Transparent.new(synchronizer.getTransparentAddress(account)),
                                 )
                             }
                         }
@@ -116,7 +116,7 @@ class AccountDataSourceImpl(
                             }
                         }
                     } ?: flowOf(null)
-            }
+            }.flowOn(Dispatchers.IO)
 
     override val allAccounts: StateFlow<List<WalletAccount>?> =
         combine(
@@ -165,7 +165,7 @@ class AccountDataSourceImpl(
                     }
                 }
                 ?.sortedDescending()
-        }.flowOn(Dispatchers.Default)
+        }.flowOn(Dispatchers.IO)
             .stateIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT, Duration.ZERO),
@@ -184,11 +184,17 @@ class AccountDataSourceImpl(
                 account?.filterIsInstance<ZashiAccount>()?.firstOrNull()
             }
 
-    override suspend fun getAllAccounts() = allAccounts.filterNotNull().first()
+    override suspend fun getAllAccounts() = withContext(Dispatchers.IO) {
+        allAccounts.filterNotNull().first()
+    }
 
-    override suspend fun getSelectedAccount() = selectedAccount.filterNotNull().first()
+    override suspend fun getSelectedAccount() = withContext(Dispatchers.IO) {
+        selectedAccount.filterNotNull().first()
+    }
 
-    override suspend fun getZashiAccount() = zashiAccount.filterNotNull().first()
+    override suspend fun getZashiAccount() = withContext(Dispatchers.IO) {
+        zashiAccount.filterNotNull().first()
+    }
 
     override suspend fun selectAccount(account: Account) =
         withContext(Dispatchers.IO) {
