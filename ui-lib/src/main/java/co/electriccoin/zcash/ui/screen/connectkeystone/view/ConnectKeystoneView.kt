@@ -128,24 +128,24 @@ private fun HeaderSection(state: ConnectKeystoneState) {
         Text(
             buildAnnotatedString {
                 append(stringResource(R.string.connect_keystone_subtitle))
-                appendLine()
-                appendLine()
-                withLink(
-                    LinkAnnotation.Clickable("CLICKABLE") { state.onViewKeystoneTutorialClicked() }
-                ) {
-                    withStyle(
-                        style =
-                            ZashiTypography.textSm
-                                .copy(
-                                    textDecoration = TextDecoration.Underline,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = HyperBlue.`700` orDark HyperBlue.`400`,
-                                )
-                                .toSpanStyle()
-                    ) {
-                        append(stringResource(R.string.connect_keystone_subtitle_clickable))
-                    }
-                }
+                // appendLine()
+                // appendLine()
+                // withLink(
+                //     LinkAnnotation.Clickable("CLICKABLE") { state.onViewKeystoneTutorialClicked() }
+                // ) {
+                //     withStyle(
+                //         style =
+                //             ZashiTypography.textSm
+                //                 .copy(
+                //                     textDecoration = TextDecoration.Underline,
+                //                     fontWeight = FontWeight.SemiBold,
+                //                     color = HyperBlue.`700` orDark HyperBlue.`400`,
+                //                 )
+                //                 .toSpanStyle()
+                //     ) {
+                //         append(stringResource(R.string.connect_keystone_subtitle_clickable))
+                //     }
+                // }
             },
             style = ZashiTypography.textSm,
             color = ZashiColors.Text.textTertiary,
