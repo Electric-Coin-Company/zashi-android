@@ -3,6 +3,8 @@ package co.electriccoin.zcash.ui.common.usecase
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
+import co.electriccoin.zcash.ui.common.repository.ParsePCZTException
+import co.electriccoin.zcash.ui.common.repository.PcztNotCreatedException
 import co.electriccoin.zcash.ui.screen.transactionprogress.KeystoneTransactionProgress
 import com.keystone.module.DecodeResult
 import com.keystone.sdk.KeystoneSDK
@@ -14,12 +16,12 @@ class ParseKeystonePCZTUseCase(
 ) {
     private val keystoneSDK = KeystoneSDK()
 
-    @Throws(InvalidKeystonePCZTQR::class)
+    @Throws(InvalidKeystonePCZTQRException::class, PcztNotCreatedException::class, ParsePCZTException::class)
     suspend operator fun invoke(result: String): Boolean {
         val decodedResult = decodeResult(result)
-        Twig.debug { "=========> progress: " + decodedResult.progress }
-
         val ur = decodedResult.ur
+
+        Twig.info { "=========> progress ur: ${decodedResult.progress}" }
 
         return if (ur != null) {
             keystoneProposalRepository.parsePCZT(ur)
@@ -35,9 +37,9 @@ class ParseKeystonePCZTUseCase(
         return try {
             keystoneSDK.decodeQR(result)
         } catch (_: Exception) {
-            throw InvalidKeystonePCZTQR()
+            throw InvalidKeystonePCZTQRException()
         }
     }
 }
 
-class InvalidKeystonePCZTQR : Exception()
+class InvalidKeystonePCZTQRException : Exception()

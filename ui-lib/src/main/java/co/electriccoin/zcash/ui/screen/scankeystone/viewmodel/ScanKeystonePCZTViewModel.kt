@@ -2,7 +2,8 @@ package co.electriccoin.zcash.ui.screen.scankeystone.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.electriccoin.zcash.ui.common.usecase.InvalidKeystonePCZTQR
+import co.electriccoin.zcash.ui.common.repository.ParsePCZTException
+import co.electriccoin.zcash.ui.common.usecase.InvalidKeystonePCZTQRException
 import co.electriccoin.zcash.ui.common.usecase.ParseKeystonePCZTUseCase
 import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,8 +30,12 @@ internal class ScanKeystonePCZTViewModel(
                     if (parseKeystonePCZT(result)) {
                         scanSuccess = true
                     }
-                } catch (_: InvalidKeystonePCZTQR) { // todo keystone
+                } catch (_: InvalidKeystonePCZTQRException) {
                     state.update { ScanValidationState.INVALID }
+                } catch (_: ParsePCZTException) {
+                    state.update { ScanValidationState.INVALID }
+                } catch (_: Exception) {
+                    // do nothing
                 }
             }
         }

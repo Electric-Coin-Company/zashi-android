@@ -61,8 +61,12 @@ class SignKeystoneTransactionViewModel(
 
     init {
         viewModelScope.launch {
-            encoder = createKeystoneProposalPCZTEncoder()
-            currentQrPart.update { encoder?.nextPart() }
+            try {
+                encoder = createKeystoneProposalPCZTEncoder()
+                currentQrPart.update { encoder?.nextPart() }
+            } catch (_: Exception) {
+                // do nothing
+            }
         }
     }
 

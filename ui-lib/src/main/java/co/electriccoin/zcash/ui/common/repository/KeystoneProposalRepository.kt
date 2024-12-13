@@ -226,10 +226,6 @@ class KeystoneProposalRepositoryImpl(
         this.pcztWithProofs = pcztWithProofs
     }
 
-    // override suspend fun addPCZTToProofs() {
-    //     // TODO keystone PCZT using our sdk
-    // }
-
     override suspend fun createPCZTEncoder(): UREncoder {
         val pczt = proposalPczt ?: throw PcztNotCreatedException()
         return keystoneZcashSDK.generatePczt(pczt.toByteArray())

@@ -7,7 +7,7 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneAccountUseCase
-import co.electriccoin.zcash.ui.common.usecase.DecodeUrToZashiAccountsUseCase
+import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneUrToZashiAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddressUseCase
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -27,12 +27,12 @@ import kotlinx.coroutines.launch
 
 class SelectKeystoneAccountViewModel(
     args: SelectKeystoneAccount,
-    decodeUrToZashiAccounts: DecodeUrToZashiAccountsUseCase,
+    parseKeystoneUrToZashiAccounts: ParseKeystoneUrToZashiAccountsUseCase,
     private val createKeystoneAccount: CreateKeystoneAccountUseCase,
     private val deriveKeystoneAccountUnifiedAddress: DeriveKeystoneAccountUnifiedAddressUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
-    private val accounts = decodeUrToZashiAccounts(args.ur)
+    private val accounts = parseKeystoneUrToZashiAccounts(args.ur)
 
     private val selectedAccount = MutableStateFlow<ZcashAccount?>(null)
 
@@ -56,17 +56,16 @@ class SelectKeystoneAccountViewModel(
             title = stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_title),
             subtitle = stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_subtitle),
             items =
-                accounts?.accounts
-                    ?.take(1)
-                    ?.map { account ->
+                accounts.accounts
+                    .take(1)
+                    .map { account ->
                         createCheckboxState(account, selection)
-                    }
-                    .orEmpty(),
+                    },
             positiveButtonState =
                 ButtonState(
                     text = stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_positive),
                     onClick = {
-                        if (accounts != null && selection != null) {
+                        if (selection != null) {
                             onUnlockClick(accounts, selection)
                         }
                     },

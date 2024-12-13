@@ -9,9 +9,13 @@ class CreateKeystoneZip321ProposalUseCase(
     private val navigationRouter: NavigationRouter
 ) {
     suspend operator fun invoke(zip321Uri: String) {
-        keystoneProposalRepository.createZip321Proposal(zip321Uri)
-        keystoneProposalRepository.createPCZTFromProposal()
-        // keystoneProposalRepository.addPCZTToProofs()
-        navigationRouter.forward(ReviewKeystoneTransaction)
+        try {
+            keystoneProposalRepository.createZip321Proposal(zip321Uri)
+            keystoneProposalRepository.createPCZTFromProposal()
+            navigationRouter.forward(ReviewKeystoneTransaction)
+        } catch (e: Exception) {
+            keystoneProposalRepository.clear()
+            throw e
+        }
     }
 }

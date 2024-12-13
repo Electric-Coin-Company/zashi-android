@@ -175,7 +175,7 @@ class SendViewModel(
             is KeystoneAccount -> {
                 try {
                     createKeystoneZip321TransactionProposal(zip321Uri)
-                } catch (_: Exception) { // TODO keystone
+                } catch (_: Exception) {
                     setSendStage(SendStage.SendFailure(""))
                 }
             }

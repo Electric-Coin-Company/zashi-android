@@ -6,8 +6,8 @@ import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneShieldProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneZip321ProposalUseCase
-import co.electriccoin.zcash.ui.common.usecase.DecodeKeystoneSignInRequestUseCase
-import co.electriccoin.zcash.ui.common.usecase.DecodeUrToZashiAccountsUseCase
+import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneSignInRequestUseCase
+import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneUrToZashiAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetBackupPersistableWalletUseCase
@@ -106,7 +106,7 @@ val useCaseModule =
         factoryOf(::GetZashiAccountUseCase)
         factoryOf(::CreateKeystoneAccountUseCase)
         factoryOf(::DeriveKeystoneAccountUnifiedAddressUseCase)
-        factoryOf(::DecodeUrToZashiAccountsUseCase)
+        factoryOf(::ParseKeystoneUrToZashiAccountsUseCase)
         factoryOf(::GetLoadedExchangeRateUseCase)
         factoryOf(::GetSelectedWalletAccountUseCase)
         singleOf(::ObserveClearSendUseCase)
@@ -115,7 +115,7 @@ val useCaseModule =
         factoryOf(::CreateKeystoneZip321ProposalUseCase)
         factoryOf(::CreateKeystoneShieldProposalUseCase)
         factoryOf(::ParseKeystonePCZTUseCase)
-        factoryOf(::DecodeKeystoneSignInRequestUseCase)
+        factoryOf(::ParseKeystoneSignInRequestUseCase)
         factoryOf(::CancelKeystoneProposalFlowUseCase)
         factoryOf(::ObserveKeystoneSendTransactionProposalUseCase)
     }

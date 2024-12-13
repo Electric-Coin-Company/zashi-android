@@ -9,9 +9,13 @@ class CreateKeystoneShieldProposalUseCase(
     private val navigationRouter: NavigationRouter
 ) {
     suspend operator fun invoke() {
-        keystoneProposalRepository.createShieldProposal()
-        keystoneProposalRepository.createPCZTFromProposal()
-        // keystoneProposalRepository.addPCZTToProofs()
-        navigationRouter.forward(SignKeystoneTransaction)
+        try {
+            keystoneProposalRepository.createShieldProposal()
+            keystoneProposalRepository.createPCZTFromProposal()
+            navigationRouter.forward(SignKeystoneTransaction)
+        } catch (e: Exception) {
+            keystoneProposalRepository.clear()
+            throw e
+        }
     }
 }

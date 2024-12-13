@@ -181,7 +181,7 @@ internal fun WrapBalances(
                         is KeystoneAccount -> {
                             try {
                                 createKeystoneShieldProposal()
-                            } catch (_: Exception) { // TODO keystone
+                            } catch (_: Exception) {
                                 showShieldingError(
                                     ShieldState.Failed(
                                         error =

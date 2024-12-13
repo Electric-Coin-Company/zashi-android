@@ -115,7 +115,7 @@ val viewModelModule =
                 args = args,
                 createKeystoneAccount = get(),
                 deriveKeystoneAccountUnifiedAddress = get(),
-                decodeUrToZashiAccounts = get(),
+                parseKeystoneUrToZashiAccounts = get(),
                 navigationRouter = get()
             )
         }
