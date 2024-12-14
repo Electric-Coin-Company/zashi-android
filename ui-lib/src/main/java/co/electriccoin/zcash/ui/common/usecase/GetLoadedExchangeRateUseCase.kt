@@ -10,7 +10,7 @@ class GetLoadedExchangeRateUseCase(
     suspend operator fun invoke() =
         exchangeRateRepository.state.first {
             when (it) {
-                is ExchangeRateState.Data -> it.isLoading
+                is ExchangeRateState.Data -> !it.isLoading
                 is ExchangeRateState.OptIn -> true
                 ExchangeRateState.OptedOut -> true
             }
