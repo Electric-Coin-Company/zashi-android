@@ -72,20 +72,30 @@ class AccountDataSourceImpl(
                                 InternalAccountWithAddresses(
                                     sdkAccount = account,
                                     unifiedAddress =
-                                    WalletAddress.Unified.new(synchronizer.getUnifiedAddress(account)),
+                                    WalletAddress.Unified.new(
+                                        runCatching { synchronizer.getUnifiedAddress(account) }.getOrElse { "" }
+                                    ),
                                     saplingAddress = null,
                                     transparentAddress =
-                                    WalletAddress.Transparent.new(synchronizer.getTransparentAddress(account)),
+                                    WalletAddress.Transparent.new(
+                                        runCatching { synchronizer.getTransparentAddress(account) }.getOrElse { "" }
+                                    ),
                                 )
                             } else {
                                 InternalAccountWithAddresses(
                                     sdkAccount = account,
                                     unifiedAddress =
-                                    WalletAddress.Unified.new(synchronizer.getUnifiedAddress(account)),
+                                    WalletAddress.Unified.new(
+                                        runCatching { synchronizer.getUnifiedAddress(account) }.getOrElse { "" }
+                                    ),
                                     saplingAddress =
-                                    WalletAddress.Sapling.new(synchronizer.getSaplingAddress(account)),
+                                    WalletAddress.Sapling.new(
+                                        runCatching { synchronizer.getSaplingAddress(account) }.getOrElse { "" }
+                                    ),
                                     transparentAddress =
-                                    WalletAddress.Transparent.new(synchronizer.getTransparentAddress(account)),
+                                    WalletAddress.Transparent.new(
+                                        runCatching { synchronizer.getTransparentAddress(account) }.getOrElse { "" }
+                                    ),
                                 )
                             }
                         }
