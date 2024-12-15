@@ -169,6 +169,8 @@ class KeystoneProposalRepositoryImpl(
                 return@launch
             }
 
+            submitState.update { SubmitProposalState.Submitting }
+
             val pcztWithProofs = pcztWithProofs.filter { !it.isLoading }.first().pczt
 
             if (pcztWithProofs == null) {
@@ -176,7 +178,6 @@ class KeystoneProposalRepositoryImpl(
                 return@launch
             }
 
-            submitState.update { SubmitProposalState.Submitting }
             val result =
                 proposalDataSource.submitTransaction(
                     pcztWithProofs = pcztWithProofs,
