@@ -14,9 +14,11 @@ import com.sparrowwallet.hummingbird.UR
 import com.sparrowwallet.hummingbird.UREncoder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -74,13 +76,14 @@ class KeystoneProposalRepositoryImpl(
 
     override val submitState = MutableStateFlow<SubmitProposalState?>(null)
 
-    private val keystoneSDK = KeystoneSDK()
-
-    private val keystoneZcashSDK = keystoneSDK.zcash
-
+    private val pcztWithProofs = MutableStateFlow(PcztState(isLoading = false, pczt = null))
     private var proposalPczt: Pczt? = null
-    private var pcztWithProofs: Pczt? = null
     private var pcztWithSignatures: Pczt? = null
+
+    private val keystoneSDK = KeystoneSDK()
+    private val keystoneZcashSDK = keystoneSDK.zcash
+    private var pcztWithProofsJob: Job? = null
+    private var extractPCZTJob: Job? = null
 
     override suspend fun createProposal(zecSend: ZecSend) {
         createProposalInternal {
@@ -109,19 +112,29 @@ class KeystoneProposalRepositoryImpl(
     }
 
     override suspend fun createPCZTFromProposal() {
-        val proposalPczt =
+        val result =
             proposalDataSource.createPcztFromProposal(
                 account = accountDataSource.getSelectedAccount(),
                 proposal = getTransactionProposal().proposal
             )
-        // Copy the original PZCT proposal data so we pass one copy to the KeyStone device and the second one to the
-        // Rust Backend
-        val proposalPcztCopy = Pczt(proposalPczt.toByteArray().copyOf())
+        proposalPczt = result
+        addProofsToPczt(result)
+    }
 
-        val pcztWithProofs = proposalDataSource.addProofsToPczt(proposalPcztCopy)
-
-        this@KeystoneProposalRepositoryImpl.proposalPczt = proposalPczt
-        this@KeystoneProposalRepositoryImpl.pcztWithProofs = pcztWithProofs
+    private fun addProofsToPczt(proposalPczt: Pczt) {
+        pcztWithProofsJob?.cancel()
+        pcztWithProofsJob = scope.launch {
+            pcztWithProofs.update {
+                PcztState(isLoading = true, pczt = null)
+            }
+            // Copy the original PZCT proposal data so we pass one copy to the KeyStone device and the second one
+            // to the Rust Backend
+            val result = runCatching { proposalDataSource.addProofsToPczt(proposalPczt.clonePczt()) }
+                .getOrNull()
+            pcztWithProofs.update {
+                PcztState(isLoading = false, pczt = result)
+            }
+        }
     }
 
     @Suppress("UseCheckOrError")
@@ -142,10 +155,27 @@ class KeystoneProposalRepositoryImpl(
 
     @Suppress("UseCheckOrError")
     override fun extractPCZT() {
-        val pcztWithProofs = pcztWithProofs ?: throw IllegalStateException("Proposal with proofs not created")
-        val pcztWithSignatures = pcztWithSignatures ?: throw IllegalStateException("Signed proposal not created")
 
-        scope.launch {
+        fun createErrorState(message: String) = SubmitProposalState.Result(
+            SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther(NullPointerException(message))
+        )
+
+        extractPCZTJob?.cancel()
+        extractPCZTJob = scope.launch {
+            val pcztWithSignatures = pcztWithSignatures
+
+            if (pcztWithSignatures == null) {
+                submitState.update { createErrorState("pcztWithSignatures is null") }
+                return@launch
+            }
+
+            val pcztWithProofs = pcztWithProofs.filter { !it.isLoading }.first().pczt
+
+            if (pcztWithProofs == null) {
+                submitState.update { createErrorState("pcztWithProofs is null") }
+                return@launch
+            }
+
             submitState.update { SubmitProposalState.Submitting }
             val result =
                 proposalDataSource.submitTransaction(
@@ -161,10 +191,15 @@ class KeystoneProposalRepositoryImpl(
     override fun getProposalPCZT(): Pczt? = proposalPczt
 
     override fun clear() {
+        extractPCZTJob?.cancel()
+        extractPCZTJob = null
+        pcztWithProofsJob?.cancel()
+        pcztWithProofsJob = null
+        pcztWithProofs.update { PcztState(isLoading = false, pczt = null) }
+
         transactionProposal.update { null }
         submitState.update { null }
         proposalPczt = null
-        pcztWithProofs = null
         pcztWithSignatures = null
     }
 
@@ -179,3 +214,8 @@ class KeystoneProposalRepositoryImpl(
         transactionProposal.update { proposal }
     }
 }
+
+private data class PcztState(
+    val isLoading: Boolean,
+    val pczt: Pczt?
+)
