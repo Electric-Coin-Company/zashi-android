@@ -49,7 +49,6 @@ internal fun AccountListView(
 ) {
     ZashiModalBottomSheet(
         sheetState = sheetState,
-        scrimColor = Color.Transparent,
         content = {
             BottomSheetContent(state)
         },
