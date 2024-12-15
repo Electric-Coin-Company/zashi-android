@@ -114,7 +114,12 @@ class KeystoneProposalRepositoryImpl(
                 account = accountDataSource.getSelectedAccount(),
                 proposal = getTransactionProposal().proposal
             )
-        val pcztWithProofs = proposalDataSource.addProofsToPczt(proposalPczt)
+        // Copy the original PZCT proposal data so we pass one copy to the KeyStone device and the second one to the
+        // Rust Backend
+        val proposalPcztCopy = Pczt(proposalPczt.toByteArray().copyOf())
+
+        val pcztWithProofs = proposalDataSource.addProofsToPczt(proposalPcztCopy)
+
         this@KeystoneProposalRepositoryImpl.proposalPczt = proposalPczt
         this@KeystoneProposalRepositoryImpl.pcztWithProofs = pcztWithProofs
     }
