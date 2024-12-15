@@ -58,10 +58,11 @@ class SignKeystoneTransactionViewModel(
                         text = stringRes(R.string.sign_keystone_transaction_negative),
                         onClick = ::onRejectClick
                     ),
-                shareButton = ButtonState(
-                    text = stringRes("Share PCZT"),
-                    onClick = ::onSharePCZTClick
-                ).takeIf { BuildConfig.DEBUG },
+                shareButton =
+                    ButtonState(
+                        text = stringRes("Share PCZT"),
+                        onClick = ::onSharePCZTClick
+                    ).takeIf { BuildConfig.DEBUG },
                 onBack = ::onBack
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)

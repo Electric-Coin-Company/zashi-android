@@ -6,29 +6,33 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.datasource.RegularTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.WalletAccount
-import co.electriccoin.zcash.ui.common.repository.RegularTransactionProposal
-import co.electriccoin.zcash.ui.common.repository.SendTransactionProposal
-import co.electriccoin.zcash.ui.common.repository.Zip321TransactionProposal
 import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetLoadedExchangeRateUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveKeystoneSendTransactionProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
+import co.electriccoin.zcash.ui.util.Quadruple
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
@@ -37,34 +41,46 @@ class ReviewKeystoneTransactionViewModel(
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     observeKeystoneSendTransactionProposal: ObserveKeystoneSendTransactionProposalUseCase,
     private val cancelKeystoneProposalFlow: CancelKeystoneProposalFlowUseCase,
-    private val getLoadedExchangeRate: GetLoadedExchangeRateUseCase,
+    private val getExchangeRate: GetExchangeRateUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     private val isReceiverExpanded = MutableStateFlow(false)
+
+    private val exchangeRate =
+        flow {
+            emit(getExchangeRate())
+        }.shareIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            replay = 1
+        )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val state =
         combine(
             observeSelectedWalletAccount.require(),
             observeKeystoneSendTransactionProposal(),
-            isReceiverExpanded
-        ) { wallet, zecSend, isReceiverExpanded ->
-            Triple(wallet, zecSend, isReceiverExpanded)
-        }.flatMapLatest { (wallet, proposal, isReceiverExpanded) ->
+            isReceiverExpanded,
+            exchangeRate,
+        ) { wallet, zecSend, isReceiverExpanded, exchangeRate ->
+            Quadruple(wallet, zecSend, isReceiverExpanded, exchangeRate)
+        }.flatMapLatest { (wallet, proposal, isReceiverExpanded, exchangeRate) ->
             observeContactByAddress(proposal?.destination?.address.orEmpty()).map { addressBookContact ->
                 when (proposal) {
                     is RegularTransactionProposal ->
                         createState(
                             transactionProposal = proposal,
                             addressBookContact = addressBookContact,
-                            wallet = wallet
+                            wallet = wallet,
+                            exchangeRateState = exchangeRate
                         )
                     is Zip321TransactionProposal ->
                         createZip321State(
                             transactionProposal = proposal,
                             addressBookContact = addressBookContact,
                             wallet = wallet,
-                            isReceiverExpanded = isReceiverExpanded
+                            isReceiverExpanded = isReceiverExpanded,
+                            exchangeRateState = exchangeRate
                         )
                     null -> null
                 }
@@ -75,10 +91,11 @@ class ReviewKeystoneTransactionViewModel(
             initialValue = null
         )
 
-    private suspend fun createState(
+    private fun createState(
+        wallet: WalletAccount,
         transactionProposal: SendTransactionProposal,
         addressBookContact: AddressBookContact?,
-        wallet: WalletAccount
+        exchangeRateState: ExchangeRateState
     ) = ReviewTransactionState(
         title = stringRes(R.string.review_keystone_transaction_title),
         items =
@@ -86,7 +103,7 @@ class ReviewKeystoneTransactionViewModel(
                 AmountState(
                     title = stringRes(R.string.send_confirmation_amount),
                     amount = transactionProposal.amount,
-                    exchangeRate = getLoadedExchangeRate(),
+                    exchangeRate = exchangeRateState,
                 ),
                 ReceiverState(
                     title = stringRes(R.string.send_confirmation_address),
@@ -133,11 +150,12 @@ class ReviewKeystoneTransactionViewModel(
         onBack = ::onBack,
     )
 
-    private suspend fun createZip321State(
+    private fun createZip321State(
         transactionProposal: SendTransactionProposal,
         addressBookContact: AddressBookContact?,
         wallet: WalletAccount,
         isReceiverExpanded: Boolean,
+        exchangeRateState: ExchangeRateState
     ) = ReviewTransactionState(
         title = stringRes(R.string.payment_request_title),
         items =
@@ -145,7 +163,7 @@ class ReviewKeystoneTransactionViewModel(
                 AmountState(
                     title = null,
                     amount = transactionProposal.amount,
-                    exchangeRate = getLoadedExchangeRate(),
+                    exchangeRate = exchangeRateState,
                 ),
                 SenderState(
                     title = stringRes(R.string.send_confirmation_address_from),

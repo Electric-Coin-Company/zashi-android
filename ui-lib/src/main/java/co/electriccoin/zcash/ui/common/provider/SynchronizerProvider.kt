@@ -45,7 +45,7 @@ class SynchronizerProviderImpl(walletCoordinator: WalletCoordinator) : Synchroni
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
                 initialValue = null
-            ) // TODO keystone
+            )
 
     override suspend fun getSynchronizer(): Synchronizer =
         withContext(Dispatchers.IO) {

@@ -3,9 +3,9 @@ package co.electriccoin.zcash.ui.screen.transactionprogress
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.ShieldTransactionProposal
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
-import co.electriccoin.zcash.ui.common.repository.SendTransactionProposal
-import co.electriccoin.zcash.ui.common.repository.ShieldTransactionProposal
 import co.electriccoin.zcash.ui.common.repository.SubmitProposalState
 import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase

@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.screen.reviewtransaction
 
 import androidx.compose.foundation.Image

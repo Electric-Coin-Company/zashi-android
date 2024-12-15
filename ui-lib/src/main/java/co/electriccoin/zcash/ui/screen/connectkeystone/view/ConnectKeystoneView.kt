@@ -48,7 +48,7 @@ fun ConnectKeystoneView(state: ConnectKeystoneState) {
                     .verticalScroll(rememberScrollState())
                     .scaffoldPadding(it)
         ) {
-            HeaderSection(state)
+            HeaderSection()
             Spacer(Modifier.height(24.dp))
             HowToConnectSection()
             Spacer(Modifier.height(24.dp))
@@ -104,7 +104,9 @@ private fun HowToConnectSection() {
 }
 
 @Composable
-private fun HeaderSection(state: ConnectKeystoneState) {
+private fun HeaderSection(
+    // state: ConnectKeystoneState,
+) {
     Column {
         Image(
             modifier = Modifier.height(32.dp),

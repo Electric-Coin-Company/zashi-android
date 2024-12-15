@@ -11,7 +11,7 @@ import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetBackupPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetLoadedExchangeRateUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
@@ -109,7 +109,7 @@ val useCaseModule =
         factoryOf(::CreateKeystoneAccountUseCase)
         factoryOf(::DeriveKeystoneAccountUnifiedAddressUseCase)
         factoryOf(::ParseKeystoneUrToZashiAccountsUseCase)
-        factoryOf(::GetLoadedExchangeRateUseCase)
+        factoryOf(::GetExchangeRateUseCase)
         factoryOf(::GetSelectedWalletAccountUseCase)
         singleOf(::ObserveClearSendUseCase)
         factoryOf(::ObserveCurrentTransactionsUseCase)

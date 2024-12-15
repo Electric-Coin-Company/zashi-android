@@ -4,6 +4,8 @@ import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSourceImpl
 import co.electriccoin.zcash.ui.common.datasource.LocalAddressBookDataSource
 import co.electriccoin.zcash.ui.common.datasource.LocalAddressBookDataSourceImpl
+import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
+import co.electriccoin.zcash.ui.common.datasource.ProposalDataSourceImpl
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSourceImpl
 import org.koin.core.module.dsl.singleOf
@@ -15,4 +17,5 @@ val dataSourceModule =
         singleOf(::LocalAddressBookDataSourceImpl) bind LocalAddressBookDataSource::class
         singleOf(::AccountDataSourceImpl) bind AccountDataSource::class
         singleOf(::ZashiSpendingKeyDataSourceImpl) bind ZashiSpendingKeyDataSource::class
+        singleOf(::ProposalDataSourceImpl) bind ProposalDataSource::class
     }

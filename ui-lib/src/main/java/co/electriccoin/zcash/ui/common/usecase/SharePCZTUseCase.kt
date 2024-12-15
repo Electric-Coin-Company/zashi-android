@@ -13,26 +13,27 @@ class SharePCZTUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
     private val versionInfoProvider: GetVersionInfoProvider
 ) {
-    suspend operator fun invoke() = withContext(Dispatchers.Main) {
-        val proposalPczt = keystoneProposalRepository.getProposalPCZT() ?: return@withContext
+    suspend operator fun invoke() =
+        withContext(Dispatchers.Main) {
+            val proposalPczt = keystoneProposalRepository.getProposalPCZT() ?: return@withContext
 
-        val file = getOrCreateFile()
-        file.writeBytes(proposalPczt.toByteArray())
+            val file = getOrCreateFile()
+            file.writeBytes(proposalPczt.toByteArray())
 
-        val shareIntent =
-            FileShareUtil.newShareContentIntent(
-                context = context,
-                dataFilePath = file.absolutePath,
-                fileType = "*/octet-stream",
-                shareText = "Pczt",
-                sharePickerText = "pczt",
-                versionInfo = versionInfoProvider(),
-            )
+            val shareIntent =
+                FileShareUtil.newShareContentIntent(
+                    context = context,
+                    dataFilePath = file.absolutePath,
+                    fileType = "*/octet-stream",
+                    shareText = "Pczt",
+                    sharePickerText = "pczt",
+                    versionInfo = versionInfoProvider(),
+                )
 
-        runCatching {
-            context.startActivity(shareIntent)
+            runCatching {
+                context.startActivity(shareIntent)
+            }
         }
-    }
 
     private fun getOrCreateFile(): File {
         val file = File(context.filesDir, "pczt")

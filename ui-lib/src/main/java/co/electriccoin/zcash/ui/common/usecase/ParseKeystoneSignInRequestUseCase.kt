@@ -16,27 +16,28 @@ class ParseKeystoneSignInRequestUseCase(
     private val keystoneSDK = KeystoneSDK()
 
     @Throws(InvalidKeystoneSignInQRException::class)
-    suspend operator fun invoke(result: String): ParseKeystoneQrResult = withContext(Dispatchers.Default) {
-        val decodedResult = decodeResult(result)
+    suspend operator fun invoke(result: String): ParseKeystoneQrResult =
+        withContext(Dispatchers.Default) {
+            val decodedResult = decodeResult(result)
 
-        Twig.debug { "=========> progress: " + decodedResult.progress }
+            Twig.debug { "=========> progress: " + decodedResult.progress }
 
-        val ur = decodedResult.ur
+            val ur = decodedResult.ur
 
-        if (ur != null) {
-            tryParse(ur)
-            navigationRouter.replace(SelectKeystoneAccount(ur.toString()))
-            ParseKeystoneQrResult(
-                progress = decodedResult.progress,
-                isFinished = true
-            )
-        } else {
-            ParseKeystoneQrResult(
-                progress = decodedResult.progress,
-                isFinished = false
-            )
+            if (ur != null) {
+                tryParse(ur)
+                navigationRouter.replace(SelectKeystoneAccount(ur.toString()))
+                ParseKeystoneQrResult(
+                    progress = decodedResult.progress,
+                    isFinished = true
+                )
+            } else {
+                ParseKeystoneQrResult(
+                    progress = decodedResult.progress,
+                    isFinished = false
+                )
+            }
         }
-    }
 
     @Throws(InvalidKeystoneSignInQRException::class)
     private fun tryParse(ur: UR) {
