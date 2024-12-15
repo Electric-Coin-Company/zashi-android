@@ -1,16 +1,18 @@
 package co.electriccoin.zcash.ui.screen.transactionprogress
 
+import co.electriccoin.zcash.ui.design.util.StringResource
+
 sealed interface TransactionProgressState {
     val onBack: () -> Unit
 }
 
 data class SendingTransactionState(
-    val address: String,
+    val text: StringResource,
     override val onBack: () -> Unit
 ) : TransactionProgressState
 
 data class SuccessfulTransactionState(
-    val address: String,
+    val text: StringResource,
     val onViewTransactionClick: () -> Unit,
     val onCloseClick: () -> Unit,
     override val onBack: () -> Unit

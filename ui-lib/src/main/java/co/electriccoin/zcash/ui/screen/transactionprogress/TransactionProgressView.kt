@@ -45,6 +45,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import com.airbnb.lottie.compose.LottieAnimation
@@ -295,7 +296,7 @@ private fun SendingTransaction(
             Text(
                 fontWeight = FontWeight.Normal,
                 style = ZashiTypography.textSm,
-                text = stringResource(id = R.string.send_confirmation_sending_subtitle, state.address),
+                text = state.text.getValue(),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = ZashiColors.Text.textPrimary
@@ -364,7 +365,7 @@ private fun SuccessfulTransaction(
             Text(
                 fontWeight = FontWeight.Normal,
                 style = ZashiTypography.textSm,
-                text = stringResource(id = R.string.send_confirmation_success_subtitle, state.address),
+                text = state.text.getValue(),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = ZashiColors.Text.textPrimary
@@ -631,7 +632,7 @@ private fun SendingPreview() =
         TransactionProgressView(
             state =
                 SendingTransactionState(
-                    address = "address",
+                    text = stringRes("Your tokens are being sent to <address>"),
                     onBack = {}
                 )
         )
@@ -644,7 +645,7 @@ private fun SuccessPreview() =
         TransactionProgressView(
             state =
                 SuccessfulTransactionState(
-                    address = "address",
+                    text = stringRes("Your tokens were successfully sent to <address>"),
                     onViewTransactionClick = {},
                     onCloseClick = {},
                     onBack = {}

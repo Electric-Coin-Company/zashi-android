@@ -3,14 +3,19 @@ package co.electriccoin.zcash.ui.screen.transactionprogress
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.datasource.RegularTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ShieldTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.SubmitProposalState
 import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,9 +37,13 @@ class KeystoneTransactionProgressViewModel(
     private val supportContacted = MutableStateFlow(false)
 
     val state: StateFlow<TransactionProgressState?> =
-        combine(keystoneProposalRepository.submitState, supportContacted) { submitState, supportContacted ->
+        combine(
+            keystoneProposalRepository.transactionProposal,
+            keystoneProposalRepository.submitState,
+            supportContacted
+        ) { proposal, submitState, supportContacted ->
             when (submitState) {
-                null, SubmitProposalState.Submitting -> createSendingTransactionState()
+                null, SubmitProposalState.Submitting -> createSendingTransactionState(proposal)
                 is SubmitProposalState.Result ->
                     when (val result = submitState.submitResult) {
                         is SubmitResult.MultipleTrxFailure ->
@@ -49,7 +58,7 @@ class KeystoneTransactionProgressViewModel(
                         is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit ->
                             createFailureTransactionState(result)
 
-                        SubmitResult.Success -> createSuccessfulTransactionState()
+                        SubmitResult.Success -> createSuccessfulTransactionState(proposal)
                     }
             }
         }.stateIn(
@@ -90,12 +99,21 @@ class KeystoneTransactionProgressViewModel(
             onCloseClick = ::onBackToHomepageAndClearSendForm
         )
 
-    private suspend fun createSuccessfulTransactionState() =
+    private suspend fun createSuccessfulTransactionState(proposal: TransactionProposal?) =
         SuccessfulTransactionState(
             onBack = ::onBackToHomepageAndClearSendForm,
             onViewTransactionClick = ::onBackToHomepageAndClearSendForm,
             onCloseClick = ::onBackToHomepageAndClearSendForm,
-            address = getAddressAbbreviated()
+            text = when (proposal) {
+                is RegularTransactionProposal ->
+                    stringRes(R.string.send_confirmation_success_subtitle, getAddressAbbreviated())
+                is Zip321TransactionProposal ->
+                    stringRes(R.string.send_confirmation_success_subtitle, getAddressAbbreviated())
+                is ShieldTransactionProposal ->
+                    stringRes(R.string.send_confirmation_success_subtitle_transparent)
+                null ->
+                    stringRes(R.string.send_confirmation_success_subtitle, getAddressAbbreviated())
+            }
         )
 
     private fun createFailureTransactionState(result: SubmitResult.SimpleTrxFailure) =
@@ -111,22 +129,27 @@ class KeystoneTransactionProgressViewModel(
             }
         )
 
-    private suspend fun createSendingTransactionState() =
+    private suspend fun createSendingTransactionState(proposal: TransactionProposal?) =
         SendingTransactionState(
             onBack = {
                 // do nothing
             },
-            address = getAddressAbbreviated()
+            text = when (proposal) {
+                is RegularTransactionProposal ->
+                    stringRes(R.string.send_confirmation_sending_subtitle, getAddressAbbreviated())
+                is Zip321TransactionProposal ->
+                    stringRes(R.string.send_confirmation_sending_subtitle, getAddressAbbreviated())
+                is ShieldTransactionProposal ->
+                    stringRes(R.string.send_confirmation_sending_subtitle_transparent)
+                null ->
+                    stringRes(R.string.send_confirmation_sending_subtitle, getAddressAbbreviated())
+            }
         )
 
     private suspend fun getAddressAbbreviated(): String {
-        val address =
-            when (val proposal = keystoneProposalRepository.getTransactionProposal()) {
-                is ShieldTransactionProposal -> getSelectedWalletAccount().unified.address.address
-                is SendTransactionProposal -> proposal.destination.address
-            }
-
-        return "${address.take(ADDRESS_MAX_LENGTH)}..."
+        val address = (keystoneProposalRepository.getTransactionProposal() as? SendTransactionProposal)
+            ?.destination?.address
+        return address?.let { "${it.take(ADDRESS_MAX_LENGTH)}..." }.orEmpty()
     }
 
     private fun onBackToHomepageAndClearSendForm() {

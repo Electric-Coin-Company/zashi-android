@@ -15,11 +15,13 @@
     <string name="send_confirmation_sending_subtitle">Your tokens are being sent to\n
         <xliff:g example="zs12ghrbdjfs24383x5T…" id="index">%1$s</xliff:g>
     </string>
+    <string name="send_confirmation_sending_subtitle_transparent">Your tokens are being shielded</string>
 
     <string name="send_confirmation_success_title">Sent!</string>
     <string name="send_confirmation_success_subtitle">Your tokens were successfully sent to\n
         <xliff:g example="zs12ghrbdjfs24383x5T…" id="index">%1$s</xliff:g>
     </string>
+    <string name="send_confirmation_success_subtitle_transparent">Your tokens have been successfuly shielded</string>
     <string name="send_confirmation_success_view_trx">View Transaction</string>
     <string name="send_confirmation_success_btn_close">Close</string>
 
