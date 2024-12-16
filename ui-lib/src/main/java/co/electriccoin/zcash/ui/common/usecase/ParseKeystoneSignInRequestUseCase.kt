@@ -13,6 +13,7 @@ import kotlin.jvm.Throws
 class ParseKeystoneSignInRequestUseCase(
     private val navigationRouter: NavigationRouter
 ) {
+    private val keystoneDecoder = KeystoneDecoder()
     private val keystoneSDK = KeystoneSDK()
 
     @Throws(InvalidKeystoneSignInQRException::class)
@@ -51,7 +52,7 @@ class ParseKeystoneSignInRequestUseCase(
     @Throws(InvalidKeystoneSignInQRException::class)
     private fun decodeResult(result: String): DecodeResult {
         try {
-            return keystoneSDK.decodeQR(result)
+            return keystoneDecoder.decodeQR(result)
         } catch (_: Exception) {
             throw InvalidKeystoneSignInQRException()
         }
@@ -59,8 +60,3 @@ class ParseKeystoneSignInRequestUseCase(
 }
 
 class InvalidKeystoneSignInQRException : Exception()
-
-data class ParseKeystoneQrResult(
-    val progress: Int,
-    val isFinished: Boolean,
-)

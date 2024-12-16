@@ -51,7 +51,7 @@ class ParseKeystonePCZTUseCase(
 
 class InvalidKeystonePCZTQRException : Exception()
 
-private class KeystoneDecoder {
+internal class KeystoneDecoder {
     private var urDecoder: URDecoder = URDecoder()
 
     @Suppress("MagicNumber", "TooGenericExceptionThrown")
@@ -83,3 +83,8 @@ private class KeystoneDecoder {
         urDecoder = URDecoder()
     }
 }
+
+data class ParseKeystoneQrResult(
+    val progress: Int,
+    val isFinished: Boolean,
+)
