@@ -13,7 +13,6 @@ import kotlin.jvm.Throws
 class ParseKeystoneSignInRequestUseCase(
     private val navigationRouter: NavigationRouter
 ) {
-    private val keystoneDecoder = KeystoneDecoder()
     private val keystoneSDK = KeystoneSDK()
 
     @Throws(InvalidKeystoneSignInQRException::class)
@@ -52,7 +51,7 @@ class ParseKeystoneSignInRequestUseCase(
     @Throws(InvalidKeystoneSignInQRException::class)
     private fun decodeResult(result: String): DecodeResult {
         try {
-            return keystoneDecoder.decodeQR(result)
+            return keystoneSDK.decodeQR(result)
         } catch (_: Exception) {
             throw InvalidKeystoneSignInQRException()
         }

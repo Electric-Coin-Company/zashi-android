@@ -164,6 +164,7 @@ dependencies {
     api(libs.bundles.androidx.biometric)
 
     api(libs.keystone)
+    api(libs.hummingbird)
 
     androidTestImplementation(projects.testLib)
     androidTestImplementation(libs.bundles.androidx.test)
