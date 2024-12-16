@@ -16,6 +16,13 @@
         <xliff:g example="zs12ghrbdjfs24383x5T…" id="index">%1$s</xliff:g>
     </string>
 
+    <string name="send_confirmation_sending_title_transparent">Protegiendo…</string>
+    <string name="send_confirmation_sending_subtitle_transparent">Tus tokens están siendo protegidos</string>
+    <string name="send_confirmation_success_title_transparent">¡Protegidos!</string>
+    <string name="send_confirmation_success_subtitle_transparent">Tus tokens han sido protegidos con éxito</string>
+    <string name="send_confirmation_failure_title_transparent">No se pudo proteger</string>
+    <string name="send_confirmation_failure_subtitle_transparent">Hubo un error al intentar proteger tus tokens. Por favor, inténtalo de nuevo.</string>
+
     <string name="send_confirmation_success_title">¡Enviado!</string>
     <string name="send_confirmation_success_subtitle">Tus tokens fueron enviados exitosamente a\n
         <xliff:g example="zs12ghrbdjfs24383x5T…" id="index">%1$s</xliff:g>

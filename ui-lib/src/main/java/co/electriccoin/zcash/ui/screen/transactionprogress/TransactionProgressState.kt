@@ -7,11 +7,13 @@ sealed interface TransactionProgressState {
 }
 
 data class SendingTransactionState(
+    val title: StringResource,
     val text: StringResource,
     override val onBack: () -> Unit
 ) : TransactionProgressState
 
 data class SuccessfulTransactionState(
+    val title: StringResource,
     val text: StringResource,
     val onViewTransactionClick: () -> Unit,
     val onCloseClick: () -> Unit,
@@ -19,6 +21,8 @@ data class SuccessfulTransactionState(
 ) : TransactionProgressState
 
 data class FailureTransactionState(
+    val title: StringResource,
+    val text: StringResource,
     val onViewTransactionClick: () -> Unit,
     val onCloseClick: () -> Unit,
     val onReportClick: () -> Unit,

@@ -287,7 +287,7 @@ private fun SendingTransaction(
             Text(
                 fontWeight = FontWeight.SemiBold,
                 style = ZashiTypography.header5,
-                text = stringResource(id = R.string.send_confirmation_sending_title),
+                text = state.title.getValue(),
                 color = ZashiColors.Text.textPrimary
             )
 
@@ -356,7 +356,7 @@ private fun SuccessfulTransaction(
             Text(
                 fontWeight = FontWeight.SemiBold,
                 style = ZashiTypography.header5,
-                text = stringResource(id = R.string.send_confirmation_success_title),
+                text = state.title.getValue(),
                 color = ZashiColors.Text.textPrimary
             )
 
@@ -439,7 +439,7 @@ private fun FailureTransaction(
             Text(
                 fontWeight = FontWeight.SemiBold,
                 style = ZashiTypography.header5,
-                text = stringResource(id = R.string.send_confirmation_failure_title),
+                text = state.title.getValue(),
                 color = ZashiColors.Text.textPrimary
             )
 
@@ -448,7 +448,7 @@ private fun FailureTransaction(
             Text(
                 fontWeight = FontWeight.Normal,
                 style = ZashiTypography.textSm,
-                text = stringResource(id = R.string.send_confirmation_failure_subtitle),
+                text = state.text.getValue(),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = ZashiColors.Text.textPrimary
@@ -632,9 +632,24 @@ private fun SendingPreview() =
         TransactionProgressView(
             state =
                 SendingTransactionState(
+                    title = stringRes(R.string.send_confirmation_sending_title),
                     text = stringRes("Your tokens are being sent to <address>"),
                     onBack = {}
                 )
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun ShieldingPreview() =
+    ZcashTheme {
+        TransactionProgressView(
+            state =
+            SendingTransactionState(
+                title = stringRes(R.string.send_confirmation_sending_title_transparent),
+                text = stringRes(R.string.send_confirmation_sending_subtitle_transparent),
+                onBack = {}
+            )
         )
     }
 
@@ -645,11 +660,28 @@ private fun SuccessPreview() =
         TransactionProgressView(
             state =
                 SuccessfulTransactionState(
+                    title = stringRes(R.string.send_confirmation_success_title),
                     text = stringRes("Your tokens were successfully sent to <address>"),
                     onViewTransactionClick = {},
                     onCloseClick = {},
                     onBack = {}
                 )
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun SuccessShieldingPreview() =
+    ZcashTheme {
+        TransactionProgressView(
+            state =
+            SuccessfulTransactionState(
+                title = stringRes(R.string.send_confirmation_success_title_transparent),
+                text = stringRes(R.string.send_confirmation_success_subtitle_transparent),
+                onViewTransactionClick = {},
+                onCloseClick = {},
+                onBack = {}
+            )
         )
     }
 
@@ -663,8 +695,27 @@ private fun FailurePreview() =
                     onViewTransactionClick = {},
                     onCloseClick = {},
                     onReportClick = {},
-                    onBack = {}
+                    onBack = {},
+                    title = stringRes(R.string.send_confirmation_failure_title),
+                    text = stringRes(R.string.send_confirmation_failure_subtitle),
                 )
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun FailureShieldingPreview() =
+    ZcashTheme {
+        TransactionProgressView(
+            state =
+            FailureTransactionState(
+                onViewTransactionClick = {},
+                onCloseClick = {},
+                onReportClick = {},
+                onBack = {},
+                title = stringRes(R.string.send_confirmation_failure_title_transparent),
+                text = stringRes(R.string.send_confirmation_failure_subtitle_transparent),
+            )
         )
     }
 
