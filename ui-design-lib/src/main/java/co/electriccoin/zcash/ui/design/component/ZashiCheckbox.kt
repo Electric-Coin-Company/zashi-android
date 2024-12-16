@@ -82,7 +82,7 @@ fun ZashiCheckboxIndicator(isChecked: Boolean) {
     Box {
         Image(
             painter = painterResource(R.drawable.ic_zashi_checkbox),
-            contentDescription = ""
+            contentDescription = null
         )
 
         AnimatedVisibility(
@@ -104,7 +104,7 @@ fun ZashiCheckboxIndicator(isChecked: Boolean) {
         ) {
             Image(
                 painter = painterResource(R.drawable.ic_zashi_checkbox_checked),
-                contentDescription = ""
+                contentDescription = null
             )
         }
     }

@@ -8,6 +8,7 @@ class CreateKeystoneZip321ProposalUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
     private val navigationRouter: NavigationRouter
 ) {
+    @Suppress("TooGenericExceptionCaught")
     suspend operator fun invoke(zip321Uri: String) {
         try {
             keystoneProposalRepository.createZip321Proposal(zip321Uri)

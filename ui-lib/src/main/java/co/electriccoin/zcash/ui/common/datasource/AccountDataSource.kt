@@ -121,7 +121,7 @@ class AccountDataSourceImpl(
                     }
                     ?.retryWhen { _, attempt ->
                         emit(null)
-                        delay(attempt.coerceAtMost(3).seconds)
+                        delay(attempt.coerceAtMost(RETRY_DELAY).seconds)
                         true
                     }
                     ?: flowOf(null)
@@ -250,3 +250,5 @@ private data class InternalAccountWithBalances(
     val orchardBalance: WalletBalance,
     val transparentBalance: Zatoshi,
 )
+
+private const val RETRY_DELAY = 3L

@@ -222,7 +222,7 @@ private fun EmptyFullscreen(
             modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Image(painter = painterResource(id = R.drawable.ic_address_book_empty), contentDescription = "")
+            Image(painter = painterResource(id = R.drawable.ic_address_book_empty), contentDescription = null)
             Spacer(modifier = Modifier.height(14.dp))
             Text(
                 text = stringResource(id = R.string.address_book_empty),
@@ -298,7 +298,7 @@ private fun AddContactButton(
         Image(
             painter = painterResource(id = R.drawable.ic_address_book_plus),
             colorFilter = ColorFilter.tint(ZashiColors.Btns.Primary.btnPrimaryFg),
-            contentDescription = ""
+            contentDescription = null
         )
         Spacer(modifier = Modifier.width(8.dp))
         scope.Text()

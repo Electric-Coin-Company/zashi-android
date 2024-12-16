@@ -4,11 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.datasource.RegularTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ShieldTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
-import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.SubmitProposalState
 import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
@@ -102,61 +100,70 @@ class KeystoneTransactionProgressViewModel(
             onBack = ::onBackToHomepageAndClearSendForm,
             onViewTransactionClick = ::onBackToHomepageAndClearSendForm,
             onCloseClick = ::onBackToHomepageAndClearSendForm,
-            text = if (proposal is ShieldTransactionProposal) {
-                stringRes(R.string.send_confirmation_success_subtitle_transparent)
-            } else {
-                stringRes(R.string.send_confirmation_success_subtitle, getAddressAbbreviated())
-            },
-            title = if (proposal is ShieldTransactionProposal) {
-                stringRes(R.string.send_confirmation_success_title_transparent)
-            } else {
-                stringRes(R.string.send_confirmation_success_title, getAddressAbbreviated())
-            }
+            text =
+                if (proposal is ShieldTransactionProposal) {
+                    stringRes(R.string.send_confirmation_success_subtitle_transparent)
+                } else {
+                    stringRes(R.string.send_confirmation_success_subtitle, getAddressAbbreviated())
+                },
+            title =
+                if (proposal is ShieldTransactionProposal) {
+                    stringRes(R.string.send_confirmation_success_title_transparent)
+                } else {
+                    stringRes(R.string.send_confirmation_success_title, getAddressAbbreviated())
+                }
         )
 
-    private fun createFailureTransactionState(proposal: TransactionProposal?, result: SubmitResult.SimpleTrxFailure) =
-        FailureTransactionState(
-            onBack = ::onBackToHomepage,
-            onCloseClick = ::onBackToHomepage,
-            onViewTransactionClick = ::onBackToHomepageAndClearSendForm,
-            onReportClick = {
-                viewModelScope.launch {
-                    sendEmailUseCase(result)
-                    this@KeystoneTransactionProgressViewModel.supportContacted.update { true }
-                }
-            },
-            title = if (proposal is ShieldTransactionProposal) {
+    private fun createFailureTransactionState(
+        proposal: TransactionProposal?,
+        result: SubmitResult.SimpleTrxFailure
+    ) = FailureTransactionState(
+        onBack = ::onBackToHomepage,
+        onCloseClick = ::onBackToHomepage,
+        onViewTransactionClick = ::onBackToHomepageAndClearSendForm,
+        onReportClick = {
+            viewModelScope.launch {
+                sendEmailUseCase(result)
+                this@KeystoneTransactionProgressViewModel.supportContacted.update { true }
+            }
+        },
+        title =
+            if (proposal is ShieldTransactionProposal) {
                 stringRes(R.string.send_confirmation_failure_title_transparent)
             } else {
                 stringRes(R.string.send_confirmation_failure_title)
             },
-            text = if (proposal is ShieldTransactionProposal) {
+        text =
+            if (proposal is ShieldTransactionProposal) {
                 stringRes(R.string.send_confirmation_failure_subtitle_transparent)
             } else {
                 stringRes(R.string.send_confirmation_failure_subtitle)
             }
-        )
+    )
 
     private suspend fun createSendingTransactionState(proposal: TransactionProposal?) =
         SendingTransactionState(
             onBack = {
                 // do nothing
             },
-            text = if (proposal is ShieldTransactionProposal) {
-                stringRes(R.string.send_confirmation_sending_subtitle_transparent)
-            } else {
-                stringRes(R.string.send_confirmation_sending_subtitle, getAddressAbbreviated())
-            },
-            title = if (proposal is ShieldTransactionProposal) {
-                stringRes(R.string.send_confirmation_sending_title_transparent)
-            } else {
-                stringRes(R.string.send_confirmation_sending_title)
-            }
+            text =
+                if (proposal is ShieldTransactionProposal) {
+                    stringRes(R.string.send_confirmation_sending_subtitle_transparent)
+                } else {
+                    stringRes(R.string.send_confirmation_sending_subtitle, getAddressAbbreviated())
+                },
+            title =
+                if (proposal is ShieldTransactionProposal) {
+                    stringRes(R.string.send_confirmation_sending_title_transparent)
+                } else {
+                    stringRes(R.string.send_confirmation_sending_title)
+                }
         )
 
     private suspend fun getAddressAbbreviated(): String {
-        val address = (keystoneProposalRepository.getTransactionProposal() as? SendTransactionProposal)
-            ?.destination?.address
+        val address =
+            (keystoneProposalRepository.getTransactionProposal() as? SendTransactionProposal)
+                ?.destination?.address
         return address?.let { "${it.take(ADDRESS_MAX_LENGTH)}..." }.orEmpty()
     }
 

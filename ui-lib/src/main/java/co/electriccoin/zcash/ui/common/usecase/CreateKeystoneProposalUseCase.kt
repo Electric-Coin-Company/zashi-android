@@ -9,6 +9,7 @@ class CreateKeystoneProposalUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
     private val navigationRouter: NavigationRouter
 ) {
+    @Suppress("TooGenericExceptionCaught")
     suspend operator fun invoke(zecSend: ZecSend) {
         try {
             keystoneProposalRepository.createProposal(zecSend)

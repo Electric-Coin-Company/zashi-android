@@ -66,6 +66,7 @@ sealed interface SubmitProposalState {
     data class Result(val submitResult: SubmitResult) : SubmitProposalState
 }
 
+@Suppress("TooManyFunctions")
 class KeystoneProposalRepositoryImpl(
     private val accountDataSource: AccountDataSource,
     private val proposalDataSource: ProposalDataSource,
@@ -123,18 +124,20 @@ class KeystoneProposalRepositoryImpl(
 
     private fun addProofsToPczt(proposalPczt: Pczt) {
         pcztWithProofsJob?.cancel()
-        pcztWithProofsJob = scope.launch {
-            pcztWithProofs.update {
-                PcztState(isLoading = true, pczt = null)
+        pcztWithProofsJob =
+            scope.launch {
+                pcztWithProofs.update {
+                    PcztState(isLoading = true, pczt = null)
+                }
+                // Copy the original PZCT proposal data so we pass one copy to the KeyStone device and the second one
+                // to the Rust Backend
+                val result =
+                    runCatching { proposalDataSource.addProofsToPczt(proposalPczt.clonePczt()) }
+                        .getOrNull()
+                pcztWithProofs.update {
+                    PcztState(isLoading = false, pczt = result)
+                }
             }
-            // Copy the original PZCT proposal data so we pass one copy to the KeyStone device and the second one
-            // to the Rust Backend
-            val result = runCatching { proposalDataSource.addProofsToPczt(proposalPczt.clonePczt()) }
-                .getOrNull()
-            pcztWithProofs.update {
-                PcztState(isLoading = false, pczt = result)
-            }
-        }
     }
 
     @Suppress("UseCheckOrError")
@@ -155,36 +158,37 @@ class KeystoneProposalRepositoryImpl(
 
     @Suppress("UseCheckOrError")
     override fun extractPCZT() {
-
-        fun createErrorState(message: String) = SubmitProposalState.Result(
-            SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther(NullPointerException(message))
-        )
+        fun createErrorState(message: String) =
+            SubmitProposalState.Result(
+                SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther(NullPointerException(message))
+            )
 
         extractPCZTJob?.cancel()
-        extractPCZTJob = scope.launch {
-            val pcztWithSignatures = pcztWithSignatures
+        extractPCZTJob =
+            scope.launch {
+                val pcztWithSignatures = pcztWithSignatures
 
-            if (pcztWithSignatures == null) {
-                submitState.update { createErrorState("pcztWithSignatures is null") }
-                return@launch
+                if (pcztWithSignatures == null) {
+                    submitState.update { createErrorState("pcztWithSignatures is null") }
+                    return@launch
+                }
+
+                submitState.update { SubmitProposalState.Submitting }
+
+                val pcztWithProofs = pcztWithProofs.filter { !it.isLoading }.first().pczt
+
+                if (pcztWithProofs == null) {
+                    submitState.update { createErrorState("pcztWithProofs is null") }
+                    return@launch
+                }
+
+                val result =
+                    proposalDataSource.submitTransaction(
+                        pcztWithProofs = pcztWithProofs,
+                        pcztWithSignatures = pcztWithSignatures
+                    )
+                submitState.update { SubmitProposalState.Result(result) }
             }
-
-            submitState.update { SubmitProposalState.Submitting }
-
-            val pcztWithProofs = pcztWithProofs.filter { !it.isLoading }.first().pczt
-
-            if (pcztWithProofs == null) {
-                submitState.update { createErrorState("pcztWithProofs is null") }
-                return@launch
-            }
-
-            val result =
-                proposalDataSource.submitTransaction(
-                    pcztWithProofs = pcztWithProofs,
-                    pcztWithSignatures = pcztWithSignatures
-                )
-            submitState.update { SubmitProposalState.Result(result) }
-        }
     }
 
     override suspend fun getTransactionProposal(): TransactionProposal = transactionProposal.filterNotNull().first()

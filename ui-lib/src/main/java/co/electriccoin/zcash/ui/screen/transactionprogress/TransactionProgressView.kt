@@ -645,11 +645,11 @@ private fun ShieldingPreview() =
     ZcashTheme {
         TransactionProgressView(
             state =
-            SendingTransactionState(
-                title = stringRes(R.string.send_confirmation_sending_title_transparent),
-                text = stringRes(R.string.send_confirmation_sending_subtitle_transparent),
-                onBack = {}
-            )
+                SendingTransactionState(
+                    title = stringRes(R.string.send_confirmation_sending_title_transparent),
+                    text = stringRes(R.string.send_confirmation_sending_subtitle_transparent),
+                    onBack = {}
+                )
         )
     }
 
@@ -675,13 +675,13 @@ private fun SuccessShieldingPreview() =
     ZcashTheme {
         TransactionProgressView(
             state =
-            SuccessfulTransactionState(
-                title = stringRes(R.string.send_confirmation_success_title_transparent),
-                text = stringRes(R.string.send_confirmation_success_subtitle_transparent),
-                onViewTransactionClick = {},
-                onCloseClick = {},
-                onBack = {}
-            )
+                SuccessfulTransactionState(
+                    title = stringRes(R.string.send_confirmation_success_title_transparent),
+                    text = stringRes(R.string.send_confirmation_success_subtitle_transparent),
+                    onViewTransactionClick = {},
+                    onCloseClick = {},
+                    onBack = {}
+                )
         )
     }
 
@@ -708,14 +708,14 @@ private fun FailureShieldingPreview() =
     ZcashTheme {
         TransactionProgressView(
             state =
-            FailureTransactionState(
-                onViewTransactionClick = {},
-                onCloseClick = {},
-                onReportClick = {},
-                onBack = {},
-                title = stringRes(R.string.send_confirmation_failure_title_transparent),
-                text = stringRes(R.string.send_confirmation_failure_subtitle_transparent),
-            )
+                FailureTransactionState(
+                    onViewTransactionClick = {},
+                    onCloseClick = {},
+                    onReportClick = {},
+                    onBack = {},
+                    title = stringRes(R.string.send_confirmation_failure_title_transparent),
+                    text = stringRes(R.string.send_confirmation_failure_subtitle_transparent),
+                )
         )
     }
 

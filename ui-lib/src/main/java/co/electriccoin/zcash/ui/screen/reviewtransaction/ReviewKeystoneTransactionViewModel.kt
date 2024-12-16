@@ -55,6 +55,7 @@ class ReviewKeystoneTransactionViewModel(
             replay = 1
         )
 
+    @Suppress("DestructuringDeclarationWithTooManyEntries")
     @OptIn(ExperimentalCoroutinesApi::class)
     val state =
         combine(

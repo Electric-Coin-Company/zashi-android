@@ -840,7 +840,7 @@ private fun SendConfirmationContent(
                         {
                             Image(
                                 painter = painterResource(id = R.drawable.ic_confirmation_message_info),
-                                contentDescription = "",
+                                contentDescription = null,
                                 colorFilter = ColorFilter.tint(ZashiColors.Utility.Gray.utilityGray500)
                             )
                         }

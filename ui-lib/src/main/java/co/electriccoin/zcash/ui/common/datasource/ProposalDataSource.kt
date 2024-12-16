@@ -35,12 +35,7 @@ interface ProposalDataSource {
     ): Zip321TransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
-    suspend fun createShieldProposal(
-        account: WalletAccount,
-        shieldingThreshold: Zatoshi = Zatoshi(DEFAULT_SHIELDING_THRESHOLD),
-        memo: String = "",
-        transparentReceiver: String? = null
-    ): ShieldTransactionProposal
+    suspend fun createShieldProposal(account: WalletAccount): ShieldTransactionProposal
 
     @Throws(PcztException.CreatePcztFromProposalException::class)
     suspend fun createPcztFromProposal(
@@ -111,12 +106,7 @@ class ProposalDataSourceImpl(
             }
         }
 
-    override suspend fun createShieldProposal(
-        account: WalletAccount,
-        shieldingThreshold: Zatoshi,
-        memo: String,
-        transparentReceiver: String?
-    ): ShieldTransactionProposal =
+    override suspend fun createShieldProposal(account: WalletAccount): ShieldTransactionProposal =
         withContext(Dispatchers.IO) {
             getOrThrow {
                 val newProposal =
@@ -216,6 +206,7 @@ class ProposalDataSourceImpl(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private inline fun <T : Any> getOrThrow(block: () -> T): T {
         return try {
             block()

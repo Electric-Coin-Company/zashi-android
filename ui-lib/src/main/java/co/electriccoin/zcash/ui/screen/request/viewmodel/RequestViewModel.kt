@@ -116,7 +116,6 @@ class RequestViewModel(
                             when (account) {
                                 is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
                                 is ZashiAccount -> R.drawable.ic_zec_round_full
-                                null -> R.drawable.ic_zec_round_full
                             },
                         walletAddress = walletAddress,
                         request = request,
@@ -134,7 +133,6 @@ class RequestViewModel(
                                     co.electriccoin.zcash.ui.design.R.drawable
                                         .ic_item_keystone_qr
                                 is ZashiAccount -> R.drawable.logo_zec_fill_stroke
-                                null -> R.drawable.logo_zec_fill_stroke
                             },
                         walletAddress = walletAddress,
                         request = request,

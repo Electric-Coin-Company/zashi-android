@@ -99,7 +99,7 @@ fun Integrations(
                 Image(
                     modifier = Modifier.align(CenterHorizontally),
                     painter = painterResource(R.drawable.ic_integrations_info),
-                    contentDescription = "",
+                    contentDescription = null,
                     colorFilter = ColorFilter.tint(ZashiColors.Text.textSecondary)
                 )
                 Spacer(Modifier.height(16.dp))
@@ -125,7 +125,7 @@ private fun DisabledInfo(it: StringResource) {
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_advanced_settings_info),
-            contentDescription = "",
+            contentDescription = null,
             colorFilter = ColorFilter.tint(ZashiColors.Utility.WarningYellow.utilityOrange700)
         )
         Spacer(modifier = Modifier.width(8.dp))

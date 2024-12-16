@@ -105,7 +105,10 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} yet.")
     }
 
-    override suspend fun createPcztFromProposal(accountUuid: AccountUuid, proposal: Proposal): Pczt {
+    override suspend fun createPcztFromProposal(
+        accountUuid: AccountUuid,
+        proposal: Proposal
+    ): Pczt {
         TODO("Not yet implemented")
     }
 

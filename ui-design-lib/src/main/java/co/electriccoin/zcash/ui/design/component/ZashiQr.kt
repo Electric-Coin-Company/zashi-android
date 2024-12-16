@@ -39,7 +39,7 @@ fun ZashiQr(
         ) {
             Image(
                 bitmap = bitmap,
-                contentDescription = "",
+                contentDescription = null,
             )
         }
     }

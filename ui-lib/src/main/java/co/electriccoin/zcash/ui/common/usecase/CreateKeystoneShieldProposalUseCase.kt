@@ -8,6 +8,7 @@ class CreateKeystoneShieldProposalUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
     private val navigationRouter: NavigationRouter
 ) {
+    @Suppress("TooGenericExceptionCaught")
     suspend operator fun invoke() {
         try {
             keystoneProposalRepository.createShieldProposal()

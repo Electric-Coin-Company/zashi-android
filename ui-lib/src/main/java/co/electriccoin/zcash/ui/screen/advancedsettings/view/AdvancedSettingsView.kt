@@ -102,7 +102,7 @@ private fun Info() {
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_advanced_settings_info),
-            contentDescription = "",
+            contentDescription = null,
             colorFilter = ColorFilter.tint(ZashiColors.Text.textTertiary)
         )
         Spacer(modifier = Modifier.width(12.dp))

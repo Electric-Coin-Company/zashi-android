@@ -113,7 +113,7 @@ private fun Option(
         ) {
             Image(
                 painter = painterResource(image),
-                contentDescription = ""
+                contentDescription = null
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column(
@@ -135,7 +135,7 @@ private fun Option(
             }
             Image(
                 painter = painterResource(selectionImage),
-                contentDescription = ""
+                contentDescription = null
             )
         }
     }

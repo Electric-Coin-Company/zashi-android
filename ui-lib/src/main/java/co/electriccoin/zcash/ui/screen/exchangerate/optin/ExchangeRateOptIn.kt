@@ -88,7 +88,7 @@ private fun InfoItem(
     Row(modifier) {
         Image(
             painter = painterResource(image),
-            contentDescription = ""
+            contentDescription = null
         )
         Spacer(modifier = Modifier.width(12.dp))
         Column(

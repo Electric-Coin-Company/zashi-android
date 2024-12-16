@@ -99,7 +99,7 @@ private fun ContactItemLeading(
                                 .align(Alignment.BottomEnd)
                                 .size(24.dp),
                         painter = painterResource(id = R.drawable.ic_address_book_shielded),
-                        contentDescription = ""
+                        contentDescription = null
                     )
                 }
             }

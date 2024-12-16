@@ -292,7 +292,7 @@ private fun MessagePlaceholderWidget(state: MessagePlaceholderState) {
             leadingIcon = {
                 Image(
                     painter = painterResource(state.icon),
-                    contentDescription = "",
+                    contentDescription = null,
                     colorFilter = ColorFilter.tint(ZashiColors.Utility.Gray.utilityGray500)
                 )
             }

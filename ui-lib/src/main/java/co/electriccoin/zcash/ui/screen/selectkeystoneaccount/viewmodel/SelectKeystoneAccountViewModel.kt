@@ -17,10 +17,12 @@ import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccou
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.model.SelectKeystoneAccountState
 import com.keystone.module.ZcashAccount
 import com.keystone.module.ZcashAccounts
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -38,8 +40,11 @@ class SelectKeystoneAccountViewModel(
 
     private val isCreatingAccount = MutableStateFlow(false)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val state =
         combine(isCreatingAccount, selectedAccount) { isCreatingAccount, selection ->
+            isCreatingAccount to selection
+        }.mapLatest { (isCreatingAccount, selection) ->
             createState(selection, isCreatingAccount)
         }.stateIn(
             scope = viewModelScope,
