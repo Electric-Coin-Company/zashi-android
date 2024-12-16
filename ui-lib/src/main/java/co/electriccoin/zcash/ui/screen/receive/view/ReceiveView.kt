@@ -53,7 +53,7 @@ import co.electriccoin.zcash.ui.screen.receive.model.ReceiveState
 @Composable
 internal fun ReceiveView(
     state: ReceiveState,
-    zashiMainTopAppBarState: ZashiMainTopAppBarState,
+    zashiMainTopAppBarState: ZashiMainTopAppBarState?,
 ) {
     when {
         state.items.isNullOrEmpty() && state.isLoading -> {

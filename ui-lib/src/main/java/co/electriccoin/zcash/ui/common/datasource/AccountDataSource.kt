@@ -148,7 +148,7 @@ class AccountDataSourceImpl(
                                         address = account.transparentAddress,
                                         balance = account.transparentBalance
                                     ),
-                                isSelected = account.sdkAccount.accountUuid == uuid,
+                                isSelected = account.sdkAccount.accountUuid == uuid || accounts.size == 1,
                             )
 
                         else ->
@@ -169,7 +169,10 @@ class AccountDataSourceImpl(
                                         address = account.saplingAddress!!,
                                         balance = account.saplingBalance!!
                                     ),
-                                isSelected = uuid == null || account.sdkAccount.accountUuid == uuid,
+                                isSelected =
+                                    uuid == null ||
+                                        account.sdkAccount.accountUuid == uuid ||
+                                        accounts.size == 1,
                             )
                     }
                 }

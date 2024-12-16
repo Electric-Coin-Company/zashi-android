@@ -10,7 +10,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
-import co.electriccoin.zcash.ui.common.repository.WalletRepository
+import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.AccountSwitchState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
@@ -29,27 +29,23 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ZashiMainTopAppBarViewModel(
-    walletRepository: WalletRepository,
+    observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     private val isHideBalances: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_HIDE_BALANCES)
 
     val state =
-        combine(walletRepository.currentAccount, isHideBalances) { currentAccount, isHideBalances ->
+        combine(observeSelectedWalletAccount.require(), isHideBalances) { currentAccount, isHideBalances ->
             createState(currentAccount, isHideBalances)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue =
-                createState(
-                    currentAccount = null,
-                    isHideBalances = null
-                )
+            initialValue = null
         )
 
     private fun createState(
-        currentAccount: WalletAccount?,
+        currentAccount: WalletAccount,
         isHideBalances: Boolean?
     ) = ZashiMainTopAppBarState(
         accountSwitchState =
@@ -58,7 +54,6 @@ class ZashiMainTopAppBarViewModel(
                     when (currentAccount) {
                         is KeystoneAccount -> ZashiMainTopAppBarState.AccountType.KEYSTONE
                         is ZashiAccount -> ZashiMainTopAppBarState.AccountType.ZASHI
-                        null -> ZashiMainTopAppBarState.AccountType.ZASHI
                     },
                 onAccountTypeClick = ::onAccountTypeClicked,
             ),

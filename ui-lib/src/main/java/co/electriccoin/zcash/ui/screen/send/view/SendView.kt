@@ -187,7 +187,7 @@ fun Send(
     walletSnapshot: WalletSnapshot,
     exchangeRateState: ExchangeRateState,
     sendAddressBookState: SendAddressBookState,
-    zashiMainTopAppBarState: ZashiMainTopAppBarState,
+    zashiMainTopAppBarState: ZashiMainTopAppBarState?,
 ) {
     BlankBgScaffold(topBar = {
         ZashiMainTopAppBar(zashiMainTopAppBarState)

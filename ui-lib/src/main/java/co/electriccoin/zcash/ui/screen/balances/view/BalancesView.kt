@@ -162,7 +162,7 @@ fun Balances(
     snackbarHostState: SnackbarHostState,
     walletSnapshot: WalletSnapshot?,
     walletRestoringState: WalletRestoringState,
-    zashiMainTopAppBarState: ZashiMainTopAppBarState
+    zashiMainTopAppBarState: ZashiMainTopAppBarState?
 ) {
     BlankBgScaffold(
         topBar = {

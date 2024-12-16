@@ -29,9 +29,11 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 
 @Composable
 fun ZashiMainTopAppBar(
-    state: ZashiMainTopAppBarState,
+    state: ZashiMainTopAppBarState?,
     showHideBalances: Boolean = true
 ) {
+    if (state == null) return
+
     ZashiSmallTopAppBar(
         windowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         hamburgerMenuActions = {

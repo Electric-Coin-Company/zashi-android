@@ -106,7 +106,7 @@ internal fun WrapAccount(
     transactionHistoryViewModel: TransactionHistoryViewModel,
     walletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot?,
-    zashiMainTopAppBarState: ZashiMainTopAppBarState
+    zashiMainTopAppBarState: ZashiMainTopAppBarState?
 ) {
     val navController = LocalNavController.current
 

@@ -115,7 +115,7 @@ internal fun WrapBalances(
     synchronizer: Synchronizer?,
     walletSnapshot: WalletSnapshot?,
     walletRestoringState: WalletRestoringState,
-    zashiMainTopAppBarState: ZashiMainTopAppBarState
+    zashiMainTopAppBarState: ZashiMainTopAppBarState?
 ) {
     val scope = rememberCoroutineScope()
 
