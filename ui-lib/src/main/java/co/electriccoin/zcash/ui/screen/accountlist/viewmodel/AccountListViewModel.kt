@@ -10,7 +10,6 @@ import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.SelectWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.R
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDesignType
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListItem
@@ -66,8 +65,6 @@ class AccountListViewModel(
                                 stringRes(
                                     co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_subtitle,
                                 ),
-                            icon = R.drawable.ic_item_keystone,
-                            design = ZashiListItemDesignType.SECONDARY,
                             onClick = ::onAddWalletButtonClicked
                         )
                     ).takeIf {

@@ -4,6 +4,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,12 +26,13 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun BaseListItem(
-    leading: @Composable (Modifier) -> Unit,
+    leading: @Composable ((Modifier) -> Unit)?,
     content: @Composable (Modifier) -> Unit,
-    trailing: @Composable (Modifier) -> Unit,
+    trailing: @Composable ((Modifier) -> Unit)?,
     onClick: (() -> Unit)?,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
+    below: @Composable ColumnScope.(Modifier) -> Unit = {},
     shape: Shape = RoundedCornerShape(16.dp),
     border: BorderStroke? = null,
     color: Color = Color.Transparent,
@@ -45,21 +48,28 @@ fun BaseListItem(
         Box(
             modifier = clickableModifier(remember { MutableInteractionSource() }, onClick)
         ) {
-            Row(
-                modifier = Modifier.padding(contentPadding),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                leading(Modifier.sizeIn(maxWidth = 48.dp, maxHeight = 48.dp))
-                Spacer(modifier = Modifier.width(16.dp))
-                content(Modifier.weight(1f))
-                Spacer(modifier = Modifier.width(16.dp))
-                trailing(Modifier)
+            Column {
+                Row(
+                    modifier = Modifier.padding(contentPadding),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (leading != null) {
+                        leading(Modifier.sizeIn(maxWidth = 48.dp, maxHeight = 48.dp))
+                        Spacer(modifier = Modifier.width(16.dp))
+                    }
+                    content(Modifier.weight(1f))
+                    if (trailing != null) {
+                        Spacer(modifier = Modifier.width(16.dp))
+                        trailing(Modifier)
+                    }
+                }
+                below(Modifier)
             }
         }
     }
 }
 
-internal fun clickableModifier(
+fun clickableModifier(
     interactionSource: MutableInteractionSource,
     onClick: (() -> Unit)?
 ) = if (onClick != null) {

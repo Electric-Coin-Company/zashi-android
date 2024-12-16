@@ -1,6 +1,11 @@
 package co.electriccoin.zcash.ui.screen.accountlist.view
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
@@ -17,6 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.isUnspecified
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,7 +31,7 @@ import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.component.ZashiModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.listitem.BaseListItem
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemColors
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDefaults
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDesignType
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
@@ -82,13 +89,11 @@ private fun BottomSheetContent(state: AccountListState) {
                     is AccountListItem.Account ->
                         ZashiAccountListItem(
                             modifier = Modifier.padding(horizontal = 4.dp),
-                            state = item.item,
+                            state = item.state,
                         )
+
                     is AccountListItem.Other ->
-                        ZashiListItem(
-                            modifier = Modifier.padding(horizontal = 4.dp),
-                            state = item.item,
-                        )
+                        ZashiKeystonePromoListItem(item)
                 }
             }
             if (state.isLoading) {
@@ -100,6 +105,87 @@ private fun BottomSheetContent(state: AccountListState) {
         }
         Spacer(modifier = Modifier.height(24.dp))
         Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
+    }
+}
+
+@Composable
+private fun ZashiKeystonePromoListItem(item: AccountListItem.Other) {
+    ZashiKeystonePromoListItem(
+        modifier = Modifier.padding(horizontal = 4.dp),
+        state = item.state,
+    )
+}
+
+@Composable
+private fun ZashiKeystonePromoListItem(
+    state: ZashiListItemState,
+    modifier: Modifier = Modifier,
+    content: @Composable (Modifier) -> Unit = {
+        ZashiKeystonePromoListContent(
+            modifier = it,
+            text = state.title.getValue(),
+            subtitle = state.subtitle?.getValue(),
+            isEnabled = state.isEnabled
+        )
+    },
+    below: @Composable ColumnScope.(Modifier) -> Unit = {
+        Image(
+            painter = painterResource(co.electriccoin.zcash.ui.R.drawable.img_keystone_promo),
+            contentDescription = null
+        )
+    },
+    contentPadding: PaddingValues = PaddingValues(24.dp),
+    colors: ZashiListItemColors =
+        ZashiListItemDefaults.primaryColors(
+            backgroundColor = ZashiColors.Surfaces.bgTertiary
+        )
+) {
+    BaseListItem(
+        modifier = modifier,
+        contentPadding = contentPadding,
+        leading = null,
+        content = content,
+        trailing = null,
+        below = below,
+        onClick = state.onClick.takeIf { state.isEnabled },
+        border = colors.borderColor.takeIf { !it.isUnspecified }?.let { BorderStroke(1.dp, it) },
+        color = colors.backgroundColor
+    )
+}
+
+@Composable
+private fun ZashiKeystonePromoListContent(
+    text: String,
+    subtitle: String?,
+    isEnabled: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = text,
+                style = ZashiTypography.textLg,
+                fontWeight = FontWeight.SemiBold,
+                color =
+                    if (isEnabled) {
+                        ZashiColors.Text.textPrimary
+                    } else {
+                        ZashiColors.Text.textDisabled
+                    }
+            )
+        }
+        subtitle?.let {
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = it,
+                style = ZashiTypography.textXs,
+                color = ZashiColors.Text.textTertiary
+            )
+        }
     }
 }
 
@@ -163,7 +249,6 @@ private fun Preview() =
                                 ZashiListItemState(
                                     title = stringRes("Keystone Hardware Wallet"),
                                     subtitle = stringRes("Get a Keystone Hardware Wallet and secure your Zcash."),
-                                    icon = R.drawable.ic_item_keystone,
                                     design = ZashiListItemDesignType.SECONDARY,
                                     onClick = {}
                                 )

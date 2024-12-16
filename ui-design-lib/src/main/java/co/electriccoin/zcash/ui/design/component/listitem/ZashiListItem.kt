@@ -95,13 +95,12 @@ fun ZashiListItem(
         )
     },
     contentPadding: PaddingValues = ZashiListItemDefaults.contentPadding,
-) {
-    val colors =
+    colors: ZashiListItemColors =
         when (state.design) {
             ZashiListItemDesignType.PRIMARY -> ZashiListItemDefaults.primaryColors()
             ZashiListItemDesignType.SECONDARY -> ZashiListItemDefaults.secondaryColors()
         }
-
+) {
     BaseListItem(
         modifier = modifier,
         contentPadding = contentPadding,
@@ -109,16 +108,18 @@ fun ZashiListItem(
         content = content,
         trailing = trailing,
         onClick = state.onClick.takeIf { state.isEnabled },
-        border = colors.borderColor.takeIf { !it.isUnspecified }?.let { BorderStroke(1.dp, it) }
+        border = colors.borderColor.takeIf { !it.isUnspecified }?.let { BorderStroke(1.dp, it) },
+        color = colors.backgroundColor
     )
 }
 
 @Composable
 private fun ZashiListLeadingItem(
-    icon: Int,
+    icon: Int?,
     contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
+    if (icon == null) return
     Image(
         modifier = modifier,
         painter = painterResource(icon),
@@ -210,7 +211,7 @@ private fun ZashiListContentItem(
 
 data class ZashiListItemState(
     val title: StringResource,
-    @DrawableRes val icon: Int,
+    @DrawableRes val icon: Int? = null,
     val design: ZashiListItemDesignType = ZashiListItemDesignType.PRIMARY,
     val subtitle: StringResource? = null,
     val titleIcons: ImmutableList<Int> = persistentListOf(),
@@ -220,6 +221,7 @@ data class ZashiListItemState(
 
 data class ZashiListItemColors(
     val borderColor: Color,
+    val backgroundColor: Color
 )
 
 object ZashiListItemDefaults {
@@ -228,7 +230,7 @@ object ZashiListItemDefaults {
 
     @Composable
     fun LeadingItem(
-        icon: Int,
+        icon: Int?,
         contentDescription: String,
         modifier: Modifier = Modifier,
     ) = ZashiListLeadingItem(icon, contentDescription, modifier)
@@ -250,13 +252,19 @@ object ZashiListItemDefaults {
     ) = ZashiListContentItem(text, subtitle, titleIcons, isEnabled, modifier)
 
     @Composable
-    fun primaryColors(borderColor: Color = Color.Unspecified): ZashiListItemColors {
-        return ZashiListItemColors(borderColor)
+    fun primaryColors(
+        borderColor: Color = Color.Unspecified,
+        backgroundColor: Color = Color.Transparent
+    ): ZashiListItemColors {
+        return ZashiListItemColors(borderColor = borderColor, backgroundColor = backgroundColor)
     }
 
     @Composable
-    fun secondaryColors(borderColor: Color = ZashiColors.Surfaces.strokeSecondary): ZashiListItemColors {
-        return ZashiListItemColors(borderColor)
+    fun secondaryColors(
+        borderColor: Color = ZashiColors.Surfaces.strokeSecondary,
+        backgroundColor: Color = Color.Transparent
+    ): ZashiListItemColors {
+        return ZashiListItemColors(borderColor = borderColor, backgroundColor = backgroundColor)
     }
 }
 
