@@ -40,7 +40,8 @@ class SynchronizerProviderImpl(walletCoordinator: WalletCoordinator) : Synchroni
                     synchronizer.walletBalances.filterNotNull().first()
                     synchronizer
                 }
-            }.flowOn(Dispatchers.IO)
+            }
+            .flowOn(Dispatchers.IO)
             .stateIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
