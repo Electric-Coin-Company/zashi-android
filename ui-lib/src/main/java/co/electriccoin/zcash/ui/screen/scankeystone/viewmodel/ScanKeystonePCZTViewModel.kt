@@ -12,8 +12,6 @@ import co.electriccoin.zcash.ui.screen.scankeystone.model.ScanKeystoneState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 internal class ScanKeystonePCZTViewModel(
     private val parseKeystonePCZT: ParseKeystonePCZTUseCase

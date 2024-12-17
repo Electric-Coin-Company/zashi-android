@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.common.repository
 import cash.z.ecc.android.sdk.exception.PcztException
 import cash.z.ecc.android.sdk.model.Pczt
 import cash.z.ecc.android.sdk.model.ZecSend
-import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
@@ -162,7 +161,6 @@ class KeystoneProposalRepositoryImpl(
             }
         }
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Suppress("UseCheckOrError")
     override fun extractPCZT() {
         fun createErrorState(message: String) =
@@ -188,10 +186,6 @@ class KeystoneProposalRepositoryImpl(
                     submitState.update { createErrorState("pcztWithProofs is null") }
                     return@launch
                 }
-
-                Twig.info { "Pczt: ${proposalPczt?.toByteArray()?.toHexString()}" }
-                Twig.info { "PcztWithProofs: ${pcztWithProofs.toByteArray().toHexString()}" }
-                Twig.info { "PcztWithSignatures: ${pcztWithSignatures.toByteArray().toHexString()}" }
 
                 val result =
                     proposalDataSource.submitTransaction(

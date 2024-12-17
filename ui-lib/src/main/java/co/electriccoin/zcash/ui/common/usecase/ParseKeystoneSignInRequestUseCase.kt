@@ -7,7 +7,6 @@ import com.sparrowwallet.hummingbird.UR
 class ParseKeystoneSignInRequestUseCase(
     private val navigationRouter: NavigationRouter
 ) : BaseKeystoneScanner() {
-
     override suspend fun onSuccess(ur: UR) {
         tryParse(ur)
         navigationRouter.replace(SelectKeystoneAccount(ur.toString()))

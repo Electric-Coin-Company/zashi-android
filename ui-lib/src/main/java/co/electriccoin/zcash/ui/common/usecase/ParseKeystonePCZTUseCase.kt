@@ -16,7 +16,6 @@ class ParseKeystonePCZTUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
     private val navigationRouter: NavigationRouter
 ) : BaseKeystoneScanner() {
-
     override suspend fun onSuccess(ur: UR) {
         keystoneProposalRepository.parsePCZT(ur)
         keystoneProposalRepository.extractPCZT()
@@ -31,40 +30,43 @@ abstract class BaseKeystoneScanner {
 
     protected val keystoneSDK = KeystoneSDK()
 
-    suspend operator fun invoke(result: String): ParseKeystoneQrResult = withSemaphore {
-        val latest = latestResult
-        if (latest != null && latest.isFinished) {
-            latest
-        } else {
-            val decodedResult = decodeResult(result)
-            val ur = decodedResult.ur
-
-            Twig.info { "=========> progress ur: ${decodedResult.progress}" }
-
-            val new = if (ur != null) {
-                try {
-                    onSuccess(ur)
-                    ParseKeystoneQrResult(
-                        progress = decodedResult.progress,
-                        isFinished = true
-                    )
-                } catch (e: Exception) {
-                    keystoneSDK.resetQRDecoder()
-                    ParseKeystoneQrResult(
-                        progress = 0,
-                        isFinished = false
-                    )
-                }
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
+    suspend operator fun invoke(result: String): ParseKeystoneQrResult =
+        withSemaphore {
+            val latest = latestResult
+            if (latest != null && latest.isFinished) {
+                latest
             } else {
-                ParseKeystoneQrResult(
-                    progress = decodedResult.progress,
-                    isFinished = false
-                )
+                val decodedResult = decodeResult(result)
+                val ur = decodedResult.ur
+
+                Twig.info { "=========> progress ur: ${decodedResult.progress}" }
+
+                val new =
+                    if (ur != null) {
+                        try {
+                            onSuccess(ur)
+                            ParseKeystoneQrResult(
+                                progress = decodedResult.progress,
+                                isFinished = true
+                            )
+                        } catch (e: Exception) {
+                            keystoneSDK.resetQRDecoder()
+                            ParseKeystoneQrResult(
+                                progress = 0,
+                                isFinished = false
+                            )
+                        }
+                    } else {
+                        ParseKeystoneQrResult(
+                            progress = decodedResult.progress,
+                            isFinished = false
+                        )
+                    }
+                latestResult = new
+                new
             }
-            latestResult = new
-            new
         }
-    }
 
     abstract suspend fun onSuccess(ur: UR)
 
