@@ -24,7 +24,7 @@ class CreateKeystoneAccountUseCase(
             accountDataSource.importAccountByUfvk(
                 setup =
                     AccountImportSetup(
-                        accountName = "",
+                        accountName = "Keystone",
                         keySource = "keystone",
                         ufvk = UnifiedFullViewingKey(account.ufvk),
                         purpose =

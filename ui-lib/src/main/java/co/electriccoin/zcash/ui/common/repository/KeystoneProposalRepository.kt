@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.common.repository
 import cash.z.ecc.android.sdk.exception.PcztException
 import cash.z.ecc.android.sdk.model.Pczt
 import cash.z.ecc.android.sdk.model.ZecSend
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
@@ -132,8 +133,11 @@ class KeystoneProposalRepositoryImpl(
                 // Copy the original PZCT proposal data so we pass one copy to the KeyStone device and the second one
                 // to the Rust Backend
                 val result =
-                    runCatching { proposalDataSource.addProofsToPczt(proposalPczt.clonePczt()) }
-                        .getOrNull()
+                    runCatching {
+                        proposalDataSource.addProofsToPczt(
+                            pczt = proposalPczt.clonePczt()
+                        )
+                    }.getOrNull()
                 pcztWithProofs.update {
                     PcztState(isLoading = false, pczt = result)
                 }
@@ -144,7 +148,9 @@ class KeystoneProposalRepositoryImpl(
     override suspend fun createPCZTEncoder(): UREncoder =
         withContext(Dispatchers.IO) {
             val pczt = proposalPczt ?: throw IllegalStateException("Proposal not created")
-            keystoneZcashSDK.generatePczt(pczt.toByteArray())
+            keystoneZcashSDK.generatePczt(
+                pczt = pczt.clonePczt().toByteArray()
+            )
         }
 
     override suspend fun parsePCZT(ur: UR) =
@@ -156,6 +162,7 @@ class KeystoneProposalRepositoryImpl(
             }
         }
 
+    @OptIn(ExperimentalStdlibApi::class)
     @Suppress("UseCheckOrError")
     override fun extractPCZT() {
         fun createErrorState(message: String) =
@@ -181,6 +188,10 @@ class KeystoneProposalRepositoryImpl(
                     submitState.update { createErrorState("pcztWithProofs is null") }
                     return@launch
                 }
+
+                Twig.info { "Pczt: ${proposalPczt?.toByteArray()?.toHexString()}" }
+                Twig.info { "PcztWithProofs: ${pcztWithProofs.toByteArray().toHexString()}" }
+                Twig.info { "PcztWithSignatures: ${pcztWithSignatures.toByteArray().toHexString()}" }
 
                 val result =
                     proposalDataSource.submitTransaction(
