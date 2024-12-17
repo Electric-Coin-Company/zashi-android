@@ -10,6 +10,8 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,10 +21,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -40,6 +44,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.RoundRect
@@ -48,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -69,18 +75,21 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiButton
-import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarCloseNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiLinearProgressIndicator
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
 import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
 import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
-import co.electriccoin.zcash.ui.screen.scan.view.FramePosition
+import co.electriccoin.zcash.ui.screen.scankeystone.model.ScanKeystoneState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
@@ -103,7 +112,8 @@ fun ScanKeystoneView(
     onOpenSettings: () -> Unit,
     onScanStateChanged: (ScanScreenState) -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
-    validationResult: ScanValidationState
+    validationResult: ScanValidationState,
+    state: ScanKeystoneState,
 ) = ZcashTheme(forceDarkMode = true) { // forces dark theme for this screen
     val permissionState =
         if (LocalInspectionMode.current) {
@@ -143,9 +153,11 @@ fun ScanKeystoneView(
     ) { _ ->
         Box {
             ScanMainContent(
+                state = state,
                 validationResult = validationResult,
                 onScanned = onScanned,
                 onOpenSettings = onOpenSettings,
+                onBack = onBack,
                 onScanStateChanged = onScanStateChanged,
                 permissionState = permissionState,
                 scanState = scanState,
@@ -165,6 +177,7 @@ fun ScanKeystoneView(
 
             ScanTopAppBar(
                 onBack = onBack,
+                showBack = scanState != ScanScreenState.Scanning,
                 subTitleState = topAppBarSubTitleState,
             )
         }
@@ -173,9 +186,11 @@ fun ScanKeystoneView(
 
 @Composable
 fun ScanBottomItems(
+    state: ScanKeystoneState,
     validationResult: ScanValidationState,
     scanState: ScanScreenState,
     onOpenSettings: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -201,12 +216,12 @@ fun ScanBottomItems(
         Text(
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center,
-            text = stringResource(R.string.scan_keystone_info),
+            text = state.message.getValue(),
             style = ZashiTypography.textXl,
             fontWeight = FontWeight.SemiBold
         )
 
-        Spacer(Modifier.height(92.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         if (failureText != null) {
             Row(
@@ -226,20 +241,25 @@ fun ScanBottomItems(
                             .testTag(ScanTag.FAILED_TEXT_STATE)
                 )
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
         when (scanState) {
+            ScanScreenState.Scanning, ScanScreenState.Failed -> {
+                ZashiButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onBack,
+                    text = stringResource(id = R.string.scan_keystone_cancel_button)
+                )
+            }
+
             ScanScreenState.Permission -> {
                 ZashiButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onOpenSettings,
                     text = stringResource(id = R.string.scan_keystone_settings_button)
                 )
-            }
-            else -> {
-                // do nothing
             }
         }
 
@@ -251,25 +271,40 @@ fun ScanBottomItems(
 @Composable
 private fun ScanTopAppBar(
     onBack: () -> Unit,
+    showBack: Boolean,
     subTitleState: TopAppBarSubTitleState
 ) {
-    ZashiSmallTopAppBar(
-        subtitle =
+    SmallTopAppBar(
+        subTitle =
             when (subTitleState) {
                 TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
                 TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
                 TopAppBarSubTitleState.None -> null
             },
         navigationAction = {
-            ZashiTopAppBarCloseNavigation(
-                onBack = onBack
-            )
+            if (showBack) {
+                TopAppBarBackNavigation(
+                    backText = stringResource(id = R.string.back_navigation).uppercase(),
+                    backContentDescriptionText = stringResource(R.string.back_navigation_content_description),
+                    onBack = onBack
+                )
+            }
         },
         colors = ZcashTheme.colors.transparentTopAppBarColors,
     )
 }
 
 const val CAMERA_TRANSLUCENT_BORDER = 0.5f
+
+data class FramePosition(
+    val left: Float,
+    val top: Float,
+    val right: Float,
+    val bottom: Float,
+) {
+    val width: Float = right - left
+    val height: Float = bottom - top
+}
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Suppress(
@@ -281,9 +316,11 @@ const val CAMERA_TRANSLUCENT_BORDER = 0.5f
 )
 @Composable
 private fun ScanMainContent(
+    state: ScanKeystoneState,
     validationResult: ScanValidationState,
     onScanned: (String) -> Unit,
     onOpenSettings: () -> Unit,
+    onBack: () -> Unit,
     onScanStateChanged: (ScanScreenState) -> Unit,
     permissionState: PermissionState,
     scanState: ScanScreenState,
@@ -320,6 +357,8 @@ private fun ScanMainContent(
     // Calculate the best frame size for the current device screen
     var scanFrameLayoutSize by remember { mutableStateOf<IntSize?>(null) }
     var scanFrameLayoutSizeWindow by remember { mutableStateOf<IntSize?>(null) }
+
+    val (isTorchOn, setIsTorchOn) = rememberSaveable { mutableStateOf(false) }
 
     ConstraintLayout(modifier = modifier) {
         val cutoutWidth by remember {
@@ -370,6 +409,7 @@ private fun ScanMainContent(
                 if (!LocalInspectionMode.current) {
                     ScanCameraView(
                         framePosition = framePosition,
+                        isTorchOn = isTorchOn,
                         onScanned = onScanned,
                         permissionState = permissionState,
                         setScanState = setScanState,
@@ -397,6 +437,61 @@ private fun ScanMainContent(
                             }
                     ) {
                         drawRect(Color.Black.copy(alpha = CAMERA_TRANSLUCENT_BORDER))
+                    }
+                }
+
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .offset(
+                                x = 0.dp,
+                                y = with(density) { framePosition.top.toDp() - 84.dp }
+                            ),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    if (state.progress != null) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "${state.progress}%",
+                                style = ZashiTypography.textMd,
+                                fontWeight = FontWeight.SemiBold,
+                                color = ZashiColors.Text.textPrimary
+                            )
+
+                            Spacer(Modifier.height(8.dp))
+
+                            ZashiLinearProgressIndicator(
+                                modifier = Modifier.padding(horizontal = 100.dp),
+                                progress = state.progress / 100f
+                            )
+                        }
+                    }
+                }
+
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .offset(
+                                x = 0.dp,
+                                y = with(density) { framePosition.bottom.toDp() }
+                            )
+                            .padding(top = 36.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    ImageButton(
+                        painter =
+                            if (isTorchOn) {
+                                painterResource(R.drawable.ic_scan_torch_off)
+                            } else {
+                                painterResource(R.drawable.ic_scan_torch)
+                            },
+                        contentDescription = stringResource(id = R.string.scan_keystone_torch_content_description),
+                    ) {
+                        setIsTorchOn(!isTorchOn)
                     }
                 }
             }
@@ -456,7 +551,9 @@ private fun ScanMainContent(
                     .constrainAs(bottomItems) { bottom.linkTo(parent.bottom) }
         ) {
             ScanBottomItems(
+                state = state,
                 validationResult = validationResult,
+                onBack = onBack,
                 onOpenSettings = onOpenSettings,
                 scanState = scanState,
                 modifier =
@@ -468,6 +565,23 @@ private fun ScanMainContent(
             )
         }
     }
+}
+
+@Composable
+private fun ImageButton(
+    painter: Painter,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Image(
+        painter = painter,
+        contentDescription = contentDescription,
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(12.dp))
+                .clickable { onClick() }
+    )
 }
 
 @Composable
@@ -520,6 +634,7 @@ fun ScanFrame(modifier: Modifier = Modifier) {
 @Composable
 fun ScanCameraView(
     framePosition: FramePosition,
+    isTorchOn: Boolean,
     onScanned: (result: String) -> Unit,
     permissionState: PermissionState,
     setScanState: (ScanScreenState) -> Unit,
@@ -541,11 +656,12 @@ fun ScanCameraView(
     val collectedCameraProvider = cameraProviderFlow?.collectAsState(initial = null)?.value
 
     val cameraController = remember { mutableStateOf<CameraControl?>(null) }
+    cameraController.value?.enableTorch(isTorchOn)
 
     if (null == collectedCameraProvider) {
         // Show loading indicator
     } else {
-        val contentDescription = stringResource(id = R.string.scan_keystone_preview_content_description)
+        val contentDescription = stringResource(id = R.string.scan_preview_content_description)
 
         val imageAnalysis =
             ImageAnalysis.Builder()
@@ -648,7 +764,37 @@ private fun ScanPreview() =
                 onOpenSettings = {},
                 onScanStateChanged = {},
                 topAppBarSubTitleState = TopAppBarSubTitleState.None,
-                validationResult = ScanValidationState.VALID,
+                validationResult = ScanValidationState.INVALID,
+                state =
+                    ScanKeystoneState(
+                        message = stringRes("Message"),
+                        progress = null,
+                    )
+            )
+        }
+    }
+
+@PreviewScreens
+@Composable
+private fun ScanProgressPreview() =
+    ZcashTheme {
+        Surface(
+            color = Color.Blue,
+            shape = RectangleShape,
+        ) {
+            ScanKeystoneView(
+                snackbarHostState = SnackbarHostState(),
+                onBack = {},
+                onScanned = {},
+                onOpenSettings = {},
+                onScanStateChanged = {},
+                topAppBarSubTitleState = TopAppBarSubTitleState.None,
+                validationResult = ScanValidationState.INVALID,
+                state =
+                    ScanKeystoneState(
+                        message = stringRes("Message"),
+                        progress = 50
+                    )
             )
         }
     }

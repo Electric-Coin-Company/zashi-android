@@ -3,45 +3,126 @@ package co.electriccoin.zcash.ui.screen.accountlist.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
+import co.electriccoin.zcash.ui.common.usecase.SelectWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.ExternalUrl
+import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListItem
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListState
-import kotlinx.coroutines.flow.MutableStateFlow
+import co.electriccoin.zcash.ui.screen.accountlist.model.ZashiAccountListItemState
+import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
+import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class AccountListViewModel : ViewModel() {
-    private val isLoading = MutableStateFlow(true)
+class AccountListViewModel(
+    observeWalletAccounts: ObserveWalletAccountsUseCase,
+    private val selectWalletAccount: SelectWalletAccountUseCase,
+    private val navigationRouter: NavigationRouter,
+) : ViewModel() {
+    val hideBottomSheetRequest = MutableSharedFlow<Unit>()
 
+    private val bottomSheetHiddenResponse = MutableSharedFlow<Unit>()
+
+    @Suppress("SpreadOperator")
     val state =
-        isLoading.map { isLoading ->
-            AccountListState(
-                accounts =
-                    listOf(
-                        ZashiSettingsListItemState(
-                            text = stringRes("title"),
-                            subtitle = stringRes("subtitle"),
-                            icon = R.drawable.ic_radio_button_checked
-                        ),
-                        ZashiSettingsListItemState(
-                            text = stringRes("title"),
-                            subtitle = stringRes("subtitle"),
-                            icon = R.drawable.ic_radio_button_checked
+        observeWalletAccounts().map { accounts ->
+            val items =
+                listOfNotNull(
+                    *accounts.orEmpty()
+                        .map<WalletAccount, AccountListItem> { account ->
+                            AccountListItem.Account(
+                                ZashiAccountListItemState(
+                                    title = account.name,
+                                    subtitle =
+                                        stringRes(
+                                            "${account.unified.address.address.take(ADDRESS_MAX_LENGTH)}...",
+                                        ),
+                                    icon =
+                                        when (account) {
+                                            is KeystoneAccount -> R.drawable.ic_item_keystone
+                                            is ZashiAccount -> R.drawable.ic_item_zashi
+                                        },
+                                    isSelected = account.isSelected,
+                                    onClick = { onAccountClicked(account) }
+                                )
+                            )
+                        }.toTypedArray(),
+                    AccountListItem.Other(
+                        ZashiListItemState(
+                            title = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_title),
+                            subtitle =
+                                stringRes(
+                                    co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_subtitle,
+                                ),
+                            onClick = ::onShowKeystonePromoClicked
                         )
-                    ),
-                isLoading = isLoading,
+                    ).takeIf {
+                        accounts.orEmpty().none { it is KeystoneAccount }
+                    }
+                )
+
+            AccountListState(
+                items = items,
+                isLoading = accounts == null,
+                onBottomSheetHidden = ::onBottomSheetHidden,
+                onBack = ::onBack,
                 addWalletButton =
                     ButtonState(
-                        text = stringRes("Add hardware wallet")
-                    )
+                        text = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_primary),
+                        onClick = ::onAddWalletButtonClicked
+                    ).takeIf {
+                        accounts.orEmpty().none { it is KeystoneAccount }
+                    }
             )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = null
         )
+
+    private fun onShowKeystonePromoClicked() =
+        viewModelScope.launch {
+            hideBottomSheet()
+            navigationRouter.replace(ExternalUrl("https://keyst.one/shop/products/keystone-3-pro?discount=Zashi"))
+        }
+
+    private suspend fun hideBottomSheet() {
+        hideBottomSheetRequest.emit(Unit)
+        bottomSheetHiddenResponse.first()
+    }
+
+    private fun onAccountClicked(account: WalletAccount) =
+        viewModelScope.launch {
+            selectWalletAccount(account) { hideBottomSheet() }
+        }
+
+    private fun onAddWalletButtonClicked() =
+        viewModelScope.launch {
+            hideBottomSheet()
+            navigationRouter.forward(ConnectKeystone)
+        }
+
+    private fun onBottomSheetHidden() =
+        viewModelScope.launch {
+            bottomSheetHiddenResponse.emit(Unit)
+        }
+
+    private fun onBack() =
+        viewModelScope.launch {
+            hideBottomSheet()
+            navigationRouter.back()
+        }
 }

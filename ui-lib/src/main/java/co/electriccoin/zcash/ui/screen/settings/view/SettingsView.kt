@@ -30,11 +30,11 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiVersion
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
@@ -67,7 +67,7 @@ fun Settings(
                     .scaffoldScrollPadding(paddingValues),
         ) {
             state.items.forEachIndexed { index, item ->
-                ZashiSettingsListItem(
+                ZashiListItem(
                     state = item,
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
@@ -198,29 +198,84 @@ private fun PreviewSettings() {
                     onBack = {},
                     items =
                         persistentListOf(
-                            ZashiSettingsListItemState(
-                                text = stringRes(R.string.settings_address_book),
+                            ZashiListItemState(
+                                title = stringRes(R.string.settings_address_book),
                                 icon = R.drawable.ic_settings_address_book,
                                 onClick = { },
                             ),
-                            ZashiSettingsListItemState(
-                                text = stringRes(R.string.settings_integrations),
+                            ZashiListItemState(
+                                title = stringRes(R.string.settings_integrations),
                                 icon = R.drawable.ic_settings_integrations,
                                 onClick = { },
-                                titleIcons = persistentListOf(R.drawable.ic_integrations_coinbase)
+                                titleIcons =
+                                    persistentListOf(
+                                        R.drawable.ic_integrations_coinbase,
+                                        R.drawable.ic_integrations_flexa
+                                    )
                             ),
-                            ZashiSettingsListItemState(
-                                text = stringRes(R.string.settings_advanced_settings),
+                            ZashiListItemState(
+                                title = stringRes(R.string.settings_advanced_settings),
                                 icon = R.drawable.ic_advanced_settings,
                                 onClick = { },
                             ),
-                            ZashiSettingsListItemState(
-                                text = stringRes(R.string.settings_about_us),
+                            ZashiListItemState(
+                                title = stringRes(R.string.settings_about_us),
                                 icon = R.drawable.ic_settings_info,
                                 onClick = { },
                             ),
-                            ZashiSettingsListItemState(
-                                text = stringRes(R.string.settings_feedback),
+                            ZashiListItemState(
+                                title = stringRes(R.string.settings_feedback),
+                                icon = R.drawable.ic_settings_feedback,
+                                onClick = { },
+                            ),
+                        ),
+                ),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+        )
+    }
+}
+
+@PreviewScreens
+@Composable
+private fun IntegrationsDisabledPreview() {
+    ZcashTheme {
+        Settings(
+            state =
+                SettingsState(
+                    version = stringRes("Version 1.2"),
+                    debugMenu = null,
+                    onBack = {},
+                    items =
+                        persistentListOf(
+                            ZashiListItemState(
+                                title = stringRes(R.string.settings_address_book),
+                                icon = R.drawable.ic_settings_address_book,
+                                onClick = { },
+                            ),
+                            ZashiListItemState(
+                                title = stringRes(R.string.settings_integrations),
+                                icon = R.drawable.ic_settings_integrations_disabled,
+                                subtitle = stringRes(R.string.settings_integrations_subtitle_disabled),
+                                onClick = { },
+                                isEnabled = false,
+                                titleIcons =
+                                    persistentListOf(
+                                        R.drawable.ic_integrations_coinbase_disabled,
+                                        R.drawable.ic_integrations_flexa_disabled
+                                    )
+                            ),
+                            ZashiListItemState(
+                                title = stringRes(R.string.settings_advanced_settings),
+                                icon = R.drawable.ic_advanced_settings,
+                                onClick = { },
+                            ),
+                            ZashiListItemState(
+                                title = stringRes(R.string.settings_about_us),
+                                icon = R.drawable.ic_settings_info,
+                                onClick = { },
+                            ),
+                            ZashiListItemState(
+                                title = stringRes(R.string.settings_feedback),
                                 icon = R.drawable.ic_settings_feedback,
                                 onClick = { },
                             ),

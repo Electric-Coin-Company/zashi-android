@@ -259,8 +259,7 @@ class MainActivity : FragmentActivity() {
                                         WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
                                     )
                                 } else {
-                                    walletViewModel.persistNewWallet()
-                                    walletViewModel.persistWalletRestoringState(WalletRestoringState.INITIATING)
+                                    walletViewModel.persistNewWalletAndRestoringState(WalletRestoringState.INITIATING)
                                 }
                             }
                         )

@@ -52,7 +52,7 @@ internal fun WrapHome(
 
     val isKeepScreenOnWhileSyncing = homeViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
 
-    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
+    val walletSnapshot = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value
 
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
@@ -84,15 +84,15 @@ internal fun WrapHome(
     }
 
     WrapHome(
+        goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         goScan = goScan,
         goSendConfirmation = goSendConfirmation,
         goPaymentRequest = goPaymentRequest,
-        goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
         isShowingRestoreSuccess = isShowingRestoreSuccess,
         sendArguments = sendArguments,
         setShowingRestoreSuccess = setShowingRestoreSuccess,
-        walletSnapshot = walletSnapshot
+        walletSnapshot = walletSnapshot,
     )
 }
 
@@ -171,6 +171,7 @@ internal fun WrapHome(
                 testTag = HomeTag.TAB_SEND,
                 screenContent = {
                     WrapSend(
+                        sendArguments = sendArguments,
                         goToQrScanner = goScan,
                         goBack = homeGoBack,
                         goBalances = {
@@ -179,8 +180,7 @@ internal fun WrapHome(
                             }
                         },
                         goSendConfirmation = goSendConfirmation,
-                        goPaymentRequest = goPaymentRequest,
-                        sendArguments = sendArguments
+                        goPaymentRequest = goPaymentRequest
                     )
                 }
             ),

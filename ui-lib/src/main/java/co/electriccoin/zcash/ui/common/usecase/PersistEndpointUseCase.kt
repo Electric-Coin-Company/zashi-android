@@ -4,13 +4,14 @@ import android.app.Application
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.type.ServerValidation
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 
 class PersistEndpointUseCase(
     private val application: Application,
     private val walletRepository: WalletRepository,
     private val getPersistableWallet: GetPersistableWalletUseCase,
-    private val getSynchronizer: GetSynchronizerUseCase,
+    private val synchronizerProvider: SynchronizerProvider,
 ) {
     @Throws(PersistEndpointException::class)
     suspend operator fun invoke(endpoint: LightWalletEndpoint) {
@@ -29,7 +30,7 @@ class PersistEndpointUseCase(
     }
 
     private suspend fun validateServerEndpoint(endpoint: LightWalletEndpoint) =
-        getSynchronizer()
+        synchronizerProvider.getSynchronizer()
             .validateServerEndpoint(application, endpoint)
 
     private fun persistWallet(persistableWallet: PersistableWallet) {

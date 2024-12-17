@@ -11,16 +11,18 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
-import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
+import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
+import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
-import co.electriccoin.zcash.ui.screen.qrcode.util.AndroidQrCodeImageGenerator
-import co.electriccoin.zcash.ui.screen.qrcode.util.JvmQrCodeGenerator
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
@@ -43,12 +45,12 @@ import kotlinx.coroutines.launch
 class RequestViewModel(
     private val addressTypeOrdinal: Int,
     private val application: Application,
-    getAddresses: GetAddressesUseCase,
     walletViewModel: WalletViewModel,
     getZcashCurrency: GetZcashCurrencyProvider,
     getMonetarySeparators: GetMonetarySeparatorProvider,
     shareImageBitmap: ShareImageUseCase,
     zip321BuildUriUseCase: Zip321BuildUriUseCase,
+    observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     companion object {
@@ -72,12 +74,14 @@ class RequestViewModel(
 
     internal val state =
         combine(
-            getAddresses(),
             request,
             stage,
             walletViewModel.exchangeRateUsd,
-        ) { addresses, request, currentStage, exchangeRateUsd ->
-            val walletAddress = addresses.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal))
+            observeSelectedWalletAccount.require()
+        ) { request, currentStage, exchangeRateUsd, account ->
+            val walletAddress =
+                account.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal))
+                    ?: return@combine RequestState.Loading
 
             when (currentStage) {
                 RequestStage.AMOUNT -> {
@@ -108,6 +112,11 @@ class RequestViewModel(
                 }
                 RequestStage.MEMO -> {
                     RequestState.Memo(
+                        icon =
+                            when (account) {
+                                is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
+                                is ZashiAccount -> R.drawable.ic_zec_round_full
+                            },
                         walletAddress = walletAddress,
                         request = request,
                         onMemo = { onMemo(it) },
@@ -118,6 +127,13 @@ class RequestViewModel(
                 }
                 RequestStage.QR_CODE -> {
                     RequestState.QrCode(
+                        icon =
+                            when (account) {
+                                is KeystoneAccount ->
+                                    co.electriccoin.zcash.ui.design.R.drawable
+                                        .ic_item_keystone_qr
+                                is ZashiAccount -> R.drawable.logo_zec_fill_stroke
+                            },
                         walletAddress = walletAddress,
                         request = request,
                         onQrCodeGenerate = { qrCodeForValue(request.qrCodeState.requestUri, it) },

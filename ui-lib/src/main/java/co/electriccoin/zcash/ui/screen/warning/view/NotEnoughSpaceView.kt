@@ -70,7 +70,7 @@ fun NotEnoughSpaceView(
                 Image(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     painter = painterResource(R.drawable.ic_not_enough_space),
-                    contentDescription = ""
+                    contentDescription = null
                 )
                 Spacer(Modifier.height(24.dp))
                 Text(

@@ -187,7 +187,7 @@ fun Send(
     walletSnapshot: WalletSnapshot,
     exchangeRateState: ExchangeRateState,
     sendAddressBookState: SendAddressBookState,
-    zashiMainTopAppBarState: ZashiMainTopAppBarState,
+    zashiMainTopAppBarState: ZashiMainTopAppBarState?,
 ) {
     BlankBgScaffold(topBar = {
         ZashiMainTopAppBar(zashiMainTopAppBarState)
@@ -554,7 +554,7 @@ fun SendFormAddressTextField(
                                         interactionSource = remember { MutableInteractionSource() }
                                     ),
                                 painter = painterResource(sendAddressBookState.mode.icon),
-                                contentDescription = "",
+                                contentDescription = null,
                             )
 
                             Spacer(modifier = Modifier.width(4.dp))
@@ -695,7 +695,7 @@ fun SendFormAmountTextField(
                 prefix = {
                     Image(
                         painter = painterResource(R.drawable.ic_send_zashi),
-                        contentDescription = "",
+                        contentDescription = null,
                         colorFilter = ColorFilter.tint(color = ZashiColors.Inputs.Default.text),
                     )
                 }
@@ -706,7 +706,7 @@ fun SendFormAmountTextField(
                 Image(
                     modifier = Modifier.padding(top = 12.dp),
                     painter = painterResource(id = R.drawable.ic_send_convert),
-                    contentDescription = "",
+                    contentDescription = null,
                     colorFilter = ColorFilter.tint(color = ZcashTheme.colors.secondaryColor),
                 )
                 Spacer(modifier = Modifier.width(12.dp))
@@ -755,7 +755,7 @@ fun SendFormAmountTextField(
                     prefix = {
                         Image(
                             painter = painterResource(R.drawable.ic_send_usd),
-                            contentDescription = "",
+                            contentDescription = null,
                             colorFilter =
                                 if (!exchangeRateState.isStale) {
                                     ColorFilter.tint(color = ZashiColors.Inputs.Default.text)
@@ -837,7 +837,7 @@ fun SendFormMemoTextField(
                     {
                         Image(
                             painter = painterResource(id = R.drawable.ic_confirmation_message_info),
-                            contentDescription = "",
+                            contentDescription = null,
                             colorFilter = ColorFilter.tint(ZashiColors.Utility.Gray.utilityGray500)
                         )
                     }

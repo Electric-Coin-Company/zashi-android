@@ -6,7 +6,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.fixture.WalletAddressesFixture
-import cash.z.ecc.android.sdk.model.WalletAddresses
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
 import co.electriccoin.zcash.ui.test.getAppContext
@@ -33,7 +32,7 @@ class ReceiveViewTest {
     fun setup() =
         runTest {
             val walletAddresses = WalletAddressesFixture.new()
-            newTestSetup(walletAddresses)
+            newTestSetup()
 
             // Enable substring for ellipsizing
             composeTestRule.onNodeWithText(
@@ -48,7 +47,7 @@ class ReceiveViewTest {
     @MediumTest
     fun click_settings_test() =
         runTest {
-            val testSetup = newTestSetup(WalletAddressesFixture.new())
+            val testSetup = newTestSetup()
 
             assertEquals(0, testSetup.getOnSettingsCount())
 
@@ -61,5 +60,5 @@ class ReceiveViewTest {
             assertEquals(1, testSetup.getOnSettingsCount())
         }
 
-    private fun newTestSetup(walletAddresses: WalletAddresses) = ReceiveViewTestSetup(composeTestRule, walletAddresses)
+    private fun newTestSetup() = ReceiveViewTestSetup(composeTestRule)
 }

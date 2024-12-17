@@ -47,7 +47,7 @@ fun StyledExchangeOptIn(
                 Image(
                     modifier = Modifier.padding(top = 20.dp),
                     painter = painterResource(Icon),
-                    contentDescription = ""
+                    contentDescription = null
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column(
@@ -74,7 +74,7 @@ fun StyledExchangeOptIn(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_exchange_rate_unavailable_dialog_close),
-                        contentDescription = "",
+                        contentDescription = null,
                         tint = ZashiColors.HintTooltips.defaultFg
                     )
                 }

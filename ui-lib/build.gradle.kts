@@ -43,6 +43,7 @@ android {
                     "src/main/res/ui/balances",
                     "src/main/res/ui/common",
                     "src/main/res/ui/contact",
+                    "src/main/res/ui/connect_keystone",
                     "src/main/res/ui/delete_wallet",
                     "src/main/res/ui/export_data",
                     "src/main/res/ui/home",
@@ -53,15 +54,18 @@ android {
                     "src/main/res/ui/qr_code",
                     "src/main/res/ui/request",
                     "src/main/res/ui/receive",
+                    "src/main/res/ui/review_keystone_transaction",
                     "src/main/res/ui/restore",
                     "src/main/res/ui/restore_success",
                     "src/main/res/ui/scan",
                     "src/main/res/ui/scan_keystone",
                     "src/main/res/ui/security_warning",
                     "src/main/res/ui/seed_recovery",
+                    "src/main/res/ui/select_keystone_account",
                     "src/main/res/ui/send",
                     "src/main/res/ui/send_confirmation",
                     "src/main/res/ui/settings",
+                    "src/main/res/ui/sign_keystone_transaction",
                     "src/main/res/ui/feedback",
                     "src/main/res/ui/update",
                     "src/main/res/ui/update_contact",
@@ -160,6 +164,7 @@ dependencies {
     api(libs.bundles.androidx.biometric)
 
     api(libs.keystone)
+    api(libs.hummingbird)
 
     androidTestImplementation(projects.testLib)
     androidTestImplementation(libs.bundles.androidx.test)

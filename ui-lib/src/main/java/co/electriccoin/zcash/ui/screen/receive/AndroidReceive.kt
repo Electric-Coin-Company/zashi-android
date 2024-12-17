@@ -2,10 +2,8 @@
 
 package co.electriccoin.zcash.ui.screen.receive
 
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
@@ -18,11 +16,9 @@ internal fun WrapReceive() {
     val receiveState by receiveViewModel.state.collectAsStateWithLifecycle()
     val topAppBarViewModel = koinActivityViewModel<ZashiMainTopAppBarViewModel>()
     val zashiMainTopAppBarState by topAppBarViewModel.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
 
     ReceiveView(
         state = receiveState,
-        snackbarHostState = snackbarHostState,
         zashiMainTopAppBarState = zashiMainTopAppBarState,
     )
 }

@@ -121,7 +121,7 @@ fun ZashiTooltip(
                 IconButton(onClick = onDismissRequest) {
                     Icon(
                         painter = painterResource(R.drawable.ic_exchange_rate_unavailable_dialog_close),
-                        contentDescription = "",
+                        contentDescription = null,
                         tint = ZashiColors.HintTooltips.defaultFg
                     )
                 }

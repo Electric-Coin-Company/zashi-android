@@ -12,13 +12,17 @@ import co.electriccoin.zcash.ui.NavigationTargets.INTEGRATIONS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SensitiveSettingsVisibleUseCase
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
@@ -40,6 +44,7 @@ class SettingsViewModel(
     observeConfiguration: ObserveConfigurationUseCase,
     isSensitiveSettingsVisible: SensitiveSettingsVisibleUseCase,
     observeIsFlexaAvailable: ObserveIsFlexaAvailableUseCase,
+    observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getVersionInfo: GetVersionInfoProvider,
     private val rescanBlockchain: RescanBlockchainUseCase,
@@ -94,10 +99,12 @@ class SettingsViewModel(
     val state: StateFlow<SettingsState> =
         combine(
             troubleshootingState,
+            observeSelectedWalletAccount(),
             isSensitiveSettingsVisible(),
             observeIsFlexaAvailable(),
-        ) { troubleshootingState, isSensitiveSettingsVisible, isFlexaAvailable ->
+        ) { troubleshootingState, account, isSensitiveSettingsVisible, isFlexaAvailable ->
             createState(
+                selectedAccount = account,
                 troubleshootingState = troubleshootingState,
                 isSensitiveSettingsVisible = isSensitiveSettingsVisible,
                 isFlexaAvailable = isFlexaAvailable == true
@@ -107,6 +114,7 @@ class SettingsViewModel(
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue =
                 createState(
+                    selectedAccount = null,
                     troubleshootingState = null,
                     isSensitiveSettingsVisible = isSensitiveSettingsVisible().value,
                     isFlexaAvailable = observeIsFlexaAvailable().value == true
@@ -114,6 +122,7 @@ class SettingsViewModel(
         )
 
     private fun createState(
+        selectedAccount: WalletAccount?,
         troubleshootingState: SettingsTroubleshootingState?,
         isSensitiveSettingsVisible: Boolean,
         isFlexaAvailable: Boolean
@@ -122,38 +131,56 @@ class SettingsViewModel(
         onBack = ::onBack,
         items =
             listOfNotNull(
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.settings_address_book),
+                ZashiListItemState(
+                    title = stringRes(R.string.settings_address_book),
                     icon = R.drawable.ic_settings_address_book,
                     onClick = ::onAddressBookClick
                 ),
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.settings_integrations),
-                    icon = R.drawable.ic_settings_integrations,
+                ZashiListItemState(
+                    title = stringRes(R.string.settings_integrations),
+                    icon =
+                        when (selectedAccount) {
+                            is KeystoneAccount -> R.drawable.ic_settings_integrations_disabled
+                            is ZashiAccount -> R.drawable.ic_settings_integrations
+                            null -> R.drawable.ic_settings_integrations
+                        },
                     onClick = ::onIntegrationsClick,
+                    isEnabled = selectedAccount is ZashiAccount,
+                    subtitle =
+                        stringRes(R.string.settings_integrations_subtitle_disabled).takeIf {
+                            selectedAccount !is ZashiAccount
+                        },
                     titleIcons =
                         listOfNotNull(
-                            R.drawable.ic_integrations_coinbase,
-                            R.drawable.ic_integrations_flexa.takeIf { isFlexaAvailable }
+                            when (selectedAccount) {
+                                is KeystoneAccount -> R.drawable.ic_integrations_coinbase_disabled
+                                is ZashiAccount -> R.drawable.ic_integrations_coinbase
+                                null -> R.drawable.ic_integrations_coinbase
+                            },
+                            when (selectedAccount) {
+                                is KeystoneAccount -> R.drawable.ic_integrations_flexa_disabled
+                                is ZashiAccount -> R.drawable.ic_integrations_flexa
+                                null -> R.drawable.ic_integrations_flexa
+                            }.takeIf { isFlexaAvailable }
                         ).toImmutableList()
                 ).takeIf { isSensitiveSettingsVisible },
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.settings_advanced_settings),
+                ZashiListItemState(
+                    title = stringRes(R.string.settings_advanced_settings),
                     icon = R.drawable.ic_advanced_settings,
                     onClick = ::onAdvancedSettingsClick
                 ),
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.settings_whats_new),
+                ZashiListItemState(
+                    title = stringRes(R.string.settings_whats_new),
                     icon = R.drawable.ic_settings_whats_new,
                     onClick = ::onWhatsNewClick
                 ),
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.settings_about_us),
+                ZashiListItemState(
+                    title = stringRes(R.string.settings_about_us),
                     icon = R.drawable.ic_settings_info,
                     onClick = ::onAboutUsClick
                 ),
-                ZashiSettingsListItemState(
-                    text = stringRes(R.string.settings_feedback),
+                ZashiListItemState(
+                    title = stringRes(R.string.settings_feedback),
                     icon = R.drawable.ic_settings_feedback,
                     onClick = ::onSendUsFeedbackClick
                 ),

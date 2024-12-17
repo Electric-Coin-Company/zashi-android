@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="seed_recovery_title">Recovery Phrase</string>
-    <string name="seed_recovery_header">Secure Your Wallet</string>
+    <string name="seed_recovery_header">Secure Your Zashi Wallet</string>
     <string name="seed_recovery_description">The following 24 words are the keys to your funds and are the only way
         to recover your funds if you get locked out or get a new device.</string>
     <string name="seed_recovery_reveal_button">Reveal security details</string>

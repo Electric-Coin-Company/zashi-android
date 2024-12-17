@@ -10,7 +10,6 @@ internal sealed class PaymentRequestState {
     data object Loading : PaymentRequestState()
 
     data class Prepared(
-        val arguments: PaymentRequestArguments,
         val contact: AddressBookContact?,
         val exchangeRateState: ExchangeRateState,
         val monetarySeparators: MonetarySeparators,

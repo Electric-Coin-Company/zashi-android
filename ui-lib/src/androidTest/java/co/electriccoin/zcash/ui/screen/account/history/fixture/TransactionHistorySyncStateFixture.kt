@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.account.history.fixture
 
+import cash.z.ecc.android.sdk.fixture.AccountFixture
 import cash.z.ecc.android.sdk.fixture.TransactionOverviewFixture
-import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
@@ -14,13 +14,13 @@ internal object TransactionHistorySyncStateFixture {
         persistentListOf(
             TransactionOverviewExt(
                 TransactionOverviewFixture.new(),
-                TransactionRecipient.Account(Account.DEFAULT),
+                TransactionRecipient.RecipientAccount(AccountFixture.new().accountUuid.value),
                 AddressType.Shielded,
                 emptyList()
             ),
             TransactionOverviewExt(
                 TransactionOverviewFixture.new(),
-                TransactionRecipient.Account(Account(1)),
+                TransactionRecipient.RecipientAccount(AccountFixture.new().accountUuid.value),
                 AddressType.Transparent,
                 emptyList()
             ),

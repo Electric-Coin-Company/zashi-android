@@ -125,7 +125,7 @@ internal fun Account(
     transactionsUiState: TransactionUiState,
     walletRestoringState: WalletRestoringState,
     walletSnapshot: WalletSnapshot,
-    zashiMainTopAppBarState: ZashiMainTopAppBarState
+    zashiMainTopAppBarState: ZashiMainTopAppBarState?
 ) {
     BlankBgScaffold(
         topBar = {
