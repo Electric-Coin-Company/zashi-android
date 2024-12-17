@@ -43,8 +43,8 @@ class ParseKeystoneSignInRequestUseCase(
     private fun tryParse(ur: UR) {
         try {
             keystoneSDK.parseZcashAccounts(ur)
-        } catch (_: Exception) {
-            throw InvalidKeystoneSignInQRException()
+        } catch (e: Exception) {
+            throw InvalidKeystoneSignInQRException(e)
         }
     }
 
@@ -52,10 +52,10 @@ class ParseKeystoneSignInRequestUseCase(
     private fun decodeResult(result: String): DecodeResult {
         try {
             return keystoneSDK.decodeQR(result)
-        } catch (_: Exception) {
-            throw InvalidKeystoneSignInQRException()
+        } catch (e: Exception) {
+            throw InvalidKeystoneSignInQRException(e)
         }
     }
 }
 
-class InvalidKeystoneSignInQRException : Exception()
+class InvalidKeystoneSignInQRException(cause: Throwable) : Exception(cause)
