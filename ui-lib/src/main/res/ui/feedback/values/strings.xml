@@ -12,6 +12,6 @@
     <string name="support_confirmation_explanation">Zashi is about to
         open your e-mail app with a pre-filled message.\n\nBe sure to hit send within your e-mail app.</string>
     <string name="support_information">Please let us know about any problems you have had, or features you want to see in the future.</string>
-    <string name="support_email_part_1">How is your Zashi experience?\n%s %s/5</string>
+    <string name="support_email_part_1">How is your Zashi experience?\n<xliff:g id="emoji_encoding" example="😍">%1$s</xliff:g> <xliff:g id="emoji_order" example="5">%2$s</xliff:g>/5</string>
     <string name="support_email_part_2">How can we help you?\n%s</string>
 </resources>

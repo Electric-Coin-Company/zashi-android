@@ -11,6 +11,6 @@
     <string name="support_confirmation_dialog_title">Abrir aplicación de correo</string>
     <string name="support_confirmation_explanation">Zashi está a punto de abrir tu aplicación de correo con un mensaje prellenado.\n\nAsegúrate de presionar enviar dentro de tu aplicación de correo.</string>
     <string name="support_information">Por favor, infórmanos sobre cualquier problema que hayas tenido o características que te gustaría ver en el futuro.</string>
-    <string name="support_email_part_1">¿Cómo ha sido tu experiencia con Zashi?\n%s %s/5</string>
+    <string name="support_email_part_1">¿Cómo ha sido tu experiencia con Zashi?\n<xliff:g id="emoji_encoding" example="😍">%1$s</xliff:g> <xliff:g id="emoji_order" example="5">%2$s</xliff:g>/5</string>
     <string name="support_email_part_2">¿En qué podemos ayudarte?\n%s</string>
 </resources>
