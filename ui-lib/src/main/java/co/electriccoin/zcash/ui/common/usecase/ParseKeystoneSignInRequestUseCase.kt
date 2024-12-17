@@ -39,6 +39,7 @@ class ParseKeystoneSignInRequestUseCase(
             }
         }
 
+    @Suppress("TooGenericExceptionCaught")
     @Throws(InvalidKeystoneSignInQRException::class)
     private fun tryParse(ur: UR) {
         try {
@@ -48,6 +49,7 @@ class ParseKeystoneSignInRequestUseCase(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     @Throws(InvalidKeystoneSignInQRException::class)
     private fun decodeResult(result: String): DecodeResult {
         try {

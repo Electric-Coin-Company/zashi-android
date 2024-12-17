@@ -1,11 +1,16 @@
 package co.electriccoin.zcash.ui.common.datasource
 
+import android.content.Context
 import cash.z.ecc.android.sdk.model.Account
 import cash.z.ecc.android.sdk.model.AccountImportSetup
+import cash.z.ecc.android.sdk.model.AccountPurpose
+import cash.z.ecc.android.sdk.model.UnifiedFullViewingKey
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.WalletBalance
 import cash.z.ecc.android.sdk.model.Zatoshi
+import cash.z.ecc.android.sdk.model.Zip32AccountIndex
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.SaplingInfo
 import co.electriccoin.zcash.ui.common.model.TransparentInfo
@@ -53,12 +58,17 @@ interface AccountDataSource {
 
     suspend fun selectAccount(account: WalletAccount)
 
-    suspend fun importAccountByUfvk(setup: AccountImportSetup): Account
+    suspend fun importKeystoneAccount(
+        ufvk: String,
+        seedFingerprint: String,
+        index: Long
+    ): Account
 }
 
 class AccountDataSourceImpl(
     private val synchronizerProvider: SynchronizerProvider,
     private val selectedAccountUUIDProvider: SelectedAccountUUIDProvider,
+    private val context: Context,
 ) : AccountDataSource {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -71,7 +81,7 @@ class AccountDataSourceImpl(
                     ?.accountsFlow
                     ?.map { accounts ->
                         accounts?.map { account ->
-                            if (account.keySource == "keystone") {
+                            if (account.keySource == KEYSTONE_KEYSOURCE) {
                                 InternalAccountWithAddresses(
                                     sdkAccount = account,
                                     unifiedAddress =
@@ -135,7 +145,7 @@ class AccountDataSourceImpl(
             accounts
                 ?.map { account ->
                     when (account.sdkAccount.keySource?.lowercase()) {
-                        "keystone" ->
+                        KEYSTONE_KEYSOURCE ->
                             KeystoneAccount(
                                 sdkAccount = account.sdkAccount,
                                 unified =
@@ -221,9 +231,26 @@ class AccountDataSourceImpl(
             selectedAccountUUIDProvider.setUUID(account.sdkAccount.accountUuid)
         }
 
-    override suspend fun importAccountByUfvk(setup: AccountImportSetup): Account =
+    @OptIn(ExperimentalStdlibApi::class)
+    override suspend fun importKeystoneAccount(
+        ufvk: String,
+        seedFingerprint: String,
+        index: Long
+    ): Account =
         withContext(Dispatchers.IO) {
-            synchronizerProvider.getSynchronizer().importAccountByUfvk(setup)
+            synchronizerProvider.getSynchronizer()
+                .importAccountByUfvk(
+                    AccountImportSetup(
+                        accountName = context.getString(R.string.keystone_wallet_name),
+                        keySource = KEYSTONE_KEYSOURCE,
+                        ufvk = UnifiedFullViewingKey(ufvk),
+                        purpose =
+                            AccountPurpose.Spending(
+                                seedFingerprint = seedFingerprint.hexToByteArray(),
+                                zip32AccountIndex = Zip32AccountIndex.new(index)
+                            )
+                    ),
+                )
         }
 }
 
@@ -255,3 +282,4 @@ private data class InternalAccountWithBalances(
 )
 
 private const val RETRY_DELAY = 3L
+private const val KEYSTONE_KEYSOURCE = "keystone"
