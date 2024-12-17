@@ -28,28 +28,17 @@ internal class ScanKeystonePCZTViewModel(
             )
         )
 
-    private val mutex = Mutex()
-
-    private var scanSuccess = false
-
     fun onScanned(result: String) =
         viewModelScope.launch {
-            mutex.withLock {
-                if (scanSuccess) return@withLock
-
-                try {
-                    val scanResult = parseKeystonePCZT(result)
-                    state.update { it.copy(progress = scanResult.progress) }
-                    if (scanResult.isFinished) {
-                        scanSuccess = true
-                    }
-                } catch (_: InvalidKeystonePCZTQRException) {
-                    validationState.update { ScanValidationState.INVALID }
-                } catch (_: ParsePCZTException) {
-                    validationState.update { ScanValidationState.INVALID }
-                } catch (_: Exception) {
-                    // do nothing
-                }
+            try {
+                val scanResult = parseKeystonePCZT(result)
+                state.update { it.copy(progress = scanResult.progress) }
+            } catch (_: InvalidKeystonePCZTQRException) {
+                validationState.update { ScanValidationState.INVALID }
+            } catch (_: ParsePCZTException) {
+                validationState.update { ScanValidationState.INVALID }
+            } catch (_: Exception) {
+                // do nothing
             }
         }
 }
