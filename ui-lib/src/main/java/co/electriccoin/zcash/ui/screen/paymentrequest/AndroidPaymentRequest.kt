@@ -41,6 +41,7 @@ internal fun WrapPaymentRequest(arguments: PaymentRequestArguments) {
 
     val paymentRequestViewModel = koinViewModel<PaymentRequestViewModel> { parametersOf(arguments) }
     val paymentRequestState by paymentRequestViewModel.state.collectAsStateWithLifecycle()
+    val infoState by paymentRequestViewModel.infoState.collectAsStateWithLifecycle()
 
     val authenticateForProposal = rememberSaveable { mutableStateOf<Proposal?>(null) }
 
@@ -105,7 +106,8 @@ internal fun WrapPaymentRequest(arguments: PaymentRequestArguments) {
     PaymentRequestView(
         state = paymentRequestState,
         topAppBarSubTitleState = walletState,
-        snackbarHostState = snackbarHostState
+        snackbarHostState = snackbarHostState,
+        infoState = infoState,
     )
 
     if (authenticateForProposal.value != null) {

@@ -3,7 +3,6 @@
 package co.electriccoin.zcash.ui.screen.home
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,7 +40,6 @@ import kotlinx.coroutines.launch
 @Composable
 @Suppress("LongParameterList")
 internal fun WrapHome(
-    goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
@@ -54,7 +52,7 @@ internal fun WrapHome(
 
     val isKeepScreenOnWhileSyncing = homeViewModel.isKeepScreenOnWhileSyncing.collectAsStateWithLifecycle().value
 
-    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
+    val walletSnapshot = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value
 
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
 
@@ -86,24 +84,21 @@ internal fun WrapHome(
     }
 
     WrapHome(
+        goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         goScan = goScan,
         goSendConfirmation = goSendConfirmation,
         goPaymentRequest = goPaymentRequest,
-        goSettings = goSettings,
-        goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
         isShowingRestoreSuccess = isShowingRestoreSuccess,
         sendArguments = sendArguments,
         setShowingRestoreSuccess = setShowingRestoreSuccess,
-        walletSnapshot = walletSnapshot
+        walletSnapshot = walletSnapshot,
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongParameterList", "LongMethod")
 @Composable
 internal fun WrapHome(
-    goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
     goSendConfirmation: (ZecSend) -> Unit,
@@ -167,7 +162,6 @@ internal fun WrapHome(
                                 pagerState.animateScrollToPage(HomeScreenIndex.BALANCES.pageIndex)
                             }
                         },
-                        goSettings = goSettings
                     )
                 }
             ),
@@ -177,6 +171,7 @@ internal fun WrapHome(
                 testTag = HomeTag.TAB_SEND,
                 screenContent = {
                     WrapSend(
+                        sendArguments = sendArguments,
                         goToQrScanner = goScan,
                         goBack = homeGoBack,
                         goBalances = {
@@ -185,9 +180,7 @@ internal fun WrapHome(
                             }
                         },
                         goSendConfirmation = goSendConfirmation,
-                        goPaymentRequest = goPaymentRequest,
-                        goSettings = goSettings,
-                        sendArguments = sendArguments
+                        goPaymentRequest = goPaymentRequest
                     )
                 }
             ),
@@ -205,7 +198,6 @@ internal fun WrapHome(
                 testTag = HomeTag.TAB_BALANCES,
                 screenContent = {
                     WrapBalances(
-                        goSettings = goSettings,
                         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure
                     )
                 }

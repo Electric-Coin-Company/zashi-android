@@ -7,6 +7,7 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -16,20 +17,25 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneShieldProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.balances.view.Balances
@@ -45,12 +51,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.VisibleForTesting
+import org.koin.compose.koinInject
 
 @Composable
-internal fun WrapBalances(
-    goSettings: () -> Unit,
-    goMultiTrxSubmissionFailure: () -> Unit,
-) {
+internal fun WrapBalances(goMultiTrxSubmissionFailure: () -> Unit) {
     val activity = LocalActivity.current
 
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
@@ -63,13 +67,9 @@ internal fun WrapBalances(
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    val walletSnapshot = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value
-
-    val spendingKey = walletViewModel.spendingKey.collectAsStateWithLifecycle().value
+    val walletSnapshot = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value
 
     val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
-
-    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
 
     val isHideBalances = homeViewModel.isHideBalances.collectAsStateWithLifecycle().value ?: false
 
@@ -79,21 +79,22 @@ internal fun WrapBalances(
 
     val supportInfo = supportViewModel.supportInfo.collectAsStateWithLifecycle().value
 
+    val zashiMainTopAppBarViewModel = koinActivityViewModel<ZashiMainTopAppBarViewModel>()
+
+    val zashiMainTopAppBarState = zashiMainTopAppBarViewModel.state.collectAsStateWithLifecycle().value
+
     WrapBalances(
         balanceState = balanceState,
         createTransactionsViewModel = createTransactionsViewModel,
         checkUpdateViewModel = checkUpdateViewModel,
-        goSettings = goSettings,
         goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         isHideBalances = isHideBalances,
         lifecycleScope = activity.lifecycleScope,
-        onHideBalances = { homeViewModel.showOrHideBalances() },
-        spendingKey = spendingKey,
         supportInfo = supportInfo,
         synchronizer = synchronizer,
-        topAppBarSubTitleState = walletState,
         walletSnapshot = walletSnapshot,
         walletRestoringState = walletRestoringState,
+        zashiMainTopAppBarState = zashiMainTopAppBarState
     )
 }
 
@@ -107,17 +108,14 @@ internal fun WrapBalances(
     balanceState: BalanceState,
     checkUpdateViewModel: CheckUpdateViewModel,
     createTransactionsViewModel: CreateTransactionsViewModel,
-    goSettings: () -> Unit,
     goMultiTrxSubmissionFailure: () -> Unit,
     lifecycleScope: CoroutineScope,
     isHideBalances: Boolean,
-    onHideBalances: () -> Unit,
-    spendingKey: UnifiedSpendingKey?,
     supportInfo: SupportInfo?,
     synchronizer: Synchronizer?,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
     walletSnapshot: WalletSnapshot?,
     walletRestoringState: WalletRestoringState,
+    zashiMainTopAppBarState: ZashiMainTopAppBarState?
 ) {
     val scope = rememberCoroutineScope()
 
@@ -132,10 +130,12 @@ internal fun WrapBalances(
         }
 
     val (shieldState, setShieldState) =
-        rememberSaveable(stateSaver = ShieldState.Saver) { mutableStateOf(ShieldState.None) }
+        rememberSaveable(walletSnapshot?.isZashi, stateSaver = ShieldState.Saver) { mutableStateOf(ShieldState.None) }
 
     // Keep the state always up-to-date with the latest transparent balance
-    setShieldState(updateTransparentBalanceState(shieldState, walletSnapshot))
+    LaunchedEffect(shieldState, walletSnapshot) {
+        setShieldState(updateTransparentBalanceState(shieldState, walletSnapshot))
+    }
 
     val (isShowingErrorDialog, setShowErrorDialog) = rememberSaveable { mutableStateOf(false) }
 
@@ -159,7 +159,11 @@ internal fun WrapBalances(
     // dialog dismissing in such cases is not critical, and it would require creating StatusAction custom Saver
     val showStatusDialog = remember { mutableStateOf<StatusAction.Detailed?>(null) }
 
-    if (null == synchronizer || null == walletSnapshot || null == spendingKey) {
+    val getZashiSpendingKey = koinInject<GetZashiSpendingKeyUseCase>()
+    val getSelectedWalletAccount = koinInject<GetSelectedWalletAccountUseCase>()
+    val createKeystoneShieldProposal = koinInject<CreateKeystoneShieldProposalUseCase>()
+
+    if (null == synchronizer || null == walletSnapshot) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
         // TODO [#1146]: https://github.com/Electric-Coin-Company/zashi-android/issues/1146
@@ -169,8 +173,6 @@ internal fun WrapBalances(
             balanceState = balanceState,
             isHideBalances = isHideBalances,
             isUpdateAvailable = isUpdateAvailable,
-            onHideBalances = onHideBalances,
-            onSettings = goSettings,
             isShowingErrorDialog = isShowingErrorDialog,
             setShowErrorDialog = setShowErrorDialog,
             showStatusDialog = showStatusDialog.value,
@@ -178,78 +180,102 @@ internal fun WrapBalances(
             snackbarHostState = snackbarHostState,
             onShielding = {
                 lifecycleScope.launch {
-                    setShieldState(ShieldState.Running)
-
-                    Twig.debug { "Shielding transparent funds" }
-
-                    runCatching {
-                        synchronizer.proposeShielding(
-                            account = spendingKey.account,
-                            shieldingThreshold = Zatoshi(DEFAULT_SHIELDING_THRESHOLD),
-                            // Using empty string for memo to clear the default memo prefix value defined in the SDK
-                            memo = "",
-                            // Using null will select whichever of the account's trans. receivers has funds to shield
-                            transparentReceiver = null
-                        )
-                    }.onSuccess { newProposal ->
-                        Twig.info { "Shielding proposal result: ${newProposal?.toPrettyString()}" }
-
-                        if (newProposal == null) {
-                            showShieldingError(
-                                ShieldState.Failed(
-                                    error =
-                                        context.getString(
-                                            R.string.balances_shielding_dialog_error_text_below_threshold
-                                        ),
-                                    stackTrace = ""
-                                )
-                            )
-                        } else {
-                            val result =
-                                createTransactionsViewModel.runCreateTransactions(
-                                    synchronizer = synchronizer,
-                                    spendingKey = spendingKey,
-                                    proposal = newProposal
-                                )
-
-                            // Triggering the transaction history and balances refresh to be notified immediately
-                            // about the wallet's updated state
-                            (synchronizer as SdkSynchronizer).run {
-                                refreshTransactions()
-                                refreshAllBalances()
-                            }
-
-                            when (result) {
-                                SubmitResult.Success -> {
-                                    Twig.info { "Shielding transaction done successfully" }
-                                    showShieldingSuccess()
-                                }
-                                is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc -> {
-                                    Twig.warn { "Shielding transaction failed" }
-                                    showShieldingError(ShieldState.FailedGrpc)
-                                }
-                                is SubmitResult.SimpleTrxFailure -> {
-                                    Twig.warn { "Shielding transaction failed" }
-                                    showShieldingError(
-                                        ShieldState.Failed(
-                                            error = result.toErrorMessage(),
-                                            stackTrace = result.toErrorStacktrace()
-                                        )
+                    when (val account = getSelectedWalletAccount()) {
+                        is KeystoneAccount -> {
+                            try {
+                                createKeystoneShieldProposal()
+                            } catch (_: Exception) {
+                                showShieldingError(
+                                    ShieldState.Failed(
+                                        error =
+                                            context.getString(
+                                                R.string.balances_shielding_dialog_error_text_below_threshold
+                                            ),
+                                        stackTrace = ""
                                     )
-                                }
-                                is SubmitResult.MultipleTrxFailure -> {
-                                    Twig.warn { "Shielding failed with multi-transactions-submission-error handling" }
-                                    goMultiTrxSubmissionFailure()
-                                }
+                                )
                             }
                         }
-                    }.onFailure {
-                        showShieldingError(
-                            ShieldState.Failed(
-                                error = it.message ?: "Unknown error",
-                                stackTrace = it.stackTraceToString()
-                            )
-                        )
+                        is ZashiAccount -> {
+                            val spendingKey = getZashiSpendingKey()
+                            setShieldState(ShieldState.Running)
+
+                            Twig.debug { "Shielding transparent funds" }
+
+                            runCatching {
+                                synchronizer.proposeShielding(
+                                    account = account.sdkAccount,
+                                    shieldingThreshold = Zatoshi(DEFAULT_SHIELDING_THRESHOLD),
+                                    // Using empty string for memo to clear the default memo prefix value defined in
+                                    // the SDK
+                                    memo = "",
+                                    // Using null will select whichever of the account's trans. receivers has funds
+                                    // to shield
+                                    transparentReceiver = null
+                                )
+                            }.onSuccess { newProposal ->
+                                Twig.info { "Shielding proposal result: ${newProposal?.toPrettyString()}" }
+
+                                if (newProposal == null) {
+                                    showShieldingError(
+                                        ShieldState.Failed(
+                                            error =
+                                                context.getString(
+                                                    R.string.balances_shielding_dialog_error_text_below_threshold
+                                                ),
+                                            stackTrace = ""
+                                        )
+                                    )
+                                } else {
+                                    val result =
+                                        createTransactionsViewModel.runCreateTransactions(
+                                            synchronizer = synchronizer,
+                                            spendingKey = spendingKey,
+                                            proposal = newProposal
+                                        )
+
+                                    // Triggering the transaction history and balances refresh to be notified
+                                    // immediately about the wallet's updated state
+                                    (synchronizer as SdkSynchronizer).run {
+                                        refreshTransactions()
+                                        refreshAllBalances()
+                                    }
+
+                                    when (result) {
+                                        SubmitResult.Success -> {
+                                            Twig.info { "Shielding transaction done successfully" }
+                                            showShieldingSuccess()
+                                        }
+                                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc -> {
+                                            Twig.warn { "Shielding transaction failed" }
+                                            showShieldingError(ShieldState.FailedGrpc)
+                                        }
+                                        is SubmitResult.SimpleTrxFailure -> {
+                                            Twig.warn { "Shielding transaction failed" }
+                                            showShieldingError(
+                                                ShieldState.Failed(
+                                                    error = result.toErrorMessage(),
+                                                    stackTrace = result.toErrorStacktrace()
+                                                )
+                                            )
+                                        }
+                                        is SubmitResult.MultipleTrxFailure -> {
+                                            Twig.warn {
+                                                "Shielding failed with multi-transactions-submission-error handling"
+                                            }
+                                            goMultiTrxSubmissionFailure()
+                                        }
+                                    }
+                                }
+                            }.onFailure {
+                                showShieldingError(
+                                    ShieldState.Failed(
+                                        error = it.message ?: "Unknown error",
+                                        stackTrace = it.stackTraceToString()
+                                    )
+                                )
+                            }
+                        }
                     }
                 }
             },
@@ -293,9 +319,9 @@ internal fun WrapBalances(
                 }
             },
             shieldState = shieldState,
-            topAppBarSubTitleState = topAppBarSubTitleState,
             walletSnapshot = walletSnapshot,
             walletRestoringState = walletRestoringState,
+            zashiMainTopAppBarState = zashiMainTopAppBarState
         )
     }
 }

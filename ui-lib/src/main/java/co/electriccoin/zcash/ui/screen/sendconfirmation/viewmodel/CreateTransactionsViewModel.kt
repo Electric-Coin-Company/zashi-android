@@ -1,18 +1,46 @@
 package co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
+import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.design.R
+import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationExpandedInfoState
+import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationState
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
-class CreateTransactionsViewModel : ViewModel() {
+class CreateTransactionsViewModel(
+    observeSelectedWalletAccountUseCase: ObserveSelectedWalletAccountUseCase
+) : ViewModel() {
     // Technically this value will not survive process dead, but will survive all possible configuration changes
     // Possible solution would be storing the value within [SavedStateHandle]
     val submissions: MutableStateFlow<List<TransactionSubmitResult>> = MutableStateFlow(emptyList())
+
+    val state =
+        observeSelectedWalletAccountUseCase.require().map {
+            SendConfirmationState(
+                SendConfirmationExpandedInfoState(
+                    title = stringRes(co.electriccoin.zcash.ui.R.string.send_confirmation_address_from),
+                    icon = it.icon,
+                    text = it.name
+                )
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = SendConfirmationState(from = null)
+        )
 
     suspend fun runCreateTransactions(
         synchronizer: Synchronizer,
@@ -42,7 +70,7 @@ class CreateTransactionsViewModel : ViewModel() {
                 } else {
                     // Any subsequent transaction submission failed - user needs to resolve this manually. Multiple
                     // transaction failure screen presented
-                    SubmitResult.MultipleTrxFailure
+                    SubmitResult.MultipleTrxFailure(submitResults)
                 }
             } else {
                 // All transaction submissions were successful
@@ -56,7 +84,7 @@ class CreateTransactionsViewModel : ViewModel() {
             SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther(it)
         }.also {
             // Save the submission results for the later MultipleSubmissionError screen
-            if (it == SubmitResult.MultipleTrxFailure) {
+            if (it is SubmitResult.MultipleTrxFailure) {
                 submissions.value = submitResults
             }
         }

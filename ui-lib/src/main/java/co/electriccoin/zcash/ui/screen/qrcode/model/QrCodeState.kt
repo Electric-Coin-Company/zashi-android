@@ -7,9 +7,15 @@ internal sealed class QrCodeState {
     data object Loading : QrCodeState()
 
     data class Prepared(
+        val qrCodeType: QrCodeType,
         val walletAddress: WalletAddress,
         val onAddressCopy: (String) -> Unit,
         val onQrCodeShare: (ImageBitmap) -> Unit,
         val onBack: () -> Unit,
     ) : QrCodeState()
+}
+
+enum class QrCodeType {
+    ZASHI,
+    KEYSTONE
 }

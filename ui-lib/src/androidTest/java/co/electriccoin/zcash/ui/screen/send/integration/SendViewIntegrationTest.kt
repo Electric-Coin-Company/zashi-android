@@ -38,9 +38,8 @@ class SendViewIntegrationTest {
                 goToQrScanner = {},
                 goBack = {},
                 goBalances = {},
-                goSettings = {},
-                goPaymentRequest = { _, _ -> },
                 goSendConfirmation = {},
+                goPaymentRequest = { _, _ -> },
             )
         }
 

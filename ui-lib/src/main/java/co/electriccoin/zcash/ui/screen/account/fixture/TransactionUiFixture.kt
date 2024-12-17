@@ -15,7 +15,7 @@ object TransactionUiFixture {
     val OVERVIEW: TransactionOverview = TransactionOverviewFixture.new()
 
     val RECIPIENT: TransactionRecipient =
-        TransactionRecipient.Address(
+        TransactionRecipient.RecipientAddress(
             WalletFixture.Alice.getAddresses(ZcashNetwork.Mainnet).sapling
         )
 

@@ -2,10 +2,13 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="delete_wallet_title">Reset Zashi</string>
     <string name="delete_wallet_text_1">
-        Please don\'t reset this app unless you\'re sure you understand the effects.
+        Resetting your app can lead to complete loss of access to your funds! ⚠️
     </string>
     <string name="delete_wallet_text_2">
-        Resetting the Zashi app will delete the database and cached data. Any funds you have in this wallet will be lost and can only be recovered by using your Zashi secret recovery phrase in another Zcash wallet.
+        Make sure you have both your secret recovery phrase and wallet birthday height saved before you
+        proceed.\n\nResetting the Zashi app will delete the app database and cached app data, and disconnect all
+        connected hardware wallets.\n\nOnce you Reset Zashi, the only way to access your funds is through a wallet
+        restore process that requires your Zashi Recovery Phrase and Wallet Birthday Height.
     </string>
     <string name="delete_wallet_acknowledge">I understand</string>
     <string name="delete_wallet_button">Reset Zashi</string>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_keystone_title">Conectar Billetera de Hardware</string>
+    <string name="connect_keystone_subtitle">"Escanea el código QR de tu dispositivo para conectarte."</string>
+    <string name="connect_keystone_subtitle_clickable">Ver tutorial de Keystone</string>
+    <string name="connect_keystone_item_1">Desbloquea tu Keystone</string>
+    <string name="connect_keystone_item_2">Toca el ícono del menú</string>
+    <string name="connect_keystone_item_3">Selecciona Conectar Billetera de Software</string>
+    <string name="connect_keystone_item_4">Elige la app Zashi y escanea el código QR</string>
+    <string name="connect_keystone_item_title">Instrucciones:</string>
+    <string name="connect_keystone_positive">Listo para Escanear</string>
+</resources>

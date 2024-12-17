@@ -133,7 +133,7 @@ private fun ExchangeAvailableRateLabelInternal(
                         .align(CenterVertically)
                         .size(16.dp),
                 painter = painterResource(R.drawable.ic_exchange_rate_retry),
-                contentDescription = "",
+                contentDescription = null,
                 colorFilter =
                     ColorFilter.tint(
                         if (state.isRefreshEnabled) {
@@ -207,7 +207,7 @@ private fun ExchangeRateUnavailableButton(
                 Modifier
                     .align(CenterVertically),
             painter = painterResource(R.drawable.ic_exchange_rate_info),
-            contentDescription = "",
+            contentDescription = null,
             colorFilter = ColorFilter.tint(textColor)
         )
     }

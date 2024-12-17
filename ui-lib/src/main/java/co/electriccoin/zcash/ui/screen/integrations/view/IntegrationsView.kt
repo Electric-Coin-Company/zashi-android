@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -28,10 +29,11 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ZashiCard
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItemState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDefaults
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -63,9 +65,16 @@ fun Integrations(
                     .scaffoldScrollPadding(paddingValues),
         ) {
             state.items.forEachIndexed { index, item ->
-                ZashiSettingsListItem(
+                ZashiListItem(
                     state = item,
-                    modifier = Modifier.padding(horizontal = 4.dp)
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    leading = {
+                        ZashiListItemDefaults.LeadingItem(
+                            modifier = Modifier.size(40.dp),
+                            icon = item.icon,
+                            contentDescription = item.title.getValue()
+                        )
+                    },
                 )
                 if (index != state.items.lastIndex) {
                     ZashiHorizontalDivider(
@@ -90,7 +99,7 @@ fun Integrations(
                 Image(
                     modifier = Modifier.align(CenterHorizontally),
                     painter = painterResource(R.drawable.ic_integrations_info),
-                    contentDescription = "",
+                    contentDescription = null,
                     colorFilter = ColorFilter.tint(ZashiColors.Text.textSecondary)
                 )
                 Spacer(Modifier.height(16.dp))
@@ -116,7 +125,7 @@ private fun DisabledInfo(it: StringResource) {
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_advanced_settings_info),
-            contentDescription = "",
+            contentDescription = null,
             colorFilter = ColorFilter.tint(ZashiColors.Utility.WarningYellow.utilityOrange700)
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -160,9 +169,9 @@ private fun IntegrationSettings() =
                     disabledInfo = stringRes("Disabled info"),
                     items =
                         persistentListOf(
-                            ZashiSettingsListItemState(
+                            ZashiListItemState(
                                 icon = R.drawable.ic_integrations_coinbase,
-                                text = stringRes("Coinbase"),
+                                title = stringRes("Coinbase"),
                                 subtitle = stringRes("subtitle"),
                                 onClick = {}
                             )

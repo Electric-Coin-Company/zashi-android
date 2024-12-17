@@ -12,47 +12,59 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getInternalCacheDirSuspend
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetAddressesUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
+import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.util.FileShareUtil
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
 class QrCodeViewModel(
+    getVersionInfo: GetVersionInfoProvider,
+    observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val addressTypeOrdinal: Int,
     private val application: Application,
-    getAddresses: GetAddressesUseCase,
-    getVersionInfo: GetVersionInfoProvider,
     private val copyToClipboard: CopyToClipboardUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     internal val state =
-        getAddresses().mapLatest { addresses ->
-            QrCodeState.Prepared(
-                walletAddress = addresses.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal)),
-                onAddressCopy = { address -> onAddressCopyClick(address) },
-                onQrCodeShare = { onQrCodeShareClick(it, versionInfo) },
-                onBack = ::onBack,
-            )
+        observeSelectedWalletAccount.require().map { account ->
+            val walletAddress = account.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal))
+
+            if (walletAddress == null) {
+                QrCodeState.Loading
+            } else {
+                QrCodeState.Prepared(
+                    walletAddress = walletAddress,
+                    onAddressCopy = { address -> onAddressCopyClick(address) },
+                    onQrCodeShare = { onQrCodeShareClick(it, versionInfo) },
+                    onBack = ::onBack,
+                    qrCodeType =
+                        when (account) {
+                            is KeystoneAccount -> QrCodeType.KEYSTONE
+                            is ZashiAccount -> QrCodeType.ZASHI
+                        }
+                )
+            }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),

@@ -1,16 +1,18 @@
 package co.electriccoin.zcash.ui.screen.receive.model
 
-import cash.z.ecc.android.sdk.model.WalletAddresses
+import co.electriccoin.zcash.ui.design.util.StringResource
 
-internal sealed class ReceiveState {
-    data object Loading : ReceiveState()
+data class ReceiveState(
+    val items: List<ReceiveAddressState>?,
+    val isLoading: Boolean
+)
 
-    data class Prepared(
-        val walletAddresses: WalletAddresses,
-        val onAddressCopy: (String) -> Unit,
-        val onQrCode: (ReceiveAddressType) -> Unit,
-        val onRequest: (ReceiveAddressType) -> Unit,
-        val onSettings: () -> Unit,
-        val isTestnet: Boolean,
-    ) : ReceiveState()
-}
+data class ReceiveAddressState(
+    val icon: Int,
+    val title: StringResource,
+    val subtitle: StringResource,
+    val isShielded: Boolean,
+    val onCopyClicked: () -> Unit,
+    val onQrClicked: () -> Unit,
+    val onRequestClicked: () -> Unit,
+)

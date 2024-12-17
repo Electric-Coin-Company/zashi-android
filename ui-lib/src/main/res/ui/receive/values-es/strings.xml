@@ -3,11 +3,14 @@
     <string name="receive_title">Recibir</string>
     <string name="receive_header">Recibir Zcash</string>
     <string name="receive_prioritize_shielded">Prioriza usar tu dirección protegida para máxima privacidad.</string>
-    <string name="receive_wallet_address_shielded">Dirección Protegida de Zcash</string>
-    <string name="receive_wallet_address_sapling">Dirección Sapling de Zcash</string>
-    <string name="receive_wallet_address_transparent">Dirección Transparente de Zcash</string>
+    <string name="receive_wallet_address_shielded">Dirección Protegida de Zashi</string>
+    <string name="receive_wallet_address_sapling">Dirección Sapling de Zashi</string>
+    <string name="receive_wallet_address_transparent">Dirección Transparente de Zashi</string>
     <string name="receive_copy">Copiar</string>
     <string name="receive_qr_code">Código QR</string>
     <string name="receive_request">Solicitar</string>
-    <string name="receive_clipboard_tag">Dirección de Billetera Zcash</string>
+    <string name="receive_clipboard_tag">Dirección de Wallet Zcash</string>
+    <string name="receive_wallet_address_shielded_keystone">Dirección Protegida de Keystone</string>
+    <string name="receive_wallet_address_sapling_keystone">Dirección Sapling de Keystone</string>
+    <string name="receive_wallet_address_transparent_keystone">Dirección Transparente de Keystone</string>
 </resources>

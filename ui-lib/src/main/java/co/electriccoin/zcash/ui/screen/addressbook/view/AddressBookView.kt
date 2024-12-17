@@ -1,34 +1,42 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.screen.addressbook.view
 
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
@@ -39,10 +47,10 @@ import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListItem
-import co.electriccoin.zcash.ui.design.component.ZashiSettingsListTrailingItem
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiContactListItem
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiContactListItemState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -50,10 +58,11 @@ import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.asScaffoldScrollPaddingValues
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookTag
-import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookContactState
+import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookItem
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
 
 @Composable
@@ -63,16 +72,20 @@ fun AddressBookView(
 ) {
     BlankBgScaffold(
         topBar = {
-            AddressBookTopAppBar(onBack = state.onBack, subTitleState = topAppBarSubTitleState)
+            AddressBookTopAppBar(
+                onBack = state.onBack,
+                subTitleState = topAppBarSubTitleState,
+                state = state
+            )
         }
     ) { paddingValues ->
         when {
-            state.contacts.isEmpty() && state.isLoading -> {
+            state.items.isEmpty() && state.isLoading -> {
                 CircularScreenProgressIndicator()
             }
 
-            state.contacts.isEmpty() && !state.isLoading -> {
-                Empty(
+            state.items.isEmpty() && !state.isLoading -> {
+                EmptyFullscreen(
                     state = state,
                     modifier =
                         Modifier
@@ -92,12 +105,47 @@ fun AddressBookView(
                                 .weight(1f),
                         contentPadding = paddingValues.asScaffoldScrollPaddingValues()
                     ) {
-                        itemsIndexed(state.contacts) { index, item ->
-                            ContactItem(state = item)
-                            if (index != state.contacts.lastIndex) {
-                                ZashiHorizontalDivider(
-                                    modifier = Modifier.padding(horizontal = 4.dp),
-                                )
+                        itemsIndexed(
+                            contentType = { _, item -> item.contentType },
+                            items = state.items,
+                        ) { index, item ->
+                            when (item) {
+                                is AddressBookItem.Contact -> {
+                                    ZashiContactListItem(
+                                        modifier = Modifier.padding(horizontal = 4.dp),
+                                        state = item.state,
+                                    )
+                                    if (index != state.items.lastIndex &&
+                                        state.items[index + 1] is AddressBookItem.Contact
+                                    ) {
+                                        ZashiHorizontalDivider(
+                                            modifier = Modifier.padding(horizontal = 4.dp),
+                                        )
+                                    }
+                                }
+
+                                is AddressBookItem.Title -> {
+                                    if (index == 0) {
+                                        Spacer(Modifier.height(16.dp))
+                                    } else {
+                                        Spacer(Modifier.height(20.dp))
+                                    }
+                                    ZashiTitleItem(
+                                        modifier = Modifier.padding(horizontal = 20.dp),
+                                        state = item
+                                    )
+                                    Spacer(Modifier.height(4.dp))
+                                }
+
+                                AddressBookItem.Empty -> {
+                                    Spacer(modifier = Modifier.height(68.dp))
+                                    EmptyItem(
+                                        modifier =
+                                            Modifier
+                                                .padding(horizontal = 20.dp)
+                                                .fillMaxWidth()
+                                    )
+                                }
                             }
                         }
                     }
@@ -118,88 +166,52 @@ fun AddressBookView(
 }
 
 @Composable
-private fun ContactItem(state: AddressBookContactState) {
-    ZashiSettingsListItem(
-        modifier = Modifier.padding(horizontal = 4.dp),
-        leading = { modifier ->
-            ContactItemLeading(modifier = modifier, state = state)
-        },
-        content = { modifier ->
-            ContactItemContent(modifier = modifier, state = state)
-        },
-        trailing = { modifier ->
-            ZashiSettingsListTrailingItem(
-                modifier = modifier,
-                isEnabled = true,
-                contentDescription = state.name.getValue()
-            )
-        },
-        onClick = state.onClick,
-        contentPadding = PaddingValues(top = 12.dp, bottom = if (state.isShielded) 8.dp else 12.dp)
+private fun ZashiTitleItem(
+    state: AddressBookItem.Title,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        modifier = modifier,
+        text = state.title.getValue(),
+        style = ZashiTypography.textSm,
+        fontWeight = FontWeight.Medium,
+        color = ZashiColors.Text.textTertiary,
     )
 }
 
 @Composable
-private fun ContactItemLeading(
-    state: AddressBookContactState,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier.size(40.dp)
+private fun EmptyItem(modifier: Modifier = Modifier) {
+    Surface(
+        modifier =
+            modifier.dashedBorder(
+                strokeWidth = 2.5.dp,
+                color = ZashiColors.Surfaces.strokeSecondary,
+                cornerRadiusDp = 16.dp,
+                density = LocalDensity.current
+            ),
+        shape = RoundedCornerShape(16.dp),
     ) {
-        Text(
-            modifier =
-                Modifier
-                    .background(ZashiColors.Avatars.avatarBg, CircleShape)
-                    .size(40.dp)
-                    .padding(top = 11.dp)
-                    .align(Alignment.Center),
-            text = state.initials.getValue(),
-            style = ZashiTypography.textSm,
-            color = ZashiColors.Avatars.avatarTextFg,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.SemiBold,
-        )
-        if (state.isShielded) {
-            Image(
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomEnd)
-                        .size(24.dp),
-                painter = painterResource(id = R.drawable.ic_address_book_shielded),
-                contentDescription = ""
+        Column(
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 64.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(painter = painterResource(id = R.drawable.ic_address_book_empty), contentDescription = null)
+            Spacer(modifier = Modifier.height(14.dp))
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = R.string.address_book_empty),
+                color = ZashiColors.Text.textPrimary,
+                style = ZashiTypography.header6,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.SemiBold,
             )
         }
     }
 }
 
 @Composable
-private fun ContactItemContent(
-    state: AddressBookContactState,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-    ) {
-        Text(
-            text = state.name.getValue(),
-            style = ZashiTypography.textMd,
-            fontWeight = FontWeight.SemiBold,
-            color = ZashiColors.Text.textPrimary
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        Text(
-            text = state.address.getValue(),
-            style = ZashiTypography.textXs,
-            color = ZashiColors.Text.textTertiary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-}
-
-@Composable
-private fun Empty(
+private fun EmptyFullscreen(
     state: AddressBookState,
     modifier: Modifier = Modifier
 ) {
@@ -210,7 +222,7 @@ private fun Empty(
             modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Image(painter = painterResource(id = R.drawable.ic_address_book_empty), contentDescription = "")
+            Image(painter = painterResource(id = R.drawable.ic_address_book_empty), contentDescription = null)
             Spacer(modifier = Modifier.height(14.dp))
             Text(
                 text = stringResource(id = R.string.address_book_empty),
@@ -230,6 +242,37 @@ private fun Empty(
         )
     }
 }
+
+@Suppress("MagicNumber", "ModifierComposed")
+fun Modifier.dashedBorder(
+    strokeWidth: Dp,
+    color: Color,
+    cornerRadiusDp: Dp,
+    density: Density
+) = composed(
+    factory = {
+        val strokeWidthPx = density.run { strokeWidth.toPx() }
+        val cornerRadiusPx = density.run { cornerRadiusDp.toPx() }
+
+        this.then(
+            Modifier.drawWithCache {
+                onDrawBehind {
+                    val stroke =
+                        Stroke(
+                            width = strokeWidthPx,
+                            pathEffect = PathEffect.dashPathEffect(floatArrayOf(30f, 25f), 0f)
+                        )
+
+                    drawRoundRect(
+                        color = color,
+                        style = stroke,
+                        cornerRadius = CornerRadius(cornerRadiusPx)
+                    )
+                }
+            }
+        )
+    }
+)
 
 @Composable
 private fun AddContactButton(
@@ -255,7 +298,7 @@ private fun AddContactButton(
         Image(
             painter = painterResource(id = R.drawable.ic_address_book_plus),
             colorFilter = ColorFilter.tint(ZashiColors.Btns.Primary.btnPrimaryFg),
-            contentDescription = ""
+            contentDescription = null
         )
         Spacer(modifier = Modifier.width(8.dp))
         scope.Text()
@@ -280,9 +323,10 @@ private fun AddContactButton(
 private fun AddressBookTopAppBar(
     onBack: () -> Unit,
     subTitleState: TopAppBarSubTitleState,
+    state: AddressBookState,
 ) {
     ZashiSmallTopAppBar(
-        title = stringResource(id = R.string.address_book_title),
+        title = state.title.getValue(),
         subtitle =
             when (subTitleState) {
                 TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
@@ -299,23 +343,35 @@ private fun AddressBookTopAppBar(
 
 @PreviewScreens
 @Composable
-private fun DataPreview() {
+private fun AddressBookDataPreview() {
     ZcashTheme {
         AddressBookView(
             state =
                 AddressBookState(
                     isLoading = false,
                     onBack = {},
-                    contacts =
-                        (1..10).map {
-                            AddressBookContactState(
-                                name = stringRes("Name Surname"),
-                                address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                                initials = stringRes("NS"),
-                                isShielded = it % 2 == 0,
-                                onClick = {}
+                    items =
+                        listOf(
+                            AddressBookItem.Title(stringRes("Title")),
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    name = stringRes("Name Surname"),
+                                    address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                    icon = imageRes("NS"),
+                                    isShielded = false,
+                                    onClick = {}
+                                )
+                            ),
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    name = stringRes("Name Surname"),
+                                    address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                    icon = imageRes("NS"),
+                                    isShielded = false,
+                                    onClick = {}
+                                )
                             )
-                        },
+                        ),
                     scanButton =
                         ButtonState(
                             text = stringRes("Scan"),
@@ -323,7 +379,73 @@ private fun DataPreview() {
                     manualButton =
                         ButtonState(
                             text = stringRes("Manual"),
-                        )
+                        ),
+                    title = stringRes("Address book")
+                ),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+        )
+    }
+}
+
+@PreviewScreens
+@Composable
+private fun SelectRecipientDataPreview() {
+    ZcashTheme {
+        AddressBookView(
+            state =
+                AddressBookState(
+                    isLoading = false,
+                    onBack = {},
+                    items =
+                        listOf(
+                            AddressBookItem.Title(stringRes("Title")),
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    name = stringRes("Name Surname"),
+                                    address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                    icon = imageRes("NS"),
+                                    isShielded = false,
+                                    onClick = {}
+                                )
+                            ),
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    name = stringRes("Name Surname"),
+                                    address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                    icon = imageRes("NS"),
+                                    isShielded = false,
+                                    onClick = {}
+                                )
+                            ),
+                            AddressBookItem.Title(stringRes("Title")),
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    name = stringRes("Name Surname"),
+                                    address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                    icon = imageRes("NS"),
+                                    isShielded = false,
+                                    onClick = {}
+                                )
+                            ),
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    name = stringRes("Name Surname"),
+                                    address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                    icon = imageRes("NS"),
+                                    isShielded = false,
+                                    onClick = {}
+                                )
+                            )
+                        ),
+                    scanButton =
+                        ButtonState(
+                            text = stringRes("Scan"),
+                        ),
+                    manualButton =
+                        ButtonState(
+                            text = stringRes("Manual"),
+                        ),
+                    title = stringRes("Select Recipient")
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
@@ -339,7 +461,7 @@ private fun LoadingPreview() {
                 AddressBookState(
                     isLoading = true,
                     onBack = {},
-                    contacts = emptyList(),
+                    items = emptyList(),
                     scanButton =
                         ButtonState(
                             text = stringRes("Scan"),
@@ -347,7 +469,8 @@ private fun LoadingPreview() {
                     manualButton =
                         ButtonState(
                             text = stringRes("Manual"),
-                        )
+                        ),
+                    title = stringRes("Select Recipient")
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
@@ -356,14 +479,14 @@ private fun LoadingPreview() {
 
 @PreviewScreens
 @Composable
-private fun EmptyPreview() {
+private fun EmptyAddressBookPreview() {
     ZcashTheme {
         AddressBookView(
             state =
                 AddressBookState(
                     isLoading = false,
                     onBack = {},
-                    contacts = emptyList(),
+                    items = emptyList(),
                     scanButton =
                         ButtonState(
                             text = stringRes("Scan"),
@@ -371,7 +494,46 @@ private fun EmptyPreview() {
                     manualButton =
                         ButtonState(
                             text = stringRes("Manual"),
-                        )
+                        ),
+                    title = stringRes("Address Book")
+                ),
+            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+        )
+    }
+}
+
+@PreviewScreens
+@Composable
+private fun EmptySelectRecipientPreview() {
+    ZcashTheme {
+        AddressBookView(
+            state =
+                AddressBookState(
+                    isLoading = false,
+                    onBack = {},
+                    items =
+                        listOf(
+                            AddressBookItem.Title(stringRes("Title")),
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    name = stringRes("Name Surname"),
+                                    address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                                    icon = imageRes("NS"),
+                                    isShielded = false,
+                                    onClick = {}
+                                )
+                            ),
+                            AddressBookItem.Empty
+                        ),
+                    scanButton =
+                        ButtonState(
+                            text = stringRes("Scan"),
+                        ),
+                    manualButton =
+                        ButtonState(
+                            text = stringRes("Manual"),
+                        ),
+                    title = stringRes("Select Recipient")
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )

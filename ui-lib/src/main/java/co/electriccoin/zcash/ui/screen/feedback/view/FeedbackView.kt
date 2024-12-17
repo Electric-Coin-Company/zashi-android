@@ -238,7 +238,7 @@ private fun Emoji(
         Image(
             modifier = Modifier.size(24.dp),
             painter = painterResource(emoji.res),
-            contentDescription = ""
+            contentDescription = null
         )
     }
 }

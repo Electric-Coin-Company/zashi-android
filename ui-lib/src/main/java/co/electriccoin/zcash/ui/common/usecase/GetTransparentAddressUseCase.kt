@@ -1,12 +1,9 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import co.electriccoin.zcash.ui.common.repository.WalletRepository
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 
 class GetTransparentAddressUseCase(
-    private val walletRepository: WalletRepository
+    private val accountDataSource: AccountDataSource,
 ) {
-    suspend operator fun invoke() = walletRepository.addresses.filterNotNull().map { it.transparent }.first()
+    suspend operator fun invoke() = accountDataSource.getSelectedAccount().transparent
 }

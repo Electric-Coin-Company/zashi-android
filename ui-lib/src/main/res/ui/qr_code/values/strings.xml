@@ -16,4 +16,7 @@
     <string name="qr_code_share_chooser_title">My Zashi ZEC Address</string>
     <string name="qr_code_share_chooser_text">Hi, scan this QR code to send me a ZEC payment! Download Link:
         https://play.google.com/store/apps/details?id=co.electriccoin.zcash</string>
+    <string name="qr_code_wallet_address_shielded_keystone">Keystone Shielded Address</string>
+    <string name="qr_code_wallet_address_sapling_keystone">Keystone Sapling Address</string>
+    <string name="qr_code_wallet_address_transparent_keystone">Keystone Transparent Address</string>
 </resources>

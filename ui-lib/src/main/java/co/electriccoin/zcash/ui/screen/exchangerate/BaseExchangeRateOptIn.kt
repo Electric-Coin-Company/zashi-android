@@ -55,7 +55,7 @@ internal fun BaseExchangeRateOptIn(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_exchange_rate_close),
-                    contentDescription = "",
+                    contentDescription = null,
                     colorFilter = ColorFilter.tint(ZashiColors.Btns.Tertiary.btnTertiaryFg)
                 )
             }
@@ -68,7 +68,7 @@ internal fun BaseExchangeRateOptIn(
                         .weight(1f)
                         .verticalScroll(rememberScrollState())
             ) {
-                Image(painter = painterResource(R.drawable.exchange_rate), contentDescription = "")
+                Image(painter = painterResource(R.drawable.exchange_rate), contentDescription = null)
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(id = R.string.exchange_rate_opt_in_subtitle),
@@ -84,7 +84,7 @@ internal fun BaseExchangeRateOptIn(
                 Row {
                     Image(
                         painter = painterResource(R.drawable.ic_exchange_rate_info),
-                        contentDescription = "",
+                        contentDescription = null,
                         colorFilter = ColorFilter.tint(ZashiColors.Text.textTertiary)
                     )
                     Spacer(modifier = Modifier.width(12.dp))

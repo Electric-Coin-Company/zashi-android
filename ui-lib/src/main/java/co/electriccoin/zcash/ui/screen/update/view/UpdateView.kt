@@ -101,7 +101,7 @@ fun Update(
                                 R.drawable.ic_update
                             }
                         ),
-                    contentDescription = ""
+                    contentDescription = null
                 )
                 Spacer(Modifier.height(24.dp))
                 Text(

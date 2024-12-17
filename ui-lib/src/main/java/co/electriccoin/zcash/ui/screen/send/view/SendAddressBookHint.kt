@@ -42,7 +42,7 @@ fun SendAddressBookHint(modifier: Modifier = Modifier) {
             Image(
                 painter = painterResource(id = R.drawable.ic_send_address_book_hint),
                 colorFilter = ColorFilter.tint(ZashiColors.Text.textLightSupport),
-                contentDescription = ""
+                contentDescription = null
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(

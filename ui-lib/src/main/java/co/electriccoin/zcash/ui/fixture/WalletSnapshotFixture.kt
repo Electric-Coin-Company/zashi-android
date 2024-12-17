@@ -40,6 +40,7 @@ object WalletSnapshotFixture {
         saplingBalance = saplingBalance,
         transparentBalance = transparentBalance,
         progress = progress,
-        synchronizerError = synchronizerError
+        synchronizerError = synchronizerError,
+        isZashi = false,
     )
 }

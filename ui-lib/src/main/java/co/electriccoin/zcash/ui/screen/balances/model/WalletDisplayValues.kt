@@ -41,7 +41,7 @@ data class WalletDisplayValues(
             var fiatCurrencyAmountText = getFiatCurrencyRateValue(context, fiatCurrencyAmountState)
 
             when (walletSnapshot.status) {
-                Synchronizer.Status.SYNCING -> {
+                Synchronizer.Status.INITIALIZING, Synchronizer.Status.SYNCING -> {
                     progress = walletSnapshot.progress
                     // We add "so far" to the amount
                     if (fiatCurrencyAmountState != FiatCurrencyConversionRateState.Unavailable) {

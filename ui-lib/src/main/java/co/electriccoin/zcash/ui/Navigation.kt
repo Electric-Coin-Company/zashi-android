@@ -5,18 +5,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
@@ -61,13 +63,19 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
+import co.electriccoin.zcash.ui.screen.ExternalUrl
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
+import co.electriccoin.zcash.ui.screen.about.util.WebBrowserUtil
+import co.electriccoin.zcash.ui.screen.accountlist.AccountList
+import co.electriccoin.zcash.ui.screen.accountlist.AndroidAccountList
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.addressbook.WrapAddressBook
 import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
+import co.electriccoin.zcash.ui.screen.connectkeystone.AndroidConnectKeystone
+import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
 import co.electriccoin.zcash.ui.screen.contact.WrapAddContact
@@ -85,16 +93,28 @@ import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestArgume
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
+import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
+import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
+import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneSignInRequest
+import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystonePCZTRequest
+import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystoneSignInRequest
 import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
 import co.electriccoin.zcash.ui.screen.seed.WrapSeed
+import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.AndroidSelectKeystoneAccount
+import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.send.ext.toSerializableAddress
 import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import co.electriccoin.zcash.ui.screen.sendconfirmation.WrapSendConfirmation
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationArguments
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.transactionprogress.AndroidKeystoneTransactionProgress
+import co.electriccoin.zcash.ui.screen.transactionprogress.KeystoneTransactionProgress
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.whatsnew.WrapWhatsNew
@@ -106,9 +126,8 @@ import org.koin.compose.koinInject
 
 // TODO [#1297]: Consider: Navigation passing complex data arguments different way
 // TODO [#1297]: https://github.com/Electric-Coin-Company/zashi-android/issues/1297
-
 @Composable
-@Suppress("LongMethod")
+@Suppress("LongMethod", "CyclomaticComplexMethod")
 internal fun MainActivity.Navigation() {
     val navController = LocalNavController.current
 
@@ -124,15 +143,47 @@ internal fun MainActivity.Navigation() {
     LaunchedEffect(Unit) {
         navigationRouter.observe().collect {
             when (it) {
-                is NavigationCommand.Forward -> navController.navigate(it.route)
-                is NavigationCommand.Replace ->
-                    navController.navigate(it.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        restoreState = true
+                is NavigationCommand.Forward.ByRoute -> {
+                    navController.navigate(it.route)
+                }
+                is NavigationCommand.Forward.ByTypeSafetyRoute<*> -> {
+                    if (it.route is ExternalUrl) {
+                        WebBrowserUtil.startActivity(this@Navigation, it.route.url)
+                        return@collect
+                    } else {
+                        navController.navigate(it.route)
                     }
-                NavigationCommand.Back -> navController.popBackStack()
+                }
+                is NavigationCommand.Replace.ByRoute -> {
+                    navController.navigate(it.route) {
+                        popUpTo(navController.currentBackStackEntry?.destination?.id ?: 0) {
+                            inclusive = true
+                        }
+                    }
+                }
+                is NavigationCommand.Replace.ByTypeSafetyRoute<*> -> {
+                    if (it.route is ExternalUrl) {
+                        navController.popBackStack()
+                        WebBrowserUtil.startActivity(this@Navigation, it.route.url)
+                        return@collect
+                    } else {
+                        navController.navigate(it.route) {
+                            popUpTo(navController.currentBackStackEntry?.destination?.id ?: 0) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                }
+                NavigationCommand.Back -> {
+                    navController.popBackStack()
+                }
+
+                NavigationCommand.BackToRoot -> {
+                    navController.popBackStack(
+                        destinationId = navController.graph.startDestinationId,
+                        inclusive = false
+                    )
+                }
             }
         }
     }
@@ -252,6 +303,24 @@ internal fun MainActivity.Navigation() {
         composable(SETTINGS_EXCHANGE_RATE_OPT_IN) {
             AndroidSettingsExchangeRateOptIn()
         }
+        composable<ScanKeystoneSignInRequest> {
+            WrapScanKeystoneSignInRequest()
+        }
+        composable<ScanKeystonePCZTRequest> {
+            WrapScanKeystonePCZTRequest()
+        }
+        composable<SignKeystoneTransaction> {
+            AndroidSignKeystoneTransaction()
+        }
+        dialog<AccountList>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false,
+                )
+        ) {
+            AndroidAccountList()
+        }
         composable(
             route = ScanNavigationArgs.ROUTE,
             arguments =
@@ -359,6 +428,18 @@ internal fun MainActivity.Navigation() {
                 )
             }
         }
+        composable<ConnectKeystone> {
+            AndroidConnectKeystone()
+        }
+        composable<SelectKeystoneAccount> {
+            AndroidSelectKeystoneAccount(it.toRoute())
+        }
+        composable<ReviewKeystoneTransaction> {
+            AndroidReviewKeystoneTransaction()
+        }
+        composable<KeystoneTransactionProgress> {
+            AndroidKeystoneTransactionProgress(it.toRoute())
+        }
     }
 }
 
@@ -371,6 +452,14 @@ private fun MainActivity.NavigationHome(
     backStack: NavBackStackEntry
 ) {
     WrapHome(
+        goMultiTrxSubmissionFailure = {
+            // Ultimately we could approach reworking the MultipleTrxFailure screen into a separate
+            // navigation endpoint
+            navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
+                fillInHandleForConfirmation(handle, null, SendConfirmationStage.MultipleTrxFailure)
+            }
+            navController.navigateJustOnce(SEND_CONFIRMATION)
+        },
         goScan = { navController.navigateJustOnce(ScanNavigationArgs(ScanNavigationArgs.DEFAULT)) },
         goSendConfirmation = { zecSend ->
             navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
@@ -383,15 +472,6 @@ private fun MainActivity.NavigationHome(
                 fillInHandleForPaymentRequest(handle, zecSend, zip321Uri)
             }
             navController.navigateJustOnce(PAYMENT_REQUEST)
-        },
-        goSettings = { navController.navigateJustOnce(SETTINGS) },
-        goMultiTrxSubmissionFailure = {
-            // Ultimately we could approach reworking the MultipleTrxFailure screen into a separate
-            // navigation endpoint
-            navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
-                fillInHandleForConfirmation(handle, null, SendConfirmationStage.MultipleTrxFailure)
-            }
-            navController.navigateJustOnce(SEND_CONFIRMATION)
         },
         sendArguments =
             SendArguments(
@@ -412,7 +492,7 @@ private fun MainActivity.NavigationHome(
 
     val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle()
 
-    val sdkStatus = walletViewModel.walletSnapshot.collectAsStateWithLifecycle().value?.status
+    val sdkStatus = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value?.status
 
     if (isEnoughSpace == false) {
         Twig.info { "Not enough free space" }

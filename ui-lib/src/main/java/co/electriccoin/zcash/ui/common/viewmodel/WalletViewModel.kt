@@ -8,9 +8,9 @@ import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.PersistableWallet
+import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
-import cash.z.ecc.android.sdk.model.WalletAddresses
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import cash.z.ecc.sdk.type.fromResources
@@ -26,6 +26,7 @@ import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetAddressBookUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
@@ -66,7 +67,8 @@ class WalletViewModel(
     private val getAvailableServers: GetDefaultServersProvider,
     private val resetAddressBook: ResetAddressBookUseCase,
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
-    private val getSynchronizer: GetSynchronizerUseCase
+    private val getSynchronizer: GetSynchronizerUseCase,
+    private val observeCurrentTransactions: ObserveCurrentTransactionsUseCase
 ) : AndroidViewModel(application) {
     val synchronizer = walletRepository.synchronizer
 
@@ -76,12 +78,7 @@ class WalletViewModel(
 
     val secretState: StateFlow<SecretState> = walletRepository.secretState
 
-    // This needs to be refactored once we support pin lock
-    val spendingKey = walletRepository.spendingKey
-
-    val walletSnapshot: StateFlow<WalletSnapshot?> = walletRepository.walletSnapshot
-
-    val addresses: StateFlow<WalletAddresses?> = walletRepository.addresses
+    val currentWalletSnapshot: StateFlow<WalletSnapshot?> = walletRepository.currentWalletSnapshot
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val transactionHistoryState =
@@ -89,14 +86,15 @@ class WalletViewModel(
             .filterNotNull()
             .flatMapLatest { synchronizer ->
                 combine(
-                    synchronizer.transactions,
+                    observeCurrentTransactions(),
                     synchronizer.status,
                     synchronizer.networkHeight
-                ) { transactions: List<TransactionOverview>,
+                ) { transactions: List<TransactionOverview>?,
                     status: Synchronizer.Status,
                     networkHeight: BlockHeight? ->
                     val enhancedTransactions =
                         transactions
+                            .orEmpty()
                             .sortedByDescending {
                                 it.getSortHeight(networkHeight)
                             }
@@ -109,7 +107,9 @@ class WalletViewModel(
                                         overview = it,
                                         recipient = recipient,
                                         recipientAddressType =
-                                            if (recipient != null && (recipient is TransactionRecipient.Address)) {
+                                            if (recipient != null &&
+                                                (recipient is TransactionRecipient.RecipientAddress)
+                                            ) {
                                                 synchronizer.validateAddress(recipient.addressValue)
                                             } else {
                                                 null
@@ -182,12 +182,25 @@ class WalletViewModel(
         }
     }
 
-    /**
-     * Persists a wallet asynchronously.  Clients observe [secretState]
-     * to see the side effects.  This would be used for a user restoring a wallet from a backup.
-     */
-    fun persistExistingWallet(persistableWallet: PersistableWallet) {
-        walletRepository.persistWallet(persistableWallet)
+    fun persistNewWalletAndRestoringState(state: WalletRestoringState) {
+        val application = getApplication<Application>()
+
+        viewModelScope.launch {
+            val zcashNetwork = ZcashNetwork.fromResources(application)
+            val newWallet =
+                PersistableWallet.new(
+                    application = application,
+                    zcashNetwork = zcashNetwork,
+                    endpoint = getAvailableServers().first(),
+                    walletInitMode = WalletInitMode.NewWallet
+                )
+            walletRepository.persistWallet(newWallet)
+
+            StandardPreferenceKeys.WALLET_RESTORING_STATE.putValue(
+                standardPreferenceProvider(),
+                state.toNumber()
+            )
+        }
     }
 
     /**
@@ -212,6 +225,14 @@ class WalletViewModel(
                 walletRestoringState.toNumber()
             )
         }
+    }
+
+    fun persistExistingWalletWithSeedPhrase(
+        network: ZcashNetwork,
+        seedPhrase: SeedPhrase,
+        birthday: BlockHeight?
+    ) {
+        walletRepository.persistExistingWalletWithSeedPhrase(network, seedPhrase, birthday)
     }
 
     private fun clearAppStateFlow(): Flow<Boolean> =

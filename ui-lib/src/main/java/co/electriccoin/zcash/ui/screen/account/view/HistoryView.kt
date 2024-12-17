@@ -457,7 +457,7 @@ private fun HistoryItem(
 
                 if (isInExpectedState &&
                     transaction.recipient != null &&
-                    transaction.recipient is TransactionRecipient.Address
+                    transaction.recipient is TransactionRecipient.RecipientAddress
                 ) {
                     HistoryItemExpandedAddressPart(onAction, transaction.recipient, transaction.addressBookContact)
 
@@ -563,7 +563,7 @@ private fun HistoryItemCollapsedAddressPart(
     transaction: TransactionUi,
     modifier: Modifier = Modifier
 ) {
-    if (transaction.recipient != null && transaction.recipient is TransactionRecipient.Address) {
+    if (transaction.recipient != null && transaction.recipient is TransactionRecipient.RecipientAddress) {
         when (transaction.expandableState) {
             TrxItemState.EXPANDED_ADDRESS, TrxItemState.EXPANDED_ALL -> {
                 // No address displayed in the top row
@@ -622,7 +622,7 @@ const val EXPANDED_ADDRESS_WIDTH_RATIO = 0.75f
 @Composable
 private fun HistoryItemExpandedAddressPart(
     onAction: (TrxItemAction) -> Unit,
-    recipient: TransactionRecipient.Address,
+    recipient: TransactionRecipient.RecipientAddress,
     contact: AddressBookContact?,
     modifier: Modifier = Modifier
 ) {
@@ -989,9 +989,9 @@ internal sealed class TrxItemAction {
         val newState: TrxItemState
     ) : TrxItemAction()
 
-    data class AddressClick(val address: TransactionRecipient.Address) : TrxItemAction()
+    data class AddressClick(val address: TransactionRecipient.RecipientAddress) : TrxItemAction()
 
-    data class AddToAddressBookClick(val address: TransactionRecipient.Address) : TrxItemAction()
+    data class AddToAddressBookClick(val address: TransactionRecipient.RecipientAddress) : TrxItemAction()
 
     data class MessageClick(val memo: String) : TrxItemAction()
 }
