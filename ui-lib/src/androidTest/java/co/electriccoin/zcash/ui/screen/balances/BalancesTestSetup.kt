@@ -47,11 +47,7 @@ class BalancesTestSetup(
             walletSnapshot = walletSnapshot,
             walletRestoringState = WalletRestoringState.NONE,
             zashiMainTopAppBarState =
-                ZashiMainTopAppBarStateFixture.new(
-                    onSettingsClick = {
-                        onSettingsCount.incrementAndGet()
-                    }
-                )
+                ZashiMainTopAppBarStateFixture.new()
         )
     }
 

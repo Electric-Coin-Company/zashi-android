@@ -148,10 +148,7 @@ class SendViewTestSetup(
                         isHintVisible = false,
                         onButtonClick = {}
                     ),
-                zashiMainTopAppBarState =
-                    ZashiMainTopAppBarStateFixture.new(
-                        onSettingsClick = { onSettingsCount.incrementAndGet() }
-                    )
+                zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
             )
         }
     }
