@@ -10,8 +10,10 @@ import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.SelectWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.R
+import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.ExternalUrl
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListItem
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListState
 import co.electriccoin.zcash.ui.screen.accountlist.model.ZashiAccountListItemState
@@ -65,7 +67,7 @@ class AccountListViewModel(
                                 stringRes(
                                     co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_subtitle,
                                 ),
-                            onClick = ::onAddWalletButtonClicked
+                            onClick = ::onShowKeystonePromoClicked
                         )
                     ).takeIf {
                         accounts.orEmpty().none { it is KeystoneAccount }
@@ -76,13 +78,26 @@ class AccountListViewModel(
                 items = items,
                 isLoading = accounts == null,
                 onBottomSheetHidden = ::onBottomSheetHidden,
-                onBack = ::onBack
+                onBack = ::onBack,
+                addWalletButton =
+                    ButtonState(
+                        text = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_primary),
+                        onClick = ::onAddWalletButtonClicked
+                    ).takeIf {
+                        accounts.orEmpty().none { it is KeystoneAccount }
+                    }
             )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = null
         )
+
+    private fun onShowKeystonePromoClicked() =
+        viewModelScope.launch {
+            hideBottomSheet()
+            navigationRouter.replace(ExternalUrl("https://keyst.one/shop/products/keystone-3-pro?discount=Zashi"))
+        }
 
     private suspend fun hideBottomSheet() {
         hideBottomSheetRequest.emit(Unit)

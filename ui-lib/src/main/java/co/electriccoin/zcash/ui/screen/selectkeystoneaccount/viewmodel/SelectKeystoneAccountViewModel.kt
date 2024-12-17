@@ -90,7 +90,9 @@ class SelectKeystoneAccountViewModel(
         selection: ZcashAccount?
     ) = ZashiExpandedCheckboxListItemState(
         title =
-            account.name?.let { stringRes(it) }
+            account.name
+                ?.takeIf { it.isNotBlank() }
+                ?.let { stringRes(it) }
                 ?: stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_default),
         subtitle = stringRes(deriveKeystoneAccountUnifiedAddress(account)),
         icon = R.drawable.ic_item_keystone,

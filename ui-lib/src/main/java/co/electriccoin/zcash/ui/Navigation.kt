@@ -63,7 +63,9 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
+import co.electriccoin.zcash.ui.screen.ExternalUrl
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
+import co.electriccoin.zcash.ui.screen.about.util.WebBrowserUtil
 import co.electriccoin.zcash.ui.screen.accountlist.AccountList
 import co.electriccoin.zcash.ui.screen.accountlist.AndroidAccountList
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
@@ -145,7 +147,12 @@ internal fun MainActivity.Navigation() {
                     navController.navigate(it.route)
                 }
                 is NavigationCommand.Forward.ByTypeSafetyRoute<*> -> {
-                    navController.navigate(it.route)
+                    if (it.route is ExternalUrl) {
+                        WebBrowserUtil.startActivity(this@Navigation, it.route.url)
+                        return@collect
+                    } else {
+                        navController.navigate(it.route)
+                    }
                 }
                 is NavigationCommand.Replace.ByRoute -> {
                     navController.navigate(it.route) {
@@ -155,9 +162,15 @@ internal fun MainActivity.Navigation() {
                     }
                 }
                 is NavigationCommand.Replace.ByTypeSafetyRoute<*> -> {
-                    navController.navigate(it.route) {
-                        popUpTo(navController.currentBackStackEntry?.destination?.id ?: 0) {
-                            inclusive = true
+                    if (it.route is ExternalUrl) {
+                        navController.popBackStack()
+                        WebBrowserUtil.startActivity(this@Navigation, it.route.url)
+                        return@collect
+                    } else {
+                        navController.navigate(it.route) {
+                            popUpTo(navController.currentBackStackEntry?.destination?.id ?: 0) {
+                                inclusive = true
+                            }
                         }
                     }
                 }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
@@ -28,7 +29,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
+import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.LottieProgress
+import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.listitem.BaseListItem
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemColors
@@ -102,6 +106,17 @@ private fun BottomSheetContent(state: AccountListState) {
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
+        }
+        if (state.addWalletButton != null) {
+            Spacer(modifier = Modifier.height(32.dp))
+            ZashiButton(
+                state = state.addWalletButton,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+                colors =
+                    ZashiButtonDefaults.secondaryColors(
+                        borderColor = ZashiColors.Btns.Secondary.btnSecondaryBorder
+                    )
+            )
         }
         Spacer(modifier = Modifier.height(24.dp))
         Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
@@ -254,16 +269,63 @@ private fun Preview() =
                                 )
                             )
                         ),
-                    isLoading = true,
+                    isLoading = false,
                     onBottomSheetHidden = {},
-                    onBack = {}
+                    onBack = {},
+                    addWalletButton = ButtonState(stringRes("Connect Hardware Wallet"))
                 ),
             onDismissRequest = {},
             sheetState =
                 rememberModalBottomSheetState(
                     skipHiddenState = true,
+                    skipPartiallyExpanded = true,
                     initialValue = SheetValue.Expanded,
-                    confirmValueChange = { false }
+                    confirmValueChange = { true }
+                )
+        )
+    }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@PreviewScreens
+@Composable
+private fun HardwareWalletAddedPreview() =
+    ZcashTheme {
+        AccountListView(
+            state =
+                AccountListState(
+                    items =
+                        listOf(
+                            AccountListItem.Account(
+                                ZashiAccountListItemState(
+                                    title = stringRes("Zashi"),
+                                    subtitle = stringRes("u1078r23uvtj8xj6dpdx..."),
+                                    icon = R.drawable.ic_item_zashi,
+                                    isSelected = true,
+                                    onClick = {}
+                                )
+                            ),
+                            AccountListItem.Account(
+                                ZashiAccountListItemState(
+                                    title = stringRes("Keystone"),
+                                    subtitle = stringRes("u1078r23uvtj8xj6dpdx..."),
+                                    icon = R.drawable.ic_item_keystone,
+                                    isSelected = false,
+                                    onClick = {}
+                                )
+                            ),
+                        ),
+                    isLoading = false,
+                    onBottomSheetHidden = {},
+                    onBack = {},
+                    addWalletButton = null
+                ),
+            onDismissRequest = {},
+            sheetState =
+                rememberModalBottomSheetState(
+                    skipHiddenState = true,
+                    skipPartiallyExpanded = true,
+                    initialValue = SheetValue.Expanded,
+                    confirmValueChange = { true }
                 )
         )
     }
