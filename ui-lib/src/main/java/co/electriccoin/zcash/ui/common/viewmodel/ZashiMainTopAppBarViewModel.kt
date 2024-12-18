@@ -8,9 +8,11 @@ import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.AccountSwitchState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
@@ -31,14 +33,19 @@ import kotlinx.coroutines.launch
 
 class ZashiMainTopAppBarViewModel(
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
+    observeWalletState: ObserveWalletStateUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     private val isHideBalances: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_HIDE_BALANCES)
 
     val state =
-        combine(observeSelectedWalletAccount.require(), isHideBalances) { currentAccount, isHideBalances ->
-            createState(currentAccount, isHideBalances)
+        combine(
+            observeSelectedWalletAccount.require(),
+            isHideBalances,
+            observeWalletState()
+        ) { currentAccount, isHideBalances, walletState ->
+            createState(currentAccount, isHideBalances, walletState)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -47,7 +54,8 @@ class ZashiMainTopAppBarViewModel(
 
     private fun createState(
         currentAccount: WalletAccount,
-        isHideBalances: Boolean?
+        isHideBalances: Boolean?,
+        topAppBarSubTitleState: TopAppBarSubTitleState
     ) = ZashiMainTopAppBarState(
         accountSwitchState =
             AccountSwitchState(
@@ -74,7 +82,19 @@ class ZashiMainTopAppBarViewModel(
                 icon = R.drawable.ic_app_bar_settings,
                 onClick = ::onSettingsClicked,
                 contentDescription = stringRes(co.electriccoin.zcash.ui.R.string.settings_menu_content_description)
-            )
+            ),
+        subtitle =
+            when (topAppBarSubTitleState) {
+                TopAppBarSubTitleState.Disconnected ->
+                    stringRes(
+                        co.electriccoin.zcash.ui.R.string.disconnected_label_new,
+                    )
+                TopAppBarSubTitleState.Restoring ->
+                    stringRes(
+                        co.electriccoin.zcash.ui.R.string.restoring_wallet_label_new,
+                    )
+                TopAppBarSubTitleState.None -> null
+            }
     )
 
     private fun onAccountTypeClicked() = navigationRouter.forward(AccountList)

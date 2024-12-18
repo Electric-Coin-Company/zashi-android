@@ -15,7 +15,9 @@
     <string name="unable_to_open_email">Unable to launch email app.</string>
 
     <string name="restoring_wallet_label">[Restoring Your Wallet…]</string>
+    <string name="restoring_wallet_label_new">Restoring Your Wallet…</string>
     <string name="disconnected_label">[Disconnected…]</string>
+    <string name="disconnected_label_new">Disconnected…</string>
     <string name="unable_to_open_play_store">Unable to launch Google Play Store app…</string>
 
     <string name="server_disconnected_dialog_title">Heads up</string>

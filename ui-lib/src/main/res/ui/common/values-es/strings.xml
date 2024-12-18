@@ -15,7 +15,9 @@
     <string name="unable_to_open_email">No se pudo iniciar la aplicación de correo electrónico.</string>
 
     <string name="restoring_wallet_label">[Restaurando tu billetera…]</string>
+    <string name="restoring_wallet_label_new">Restaurando tu billetera…</string>
     <string name="disconnected_label">[Desconectado…]</string>
+    <string name="disconnected_label_new">Desconectado…</string>
     <string name="unable_to_open_play_store">No se pudo iniciar la aplicación de Google Play Store…</string>
 
     <string name="server_disconnected_dialog_title">Aviso</string>
