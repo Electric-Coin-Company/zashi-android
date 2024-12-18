@@ -15,6 +15,7 @@ import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.AccountSwitchState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.accountlist.AccountList
 import kotlinx.coroutines.flow.SharingStarted
@@ -65,12 +66,14 @@ class ZashiMainTopAppBarViewModel(
                     } else {
                         R.drawable.ic_app_bar_balances_hide
                     },
-                onClick = ::onShowOrHideBalancesClicked
+                onClick = ::onShowOrHideBalancesClicked,
+                contentDescription = stringRes(co.electriccoin.zcash.ui.R.string.hide_balances_content_description)
             ),
         settingsButton =
             IconButtonState(
                 icon = R.drawable.ic_app_bar_settings,
-                onClick = ::onSettingsClicked
+                onClick = ::onSettingsClicked,
+                contentDescription = stringRes(co.electriccoin.zcash.ui.R.string.settings_menu_content_description)
             )
     )
 

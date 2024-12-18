@@ -12,7 +12,10 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
+import co.electriccoin.zcash.ui.design.R
+import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
@@ -148,7 +151,17 @@ class SendViewTestSetup(
                         isHintVisible = false,
                         onButtonClick = {}
                     ),
-                zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
+                zashiMainTopAppBarState =
+                    ZashiMainTopAppBarStateFixture.new(
+                        settingsButton =
+                            IconButtonState(
+                                icon = R.drawable.ic_app_bar_settings,
+                                contentDescription =
+                                    stringRes(co.electriccoin.zcash.ui.R.string.settings_menu_content_description),
+                            ) {
+                                onSettingsCount.incrementAndGet()
+                            }
+                    )
             )
         }
     }
