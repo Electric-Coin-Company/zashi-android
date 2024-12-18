@@ -30,6 +30,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveOnAccountChangedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
@@ -122,4 +123,5 @@ val useCaseModule =
         factoryOf(::ObserveTransactionProposalUseCase)
         factoryOf(::SharePCZTUseCase)
         factoryOf(::CreateKeystoneProposalPCZTEncoderUseCase)
+        factoryOf(::ObserveOnAccountChangedUseCase)
     }

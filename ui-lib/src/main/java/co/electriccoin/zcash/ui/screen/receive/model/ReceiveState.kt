@@ -11,6 +11,8 @@ data class ReceiveAddressState(
     val icon: Int,
     val title: StringResource,
     val subtitle: StringResource,
+    val isExpanded: Boolean,
+    val onClick: () -> Unit,
     val isShielded: Boolean,
     val onCopyClicked: () -> Unit,
     val onQrClicked: () -> Unit,

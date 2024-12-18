@@ -25,10 +25,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -37,11 +39,14 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 interface AccountDataSource {
+    val onAccountChanged: Flow<Unit>
+
     val allAccounts: StateFlow<List<WalletAccount>?>
 
     val selectedAccount: Flow<WalletAccount?>
@@ -71,6 +76,8 @@ class AccountDataSourceImpl(
     private val context: Context,
 ) : AccountDataSource {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+    override val onAccountChanged = MutableSharedFlow<Unit>()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val internalAccounts: Flow<List<InternalAccountWithBalances>?> =
@@ -199,12 +206,14 @@ class AccountDataSourceImpl(
             .map { account ->
                 account?.firstOrNull { it.isSelected }
             }
+            .distinctUntilChanged()
 
     override val zashiAccount: Flow<ZashiAccount?> =
         allAccounts
             .map { account ->
                 account?.filterIsInstance<ZashiAccount>()?.firstOrNull()
             }
+            .distinctUntilChanged()
 
     override suspend fun getAllAccounts() =
         withContext(Dispatchers.IO) {
@@ -221,15 +230,21 @@ class AccountDataSourceImpl(
             zashiAccount.filterNotNull().first()
         }
 
-    override suspend fun selectAccount(account: Account) =
+    override suspend fun selectAccount(account: Account) {
         withContext(Dispatchers.IO) {
-            selectedAccountUUIDProvider.setUUID(account.accountUuid)
-        }
+            val current = selectedAccountUUIDProvider.getUUID()
 
-    override suspend fun selectAccount(account: WalletAccount) =
-        withContext(Dispatchers.IO) {
-            selectedAccountUUIDProvider.setUUID(account.sdkAccount.accountUuid)
+            selectedAccountUUIDProvider.setUUID(account.accountUuid)
+
+            scope.launch {
+                if (current != account.accountUuid) {
+                    onAccountChanged.emit(Unit)
+                }
+            }
         }
+    }
+
+    override suspend fun selectAccount(account: WalletAccount) = selectAccount(account.sdkAccount)
 
     @OptIn(ExperimentalStdlibApi::class)
     override suspend fun importKeystoneAccount(

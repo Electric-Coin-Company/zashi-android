@@ -21,10 +21,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -85,8 +81,6 @@ private fun ReceiveContents(
     items: List<ReceiveAddressState>,
     modifier: Modifier = Modifier,
 ) {
-    var expandedIndex by rememberSaveable { mutableIntStateOf(0) }
-
     Column(
         modifier =
             modifier
@@ -122,8 +116,6 @@ private fun ReceiveContents(
 
             AddressPanel(
                 state = state,
-                expanded = index == expandedIndex,
-                onExpand = { expandedIndex = index },
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -133,8 +125,6 @@ private fun ReceiveContents(
 @Composable
 private fun AddressPanel(
     state: ReceiveAddressState,
-    expanded: Boolean,
-    onExpand: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -151,7 +141,7 @@ private fun AddressPanel(
                     RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
                 )
                 .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
-                .clickable { onExpand() }
+                .clickable(onClick = state.onClick)
                 .padding(all = ZcashTheme.dimens.spacingLarge)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -192,7 +182,7 @@ private fun AddressPanel(
             }
         }
 
-        AnimatedVisibility(visible = expanded) {
+        AnimatedVisibility(visible = state.isExpanded) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier =
@@ -298,6 +288,8 @@ private fun ZashiPreview() =
                                 onCopyClicked = {},
                                 onQrClicked = { },
                                 onRequestClicked = {},
+                                isExpanded = true,
+                                onClick = {}
                             ),
                             ReceiveAddressState(
                                 icon = R.drawable.ic_zec_round_stroke,
@@ -307,32 +299,9 @@ private fun ZashiPreview() =
                                 onCopyClicked = {},
                                 onQrClicked = { },
                                 onRequestClicked = { },
+                                isExpanded = false,
+                                onClick = {}
                             )
-                        ),
-                    isLoading = false
-                ),
-            zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
-        )
-    }
-
-@PreviewScreens
-@Composable
-private fun KeystonePreview() =
-    ZcashTheme {
-        ReceiveView(
-            state =
-                ReceiveState(
-                    items =
-                        listOf(
-                            ReceiveAddressState(
-                                icon = co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone,
-                                title = stringRes("Keystone Address"),
-                                subtitle = stringRes("subtitle"),
-                                isShielded = true,
-                                onCopyClicked = {},
-                                onQrClicked = {},
-                                onRequestClicked = {},
-                            ),
                         ),
                     isLoading = false
                 ),
