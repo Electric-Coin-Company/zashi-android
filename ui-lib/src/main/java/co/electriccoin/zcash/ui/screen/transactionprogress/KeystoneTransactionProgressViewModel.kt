@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.common.repository.SubmitProposalState
 import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
+import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
@@ -28,7 +29,8 @@ class KeystoneTransactionProgressViewModel(
     private val keystoneProposalRepository: KeystoneProposalRepository,
     private val copyToClipboardUseCase: CopyToClipboardUseCase,
     private val sendEmailUseCase: SendEmailUseCase,
-    private val cancelKeystoneProposalFlow: CancelKeystoneProposalFlowUseCase
+    private val cancelKeystoneProposalFlow: CancelKeystoneProposalFlowUseCase,
+    private val viewTransactionsAfterSuccessfulProposal: ViewTransactionsAfterSuccessfulProposalUseCase,
 ) : ViewModel() {
     private val supportContacted = MutableStateFlow(false)
 
@@ -70,7 +72,7 @@ class KeystoneTransactionProgressViewModel(
         showBackButton = supportContacted,
         onBack = {
             if (supportContacted) {
-                onBackToHomepageAndClearSendForm()
+                onBackToSendFormAndClear()
             }
             // do nothing
         },
@@ -91,15 +93,15 @@ class KeystoneTransactionProgressViewModel(
 
     private fun createGrpcFailureTransactionState() =
         GrpcFailureTransactionState(
-            onBack = ::onBackToHomepageAndClearSendForm,
-            onCloseClick = ::onBackToHomepageAndClearSendForm
+            onBack = ::onViewTransactions,
+            onCloseClick = ::onViewTransactions
         )
 
     private suspend fun createSuccessfulTransactionState(proposal: TransactionProposal?) =
         SuccessfulTransactionState(
-            onBack = ::onBackToHomepageAndClearSendForm,
-            onViewTransactionClick = ::onBackToHomepageAndClearSendForm,
-            onCloseClick = ::onBackToHomepageAndClearSendForm,
+            onBack = ::onViewTransactions,
+            onViewTransactionClick = ::onViewTransactions,
+            onCloseClick = ::onViewTransactions,
             text =
                 if (proposal is ShieldTransactionProposal) {
                     stringRes(R.string.send_confirmation_success_subtitle_transparent)
@@ -118,9 +120,9 @@ class KeystoneTransactionProgressViewModel(
         proposal: TransactionProposal?,
         result: SubmitResult.SimpleTrxFailure
     ) = FailureTransactionState(
-        onBack = ::onBackToHomepage,
-        onCloseClick = ::onBackToHomepage,
-        onViewTransactionClick = ::onBackToHomepageAndClearSendForm,
+        onBack = ::onBackToSendForm,
+        onCloseClick = ::onBackToSendForm,
+        onViewTransactionClick = ::onViewTransactions,
         onReportClick = {
             viewModelScope.launch {
                 sendEmailUseCase(result)
@@ -167,11 +169,15 @@ class KeystoneTransactionProgressViewModel(
         return address?.let { "${it.take(ADDRESS_MAX_LENGTH)}..." }.orEmpty()
     }
 
-    private fun onBackToHomepageAndClearSendForm() {
+    private fun onBackToSendFormAndClear() {
         cancelKeystoneProposalFlow(clearSendForm = true)
     }
 
-    private fun onBackToHomepage() {
+    private fun onBackToSendForm() {
         cancelKeystoneProposalFlow(clearSendForm = false)
+    }
+
+    private fun onViewTransactions() {
+        viewTransactionsAfterSuccessfulProposal()
     }
 }
