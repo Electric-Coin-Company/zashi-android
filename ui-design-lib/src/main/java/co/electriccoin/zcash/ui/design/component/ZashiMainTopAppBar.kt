@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.design.component
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -14,18 +15,24 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState.AccountType
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
 fun ZashiMainTopAppBar(
@@ -34,22 +41,34 @@ fun ZashiMainTopAppBar(
 ) {
     if (state == null) return
 
-    ZashiSmallTopAppBar(
-        windowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
-        hamburgerMenuActions = {
-            if (showHideBalances) {
-                Crossfade(state.balanceVisibilityButton, label = "") {
-                    ZashiIconButton(it)
+    Box {
+        ZashiSmallTopAppBar(
+            windowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
+            hamburgerMenuActions = {
+                if (showHideBalances) {
+                    Crossfade(state.balanceVisibilityButton, label = "") {
+                        ZashiIconButton(it)
+                    }
+                    Spacer(Modifier.width(4.dp))
                 }
-                Spacer(Modifier.width(4.dp))
-            }
-            ZashiIconButton(state.settingsButton)
-            Spacer(Modifier.width(20.dp))
-        },
-        navigationAction = {
-            AccountSwitch(state.accountSwitchState)
-        },
-    )
+                ZashiIconButton(state.settingsButton)
+                Spacer(Modifier.width(20.dp))
+            },
+            navigationAction = {
+                AccountSwitch(state.accountSwitchState)
+            },
+        )
+
+        if (state.subtitle != null) {
+            Text(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                text = state.subtitle.getValue().uppercase(),
+                style = ZashiTypography.textXs,
+                fontWeight = FontWeight.Normal,
+                color = ZashiColors.Text.textQuaternary
+            )
+        }
+    }
 }
 
 @Composable
@@ -108,6 +127,7 @@ data class ZashiMainTopAppBarState(
     val accountSwitchState: AccountSwitchState,
     val balanceVisibilityButton: IconButtonState,
     val settingsButton: IconButtonState,
+    val subtitle: StringResource?
 ) {
     enum class AccountType {
         ZASHI,
@@ -134,6 +154,7 @@ private fun ZashiMainTopAppBarPreview() =
                         ),
                     balanceVisibilityButton = IconButtonState(R.drawable.ic_app_bar_balances_hide) {},
                     settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {},
+                    subtitle = null
                 )
         )
     }
@@ -152,6 +173,26 @@ private fun KeystoneMainTopAppBarPreview() =
                         ),
                     balanceVisibilityButton = IconButtonState(R.drawable.ic_app_bar_balances_hide) {},
                     settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {},
+                    subtitle = null
+                )
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun MainTopAppBarWithSubtitlePreview() =
+    ZcashTheme {
+        ZashiMainTopAppBar(
+            state =
+                ZashiMainTopAppBarState(
+                    accountSwitchState =
+                        AccountSwitchState(
+                            accountType = AccountType.KEYSTONE,
+                            onAccountTypeClick = {},
+                        ),
+                    balanceVisibilityButton = IconButtonState(R.drawable.ic_app_bar_balances_hide) {},
+                    settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {},
+                    subtitle = stringRes("Subtitle")
                 )
         )
     }

@@ -27,5 +27,6 @@ object ZashiMainTopAppBarStateFixture {
         accountSwitchState = accountSwitchState,
         balanceVisibilityButton = balanceVisibilityButton,
         settingsButton = settingsButton,
+        subtitle = null
     )
 }
