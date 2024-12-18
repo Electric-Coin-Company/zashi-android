@@ -6,9 +6,11 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.datasource.ShieldTransactionProposal
 import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneProposalPCZTEncoderUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveTransactionProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -28,6 +30,7 @@ import kotlinx.coroutines.launch
 
 class SignKeystoneTransactionViewModel(
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
+    observeTransactionProposalUseCase: ObserveTransactionProposalUseCase,
     private val navigationRouter: NavigationRouter,
     private val createKeystoneProposalPCZTEncoder: CreateKeystoneProposalPCZTEncoderUseCase,
     private val cancelKeystoneProposalFlow: CancelKeystoneProposalFlowUseCase,
@@ -38,13 +41,22 @@ class SignKeystoneTransactionViewModel(
     private val currentQrPart = MutableStateFlow<String?>(null)
 
     val state: StateFlow<SignKeystoneTransactionState?> =
-        combine(observeSelectedWalletAccount.require(), currentQrPart) { wallet, qrData ->
+        combine(
+            observeTransactionProposalUseCase(),
+            observeSelectedWalletAccount.require(),
+            currentQrPart
+        ) { proposal, wallet, qrData ->
             SignKeystoneTransactionState(
                 accountInfo =
                     ZashiAccountInfoListItemState(
                         icon = R.drawable.ic_settings_info,
                         title = wallet.name,
-                        subtitle = stringRes("${wallet.unified.address.address.take(ADDRESS_MAX_LENGTH)}...")
+                        subtitle =
+                            if (proposal is ShieldTransactionProposal) {
+                                stringRes("${wallet.transparent.address.address.take(ADDRESS_MAX_LENGTH)}...")
+                            } else {
+                                stringRes("${wallet.unified.address.address.take(ADDRESS_MAX_LENGTH)}...")
+                            }
                     ),
                 generateNextQrCode = { currentQrPart.update { encoder?.nextPart() } },
                 qrData = qrData,

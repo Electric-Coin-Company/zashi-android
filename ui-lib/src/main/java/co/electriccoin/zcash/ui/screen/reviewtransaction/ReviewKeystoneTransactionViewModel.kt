@@ -14,8 +14,8 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveKeystoneSendTransactionProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveTransactionProposalUseCase
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
@@ -39,7 +39,7 @@ import kotlinx.coroutines.flow.update
 class ReviewKeystoneTransactionViewModel(
     observeContactByAddress: ObserveContactByAddressUseCase,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
-    observeKeystoneSendTransactionProposal: ObserveKeystoneSendTransactionProposalUseCase,
+    observeKeystoneSendTransactionProposal: ObserveTransactionProposalUseCase,
     private val cancelKeystoneProposalFlow: CancelKeystoneProposalFlowUseCase,
     private val getExchangeRate: GetExchangeRateUseCase,
     private val navigationRouter: NavigationRouter,
@@ -60,7 +60,7 @@ class ReviewKeystoneTransactionViewModel(
     val state =
         combine(
             observeSelectedWalletAccount.require(),
-            observeKeystoneSendTransactionProposal(),
+            observeKeystoneSendTransactionProposal.filterSendTransactions(),
             isReceiverExpanded,
             exchangeRate,
         ) { wallet, zecSend, isReceiverExpanded, exchangeRate ->

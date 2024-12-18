@@ -8,10 +8,12 @@ import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class ObserveKeystoneSendTransactionProposalUseCase(
+class ObserveTransactionProposalUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
 ) {
-    operator fun invoke(): Flow<SendTransactionProposal?> =
+    operator fun invoke() = keystoneProposalRepository.transactionProposal
+
+    fun filterSendTransactions(): Flow<SendTransactionProposal?> =
         keystoneProposalRepository.transactionProposal.map {
             when (it) {
                 is RegularTransactionProposal -> it
