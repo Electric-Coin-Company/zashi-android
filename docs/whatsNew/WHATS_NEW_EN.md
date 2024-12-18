@@ -15,24 +15,10 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [1.3 (812)] - 2024-12-19
 
 ### Added
-- New feature: Keystone integration with an ability to connect HW wallet to Zashi wallet, preview transactions, sign
-  new transactions and shield transparent funds
-- Thus, several new screens for the Keystone account import and signing transactions using the Keystone device have
-  been added
-
-### Changed
-- App bar has been redesigned to give users ability to switch between wallet accounts
-- The Integrations screen is now enabled for the Zashi account only
-- The Address book screen now shows the wallet addresses if more than one Account is imported
-- Optimizations on the New wallet creation to prevent indeterministic chain of async actions
-- Optimizations on the Wallet restoration to prevent indeterministic chain of async actions
-- Optimizations on the Send screen to run actions on ViewModel scope to prevent actions from being interrupted by
-  finalized UI scope
-- `SynchronizerProvider` is now the single source of truth when providing synchronizer
-- `SynchronizerProvider` provides synchronizer only when it is fully initialized
-
-### Fixed
-- Wallet creation and restoration are now more stable for troublesome devices
+Zashi + Keystone Hardware Wallet integration is live!
+- Connect your Keystone wallet with Zashi.
+- Sign a transaction with your Keystone wallet.
+- Includes both shielded and transparent ZEC support.
 
 ## [1.2.3 (799)] - 2024-11-26
 
