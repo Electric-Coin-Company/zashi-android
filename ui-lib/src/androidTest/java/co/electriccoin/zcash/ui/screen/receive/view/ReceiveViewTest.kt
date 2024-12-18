@@ -5,10 +5,8 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.filters.MediumTest
-import cash.z.ecc.android.sdk.fixture.WalletAddressesFixture
+import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.screen.send.ext.abbreviated
-import co.electriccoin.zcash.ui.test.getAppContext
 import co.electriccoin.zcash.ui.test.getStringResource
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -31,16 +29,14 @@ class ReceiveViewTest {
     @MediumTest
     fun setup() =
         runTest {
-            val walletAddresses = WalletAddressesFixture.new()
             newTestSetup()
 
             // Enable substring for ellipsizing
             composeTestRule.onNodeWithText(
-                text = walletAddresses.unified.abbreviated(getAppContext()),
-                substring = true
-            ).also {
-                it.assertExists()
-            }
+                text = "${WalletAddressFixture.UNIFIED_ADDRESS_STRING.take(20)}...",
+                substring = true,
+                useUnmergedTree = true
+            ).assertExists()
         }
 
     @Test

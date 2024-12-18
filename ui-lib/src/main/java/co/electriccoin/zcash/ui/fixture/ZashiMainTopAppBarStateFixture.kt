@@ -4,16 +4,28 @@ import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.AccountSwitchState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
+import co.electriccoin.zcash.ui.design.util.stringRes
 
 object ZashiMainTopAppBarStateFixture {
-    fun new() =
-        ZashiMainTopAppBarState(
-            accountSwitchState =
-                AccountSwitchState(
-                    accountType = ZashiMainTopAppBarState.AccountType.ZASHI,
-                    onAccountTypeClick = {}
-                ),
-            balanceVisibilityButton = IconButtonState(R.drawable.ic_app_bar_balances_hide) {},
-            settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {},
-        )
+    fun new(
+        accountSwitchState: AccountSwitchState =
+            AccountSwitchState(
+                accountType = ZashiMainTopAppBarState.AccountType.ZASHI,
+                onAccountTypeClick = {}
+            ),
+        balanceVisibilityButton: IconButtonState =
+            IconButtonState(
+                icon = R.drawable.ic_app_bar_balances_hide,
+                contentDescription = stringRes(co.electriccoin.zcash.ui.R.string.hide_balances_content_description)
+            ) {},
+        settingsButton: IconButtonState =
+            IconButtonState(
+                icon = R.drawable.ic_app_bar_settings,
+                contentDescription = stringRes(co.electriccoin.zcash.ui.R.string.settings_menu_content_description)
+            ) {},
+    ) = ZashiMainTopAppBarState(
+        accountSwitchState = accountSwitchState,
+        balanceVisibilityButton = balanceVisibilityButton,
+        settingsButton = settingsButton,
+    )
 }

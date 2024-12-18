@@ -5,7 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.design.R
+import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
@@ -60,7 +63,27 @@ class AccountTestSetup(
             transactionsUiState = initialTransactionState,
             walletRestoringState = WalletRestoringState.NONE,
             walletSnapshot = WalletSnapshotFixture.new(),
-            zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
+            zashiMainTopAppBarState =
+                ZashiMainTopAppBarStateFixture.new(
+                    settingsButton =
+                        IconButtonState(
+                            icon = R.drawable.ic_app_bar_settings,
+                            contentDescription =
+                                stringRes(co.electriccoin.zcash.ui.R.string.settings_menu_content_description),
+                        ) {
+                            onSettingsCount.incrementAndGet()
+                        },
+                    balanceVisibilityButton =
+                        IconButtonState(
+                            icon = R.drawable.ic_app_bar_balances_hide,
+                            contentDescription =
+                                stringRes(
+                                    co.electriccoin.zcash.ui.R.string.hide_balances_content_description
+                                ),
+                        ) {
+                            onHideBalancesCount.incrementAndGet()
+                        },
+                )
         )
     }
 
