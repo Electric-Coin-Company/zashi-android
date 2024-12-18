@@ -19,6 +19,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
@@ -45,7 +47,8 @@ class SendViewModel(
     private val getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
     private val getZashiAccount: GetZashiAccountUseCase,
     private val createKeystoneTransactionProposal: CreateKeystoneProposalUseCase,
-    private val createKeystoneZip321TransactionProposal: CreateKeystoneZip321ProposalUseCase
+    private val createKeystoneZip321TransactionProposal: CreateKeystoneZip321ProposalUseCase,
+    private val observeWalletAccounts: ObserveWalletAccountsUseCase,
 ) : ViewModel() {
     val recipientAddressState = MutableStateFlow(RecipientAddressState.new("", null))
 
@@ -54,9 +57,14 @@ class SendViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     val sendAddressBookState =
         recipientAddressState.flatMapLatest { recipientAddressState ->
-            observeContactByAddress(recipientAddressState.address).flatMapLatest { contact ->
+            combine(observeWalletAccounts.require(), observeContactByAddress(recipientAddressState.address)) {
+                    accounts, contact ->
+                accounts to contact
+            }.flatMapLatest { (accounts, contact) ->
                 flow {
-                    val exists = contact != null
+                    val exists =
+                        contact != null ||
+                            accounts.any { it.unified.address.address == recipientAddressState.address }
                     val isValid = recipientAddressState.type?.isNotValid == false
                     val mode =
                         if (isValid) {
