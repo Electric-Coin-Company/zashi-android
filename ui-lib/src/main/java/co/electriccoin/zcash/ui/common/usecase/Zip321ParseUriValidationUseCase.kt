@@ -33,7 +33,7 @@ internal class Zip321ParseUriValidationUseCase(
                     }
                 )
             }.onFailure {
-                Twig.error(it) { "Failed to validate address" }
+                Twig.debug { "Not valid Zip321 URI scanned" }
             }.getOrElse {
                 false
             }
