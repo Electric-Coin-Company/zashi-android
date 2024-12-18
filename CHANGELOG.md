@@ -6,6 +6,24 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Added
+- New feature: Keystone integration with an ability to connect HW wallet to Zashi wallet, preview transactions, sign
+  new transactions and shield transparent funds
+
+### Changed
+- App bar has been redesigned to give a user an ability to switch accounts
+- Integrations are now disabled if your selected account is not Zashi
+- Address book now also shows your addresses if you have more than one Account created during contact selection on 
+  send screen
+- Optimizations on new wallet creation to prevent indeterministic chain of async actions
+- Optimizations on wallet restoration to prevent indeterministic chain of async actions
+- Optimizations on send screen to run actions on VM scope to prevent actions from being interrupted by dead UI scope
+- SynchronizerProvider is now the single source of truth when providing synchronizer
+- SynchronizerProvider provides synchronizer only when it is fully initialized
+
+### Fixed
+- Wallet creation and restoration is now more stable troublesome devices
+
 ## [1.2.3 (798)] - 2024-11-26
 
 ### Added

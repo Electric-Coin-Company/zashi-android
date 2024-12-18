@@ -12,6 +12,19 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Added
+- New feature: Keystone integration with an ability to connect HW wallet to Zashi wallet, preview transactions, sign
+  new transactions and shield transparent funds
+
+### Changed
+- App bar has been redesigned to give a user an ability to switch accounts
+- Integrations are now disabled if your selected account is not Zashi
+- Address book now also shows your addresses if you have more than one Account created during contact selection on
+  send screen
+
+### Fixed
+- Wallet creation and restoration is now more stable troublesome devices
+
 ## [1.2.3 (799)] - 2024-11-26
 
 ### Added
