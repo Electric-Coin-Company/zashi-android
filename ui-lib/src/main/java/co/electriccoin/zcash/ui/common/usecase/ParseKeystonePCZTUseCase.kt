@@ -52,10 +52,11 @@ abstract class BaseKeystoneScanner {
                             )
                         } catch (e: Exception) {
                             keystoneSDK.resetQRDecoder()
-                            ParseKeystoneQrResult(
+                            latestResult = ParseKeystoneQrResult(
                                 progress = 0,
                                 isFinished = false
                             )
+                            throw e
                         }
                     } else {
                         ParseKeystoneQrResult(

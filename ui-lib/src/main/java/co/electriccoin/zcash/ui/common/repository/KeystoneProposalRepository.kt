@@ -8,7 +8,6 @@ import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
-import co.electriccoin.zcash.ui.util.zcash
 import com.keystone.sdk.KeystoneSDK
 import com.sparrowwallet.hummingbird.UR
 import com.sparrowwallet.hummingbird.UREncoder

@@ -8,13 +8,13 @@ class ParseKeystoneSignInRequestUseCase(
     private val navigationRouter: NavigationRouter
 ) : BaseKeystoneScanner() {
     override suspend fun onSuccess(ur: UR) {
-        tryParse(ur)
+        parseOrThrow(ur)
         navigationRouter.replace(SelectKeystoneAccount(ur.toString()))
     }
 
     @Suppress("TooGenericExceptionCaught")
     @Throws(InvalidKeystoneSignInQRException::class)
-    private fun tryParse(ur: UR) {
+    private fun parseOrThrow(ur: UR) {
         try {
             keystoneSDK.parseZcashAccounts(ur)
         } catch (e: Exception) {
