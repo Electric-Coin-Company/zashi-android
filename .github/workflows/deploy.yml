@@ -87,7 +87,7 @@ jobs:
           ref: main
           fetch-depth: 0  # To fetch all commits
       - name: Set up Java
-        uses: actions/setup-java@8df1039502a15bceb9433410b1a100fbe190c53b
+        uses: actions/setup-java@7a6d8a8234af8eb26422e24e3006232cccaa061b
         timeout-minutes: 1
         with:
           distribution: 'temurin'
