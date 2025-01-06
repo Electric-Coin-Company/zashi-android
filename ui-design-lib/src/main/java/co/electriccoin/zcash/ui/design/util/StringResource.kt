@@ -36,7 +36,7 @@ fun StringResource.getValue() =
     when (this) {
         is StringResource.ByResource -> {
             val context = LocalContext.current
-            context.getString(resource, *args.toTypedArray())
+            context.getString(resource, *args.normalize(context).toTypedArray())
         }
 
         is StringResource.ByString -> value
@@ -45,6 +45,14 @@ fun StringResource.getValue() =
 @Suppress("SpreadOperator")
 fun StringResource.getString(context: Context) =
     when (this) {
-        is StringResource.ByResource -> context.getString(resource, *args.toTypedArray())
+        is StringResource.ByResource -> context.getString(resource, *args.normalize(context).toTypedArray())
         is StringResource.ByString -> value
+    }
+
+private fun List<Any>.normalize(context: Context): List<Any> =
+    this.map {
+        when (it) {
+            is StringResource -> it.getString(context)
+            else -> it
+        }
     }

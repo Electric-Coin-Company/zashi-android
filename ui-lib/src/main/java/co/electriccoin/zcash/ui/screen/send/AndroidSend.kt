@@ -47,8 +47,6 @@ internal fun WrapSend(
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
     goBalances: () -> Unit,
-    goSendConfirmation: (ZecSend) -> Unit,
-    goPaymentRequest: (ZecSend, String) -> Unit,
 ) {
     val activity = LocalActivity.current
 
@@ -77,8 +75,6 @@ internal fun WrapSend(
         goToQrScanner = goToQrScanner,
         goBack = goBack,
         goBalances = goBalances,
-        goSendConfirmation = goSendConfirmation,
-        goPaymentRequest = goPaymentRequest,
         hasCameraFeature = hasCameraFeature,
         monetarySeparators = monetarySeparators,
         sendArguments = sendArguments,
@@ -97,8 +93,6 @@ internal fun WrapSend(
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
     goBalances: () -> Unit,
-    goSendConfirmation: (ZecSend) -> Unit,
-    goPaymentRequest: (ZecSend, String) -> Unit,
     hasCameraFeature: Boolean,
     monetarySeparators: MonetarySeparators,
     sendArguments: SendArguments?,
@@ -147,12 +141,10 @@ internal fun WrapSend(
     if (sendArguments?.zip321Uri != null &&
         synchronizer != null
     ) {
-        LaunchedEffect(goPaymentRequest) {
+        LaunchedEffect(Unit) {
             viewModel.onCreateZecSend321Click(
                 zip321Uri = sendArguments.zip321Uri,
-                setZecSend = setZecSend,
                 setSendStage = setSendStage,
-                goPaymentRequest = goPaymentRequest
             )
         }
     }
@@ -271,8 +263,6 @@ internal fun WrapSend(
             onCreateZecSend = { newZecSend ->
                 viewModel.onCreateZecSendClick(
                     newZecSend = newZecSend,
-                    setZecSend = setZecSend,
-                    goSendConfirmation = goSendConfirmation,
                     setSendStage = setSendStage
                 )
             },

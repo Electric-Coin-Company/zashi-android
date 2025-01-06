@@ -12,6 +12,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Changed
+- Send Confirmation & Send Progress screens have been refactored with bugfixes and optimizations
+
 ## [1.3.1 (822)] - 2025-01-07
 
 ### Corregido

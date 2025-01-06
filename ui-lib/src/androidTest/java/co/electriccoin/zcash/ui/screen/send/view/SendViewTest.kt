@@ -20,7 +20,6 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.fixture.SendArgumentsWrapperFixture
 import co.electriccoin.zcash.ui.screen.send.SendTag
 import co.electriccoin.zcash.ui.screen.send.SendViewTestSetup
-import co.electriccoin.zcash.ui.screen.send.assertOnConfirmation
 import co.electriccoin.zcash.ui.screen.send.assertOnForm
 import co.electriccoin.zcash.ui.screen.send.assertOnSendFailure
 import co.electriccoin.zcash.ui.screen.send.assertSendDisabled
@@ -89,7 +88,6 @@ class SendViewTest : UiTestPrerequisites() {
             composeTestRule.setValidAmount()
             composeTestRule.setValidAddress()
             composeTestRule.clickCreateAndSend()
-            composeTestRule.assertOnConfirmation()
 
             launch {
                 testSetup.mutableActionExecuted.collectWith(this) {
@@ -125,7 +123,6 @@ class SendViewTest : UiTestPrerequisites() {
             composeTestRule.setValidMemo()
 
             composeTestRule.clickCreateAndSend()
-            composeTestRule.assertOnConfirmation()
 
             launch {
                 testSetup.mutableActionExecuted.collectWith(this) {
@@ -183,7 +180,6 @@ class SendViewTest : UiTestPrerequisites() {
             composeTestRule.assertSendEnabled()
 
             composeTestRule.clickCreateAndSend()
-            composeTestRule.assertOnConfirmation()
 
             launch {
                 testSetup.mutableActionExecuted.collectWith(this) {
@@ -264,7 +260,6 @@ class SendViewTest : UiTestPrerequisites() {
             composeTestRule.setMemo(input)
 
             composeTestRule.clickCreateAndSend()
-            composeTestRule.assertOnConfirmation()
 
             launch {
                 testSetup.mutableActionExecuted.collectWith(this) {
@@ -308,7 +303,7 @@ class SendViewTest : UiTestPrerequisites() {
         composeTestRule.setValidAmount()
         composeTestRule.setValidAddress()
         composeTestRule.clickCreateAndSend()
-        composeTestRule.assertOnConfirmation()
+
         composeTestRule.assertOnForm()
 
         assertEquals(1, testSetup.getOnBackCount())

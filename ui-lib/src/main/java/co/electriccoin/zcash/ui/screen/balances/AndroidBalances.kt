@@ -24,6 +24,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
@@ -39,7 +40,6 @@ import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.screen.balances.model.ShieldState
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.balances.view.Balances
-import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfo
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
@@ -54,7 +54,7 @@ import org.jetbrains.annotations.VisibleForTesting
 import org.koin.compose.koinInject
 
 @Composable
-internal fun WrapBalances(goMultiTrxSubmissionFailure: () -> Unit) {
+internal fun WrapBalances() {
     val activity = LocalActivity.current
 
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
@@ -87,7 +87,6 @@ internal fun WrapBalances(goMultiTrxSubmissionFailure: () -> Unit) {
         balanceState = balanceState,
         createTransactionsViewModel = createTransactionsViewModel,
         checkUpdateViewModel = checkUpdateViewModel,
-        goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         isHideBalances = isHideBalances,
         lifecycleScope = activity.lifecycleScope,
         supportInfo = supportInfo,
@@ -108,7 +107,6 @@ internal fun WrapBalances(
     balanceState: BalanceState,
     checkUpdateViewModel: CheckUpdateViewModel,
     createTransactionsViewModel: CreateTransactionsViewModel,
-    goMultiTrxSubmissionFailure: () -> Unit,
     lifecycleScope: CoroutineScope,
     isHideBalances: Boolean,
     supportInfo: SupportInfo?,
@@ -263,7 +261,6 @@ internal fun WrapBalances(
                                             Twig.warn {
                                                 "Shielding failed with multi-transactions-submission-error handling"
                                             }
-                                            goMultiTrxSubmissionFailure()
                                         }
                                     }
                                 }

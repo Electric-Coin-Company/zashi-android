@@ -16,7 +16,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
@@ -40,10 +39,7 @@ import kotlinx.coroutines.launch
 @Composable
 @Suppress("LongParameterList")
 internal fun WrapHome(
-    goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
-    goSendConfirmation: (ZecSend) -> Unit,
-    goPaymentRequest: (ZecSend, String) -> Unit,
     sendArguments: SendArguments
 ) {
     val homeViewModel = koinActivityViewModel<HomeViewModel>()
@@ -84,10 +80,7 @@ internal fun WrapHome(
     }
 
     WrapHome(
-        goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure,
         goScan = goScan,
-        goSendConfirmation = goSendConfirmation,
-        goPaymentRequest = goPaymentRequest,
         isKeepScreenOnWhileSyncing = isKeepScreenOnWhileSyncing,
         isShowingRestoreSuccess = isShowingRestoreSuccess,
         sendArguments = sendArguments,
@@ -99,10 +92,7 @@ internal fun WrapHome(
 @Suppress("LongParameterList", "LongMethod")
 @Composable
 internal fun WrapHome(
-    goMultiTrxSubmissionFailure: () -> Unit,
     goScan: () -> Unit,
-    goSendConfirmation: (ZecSend) -> Unit,
-    goPaymentRequest: (ZecSend, String) -> Unit,
     isKeepScreenOnWhileSyncing: Boolean?,
     isShowingRestoreSuccess: Boolean,
     sendArguments: SendArguments,
@@ -179,8 +169,6 @@ internal fun WrapHome(
                                 pagerState.animateScrollToPage(HomeScreenIndex.BALANCES.pageIndex)
                             }
                         },
-                        goSendConfirmation = goSendConfirmation,
-                        goPaymentRequest = goPaymentRequest
                     )
                 }
             ),
@@ -197,9 +185,7 @@ internal fun WrapHome(
                 title = stringResource(id = R.string.home_tab_balances),
                 testTag = HomeTag.TAB_BALANCES,
                 screenContent = {
-                    WrapBalances(
-                        goMultiTrxSubmissionFailure = goMultiTrxSubmissionFailure
-                    )
+                    WrapBalances()
                 }
             )
         )
