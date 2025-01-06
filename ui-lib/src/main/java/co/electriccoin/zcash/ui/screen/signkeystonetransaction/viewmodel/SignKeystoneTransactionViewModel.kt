@@ -7,10 +7,10 @@ import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.ShieldTransactionProposal
-import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
+import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneProposalPCZTEncoderUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveTransactionProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -30,10 +30,10 @@ import kotlinx.coroutines.launch
 
 class SignKeystoneTransactionViewModel(
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
-    observeTransactionProposalUseCase: ObserveTransactionProposalUseCase,
+    observeProposalUseCase: ObserveProposalUseCase,
     private val navigationRouter: NavigationRouter,
     private val createKeystoneProposalPCZTEncoder: CreateKeystoneProposalPCZTEncoderUseCase,
-    private val cancelKeystoneProposalFlow: CancelKeystoneProposalFlowUseCase,
+    private val cancelKeystoneProposalFlow: CancelProposalFlowUseCase,
     private val sharePCZT: SharePCZTUseCase
 ) : ViewModel() {
     private var encoder: UREncoder? = null
@@ -42,7 +42,7 @@ class SignKeystoneTransactionViewModel(
 
     val state: StateFlow<SignKeystoneTransactionState?> =
         combine(
-            observeTransactionProposalUseCase(),
+            observeProposalUseCase(),
             observeSelectedWalletAccount.require(),
             currentQrPart
         ) { proposal, wallet, qrData ->

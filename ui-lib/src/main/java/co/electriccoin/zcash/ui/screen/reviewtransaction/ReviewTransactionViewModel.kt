@@ -10,19 +10,21 @@ import co.electriccoin.zcash.ui.common.datasource.RegularTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
-import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
+import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveTransactionProposalUseCase
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
 import co.electriccoin.zcash.ui.util.Quadruple
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,14 +37,16 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class ReviewKeystoneTransactionViewModel(
+class ReviewTransactionViewModel(
     observeContactByAddress: ObserveContactByAddressUseCase,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
-    observeKeystoneSendTransactionProposal: ObserveTransactionProposalUseCase,
-    private val cancelKeystoneProposalFlow: CancelKeystoneProposalFlowUseCase,
+    observeKeystoneSendTransactionProposal: ObserveProposalUseCase,
+    private val cancelKeystoneProposalFlow: CancelProposalFlowUseCase,
     private val getExchangeRate: GetExchangeRateUseCase,
     private val navigationRouter: NavigationRouter,
+    private val confirmProposal: ConfirmProposalUseCase,
 ) : ViewModel() {
     private val isReceiverExpanded = MutableStateFlow(false)
 
@@ -65,25 +69,24 @@ class ReviewKeystoneTransactionViewModel(
             exchangeRate,
         ) { wallet, zecSend, isReceiverExpanded, exchangeRate ->
             Quadruple(wallet, zecSend, isReceiverExpanded, exchangeRate)
-        }.flatMapLatest { (wallet, proposal, isReceiverExpanded, exchangeRate) ->
-            observeContactByAddress(proposal?.destination?.address.orEmpty()).map { addressBookContact ->
+        }.flatMapLatest { (selectedWallet, proposal, isReceiverExpanded, exchangeRate) ->
+            observeContactByAddress(proposal.destination.address).map { addressBookContact ->
                 when (proposal) {
                     is RegularTransactionProposal ->
                         createState(
                             transactionProposal = proposal,
                             addressBookContact = addressBookContact,
-                            wallet = wallet,
+                            selectedWallet = selectedWallet,
                             exchangeRateState = exchangeRate
                         )
                     is Zip321TransactionProposal ->
                         createZip321State(
                             transactionProposal = proposal,
                             addressBookContact = addressBookContact,
-                            wallet = wallet,
+                            selectedWallet = selectedWallet,
                             isReceiverExpanded = isReceiverExpanded,
                             exchangeRateState = exchangeRate
                         )
-                    null -> null
                 }
             }
         }.stateIn(
@@ -93,12 +96,16 @@ class ReviewKeystoneTransactionViewModel(
         )
 
     private fun createState(
-        wallet: WalletAccount,
+        selectedWallet: WalletAccount,
         transactionProposal: SendTransactionProposal,
         addressBookContact: AddressBookContact?,
         exchangeRateState: ExchangeRateState
     ) = ReviewTransactionState(
-        title = stringRes(R.string.review_keystone_transaction_title),
+        title =
+            when (selectedWallet) {
+                is KeystoneAccount -> stringRes(R.string.review_keystone_transaction_title)
+                is ZashiAccount -> stringRes(R.string.send_stage_confirmation_title)
+            },
         items =
             listOfNotNull(
                 AmountState(
@@ -113,8 +120,8 @@ class ReviewKeystoneTransactionViewModel(
                 ),
                 SenderState(
                     title = stringRes(R.string.send_confirmation_address_from),
-                    icon = wallet.icon,
-                    name = wallet.name
+                    icon = selectedWallet.icon,
+                    name = selectedWallet.name
                 ),
                 FinancialInfoState(
                     title = stringRes(R.string.send_amount_label),
@@ -140,12 +147,16 @@ class ReviewKeystoneTransactionViewModel(
             ),
         primaryButton =
             ButtonState(
-                stringRes(R.string.review_keystone_transaction_positive),
+                text =
+                    when (selectedWallet) {
+                        is KeystoneAccount -> stringRes(R.string.review_keystone_transaction_positive)
+                        is ZashiAccount -> stringRes(R.string.send_confirmation_send_button)
+                    },
                 onClick = ::onConfirmClick
             ),
         negativeButton =
             ButtonState(
-                stringRes(R.string.review_keystone_transaction_negative),
+                text = stringRes(R.string.review_keystone_transaction_negative),
                 onClick = ::onCancelClick
             ),
         onBack = ::onBack,
@@ -154,7 +165,7 @@ class ReviewKeystoneTransactionViewModel(
     private fun createZip321State(
         transactionProposal: SendTransactionProposal,
         addressBookContact: AddressBookContact?,
-        wallet: WalletAccount,
+        selectedWallet: WalletAccount,
         isReceiverExpanded: Boolean,
         exchangeRateState: ExchangeRateState
     ) = ReviewTransactionState(
@@ -168,8 +179,8 @@ class ReviewKeystoneTransactionViewModel(
                 ),
                 SenderState(
                     title = stringRes(R.string.send_confirmation_address_from),
-                    icon = wallet.icon,
-                    name = wallet.name
+                    icon = selectedWallet.icon,
+                    name = selectedWallet.name
                 ),
                 ReceiverExpandedState(
                     title = stringRes(R.string.payment_request_requested_by),
@@ -206,12 +217,16 @@ class ReviewKeystoneTransactionViewModel(
             ),
         primaryButton =
             ButtonState(
-                stringRes(R.string.review_keystone_transaction_positive),
+                text =
+                    when (selectedWallet) {
+                        is KeystoneAccount -> stringRes(R.string.review_keystone_transaction_positive)
+                        is ZashiAccount -> stringRes(R.string.payment_request_send_btn)
+                    },
                 onClick = ::onConfirmClick
             ),
         negativeButton =
             ButtonState(
-                stringRes(R.string.review_keystone_transaction_negative),
+                text = stringRes(R.string.review_keystone_transaction_negative),
                 onClick = ::onCancelClick
             ),
         onBack = ::onBack,
@@ -229,9 +244,10 @@ class ReviewKeystoneTransactionViewModel(
         cancelKeystoneProposalFlow(clearSendForm = false)
     }
 
-    private fun onConfirmClick() {
-        navigationRouter.forward(SignKeystoneTransaction)
-    }
+    private fun onConfirmClick() =
+        viewModelScope.launch {
+            confirmProposal()
+        }
 
     private fun onAddContactClick(address: String) {
         navigationRouter.forward(AddContactArgs(address))

@@ -7,15 +7,17 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ShieldTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
-import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
+import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.repository.SubmitProposalState
-import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
+import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveTransactionSubmitStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
-import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,19 +27,21 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class KeystoneTransactionProgressViewModel(
-    private val keystoneProposalRepository: KeystoneProposalRepository,
+class TransactionProgressViewModel(
+    observeTransactionProposal: ObserveProposalUseCase,
+    observeTransactionSubmitState: ObserveTransactionSubmitStateUseCase,
+    private val getTransactionProposal: GetProposalUseCase,
     private val copyToClipboardUseCase: CopyToClipboardUseCase,
     private val sendEmailUseCase: SendEmailUseCase,
-    private val cancelKeystoneProposalFlow: CancelKeystoneProposalFlowUseCase,
+    private val cancelKeystoneProposalFlow: CancelProposalFlowUseCase,
     private val viewTransactionsAfterSuccessfulProposal: ViewTransactionsAfterSuccessfulProposalUseCase,
 ) : ViewModel() {
     private val supportContacted = MutableStateFlow(false)
 
     val state: StateFlow<TransactionProgressState?> =
         combine(
-            keystoneProposalRepository.transactionProposal,
-            keystoneProposalRepository.submitState,
+            observeTransactionProposal(),
+            observeTransactionSubmitState(),
             supportContacted
         ) { proposal, submitState, supportContacted ->
             when (submitState) {
@@ -85,7 +89,7 @@ class KeystoneTransactionProgressViewModel(
         onSupportClick = {
             viewModelScope.launch {
                 sendEmailUseCase(result)
-                this@KeystoneTransactionProgressViewModel.supportContacted.update { true }
+                this@TransactionProgressViewModel.supportContacted.update { true }
             }
         },
         transactionIds = result.results.map { it.txIdString() }
@@ -126,7 +130,7 @@ class KeystoneTransactionProgressViewModel(
         onReportClick = {
             viewModelScope.launch {
                 sendEmailUseCase(result)
-                this@KeystoneTransactionProgressViewModel.supportContacted.update { true }
+                this@TransactionProgressViewModel.supportContacted.update { true }
             }
         },
         title =
@@ -163,9 +167,7 @@ class KeystoneTransactionProgressViewModel(
         )
 
     private suspend fun getAddressAbbreviated(): String {
-        val address =
-            (keystoneProposalRepository.getTransactionProposal() as? SendTransactionProposal)
-                ?.destination?.address
+        val address = (getTransactionProposal() as? SendTransactionProposal)?.destination?.address
         return address?.let { "${it.take(ADDRESS_MAX_LENGTH)}..." }.orEmpty()
     }
 

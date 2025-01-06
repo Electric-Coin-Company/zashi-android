@@ -1,25 +1,25 @@
-package co.electriccoin.zcash.ui.screen.sendconfirmation.model
+package co.electriccoin.zcash.ui.common.model
 
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 
-sealed class SubmitResult {
-    data object Success : SubmitResult()
+sealed interface SubmitResult {
+    data object Success : SubmitResult
 
-    data class MultipleTrxFailure(val results: List<TransactionSubmitResult>) : SubmitResult()
+    data class MultipleTrxFailure(val results: List<TransactionSubmitResult>) : SubmitResult
 
-    sealed class SimpleTrxFailure : SubmitResult() {
-        abstract fun toErrorMessage(): String
+    sealed interface SimpleTrxFailure : SubmitResult {
+        fun toErrorMessage(): String
 
-        abstract fun toErrorStacktrace(): String
+        fun toErrorStacktrace(): String
 
-        data class SimpleTrxFailureGrpc(val result: TransactionSubmitResult.Failure) : SimpleTrxFailure() {
+        data class SimpleTrxFailureGrpc(val result: TransactionSubmitResult.Failure) : SimpleTrxFailure {
             // Currently, we intentionally do not include any error related details
             override fun toErrorMessage() = ""
 
             override fun toErrorStacktrace() = ""
         }
 
-        data class SimpleTrxFailureSubmit(val result: TransactionSubmitResult.Failure) : SimpleTrxFailure() {
+        data class SimpleTrxFailureSubmit(val result: TransactionSubmitResult.Failure) : SimpleTrxFailure {
             override fun toErrorMessage() =
                 buildString {
                     appendLine("Error code: ${result.code}")
@@ -29,7 +29,7 @@ sealed class SubmitResult {
             override fun toErrorStacktrace(): String = toErrorMessage()
         }
 
-        data class SimpleTrxFailureOther(val error: Throwable) : SimpleTrxFailure() {
+        data class SimpleTrxFailureOther(val error: Throwable) : SimpleTrxFailure {
             override fun toErrorMessage() = error.message ?: "Unknown error"
 
             override fun toErrorStacktrace(): String = error.stackTraceToString()

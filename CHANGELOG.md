@@ -6,6 +6,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Changed
+- Send Confirmation & Send Progress screens have been refactored
+
 ## [1.3.1 (822)] - 2025-01-07
 
 ### Fixed

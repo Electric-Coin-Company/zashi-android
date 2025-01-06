@@ -11,6 +11,7 @@
     <string name="authentication_use_case_export_data">Función Exportar Datos Privados</string>
     <string name="authentication_use_case_seed_recovery">Función Recuperación de Semilla</string>
     <string name="authentication_use_case_send_funds">Función Enviar Fondos</string>
+    <string name="authentication_use_case_adress_book">Función Libreta de Direcciones</string>
 
     <string name="authentication_toast_canceled">Autenticación cancelada</string>
     <string name="authentication_toast_failed">Autenticación fallida</string>

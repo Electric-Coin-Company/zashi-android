@@ -1,18 +1,20 @@
 package co.electriccoin.zcash.di
 
-import co.electriccoin.zcash.ui.common.usecase.CancelKeystoneProposalFlowUseCase
+import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
+import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneProposalPCZTEncoderUseCase
-import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneShieldProposalUseCase
-import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneZip321ProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.CreateProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.CreateZip321ProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetBackupPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
@@ -22,6 +24,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
@@ -32,10 +35,11 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveOnAccountChangedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveTransactionProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveTransactionSubmitStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveZashiAccountUseCase
@@ -114,16 +118,20 @@ val useCaseModule =
         factoryOf(::GetSelectedWalletAccountUseCase)
         singleOf(::ObserveClearSendUseCase)
         factoryOf(::ObserveCurrentTransactionsUseCase)
-        factoryOf(::CreateKeystoneProposalUseCase)
-        factoryOf(::CreateKeystoneZip321ProposalUseCase)
+        factoryOf(::CreateProposalUseCase)
+        factoryOf(::CreateZip321ProposalUseCase)
         factoryOf(::CreateKeystoneShieldProposalUseCase)
         factoryOf(::ParseKeystonePCZTUseCase)
         factoryOf(::ParseKeystoneSignInRequestUseCase)
-        factoryOf(::CancelKeystoneProposalFlowUseCase)
-        factoryOf(::ObserveTransactionProposalUseCase)
+        factoryOf(::CancelProposalFlowUseCase)
+        factoryOf(::ObserveProposalUseCase)
         factoryOf(::SharePCZTUseCase)
         factoryOf(::CreateKeystoneProposalPCZTEncoderUseCase)
         factoryOf(::ObserveOnAccountChangedUseCase)
         factoryOf(::ViewTransactionsAfterSuccessfulProposalUseCase)
         factoryOf(::NavigateToCoinbaseUseCase)
+        factoryOf(::ObserveTransactionSubmitStateUseCase)
+        factoryOf(::GetProposalUseCase)
+        factoryOf(::ConfirmProposalUseCase)
+        factoryOf(::NavigateToAddressBookUseCase)
     }

@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.common.usecase
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
-import co.electriccoin.zcash.ui.screen.transactionprogress.KeystoneTransactionProgress
+import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgress
 import com.keystone.module.DecodeResult
 import com.keystone.sdk.KeystoneSDK
 import com.sparrowwallet.hummingbird.UR
@@ -19,7 +19,7 @@ class ParseKeystonePCZTUseCase(
     override suspend fun onSuccess(ur: UR) {
         keystoneProposalRepository.parsePCZT(ur)
         keystoneProposalRepository.extractPCZT()
-        navigationRouter.replace(KeystoneTransactionProgress)
+        navigationRouter.replace(TransactionProgress)
     }
 }
 

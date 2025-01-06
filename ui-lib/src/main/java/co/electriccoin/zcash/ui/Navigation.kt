@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavBackStackEntry
@@ -20,21 +19,10 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
 import co.electriccoin.zcash.ui.NavigationArguments.MULTIPLE_SUBMISSION_CLEAR_FORM
-import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_ADDRESS
-import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_AMOUNT
-import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_MEMO
-import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_PROPOSAL
-import co.electriccoin.zcash.ui.NavigationArguments.PAYMENT_REQUEST_URI
-import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_AMOUNT
-import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_INITIAL_STAGE
-import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_MEMO
-import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_PROPOSAL
-import co.electriccoin.zcash.ui.NavigationArguments.SEND_CONFIRM_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_RECIPIENT_ADDRESS
 import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_ZIP_321_URI
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
@@ -46,11 +34,9 @@ import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.HOME
 import co.electriccoin.zcash.ui.NavigationTargets.INTEGRATIONS
 import co.electriccoin.zcash.ui.NavigationTargets.NOT_ENOUGH_SPACE
-import co.electriccoin.zcash.ui.NavigationTargets.PAYMENT_REQUEST
 import co.electriccoin.zcash.ui.NavigationTargets.QR_CODE
 import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
 import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
-import co.electriccoin.zcash.ui.NavigationTargets.SEND_CONFIRMATION
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS_EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
@@ -88,13 +74,11 @@ import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.integrations.WrapIntegrations
-import co.electriccoin.zcash.ui.screen.paymentrequest.WrapPaymentRequest
-import co.electriccoin.zcash.ui.screen.paymentrequest.model.PaymentRequestArguments
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
-import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewKeystoneTransaction
-import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
@@ -105,16 +89,12 @@ import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
 import co.electriccoin.zcash.ui.screen.seed.WrapSeed
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.AndroidSelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
-import co.electriccoin.zcash.ui.screen.send.ext.toSerializableAddress
 import co.electriccoin.zcash.ui.screen.send.model.SendArguments
-import co.electriccoin.zcash.ui.screen.sendconfirmation.WrapSendConfirmation
-import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationArguments
-import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SendConfirmationStage
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
-import co.electriccoin.zcash.ui.screen.transactionprogress.AndroidKeystoneTransactionProgress
-import co.electriccoin.zcash.ui.screen.transactionprogress.KeystoneTransactionProgress
+import co.electriccoin.zcash.ui.screen.transactionprogress.AndroidTransactionProgress
+import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgress
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.whatsnew.WrapWhatsNew
@@ -349,21 +329,6 @@ internal fun MainActivity.Navigation() {
                 }
             )
         }
-        composable(route = SEND_CONFIRMATION) {
-            navController.previousBackStackEntry?.let { backStackEntry ->
-                WrapSendConfirmation(
-                    goBack = { clearForm ->
-                        navController.previousBackStackEntry?.savedStateHandle?.apply {
-                            set(MULTIPLE_SUBMISSION_CLEAR_FORM, clearForm)
-                        }
-                        navController.popBackStackJustOnce(SEND_CONFIRMATION)
-                    },
-                    goHome = { navController.navigateJustOnce(HOME) },
-                    goSupport = { navController.navigateJustOnce(SUPPORT) },
-                    arguments = SendConfirmationArguments.fromSavedStateHandle(backStackEntry.savedStateHandle)
-                )
-            }
-        }
         composable(NOT_ENOUGH_SPACE) {
             WrapNotEnoughSpace(
                 goPrevious = { navController.popBackStackJustOnce(NOT_ENOUGH_SPACE) },
@@ -421,24 +386,17 @@ internal fun MainActivity.Navigation() {
             val addressType = backStackEntry.arguments?.getInt(ADDRESS_TYPE) ?: ReceiveAddressType.Unified.ordinal
             WrapRequest(addressType)
         }
-        composable(PAYMENT_REQUEST) {
-            navController.previousBackStackEntry?.let { backStackEntry ->
-                WrapPaymentRequest(
-                    arguments = PaymentRequestArguments.fromSavedStateHandle(backStackEntry.savedStateHandle)
-                )
-            }
-        }
         composable<ConnectKeystone> {
             AndroidConnectKeystone()
         }
         composable<SelectKeystoneAccount> {
             AndroidSelectKeystoneAccount(it.toRoute())
         }
-        composable<ReviewKeystoneTransaction> {
-            AndroidReviewKeystoneTransaction()
+        composable<ReviewTransaction> {
+            AndroidReviewTransaction()
         }
-        composable<KeystoneTransactionProgress> {
-            AndroidKeystoneTransactionProgress(it.toRoute())
+        composable<TransactionProgress> {
+            AndroidTransactionProgress(it.toRoute())
         }
     }
 }
@@ -452,27 +410,7 @@ private fun MainActivity.NavigationHome(
     backStack: NavBackStackEntry
 ) {
     WrapHome(
-        goMultiTrxSubmissionFailure = {
-            // Ultimately we could approach reworking the MultipleTrxFailure screen into a separate
-            // navigation endpoint
-            navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
-                fillInHandleForConfirmation(handle, null, SendConfirmationStage.MultipleTrxFailure)
-            }
-            navController.navigateJustOnce(SEND_CONFIRMATION)
-        },
         goScan = { navController.navigateJustOnce(ScanNavigationArgs(ScanNavigationArgs.DEFAULT)) },
-        goSendConfirmation = { zecSend ->
-            navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
-                fillInHandleForConfirmation(handle, zecSend, SendConfirmationStage.Prepared)
-            }
-            navController.navigateJustOnce(SEND_CONFIRMATION)
-        },
-        goPaymentRequest = { zecSend, zip321Uri ->
-            navController.currentBackStackEntry?.savedStateHandle?.let { handle ->
-                fillInHandleForPaymentRequest(handle, zecSend, zip321Uri)
-            }
-            navController.navigateJustOnce(PAYMENT_REQUEST)
-        },
         sendArguments =
             SendArguments(
                 recipientAddress =
@@ -559,40 +497,6 @@ private fun NavHostController.checkProtectedDestination(
     }
 }
 
-private fun fillInHandleForConfirmation(
-    handle: SavedStateHandle,
-    zecSend: ZecSend?,
-    initialStage: SendConfirmationStage
-) {
-    if (zecSend != null) {
-        handle[SEND_CONFIRM_RECIPIENT_ADDRESS] =
-            Json.encodeToString(
-                serializer = SerializableAddress.serializer(),
-                value = zecSend.destination.toSerializableAddress()
-            )
-        handle[SEND_CONFIRM_AMOUNT] = zecSend.amount.value
-        handle[SEND_CONFIRM_MEMO] = zecSend.memo.value
-        handle[SEND_CONFIRM_PROPOSAL] = zecSend.proposal?.toByteArray()
-    }
-    handle[SEND_CONFIRM_INITIAL_STAGE] = initialStage.toStringName()
-}
-
-private fun fillInHandleForPaymentRequest(
-    handle: SavedStateHandle,
-    zecSend: ZecSend,
-    zip321: String
-) {
-    handle[PAYMENT_REQUEST_ADDRESS] =
-        Json.encodeToString(
-            serializer = SerializableAddress.serializer(),
-            value = zecSend.destination.toSerializableAddress()
-        )
-    handle[PAYMENT_REQUEST_AMOUNT] = zecSend.amount.value
-    handle[PAYMENT_REQUEST_MEMO] = zecSend.memo.value
-    handle[PAYMENT_REQUEST_PROPOSAL] = zecSend.proposal?.toByteArray() ?: byteArrayOf()
-    handle[PAYMENT_REQUEST_URI] = zip321
-}
-
 fun NavHostController.navigateJustOnce(
     route: String,
     navOptionsBuilder: (NavOptionsBuilder.() -> Unit)? = null
@@ -650,11 +554,9 @@ object NavigationTargets {
     const val CHOOSE_SERVER = "choose_server"
     const val INTEGRATIONS = "integrations"
     const val NOT_ENOUGH_SPACE = "not_enough_space"
-    const val PAYMENT_REQUEST = "payment_request"
     const val QR_CODE = "qr_code"
     const val REQUEST = "request"
     const val SEED_RECOVERY = "seed_recovery"
-    const val SEND_CONFIRMATION = "send_confirmation"
     const val SETTINGS = "settings"
     const val SETTINGS_EXCHANGE_RATE_OPT_IN = "settings_exchange_rate_opt_in"
     const val SUPPORT = "support"
