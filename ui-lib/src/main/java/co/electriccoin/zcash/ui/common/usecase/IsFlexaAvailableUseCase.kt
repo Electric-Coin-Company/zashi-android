@@ -6,4 +6,6 @@ class IsFlexaAvailableUseCase(
     private val configurationRepository: ConfigurationRepository
 ) {
     suspend operator fun invoke() = configurationRepository.isFlexaAvailable()
+
+    fun observe() = configurationRepository.isFlexaAvailable
 }

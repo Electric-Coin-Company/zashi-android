@@ -22,6 +22,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
@@ -29,7 +30,6 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveOnAccountChangedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedEndpointUseCase
@@ -101,7 +101,6 @@ val useCaseModule =
         factoryOf(::SendEmailUseCase)
         factoryOf(::SendSupportEmailUseCase)
         factoryOf(::IsFlexaAvailableUseCase)
-        factoryOf(::ObserveIsFlexaAvailableUseCase)
         factoryOf(::SensitiveSettingsVisibleUseCase)
         factoryOf(::ObserveWalletAccountsUseCase)
         factoryOf(::SelectWalletAccountUseCase)
@@ -126,4 +125,5 @@ val useCaseModule =
         factoryOf(::CreateKeystoneProposalPCZTEncoderUseCase)
         factoryOf(::ObserveOnAccountChangedUseCase)
         factoryOf(::ViewTransactionsAfterSuccessfulProposalUseCase)
+        factoryOf(::NavigateToCoinbaseUseCase)
     }

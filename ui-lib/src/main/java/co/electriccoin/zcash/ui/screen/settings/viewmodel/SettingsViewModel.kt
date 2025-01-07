@@ -16,8 +16,9 @@ import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
+import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SensitiveSettingsVisibleUseCase
@@ -43,8 +44,9 @@ import kotlinx.coroutines.launch
 class SettingsViewModel(
     observeConfiguration: ObserveConfigurationUseCase,
     isSensitiveSettingsVisible: SensitiveSettingsVisibleUseCase,
-    observeIsFlexaAvailable: ObserveIsFlexaAvailableUseCase,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
+    isFlexaAvailable: IsFlexaAvailableUseCase,
+    isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getVersionInfo: GetVersionInfoProvider,
     private val rescanBlockchain: RescanBlockchainUseCase,
@@ -101,13 +103,15 @@ class SettingsViewModel(
             troubleshootingState,
             observeSelectedWalletAccount(),
             isSensitiveSettingsVisible(),
-            observeIsFlexaAvailable(),
-        ) { troubleshootingState, account, isSensitiveSettingsVisible, isFlexaAvailable ->
+            isFlexaAvailable.observe(),
+            isCoinbaseAvailable.observe()
+        ) { troubleshootingState, account, isSensitiveSettingsVisible, isFlexaAvailable, isCoinbaseAvailable ->
             createState(
                 selectedAccount = account,
                 troubleshootingState = troubleshootingState,
                 isSensitiveSettingsVisible = isSensitiveSettingsVisible,
-                isFlexaAvailable = isFlexaAvailable == true
+                isFlexaAvailable = isFlexaAvailable == true,
+                isCoinbaseAvailable = isCoinbaseAvailable == true
             )
         }.stateIn(
             scope = viewModelScope,
@@ -117,7 +121,8 @@ class SettingsViewModel(
                     selectedAccount = null,
                     troubleshootingState = null,
                     isSensitiveSettingsVisible = isSensitiveSettingsVisible().value,
-                    isFlexaAvailable = observeIsFlexaAvailable().value == true
+                    isFlexaAvailable = isFlexaAvailable.observe().value == true,
+                    isCoinbaseAvailable = isCoinbaseAvailable.observe().value == true
                 )
         )
 
@@ -125,7 +130,8 @@ class SettingsViewModel(
         selectedAccount: WalletAccount?,
         troubleshootingState: SettingsTroubleshootingState?,
         isSensitiveSettingsVisible: Boolean,
-        isFlexaAvailable: Boolean
+        isFlexaAvailable: Boolean,
+        isCoinbaseAvailable: Boolean,
     ) = SettingsState(
         debugMenu = troubleshootingState,
         onBack = ::onBack,
@@ -156,7 +162,7 @@ class SettingsViewModel(
                                 is KeystoneAccount -> R.drawable.ic_integrations_coinbase_disabled
                                 is ZashiAccount -> R.drawable.ic_integrations_coinbase
                                 null -> R.drawable.ic_integrations_coinbase
-                            },
+                            }.takeIf { isCoinbaseAvailable },
                             when (selectedAccount) {
                                 is KeystoneAccount -> R.drawable.ic_integrations_flexa_disabled
                                 is ZashiAccount -> R.drawable.ic_integrations_flexa
