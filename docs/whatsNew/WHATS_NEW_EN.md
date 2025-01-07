@@ -12,6 +12,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Fixed
+- Coinbase now passes the correct transparent address into url
+
 ## [1.3 (812)] - 2024-12-19
 
 ### Added
