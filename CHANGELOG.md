@@ -6,6 +6,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [1.3.1 (822)] - 2025-01-07
+
 ### Fixed
 - Coinbase now passes the correct transparent address into url
 
