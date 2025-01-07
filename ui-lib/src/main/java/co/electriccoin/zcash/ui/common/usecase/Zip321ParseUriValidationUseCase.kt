@@ -50,6 +50,7 @@ internal class Zip321ParseUriValidationUseCase(
 
     internal sealed class Zip321ParseUriValidation {
         data class Valid(val zip321Uri: String) : Zip321ParseUriValidation()
+        data class SingleAddress(val address: String) : Zip321ParseUriValidation()
 
         data class SingleAddress(val address: String) : Zip321ParseUriValidation()
 
