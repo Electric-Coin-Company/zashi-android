@@ -12,8 +12,12 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-### Fixed
-- Coinbase now passes the correct transparent address into url
+## [1.3.1 (822)] - 2025-01-07
+
+### Corregido
+- Hemos corregido un bug en Coinbase Onramp que había impactando a nuestros usuarios cuando hacen compras con sus 
+  cuentas de Coinbase. Ahora pasamos la dirección pública correcta a Coinbase y tus ZEC son enviados directamente a 
+  tu Billetera Zashi en lugar de tu cuenta de Coinbase.
 
 ## [1.3 (812)] - 2024-12-19
 
