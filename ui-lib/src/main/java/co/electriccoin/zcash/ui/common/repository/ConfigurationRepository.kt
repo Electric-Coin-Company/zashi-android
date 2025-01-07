@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -25,7 +26,11 @@ interface ConfigurationRepository {
      */
     val isFlexaAvailable: StateFlow<Boolean?>
 
+    val isCoinbaseAvailable: StateFlow<Boolean?>
+
     suspend fun isFlexaAvailable(): Boolean
+
+    suspend fun isCoinbaseAvailable(): Boolean
 }
 
 class ConfigurationRepositoryImpl(
@@ -56,6 +61,17 @@ class ConfigurationRepositoryImpl(
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = null
             )
+    override val isCoinbaseAvailable: StateFlow<Boolean?> =
+        flow {
+            val versionInfo = getVersionInfo()
+            emit(!versionInfo.isTestnet && BuildConfig.ZCASH_COINBASE_APP_ID.isNotEmpty())
+        }.stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
+        )
 
     override suspend fun isFlexaAvailable(): Boolean = isFlexaAvailable.filterNotNull().first()
+
+    override suspend fun isCoinbaseAvailable(): Boolean = isCoinbaseAvailable.filterNotNull().first()
 }

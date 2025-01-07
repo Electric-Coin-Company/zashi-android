@@ -15,11 +15,9 @@ import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.type.AddressType
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
-import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
@@ -28,7 +26,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveIsFlexaAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -48,24 +46,20 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class IntegrationsViewModel(
-    getVersionInfo: GetVersionInfoProvider,
     getZcashCurrency: GetZcashCurrencyProvider,
     observeWalletState: ObserveWalletStateUseCase,
-    observeIsFlexaAvailableUseCase: ObserveIsFlexaAvailableUseCase,
+    isFlexaAvailableUseCase: IsFlexaAvailableUseCase,
+    isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
     private val getZashiAccount: GetZashiAccountUseCase,
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
-    private val isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
     private val getSpendingKey: GetZashiSpendingKeyUseCase,
     private val context: Context,
     private val biometricRepository: BiometricRepository,
-    private val navigationRouter: NavigationRouter
+    private val navigationRouter: NavigationRouter,
+    private val navigateToCoinbase: NavigateToCoinbaseUseCase
 ) : ViewModel() {
     val flexaNavigationCommand = MutableSharedFlow<Unit>()
-    val coinbaseNavigationCommand = MutableSharedFlow<String>()
-
-    private val versionInfo = getVersionInfo()
-    private val isDebug = versionInfo.let { it.isDebuggable && !it.isRunningUnderTestService }
 
     private val isEnabled =
         observeWalletState()
@@ -74,7 +68,11 @@ class IntegrationsViewModel(
             }
 
     val state =
-        combine(observeIsFlexaAvailableUseCase(), isEnabled) { isFlexaAvailable, isEnabled ->
+        combine(
+            isFlexaAvailableUseCase.observe(),
+            isCoinbaseAvailable.observe(),
+            isEnabled
+        ) { isFlexaAvailable, isCoinbaseAvailable, isEnabled ->
             IntegrationsState(
                 disabledInfo = stringRes(R.string.integrations_disabled_info).takeIf { isEnabled.not() },
                 onBack = ::onBack,
@@ -91,7 +89,7 @@ class IntegrationsViewModel(
                                     getZcashCurrency.getLocalizedName()
                                 ),
                             onClick = ::onBuyWithCoinbaseClicked
-                        ).takeIf { isCoinbaseAvailable() },
+                        ).takeIf { isCoinbaseAvailable == true },
                         ZashiListItemState(
                             // Set the wallet currency by app build is more future-proof, although we hide it from
                             // the UI in the Testnet build
@@ -118,27 +116,7 @@ class IntegrationsViewModel(
 
     private fun onBuyWithCoinbaseClicked() =
         viewModelScope.launch {
-            val appId = BuildConfig.ZCASH_COINBASE_APP_ID
-
-            when {
-                appId.isEmpty() && isDebug ->
-                    coinbaseNavigationCommand.emit("https://www.coinbase.com") // fallback debug url
-
-                appId.isEmpty() && isDebug -> {
-                    // should not happen
-                }
-
-                appId.isNotEmpty() -> {
-                    val address = getZashiAccount().transparent
-                    val url =
-                        "https://pay.coinbase.com/buy/select-asset?appId=$appId&addresses={\"${address}\":[\"zcash\"]}"
-                    coinbaseNavigationCommand.emit(url)
-                }
-
-                else -> {
-                    // should not happen
-                }
-            }
+            navigateToCoinbase()
         }
 
     private fun onFlexaClicked() =
