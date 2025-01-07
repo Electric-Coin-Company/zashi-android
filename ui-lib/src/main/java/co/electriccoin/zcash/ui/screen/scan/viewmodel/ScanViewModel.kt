@@ -41,47 +41,75 @@ internal class ScanViewModel(
             mutex.withLock {
                 if (!hasBeenScannedSuccessfully) {
                     val addressValidationResult = getSynchronizer().validateAddress(result)
-
                     val zip321ValidationResult = zip321ParseUriValidationUseCase(result)
 
-                    state.update {
-                        if (addressValidationResult is AddressType.Valid) {
-                            ScanValidationState.INVALID
-                        } else if (zip321ValidationResult is Zip321ParseUriValidation.Valid) {
-                            ScanValidationState.INVALID
-                        } else {
-                            ScanValidationState.NONE
-                        }
-                    }
-
-                    if (zip321ValidationResult is Zip321ParseUriValidation.Valid) {
-                        hasBeenScannedSuccessfully = true
-                        navigateBack.emit(ScanResultState.Zip321Uri(zip321ValidationResult.zip321Uri))
-                    } else if (addressValidationResult is AddressType.Valid) {
-                        hasBeenScannedSuccessfully = true
-
-                        val serializableAddress = SerializableAddress(result, addressValidationResult)
-
-                        when (args) {
-                            DEFAULT -> {
-                                navigateBack.emit(
-                                    ScanResultState.Address(
-                                        Json.encodeToString(
-                                            SerializableAddress.serializer(),
-                                            serializableAddress
-                                        )
-                                    )
-                                )
+                    when {
+                        zip321ValidationResult is Zip321ParseUriValidation.Valid ->
+                            {
+                                hasBeenScannedSuccessfully = true
+                                state.update { ScanValidationState.VALID }
+                                navigateBack.emit(ScanResultState.Zip321Uri(zip321ValidationResult.zip321Uri))
                             }
-
-                            ADDRESS_BOOK -> {
-                                navigateCommand.emit(AddContactArgs(serializableAddress.address))
+                        zip321ValidationResult is Zip321ParseUriValidation.SingleAddress ->
+                            {
+                                hasBeenScannedSuccessfully = true
+                                val singleAddressValidation =
+                                    getSynchronizer()
+                                        .validateAddress(zip321ValidationResult.address)
+                                when (singleAddressValidation) {
+                                    is AddressType.Invalid -> {
+                                        state.update { ScanValidationState.INVALID }
+                                    }
+                                    else -> {
+                                        state.update { ScanValidationState.VALID }
+                                        processAddress(zip321ValidationResult.address, singleAddressValidation)
+                                    }
+                                }
                             }
+                        addressValidationResult is AddressType.Valid ->
+                            {
+                                hasBeenScannedSuccessfully = true
+                                state.update { ScanValidationState.VALID }
+                                processAddress(result, addressValidationResult)
+                            }
+                        else -> {
+                            hasBeenScannedSuccessfully = false
+                            state.update { ScanValidationState.INVALID }
                         }
                     }
                 }
             }
         }
+
+    private suspend fun processAddress(
+        address: String,
+        addressType: AddressType
+    ) {
+        require(addressType is AddressType.Valid)
+
+        val serializableAddress =
+            SerializableAddress(
+                address = address,
+                type = addressType
+            )
+
+        when (args) {
+            DEFAULT -> {
+                navigateBack.emit(
+                    ScanResultState.Address(
+                        Json.encodeToString(
+                            SerializableAddress.serializer(),
+                            serializableAddress
+                        )
+                    )
+                )
+            }
+
+            ADDRESS_BOOK -> {
+                navigateCommand.emit(AddContactArgs(serializableAddress.address))
+            }
+        }
+    }
 
     fun onScannedError() =
         viewModelScope.launch {

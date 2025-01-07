@@ -80,13 +80,15 @@ dependencyResolutionManagement {
             "androidx.benchmark",
             "androidx.navigation",
             "com.android",
+            "com.google.android.apps.common.testing.accessibility.framework",
             "com.google.android.datatransport",
             "com.google.android.gms",
             "com.google.android.material",
+            "com.google.android.odml",
             "com.google.android.play",
             "com.google.firebase",
+            "com.google.mlkit",
             "com.google.testing.platform",
-            "com.google.android.apps.common.testing.accessibility.framework"
         )
         val googleRegexes = listOf(
             "androidx\\..*",
@@ -181,6 +183,7 @@ dependencyResolutionManagement {
             val kotlinxSerializableJsonVersion = extra["KOTLINX_SERIALIZABLE_JSON_VERSION"].toString()
             val lottieVersion = extra["LOTTIE_VERSION"].toString()
             val markdownVersion = extra["MARKDOWN_VERSION"].toString()
+            val mlkitScanningVersion = extra["MLKIT_SCANNING_VERSION"].toString()
             val playAppUpdateVersion = extra["PLAY_APP_UPDATE_VERSION"].toString()
             val playAppUpdateKtxVersion = extra["PLAY_APP_UPDATE_KTX_VERSION"].toString()
             val tinkVersion = extra["TINK_VERSION"].toString()
@@ -245,6 +248,7 @@ dependencyResolutionManagement {
             library("kotlinx-serializable-json", "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializableJsonVersion")
             library("lottie", "com.airbnb.android:lottie-compose:$lottieVersion")
             library("markdown", "org.jetbrains:markdown:$markdownVersion")
+            library("mlkit-scanning", "com.google.mlkit:barcode-scanning:$mlkitScanningVersion")
             library("play-update", "com.google.android.play:app-update:$playAppUpdateVersion")
             library("play-update-ktx", "com.google.android.play:app-update-ktx:$playAppUpdateKtxVersion")
             library("tink", "com.google.crypto.tink:tink-android:$tinkVersion")

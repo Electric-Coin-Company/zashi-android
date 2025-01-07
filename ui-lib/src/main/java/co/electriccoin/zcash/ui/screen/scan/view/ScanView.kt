@@ -88,7 +88,7 @@ import co.electriccoin.zcash.ui.screen.scan.ScanTag
 import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
 import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
 import co.electriccoin.zcash.ui.screen.scan.util.ImageUriToQrCodeConverter
-import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzer
+import co.electriccoin.zcash.ui.screen.scan.util.MlkitQrCodeAnalyzer
 import co.electriccoin.zcash.ui.screen.scankeystone.view.CAMERA_TRANSLUCENT_BORDER
 import co.electriccoin.zcash.ui.screen.scankeystone.view.FramePosition
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -709,7 +709,7 @@ fun ImageAnalysis.qrCodeFlow(framePosition: FramePosition): Flow<String> {
         callbackFlow {
             setAnalyzer(
                 ContextCompat.getMainExecutor(context),
-                QrCodeAnalyzer(
+                MlkitQrCodeAnalyzer(
                     framePosition = framePosition,
                     onQrCodeScanned = { result ->
                         Twig.debug { "Scan result onQrCodeScanned: $result" }
