@@ -42,13 +42,15 @@ internal class Zip321ParseUriValidationUseCase(
 
         return when (paymentRequest) {
             is ZIP321.ParserResult.Request -> Zip321ParseUriValidation.Valid(zip321Uri)
-            // null or [ZIP321.ParserResult.SingleAddress] is not valid for our ZIP 321 Uri to Proposal use case
+            is ZIP321.ParserResult.SingleAddress ->
+                Zip321ParseUriValidation.SingleAddress(paymentRequest.singleRecipient.value)
             else -> Zip321ParseUriValidation.Invalid
         }
     }
 
     internal sealed class Zip321ParseUriValidation {
         data class Valid(val zip321Uri: String) : Zip321ParseUriValidation()
+        data class SingleAddress(val address: String) : Zip321ParseUriValidation()
 
         data object Invalid : Zip321ParseUriValidation()
     }
