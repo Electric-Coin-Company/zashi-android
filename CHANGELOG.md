@@ -10,6 +10,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - Send Confirmation & Send Progress screens have been refactored
 - ZXing QR codes scanning library has been replaced with a more recent MLkit Barcodes scanning library, which gives 
   us better results in testing
+- Zashi now displays dark version of QR code in the dark theme on the QR Code and Request screens
 
 ### Fixed
 - The way how Zashi treats ZIP 321 single address within URIs results has been fixed
