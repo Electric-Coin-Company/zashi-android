@@ -45,32 +45,33 @@ internal class ScanViewModel(
 
                     when {
                         zip321ValidationResult is Zip321ParseUriValidation.Valid ->
-                        {
-                            hasBeenScannedSuccessfully = true
-                            state.update { ScanValidationState.VALID }
-                            navigateBack.emit(ScanResultState.Zip321Uri(zip321ValidationResult.zip321Uri))
-                        }
+                            {
+                                hasBeenScannedSuccessfully = true
+                                state.update { ScanValidationState.VALID }
+                                navigateBack.emit(ScanResultState.Zip321Uri(zip321ValidationResult.zip321Uri))
+                            }
                         zip321ValidationResult is Zip321ParseUriValidation.SingleAddress ->
-                        {
-                            hasBeenScannedSuccessfully = true
-                            val singleAddressValidation = getSynchronizer()
-                                .validateAddress(zip321ValidationResult.address)
-                            when (singleAddressValidation) {
-                                is AddressType.Invalid -> {
-                                    state.update { ScanValidationState.INVALID }
-                                }
-                                else -> {
-                                    state.update { ScanValidationState.VALID }
-                                    processAddress(zip321ValidationResult.address, singleAddressValidation)
+                            {
+                                hasBeenScannedSuccessfully = true
+                                val singleAddressValidation =
+                                    getSynchronizer()
+                                        .validateAddress(zip321ValidationResult.address)
+                                when (singleAddressValidation) {
+                                    is AddressType.Invalid -> {
+                                        state.update { ScanValidationState.INVALID }
+                                    }
+                                    else -> {
+                                        state.update { ScanValidationState.VALID }
+                                        processAddress(zip321ValidationResult.address, singleAddressValidation)
+                                    }
                                 }
                             }
-                        }
                         addressValidationResult is AddressType.Valid ->
-                        {
-                            hasBeenScannedSuccessfully = true
-                            state.update { ScanValidationState.VALID }
-                            processAddress(result, addressValidationResult)
-                        }
+                            {
+                                hasBeenScannedSuccessfully = true
+                                state.update { ScanValidationState.VALID }
+                                processAddress(result, addressValidationResult)
+                            }
                         else -> {
                             hasBeenScannedSuccessfully = false
                             state.update { ScanValidationState.INVALID }
@@ -86,10 +87,11 @@ internal class ScanViewModel(
     ) {
         require(addressType is AddressType.Valid)
 
-        val serializableAddress = SerializableAddress(
-            address = address,
-            type = addressType
-        )
+        val serializableAddress =
+            SerializableAddress(
+                address = address,
+                type = addressType
+            )
 
         when (args) {
             DEFAULT -> {

@@ -17,7 +17,6 @@ class MlkitQrCodeAnalyzer(
     private val framePosition: FramePosition,
     private val onQrCodeScanned: (String) -> Unit,
 ) : ImageAnalysis.Analyzer {
-
     private val supportedImageFormat = Barcode.FORMAT_QR_CODE
 
     @OptIn(ExperimentalGetImage::class)
@@ -36,20 +35,21 @@ class MlkitQrCodeAnalyzer(
 
             Twig.verbose {
                 "Scan result: " +
-                "Frame: $framePosition, "
+                    "Frame: $framePosition, "
                 "Format: ${mediaImage.format}, " +
-                "Image width: ${mediaImage.width}, " +
-                "Image height: ${mediaImage.height}"
+                    "Image width: ${mediaImage.width}, " +
+                    "Image height: ${mediaImage.height}"
                 "Rotation: ${imageProxy.imageInfo.rotationDegrees}"
             }
 
             // Configure Barcode Scanner Options
-            val options = BarcodeScannerOptions.Builder()
-                .setBarcodeFormats(supportedImageFormat)
-                // We could optionally use this to enhance scan success ratio. If it's specified, then the library
-                // will suggest zooming the camera if the barcode is too far away or too small to be detected.
-                //.setZoomSuggestionOptions()
-                .build()
+            val options =
+                BarcodeScannerOptions.Builder()
+                    .setBarcodeFormats(supportedImageFormat)
+                    // We could optionally use this to enhance scan success ratio. If it's specified, then the library
+                    // will suggest zooming the camera if the barcode is too far away or too small to be detected.
+                    // .setZoomSuggestionOptions()
+                    .build()
 
             // Initialize Barcode Scanner
             val scanner = BarcodeScanning.getClient(options)
@@ -78,9 +78,10 @@ class MlkitQrCodeAnalyzer(
 
 private fun Bitmap.rotate(rotationDegrees: Int): Bitmap {
     // Rotate the matrix by the specified degrees
-    val matrix = Matrix().also {
-        it.postRotate(rotationDegrees.toFloat())
-    }
+    val matrix =
+        Matrix().also {
+            it.postRotate(rotationDegrees.toFloat())
+        }
     return Bitmap.createBitmap(
         this,
         0,
@@ -88,7 +89,7 @@ private fun Bitmap.rotate(rotationDegrees: Int): Bitmap {
         width,
         height,
         matrix,
-        true    // Filter for better quality
+        true // Filter for better quality
     )
 }
 
