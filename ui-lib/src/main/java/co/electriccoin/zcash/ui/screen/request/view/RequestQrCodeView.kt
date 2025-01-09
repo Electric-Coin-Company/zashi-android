@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.WalletAddress
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.design.component.QrCodeDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
 import co.electriccoin.zcash.ui.design.component.ZashiBadgeColors
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -112,7 +113,8 @@ private fun ColumnScope.QrCode(
     val sizePixels = with(LocalDensity.current) { DEFAULT_QR_CODE_SIZE.toPx() }.roundToInt()
 
     if (state.request.qrCodeState.bitmap == null) {
-        state.onQrCodeGenerate(sizePixels)
+        val colors = QrCodeDefaults.colors()
+        state.onQrCodeGenerate(sizePixels, colors)
     }
 
     QrCode(
@@ -131,7 +133,7 @@ private fun ColumnScope.QrCode(
                 )
                 .background(
                     if (isSystemInDarkTheme()) {
-                        ZashiColors.Surfaces.bgAlt
+                        ZashiColors.Surfaces.bgPrimary
                     } else {
                         ZashiColors.Surfaces.bgPrimary
                     },

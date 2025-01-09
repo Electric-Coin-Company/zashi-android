@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 interface QrCodeImageGenerator {
     fun generate(
         bitArray: BooleanArray,
-        sizePixels: Int
+        sizePixels: Int,
+        colors: QrCodeColors
     ): ImageBitmap
 }

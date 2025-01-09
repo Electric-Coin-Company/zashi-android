@@ -50,6 +50,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.design.component.QrCodeDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
 import co.electriccoin.zcash.ui.design.component.ZashiBadgeColors
 import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
@@ -63,6 +64,7 @@ import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
+import co.electriccoin.zcash.ui.design.util.QrCodeColors
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeType
 import kotlinx.coroutines.runBlocking
@@ -127,11 +129,13 @@ internal fun QrCodeView(
         }
         is QrCodeState.Prepared -> {
             val sizePixels = with(LocalDensity.current) { DEFAULT_QR_CODE_SIZE.toPx() }.roundToInt()
+            val colors = QrCodeDefaults.colors()
             val qrCodeImage =
                 remember {
                     qrCodeForAddress(
                         address = state.walletAddress.address,
-                        size = sizePixels
+                        size = sizePixels,
+                        colors = colors
                     )
                 }
 
@@ -441,11 +445,13 @@ private fun ColumnScope.QrCode(
     modifier: Modifier = Modifier
 ) {
     val sizePixels = with(LocalDensity.current) { DEFAULT_QR_CODE_SIZE.toPx() }.roundToInt()
+    val colors = QrCodeDefaults.colors()
     val qrCodeImage =
         remember {
             qrCodeForAddress(
                 address = walletAddress.address,
-                size = sizePixels
+                size = sizePixels,
+                colors = colors
             )
         }
 
@@ -474,7 +480,7 @@ private fun ColumnScope.QrCode(
                 )
                 .background(
                     if (isSystemInDarkTheme()) {
-                        ZashiColors.Surfaces.bgAlt
+                        ZashiColors.Surfaces.bgPrimary
                     } else {
                         ZashiColors.Surfaces.bgPrimary
                     },
@@ -488,6 +494,7 @@ private fun ColumnScope.QrCode(
 private fun qrCodeForAddress(
     address: String,
     size: Int,
+    colors: QrCodeColors,
 ): ImageBitmap {
     // In the future, use actual/expect to switch QR code generator implementations for multiplatform
 
@@ -497,7 +504,7 @@ private fun qrCodeForAddress(
 
     val qrCodePixelArray = JvmQrCodeGenerator.generate(address, size)
 
-    return AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size)
+    return AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size, colors)
 }
 
 @Composable

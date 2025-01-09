@@ -95,7 +95,7 @@ private fun Bitmap.rotate(rotationDegrees: Int): Bitmap {
         width,
         // height
         height,
-        // m
+        // matrix
         matrix,
         // filter (Filter for better quality)
         true

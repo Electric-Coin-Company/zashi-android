@@ -22,6 +22,7 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
+import co.electriccoin.zcash.ui.design.util.QrCodeColors
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
@@ -136,7 +137,13 @@ class RequestViewModel(
                             },
                         walletAddress = walletAddress,
                         request = request,
-                        onQrCodeGenerate = { qrCodeForValue(request.qrCodeState.requestUri, it) },
+                        onQrCodeGenerate = { pixels, colors ->
+                            qrCodeForValue(
+                                value = request.qrCodeState.requestUri,
+                                size = pixels,
+                                colors = colors,
+                            )
+                        },
                         onQrCodeShare = { onRequestQrCodeShare(it, shareImageBitmap) },
                         onBack = ::onBack,
                         onClose = ::onClose,
@@ -444,6 +451,7 @@ class RequestViewModel(
     private fun qrCodeForValue(
         value: String,
         size: Int,
+        colors: QrCodeColors
     ) = viewModelScope.launch {
         // In the future, use actual/expect to switch QR code generator implementations for multiplatform
 
@@ -452,7 +460,7 @@ class RequestViewModel(
         // small and we only generate QR codes infrequently.
 
         val qrCodePixelArray = JvmQrCodeGenerator.generate(value, size)
-        val bitmap = AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size)
+        val bitmap = AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size, colors)
 
         val newQrCodeState = request.value.qrCodeState.copy(bitmap = bitmap)
         request.emit(request.value.copy(qrCodeState = newQrCodeState))

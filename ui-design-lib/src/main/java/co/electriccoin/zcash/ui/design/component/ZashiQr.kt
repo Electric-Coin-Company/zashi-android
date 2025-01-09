@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -17,16 +18,18 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
+import co.electriccoin.zcash.ui.design.util.QrCodeColors
 import co.electriccoin.zcash.ui.design.util.orDark
 
 @Composable
 fun ZashiQr(
     qrData: String,
     modifier: Modifier = Modifier,
-    qrSize: Dp = ZashiQrDefaults.width
+    qrSize: Dp = ZashiQrDefaults.width,
+    colors: QrCodeColors = QrCodeDefaults.colors()
 ) {
     val qrSizePx = with(LocalDensity.current) { qrSize.roundToPx() }
-    val bitmap = getQrCode(qrData, qrSizePx)
+    val bitmap = getQrCode(qrData, qrSizePx, colors)
 
     Surface(
         modifier = modifier,
@@ -47,10 +50,11 @@ fun ZashiQr(
 
 private fun getQrCode(
     address: String,
-    size: Int
+    size: Int,
+    colors: QrCodeColors
 ): ImageBitmap {
     val qrCodePixelArray = JvmQrCodeGenerator.generate(address, size)
-    return AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size)
+    return AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size, colors)
 }
 
 object ZashiQrDefaults {
@@ -60,3 +64,14 @@ object ZashiQrDefaults {
 }
 
 private const val WIDTH_RATIO = 0.66
+
+object QrCodeDefaults {
+    @Composable
+    fun colors(
+        background: Color = Color.White orDark ZashiColors.Surfaces.bgPrimary,
+        foreground: Color = Color.Black orDark Color.White
+    ) = QrCodeColors(
+        background = background,
+        foreground = foreground
+    )
+}
