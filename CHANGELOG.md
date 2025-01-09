@@ -6,6 +6,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [1.3.2 (828)] - 2025-01-09
+
 ### Changed
 - Send Confirmation & Send Progress screens have been refactored
 - ZXing QR codes scanning library has been replaced with a more recent MLkit Barcodes scanning library, which gives 

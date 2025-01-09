@@ -53,8 +53,6 @@ internal class Zip321ParseUriValidationUseCase(
 
         data class SingleAddress(val address: String) : Zip321ParseUriValidation()
 
-        data class SingleAddress(val address: String) : Zip321ParseUriValidation()
-
         data object Invalid : Zip321ParseUriValidation()
     }
 }

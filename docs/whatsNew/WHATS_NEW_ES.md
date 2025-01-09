@@ -12,14 +12,15 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-### Changed
-- Send Confirmation & Send Progress screens have been refactored with bugfixes and optimizations
-- ZXing QR codes scanning library has been replaced with a more recent MLkit Barcodes scanning library, which gives
-  us better results in testing
-- Zashi now displays dark version of QR code in the dark theme on the QR Code and Request screens
+## [1.3.2 (828)] - 2025-01-09
 
-### Fixed
-- The way how Zashi treats ZIP 321 single address within URIs results has been fixed
+### Cambiado
+- Zashi ahora muestra la versión oscura de los códigos QR en el tema oscuro.
+- Mejoramos el escáner de códigos QR para que sea más rápido.
+- Reestructuramos las pantallas de Enviar para optimizar su funcionamiento.
+
+### Corregido
+- Solucionamos la manera en que Zashi procesa las direcciones contenidas en los códigos QR.
 
 ## [1.3.1 (822)] - 2025-01-07
 
