@@ -31,11 +31,4 @@ private fun BooleanArray.toThemeColorArray(colors: QrCodeColors) =
 data class QrCodeColors(
     val background: Color,
     val foreground: Color
-) {
-    companion object {
-        val LightTheme = QrCodeColors(Color.White, Color.Black)
-
-        // The background color refers to [co.electriccoin.zcash.ui.design.theme.colors.Base.Obsidian]
-        val DarkTheme = QrCodeColors(Color(0xFF231F20), Color.White)
-    }
-}
+)
