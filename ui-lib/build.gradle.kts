@@ -140,6 +140,7 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.immutable)
     implementation(libs.kotlinx.serializable.json)
+    implementation(libs.mlkit.scanning)
     implementation(libs.zcash.sdk)
     implementation(libs.zcash.sdk.incubator)
     implementation(libs.zcash.bip39)
