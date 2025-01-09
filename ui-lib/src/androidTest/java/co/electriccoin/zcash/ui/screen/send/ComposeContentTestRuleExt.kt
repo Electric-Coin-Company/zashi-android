@@ -14,7 +14,6 @@ import androidx.compose.ui.test.performTextInput
 import cash.z.ecc.sdk.fixture.ZecSendFixture
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.screen.sendconfirmation.SendConfirmationTag
 import co.electriccoin.zcash.ui.test.getAppContext
 import co.electriccoin.zcash.ui.test.getStringResource
 import co.electriccoin.zcash.ui.test.getStringResourceWithArgs
@@ -101,12 +100,6 @@ internal fun ComposeContentTestRule.dismissFailureDialog() {
 
 internal fun ComposeContentTestRule.assertOnForm() {
     onNodeWithTag(SendTag.SEND_FORM_BUTTON).also {
-        it.assertExists()
-    }
-}
-
-internal fun ComposeContentTestRule.assertOnConfirmation() {
-    onNodeWithTag(SendConfirmationTag.SEND_CONFIRMATION_SEND_BUTTON).also {
         it.assertExists()
     }
 }

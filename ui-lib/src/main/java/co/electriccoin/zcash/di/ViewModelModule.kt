@@ -16,13 +16,12 @@ import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
-import co.electriccoin.zcash.ui.screen.paymentrequest.viewmodel.PaymentRequestViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
 import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
-import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewKeystoneTransactionViewModel
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
 import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
 import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
@@ -37,7 +36,7 @@ import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewMo
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
-import co.electriccoin.zcash.ui.screen.transactionprogress.KeystoneTransactionProgressViewModel
+import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressViewModel
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
@@ -86,7 +85,6 @@ val viewModelModule =
         viewModelOf(::ReceiveViewModel)
         viewModelOf(::QrCodeViewModel)
         viewModelOf(::RequestViewModel)
-        viewModelOf(::PaymentRequestViewModel)
         viewModelOf(::IntegrationsViewModel)
         viewModel { (args: ScanNavigationArgs) ->
             ScanViewModel(
@@ -119,6 +117,6 @@ val viewModelModule =
                 navigationRouter = get()
             )
         }
-        viewModelOf(::ReviewKeystoneTransactionViewModel)
-        viewModelOf(::KeystoneTransactionProgressViewModel)
+        viewModelOf(::ReviewTransactionViewModel)
+        viewModelOf(::TransactionProgressViewModel)
     }

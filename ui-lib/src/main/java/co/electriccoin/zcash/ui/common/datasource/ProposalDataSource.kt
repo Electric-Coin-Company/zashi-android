@@ -7,17 +7,19 @@ import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.Pczt
 import cash.z.ecc.android.sdk.model.Proposal
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
+import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.screen.balances.DEFAULT_SHIELDING_THRESHOLD
-import co.electriccoin.zcash.ui.screen.sendconfirmation.model.SubmitResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import org.zecdev.zip321.ZIP321
 
@@ -49,6 +51,11 @@ interface ProposalDataSource {
     suspend fun submitTransaction(
         pcztWithProofs: Pczt,
         pcztWithSignatures: Pczt
+    ): SubmitResult
+
+    suspend fun submitTransaction(
+        proposal: Proposal,
+        usk: UnifiedSpendingKey
     ): SubmitResult
 }
 
@@ -147,64 +154,66 @@ class ProposalDataSourceImpl(
         pcztWithProofs: Pczt,
         pcztWithSignatures: Pczt
     ): SubmitResult =
+        submitTransactionInternal {
+            it.createTransactionFromPczt(
+                pcztWithProofs = pcztWithProofs,
+                pcztWithSignatures = pcztWithSignatures,
+            )
+        }
+
+    override suspend fun submitTransaction(
+        proposal: Proposal,
+        usk: UnifiedSpendingKey
+    ): SubmitResult =
+        submitTransactionInternal {
+            it.createProposedTransactions(
+                proposal = proposal,
+                usk = usk,
+            )
+        }
+
+    private suspend inline fun submitTransactionInternal(
+        crossinline block: suspend (Synchronizer) -> Flow<TransactionSubmitResult>
+    ): SubmitResult =
         withContext(Dispatchers.IO) {
             val synchronizer = synchronizerProvider.getSdkSynchronizer()
 
-            val submitResult =
-                runCreateTransactions(
-                    synchronizer = synchronizer,
-                    pcztWithProofs = pcztWithProofs,
-                    pcztWithSignatures = pcztWithSignatures
-                )
+            val submitResults = mutableListOf<TransactionSubmitResult>()
+
+            val result =
+                runCatching {
+                    block(synchronizer).collect { submitResult ->
+                        Twig.info { "Transaction submit result: $submitResult" }
+                        submitResults.add(submitResult)
+                    }
+                    if (submitResults.find { it is TransactionSubmitResult.Failure } != null) {
+                        if (submitResults.size == 1) {
+                            val result = (submitResults[0] as TransactionSubmitResult.Failure)
+                            if (result.grpcError) {
+                                SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc(result)
+                            } else {
+                                SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit(result)
+                            }
+                        } else {
+                            SubmitResult.MultipleTrxFailure(submitResults)
+                        }
+                    } else {
+                        // All transaction submissions were successful
+                        SubmitResult.Success
+                    }
+                }.onSuccess {
+                    Twig.debug { "Transactions submitted successfully" }
+                }.onFailure {
+                    Twig.error(it) { "Transactions submission failed" }
+                }.getOrElse {
+                    SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther(it)
+                }
 
             synchronizer.refreshTransactions()
             synchronizer.refreshAllBalances()
 
-            submitResult
+            result
         }
-
-    private suspend fun runCreateTransactions(
-        synchronizer: Synchronizer,
-        pcztWithProofs: Pczt,
-        pcztWithSignatures: Pczt,
-    ): SubmitResult {
-        val submitResults = mutableListOf<TransactionSubmitResult>()
-
-        return runCatching {
-            synchronizer.createTransactionFromPczt(
-                pcztWithProofs = pcztWithProofs,
-                pcztWithSignatures = pcztWithSignatures
-            ).collect { submitResult ->
-                Twig.info { "Transaction submit result: $submitResult" }
-                submitResults.add(submitResult)
-            }
-            if (submitResults.find { it is TransactionSubmitResult.Failure } != null) {
-                if (submitResults.size == 1) {
-                    // The first transaction submission failed - user might just be able to re-submit the transaction
-                    // proposal. Simple error pop up is fine then
-                    val result = (submitResults[0] as TransactionSubmitResult.Failure)
-                    if (result.grpcError) {
-                        SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc(result)
-                    } else {
-                        SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit(result)
-                    }
-                } else {
-                    // Any subsequent transaction submission failed - user needs to resolve this manually. Multiple
-                    // transaction failure screen presented
-                    SubmitResult.MultipleTrxFailure(submitResults)
-                }
-            } else {
-                // All transaction submissions were successful
-                SubmitResult.Success
-            }
-        }.onSuccess {
-            Twig.debug { "Transactions submitted successfully" }
-        }.onFailure {
-            Twig.error(it) { "Transactions submission failed" }
-        }.getOrElse {
-            SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther(it)
-        }
-    }
 
     @Suppress("TooGenericExceptionCaught")
     private inline fun <T : Any> getOrThrow(block: () -> T): T {

@@ -6,7 +6,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.test.filters.MediumTest
 import cash.z.ecc.sdk.fixture.ZecSendFixture
 import co.electriccoin.zcash.ui.screen.send.WrapSend
-import co.electriccoin.zcash.ui.screen.send.assertOnConfirmation
 import co.electriccoin.zcash.ui.screen.send.assertOnForm
 import co.electriccoin.zcash.ui.screen.send.clickCreateAndSend
 import co.electriccoin.zcash.ui.screen.send.setAddress
@@ -38,8 +37,6 @@ class SendViewIntegrationTest {
                 goToQrScanner = {},
                 goBack = {},
                 goBalances = {},
-                goSendConfirmation = {},
-                goPaymentRequest = { _, _ -> },
             )
         }
 
@@ -51,12 +48,10 @@ class SendViewIntegrationTest {
 
         // Move to confirmation
         composeTestRule.clickCreateAndSend()
-        composeTestRule.assertOnConfirmation()
 
         restorationTester.emulateSavedInstanceStateRestore()
 
         // Check if stage recreated correctly
-        composeTestRule.assertOnConfirmation()
 
         // Move back to form
         composeTestRule.assertOnForm()

@@ -13,6 +13,7 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [Unreleased]
 
 ### Changed
+- Send Confirmation & Send Progress screens have been refactored with bugfixes and optimizations
 - ZXing QR codes scanning library has been replaced with a more recent MLkit Barcodes scanning library, which gives
   us better results in testing
 

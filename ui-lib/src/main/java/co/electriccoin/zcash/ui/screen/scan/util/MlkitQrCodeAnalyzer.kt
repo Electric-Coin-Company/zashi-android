@@ -60,6 +60,8 @@ class MlkitQrCodeAnalyzer(
                         barcode.rawValue?.let { value ->
                             Twig.debug { "Mlkit barcode value: $value" }
                             onQrCodeScanned(value)
+                            // Note that we only take the first code from the list of discovered codes
+                            return@addOnSuccessListener
                         }
                     }
                 }
@@ -83,13 +85,20 @@ private fun Bitmap.rotate(rotationDegrees: Int): Bitmap {
             it.postRotate(rotationDegrees.toFloat())
         }
     return Bitmap.createBitmap(
+        // source
         this,
+        // x
         0,
+        // y
         0,
+        // width
         width,
+        // height
         height,
+        // matrix
         matrix,
-        true // Filter for better quality
+        // filter (Filter for better quality)
+        true
     )
 }
 
@@ -102,13 +111,13 @@ private fun Bitmap.crop(framePosition: FramePosition): Bitmap {
     // TODO [#1380]: https://github.com/Electric-Coin-Company/zashi-android/issues/1380
     return Bitmap.createBitmap(
         this,
-        // left =
+        // left
         (width * LEFT_OFFSET).toInt(),
-        // top =
+        // top
         (height * TOP_OFFSET).toInt(),
-        // width =
+        // width
         (width * WIDTH_OFFSET).toInt(),
-        // height =
+        // height
         (height * HEIGHT_OFFSET).toInt(),
     )
 }
