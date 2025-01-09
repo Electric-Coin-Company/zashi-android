@@ -8,22 +8,33 @@ import androidx.compose.ui.graphics.asImageBitmap
 object AndroidQrCodeImageGenerator : QrCodeImageGenerator {
     override fun generate(
         bitArray: BooleanArray,
-        sizePixels: Int
+        sizePixels: Int,
+        colors: QrCodeColors
     ): ImageBitmap {
-        val colorArray = bitArray.toBlackAndWhiteColorArray()
+        val colorArray = bitArray.toThemeColorArray(colors)
 
         return Bitmap.createBitmap(colorArray, sizePixels, sizePixels, Bitmap.Config.ARGB_8888)
             .asImageBitmap()
     }
 }
 
-// TODO [#1473]: Dark mode QR codes for Receive screen
-// TODO [#1473]: https://github.com/Electric-Coin-Company/zashi-android/issues/1473
-private fun BooleanArray.toBlackAndWhiteColorArray() =
+private fun BooleanArray.toThemeColorArray(colors: QrCodeColors) =
     IntArray(size) {
         if (this[it]) {
-            Color.BLACK
+            colors.foreground
         } else {
-            Color.WHITE
+            colors.background
         }
     }
+
+data class QrCodeColors(
+    val background: Int,
+    val foreground: Int
+) {
+    companion object {
+        val LightTheme = QrCodeColors(Color.WHITE, Color.BLACK)
+
+        // The background color refers to [co.electriccoin.zcash.ui.design.theme.colors.Base.Obsidian]
+        val DarkTheme = QrCodeColors(0xFF231F20.toInt(), Color.WHITE)
+    }
+}

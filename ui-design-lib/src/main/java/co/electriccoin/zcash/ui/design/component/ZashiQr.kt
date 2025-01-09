@@ -17,6 +17,7 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
+import co.electriccoin.zcash.ui.design.util.QrCodeColors
 import co.electriccoin.zcash.ui.design.util.orDark
 
 @Composable
@@ -26,7 +27,8 @@ fun ZashiQr(
     qrSize: Dp = ZashiQrDefaults.width
 ) {
     val qrSizePx = with(LocalDensity.current) { qrSize.roundToPx() }
-    val bitmap = getQrCode(qrData, qrSizePx)
+    val colors = QrCodeColors.LightTheme orDark QrCodeColors.DarkTheme
+    val bitmap = getQrCode(qrData, qrSizePx, colors)
 
     Surface(
         modifier = modifier,
@@ -47,10 +49,11 @@ fun ZashiQr(
 
 private fun getQrCode(
     address: String,
-    size: Int
+    size: Int,
+    colors: QrCodeColors
 ): ImageBitmap {
     val qrCodePixelArray = JvmQrCodeGenerator.generate(address, size)
-    return AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size)
+    return AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size, colors)
 }
 
 object ZashiQrDefaults {

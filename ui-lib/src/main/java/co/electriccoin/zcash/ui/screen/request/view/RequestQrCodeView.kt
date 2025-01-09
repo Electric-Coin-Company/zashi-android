@@ -40,6 +40,8 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.QrCodeColors
+import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 import kotlin.math.roundToInt
 
@@ -112,7 +114,8 @@ private fun ColumnScope.QrCode(
     val sizePixels = with(LocalDensity.current) { DEFAULT_QR_CODE_SIZE.toPx() }.roundToInt()
 
     if (state.request.qrCodeState.bitmap == null) {
-        state.onQrCodeGenerate(sizePixels)
+        val colors = QrCodeColors.LightTheme orDark QrCodeColors.DarkTheme
+        state.onQrCodeGenerate(sizePixels, colors)
     }
 
     QrCode(
@@ -131,7 +134,7 @@ private fun ColumnScope.QrCode(
                 )
                 .background(
                     if (isSystemInDarkTheme()) {
-                        ZashiColors.Surfaces.bgAlt
+                        ZashiColors.Surfaces.bgPrimary
                     } else {
                         ZashiColors.Surfaces.bgPrimary
                     },
