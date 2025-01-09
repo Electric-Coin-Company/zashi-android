@@ -132,12 +132,8 @@ private fun ColumnScope.QrCode(
                     shape = RoundedCornerShape(ZashiDimensions.Radius.radius4xl)
                 )
                 .background(
-                    if (isSystemInDarkTheme()) {
-                        ZashiColors.Surfaces.bgPrimary
-                    } else {
-                        ZashiColors.Surfaces.bgPrimary
-                    },
-                    RoundedCornerShape(ZashiDimensions.Radius.radius4xl)
+                    color = ZashiColors.Surfaces.bgPrimary,
+                    shape = RoundedCornerShape(ZashiDimensions.Radius.radius4xl)
                 )
                 .padding(all = 12.dp)
     )
