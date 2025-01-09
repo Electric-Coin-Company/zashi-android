@@ -12,6 +12,13 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Changed
+- ZXing QR codes scanning library has been replaced with a more recent MLkit Barcodes scanning library, which gives
+  us better results in testing
+
+### Fixed
+- The way how Zashi treats ZIP 321 single address within URIs results has been fixed
+
 ## [1.3.1 (822)] - 2025-01-07
 
 ### Fixed
