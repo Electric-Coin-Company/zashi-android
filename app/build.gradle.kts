@@ -184,6 +184,7 @@ dependencies {
     implementation(projects.preferenceImplAndroidLib)
     implementation(projects.spackleAndroidLib)
     implementation(projects.uiLib)
+    implementation("androidx.lifecycle:lifecycle-process:2.8.7")
 
     androidTestImplementation(projects.testLib)
 
