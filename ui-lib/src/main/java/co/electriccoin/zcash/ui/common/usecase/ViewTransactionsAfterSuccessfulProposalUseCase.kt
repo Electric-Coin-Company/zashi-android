@@ -15,6 +15,6 @@ class ViewTransactionsAfterSuccessfulProposalUseCase(
         zashiProposalRepository.clear()
         keystoneProposalRepository.clear()
         observeClearSend.requestClear()
-        navigationRouter.forward(HOME)
+        navigationRouter.newRoot(HOME)
     }
 }

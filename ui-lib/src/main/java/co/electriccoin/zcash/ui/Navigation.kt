@@ -123,47 +123,36 @@ internal fun MainActivity.Navigation() {
     LaunchedEffect(Unit) {
         navigationRouter.observe().collect {
             when (it) {
-                is NavigationCommand.Forward.ByRoute -> {
-                    navController.navigate(it.route)
-                }
-                is NavigationCommand.Forward.ByTypeSafetyRoute<*> -> {
+                is NavigationCommand.Forward ->
                     if (it.route is ExternalUrl) {
                         WebBrowserUtil.startActivity(this@Navigation, it.route.url)
-                        return@collect
                     } else {
-                        navController.navigate(it.route)
+                        navController.executeNavigation(route = it.route)
                     }
-                }
-                is NavigationCommand.Replace.ByRoute -> {
-                    navController.navigate(it.route) {
-                        popUpTo(navController.currentBackStackEntry?.destination?.id ?: 0) {
-                            inclusive = true
-                        }
-                    }
-                }
-                is NavigationCommand.Replace.ByTypeSafetyRoute<*> -> {
+                is NavigationCommand.Replace ->
                     if (it.route is ExternalUrl) {
                         navController.popBackStack()
                         WebBrowserUtil.startActivity(this@Navigation, it.route.url)
-                        return@collect
                     } else {
-                        navController.navigate(it.route) {
+                        navController.executeNavigation(route = it.route) {
                             popUpTo(navController.currentBackStackEntry?.destination?.id ?: 0) {
                                 inclusive = true
                             }
                         }
                     }
-                }
-                NavigationCommand.Back -> {
-                    navController.popBackStack()
-                }
+                is NavigationCommand.NewRoot ->
+                    navController.executeNavigation(route = it.route) {
+                        popUpTo(HOME) {
+                            inclusive = true
+                        }
+                    }
+                NavigationCommand.Back -> navController.popBackStack()
 
-                NavigationCommand.BackToRoot -> {
+                NavigationCommand.BackToRoot ->
                     navController.popBackStack(
                         destinationId = navController.graph.startDestinationId,
                         inclusive = false
                     )
-                }
             }
         }
     }
@@ -512,6 +501,25 @@ fun NavHostController.navigateJustOnce(
     }
 }
 
+private fun NavHostController.executeNavigation(
+    route: Any,
+    builder: (NavOptionsBuilder.() -> Unit)? = null
+) {
+    if (route is String) {
+        if (builder == null) {
+            navigate(route)
+        } else {
+            navigate(route, builder)
+        }
+    } else {
+        if (builder == null) {
+            navigate(route)
+        } else {
+            navigate(route, builder)
+        }
+    }
+}
+
 /**
  * Pops up the current screen from the back stack. Parameter currentRouteToBePopped is meant to be
  * set only to the current screen so we can easily debounce multiple screen popping from the back stack.
@@ -528,20 +536,7 @@ fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: String) {
 object NavigationArguments {
     const val SEND_SCAN_RECIPIENT_ADDRESS = "send_scan_recipient_address"
     const val SEND_SCAN_ZIP_321_URI = "send_scan_zip_321_uri"
-
-    const val SEND_CONFIRM_RECIPIENT_ADDRESS = "send_confirm_recipient_address"
-    const val SEND_CONFIRM_AMOUNT = "send_confirm_amount"
-    const val SEND_CONFIRM_MEMO = "send_confirm_memo"
-    const val SEND_CONFIRM_PROPOSAL = "send_confirm_proposal"
-    const val SEND_CONFIRM_INITIAL_STAGE = "send_confirm_initial_stage"
-
     const val MULTIPLE_SUBMISSION_CLEAR_FORM = "multiple_submission_clear_form"
-
-    const val PAYMENT_REQUEST_ADDRESS = "payment_request_address"
-    const val PAYMENT_REQUEST_AMOUNT = "payment_request_amount"
-    const val PAYMENT_REQUEST_MEMO = "payment_request_memo"
-    const val PAYMENT_REQUEST_PROPOSAL = "payment_request_proposal"
-    const val PAYMENT_REQUEST_URI = "payment_request_uri"
 }
 
 object NavigationTargets {
