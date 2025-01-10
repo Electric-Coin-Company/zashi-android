@@ -12,6 +12,10 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Fixed
+- Fixed an issue when the application did not clean navigation stack after clicking View Transactions after
+  successful transaction
+
 ## [1.3.2 (828)] - 2025-01-09
 
 ### Changed
