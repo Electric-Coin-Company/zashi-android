@@ -12,7 +12,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-## [1.3.2 (828)] - 2025-01-09
+## [1.3.2 (829)] - 2025-01-10
 
 ### Changed
 - Zashi now displays the dark version of QR codes in the dark theme
