@@ -11,7 +11,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -479,12 +478,8 @@ private fun ColumnScope.QrCode(
                     shape = RoundedCornerShape(ZashiDimensions.Radius.radius4xl)
                 )
                 .background(
-                    if (isSystemInDarkTheme()) {
-                        ZashiColors.Surfaces.bgPrimary
-                    } else {
-                        ZashiColors.Surfaces.bgPrimary
-                    },
-                    RoundedCornerShape(ZashiDimensions.Radius.radius4xl)
+                    color = ZashiColors.Surfaces.bgPrimary,
+                    shape = RoundedCornerShape(ZashiDimensions.Radius.radius4xl)
                 )
                 .padding(all = 12.dp),
         qrCodeType = qrCodeType
