@@ -29,13 +29,6 @@ class ZcashApplication : CoroutineApplication() {
     override fun onCreate() {
         super.onCreate()
 
-        // Observe the application process lifecycle
-        ProcessLifecycleOwner.get().lifecycle.addObserver(
-            LifecycleEventObserver { _, event ->
-                applicationStateProvider.setApplicationState(event)
-            }
-        )
-
         configureLogging()
 
         configureStrictMode()
@@ -52,6 +45,13 @@ class ZcashApplication : CoroutineApplication() {
                 viewModelModule
             )
         }
+
+        // Observe the application process lifecycle
+        ProcessLifecycleOwner.get().lifecycle.addObserver(
+            LifecycleEventObserver { _, event ->
+                applicationStateProvider.setApplicationState(event)
+            }
+        )
 
         // Since analytics will need disk IO internally, we want this to be registered after strict
         // mode is configured to ensure none of that IO happens on the main thread
