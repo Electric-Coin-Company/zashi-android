@@ -12,6 +12,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Fixed
+- The Disconnected popup trigger when the app is backgrounded has been fixed
+
 ## [1.3.2 (829)] - 2025-01-10
 
 ### Cambiado
