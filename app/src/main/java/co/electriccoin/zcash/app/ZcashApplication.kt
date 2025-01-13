@@ -32,9 +32,7 @@ class ZcashApplication : CoroutineApplication() {
         // Observe the application process lifecycle
         ProcessLifecycleOwner.get().lifecycle.addObserver(
             LifecycleEventObserver { _, event ->
-                applicationScope.launch {
-                    applicationStateProvider.setApplicationState(event)
-                }
+                applicationStateProvider.setApplicationState(event)
             }
         )
 

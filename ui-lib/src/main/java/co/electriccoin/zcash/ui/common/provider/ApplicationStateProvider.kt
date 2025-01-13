@@ -30,6 +30,5 @@ class ApplicationStateProviderImpl : ApplicationStateProvider {
 }
 
 fun Lifecycle.Event?.isInForeground(): Boolean =
-    this == Lifecycle.Event.ON_CREATE ||
-        this == Lifecycle.Event.ON_RESUME ||
+    this == Lifecycle.Event.ON_RESUME ||
         this == Lifecycle.Event.ON_START
