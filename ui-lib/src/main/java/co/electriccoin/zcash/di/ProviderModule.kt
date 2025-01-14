@@ -6,6 +6,8 @@ import co.electriccoin.zcash.ui.common.provider.AddressBookProvider
 import co.electriccoin.zcash.ui.common.provider.AddressBookProviderImpl
 import co.electriccoin.zcash.ui.common.provider.AddressBookStorageProvider
 import co.electriccoin.zcash.ui.common.provider.AddressBookStorageProviderImpl
+import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
+import co.electriccoin.zcash.ui.common.provider.ApplicationStateProviderImpl
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
@@ -33,4 +35,5 @@ val providerModule =
         factoryOf(::SelectedAccountUUIDProviderImpl) bind SelectedAccountUUIDProvider::class
         singleOf(::PersistableWalletProviderImpl) bind PersistableWalletProvider::class
         singleOf(::SynchronizerProviderImpl) bind SynchronizerProvider::class
+        singleOf(::ApplicationStateProviderImpl) bind ApplicationStateProvider::class
     }
