@@ -37,6 +37,7 @@ internal sealed class RequestState {
         val icon: Int,
         val request: Request,
         val walletAddress: WalletAddress,
+        val onQrCodeClick: () -> Unit,
         val onQrCodeShare: (ImageBitmap) -> Unit,
         val onQrCodeGenerate: (pixels: Int, colors: QrCodeColors) -> Unit,
         override val onBack: () -> Unit,

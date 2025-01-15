@@ -5,7 +5,6 @@ package co.electriccoin.zcash.ui.screen.exchangerate.widget
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Column
@@ -93,7 +92,6 @@ fun StyledExchangeBalance(
 }
 
 @Suppress("LongParameterList", "LongMethod")
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ExchangeAvailableRateLabelInternal(
     style: TextStyle,
