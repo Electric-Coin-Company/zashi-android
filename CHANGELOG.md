@@ -6,6 +6,10 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Changed
+- The QR code image logic of the `QrCode`, `Request`, and `SignTransaction` screens has been refactored to work 
+  with the newer `ZashiQr` component 
+
 ### Fixed
 - The Disconnected popup trigger when the app is backgrounded has been fixed 
 

@@ -1,28 +1,18 @@
 package co.electriccoin.zcash.ui.screen.request.view
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -32,16 +22,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.WalletAddress
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
-import co.electriccoin.zcash.ui.design.component.QrCodeDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
 import co.electriccoin.zcash.ui.design.component.ZashiBadgeColors
+import co.electriccoin.zcash.ui.design.component.ZashiQr
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
-import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
-import kotlin.math.roundToInt
 
 @Composable
 internal fun RequestQrCodeView(
@@ -96,7 +84,7 @@ internal fun RequestQrCodeView(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
 
         QrCode(
-            state = state,
+            requestState = state,
             modifier = Modifier.padding(horizontal = 24.dp),
         )
 
@@ -106,69 +94,17 @@ internal fun RequestQrCodeView(
 
 @Composable
 private fun ColumnScope.QrCode(
-    state: RequestState.QrCode,
+    requestState: RequestState.QrCode,
     modifier: Modifier = Modifier
 ) {
-    val sizePixels = with(LocalDensity.current) { DEFAULT_QR_CODE_SIZE.toPx() }.roundToInt()
-
-    if (state.request.qrCodeState.bitmap == null) {
-        val colors = QrCodeDefaults.colors()
-        state.onQrCodeGenerate(sizePixels, colors)
-    }
-
-    QrCode(
-        state = state,
-        contentDescription = stringResource(id = R.string.request_qr_code_content_description),
-        modifier =
-            modifier
-                .align(Alignment.CenterHorizontally)
-                .border(
-                    border =
-                        BorderStroke(
-                            width = 1.dp,
-                            color = ZashiColors.Surfaces.strokePrimary
-                        ),
-                    shape = RoundedCornerShape(ZashiDimensions.Radius.radius4xl)
-                )
-                .background(
-                    color = ZashiColors.Surfaces.bgPrimary,
-                    shape = RoundedCornerShape(ZashiDimensions.Radius.radius4xl)
-                )
-                .padding(all = 12.dp)
+    ZashiQr(
+        state =
+            requestState.toQrState(
+                contentDescription = stringRes(R.string.request_qr_code_content_description),
+                centerImageResId = requestState.icon
+            ),
+        modifier = modifier.align(CenterHorizontally),
     )
-}
-
-@Composable
-private fun QrCode(
-    state: RequestState.QrCode,
-    contentDescription: String,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier =
-            Modifier
-                .clickable(
-                    indication = null,
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = { state.request.qrCodeState.bitmap?.let { state.onQrCodeShare(it) } },
-                )
-                .then(modifier)
-    ) {
-        if (state.request.qrCodeState.bitmap == null) {
-            CircularScreenProgressIndicator()
-        } else {
-            Image(
-                bitmap = state.request.qrCodeState.bitmap,
-                contentDescription = contentDescription,
-            )
-            Image(
-                modifier = Modifier.size(64.dp),
-                painter = painterResource(id = state.icon),
-                contentDescription = contentDescription,
-            )
-        }
-    }
 }
 
 @Composable
@@ -196,5 +132,3 @@ private fun RequestQrCodeZecAmountView(
         modifier = modifier
     )
 }
-
-private val DEFAULT_QR_CODE_SIZE = 320.dp

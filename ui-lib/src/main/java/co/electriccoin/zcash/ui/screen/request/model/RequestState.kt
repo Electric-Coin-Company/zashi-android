@@ -5,7 +5,9 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
+import co.electriccoin.zcash.ui.design.component.QrState
 import co.electriccoin.zcash.ui.design.util.QrCodeColors
+import co.electriccoin.zcash.ui.design.util.StringResource
 
 internal sealed class RequestState {
     data object Loading : RequestState()
@@ -37,10 +39,21 @@ internal sealed class RequestState {
         val icon: Int,
         val request: Request,
         val walletAddress: WalletAddress,
+        val onQrCodeClick: () -> Unit,
         val onQrCodeShare: (ImageBitmap) -> Unit,
         val onQrCodeGenerate: (pixels: Int, colors: QrCodeColors) -> Unit,
         override val onBack: () -> Unit,
         val onClose: () -> Unit,
         val zcashCurrency: ZcashCurrency,
-    ) : Prepared(onBack)
+    ) : Prepared(onBack) {
+        fun toQrState(
+            contentDescription: StringResource? = null,
+            centerImageResId: Int? = null,
+        ) = QrState(
+            qrData = walletAddress.address,
+            onClick = onQrCodeClick,
+            contentDescription = contentDescription,
+            centerImageResId = centerImageResId
+        )
+    }
 }
