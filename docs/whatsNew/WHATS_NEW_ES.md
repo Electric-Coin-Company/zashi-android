@@ -22,6 +22,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ### Fixed
 - The Disconnected popup trigger when the app is backgrounded has been fixed
+- The issue when the application does not clean navigation stack after clicking View Transactions after a successful
+  transaction has been resolved
 
 ## [1.3.2 (829)] - 2025-01-10
 

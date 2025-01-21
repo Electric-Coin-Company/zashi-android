@@ -126,47 +126,36 @@ internal fun MainActivity.Navigation() {
     LaunchedEffect(Unit) {
         navigationRouter.observe().collect {
             when (it) {
-                is NavigationCommand.Forward.ByRoute -> {
-                    navController.navigate(it.route)
-                }
-                is NavigationCommand.Forward.ByTypeSafetyRoute<*> -> {
+                is NavigationCommand.Forward ->
                     if (it.route is ExternalUrl) {
                         WebBrowserUtil.startActivity(this@Navigation, it.route.url)
-                        return@collect
                     } else {
-                        navController.navigate(it.route)
+                        navController.executeNavigation(route = it.route)
                     }
-                }
-                is NavigationCommand.Replace.ByRoute -> {
-                    navController.navigate(it.route) {
-                        popUpTo(navController.currentBackStackEntry?.destination?.id ?: 0) {
-                            inclusive = true
-                        }
-                    }
-                }
-                is NavigationCommand.Replace.ByTypeSafetyRoute<*> -> {
+                is NavigationCommand.Replace ->
                     if (it.route is ExternalUrl) {
                         navController.popBackStack()
                         WebBrowserUtil.startActivity(this@Navigation, it.route.url)
-                        return@collect
                     } else {
-                        navController.navigate(it.route) {
+                        navController.executeNavigation(route = it.route) {
                             popUpTo(navController.currentBackStackEntry?.destination?.id ?: 0) {
                                 inclusive = true
                             }
                         }
                     }
-                }
-                NavigationCommand.Back -> {
-                    navController.popBackStack()
-                }
+                is NavigationCommand.NewRoot ->
+                    navController.executeNavigation(route = it.route) {
+                        popUpTo(HOME) {
+                            inclusive = true
+                        }
+                    }
+                NavigationCommand.Back -> navController.popBackStack()
 
-                NavigationCommand.BackToRoot -> {
+                NavigationCommand.BackToRoot ->
                     navController.popBackStack(
                         destinationId = navController.graph.startDestinationId,
                         inclusive = false
                     )
-                }
             }
         }
     }
@@ -522,6 +511,25 @@ fun NavHostController.navigateJustOnce(
         navigate(route, navOptionsBuilder)
     } else {
         navigate(route)
+    }
+}
+
+private fun NavHostController.executeNavigation(
+    route: Any,
+    builder: (NavOptionsBuilder.() -> Unit)? = null
+) {
+    if (route is String) {
+        if (builder == null) {
+            navigate(route)
+        } else {
+            navigate(route, builder)
+        }
+    } else {
+        if (builder == null) {
+            navigate(route)
+        } else {
+            navigate(route, builder)
+        }
     }
 }
 

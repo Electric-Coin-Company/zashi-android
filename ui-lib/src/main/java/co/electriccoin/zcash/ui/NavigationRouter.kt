@@ -9,13 +9,11 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 interface NavigationRouter {
-    fun forward(route: String)
+    fun forward(route: Any)
 
-    fun <T : Any> forward(route: T)
+    fun replace(route: Any)
 
-    fun replace(route: String)
-
-    fun <T : Any> replace(route: T)
+    fun newRoot(route: Any)
 
     fun back()
 
@@ -29,27 +27,21 @@ class NavigationRouterImpl : NavigationRouter {
 
     private val channel = Channel<NavigationCommand>()
 
-    override fun forward(route: String) {
+    override fun forward(route: Any) {
         scope.launch {
-            channel.send(NavigationCommand.Forward.ByRoute(route))
+            channel.send(NavigationCommand.Forward(route))
         }
     }
 
-    override fun <T : Any> forward(route: T) {
+    override fun replace(route: Any) {
         scope.launch {
-            channel.send(NavigationCommand.Forward.ByTypeSafetyRoute(route))
+            channel.send(NavigationCommand.Replace(route))
         }
     }
 
-    override fun replace(route: String) {
+    override fun newRoot(route: Any) {
         scope.launch {
-            channel.send(NavigationCommand.Replace.ByRoute(route))
-        }
-    }
-
-    override fun <T : Any> replace(route: T) {
-        scope.launch {
-            channel.send(NavigationCommand.Replace.ByTypeSafetyRoute(route))
+            channel.send(NavigationCommand.NewRoot(route))
         }
     }
 
@@ -69,17 +61,11 @@ class NavigationRouterImpl : NavigationRouter {
 }
 
 sealed interface NavigationCommand {
-    sealed interface Forward : NavigationCommand {
-        data class ByRoute(val route: String) : Forward
+    data class Forward(val route: Any) : NavigationCommand
 
-        data class ByTypeSafetyRoute<T : Any>(val route: T) : Forward
-    }
+    data class Replace(val route: Any) : NavigationCommand
 
-    sealed interface Replace : NavigationCommand {
-        data class ByRoute(val route: String) : Replace
-
-        data class ByTypeSafetyRoute<T : Any>(val route: T) : Replace
-    }
+    data class NewRoot(val route: Any) : NavigationCommand
 
     data object Back : NavigationCommand
 
