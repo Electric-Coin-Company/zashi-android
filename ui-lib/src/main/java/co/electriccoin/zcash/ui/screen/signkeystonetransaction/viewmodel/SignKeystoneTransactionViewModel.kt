@@ -75,7 +75,11 @@ class SignKeystoneTransactionViewModel(
                         text = stringRes("Share PCZT"),
                         onClick = ::onSharePCZTClick
                     ).takeIf { BuildConfig.DEBUG },
-                onBack = ::onBack
+                onBack = ::onBack,
+                onQrCodeClick = {
+                    // TODO [#1731]: Allow QR codes colors switching
+                    // TODO [#1731]: https://github.com/Electric-Coin-Company/zashi-android/issues/1731
+                },
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 

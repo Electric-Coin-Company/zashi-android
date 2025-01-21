@@ -144,6 +144,10 @@ class RequestViewModel(
                                 colors = colors,
                             )
                         },
+                        onQrCodeClick = {
+                            // TODO [#1731]: Allow QR codes colors switching
+                            // TODO [#1731]: https://github.com/Electric-Coin-Company/zashi-android/issues/1731
+                        },
                         onQrCodeShare = { onRequestQrCodeShare(it, shareImageBitmap) },
                         onBack = ::onBack,
                         onClose = ::onClose,

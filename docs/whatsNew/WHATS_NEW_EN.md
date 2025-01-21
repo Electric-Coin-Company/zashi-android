@@ -13,6 +13,10 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [Unreleased]
 
 ### Changed
+- The QR code image logic of the `QrCode`, `Request`, and `SignTransaction` screens has been refactored to work
+  with the newer `ZashiQr` component
+- The colors of the QR code image on the `SignTransaction` screen are now white and black for both color themes to
+  improve the successful scanning chance by the Keystone device
 - The block synchronization progress logic has been changed to return an uncompleted percentage in case the
   `Synchronizer` is still in the `SYNCING` state
 
