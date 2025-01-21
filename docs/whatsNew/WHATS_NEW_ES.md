@@ -17,6 +17,8 @@ directly impact users rather than highlighting other key architectural updates.*
   with the newer `ZashiQr` component
 - The colors of the QR code image on the `SignTransaction` screen are now white and black for both color themes to
   improve the successful scanning chance by the Keystone device
+- The block synchronization progress logic has been changed to return an uncompleted percentage in case the
+  `Synchronizer` is still in the `SYNCING` state
 
 ### Fixed
 - The Disconnected popup trigger when the app is backgrounded has been fixed
