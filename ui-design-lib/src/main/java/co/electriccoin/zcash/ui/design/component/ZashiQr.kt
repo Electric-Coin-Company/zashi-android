@@ -42,10 +42,10 @@ fun ZashiQr(
         modifier = modifier,
         shape = RoundedCornerShape(ZashiDimensions.Radius.radius4xl),
         border = BorderStroke(width = 1.dp, color = ZashiColors.Surfaces.strokePrimary),
-        color = ZashiColors.Surfaces.bgPrimary,
+        color = colors.background,
     ) {
         Box(
-            modifier = Modifier.padding(all = 12.dp)
+            modifier = Modifier.padding(all = 16.dp)
         ) {
             Image(
                 bitmap = bitmap,

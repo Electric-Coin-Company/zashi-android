@@ -8,7 +8,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ### Changed
 - The QR code image logic of the `QrCode`, `Request`, and `SignTransaction` screens has been refactored to work 
-  with the newer `ZashiQr` component 
+  with the newer `ZashiQr` component
+- The colors of the QR code image on the `SignTransaction` screen are now white and black for both color themes to 
+  improve the successful scanning chance by the Keystone device
 
 ### Fixed
 - The Disconnected popup trigger when the app is backgrounded has been fixed 
