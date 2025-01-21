@@ -28,6 +28,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiQr
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 
 @Composable
@@ -83,7 +84,7 @@ internal fun RequestQrCodeView(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingBig))
 
         QrCode(
-            state = state,
+            requestState = state,
             modifier = Modifier.padding(horizontal = 24.dp),
         )
 
@@ -93,15 +94,16 @@ internal fun RequestQrCodeView(
 
 @Composable
 private fun ColumnScope.QrCode(
-    state: RequestState.QrCode,
+    requestState: RequestState.QrCode,
     modifier: Modifier = Modifier
 ) {
     ZashiQr(
-        qrData = state.walletAddress.address,
+        state =
+            requestState.toQrState(
+                contentDescription = stringRes(R.string.request_qr_code_content_description),
+                centerImageResId = requestState.icon
+            ),
         modifier = modifier.align(CenterHorizontally),
-        contentDescription = stringResource(id = R.string.request_qr_code_content_description),
-        onQrCodeClick = state.onQrCodeClick,
-        centerImage = painterResource(id = state.icon)
     )
 }
 

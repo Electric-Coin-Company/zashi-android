@@ -13,9 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -23,20 +24,19 @@ import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
 import co.electriccoin.zcash.ui.design.util.QrCodeColors
+import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
 
 @Composable
 fun ZashiQr(
-    qrData: String,
+    state: QrState,
     modifier: Modifier = Modifier,
     qrSize: Dp = ZashiQrDefaults.width,
     colors: QrCodeColors = QrCodeDefaults.colors(),
-    contentDescription: String? = null,
-    onQrCodeClick: () -> Unit = {},
-    centerImage: Painter? = null
 ) {
     val qrSizePx = with(LocalDensity.current) { qrSize.roundToPx() }
-    val bitmap = getQrCode(qrData, qrSizePx, colors)
+    val bitmap = getQrCode(state.qrData, qrSizePx, colors)
 
     Surface(
         modifier = modifier,
@@ -49,17 +49,17 @@ fun ZashiQr(
         ) {
             Image(
                 bitmap = bitmap,
-                contentDescription = contentDescription,
-                Modifier.clickable { onQrCodeClick() }
+                contentDescription = state.contentDescription?.getValue(),
+                Modifier.clickable { state.onClick() }
             )
-            if (centerImage != null) {
+            if (state.centerImageResId != null) {
                 Image(
                     modifier =
                         Modifier
                             .size(64.dp)
                             .align(Alignment.Center),
-                    painter = centerImage,
-                    contentDescription = contentDescription,
+                    imageVector = ImageVector.vectorResource(state.centerImageResId),
+                    contentDescription = null,
                 )
             }
         }
@@ -93,3 +93,10 @@ object QrCodeDefaults {
         foreground = foreground
     )
 }
+
+data class QrState(
+    val qrData: String,
+    val contentDescription: StringResource? = null,
+    val onClick: () -> Unit = {},
+    val centerImageResId: Int? = null,
+)

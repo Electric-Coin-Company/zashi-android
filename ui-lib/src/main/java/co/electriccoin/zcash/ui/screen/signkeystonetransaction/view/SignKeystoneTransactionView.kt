@@ -124,14 +124,17 @@ private fun ZashiAccountInfoListItem(
 }
 
 @Composable
-private fun ColumnScope.QrContent(state: SignKeystoneTransactionState) {
-    state.qrData?.let {
-        ZashiQr(qrData = it, modifier = Modifier.align(CenterHorizontally))
+private fun ColumnScope.QrContent(ksState: SignKeystoneTransactionState) {
+    ksState.qrData?.let {
+        ZashiQr(
+            state = ksState.toQrState(),
+            modifier = Modifier.align(CenterHorizontally)
+        )
     }
-    LaunchedEffect(state.qrData) {
-        if (state.qrData != null) {
+    LaunchedEffect(ksState.qrData) {
+        if (ksState.qrData != null) {
             delay(100.milliseconds)
-            state.generateNextQrCode()
+            ksState.generateNextQrCode()
         }
     }
 }
@@ -182,6 +185,7 @@ private fun Preview() =
                     positiveButton = ButtonState(stringRes("Get Signature")),
                     negativeButton = ButtonState(stringRes("Reject")),
                     onBack = {},
+                    onQrCodeClick = {},
                 )
         )
     }
@@ -205,6 +209,7 @@ private fun DebugPreview() =
                     positiveButton = ButtonState(stringRes("Get Signature")),
                     negativeButton = ButtonState(stringRes("Reject")),
                     onBack = {},
+                    onQrCodeClick = {},
                 )
         )
     }
