@@ -21,6 +21,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.model.PercentDecimal
+import cash.z.ecc.android.sdk.model.PercentDecimal.Companion.ONE_HUNDRED_PERCENT
 import cash.z.ecc.sdk.extension.toPercentageWithDecimal
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -86,7 +89,7 @@ fun SynchronizationStatus(
             text =
                 stringResource(
                     id = R.string.balances_status_syncing_percentage,
-                    walletSnapshot.progress.toPercentageWithDecimal()
+                    walletSnapshot.progress.toCheckedProgress(walletSnapshot.status)
                 ),
             textFontWeight = FontWeight.Black
         )
@@ -102,6 +105,21 @@ fun SynchronizationStatus(
         )
     }
 }
+
+private const val UNCOMPLETED_PERCENTAGE = 0.9999f
+
+/**
+ * This function ensures that a non finished percentage is returned in case `Synchronizer.Status` is still in the
+ * `SYNCING` state.
+ *
+ * @return String with value 99.99 if the `Synchronizer` is still running, another expected value otherwise.
+ */
+private fun PercentDecimal.toCheckedProgress(status: Synchronizer.Status): String =
+    if (status == Synchronizer.Status.SYNCING && this == ONE_HUNDRED_PERCENT) {
+        PercentDecimal(UNCOMPLETED_PERCENTAGE).toPercentageWithDecimal()
+    } else {
+        toPercentageWithDecimal()
+    }
 
 @Composable
 fun StatusDialog(

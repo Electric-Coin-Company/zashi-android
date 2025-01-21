@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,6 +35,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.QrCodeColors
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -124,14 +126,22 @@ private fun ZashiAccountInfoListItem(
 }
 
 @Composable
-private fun ColumnScope.QrContent(state: SignKeystoneTransactionState) {
-    state.qrData?.let {
-        ZashiQr(qrData = it, modifier = Modifier.align(CenterHorizontally))
+private fun ColumnScope.QrContent(ksState: SignKeystoneTransactionState) {
+    ksState.qrData?.let {
+        ZashiQr(
+            state = ksState.toQrState(),
+            modifier = Modifier.align(CenterHorizontally),
+            colors =
+                QrCodeColors(
+                    background = Color.White,
+                    foreground = Color.Black
+                )
+        )
     }
-    LaunchedEffect(state.qrData) {
-        if (state.qrData != null) {
+    LaunchedEffect(ksState.qrData) {
+        if (ksState.qrData != null) {
             delay(100.milliseconds)
-            state.generateNextQrCode()
+            ksState.generateNextQrCode()
         }
     }
 }
@@ -182,6 +192,7 @@ private fun Preview() =
                     positiveButton = ButtonState(stringRes("Get Signature")),
                     negativeButton = ButtonState(stringRes("Reject")),
                     onBack = {},
+                    onQrCodeClick = {},
                 )
         )
     }
@@ -205,6 +216,7 @@ private fun DebugPreview() =
                     positiveButton = ButtonState(stringRes("Get Signature")),
                     negativeButton = ButtonState(stringRes("Reject")),
                     onBack = {},
+                    onQrCodeClick = {},
                 )
         )
     }

@@ -43,6 +43,8 @@ import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
+import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
+import co.electriccoin.zcash.ui.common.provider.isInForeground
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
@@ -102,6 +104,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import org.koin.android.ext.android.inject
 import org.koin.compose.koinInject
 
 // TODO [#1297]: Consider: Navigation passing complex data arguments different way
@@ -398,6 +401,8 @@ private fun MainActivity.NavigationHome(
     navController: NavHostController,
     backStack: NavBackStackEntry
 ) {
+    val applicationStateProvider: ApplicationStateProvider by inject()
+
     WrapHome(
         goScan = { navController.navigateJustOnce(ScanNavigationArgs(ScanNavigationArgs.DEFAULT)) },
         sendArguments =
@@ -421,11 +426,19 @@ private fun MainActivity.NavigationHome(
 
     val sdkStatus = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value?.status
 
+    val currentAppState = applicationStateProvider.state.collectAsStateWithLifecycle().value
+
     if (isEnoughSpace == false) {
         Twig.info { "Not enough free space" }
         navController.navigateJustOnce(NOT_ENOUGH_SPACE)
     } else if (Synchronizer.Status.DISCONNECTED == sdkStatus) {
         Twig.info { "Disconnected state received from Synchronizer" }
+
+        if (!currentAppState.isInForeground()) {
+            Twig.info { "Disconnected state received but omitted as the app is not in foreground" }
+            return
+        }
+
         WrapDisconnected(
             goChooseServer = {
                 navController.navigateJustOnce(CHOOSE_SERVER)

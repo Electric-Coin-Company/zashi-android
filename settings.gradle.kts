@@ -224,6 +224,7 @@ dependencyResolutionManagement {
             library("androidx-fragment-compose", "androidx.fragment:fragment-compose:$androidxFragmentVersion")
             library("androidx-lifecycle-livedata", "androidx.lifecycle:lifecycle-livedata-ktx:$androidxLifecycleVersion")
             library("androidx-lifecycle-compose", "androidx.lifecycle:lifecycle-runtime-compose:$androidxLifecycleVersion")
+            library("androidx-lifecycle-process", "androidx.lifecycle:lifecycle-process:$androidxLifecycleVersion")
             library("androidx-navigation-compose", "androidx.navigation:navigation-compose:$androidxNavigationComposeVersion")
             library("androidx-profileinstaller", "androidx.profileinstaller:profileinstaller:$androidxProfileInstallerVersion")
             library("androidx-security-crypto", "androidx.security:security-crypto-ktx:$androidxSecurityCryptoVersion")
