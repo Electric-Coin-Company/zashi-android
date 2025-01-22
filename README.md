@@ -3,13 +3,15 @@
 This is the official home of the Zashi Zcash wallet for Android, a no-frills
 Zcash mobile wallet leveraging the [Zcash Android SDK](https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk).  
 
-# Beta Testing
+# Production
 
-The Zashi Android wallet is currently in closed beta testing, and will be
-publicly available from the Google Play Store when testing is complete.
+The Zashi Android wallet is publicly available for download in the [Play Store](https://play.google.com/store/apps/details?id=co.electriccoin.zcash).
 
-If you'd like to be added to the waitlist to become a Zashi beta tester, 
-please [sign up here](https://docs.google.com/forms/d/e/1FAIpQLSeQpykeMF8QcxnX5W8ya0pXIf5YPRRpUXD7H1gvbzv_WyASPw/viewform).
+# Zashi Discord
+
+Join the Zashi community on ECC Discord server, report bugs, share ideas, request new features, and help shape Zashi's journey!
+
+https://discord.gg/jQPU7aXe7A
 
 # Reporting an issue
 
