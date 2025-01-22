@@ -19,6 +19,7 @@ directly impact users rather than highlighting other key architectural updates.*
   improve the successful scanning chance by the Keystone device
 - The block synchronization progress logic has been changed to return an uncompleted percentage in case the
   `Synchronizer` is still in the `SYNCING` state
+- The Keystone SDK has been updated to version `0.7.10`, which brings a significant QR codes scanning improvement
 
 ### Fixed
 - The Disconnected popup trigger when the app is backgrounded has been fixed
