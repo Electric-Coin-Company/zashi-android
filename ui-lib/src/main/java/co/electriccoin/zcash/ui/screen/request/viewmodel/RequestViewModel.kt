@@ -34,11 +34,14 @@ import co.electriccoin.zcash.ui.screen.request.model.Request
 import co.electriccoin.zcash.ui.screen.request.model.RequestCurrency
 import co.electriccoin.zcash.ui.screen.request.model.RequestStage
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -67,7 +70,7 @@ class RequestViewModel(
             Request(
                 amountState = AmountState.Default(defaultAmount, RequestCurrency.Zec),
                 memoState = MemoState.Valid(DEFAULT_MEMO, 0, defaultAmount),
-                qrCodeState = QrCodeState(DEFAULT_URI, defaultAmount, DEFAULT_MEMO, null),
+                qrCodeState = QrCodeState(DEFAULT_URI, defaultAmount, DEFAULT_MEMO),
             )
         )
 
@@ -137,18 +140,18 @@ class RequestViewModel(
                             },
                         walletAddress = walletAddress,
                         request = request,
-                        onQrCodeGenerate = { pixels, colors ->
-                            qrCodeForValue(
-                                value = request.qrCodeState.requestUri,
-                                size = pixels,
-                                colors = colors,
-                            )
-                        },
                         onQrCodeClick = {
                             // TODO [#1731]: Allow QR codes colors switching
                             // TODO [#1731]: https://github.com/Electric-Coin-Company/zashi-android/issues/1731
                         },
-                        onQrCodeShare = { onRequestQrCodeShare(it, shareImageBitmap) },
+                        onQrCodeShare = { colors, pixels, uri ->
+                            onShareQrCode(
+                                colors = colors,
+                                pixels = pixels,
+                                requestUri = uri,
+                                shareImageBitmap = shareImageBitmap
+                            )
+                        },
                         onBack = ::onBack,
                         onClose = ::onClose,
                         zcashCurrency = getZcashCurrency(),
@@ -270,6 +273,22 @@ class RequestViewModel(
         } ?: newAmount
     }
 
+    private fun onShareQrCode(
+        colors: QrCodeColors,
+        pixels: Int,
+        requestUri: String,
+        shareImageBitmap: ShareImageUseCase,
+    ) = viewModelScope.launch {
+        bitmapForData(
+            value = requestUri,
+            size = pixels,
+            colors = colors,
+        ).filterNotNull()
+            .collect { bitmap ->
+                onRequestQrCodeShare(bitmap, shareImageBitmap)
+            }
+    }
+
     internal fun onBack() =
         viewModelScope.launch {
             when (stage.value) {
@@ -329,7 +348,6 @@ class RequestViewModel(
                             ),
                         zecAmount = request.value.memoState.zecAmount,
                         memo = request.value.memoState.text,
-                        bitmap = null
                     )
             )
         )
@@ -365,7 +383,6 @@ class RequestViewModel(
                             ),
                         zecAmount = qrCodeAmount,
                         memo = DEFAULT_MEMO,
-                        bitmap = null
                     )
             )
         request.emit(newRequest)
@@ -452,22 +469,26 @@ class RequestViewModel(
         }
     }
 
-    private fun qrCodeForValue(
+    private fun bitmapForData(
         value: String,
         size: Int,
         colors: QrCodeColors
-    ) = viewModelScope.launch {
-        // In the future, use actual/expect to switch QR code generator implementations for multiplatform
+    ) = callbackFlow {
+        viewModelScope.launch {
+            // In the future, use actual/expect to switch QR code generator implementations for multiplatform
 
-        // Note that our implementation has an extra array copy to BooleanArray, which is a cross-platform
-        // representation.  This should have minimal performance impact since the QR code is relatively
-        // small and we only generate QR codes infrequently.
+            // Note that our implementation has an extra array copy to BooleanArray, which is a cross-platform
+            // representation.  This should have minimal performance impact since the QR code is relatively
+            // small and we only generate QR codes infrequently.
 
-        val qrCodePixelArray = JvmQrCodeGenerator.generate(value, size)
-        val bitmap = AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size, colors)
+            val qrCodePixelArray = JvmQrCodeGenerator.generate(value, size)
+            val bitmap = AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size, colors)
 
-        val newQrCodeState = request.value.qrCodeState.copy(bitmap = bitmap)
-        request.emit(request.value.copy(qrCodeState = newQrCodeState))
+            trySend(bitmap)
+        }
+        awaitClose {
+            // No resources to release
+        }
     }
 }
 
