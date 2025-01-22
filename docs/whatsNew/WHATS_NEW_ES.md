@@ -12,6 +12,8 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.3.3 (839)] - 2025-01-23
+
 ### Changed
 - The QR code image logic of the `QrCode`, `Request`, and `SignTransaction` screens has been refactored to work
   with the newer `ZashiQr` component
