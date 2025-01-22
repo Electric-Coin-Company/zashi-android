@@ -5,7 +5,6 @@ import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
-import co.electriccoin.zcash.ui.screen.account.viewmodel.TransactionHistoryViewModel
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.SelectRecipientViewModel
@@ -36,6 +35,7 @@ import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewMo
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
+import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetViewModel
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressViewModel
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
@@ -51,7 +51,6 @@ val viewModelModule =
         viewModelOf(::AuthenticationViewModel)
         viewModelOf(::CheckUpdateViewModel)
         viewModelOf(::HomeViewModel)
-        viewModelOf(::TransactionHistoryViewModel)
         viewModelOf(::OnboardingViewModel)
         viewModelOf(::StorageCheckViewModel)
         viewModelOf(::RestoreViewModel)
@@ -119,4 +118,5 @@ val viewModelModule =
         }
         viewModelOf(::ReviewTransactionViewModel)
         viewModelOf(::TransactionProgressViewModel)
+        viewModelOf(::TransactionHistoryWidgetViewModel)
     }

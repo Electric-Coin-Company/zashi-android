@@ -21,7 +21,10 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -37,14 +40,21 @@ import co.electriccoin.zcash.ui.design.util.getValue
 fun ZashiButton(
     state: ButtonState,
     modifier: Modifier = Modifier,
+    style: TextStyle = ZashiButtonDefaults.style,
+    shape: Shape = ZashiButtonDefaults.shape,
+    contentPadding: PaddingValues = ZashiButtonDefaults.contentPadding,
     colors: ZashiButtonColors = ZashiButtonDefaults.primaryColors(),
     content: @Composable RowScope.(ZashiButtonScope) -> Unit = ZashiButtonDefaults.content
 ) {
     ZashiButton(
         text = state.text.getValue(),
         icon = state.icon,
+        trailingIcon = state.trailingIcon,
         onClick = state.onClick,
         modifier = modifier,
+        style = style,
+        shape = shape,
+        contentPadding = contentPadding,
         enabled = state.isEnabled,
         isLoading = state.isLoading,
         colors = colors,
@@ -58,7 +68,11 @@ fun ZashiButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    style: TextStyle = ZashiButtonDefaults.style,
+    shape: Shape = ZashiButtonDefaults.shape,
+    contentPadding: PaddingValues = ZashiButtonDefaults.contentPadding,
     @DrawableRes icon: Int? = null,
+    @DrawableRes trailingIcon: Int? = null,
     enabled: Boolean = true,
     isLoading: Boolean = false,
     colors: ZashiButtonColors = ZashiButtonDefaults.primaryColors(),
@@ -79,10 +93,22 @@ fun ZashiButton(
             }
 
             @Composable
+            override fun TrailingIcon() {
+                if (trailingIcon != null) {
+                    Image(
+                        painter = painterResource(trailingIcon),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        colorFilter = ColorFilter.tint(LocalContentColor.current)
+                    )
+                }
+            }
+
+            @Composable
             override fun Text() {
                 Text(
                     text = text,
-                    style = ZashiTypography.textMd,
+                    style = style,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center
                 )
@@ -108,8 +134,8 @@ fun ZashiButton(
     Button(
         onClick = onClick,
         modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        contentPadding = PaddingValues(horizontal = 10.dp),
+        shape = shape,
+        contentPadding = contentPadding,
         enabled = enabled,
         colors = colors.toButtonColors(),
         border = borderColor.takeIf { it != Color.Unspecified }?.let { BorderStroke(1.dp, it) },
@@ -122,6 +148,9 @@ fun ZashiButton(
 interface ZashiButtonScope {
     @Composable
     fun LeadingIcon()
+
+    @Composable
+    fun TrailingIcon()
 
     @Composable
     fun Text()
@@ -137,8 +166,18 @@ object ZashiButtonDefaults {
             Spacer(modifier = Modifier.width(6.dp))
             scope.Text()
             Spacer(modifier = Modifier.width(6.dp))
+            scope.TrailingIcon()
             scope.Loading()
         }
+
+    val style: TextStyle
+        @Composable get() = ZashiTypography.textMd
+
+    val contentPadding: PaddingValues
+        get() = PaddingValues(horizontal = 10.dp)
+
+    val shape: Shape
+        get() = RoundedCornerShape(12.dp)
 
     @Composable
     fun primaryColors(
@@ -217,6 +256,7 @@ data class ZashiButtonColors(
 data class ButtonState(
     val text: StringResource,
     @DrawableRes val icon: Int? = null,
+    @DrawableRes val trailingIcon: Int? = null,
     val isEnabled: Boolean = true,
     val isLoading: Boolean = false,
     val onClick: () -> Unit = {},

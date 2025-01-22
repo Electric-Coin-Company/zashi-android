@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="transaction_history_plus">+ %s ZEC</string>
+    <string name="transaction_history_minus">- %s ZEC</string>
+    <string name="transaction_history_today">Todat</string>
+    <string name="transaction_history_yesterday">Yesterday</string>
+    <string name="transaction_history_days_ago">%s days ago</string>
+</resources>
