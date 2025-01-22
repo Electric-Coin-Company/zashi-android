@@ -27,7 +27,6 @@ class TransactionHistoryViewModel(
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
-
     @Suppress("SpreadOperator")
     val state =
         observeCurrentTransactions()

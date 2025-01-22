@@ -6,7 +6,6 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import java.util.UUID
 
 object TransactionStateFixture {
-
     @Suppress("MagicNumber")
     fun new() =
         TransactionState(
