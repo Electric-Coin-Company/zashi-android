@@ -6,19 +6,23 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionStateFixture
 
 object TransactionHistoryWidgetStateFixture {
-    fun new() = TransactionHistoryWidgetState.Data(
-        header = TransactionHistoryWidgetHeaderState(
-            title = stringRes("Transactions"),
-            button = ButtonState(
-                text = stringRes("See All"),
-                trailingIcon = R.drawable.ic_chevron_right_small,
-                onClick = {}
-            )
-        ),
-        transactions = listOf(
-            TransactionStateFixture.new(),
-            TransactionStateFixture.new(),
-            TransactionStateFixture.new(),
+    fun new() =
+        TransactionHistoryWidgetState.Data(
+            header =
+                TransactionHistoryWidgetHeaderState(
+                    title = stringRes("Transactions"),
+                    button =
+                        ButtonState(
+                            text = stringRes("See All"),
+                            trailingIcon = R.drawable.ic_chevron_right_small,
+                            onClick = {}
+                        )
+                ),
+            transactions =
+                listOf(
+                    TransactionStateFixture.new(),
+                    TransactionStateFixture.new(),
+                    TransactionStateFixture.new(),
+                )
         )
-    )
 }

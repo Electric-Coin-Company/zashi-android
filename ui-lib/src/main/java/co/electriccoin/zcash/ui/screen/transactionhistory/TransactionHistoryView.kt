@@ -59,14 +59,16 @@ fun TransactionHistoryView(
         }
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding())
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = paddingValues.calculateTopPadding())
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = ZashiDimensions.Spacing.spacing3xl),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = ZashiDimensions.Spacing.spacing3xl),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 ZashiTextField(
@@ -96,9 +98,10 @@ fun TransactionHistoryView(
                 )
             }
             LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
                 contentPadding = paddingValues.asScaffoldScrollPaddingValues(top = 0.dp)
             ) {
                 itemsIndexed(
@@ -133,8 +136,9 @@ fun TransactionHistoryView(
                                     contentPadding = PaddingValues(vertical = 12.dp, horizontal = 20.dp)
                                 )
 
-                                if (index != state.items.lastIndex && state.items[index + 1] is TransactionHistoryItem
-                                    .Transaction
+                                if (index != state.items.lastIndex &&
+                                    state.items[index + 1] is TransactionHistoryItem
+                                        .Transaction
                                 ) {
                                     ZashiHorizontalDivider(
                                         modifier = Modifier.padding(horizontal = 4.dp),
@@ -158,11 +162,11 @@ private fun TransactionHistoryAppBar(
     ZashiSmallTopAppBar(
         title = stringRes("Transactions").getValue(),
         subtitle =
-        when (appBarState) {
-            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None -> null
-        },
+            when (appBarState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
+            },
         showTitleLogo = true,
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = state.onBack)
@@ -178,40 +182,44 @@ private fun TransactionHistoryAppBar(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    TransactionHistoryView(
-        state = TransactionHistoryState(
-            onBack = {},
-            search = TextFieldState(stringRes(value = "")) {},
-            filterButton = IconButtonState(
-                icon = R.drawable.ic_transaction_filters,
-                badge = stringRes("1"),
-                onClick = {}
-            ),
-            items = listOf(
-                TransactionHistoryItem.Header(
-                    key = "week 0",
-                    title = stringRes("Header")
+private fun Preview() =
+    ZcashTheme {
+        TransactionHistoryView(
+            state =
+                TransactionHistoryState(
+                    onBack = {},
+                    search = TextFieldState(stringRes(value = "")) {},
+                    filterButton =
+                        IconButtonState(
+                            icon = R.drawable.ic_transaction_filters,
+                            badge = stringRes("1"),
+                            onClick = {}
+                        ),
+                    items =
+                        listOf(
+                            TransactionHistoryItem.Header(
+                                key = "week 0",
+                                title = stringRes("Header")
+                            ),
+                            TransactionHistoryItem.Transaction(
+                                state = TransactionStateFixture.new(),
+                            ),
+                            TransactionHistoryItem.Transaction(
+                                state = TransactionStateFixture.new(),
+                            ),
+                            TransactionHistoryItem.Header(
+                                key = "week 1",
+                                title = stringRes("Header 2")
+                            ),
+                            TransactionHistoryItem.Transaction(
+                                state = TransactionStateFixture.new()
+                            ),
+                            TransactionHistoryItem.Transaction(
+                                state = TransactionStateFixture.new()
+                            ),
+                        )
                 ),
-                TransactionHistoryItem.Transaction(
-                    state = TransactionStateFixture.new(),
-                ),
-                TransactionHistoryItem.Transaction(
-                    state = TransactionStateFixture.new(),
-                ),
-                TransactionHistoryItem.Header(
-                    key = "week 1",
-                    title = stringRes("Header 2")
-                ),
-                TransactionHistoryItem.Transaction(
-                    state = TransactionStateFixture.new()
-                ),
-                TransactionHistoryItem.Transaction(
-                    state = TransactionStateFixture.new()
-                ),
-            )
-        ),
-        appBarState = TopAppBarSubTitleState.None,
-        mainAppBarState = ZashiMainTopAppBarStateFixture.new()
-    )
-}
+            appBarState = TopAppBarSubTitleState.None,
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new()
+        )
+    }

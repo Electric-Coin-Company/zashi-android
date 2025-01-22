@@ -55,17 +55,19 @@ data class TransactionHistoryWidgetHeaderState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        TransactionHistoryWidgetHeader(
-            TransactionHistoryWidgetHeaderState(
-                title = stringRes("Transactions"),
-                button = ButtonState(
-                    text = stringRes("See All"),
-                    trailingIcon = R.drawable.ic_chevron_right_small,
-                    onClick = {}
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            TransactionHistoryWidgetHeader(
+                TransactionHistoryWidgetHeaderState(
+                    title = stringRes("Transactions"),
+                    button =
+                        ButtonState(
+                            text = stringRes("See All"),
+                            trailingIcon = R.drawable.ic_chevron_right_small,
+                            onClick = {}
+                        )
                 )
             )
-        )
+        }
     }
-}

@@ -51,14 +51,15 @@ fun Transaction(
         tonalElevation = 0.dp,
     ) {
         Row(
-            modifier = Modifier
-                .clickable(
-                    indication = ripple(),
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = state.onClick,
-                    role = Role.Button,
-                )
-                .padding(contentPadding),
+            modifier =
+                Modifier
+                    .clickable(
+                        indication = ripple(),
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = state.onClick,
+                        role = Role.Button,
+                    )
+                    .padding(contentPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -98,7 +99,7 @@ fun Transaction(
                 Spacer(Modifier.width(16.dp))
                 Text(
                     text =
-                    it orHiddenString stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                        it orHiddenString stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                     color = ZashiColors.Text.textPrimary,
                     style = ZashiTypography.textSm
                 )
@@ -115,17 +116,18 @@ data class TransactionState(
     val isShielded: Boolean,
     val value: StringResource?,
     val onClick: () -> Unit,
-): Itemizable {
+) : Itemizable {
     override val contentType: Any = "Transaction"
 }
 
 @PreviewScreens
 @Composable
-private fun TransactionPreview() = ZcashTheme {
-    BlankSurface {
-        Transaction(
-            state = TransactionStateFixture.new(),
-            modifier = Modifier.fillMaxWidth()
-        )
+private fun TransactionPreview() =
+    ZcashTheme {
+        BlankSurface {
+            Transaction(
+                state = TransactionStateFixture.new(),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
-}

@@ -19,7 +19,7 @@ fun AndroidTransactionHistory() {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     BackHandler {
-        state?.onBack?.invoke()
+        state.onBack()
     }
 
     TransactionHistoryView(

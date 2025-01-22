@@ -3,18 +3,15 @@ package co.electriccoin.zcash.ui.screen.account
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
-import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
-import co.electriccoin.zcash.ui.screen.account.history.fixture.TransactionHistoryUiStateFixture
-import co.electriccoin.zcash.ui.screen.account.model.TransactionUiState
 import co.electriccoin.zcash.ui.screen.account.view.Account
+import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetStateFixture
 import java.util.concurrent.atomic.AtomicInteger
 
 class AccountTestSetup(
@@ -24,11 +21,8 @@ class AccountTestSetup(
     // TODO [#1282]: Update AccountView Tests #1282
     // TODO [#1282]: https://github.com/Electric-Coin-Company/zashi-android/issues/1282
 
-    val initialTransactionState: TransactionUiState = TransactionHistoryUiStateFixture.new()
-
     private val onSettingsCount = AtomicInteger(0)
     private val onHideBalancesCount = AtomicInteger(0)
-    private val onItemClickCount = AtomicInteger(0)
 
     fun getOnSettingsCount(): Int {
         composeTestRule.waitForIdle()
@@ -54,15 +48,8 @@ class AccountTestSetup(
             hideStatusDialog = {},
             isHideBalances = isHideBalances,
             onContactSupport = {},
-            onTransactionItemAction = {
-                onItemClickCount.incrementAndGet()
-            },
-            onStatusClick = {},
             showStatusDialog = null,
             snackbarHostState = SnackbarHostState(),
-            transactionsUiState = initialTransactionState,
-            walletRestoringState = WalletRestoringState.NONE,
-            walletSnapshot = WalletSnapshotFixture.new(),
             zashiMainTopAppBarState =
                 ZashiMainTopAppBarStateFixture.new(
                     settingsButton =
@@ -83,7 +70,8 @@ class AccountTestSetup(
                         ) {
                             onHideBalancesCount.incrementAndGet()
                         },
-                )
+                ),
+            transactionHistoryWidgetState = TransactionHistoryWidgetStateFixture.new()
         )
     }
 

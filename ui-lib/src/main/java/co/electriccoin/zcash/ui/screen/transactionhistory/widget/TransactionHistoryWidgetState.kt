@@ -6,15 +6,14 @@ import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionState
 
 @Immutable
 sealed interface TransactionHistoryWidgetState {
-
     @Immutable
     data class Data(
         val header: TransactionHistoryWidgetHeaderState,
         val transactions: List<TransactionState>
-    ): TransactionHistoryWidgetState
+    ) : TransactionHistoryWidgetState
 
     @Immutable
     data class Empty(
         val sendTransaction: ButtonState
-    ): TransactionHistoryWidgetState
+    ) : TransactionHistoryWidgetState
 }

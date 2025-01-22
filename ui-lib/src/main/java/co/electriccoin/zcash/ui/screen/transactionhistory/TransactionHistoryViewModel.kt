@@ -28,59 +28,67 @@ class TransactionHistoryViewModel(
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
 
-    val state = observeCurrentTransactions()
-        .map { transactions ->
-            val items = transactions.orEmpty()
-                .groupBy {
-                    val now = ZonedDateTime.now()
-                    val other = Instant
-                        .ofEpochSecond(it.transactionOverview.blockTimeEpochSeconds ?: 0)
-                        .atZone(ZoneId.systemDefault())
-                    ChronoUnit.WEEKS.between(other, now)
-                }
-                .map { (weekDifference, transactions) ->
-                    listOf(
-                        TransactionHistoryItem.Header(
-                            key = weekDifference,
-                            title = when (weekDifference) {
-                                0L -> stringRes(R.string.transaction_history_this_week)
-                                1L -> stringRes(R.string.transaction_history_last_week)
-                                else -> stringRes(
-                                    R.string.transaction_history_weeks_ago,
-                                    weekDifference.toString()
-                                )
-                            }
-                        ),
-                        *transactions.map { transaction ->
-                            TransactionHistoryItem.Transaction(
-                                state = transactionHistoryMapper.createTransactionState(
-                                    transaction = transaction,
-                                    onTransactionClick = ::onTransactionClick
-                                )
+    @Suppress("SpreadOperator")
+    val state =
+        observeCurrentTransactions()
+            .map { transactions ->
+                val items =
+                    transactions.orEmpty()
+                        .groupBy {
+                            val now = ZonedDateTime.now()
+                            val other =
+                                Instant
+                                    .ofEpochSecond(it.transactionOverview.blockTimeEpochSeconds ?: 0)
+                                    .atZone(ZoneId.systemDefault())
+                            ChronoUnit.WEEKS.between(other, now)
+                        }
+                        .map { (weekDifference, transactions) ->
+                            listOf(
+                                TransactionHistoryItem.Header(
+                                    key = weekDifference,
+                                    title =
+                                        when (weekDifference) {
+                                            0L -> stringRes(R.string.transaction_history_this_week)
+                                            1L -> stringRes(R.string.transaction_history_last_week)
+                                            else ->
+                                                stringRes(
+                                                    R.string.transaction_history_weeks_ago,
+                                                    weekDifference.toString()
+                                                )
+                                        }
+                                ),
+                                *transactions.map { transaction ->
+                                    TransactionHistoryItem.Transaction(
+                                        state =
+                                            transactionHistoryMapper.createTransactionState(
+                                                transaction = transaction,
+                                                onTransactionClick = ::onTransactionClick
+                                            )
+                                    )
+                                }.toTypedArray()
                             )
-                        }.toTypedArray()
-                    )
-                }
-                .flatten()
+                        }
+                        .flatten()
 
-            createState(items = items)
-        }
-        .flowOn(Dispatchers.Default)
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = createState(items = emptyList())
-        )
+                createState(items = items)
+            }
+            .flowOn(Dispatchers.Default)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = createState(items = emptyList())
+            )
 
     private fun createState(items: List<TransactionHistoryItem>) =
         TransactionHistoryState(
             onBack = ::onBack,
             items = items,
-            filterButton = IconButtonState(
-                icon = R.drawable.ic_transaction_filters,
-                onClick = {},
-                contentDescription = null
-            ),
+            filterButton =
+                IconButtonState(
+                    icon = R.drawable.ic_transaction_filters,
+                    onClick = {},
+                    contentDescription = null
+                ),
             search = TextFieldState(stringRes("")) {}
         )
 
@@ -88,7 +96,7 @@ class TransactionHistoryViewModel(
         navigationRouter.back()
     }
 
+    @Suppress("EmptyFunctionBlock", "UnusedParameter")
     private fun onTransactionClick(transactionData: TransactionData) {
-        // todo
     }
 }

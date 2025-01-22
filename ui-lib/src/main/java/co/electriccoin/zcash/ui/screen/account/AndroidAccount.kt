@@ -83,7 +83,6 @@ internal fun WrapAccount(
     walletSnapshot: WalletSnapshot?,
     zashiMainTopAppBarState: ZashiMainTopAppBarState?,
 ) {
-
     val context = LocalContext.current
 
     val scope = rememberCoroutineScope()

@@ -39,9 +39,9 @@ import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeOptIn
-import co.electriccoin.zcash.ui.screen.transactionhistory.widget.createTransactionHistoryWidget
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetState
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetStateFixture
+import co.electriccoin.zcash.ui.screen.transactionhistory.widget.createTransactionHistoryWidgets
 import kotlinx.datetime.Clock
 
 @Suppress("UnusedPrivateMember")
@@ -156,9 +156,9 @@ private fun AccountMainContent(
     balanceState: BalanceState,
     goBalances: () -> Unit,
     isHideBalances: Boolean,
+    transactionHistoryWidgetState: TransactionHistoryWidgetState,
     modifier: Modifier = Modifier,
     paddingValues: PaddingValues = PaddingValues(),
-    transactionHistoryWidgetState: TransactionHistoryWidgetState
 ) {
     Box {
         Column(
@@ -202,7 +202,7 @@ private fun AccountMainContent(
             LazyColumn(
                 modifier = Modifier.fillMaxWidth().weight(1f)
             ) {
-                createTransactionHistoryWidget(
+                createTransactionHistoryWidgets(
                     state = transactionHistoryWidgetState
                 )
             }

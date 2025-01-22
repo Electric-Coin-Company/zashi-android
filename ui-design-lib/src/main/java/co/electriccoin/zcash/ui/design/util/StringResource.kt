@@ -8,7 +8,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.platform.LocalContext
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.model.Zatoshi
-import cash.z.ecc.android.sdk.model.toZecString
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -25,10 +24,10 @@ sealed interface StringResource {
     value class ByString(val value: String) : StringResource
 
     @Immutable
-    data class ByZatoshi(val zatoshi: Zatoshi): StringResource
+    data class ByZatoshi(val zatoshi: Zatoshi) : StringResource
 
     @Immutable
-    data class ByDateTime(val zonedDateTime: ZonedDateTime): StringResource
+    data class ByDateTime(val zonedDateTime: ZonedDateTime) : StringResource
 }
 
 @Stable
@@ -52,27 +51,26 @@ fun StringResource.getValue(
     convertZatoshi: (Zatoshi) -> String = StringResourceDefaults::convertZatoshi,
     convertDateTime: (ZonedDateTime) -> String = StringResourceDefaults::convertDateTime
 ) = when (this) {
-        is StringResource.ByResource -> {
-            val context = LocalContext.current
-            context.getString(resource, *args.normalize(context).toTypedArray())
-        }
-        is StringResource.ByString -> value
-        is StringResource.ByZatoshi -> convertZatoshi(zatoshi)
-        is StringResource.ByDateTime -> convertDateTime(zonedDateTime)
+    is StringResource.ByResource -> {
+        val context = LocalContext.current
+        context.getString(resource, *args.normalize(context).toTypedArray())
     }
+    is StringResource.ByString -> value
+    is StringResource.ByZatoshi -> convertZatoshi(zatoshi)
+    is StringResource.ByDateTime -> convertDateTime(zonedDateTime)
+}
 
 @Suppress("SpreadOperator")
 fun StringResource.getString(
     context: Context,
     convertZatoshi: (Zatoshi) -> String = StringResourceDefaults::convertZatoshi,
     convertDateTime: (ZonedDateTime) -> String = StringResourceDefaults::convertDateTime
-) =
-    when (this) {
-        is StringResource.ByResource -> context.getString(resource, *args.normalize(context).toTypedArray())
-        is StringResource.ByString -> value
-        is StringResource.ByZatoshi -> convertZatoshi(zatoshi)
-        is StringResource.ByDateTime -> convertDateTime(zonedDateTime)
-    }
+) = when (this) {
+    is StringResource.ByResource -> context.getString(resource, *args.normalize(context).toTypedArray())
+    is StringResource.ByString -> value
+    is StringResource.ByZatoshi -> convertZatoshi(zatoshi)
+    is StringResource.ByDateTime -> convertDateTime(zonedDateTime)
+}
 
 private fun List<Any>.normalize(context: Context): List<Any> =
     this.map {
@@ -83,13 +81,13 @@ private fun List<Any>.normalize(context: Context): List<Any> =
     }
 
 object StringResourceDefaults {
-    fun convertZatoshi(zatoshi: Zatoshi) = zatoshi.convertZatoshiToZecString(
-        minDecimals = 0
-    )
+    fun convertZatoshi(zatoshi: Zatoshi) =
+        zatoshi.convertZatoshiToZecString(
+            minDecimals = 0
+        )
 
     fun convertDateTime(zonedDateTime: ZonedDateTime): String {
         val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         return zonedDateTime.format(pattern).orEmpty()
     }
-
 }

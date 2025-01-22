@@ -32,14 +32,14 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactionhistory.Transaction
 
-fun LazyListScope.createTransactionHistoryWidget(state: TransactionHistoryWidgetState) {
+fun LazyListScope.createTransactionHistoryWidgets(state: TransactionHistoryWidgetState) {
     when (state) {
-        is TransactionHistoryWidgetState.Data -> data(state)
-        is TransactionHistoryWidgetState.Empty -> empty(state)
+        is TransactionHistoryWidgetState.Data -> transactionHistoryWidgets(state)
+        is TransactionHistoryWidgetState.Empty -> transactionHistoryEmptyWidget(state)
     }
 }
 
-private fun LazyListScope.data(state: TransactionHistoryWidgetState.Data) {
+private fun LazyListScope.transactionHistoryWidgets(state: TransactionHistoryWidgetState.Data) {
     item {
         TransactionHistoryWidgetHeader(
             state = state.header,
@@ -71,7 +71,7 @@ private fun LazyListScope.data(state: TransactionHistoryWidgetState.Data) {
     }
 }
 
-private fun LazyListScope.empty(state: TransactionHistoryWidgetState.Empty) {
+private fun LazyListScope.transactionHistoryEmptyWidget(state: TransactionHistoryWidgetState.Empty) {
     item {
         Box {
             Column {
@@ -87,15 +87,17 @@ private fun LazyListScope.empty(state: TransactionHistoryWidgetState.Empty) {
                 )
             }
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            0f to Color.Transparent,
-                            .41f to ZashiColors.Surfaces.bgPrimary,
-                            1f to ZashiColors.Surfaces.bgPrimary,
-                        )
-                    ),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(
+                            brush =
+                                Brush.verticalGradient(
+                                    0f to Color.Transparent,
+                                    EMPTY_GRADIENT_THRESHOLD to ZashiColors.Surfaces.bgPrimary,
+                                    1f to ZashiColors.Surfaces.bgPrimary,
+                                )
+                        ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(Modifier.height(90.dp))
@@ -121,32 +123,37 @@ private fun LazyListScope.empty(state: TransactionHistoryWidgetState.Empty) {
     }
 }
 
-@PreviewScreens
-@Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        LazyColumn {
-            createTransactionHistoryWidget(
-                state = TransactionHistoryWidgetStateFixture.new()
-            )
-        }
-
-    }
-}
+private const val EMPTY_GRADIENT_THRESHOLD = .41f
 
 @PreviewScreens
 @Composable
-private fun EmptyPreview() = ZcashTheme {
-    BlankSurface {
-        LazyColumn {
-            createTransactionHistoryWidget(
-                state = TransactionHistoryWidgetState.Empty(
-                    sendTransaction = ButtonState(
-                        text = stringRes("Send a transaction"),
-                        onClick = {}
-                    )
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            LazyColumn {
+                createTransactionHistoryWidgets(
+                    state = TransactionHistoryWidgetStateFixture.new()
                 )
-            )
+            }
         }
     }
-}
+
+@PreviewScreens
+@Composable
+private fun EmptyPreview() =
+    ZcashTheme {
+        BlankSurface {
+            LazyColumn {
+                createTransactionHistoryWidgets(
+                    state =
+                        TransactionHistoryWidgetState.Empty(
+                            sendTransaction =
+                                ButtonState(
+                                    text = stringRes("Send a transaction"),
+                                    onClick = {}
+                                )
+                        )
+                )
+            }
+        }
+    }

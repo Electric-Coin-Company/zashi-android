@@ -40,10 +40,9 @@ fun PaddingValues.asScaffoldScrollPaddingValues(
     bottom: Dp = calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
     start: Dp = 0.dp,
     end: Dp = 0.dp
-) =
-    PaddingValues(
-        top = top,
-        bottom = bottom,
-        start = start,
-        end = end,
-    )
+) = PaddingValues(
+    top = top,
+    bottom = bottom,
+    start = start,
+    end = end,
+)

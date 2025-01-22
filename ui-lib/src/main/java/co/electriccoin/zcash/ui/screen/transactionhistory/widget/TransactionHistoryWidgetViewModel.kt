@@ -20,56 +20,64 @@ class TransactionHistoryWidgetViewModel(
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
-
-    val state = observeCurrentTransactions()
-        .map {
-            if (it.isNullOrEmpty()) {
-                TransactionHistoryWidgetState.Empty(
-                    sendTransaction = ButtonState(
-                        text = stringRes("Send a transaction"),
-                        onClick = ::onSendTransactionClick
-                    )
-                )
-            } else {
-                TransactionHistoryWidgetState.Data(
-                    header = TransactionHistoryWidgetHeaderState(
-                        title = stringRes("Transactions"),
-                        button = ButtonState(
-                            text = stringRes("See All"),
-                            onClick = ::onSeeAllTransactionsClick
-                        )
-                    ),
-                    transactions = it
-                        .take(5)
-                        .map { transaction ->
-                            transactionHistoryMapper.createTransactionState(
-                                transaction = transaction,
-                                onTransactionClick = ::onTransactionClick
+    val state =
+        observeCurrentTransactions()
+            .map {
+                if (it.isNullOrEmpty()) {
+                    TransactionHistoryWidgetState.Empty(
+                        sendTransaction =
+                            ButtonState(
+                                text = stringRes("Send a transaction"),
+                                onClick = ::onSendTransactionClick
                             )
-                        }
-                )
+                    )
+                } else {
+                    TransactionHistoryWidgetState.Data(
+                        header =
+                            TransactionHistoryWidgetHeaderState(
+                                title = stringRes("Transactions"),
+                                button =
+                                    ButtonState(
+                                        text = stringRes("See All"),
+                                        onClick = ::onSeeAllTransactionsClick
+                                    )
+                            ),
+                        transactions =
+                            it
+                                .take(MAX_TRANSACTION_COUNT)
+                                .map { transaction ->
+                                    transactionHistoryMapper.createTransactionState(
+                                        transaction = transaction,
+                                        onTransactionClick = ::onTransactionClick
+                                    )
+                                }
+                    )
+                }
             }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = TransactionHistoryWidgetState.Empty(
-                sendTransaction = ButtonState(
-                    text = stringRes("Send a transaction"),
-                    onClick = ::onSendTransactionClick
-                )
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue =
+                    TransactionHistoryWidgetState.Empty(
+                        sendTransaction =
+                            ButtonState(
+                                text = stringRes("Send a transaction"),
+                                onClick = ::onSendTransactionClick
+                            )
+                    )
             )
-        )
 
+    @Suppress("EmptyFunctionBlock", "UnusedParameter")
     private fun onTransactionClick(transactionData: TransactionData) {
-        // todo
     }
 
     private fun onSeeAllTransactionsClick() {
         navigationRouter.forward(TransactionHistory)
     }
 
+    @Suppress("EmptyFunctionBlock")
     private fun onSendTransactionClick() {
-        // todo
     }
 }
+
+private const val MAX_TRANSACTION_COUNT = 5

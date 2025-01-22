@@ -17,35 +17,42 @@ class TransactionHistoryMapper {
         onTransactionClick: (TransactionData) -> Unit
     ) = TransactionState(
         key = transaction.transactionOverview.txIdString(),
-        icon = when {
-            transaction.transactionOverview.isShielding -> R.drawable.ic_transaction_shielded
-            transaction.transactionOverview.isSentTransaction -> R.drawable.ic_transaction_sent
-            else -> R.drawable.ic_transaction_received
-        },
-        title = when {
-            transaction.transactionOverview.isShielding -> stringRes("Shielded")
-            transaction.transactionOverview.isSentTransaction -> stringRes("Sent")
-            else -> stringRes("Received")
-        },
-        subtitle = transaction.transactionOverview.blockTimeEpochSeconds
-            ?.let { blockTimeEpochSeconds ->
-                Instant.ofEpochSecond(blockTimeEpochSeconds).toStringResource()
+        icon =
+            when {
+                transaction.transactionOverview.isShielding -> R.drawable.ic_transaction_shielded
+                transaction.transactionOverview.isSentTransaction -> R.drawable.ic_transaction_sent
+                else -> R.drawable.ic_transaction_received
             },
-        isShielded = transaction.transactionOutputs
-            .none { output -> output.pool == TransactionPool.TRANSPARENT } &&
-            !transaction.transactionOverview.isShielding,
-        value = when {
-            transaction.transactionOverview.isShielding -> null
-            transaction.transactionOverview.isSentTransaction -> stringRes(
-                R.string.transaction_history_minus,
-                stringRes(transaction.transactionOverview.netValue)
-            )
+        title =
+            when {
+                transaction.transactionOverview.isShielding -> stringRes("Shielded")
+                transaction.transactionOverview.isSentTransaction -> stringRes("Sent")
+                else -> stringRes("Received")
+            },
+        subtitle =
+            transaction.transactionOverview.blockTimeEpochSeconds
+                ?.let { blockTimeEpochSeconds ->
+                    Instant.ofEpochSecond(blockTimeEpochSeconds).toStringResource()
+                },
+        isShielded =
+            transaction.transactionOutputs
+                .none { output -> output.pool == TransactionPool.TRANSPARENT } &&
+                !transaction.transactionOverview.isShielding,
+        value =
+            when {
+                transaction.transactionOverview.isShielding -> null
+                transaction.transactionOverview.isSentTransaction ->
+                    stringRes(
+                        R.string.transaction_history_minus,
+                        stringRes(transaction.transactionOverview.netValue)
+                    )
 
-            else -> stringRes(
-                R.string.transaction_history_plus,
-                stringRes(transaction.transactionOverview.netValue)
-            )
-        },
+                else ->
+                    stringRes(
+                        R.string.transaction_history_plus,
+                        stringRes(transaction.transactionOverview.netValue)
+                    )
+            },
         onClick = { onTransactionClick(transaction) }
     )
 
@@ -53,9 +60,10 @@ class TransactionHistoryMapper {
         when (val date = this.atZone(ZoneId.systemDefault()).toLocalDate()) {
             LocalDate.now() -> stringRes(R.string.transaction_history_today)
             LocalDate.now().minusDays(1) -> stringRes(R.string.transaction_history_yesterday)
-            else -> stringRes(
-                R.string.transaction_history_days_ago,
-                ChronoUnit.DAYS.between(date, LocalDate.now()).toString()
-            )
+            else ->
+                stringRes(
+                    R.string.transaction_history_days_ago,
+                    ChronoUnit.DAYS.between(date, LocalDate.now()).toString()
+                )
         }
 }

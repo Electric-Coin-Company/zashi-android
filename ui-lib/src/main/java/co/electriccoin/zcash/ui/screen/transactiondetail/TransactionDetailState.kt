@@ -16,7 +16,6 @@ data class TransactionDetailState(
 )
 
 sealed interface TransactionDetailItem {
-
     data class Header(
         val title: StringResource
     ) : TransactionDetailItem

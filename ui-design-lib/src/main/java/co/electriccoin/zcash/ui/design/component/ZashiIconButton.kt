@@ -31,9 +31,10 @@ fun ZashiIconButton(
     state: IconButtonState,
     modifier: Modifier = Modifier
 ) {
-    Box {
+    Box(
+        modifier = modifier
+    ) {
         IconButton(
-            modifier = modifier,
             onClick = state.onClick
         ) {
             Icon(
@@ -44,11 +45,12 @@ fun ZashiIconButton(
         }
         if (state.badge != null) {
             Text(
-                modifier = Modifier
-                    .size(20.dp)
-                    .background(ZashiColors.Utility.Gray.utilityGray900, CircleShape)
-                    .align(Alignment.TopEnd)
-                    .padding(top = 3.dp),
+                modifier =
+                    Modifier
+                        .size(20.dp)
+                        .background(ZashiColors.Utility.Gray.utilityGray900, CircleShape)
+                        .align(Alignment.TopEnd)
+                        .padding(top = 3.dp),
                 text = state.badge.getValue(),
                 textAlign = TextAlign.Center,
                 color = ZashiColors.Surfaces.bgPrimary,
@@ -68,12 +70,14 @@ data class IconButtonState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    ZashiIconButton(
-        state = IconButtonState(
-            icon = R.drawable.ic_item_keystone,
-            badge = stringRes("1"),
-            onClick = {}
+private fun Preview() =
+    ZcashTheme {
+        ZashiIconButton(
+            state =
+                IconButtonState(
+                    icon = R.drawable.ic_item_keystone,
+                    badge = stringRes("1"),
+                    onClick = {}
+                )
         )
-    )
-}
+    }

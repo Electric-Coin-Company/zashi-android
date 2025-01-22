@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -36,10 +35,10 @@ fun TransactionDetailView(
     ) { paddingValues ->
         Column(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .scaffoldScrollPadding(paddingValues),
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .scaffoldScrollPadding(paddingValues),
         ) {
             val rowItems = state.items.filterIsInstance<TransactionDetailItem.Row>()
 
@@ -68,6 +67,7 @@ fun TransactionDetailView(
     }
 }
 
+@Suppress("EmptyFunctionBlock", "UnusedParameter")
 @Composable
 fun Row(
     item: TransactionDetailItem.Row,
@@ -76,15 +76,17 @@ fun Row(
 ) {
 }
 
+@Suppress("EmptyFunctionBlock", "UnusedParameter")
 @Composable
 fun Note(item: TransactionDetailItem.Note) {
 }
 
+@Suppress("EmptyFunctionBlock", "UnusedParameter")
 @Composable
 fun Memo(item: TransactionDetailItem.Memo) {
-    TODO("Not yet implemented")
 }
 
+@Suppress("EmptyFunctionBlock", "UnusedParameter")
 @Composable
 fun Header(item: TransactionDetailItem.Header) {
 }
@@ -97,11 +99,11 @@ private fun TransactionDetailTopAppBar(
 ) {
     ZashiSmallTopAppBar(
         subtitle =
-        when (appBarState) {
-            TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-            TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-            TopAppBarSubTitleState.None -> null
-        },
+            when (appBarState) {
+                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
+                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
+                TopAppBarSubTitleState.None -> null
+            },
         showTitleLogo = true,
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
