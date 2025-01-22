@@ -2,7 +2,11 @@
 <resources>
     <string name="transaction_history_plus">+ %s ZEC</string>
     <string name="transaction_history_minus">- %s ZEC</string>
-    <string name="transaction_history_today">Todat</string>
+    <string name="transaction_history_today">Today</string>
     <string name="transaction_history_yesterday">Yesterday</string>
     <string name="transaction_history_days_ago">%s days ago</string>
+
+    <string name="transaction_history_this_week">This week</string>
+    <string name="transaction_history_last_week">Last week</string>
+    <string name="transaction_history_weeks_ago">%s weeks ago</string>
 </resources>

@@ -95,6 +95,8 @@ import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.transactionhistory.AndroidTransactionHistory
+import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
 import co.electriccoin.zcash.ui.screen.transactionprogress.AndroidTransactionProgress
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgress
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
@@ -400,6 +402,9 @@ internal fun MainActivity.Navigation() {
         }
         composable<TransactionProgress> {
             AndroidTransactionProgress(it.toRoute())
+        }
+        composable<TransactionHistory> {
+            AndroidTransactionHistory()
         }
     }
 }

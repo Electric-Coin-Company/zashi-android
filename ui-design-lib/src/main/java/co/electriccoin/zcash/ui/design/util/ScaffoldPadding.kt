@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 
@@ -34,10 +35,15 @@ fun PaddingValues.asScaffoldPaddingValues() =
     )
 
 @Stable
-fun PaddingValues.asScaffoldScrollPaddingValues() =
+fun PaddingValues.asScaffoldScrollPaddingValues(
+    top: Dp = calculateTopPadding() + ZashiDimensions.Spacing.spacingLg,
+    bottom: Dp = calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
+    start: Dp = 0.dp,
+    end: Dp = 0.dp
+) =
     PaddingValues(
-        top = calculateTopPadding() + ZashiDimensions.Spacing.spacingLg,
-        bottom = calculateBottomPadding() + ZashiDimensions.Spacing.spacing3xl,
-        start = 0.dp,
-        end = 0.dp
+        top = top,
+        bottom = bottom,
+        start = start,
+        end = end,
     )

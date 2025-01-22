@@ -37,28 +37,27 @@ class TransactionRepositoryImpl(
             accountDataSource.selectedAccount.map { it?.sdkAccount }
         ) { synchronizer, networkHeight, account ->
             Triple(synchronizer, networkHeight, account)
-        }
-            .flatMapLatest { (synchronizer, networkHeight, account) ->
-                if (synchronizer == null || account == null) {
-                    flowOf(null)
-                } else {
-                    synchronizer.getTransactions(account.accountUuid)
-                        .map {
-                            it.map { transaction ->
-                                TransactionData(
-                                    transactionOverview = transaction,
-                                    transactionOutputs = synchronizer.getTransactionOutputs(transaction),
-                                )
-                            }.sortedByDescending { transaction ->
-                                transaction.transactionOverview.getSortHeight(networkHeight)
-                            }
+        }.flatMapLatest { (synchronizer, networkHeight, account) ->
+            if (synchronizer == null || account == null) {
+                flowOf(null)
+            } else {
+                synchronizer.getTransactions(account.accountUuid)
+                    .map {
+                        it.map { transaction ->
+                            TransactionData(
+                                transactionOverview = transaction,
+                                transactionOutputs = synchronizer.getTransactionOutputs(transaction),
+                            )
+                        }.sortedByDescending { transaction ->
+                            transaction.transactionOverview.getSortHeight(networkHeight)
                         }
-                }
-            }.stateIn(
-                scope = scope,
-                started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
-                initialValue = null
-            )
+                    }
+            }
+        }.stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
+            initialValue = null
+        )
 
     private fun TransactionOverview.getSortHeight(networkHeight: BlockHeight?): BlockHeight? {
         // Non-null assertion operator is necessary here as the smart cast to is impossible because `minedHeight` and

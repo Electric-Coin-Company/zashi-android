@@ -84,8 +84,7 @@ private fun List<Any>.normalize(context: Context): List<Any> =
 
 object StringResourceDefaults {
     fun convertZatoshi(zatoshi: Zatoshi) = zatoshi.convertZatoshiToZecString(
-        maxDecimals = ZATOSHI_MAX_DECIMALS,
-        minDecimals = ZATOSHI_MAX_DECIMALS
+        minDecimals = 0
     )
 
     fun convertDateTime(zonedDateTime: ZonedDateTime): String {
@@ -94,5 +93,3 @@ object StringResourceDefaults {
     }
 
 }
-
-private const val ZATOSHI_MAX_DECIMALS = 3

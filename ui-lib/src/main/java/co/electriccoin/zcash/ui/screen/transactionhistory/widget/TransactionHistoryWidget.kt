@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,23 +32,30 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactionhistory.Transaction
 
-@Composable
-fun TransactionHistoryWidget(state: TransactionHistoryWidgetState) {
+fun LazyListScope.createTransactionHistoryWidget(state: TransactionHistoryWidgetState) {
     when (state) {
-        is TransactionHistoryWidgetState.Data -> Data(state)
-        is TransactionHistoryWidgetState.Empty -> Empty(state)
+        is TransactionHistoryWidgetState.Data -> data(state)
+        is TransactionHistoryWidgetState.Empty -> empty(state)
     }
 }
 
-@Composable
-private fun Data(state: TransactionHistoryWidgetState.Data) {
-    Column {
+private fun LazyListScope.data(state: TransactionHistoryWidgetState.Data) {
+    item {
         TransactionHistoryWidgetHeader(
             state = state.header,
             modifier = Modifier.padding(horizontal = 24.dp),
         )
         Spacer(Modifier.height(8.dp))
-        state.transactions.forEachIndexed { index, item ->
+    }
+
+    itemsIndexed(
+        items = state.transactions,
+        key = { _, item -> item.key },
+        contentType = { _, item -> item.contentType }
+    ) { index, item ->
+        Column(
+            modifier = Modifier.animateItem()
+        ) {
             Transaction(
                 state = item,
                 modifier = Modifier.padding(horizontal = 4.dp),
@@ -61,50 +71,52 @@ private fun Data(state: TransactionHistoryWidgetState.Data) {
     }
 }
 
-@Composable
-private fun Empty(state: TransactionHistoryWidgetState.Empty) {
-    Box {
-        Column {
-            Spacer(Modifier.height(32.dp))
-            Image(
-                painter = painterResource(id = R.drawable.transaction_widget_loading_background),
-                contentDescription = null
-            )
-            Spacer(Modifier.height(20.dp))
-            Image(
-                painter = painterResource(id = R.drawable.transaction_widget_loading_background),
-                contentDescription = null
-            )
-        }
-        Column(
-            modifier = Modifier.fillMaxWidth()
-                .background(
-                    brush = Brush.verticalGradient(
-                        0f to Color.Transparent,
-                        .41f to ZashiColors.Surfaces.bgPrimary,
-                        1f to ZashiColors.Surfaces.bgPrimary,
-                    )
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(Modifier.height(90.dp))
-            Image(
-                painter = painterResource(R.drawable.ic_transaction_widget_empty),
-                contentDescription = null,
-            )
-            Spacer(Modifier.height(20.dp))
-            Text(
-                text = "There’s nothing here, yet."
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "Make the first move..."
-            )
-            Spacer(Modifier.height(20.dp))
-            ZashiButton(
-                state = state.sendTransaction,
-                colors = ZashiButtonDefaults.tertiaryColors(),
-            )
+private fun LazyListScope.empty(state: TransactionHistoryWidgetState.Empty) {
+    item {
+        Box {
+            Column {
+                Spacer(Modifier.height(32.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.transaction_widget_loading_background),
+                    contentDescription = null
+                )
+                Spacer(Modifier.height(20.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.transaction_widget_loading_background),
+                    contentDescription = null
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        brush = Brush.verticalGradient(
+                            0f to Color.Transparent,
+                            .41f to ZashiColors.Surfaces.bgPrimary,
+                            1f to ZashiColors.Surfaces.bgPrimary,
+                        )
+                    ),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(Modifier.height(90.dp))
+                Image(
+                    painter = painterResource(R.drawable.ic_transaction_widget_empty),
+                    contentDescription = null,
+                )
+                Spacer(Modifier.height(20.dp))
+                Text(
+                    text = "There’s nothing here, yet."
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = "Make the first move..."
+                )
+                Spacer(Modifier.height(20.dp))
+                ZashiButton(
+                    state = state.sendTransaction,
+                    colors = ZashiButtonDefaults.tertiaryColors(),
+                )
+            }
         }
     }
 }
@@ -113,9 +125,12 @@ private fun Empty(state: TransactionHistoryWidgetState.Empty) {
 @Composable
 private fun Preview() = ZcashTheme {
     BlankSurface {
-        TransactionHistoryWidget(
-            state = TransactionHistoryWidgetStateFixture.new()
-        )
+        LazyColumn {
+            createTransactionHistoryWidget(
+                state = TransactionHistoryWidgetStateFixture.new()
+            )
+        }
+
     }
 }
 
@@ -123,13 +138,15 @@ private fun Preview() = ZcashTheme {
 @Composable
 private fun EmptyPreview() = ZcashTheme {
     BlankSurface {
-        TransactionHistoryWidget(
-            state = TransactionHistoryWidgetState.Empty(
-                sendTransaction = ButtonState(
-                    text = stringRes("Send a transaction"),
-                    onClick = {}
+        LazyColumn {
+            createTransactionHistoryWidget(
+                state = TransactionHistoryWidgetState.Empty(
+                    sendTransaction = ButtonState(
+                        text = stringRes("Send a transaction"),
+                        onClick = {}
+                    )
                 )
             )
-        )
+        }
     }
 }

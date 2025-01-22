@@ -35,6 +35,7 @@ import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewMo
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
+import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryViewModel
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetViewModel
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressViewModel
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
@@ -119,4 +120,5 @@ val viewModelModule =
         viewModelOf(::ReviewTransactionViewModel)
         viewModelOf(::TransactionProgressViewModel)
         viewModelOf(::TransactionHistoryWidgetViewModel)
+        viewModelOf(::TransactionHistoryViewModel)
     }

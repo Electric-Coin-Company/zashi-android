@@ -2,12 +2,14 @@ package co.electriccoin.zcash.ui.screen.transactiondetail
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
@@ -105,7 +107,7 @@ private fun TransactionDetailTopAppBar(
             ZashiTopAppBarBackNavigation(onBack = onBack)
         },
         regularActions = {
-            ZashiIconButton(state.bookmarkButton)
+            ZashiIconButton(state.bookmarkButton, modifier = Modifier.size(40.dp))
         }
     )
 }

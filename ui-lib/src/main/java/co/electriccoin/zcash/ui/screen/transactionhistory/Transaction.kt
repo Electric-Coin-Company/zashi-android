@@ -25,13 +25,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.Itemizable
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orHiddenString
@@ -108,27 +108,23 @@ fun Transaction(
 }
 
 data class TransactionState(
+    override val key: Any,
     @DrawableRes val icon: Int,
     val title: StringResource,
     val subtitle: StringResource?,
     val isShielded: Boolean,
     val value: StringResource?,
     val onClick: () -> Unit,
-)
+): Itemizable {
+    override val contentType: Any = "Transaction"
+}
 
 @PreviewScreens
 @Composable
 private fun TransactionPreview() = ZcashTheme {
     BlankSurface {
         Transaction(
-            state = TransactionState(
-                icon = R.drawable.ic_transaction_sent,
-                title = stringRes("Transaction Title"),
-                subtitle = stringRes("Transaction subtitle"),
-                isShielded = true,
-                value = stringRes(R.string.transaction_history_plus, stringRes(Zatoshi(10000000))),
-                onClick = {}
-            ),
+            state = TransactionStateFixture.new(),
             modifier = Modifier.fillMaxWidth()
         )
     }

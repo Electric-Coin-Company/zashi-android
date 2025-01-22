@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -38,7 +39,7 @@ import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
 import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeOptIn
-import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidget
+import co.electriccoin.zcash.ui.screen.transactionhistory.widget.createTransactionHistoryWidget
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetState
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetStateFixture
 import kotlinx.datetime.Clock
@@ -198,9 +199,13 @@ private fun AccountMainContent(
 
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
-            TransactionHistoryWidget(
-                state = transactionHistoryWidgetState
-            )
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth().weight(1f)
+            ) {
+                createTransactionHistoryWidget(
+                    state = transactionHistoryWidgetState
+                )
+            }
         }
 
         AnimatedVisibility(

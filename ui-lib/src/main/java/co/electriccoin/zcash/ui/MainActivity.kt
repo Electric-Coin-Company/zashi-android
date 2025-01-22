@@ -143,9 +143,9 @@ class MainActivity : FragmentActivity() {
         enableEdgeToEdge()
         setContentCompat {
             Override(configurationOverrideFlow) {
-                val balancesAvailable by homeViewModel.isHideBalances.collectAsStateWithLifecycle()
+                val isHideBalances by homeViewModel.isHideBalances.collectAsStateWithLifecycle()
                 ZcashTheme(
-                    balancesAvailable = balancesAvailable == true
+                    balancesAvailable = isHideBalances == false
                 ) {
                     BlankSurface(
                         Modifier

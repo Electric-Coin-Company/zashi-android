@@ -2,26 +2,22 @@ package co.electriccoin.zcash.ui.screen.transactionhistory.widget
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.sdk.model.TransactionPool
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
+import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.common.usecase.ObserveCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionState
+import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
 
 class TransactionHistoryWidgetViewModel(
     observeCurrentTransactions: ObserveCurrentTransactionsUseCase,
+    private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
 
@@ -46,37 +42,9 @@ class TransactionHistoryWidgetViewModel(
                     transactions = it
                         .take(5)
                         .map { transaction ->
-                            TransactionState(
-                                icon = when {
-                                    transaction.transactionOverview.isShielding -> R.drawable.ic_transaction_shielded
-                                    transaction.transactionOverview.isSentTransaction -> R.drawable.ic_transaction_sent
-                                    else -> R.drawable.ic_transaction_received
-                                },
-                                title = when {
-                                    transaction.transactionOverview.isShielding -> stringRes("Shielded")
-                                    transaction.transactionOverview.isSentTransaction -> stringRes("Sent")
-                                    else -> stringRes("Received")
-                                },
-                                subtitle = transaction.transactionOverview.blockTimeEpochSeconds
-                                    ?.let { blockTimeEpochSeconds ->
-                                        Instant.ofEpochSecond(blockTimeEpochSeconds).toStringResource()
-                                    },
-                                isShielded = transaction.transactionOutputs
-                                    .none { output -> output.pool == TransactionPool.TRANSPARENT } &&
-                                    !transaction.transactionOverview.isShielding,
-                                value = when {
-                                    transaction.transactionOverview.isShielding -> null
-                                    transaction.transactionOverview.isSentTransaction -> stringRes(
-                                        R.string.transaction_history_minus,
-                                        stringRes(transaction.transactionOverview.netValue)
-                                    )
-
-                                    else -> stringRes(
-                                        R.string.transaction_history_plus,
-                                        stringRes(transaction.transactionOverview.netValue)
-                                    )
-                                },
-                                onClick = ::onTransactionClick
+                            transactionHistoryMapper.createTransactionState(
+                                transaction = transaction,
+                                onTransactionClick = ::onTransactionClick
                             )
                         }
                 )
@@ -93,22 +61,12 @@ class TransactionHistoryWidgetViewModel(
             )
         )
 
-    private fun Instant.toStringResource(): StringResource =
-        when (val date = this.atZone(ZoneId.systemDefault()).toLocalDate()) {
-            LocalDate.now() -> stringRes(R.string.transaction_history_today)
-            LocalDate.now().minusDays(1) -> stringRes(R.string.transaction_history_yesterday)
-            else -> stringRes(
-                R.string.transaction_history_days_ago,
-                ChronoUnit.DAYS.between(date, LocalDate.now()).toString()
-            )
-        }
-
-    private fun onTransactionClick() {
+    private fun onTransactionClick(transactionData: TransactionData) {
         // todo
     }
 
     private fun onSeeAllTransactionsClick() {
-        // todo
+        navigationRouter.forward(TransactionHistory)
     }
 
     private fun onSendTransactionClick() {
