@@ -12,19 +12,21 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-### Changed
-- The QR code image logic of the `QrCode`, `Request`, and `SignTransaction` screens has been refactored to work
-  with the newer `ZashiQr` component
-- The colors of the QR code image on the `SignTransaction` screen are now white and black for both color themes to
-  improve the successful scanning chance by the Keystone device
-- The block synchronization progress logic has been changed to return an uncompleted percentage in case the
-  `Synchronizer` is still in the `SYNCING` state
-- The Keystone SDK has been updated to version `0.7.10`, which brings a significant QR codes scanning improvement
+## [1.3.3 (839)] - 2025-01-23
 
-### Fixed
-- The Disconnected popup trigger when the app is backgrounded has been fixed
-- The issue when the application does not clean navigation stack after clicking View Transactions after a successful
-  transaction has been resolved
+### Cambiado
+- Refactorizamos la lógica de la imagen del código QR para que funcione con el nuevo componente ZashiQr.
+- Ahora, los colores de la imagen del código QR en la pantalla de SignTransaction son los mismos en ambos temas de 
+  color, mejorando el escaneo por parte del dispositivo Keystone.
+- Mejoramos la lógica del progreso de sincronización de bloques para devolver un porcentaje incompleto en caso de que 
+  el sincronizador aún esté en el estado SYNCING.
+- Actualizamos el SDK de Keystone a la versión 0.7.10, lo que incluye una mejora significativa en el escaneo de 
+  códigos QR.
+
+### Corregido
+- Corregimos la lógica del popup de Desconectado en los casos en que la aplicación pasa a segundo plano.
+- También resolvimos un problema con la pila de navegación de la aplicación, que no se limpiaba correctamente después 
+  de hacer clic en el botón Ver Transacciones.
 
 ## [1.3.2 (829)] - 2025-01-10
 
