@@ -138,7 +138,7 @@ class SendViewModel(
         try {
             createProposal(newZecSend)
         } catch (e: Exception) {
-            setSendStage(SendStage.SendFailure(""))
+            setSendStage(SendStage.SendFailure(e.cause?.message ?: e.message ?: ""))
             Twig.error(e) { "Error creating proposal" }
         }
     }
@@ -151,7 +151,7 @@ class SendViewModel(
         try {
             createKeystoneZip321TransactionProposal(zip321Uri)
         } catch (e: Exception) {
-            setSendStage(SendStage.SendFailure(""))
+            setSendStage(SendStage.SendFailure(e.cause?.message ?: e.message ?: ""))
             Twig.error(e) { "Error creating proposal" }
         }
     }
