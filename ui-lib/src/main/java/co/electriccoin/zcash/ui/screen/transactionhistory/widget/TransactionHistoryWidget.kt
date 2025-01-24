@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactionhistory.Transaction
 
@@ -115,17 +116,21 @@ private fun LazyListScope.transactionHistoryEmptyWidget(state: TransactionHistor
                     style = ZashiTypography.textLg,
                     fontWeight = FontWeight.SemiBold
                 )
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = stringResource(R.string.transaction_history_widget_empty_subtitle),
-                    color = ZashiColors.Text.textTertiary,
-                    style = ZashiTypography.textSm,
-                )
-                Spacer(Modifier.height(20.dp))
-                ZashiButton(
-                    state = state.sendTransaction,
-                    colors = ZashiButtonDefaults.tertiaryColors(),
-                )
+                state.subtitle?.let {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = it.getValue(),
+                        color = ZashiColors.Text.textTertiary,
+                        style = ZashiTypography.textSm,
+                    )
+                }
+                state.sendTransaction?.let {
+                    Spacer(Modifier.height(20.dp))
+                    ZashiButton(
+                        state = it,
+                        colors = ZashiButtonDefaults.tertiaryColors(),
+                    )
+                }
             }
         }
     }
@@ -155,6 +160,7 @@ private fun EmptyPreview() =
                 createTransactionHistoryWidgets(
                     state =
                         TransactionHistoryWidgetState.Empty(
+                            subtitle = stringRes(R.string.transaction_history_widget_empty_subtitle),
                             sendTransaction =
                                 ButtonState(
                                     text = stringRes("Send a transaction"),

@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetBackupPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetProposalUseCase
@@ -20,6 +21,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
@@ -32,7 +34,6 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveOnAccountChangedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
@@ -118,7 +119,7 @@ val useCaseModule =
         factoryOf(::GetExchangeRateUseCase)
         factoryOf(::GetSelectedWalletAccountUseCase)
         singleOf(::ObserveClearSendUseCase)
-        factoryOf(::ObserveCurrentTransactionsUseCase)
+        factoryOf(::GetCurrentTransactionsUseCase)
         factoryOf(::CreateProposalUseCase)
         factoryOf(::CreateZip321ProposalUseCase)
         factoryOf(::CreateKeystoneShieldProposalUseCase)
@@ -136,4 +137,5 @@ val useCaseModule =
         factoryOf(::ConfirmProposalUseCase)
         factoryOf(::NavigateToAddressBookUseCase)
         factoryOf(::NavigateToSendUseCase)
+        factoryOf(::GetWalletRestoringStateUseCase)
     }

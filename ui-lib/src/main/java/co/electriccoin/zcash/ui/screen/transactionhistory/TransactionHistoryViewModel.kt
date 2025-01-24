@@ -8,7 +8,7 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
 import co.electriccoin.zcash.ui.common.repository.TransactionData
-import co.electriccoin.zcash.ui.common.usecase.ObserveCurrentTransactionsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -24,13 +24,13 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 
 class TransactionHistoryViewModel(
-    observeCurrentTransactions: ObserveCurrentTransactionsUseCase,
+    getCurrentTransactions: GetCurrentTransactionsUseCase,
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     @Suppress("SpreadOperator")
     val state =
-        observeCurrentTransactions()
+        getCurrentTransactions.observe()
             .map { transactions ->
                 val items =
                     transactions.orEmpty()
