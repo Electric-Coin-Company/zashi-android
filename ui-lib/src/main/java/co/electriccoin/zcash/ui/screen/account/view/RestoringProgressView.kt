@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.common.compose.SynchronizationStatus
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -47,6 +48,7 @@ internal fun LazyListScope.createRestoringProgressView(
 
                 Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingDefault))
             }
+            Spacer(Modifier.height(8.dp))
         }
     }
 }
