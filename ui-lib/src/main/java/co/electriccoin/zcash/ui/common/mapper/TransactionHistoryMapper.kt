@@ -1,7 +1,17 @@
 package co.electriccoin.zcash.ui.common.mapper
 
+import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionPool
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.RECEIVED
+import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.RECEIVE_FAILED
+import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.RECEIVING
+import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.SENDING
+import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.SEND_FAILED
+import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.SENT
+import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.SHIELDED
+import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.SHIELDING
+import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.SHIELDING_FAILED
 import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -17,54 +27,117 @@ class TransactionHistoryMapper {
         onTransactionClick: (TransactionData) -> Unit
     ) = TransactionState(
         key = transaction.transactionOverview.txIdString(),
-        icon =
-            when {
-                transaction.transactionOverview.isShielding -> R.drawable.ic_transaction_shielded
-                transaction.transactionOverview.isSentTransaction -> R.drawable.ic_transaction_sent
-                else -> R.drawable.ic_transaction_received
-            },
-        title =
-            when {
-                transaction.transactionOverview.isShielding -> stringRes(R.string.transaction_history_shielded)
-                transaction.transactionOverview.isSentTransaction -> stringRes(R.string.transaction_history_sent)
-                else -> stringRes(R.string.transaction_history_received)
-            },
-        subtitle =
-            transaction.transactionOverview.blockTimeEpochSeconds
-                ?.let { blockTimeEpochSeconds ->
-                    Instant.ofEpochSecond(blockTimeEpochSeconds).toStringResource()
-                },
-        isShielded =
-            transaction.transactionOutputs
-                .none { output -> output.pool == TransactionPool.TRANSPARENT } &&
-                !transaction.transactionOverview.isShielding,
-        value =
-            when {
-                transaction.transactionOverview.isShielding -> null
-                transaction.transactionOverview.isSentTransaction ->
-                    stringRes(
-                        R.string.transaction_history_minus,
-                        stringRes(transaction.transactionOverview.netValue)
-                    )
-
-                else ->
-                    stringRes(
-                        R.string.transaction_history_plus,
-                        stringRes(transaction.transactionOverview.netValue)
-                    )
-            },
+        icon = getIcon(transaction),
+        title = getTitle(transaction),
+        subtitle = getSubtitle(transaction),
+        isShielded = isShielded(transaction),
+        value = getValue(transaction),
         onClick = { onTransactionClick(transaction) }
     )
 
-    private fun Instant.toStringResource(): StringResource {
-        val date = this.atZone(ZoneId.systemDefault())
-        val daysBetween = ChronoUnit.DAYS.between(date, ZonedDateTime.now())
-        return if (daysBetween < PAST_DAYS_THRESHOLD) {
+    private fun getIcon(transaction: TransactionData) =
+        when (transaction.transactionOverview.getExtendedState()) {
+            SENT,
+            SENDING,
+            SEND_FAILED -> R.drawable.ic_transaction_sent
+
+            RECEIVED,
+            RECEIVING,
+            RECEIVE_FAILED -> R.drawable.ic_transaction_received
+
+            SHIELDED,
+            SHIELDING,
+            SHIELDING_FAILED -> R.drawable.ic_transaction_shielded
+        }
+
+    private fun getTitle(transaction: TransactionData) =
+        when (transaction.transactionOverview.getExtendedState()) {
+            SENT -> stringRes(R.string.transaction_history_sent)
+            SENDING -> stringRes(R.string.transaction_history_sending)
+            SEND_FAILED -> stringRes(R.string.transaction_history_sending_failed)
+            RECEIVED -> stringRes(R.string.transaction_history_received)
+            RECEIVING -> stringRes(R.string.transaction_history_receiving)
+            RECEIVE_FAILED -> stringRes(R.string.transaction_history_receiving_failed)
+            SHIELDED -> stringRes(R.string.transaction_history_shielded)
+            SHIELDING -> stringRes(R.string.transaction_history_shielding)
+            SHIELDING_FAILED -> stringRes(R.string.transaction_history_shielding_failed)
+        }
+
+    private fun getSubtitle(transaction: TransactionData): StringResource? {
+        val now = ZonedDateTime.now()
+        val transactionDate =
+            transaction.transactionOverview.blockTimeEpochSeconds
+                ?.let { blockTimeEpochSeconds ->
+                    Instant.ofEpochSecond(blockTimeEpochSeconds)
+                }
+                ?.atZone(ZoneId.systemDefault()) ?: return null
+        val daysBetween = ChronoUnit.DAYS.between(transactionDate, now)
+        return if (daysBetween < MONTH_THRESHOLD) {
             stringRes(R.string.transaction_history_days_ago, daysBetween.toString())
         } else {
-            stringRes(date)
+            stringRes(transactionDate)
         }
+    }
+
+    private fun isShielded(transaction: TransactionData) =
+        transaction.transactionOutputs
+            .none { output -> output.pool == TransactionPool.TRANSPARENT } &&
+            !transaction.transactionOverview.isShielding
+
+    private fun getValue(transaction: TransactionData) =
+        when {
+            transaction.transactionOverview.isShielding -> null
+            transaction.transactionOverview.isSentTransaction ->
+                stringRes(
+                    R.string.transaction_history_minus,
+                    stringRes(transaction.transactionOverview.netValue)
+                )
+
+            else ->
+                stringRes(
+                    R.string.transaction_history_plus,
+                    stringRes(transaction.transactionOverview.netValue)
+                )
+        }
+}
+
+private fun TransactionOverview.getExtendedState(): TransactionExtendedState {
+    return when (transactionState) {
+        cash.z.ecc.android.sdk.model.TransactionState.Expired ->
+            when {
+                isShielding -> SHIELDING_FAILED
+                isSentTransaction -> SEND_FAILED
+                else -> RECEIVE_FAILED
+            }
+
+        cash.z.ecc.android.sdk.model.TransactionState.Confirmed ->
+            when {
+                isShielding -> SHIELDED
+                isSentTransaction -> SENT
+                else -> RECEIVED
+            }
+
+        cash.z.ecc.android.sdk.model.TransactionState.Pending ->
+            when {
+                isShielding -> SHIELDING
+                isSentTransaction -> SENDING
+                else -> RECEIVING
+            }
+
+        else -> error("Unexpected transaction state found while calculating its extended state.")
     }
 }
 
-private const val PAST_DAYS_THRESHOLD = 30
+private enum class TransactionExtendedState {
+    SENT,
+    SENDING,
+    SEND_FAILED,
+    RECEIVED,
+    RECEIVING,
+    RECEIVE_FAILED,
+    SHIELDED,
+    SHIELDING,
+    SHIELDING_FAILED
+}
+
+private const val MONTH_THRESHOLD = 30
