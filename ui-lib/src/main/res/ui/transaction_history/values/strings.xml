@@ -4,9 +4,17 @@
     <string name="transaction_history_minus">- %s ZEC</string>
     <string name="transaction_history_today">Today</string>
     <string name="transaction_history_yesterday">Yesterday</string>
+    <string name="transaction_history_previous_7_days">Previous 7 days</string>
+    <string name="transaction_history_previous_30_days">Previous 30 days</string>
     <string name="transaction_history_days_ago">%s days ago</string>
-
-    <string name="transaction_history_this_week">This week</string>
-    <string name="transaction_history_last_week">Last week</string>
-    <string name="transaction_history_weeks_ago">%s weeks ago</string>
+    <string name="transaction_history_send_transaction">Send a transaction</string>
+    <string name="transaction_history_widget_title">Transactions</string>
+    <string name="transaction_history_widget_header_button">See All</string>
+    <string name="transaction_history_widget_send_transaction">Send a transaction</string>
+    <string name="transaction_history_widget_empty_title">There’s nothing here, yet.</string>
+    <string name="transaction_history_widget_empty_subtitle">Make the first move...</string>
+    <string name="transaction_history_search">Search</string>
+    <string name="transaction_history_shielded">Shielded</string>
+    <string name="transaction_history_sent">Sent</string>
+    <string name="transaction_history_received">Received</string>
 </resources>

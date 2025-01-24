@@ -27,6 +27,8 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.BalanceWidget
 import co.electriccoin.zcash.ui.common.compose.StatusDialog
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBar
@@ -35,6 +37,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
+import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.balances.model.StatusAction
@@ -61,7 +64,10 @@ private fun HistoryLoadingComposablePreview() {
             showStatusDialog = null,
             snackbarHostState = SnackbarHostState(),
             zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new(),
-            transactionHistoryWidgetState = TransactionHistoryWidgetStateFixture.new()
+            transactionHistoryWidgetState = TransactionHistoryWidgetStateFixture.new(),
+            onStatusClick = {},
+            walletSnapshot = WalletSnapshotFixture.new(),
+            isWalletRestoringState = WalletRestoringState.SYNCING,
         )
     }
 }
@@ -96,7 +102,10 @@ private fun HistoryListComposablePreview() {
             showStatusDialog = null,
             snackbarHostState = SnackbarHostState(),
             zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new(),
-            transactionHistoryWidgetState = TransactionHistoryWidgetStateFixture.new()
+            transactionHistoryWidgetState = TransactionHistoryWidgetStateFixture.new(),
+            onStatusClick = {},
+            walletSnapshot = WalletSnapshotFixture.new(),
+            isWalletRestoringState = WalletRestoringState.SYNCING,
         )
     }
 }
@@ -112,7 +121,10 @@ internal fun Account(
     showStatusDialog: StatusAction.Detailed?,
     snackbarHostState: SnackbarHostState,
     zashiMainTopAppBarState: ZashiMainTopAppBarState?,
-    transactionHistoryWidgetState: TransactionHistoryWidgetState
+    transactionHistoryWidgetState: TransactionHistoryWidgetState,
+    isWalletRestoringState: WalletRestoringState,
+    onStatusClick: (StatusAction) -> Unit,
+    walletSnapshot: WalletSnapshot,
 ) {
     BlankBgScaffold(
         topBar = {
@@ -133,7 +145,10 @@ internal fun Account(
                     // underlying transaction history composable
                 ),
             paddingValues = paddingValues,
-            transactionHistoryWidgetState = transactionHistoryWidgetState
+            transactionHistoryWidgetState = transactionHistoryWidgetState,
+            isWalletRestoringState = isWalletRestoringState,
+            onStatusClick = onStatusClick,
+            walletSnapshot = walletSnapshot,
         )
 
         // Show synchronization status popup
@@ -157,6 +172,9 @@ private fun AccountMainContent(
     goBalances: () -> Unit,
     isHideBalances: Boolean,
     transactionHistoryWidgetState: TransactionHistoryWidgetState,
+    isWalletRestoringState: WalletRestoringState,
+    onStatusClick: (StatusAction) -> Unit,
+    walletSnapshot: WalletSnapshot,
     modifier: Modifier = Modifier,
     paddingValues: PaddingValues = PaddingValues(),
 ) {
@@ -200,8 +218,17 @@ private fun AccountMainContent(
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
 
             LazyColumn(
-                modifier = Modifier.fillMaxWidth().weight(1f)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
             ) {
+                createRestoringProgressView(
+                    onStatusClick = onStatusClick,
+                    walletRestoringState = isWalletRestoringState,
+                    walletSnapshot = walletSnapshot,
+                )
+
                 createTransactionHistoryWidgets(
                     state = transactionHistoryWidgetState
                 )

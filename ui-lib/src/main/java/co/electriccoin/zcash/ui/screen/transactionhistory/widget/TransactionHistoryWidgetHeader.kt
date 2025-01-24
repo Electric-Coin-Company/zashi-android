@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.screen.transactionhistory.widget
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,24 +32,26 @@ fun TransactionHistoryWidgetHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
+            modifier = Modifier.weight(1f),
             text = state.title.getValue(),
             color = ZashiColors.Text.textPrimary,
             fontWeight = FontWeight.SemiBold
         )
-        Spacer(modifier = Modifier.weight(1f))
-        ZashiButton(
-            state = state.button,
-            colors = ZashiButtonDefaults.tertiaryColors(),
-            style = ZashiTypography.textSm,
-            contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
-            shape = CircleShape
-        )
+        state.button?.let {
+            ZashiButton(
+                state = it,
+                colors = ZashiButtonDefaults.tertiaryColors(),
+                style = ZashiTypography.textSm,
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                shape = CircleShape
+            )
+        }
     }
 }
 
 data class TransactionHistoryWidgetHeaderState(
     val title: StringResource,
-    val button: ButtonState
+    val button: ButtonState?
 )
 
 @PreviewScreens

@@ -2,6 +2,7 @@
 
 package co.electriccoin.zcash.ui.screen.account
 
+import android.content.Context
 import android.content.Intent
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.BalanceState
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -29,6 +31,8 @@ import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetViewModel
 import co.electriccoin.zcash.ui.util.EmailUtil
+import co.electriccoin.zcash.ui.util.PlayStoreUtil
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.VisibleForTesting
 import org.koin.androidx.compose.koinViewModel
@@ -57,6 +61,8 @@ internal fun WrapAccount(goBalances: () -> Unit) {
 
     val topAppBarState by topAppBarViewModel.state.collectAsStateWithLifecycle()
 
+    val walletRestoringState = walletViewModel.walletRestoringState.collectAsStateWithLifecycle().value
+
     WrapAccount(
         balanceState = balanceState,
         goBalances = goBalances,
@@ -64,7 +70,8 @@ internal fun WrapAccount(goBalances: () -> Unit) {
         supportInfo = supportInfo,
         synchronizer = synchronizer,
         walletSnapshot = walletSnapshot,
-        zashiMainTopAppBarState = topAppBarState
+        zashiMainTopAppBarState = topAppBarState,
+        walletRestoringState = walletRestoringState,
     )
 
     // For benchmarking purposes
@@ -82,6 +89,7 @@ internal fun WrapAccount(
     supportInfo: SupportInfo?,
     walletSnapshot: WalletSnapshot?,
     zashiMainTopAppBarState: ZashiMainTopAppBarState?,
+    walletRestoringState: WalletRestoringState,
 ) {
     val context = LocalContext.current
 
@@ -135,7 +143,42 @@ internal fun WrapAccount(
             goBalances = goBalances,
             snackbarHostState = snackbarHostState,
             zashiMainTopAppBarState = zashiMainTopAppBarState,
-            transactionHistoryWidgetState = transactionHistoryWidgetState
+            transactionHistoryWidgetState = transactionHistoryWidgetState,
+            isWalletRestoringState = walletRestoringState,
+            onStatusClick = { status ->
+                when (status) {
+                    is StatusAction.Detailed -> showStatusDialog.value = status
+                    StatusAction.AppUpdate -> {
+                        openPlayStoreAppSite(
+                            context = context,
+                            snackbarHostState = snackbarHostState,
+                            scope = scope
+                        )
+                    }
+
+                    else -> {
+                        // No action required
+                    }
+                }
+            },
+            walletSnapshot = walletSnapshot,
         )
+    }
+}
+
+private fun openPlayStoreAppSite(
+    context: Context,
+    snackbarHostState: SnackbarHostState,
+    scope: CoroutineScope
+) {
+    val storeIntent = PlayStoreUtil.newActivityIntent(context)
+    runCatching {
+        context.startActivity(storeIntent)
+    }.onFailure {
+        scope.launch {
+            snackbarHostState.showSnackbar(
+                message = context.getString(R.string.unable_to_open_play_store)
+            )
+        }
     }
 }

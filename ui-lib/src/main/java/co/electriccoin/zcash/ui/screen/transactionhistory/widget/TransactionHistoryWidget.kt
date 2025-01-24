@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
@@ -29,6 +31,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactionhistory.Transaction
 
@@ -107,11 +110,16 @@ private fun LazyListScope.transactionHistoryEmptyWidget(state: TransactionHistor
                 )
                 Spacer(Modifier.height(20.dp))
                 Text(
-                    text = "There’s nothing here, yet."
+                    text = stringResource(R.string.transaction_history_widget_empty_title),
+                    color = ZashiColors.Text.textPrimary,
+                    style = ZashiTypography.textLg,
+                    fontWeight = FontWeight.SemiBold
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "Make the first move..."
+                    text = stringResource(R.string.transaction_history_widget_empty_subtitle),
+                    color = ZashiColors.Text.textTertiary,
+                    style = ZashiTypography.textSm,
                 )
                 Spacer(Modifier.height(20.dp))
                 ZashiButton(

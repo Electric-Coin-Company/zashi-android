@@ -1,6 +1,8 @@
 package co.electriccoin.zcash.ui.screen.transactionhistory
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -43,6 +44,7 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TransactionHistoryView(
     state: TransactionHistoryState,
@@ -85,7 +87,7 @@ fun TransactionHistoryView(
                     },
                     placeholder = {
                         Text(
-                            text = stringRes("Search").getValue(),
+                            text = stringRes(stringResource(R.string.transaction_history_search)).getValue(),
                             style = ZashiTypography.textMd,
                             color = ZashiColors.Inputs.Default.text,
                             fontWeight = FontWeight.Medium
@@ -97,58 +99,99 @@ fun TransactionHistoryView(
                     state = state.filterButton
                 )
             }
+
             LazyColumn(
                 modifier =
                     Modifier
                         .weight(1f)
                         .fillMaxWidth(),
-                contentPadding = paddingValues.asScaffoldScrollPaddingValues(top = 0.dp)
+                contentPadding = paddingValues.asScaffoldScrollPaddingValues(top = 32.dp),
             ) {
-                itemsIndexed(
-                    items = state.items,
-                    key = { _, item -> item.key },
-                    contentType = { _, item -> item.contentType },
-                ) { index, item ->
+                state.items.forEachIndexed { index, item ->
                     when (item) {
-                        is TransactionHistoryItem.Header -> {
-                            Column(
-                                modifier = Modifier.animateItem()
+                        is TransactionHistoryItem.Header ->
+                            stickyHeader(
+                                contentType = item.contentType
                             ) {
-                                Spacer(Modifier.height(32.dp))
-                                Text(
-                                    modifier = Modifier.padding(horizontal = 24.dp),
-                                    text = item.title.getValue(),
-                                    style = ZashiTypography.textMd,
-                                    color = ZashiColors.Text.textTertiary,
-                                    fontWeight = FontWeight.Medium,
+                                HeaderItem(
+                                    item,
+                                    modifier =
+                                        Modifier
+                                            .fillParentMaxWidth()
+                                            .background(ZashiColors.Surfaces.bgPrimary)
+                                            .animateItem()
                                 )
-                                Spacer(Modifier.height(10.dp))
                             }
-                        }
 
-                        is TransactionHistoryItem.Transaction -> {
-                            Column(
-                                modifier = Modifier.animateItem()
+                        is TransactionHistoryItem.Transaction ->
+                            item(
+                                contentType = item.contentType,
+                                key = item.key,
                             ) {
-                                Transaction(
-                                    modifier = Modifier.padding(horizontal = 4.dp),
-                                    state = item.state,
-                                    contentPadding = PaddingValues(vertical = 12.dp, horizontal = 20.dp)
+                                TransactionItem(
+                                    item = item,
+                                    index = index,
+                                    state = state,
+                                    modifier = Modifier.animateItem()
                                 )
-
-                                if (index != state.items.lastIndex &&
-                                    state.items[index + 1] is TransactionHistoryItem
-                                        .Transaction
-                                ) {
-                                    ZashiHorizontalDivider(
-                                        modifier = Modifier.padding(horizontal = 4.dp),
-                                    )
-                                }
                             }
-                        }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun HeaderItem(
+    item: TransactionHistoryItem.Header,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        Text(
+            modifier = Modifier.padding(horizontal = 24.dp),
+            text = item.title.getValue(),
+            style = ZashiTypography.textMd,
+            color = ZashiColors.Text.textTertiary,
+            fontWeight = FontWeight.Medium,
+        )
+        Spacer(Modifier.height(4.dp))
+    }
+}
+
+@Composable
+private fun TransactionItem(
+    item: TransactionHistoryItem.Transaction,
+    index: Int,
+    state: TransactionHistoryState,
+    modifier: Modifier = Modifier
+) {
+    val previousItem = if (index != 0) state.items[index - 1] else null
+    val nextItem = if (index != state.items.lastIndex) state.items[index + 1] else null
+
+    Column(
+        modifier = modifier,
+    ) {
+        if (previousItem is TransactionHistoryItem.Header) {
+            Spacer(Modifier.height(6.dp))
+        }
+
+        Transaction(
+            modifier = Modifier.padding(horizontal = 4.dp),
+            state = item.state,
+            contentPadding = PaddingValues(vertical = 12.dp, horizontal = 20.dp)
+        )
+
+        if (index != state.items.lastIndex && nextItem is TransactionHistoryItem.Transaction) {
+            ZashiHorizontalDivider(
+                modifier = Modifier.padding(horizontal = 4.dp),
+            )
+        } else if (index != state.items.lastIndex && nextItem !is TransactionHistoryItem.Transaction) {
+            Spacer(
+                modifier = Modifier.height(32.dp)
+            )
         }
     }
 }
@@ -198,7 +241,6 @@ private fun Preview() =
                     items =
                         listOf(
                             TransactionHistoryItem.Header(
-                                key = "week 0",
                                 title = stringRes("Header")
                             ),
                             TransactionHistoryItem.Transaction(
@@ -208,7 +250,6 @@ private fun Preview() =
                                 state = TransactionStateFixture.new(),
                             ),
                             TransactionHistoryItem.Header(
-                                key = "week 1",
                                 title = stringRes("Header 2")
                             ),
                             TransactionHistoryItem.Transaction(

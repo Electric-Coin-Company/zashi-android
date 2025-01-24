@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.transactionhistory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
@@ -18,9 +19,9 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
+import java.time.YearMonth
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 
 class TransactionHistoryViewModel(
     observeCurrentTransactions: ObserveCurrentTransactionsUseCase,
@@ -34,28 +35,29 @@ class TransactionHistoryViewModel(
                 val items =
                     transactions.orEmpty()
                         .groupBy {
-                            val now = ZonedDateTime.now()
+                            val now = ZonedDateTime.now().toLocalDate()
                             val other =
                                 Instant
                                     .ofEpochSecond(it.transactionOverview.blockTimeEpochSeconds ?: 0)
                                     .atZone(ZoneId.systemDefault())
-                            ChronoUnit.WEEKS.between(other, now)
+                                    .toLocalDate()
+
+                            when {
+                                now == other ->
+                                    stringRes(R.string.transaction_history_today)
+                                other == now.minusDays(1) ->
+                                    stringRes(R.string.transaction_history_yesterday)
+                                other >= now.minusDays(WEEK_THRESHOLD) ->
+                                    stringRes(R.string.transaction_history_previous_7_days)
+                                other >= now.minusDays(MONTH_THRESHOLD) ->
+                                    stringRes(R.string.transaction_history_previous_30_days)
+                                else ->
+                                    stringRes(YearMonth.from(other))
+                            }
                         }
-                        .map { (weekDifference, transactions) ->
+                        .map { (headerStringRes, transactions) ->
                             listOf(
-                                TransactionHistoryItem.Header(
-                                    key = weekDifference,
-                                    title =
-                                        when (weekDifference) {
-                                            0L -> stringRes(R.string.transaction_history_this_week)
-                                            1L -> stringRes(R.string.transaction_history_last_week)
-                                            else ->
-                                                stringRes(
-                                                    R.string.transaction_history_weeks_ago,
-                                                    weekDifference.toString()
-                                                )
-                                        }
-                                ),
+                                TransactionHistoryItem.Header(headerStringRes),
                                 *transactions.map { transaction ->
                                     TransactionHistoryItem.Transaction(
                                         state =
@@ -97,5 +99,9 @@ class TransactionHistoryViewModel(
 
     @Suppress("EmptyFunctionBlock", "UnusedParameter")
     private fun onTransactionClick(transactionData: TransactionData) {
+        Twig.debug { "Clicked txid: ${transactionData.transactionOverview.txIdString()}" }
     }
 }
+
+private const val WEEK_THRESHOLD = 7L
+private const val MONTH_THRESHOLD = 30L

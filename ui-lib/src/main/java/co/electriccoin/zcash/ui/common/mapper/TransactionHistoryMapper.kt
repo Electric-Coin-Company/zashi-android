@@ -7,8 +7,8 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionState
 import java.time.Instant
-import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 class TransactionHistoryMapper {
@@ -25,9 +25,9 @@ class TransactionHistoryMapper {
             },
         title =
             when {
-                transaction.transactionOverview.isShielding -> stringRes("Shielded")
-                transaction.transactionOverview.isSentTransaction -> stringRes("Sent")
-                else -> stringRes("Received")
+                transaction.transactionOverview.isShielding -> stringRes(R.string.transaction_history_shielded)
+                transaction.transactionOverview.isSentTransaction -> stringRes(R.string.transaction_history_sent)
+                else -> stringRes(R.string.transaction_history_received)
             },
         subtitle =
             transaction.transactionOverview.blockTimeEpochSeconds
@@ -56,14 +56,15 @@ class TransactionHistoryMapper {
         onClick = { onTransactionClick(transaction) }
     )
 
-    private fun Instant.toStringResource(): StringResource =
-        when (val date = this.atZone(ZoneId.systemDefault()).toLocalDate()) {
-            LocalDate.now() -> stringRes(R.string.transaction_history_today)
-            LocalDate.now().minusDays(1) -> stringRes(R.string.transaction_history_yesterday)
-            else ->
-                stringRes(
-                    R.string.transaction_history_days_ago,
-                    ChronoUnit.DAYS.between(date, LocalDate.now()).toString()
-                )
+    private fun Instant.toStringResource(): StringResource {
+        val date = this.atZone(ZoneId.systemDefault())
+        val daysBetween = ChronoUnit.DAYS.between(date, ZonedDateTime.now())
+        return if (daysBetween < PAST_DAYS_THRESHOLD) {
+            stringRes(R.string.transaction_history_days_ago, daysBetween.toString())
+        } else {
+            stringRes(date)
         }
+    }
 }
+
+private const val PAST_DAYS_THRESHOLD = 30

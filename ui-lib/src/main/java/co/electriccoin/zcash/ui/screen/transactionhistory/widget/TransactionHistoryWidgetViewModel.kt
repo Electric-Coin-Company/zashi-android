@@ -3,7 +3,9 @@ package co.electriccoin.zcash.ui.screen.transactionhistory.widget
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
 import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.common.usecase.ObserveCurrentTransactionsUseCase
@@ -22,12 +24,12 @@ class TransactionHistoryWidgetViewModel(
 ) : ViewModel() {
     val state =
         observeCurrentTransactions()
-            .map {
-                if (it.isNullOrEmpty()) {
+            .map { transactions ->
+                if (transactions.isNullOrEmpty()) {
                     TransactionHistoryWidgetState.Empty(
                         sendTransaction =
                             ButtonState(
-                                text = stringRes("Send a transaction"),
+                                text = stringRes(R.string.transaction_history_send_transaction),
                                 onClick = ::onSendTransactionClick
                             )
                     )
@@ -35,15 +37,17 @@ class TransactionHistoryWidgetViewModel(
                     TransactionHistoryWidgetState.Data(
                         header =
                             TransactionHistoryWidgetHeaderState(
-                                title = stringRes("Transactions"),
+                                title = stringRes(R.string.transaction_history_widget_title),
                                 button =
                                     ButtonState(
-                                        text = stringRes("See All"),
+                                        text = stringRes(R.string.transaction_history_widget_header_button),
                                         onClick = ::onSeeAllTransactionsClick
-                                    )
+                                    ).takeIf {
+                                        transactions.size > MAX_TRANSACTION_COUNT
+                                    }
                             ),
                         transactions =
-                            it
+                            transactions
                                 .take(MAX_TRANSACTION_COUNT)
                                 .map { transaction ->
                                     transactionHistoryMapper.createTransactionState(
@@ -61,7 +65,7 @@ class TransactionHistoryWidgetViewModel(
                     TransactionHistoryWidgetState.Empty(
                         sendTransaction =
                             ButtonState(
-                                text = stringRes("Send a transaction"),
+                                text = stringRes(R.string.transaction_history_widget_send_transaction),
                                 onClick = ::onSendTransactionClick
                             )
                     )
@@ -69,6 +73,7 @@ class TransactionHistoryWidgetViewModel(
 
     @Suppress("EmptyFunctionBlock", "UnusedParameter")
     private fun onTransactionClick(transactionData: TransactionData) {
+        Twig.debug { "Clicked txid: ${transactionData.transactionOverview.txIdString()}" }
     }
 
     private fun onSeeAllTransactionsClick() {

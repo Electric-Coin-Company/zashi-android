@@ -14,10 +14,10 @@ data class TransactionHistoryState(
 
 sealed interface TransactionHistoryItem : Itemizable {
     data class Header(
-        override val key: Any,
         val title: StringResource,
     ) : TransactionHistoryItem {
         override val contentType = "Transaction Header"
+        override val key = title
     }
 
     data class Transaction(
