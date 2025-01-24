@@ -3,12 +3,14 @@ package co.electriccoin.zcash.ui.screen.account
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
+import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.account.view.Account
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetStateFixture
@@ -71,7 +73,10 @@ class AccountTestSetup(
                             onHideBalancesCount.incrementAndGet()
                         },
                 ),
-            transactionHistoryWidgetState = TransactionHistoryWidgetStateFixture.new()
+            transactionHistoryWidgetState = TransactionHistoryWidgetStateFixture.new(),
+            isWalletRestoringState = WalletRestoringState.NONE,
+            walletSnapshot = WalletSnapshotFixture.new(),
+            onStatusClick = {},
         )
     }
 
