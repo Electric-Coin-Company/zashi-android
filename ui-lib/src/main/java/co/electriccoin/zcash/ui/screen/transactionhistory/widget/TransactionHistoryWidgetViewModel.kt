@@ -8,6 +8,7 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
 import co.electriccoin.zcash.ui.common.repository.TransactionData
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -21,6 +22,7 @@ class TransactionHistoryWidgetViewModel(
     observeCurrentTransactions: ObserveCurrentTransactionsUseCase,
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
+    private val navigateToSend: NavigateToSendUseCase
 ) : ViewModel() {
     val state =
         observeCurrentTransactions()
@@ -82,6 +84,7 @@ class TransactionHistoryWidgetViewModel(
 
     @Suppress("EmptyFunctionBlock")
     private fun onSendTransactionClick() {
+        navigateToSend()
     }
 }
 

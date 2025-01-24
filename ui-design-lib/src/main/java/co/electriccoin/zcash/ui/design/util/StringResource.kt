@@ -93,8 +93,7 @@ private fun List<Any>.normalize(context: Context): List<Any> =
     }
 
 object StringResourceDefaults {
-    fun convertZatoshi(zatoshi: Zatoshi) =
-        zatoshi.convertZatoshiToZecString()
+    fun convertZatoshi(zatoshi: Zatoshi) = zatoshi.convertZatoshiToZecString()
 
     fun convertDateTime(zonedDateTime: ZonedDateTime): String {
         // return DateFormat

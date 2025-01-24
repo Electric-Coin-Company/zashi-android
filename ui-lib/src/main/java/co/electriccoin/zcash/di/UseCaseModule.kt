@@ -26,6 +26,7 @@ import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
@@ -134,4 +135,5 @@ val useCaseModule =
         factoryOf(::GetProposalUseCase)
         factoryOf(::ConfirmProposalUseCase)
         factoryOf(::NavigateToAddressBookUseCase)
+        factoryOf(::NavigateToSendUseCase)
     }
