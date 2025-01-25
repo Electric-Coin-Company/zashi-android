@@ -133,8 +133,7 @@ class TransactionHistoryMapper {
                     stringRes(
                         R.string.transaction_history_plus,
                         stringRes(transaction.transactionOverview.netValue)
-                    ),
-                    StringResourceColor.POSITIVE
+                    )
                 )
             SHIELDING ->
                 StyledStringResource(
