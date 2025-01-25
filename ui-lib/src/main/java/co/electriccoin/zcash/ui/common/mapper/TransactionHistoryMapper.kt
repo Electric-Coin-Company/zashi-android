@@ -14,6 +14,8 @@ import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.SHIELDING
 import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.SHIELDING_FAILED
 import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.StringResourceColor
+import co.electriccoin.zcash.ui.design.util.StyledStringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionState
 import java.time.Instant
@@ -32,7 +34,8 @@ class TransactionHistoryMapper {
         subtitle = getSubtitle(transaction),
         isShielded = isShielded(transaction),
         value = getValue(transaction),
-        onClick = { onTransactionClick(transaction) }
+        onClick = { onTransactionClick(transaction) },
+        hasMemo = transaction.transactionOverview.memoCount > 0
     )
 
     private fun getIcon(transaction: TransactionData) =
@@ -85,18 +88,68 @@ class TransactionHistoryMapper {
             !transaction.transactionOverview.isShielding
 
     private fun getValue(transaction: TransactionData) =
-        when {
-            transaction.transactionOverview.isShielding -> null
-            transaction.transactionOverview.isSentTransaction ->
-                stringRes(
-                    R.string.transaction_history_minus,
-                    stringRes(transaction.transactionOverview.netValue)
+        when (transaction.transactionOverview.getExtendedState()) {
+            SENT,
+            SENDING ->
+                StyledStringResource(
+                    stringRes(
+                        R.string.transaction_history_minus,
+                        stringRes(transaction.transactionOverview.netValue)
+                    )
                 )
-
-            else ->
-                stringRes(
-                    R.string.transaction_history_plus,
-                    stringRes(transaction.transactionOverview.netValue)
+            SEND_FAILED ->
+                StyledStringResource(
+                    stringRes(
+                        R.string.transaction_history_minus,
+                        stringRes(transaction.transactionOverview.netValue)
+                    ),
+                    StringResourceColor.NEGATIVE
+                )
+            RECEIVED ->
+                StyledStringResource(
+                    stringRes(
+                        R.string.transaction_history_plus,
+                        stringRes(transaction.transactionOverview.netValue)
+                    ),
+                    StringResourceColor.POSITIVE
+                )
+            RECEIVING ->
+                StyledStringResource(
+                    stringRes(
+                        R.string.transaction_history_plus,
+                        stringRes(transaction.transactionOverview.netValue)
+                    ),
+                )
+            RECEIVE_FAILED ->
+                StyledStringResource(
+                    stringRes(
+                        R.string.transaction_history_plus,
+                        stringRes(transaction.transactionOverview.netValue)
+                    ),
+                    StringResourceColor.NEGATIVE
+                )
+            SHIELDED ->
+                StyledStringResource(
+                    stringRes(
+                        R.string.transaction_history_plus,
+                        stringRes(transaction.transactionOverview.netValue)
+                    ),
+                    StringResourceColor.POSITIVE
+                )
+            SHIELDING ->
+                StyledStringResource(
+                    stringRes(
+                        R.string.transaction_history_plus,
+                        stringRes(transaction.transactionOverview.netValue)
+                    )
+                )
+            SHIELDING_FAILED ->
+                StyledStringResource(
+                    stringRes(
+                        R.string.transaction_history_plus,
+                        stringRes(transaction.transactionOverview.netValue)
+                    ),
+                    StringResourceColor.NEGATIVE
                 )
         }
 }

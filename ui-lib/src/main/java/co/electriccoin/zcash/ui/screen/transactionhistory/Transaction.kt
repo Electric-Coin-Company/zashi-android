@@ -2,8 +2,11 @@ package co.electriccoin.zcash.ui.screen.transactionhistory
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,7 +14,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,6 +38,8 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.Itemizable
 import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.StyledStringResource
+import co.electriccoin.zcash.ui.design.util.getColor
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orHiddenString
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -62,10 +69,23 @@ fun Transaction(
                     .padding(contentPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(state.icon),
-                contentDescription = null
-            )
+            Box {
+                Image(
+                    painter = painterResource(state.icon),
+                    contentDescription = null
+                )
+                if (state.hasMemo) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .align(Alignment.BottomEnd)
+                                .size(12.dp)
+                                .border(2.dp, ZashiColors.Avatars.avatarProfileBorder, CircleShape)
+                                .padding(2.dp)
+                                .background(ZashiColors.Avatars.avatarBadgeBg, CircleShape)
+                    )
+                }
+            }
             Spacer(Modifier.width(16.dp))
             Column(
                 modifier = Modifier.weight(1f)
@@ -99,8 +119,9 @@ fun Transaction(
                 Spacer(Modifier.width(16.dp))
                 Text(
                     text =
-                        it orHiddenString stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
-                    color = ZashiColors.Text.textPrimary,
+                        it.resource orHiddenString
+                            stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                    color = it.getColor(),
                     style = ZashiTypography.textSm
                 )
             }
@@ -114,7 +135,8 @@ data class TransactionState(
     val title: StringResource,
     val subtitle: StringResource?,
     val isShielded: Boolean,
-    val value: StringResource?,
+    val value: StyledStringResource?,
+    val hasMemo: Boolean,
     val onClick: () -> Unit,
 ) : Itemizable {
     override val contentType: Any = "Transaction"
