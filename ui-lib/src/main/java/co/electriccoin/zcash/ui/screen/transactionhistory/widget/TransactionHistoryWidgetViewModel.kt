@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.transactionhistory.widget
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
@@ -14,6 +13,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSendUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -72,9 +72,8 @@ class TransactionHistoryWidgetViewModel(
                     TransactionHistoryWidgetState.Empty(subtitle = null, sendTransaction = null)
             )
 
-    @Suppress("EmptyFunctionBlock", "UnusedParameter")
     private fun onTransactionClick(transactionData: TransactionData) {
-        Twig.debug { "Clicked txid: ${transactionData.transactionOverview.txIdString()}" }
+        navigationRouter.forward(TransactionDetail(transactionData.overview.txIdString()))
     }
 
     private fun onSeeAllTransactionsClick() {

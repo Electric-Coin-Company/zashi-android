@@ -25,6 +25,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFulltextFiltersUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetTransactionByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
@@ -150,4 +151,5 @@ val useCaseModule =
         factoryOf(::ApplyTransactionFulltextFiltersUseCase)
         factoryOf(::GetTransactionFiltersUseCase)
         factoryOf(::GetTransactionFulltextFiltersUseCase)
+        factoryOf(::GetTransactionByIdUseCase)
     }

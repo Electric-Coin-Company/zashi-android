@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.transactionhistory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
@@ -15,6 +14,7 @@ import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFilters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,7 +51,7 @@ class TransactionHistoryViewModel(
                         val now = ZonedDateTime.now().toLocalDate()
                         val other =
                             Instant
-                                .ofEpochSecond(it.transactionOverview.blockTimeEpochSeconds ?: 0)
+                                .ofEpochSecond(it.overview.blockTimeEpochSeconds ?: 0)
                                 .atZone(ZoneId.systemDefault())
                                 .toLocalDate()
 
@@ -129,9 +129,8 @@ class TransactionHistoryViewModel(
         navigationRouter.back()
     }
 
-    @Suppress("EmptyFunctionBlock")
     private fun onTransactionClick(transactionData: TransactionData) {
-        Twig.debug { "Clicked txid: ${transactionData.transactionOverview.txIdString()}" }
+        navigationRouter.forward(TransactionDetail(transactionData.overview.txIdString()))
     }
 
     private fun onTransactionFiltersClicked() = navigationRouter.forward(TransactionFilters)

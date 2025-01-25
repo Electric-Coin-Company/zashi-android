@@ -1,18 +1,17 @@
 package co.electriccoin.zcash.ui.common.mapper
 
-import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionPool
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.RECEIVED
-import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.RECEIVE_FAILED
-import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.RECEIVING
-import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.SENDING
-import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.SEND_FAILED
-import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.SENT
-import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.SHIELDED
-import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.SHIELDING
-import co.electriccoin.zcash.ui.common.mapper.TransactionExtendedState.SHIELDING_FAILED
 import co.electriccoin.zcash.ui.common.repository.TransactionData
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVED
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVE_FAILED
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVING
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SENDING
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SEND_FAILED
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SENT
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDED
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDING
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDING_FAILED
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
@@ -28,18 +27,18 @@ class TransactionHistoryMapper {
         transaction: TransactionData,
         onTransactionClick: (TransactionData) -> Unit
     ) = TransactionState(
-        key = transaction.transactionOverview.txIdString(),
+        key = transaction.overview.txIdString(),
         icon = getIcon(transaction),
         title = getTitle(transaction),
         subtitle = getSubtitle(transaction),
         isShielded = isShielded(transaction),
         value = getValue(transaction),
         onClick = { onTransactionClick(transaction) },
-        hasMemo = transaction.transactionOverview.memoCount > 0
+        hasMemo = transaction.overview.memoCount > 0
     )
 
     private fun getIcon(transaction: TransactionData) =
-        when (transaction.transactionOverview.getExtendedState()) {
+        when (transaction.state) {
             SENT,
             SENDING,
             SEND_FAILED -> R.drawable.ic_transaction_sent
@@ -54,7 +53,7 @@ class TransactionHistoryMapper {
         }
 
     private fun getTitle(transaction: TransactionData) =
-        when (transaction.transactionOverview.getExtendedState()) {
+        when (transaction.state) {
             SENT -> stringRes(R.string.transaction_history_sent)
             SENDING -> stringRes(R.string.transaction_history_sending)
             SEND_FAILED -> stringRes(R.string.transaction_history_sending_failed)
@@ -68,7 +67,7 @@ class TransactionHistoryMapper {
 
     private fun getSubtitle(transaction: TransactionData): StringResource? {
         val transactionDate =
-            transaction.transactionOverview.blockTimeEpochSeconds
+            transaction.overview.blockTimeEpochSeconds
                 ?.let { blockTimeEpochSeconds ->
                     Instant.ofEpochSecond(blockTimeEpochSeconds)
                 }
@@ -96,16 +95,16 @@ class TransactionHistoryMapper {
     private fun isShielded(transaction: TransactionData) =
         transaction.transactionOutputs
             .none { output -> output.pool == TransactionPool.TRANSPARENT } &&
-            !transaction.transactionOverview.isShielding
+            !transaction.overview.isShielding
 
     private fun getValue(transaction: TransactionData) =
-        when (transaction.transactionOverview.getExtendedState()) {
+        when (transaction.state) {
             SENT,
             SENDING ->
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_minus,
-                        stringRes(transaction.transactionOverview.netValue)
+                        stringRes(transaction.overview.netValue)
                     )
                 )
 
@@ -113,7 +112,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_minus,
-                        stringRes(transaction.transactionOverview.netValue)
+                        stringRes(transaction.overview.netValue)
                     ),
                     StringResourceColor.NEGATIVE
                 )
@@ -122,7 +121,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(transaction.transactionOverview.netValue)
+                        stringRes(transaction.overview.netValue)
                     ),
                     StringResourceColor.POSITIVE
                 )
@@ -131,7 +130,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(transaction.transactionOverview.netValue)
+                        stringRes(transaction.overview.netValue)
                     ),
                 )
 
@@ -139,7 +138,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(transaction.transactionOverview.netValue)
+                        stringRes(transaction.overview.netValue)
                     ),
                     StringResourceColor.NEGATIVE
                 )
@@ -148,7 +147,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(transaction.transactionOverview.netValue)
+                        stringRes(transaction.overview.netValue)
                     )
                 )
 
@@ -156,7 +155,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(transaction.transactionOverview.netValue)
+                        stringRes(transaction.overview.netValue)
                     )
                 )
 
@@ -164,50 +163,11 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(transaction.transactionOverview.netValue)
+                        stringRes(transaction.overview.netValue)
                     ),
                     StringResourceColor.NEGATIVE
                 )
         }
-}
-
-private fun TransactionOverview.getExtendedState(): TransactionExtendedState {
-    return when (transactionState) {
-        cash.z.ecc.android.sdk.model.TransactionState.Expired ->
-            when {
-                isShielding -> SHIELDING_FAILED
-                isSentTransaction -> SEND_FAILED
-                else -> RECEIVE_FAILED
-            }
-
-        cash.z.ecc.android.sdk.model.TransactionState.Confirmed ->
-            when {
-                isShielding -> SHIELDED
-                isSentTransaction -> SENT
-                else -> RECEIVED
-            }
-
-        cash.z.ecc.android.sdk.model.TransactionState.Pending ->
-            when {
-                isShielding -> SHIELDING
-                isSentTransaction -> SENDING
-                else -> RECEIVING
-            }
-
-        else -> error("Unexpected transaction state found while calculating its extended state.")
-    }
-}
-
-private enum class TransactionExtendedState {
-    SENT,
-    SENDING,
-    SEND_FAILED,
-    RECEIVED,
-    RECEIVING,
-    RECEIVE_FAILED,
-    SHIELDED,
-    SHIELDING,
-    SHIELDING_FAILED
 }
 
 private const val MONTH_THRESHOLD = 30

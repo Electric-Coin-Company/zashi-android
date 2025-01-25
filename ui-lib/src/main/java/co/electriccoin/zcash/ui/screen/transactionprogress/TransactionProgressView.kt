@@ -35,7 +35,7 @@ import androidx.constraintlayout.compose.Dimension
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.GradientBgScaffold
-import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
+import co.electriccoin.zcash.ui.design.component.OldZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
@@ -89,7 +89,7 @@ private fun TopBar(state: TransactionProgressState) {
 
 @Composable
 private fun BottomBar(state: TransactionProgressState) {
-    ZashiBottomBar {
+    OldZashiBottomBar {
         when (state) {
             is SendingTransactionState -> {
                 // none

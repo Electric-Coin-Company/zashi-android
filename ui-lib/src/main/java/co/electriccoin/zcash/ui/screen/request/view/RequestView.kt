@@ -32,7 +32,7 @@ import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.QrCodeDefaults
-import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
+import co.electriccoin.zcash.ui.design.component.OldZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
@@ -149,7 +149,7 @@ private fun RequestBottomBar(
     state: RequestState.Prepared,
     modifier: Modifier = Modifier,
 ) {
-    ZashiBottomBar(modifier = modifier.fillMaxWidth()) {
+    OldZashiBottomBar(modifier = modifier.fillMaxWidth()) {
         when (state) {
             is RequestState.Amount -> {
                 ZashiButton(

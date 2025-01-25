@@ -54,12 +54,12 @@ import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.LottieProgress
+import co.electriccoin.zcash.ui.design.component.OldZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.RadioButton
 import co.electriccoin.zcash.ui.design.component.RadioButtonCheckedContent
 import co.electriccoin.zcash.ui.design.component.RadioButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
-import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
@@ -192,7 +192,7 @@ private fun ErrorDialog(dialogState: ServerDialogState) {
 
 @Composable
 fun ChooseServerBottomBar(saveButtonState: ButtonState) {
-    ZashiBottomBar {
+    OldZashiBottomBar {
         ZashiButton(
             state = saveButtonState,
             modifier =

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,13 +20,13 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
-fun ZashiBottomBar(
-    isElevated: Boolean,
+fun OldZashiBottomBar(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Surface(
-        shadowElevation = if (isElevated) 4.dp else 0.dp,
+        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+        shadowElevation = 4.dp,
         color = ZashiColors.Surfaces.bgPrimary,
         modifier = modifier,
     ) {
@@ -42,9 +43,7 @@ fun ZashiBottomBar(
 @Composable
 private fun BottomBarPreview() =
     ZcashTheme {
-        ZashiBottomBar(
-            isElevated = true
-        ) {
+        OldZashiBottomBar {
             ZashiButton(
                 state = ButtonState(text = stringRes("Save Button")),
                 modifier =
