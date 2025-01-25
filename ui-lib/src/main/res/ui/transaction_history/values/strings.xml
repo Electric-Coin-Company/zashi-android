@@ -20,7 +20,7 @@
     <string name="transaction_history_received">Received</string>
     <string name="transaction_history_receiving">Receiving…</string>
     <string name="transaction_history_receiving_failed">Receiving failed</string>
-    <string name="transaction_history_shielded">Shielded Funds</string>
+    <string name="transaction_history_shielded">Shielded</string>
     <string name="transaction_history_shielding">Shielding…</string>
     <string name="transaction_history_shielding_failed">Shielding failed</string>
 </resources>
