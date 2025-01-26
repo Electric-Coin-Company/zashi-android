@@ -18,6 +18,7 @@ import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIEL
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.DetailedTransactionData
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionByIdUseCase
+import co.electriccoin.zcash.ui.common.usecase.SendTransactionAgainUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
@@ -39,6 +40,7 @@ class TransactionDetailViewModel(
     getTransactionById: GetTransactionByIdUseCase,
     private val copyToClipboard: CopyToClipboardUseCase,
     private val navigationRouter: NavigationRouter,
+    private val sendTransactionAgain: SendTransactionAgainUseCase
 ) : ViewModel() {
     val state =
         getTransactionById.observe(transactionDetail.transactionId)
@@ -138,7 +140,7 @@ class TransactionDetailViewModel(
                 Instant.ofEpochSecond(blockTimeEpochSeconds)
             }
             ?.atZone(ZoneId.systemDefault())
-            ?.let { stringRes(it) } ?: stringRes("Pending...")
+            ?.let { stringRes(it) } ?: stringRes(R.string.transaction_detail_pending)
 
     private fun onCopyToClipboard(text: String) {
         copyToClipboard(
@@ -154,7 +156,7 @@ class TransactionDetailViewModel(
                 SENDING,
                 SEND_FAILED ->
                     ButtonState(
-                        text = stringRes("Save address"),
+                        text = stringRes(R.string.transaction_detail_save_address),
                         onClick = { onSaveAddressClick(transaction) }
                     )
 
@@ -166,8 +168,8 @@ class TransactionDetailViewModel(
                 SENDING,
                 SEND_FAILED ->
                     ButtonState(
-                        text = stringRes("Send again"),
-                        onClick = { }
+                        text = stringRes(R.string.transaction_detail_send_again),
+                        onClick = { onSendAgainClick(transaction) }
                     )
 
                 else -> null
@@ -180,23 +182,23 @@ class TransactionDetailViewModel(
         }
     }
 
-    // private fun onSendAgainClick(transaction: DetailedTransactionData) {
-    //
-    // }
+    private fun onSendAgainClick(transaction: DetailedTransactionData) {
+        sendTransactionAgain(transaction)
+    }
 
     private fun createTransactionHeaderState(transaction: DetailedTransactionData) =
         TransactionDetailHeaderState(
             title =
                 when (transaction.transaction.state) {
-                    SENT -> stringRes("Sent")
-                    SENDING -> stringRes("Sending")
-                    SEND_FAILED -> stringRes("Send failed")
-                    RECEIVED -> stringRes("Received")
-                    RECEIVING -> stringRes("Receiving")
-                    RECEIVE_FAILED -> stringRes("Receive failed")
-                    SHIELDED -> stringRes("Shielded")
-                    SHIELDING -> stringRes("Shielding")
-                    SHIELDING_FAILED -> stringRes("Shielding failed")
+                    SENT -> stringRes(R.string.transaction_detail_sent)
+                    SENDING -> stringRes(R.string.transaction_detail_sending)
+                    SEND_FAILED -> stringRes(R.string.transaction_detail_send_failed)
+                    RECEIVED -> stringRes(R.string.transaction_detail_received)
+                    RECEIVING -> stringRes(R.string.transaction_detail_receiving)
+                    RECEIVE_FAILED -> stringRes(R.string.transaction_detail_receive_failed)
+                    SHIELDED -> stringRes(R.string.transaction_detail_shielded)
+                    SHIELDING -> stringRes(R.string.transaction_detail_shielding)
+                    SHIELDING_FAILED -> stringRes(R.string.transaction_detail_shielding_failed)
                 },
             amount = stringRes(transaction.transaction.overview.netValue)
         )

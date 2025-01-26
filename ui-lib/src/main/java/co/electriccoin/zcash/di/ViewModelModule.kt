@@ -131,6 +131,7 @@ val viewModelModule =
                 getTransactionById = get(),
                 copyToClipboard = get(),
                 navigationRouter = get(),
+                sendTransactionAgain = get()
             )
         }
     }
