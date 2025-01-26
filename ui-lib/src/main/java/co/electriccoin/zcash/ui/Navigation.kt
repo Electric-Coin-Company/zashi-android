@@ -149,9 +149,23 @@ internal fun MainActivity.Navigation() {
                             }
                         }
                     }
+                is NavigationCommand.ReplaceAll ->
+                    if (it.route is ExternalUrl) {
+                        navController.popBackStack(
+                            route = navController.graph.startDestinationId,
+                            inclusive = false
+                        )
+                        WebBrowserUtil.startActivity(this@Navigation, it.route.url)
+                    } else {
+                        navController.executeNavigation(route = it.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = false
+                            }
+                        }
+                    }
                 is NavigationCommand.NewRoot ->
                     navController.executeNavigation(route = it.route) {
-                        popUpTo(HOME) {
+                        popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
                         }
                     }

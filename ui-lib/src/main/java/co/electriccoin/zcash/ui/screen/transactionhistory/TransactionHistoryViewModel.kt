@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -50,11 +51,12 @@ class TransactionHistoryViewModel(
                     .groupBy {
                         val now = ZonedDateTime.now().toLocalDate()
                         val other =
-                            Instant
-                                .ofEpochSecond(it.overview.blockTimeEpochSeconds ?: 0)
-                                .atZone(ZoneId.systemDefault())
-                                .toLocalDate()
-
+                            it.overview.blockTimeEpochSeconds?.let { sec ->
+                                Instant
+                                    .ofEpochSecond(sec)
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate()
+                            } ?: LocalDate.now()
                         when {
                             now == other ->
                                 stringRes(R.string.transaction_history_today) to "today"

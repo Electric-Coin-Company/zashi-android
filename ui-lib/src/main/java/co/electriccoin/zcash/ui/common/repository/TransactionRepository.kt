@@ -58,18 +58,20 @@ class TransactionRepositoryImpl(
             if (synchronizer == null || account == null) {
                 flowOf(null)
             } else {
-                synchronizer.getTransactions(account.accountUuid)
-                    .map {
-                        it.map { transaction ->
-                            TransactionData(
-                                overview = transaction,
-                                transactionOutputs = synchronizer.getTransactionOutputs(transaction),
-                                state = transaction.getExtendedState()
-                            )
-                        }.sortedByDescending { transaction ->
-                            transaction.overview.getSortHeight(networkHeight)
+                flowOf(null).flatMapLatest {
+                    synchronizer.getTransactions(account.accountUuid)
+                        .map {
+                            it.map { transaction ->
+                                TransactionData(
+                                    overview = transaction,
+                                    transactionOutputs = synchronizer.getTransactionOutputs(transaction),
+                                    state = transaction.getExtendedState()
+                                )
+                            }.sortedByDescending { transaction ->
+                                transaction.overview.getSortHeight(networkHeight)
+                            }
                         }
-                    }
+                }
             }
         }.stateIn(
             scope = scope,

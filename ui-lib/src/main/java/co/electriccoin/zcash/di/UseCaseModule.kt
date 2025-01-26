@@ -70,6 +70,7 @@ import co.electriccoin.zcash.ui.common.usecase.UpdateContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
+import co.electriccoin.zcash.ui.common.usecase.ViewTransactionDetailAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
@@ -139,6 +140,7 @@ val useCaseModule =
         factoryOf(::CreateKeystoneProposalPCZTEncoderUseCase)
         factoryOf(::ObserveOnAccountChangedUseCase)
         factoryOf(::ViewTransactionsAfterSuccessfulProposalUseCase)
+        factoryOf(::ViewTransactionDetailAfterSuccessfulProposalUseCase)
         factoryOf(::NavigateToCoinbaseUseCase)
         factoryOf(::ObserveTransactionSubmitStateUseCase)
         factoryOf(::GetProposalUseCase)
