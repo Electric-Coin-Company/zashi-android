@@ -19,8 +19,8 @@ import co.electriccoin.zcash.ui.design.util.StyledStringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionState
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 class TransactionHistoryMapper {
@@ -67,18 +67,29 @@ class TransactionHistoryMapper {
         }
 
     private fun getSubtitle(transaction: TransactionData): StringResource? {
-        val now = ZonedDateTime.now()
         val transactionDate =
             transaction.transactionOverview.blockTimeEpochSeconds
                 ?.let { blockTimeEpochSeconds ->
                     Instant.ofEpochSecond(blockTimeEpochSeconds)
                 }
                 ?.atZone(ZoneId.systemDefault()) ?: return null
-        val daysBetween = ChronoUnit.DAYS.between(transactionDate, now)
-        return if (daysBetween < MONTH_THRESHOLD) {
-            stringRes(R.string.transaction_history_days_ago, daysBetween.toString())
-        } else {
-            stringRes(transactionDate)
+        val daysBetween = ChronoUnit.DAYS.between(transactionDate.toLocalDate(), LocalDate.now())
+        return when {
+            LocalDate.now() == transactionDate.toLocalDate() -> {
+                stringRes(R.string.transaction_history_today)
+            }
+
+            LocalDate.now().minusDays(1) == transactionDate.toLocalDate() -> {
+                stringRes(R.string.transaction_history_yesterday)
+            }
+
+            daysBetween < MONTH_THRESHOLD -> {
+                stringRes(R.string.transaction_history_days_ago, daysBetween.toString())
+            }
+
+            else -> {
+                stringRes(transactionDate)
+            }
         }
     }
 
@@ -97,6 +108,7 @@ class TransactionHistoryMapper {
                         stringRes(transaction.transactionOverview.netValue)
                     )
                 )
+
             SEND_FAILED ->
                 StyledStringResource(
                     stringRes(
@@ -105,6 +117,7 @@ class TransactionHistoryMapper {
                     ),
                     StringResourceColor.NEGATIVE
                 )
+
             RECEIVED ->
                 StyledStringResource(
                     stringRes(
@@ -113,6 +126,7 @@ class TransactionHistoryMapper {
                     ),
                     StringResourceColor.POSITIVE
                 )
+
             RECEIVING ->
                 StyledStringResource(
                     stringRes(
@@ -120,6 +134,7 @@ class TransactionHistoryMapper {
                         stringRes(transaction.transactionOverview.netValue)
                     ),
                 )
+
             RECEIVE_FAILED ->
                 StyledStringResource(
                     stringRes(
@@ -128,6 +143,7 @@ class TransactionHistoryMapper {
                     ),
                     StringResourceColor.NEGATIVE
                 )
+
             SHIELDED ->
                 StyledStringResource(
                     stringRes(
@@ -135,6 +151,7 @@ class TransactionHistoryMapper {
                         stringRes(transaction.transactionOverview.netValue)
                     )
                 )
+
             SHIELDING ->
                 StyledStringResource(
                     stringRes(
@@ -142,6 +159,7 @@ class TransactionHistoryMapper {
                         stringRes(transaction.transactionOverview.netValue)
                     )
                 )
+
             SHIELDING_FAILED ->
                 StyledStringResource(
                     stringRes(
