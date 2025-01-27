@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import co.electriccoin.zcash.di.coreModule
 import co.electriccoin.zcash.di.dataSourceModule
+import co.electriccoin.zcash.di.mapperModule
 import co.electriccoin.zcash.di.providerModule
 import co.electriccoin.zcash.di.repositoryModule
 import co.electriccoin.zcash.di.useCaseModule
@@ -35,6 +36,7 @@ class ZcashUiTestApplication : Application() {
                 dataSourceModule,
                 repositoryModule,
                 useCaseModule,
+                mapperModule,
                 viewModelModule
             )
         }

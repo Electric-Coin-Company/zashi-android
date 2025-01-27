@@ -47,11 +47,11 @@ fun ZashiMainTopAppBar(
             hamburgerMenuActions = {
                 if (showHideBalances) {
                     Crossfade(state.balanceVisibilityButton, label = "") {
-                        ZashiIconButton(it)
+                        ZashiIconButton(it, modifier = Modifier.size(40.dp))
                     }
                     Spacer(Modifier.width(4.dp))
                 }
-                ZashiIconButton(state.settingsButton)
+                ZashiIconButton(state.settingsButton, modifier = Modifier.size(40.dp))
                 Spacer(Modifier.width(20.dp))
             },
             navigationAction = {
