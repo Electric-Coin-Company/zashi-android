@@ -4,6 +4,7 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
+import co.electriccoin.zcash.ui.design.util.stringResByDateTime
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveShieldedState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveTransparentState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.SendShieldedState
@@ -23,7 +24,7 @@ object SendShieldStateFixture {
             onTransactionIdClick = {},
             onTransactionAddressClick = {},
             fee = stringRes(Zatoshi(1011)),
-            completedTimestamp = stringRes(ZonedDateTime.now()),
+            completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
             memo =
                 TransactionDetailMemoState(
                     listOf(
@@ -45,7 +46,7 @@ object SendTransparentStateFixture {
             onTransactionIdClick = {},
             onTransactionAddressClick = {},
             fee = stringRes(Zatoshi(1011)),
-            completedTimestamp = stringRes(ZonedDateTime.now()),
+            completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
         )
 }
 
@@ -62,7 +63,7 @@ object ReceiveShieldedStateFixture {
     ) = ReceiveShieldedState(
         transactionId = stringRes("Transaction ID"),
         onTransactionIdClick = {},
-        completedTimestamp = stringRes(ZonedDateTime.now()),
+        completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
         memo = memo,
     )
 }
@@ -73,7 +74,7 @@ object ReceiveTransparentStateFixture {
         ReceiveTransparentState(
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
-            completedTimestamp = stringRes(ZonedDateTime.now()),
+            completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
         )
 }
 
@@ -83,7 +84,7 @@ object ShieldingStateFixture {
         ShieldingState(
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
-            completedTimestamp = stringRes(ZonedDateTime.now()),
+            completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
             fee = stringRes(Zatoshi(1011))
         )
 }

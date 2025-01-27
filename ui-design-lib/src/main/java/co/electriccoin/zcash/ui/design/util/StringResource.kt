@@ -8,9 +8,13 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.platform.LocalContext
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.model.Zatoshi
+import kotlinx.datetime.toJavaInstant
+import kotlinx.datetime.toKotlinInstant
+import java.text.DateFormat
 import java.time.YearMonth
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Date
 
 @Immutable
 sealed interface StringResource {
@@ -28,7 +32,7 @@ sealed interface StringResource {
     data class ByZatoshi(val zatoshi: Zatoshi) : StringResource
 
     @Immutable
-    data class ByDateTime(val zonedDateTime: ZonedDateTime) : StringResource
+    data class ByDateTime(val zonedDateTime: ZonedDateTime, val useFullFormat: Boolean) : StringResource
 
     @Immutable
     data class ByYearMonth(val yearMonth: YearMonth) : StringResource
@@ -53,7 +57,14 @@ fun stringRes(value: String): StringResource = StringResource.ByString(value)
 fun stringRes(zatoshi: Zatoshi): StringResource = StringResource.ByZatoshi(zatoshi)
 
 @Stable
-fun stringRes(zonedDateTime: ZonedDateTime): StringResource = StringResource.ByDateTime(zonedDateTime)
+fun stringResByDateTime(
+    zonedDateTime: ZonedDateTime,
+    useFullFormat: Boolean
+): StringResource =
+    StringResource.ByDateTime(
+        zonedDateTime = zonedDateTime,
+        useFullFormat = useFullFormat
+    )
 
 @Stable
 fun stringRes(yearMonth: YearMonth): StringResource = StringResource.ByYearMonth(yearMonth)
@@ -79,7 +90,7 @@ fun stringResByTransactionId(
 @Composable
 fun StringResource.getValue(
     convertZatoshi: (Zatoshi) -> String = StringResourceDefaults::convertZatoshi,
-    convertDateTime: (ZonedDateTime) -> String = StringResourceDefaults::convertDateTime,
+    convertDateTime: (StringResource.ByDateTime) -> String = StringResourceDefaults::convertDateTime,
     convertYearMonth: (YearMonth) -> String = StringResourceDefaults::convertYearMonth,
     convertAddress: (StringResource.ByAddress) -> String = StringResourceDefaults::convertAddress,
     convertTransactionId: (StringResource.ByTransactionId) -> String = StringResourceDefaults::convertTransactionId
@@ -90,7 +101,7 @@ fun StringResource.getValue(
     }
     is StringResource.ByString -> value
     is StringResource.ByZatoshi -> convertZatoshi(zatoshi)
-    is StringResource.ByDateTime -> convertDateTime(zonedDateTime)
+    is StringResource.ByDateTime -> convertDateTime(this)
     is StringResource.ByYearMonth -> convertYearMonth(yearMonth)
     is StringResource.ByAddress -> convertAddress(this)
     is StringResource.ByTransactionId -> convertTransactionId(this)
@@ -100,7 +111,7 @@ fun StringResource.getValue(
 fun StringResource.getString(
     context: Context,
     convertZatoshi: (Zatoshi) -> String = StringResourceDefaults::convertZatoshi,
-    convertDateTime: (ZonedDateTime) -> String = StringResourceDefaults::convertDateTime,
+    convertDateTime: (StringResource.ByDateTime) -> String = StringResourceDefaults::convertDateTime,
     convertYearMonth: (YearMonth) -> String = StringResourceDefaults::convertYearMonth,
     convertAddress: (StringResource.ByAddress) -> String = StringResourceDefaults::convertAddress,
     convertTransactionId: (StringResource.ByTransactionId) -> String = StringResourceDefaults::convertTransactionId
@@ -108,7 +119,7 @@ fun StringResource.getString(
     is StringResource.ByResource -> context.getString(resource, *args.normalize(context).toTypedArray())
     is StringResource.ByString -> value
     is StringResource.ByZatoshi -> convertZatoshi(zatoshi)
-    is StringResource.ByDateTime -> convertDateTime(zonedDateTime)
+    is StringResource.ByDateTime -> convertDateTime(this)
     is StringResource.ByYearMonth -> convertYearMonth(yearMonth)
     is StringResource.ByAddress -> convertAddress(this)
     is StringResource.ByTransactionId -> convertTransactionId(this)
@@ -125,12 +136,24 @@ private fun List<Any>.normalize(context: Context): List<Any> =
 object StringResourceDefaults {
     fun convertZatoshi(zatoshi: Zatoshi) = zatoshi.convertZatoshiToZecString()
 
-    fun convertDateTime(zonedDateTime: ZonedDateTime): String {
-        // return DateFormat
-        //     .getDateTimeInstance()
-        //     .format(Date.from(zonedDateTime.toInstant().toKotlinInstant().toJavaInstant()))
-        val pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        return zonedDateTime.format(pattern).orEmpty()
+    fun convertDateTime(res: StringResource.ByDateTime): String {
+        if (res.useFullFormat) {
+            return DateFormat
+                .getDateTimeInstance(
+                    DateFormat.MEDIUM,
+                    DateFormat.SHORT,
+                )
+                .format(Date.from(res.zonedDateTime.toInstant().toKotlinInstant().toJavaInstant()))
+        } else {
+            val pattern = DateTimeFormatter.ofPattern("MMM dd")
+            val start = res.zonedDateTime.format(pattern).orEmpty()
+            val end =
+                DateFormat
+                    .getTimeInstance(DateFormat.SHORT)
+                    .format(Date.from(res.zonedDateTime.toInstant().toKotlinInstant().toJavaInstant()))
+
+            return "$start $end"
+        }
     }
 
     fun convertYearMonth(yearMonth: YearMonth): String {

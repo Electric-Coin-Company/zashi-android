@@ -23,6 +23,7 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
+import co.electriccoin.zcash.ui.design.util.stringResByDateTime
 import co.electriccoin.zcash.ui.design.util.stringResByTransactionId
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveShieldedState
@@ -179,7 +180,12 @@ class TransactionDetailViewModel(
                 Instant.ofEpochSecond(blockTimeEpochSeconds)
             }
             ?.atZone(ZoneId.systemDefault())
-            ?.let { stringRes(it) } ?: stringRes(R.string.transaction_detail_pending)
+            ?.let {
+                stringResByDateTime(
+                    zonedDateTime = it,
+                    useFullFormat = true
+                )
+            } ?: stringRes(R.string.transaction_detail_pending)
 
     private fun onCopyToClipboard(text: String) {
         copyToClipboard(

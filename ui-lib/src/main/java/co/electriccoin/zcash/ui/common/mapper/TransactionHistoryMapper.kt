@@ -16,6 +16,7 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByDateTime
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionState
 import java.time.Instant
 import java.time.LocalDate
@@ -87,7 +88,7 @@ class TransactionHistoryMapper {
             }
 
             else -> {
-                stringRes(transactionDate)
+                stringResByDateTime(zonedDateTime = transactionDate, useFullFormat = false)
             }
         }
     }
