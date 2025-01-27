@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.transactiondetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.model.TransactionPool
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
@@ -120,7 +121,7 @@ class TransactionDetailViewModel(
             RECEIVED,
             RECEIVING,
             RECEIVE_FAILED -> {
-                if (transaction.recipientAddress is WalletAddress.Transparent) {
+                if (transaction.transaction.transactionOutputs.all { it.pool == TransactionPool.TRANSPARENT }) {
                     ReceiveTransparentState(
                         transactionId =
                             stringResByTransactionId(
