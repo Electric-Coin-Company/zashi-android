@@ -41,7 +41,7 @@ fun ReceiveTransparent(
             state =
                 TransactionDetailInfoRowState(
                     title = stringRes(R.string.transaction_detail_info_transaction_id),
-                    message = state.transactionId.abbreviated(),
+                    message = state.transactionId,
                     trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                     shape = TransactionDetailInfoShape.FIRST,
                     onClick = state.onTransactionIdClick

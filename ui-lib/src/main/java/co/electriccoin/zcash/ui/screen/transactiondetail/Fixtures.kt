@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.transactiondetail
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveShieldedState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveTransparentState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.SendShieldedState
@@ -16,7 +17,8 @@ object SendShieldStateFixture {
     fun new(contact: StringResource? = stringRes("Contact")) =
         SendShieldedState(
             contact = contact,
-            address = stringRes("Address"),
+            address = stringResByAddress(value = "Address", abbreviated = false),
+            addressAbbreviated = stringResByAddress(value = "Address", abbreviated = true),
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
             onTransactionAddressClick = {},
@@ -37,7 +39,8 @@ object SendTransparentStateFixture {
     fun new(contact: StringResource? = stringRes("Contact")) =
         SendTransparentState(
             contact = contact,
-            address = stringRes("Address"),
+            address = stringResByAddress(value = "Address", abbreviated = false),
+            addressAbbreviated = stringResByAddress(value = "Address", abbreviated = true),
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
             onTransactionAddressClick = {},

@@ -1,10 +1,8 @@
 package co.electriccoin.zcash.ui.screen.transactiondetail.info
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
-import co.electriccoin.zcash.ui.design.util.stringRes
 
 sealed interface TransactionDetailInfoState
 
@@ -12,6 +10,7 @@ sealed interface TransactionDetailInfoState
 data class SendShieldedState(
     val contact: StringResource?,
     val address: StringResource,
+    val addressAbbreviated: StringResource,
     val transactionId: StringResource,
     val onTransactionIdClick: () -> Unit,
     val onTransactionAddressClick: () -> Unit,
@@ -24,6 +23,7 @@ data class SendShieldedState(
 data class SendTransparentState(
     val contact: StringResource?,
     val address: StringResource,
+    val addressAbbreviated: StringResource,
     val transactionId: StringResource,
     val onTransactionIdClick: () -> Unit,
     val onTransactionAddressClick: () -> Unit,
@@ -58,8 +58,3 @@ data class ShieldingState(
 data class TransactionDetailMemoState(
     val memos: List<StringResource>,
 )
-
-@Composable
-fun StringResource.abbreviated() = stringRes("${this.getValue().take(ADDRESS_MAX_LENGTH_ABBREVIATED)}...")
-
-private const val ADDRESS_MAX_LENGTH_ABBREVIATED = 20

@@ -56,7 +56,7 @@ fun SendTransparent(
                     message =
                         when {
                             state.contact != null -> state.contact
-                            !isExpanded -> state.address.abbreviated()
+                            !isExpanded -> state.addressAbbreviated
                             else -> null
                         },
                     trailingIcon = if (isExpanded) R.drawable.ic_chevron_up_small else R.drawable.ic_chevron_down_small,
@@ -94,7 +94,7 @@ fun SendTransparent(
             state =
                 TransactionDetailInfoRowState(
                     title = stringRes(R.string.transaction_detail_info_transaction_id),
-                    message = state.transactionId.abbreviated(),
+                    message = state.transactionId,
                     trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                     shape = TransactionDetailInfoShape.MIDDLE,
                     onClick = state.onTransactionIdClick

@@ -20,7 +20,10 @@ import co.electriccoin.zcash.ui.common.usecase.DetailedTransactionData
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendTransactionAgainUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByAddress
+import co.electriccoin.zcash.ui.design.util.stringResByTransactionId
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveShieldedState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveTransparentState
@@ -35,6 +38,7 @@ import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
 import java.time.ZoneId
 
+@Suppress("TooManyFunctions")
 class TransactionDetailViewModel(
     transactionDetail: TransactionDetail,
     getTransactionById: GetTransactionByIdUseCase,
@@ -68,7 +72,12 @@ class TransactionDetailViewModel(
                     SendTransparentState(
                         contact = transaction.contact?.let { stringRes(it.name) },
                         address = createAddressStringRes(transaction),
-                        transactionId = stringRes(transaction.transaction.overview.txIdString()),
+                        addressAbbreviated = createAbbreviatedAddressStringRes(transaction),
+                        transactionId =
+                            stringResByTransactionId(
+                                value = transaction.transaction.overview.txIdString(),
+                                abbreviated = true
+                            ),
                         onTransactionIdClick = { onCopyToClipboard(transaction.transaction.overview.txIdString()) },
                         onTransactionAddressClick = { onCopyToClipboard(transaction.recipientAddress.address) },
                         fee = createFeeStringRes(transaction),
@@ -78,7 +87,12 @@ class TransactionDetailViewModel(
                     SendShieldedState(
                         contact = transaction.contact?.let { stringRes(it.name) },
                         address = createAddressStringRes(transaction),
-                        transactionId = stringRes(transaction.transaction.overview.txIdString()),
+                        addressAbbreviated = createAbbreviatedAddressStringRes(transaction),
+                        transactionId =
+                            stringResByTransactionId(
+                                value = transaction.transaction.overview.txIdString(),
+                                abbreviated = true
+                            ),
                         onTransactionIdClick = {
                             onCopyToClipboard(transaction.transaction.overview.txIdString())
                         },
@@ -97,13 +111,21 @@ class TransactionDetailViewModel(
             RECEIVE_FAILED -> {
                 if (transaction.recipientAddress is WalletAddress.Transparent) {
                     ReceiveTransparentState(
-                        transactionId = stringRes(transaction.transaction.overview.txIdString()),
+                        transactionId =
+                            stringResByTransactionId(
+                                value = transaction.transaction.overview.txIdString(),
+                                abbreviated = true
+                            ),
                         onTransactionIdClick = { onCopyToClipboard(transaction.transaction.overview.txIdString()) },
                         completedTimestamp = createTimestampStringRes(transaction),
                     )
                 } else {
                     ReceiveShieldedState(
-                        transactionId = stringRes(transaction.transaction.overview.txIdString()),
+                        transactionId =
+                            stringResByTransactionId(
+                                value = transaction.transaction.overview.txIdString(),
+                                abbreviated = true
+                            ),
                         onTransactionIdClick = { onCopyToClipboard(transaction.transaction.overview.txIdString()) },
                         completedTimestamp = createTimestampStringRes(transaction),
                         memo = TransactionDetailMemoState(transaction.memos.orEmpty().map { stringRes(it) })
@@ -115,7 +137,11 @@ class TransactionDetailViewModel(
             SHIELDING,
             SHIELDING_FAILED -> {
                 ShieldingState(
-                    transactionId = stringRes(transaction.transaction.overview.txIdString()),
+                    transactionId =
+                        stringResByTransactionId(
+                            value = transaction.transaction.overview.txIdString(),
+                            abbreviated = true
+                        ),
                     onTransactionIdClick = { onCopyToClipboard(transaction.transaction.overview.txIdString()) },
                     completedTimestamp = createTimestampStringRes(transaction),
                     fee = createFeeStringRes(transaction),
@@ -123,15 +149,28 @@ class TransactionDetailViewModel(
             }
         }
 
-    private fun createFeeStringRes(transaction: DetailedTransactionData) =
-        transaction.transaction.overview.feePaid
-            ?.let {
-                stringRes(R.string.transaction_detail_fee, stringRes(it))
-            } ?: stringRes(R.string.transaction_detail_fee_minimal)
+    private fun createFeeStringRes(transaction: DetailedTransactionData): StringResource {
+        val feePaid =
+            transaction.transaction.overview.feePaid
+                ?: return stringRes(R.string.transaction_detail_fee_minimal)
+
+        return if (feePaid.value < MIN_FEE_THRESHOLD) {
+            stringRes(R.string.transaction_detail_fee_minimal)
+        } else {
+            stringRes(R.string.transaction_detail_fee, stringRes(feePaid))
+        }
+    }
 
     private fun createAddressStringRes(transaction: DetailedTransactionData) =
-        stringRes(
-            transaction.recipientAddress?.address.orEmpty(),
+        stringResByAddress(
+            value = transaction.recipientAddress?.address.orEmpty(),
+            abbreviated = false
+        )
+
+    private fun createAbbreviatedAddressStringRes(transaction: DetailedTransactionData) =
+        stringResByAddress(
+            value = transaction.recipientAddress?.address.orEmpty(),
+            abbreviated = true
         )
 
     private fun createTimestampStringRes(transaction: DetailedTransactionData) =
@@ -207,3 +246,5 @@ class TransactionDetailViewModel(
         navigationRouter.back()
     }
 }
+
+private const val MIN_FEE_THRESHOLD = 100000
