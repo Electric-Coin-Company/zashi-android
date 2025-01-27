@@ -203,7 +203,7 @@ private fun TransactionHistoryAppBar(
     state: TransactionHistoryState
 ) {
     ZashiSmallTopAppBar(
-        title = stringRes("Transactions").getValue(),
+        title = stringResource(R.string.transaction_history_screen_title),
         subtitle =
             when (appBarState) {
                 TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
