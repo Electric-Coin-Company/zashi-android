@@ -34,7 +34,6 @@ android {
                     // app/build.gradle.kts instead
                     "src/main/res/ui/non_translatable",
                     "src/main/res/ui/about",
-                    "src/main/res/ui/account",
                     "src/main/res/ui/account_list",
                     "src/main/res/ui/address_book",
                     "src/main/res/ui/add_contact",
