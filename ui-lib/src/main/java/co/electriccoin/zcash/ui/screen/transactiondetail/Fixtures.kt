@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.info.SendShieldedState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.SendTransparentState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ShieldingState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemoState
+import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemosState
 import java.time.ZonedDateTime
 
 object SendShieldStateFixture {
@@ -26,10 +27,10 @@ object SendShieldStateFixture {
             fee = stringRes(Zatoshi(1011)),
             completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
             memo =
-                TransactionDetailMemoState(
+                TransactionDetailMemosState(
                     listOf(
-                        stringRes("Long message ".repeat(20)),
-                        stringRes("Short message"),
+                        TransactionDetailMemoState(content = stringRes("Long message ".repeat(20)), onClick = {}),
+                        TransactionDetailMemoState(content = stringRes("Short message"), onClick = {}),
                     )
                 ),
         )
@@ -53,11 +54,11 @@ object SendTransparentStateFixture {
 object ReceiveShieldedStateFixture {
     @Suppress("MagicNumber")
     fun new(
-        memo: TransactionDetailMemoState =
-            TransactionDetailMemoState(
+        memo: TransactionDetailMemosState =
+            TransactionDetailMemosState(
                 listOf(
-                    stringRes("Long message ".repeat(20)),
-                    stringRes("Short message"),
+                    TransactionDetailMemoState(content = stringRes("Long message ".repeat(20)), onClick = {}),
+                    TransactionDetailMemoState(content = stringRes("Short message"), onClick = {}),
                 )
             )
     ) = ReceiveShieldedState(

@@ -38,10 +38,11 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemoState
+import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemosState
 
 @Composable
 fun TransactionDetailMemo(
-    state: TransactionDetailMemoState,
+    state: TransactionDetailMemosState,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -52,7 +53,7 @@ fun TransactionDetailMemo(
         } else {
             state.memos.forEachIndexed { index, memo ->
 
-                val fullMemo = memo.getValue()
+                val fullMemo = memo.content.getValue()
                 val fullMemoTooBig = fullMemo.length > MAX_MEMO_LENGTH
 
                 if (index > 0) {
@@ -70,7 +71,7 @@ fun TransactionDetailMemo(
 }
 
 @Composable
-private fun ExpandableMemo(stringResource: StringResource) {
+private fun ExpandableMemo(state: TransactionDetailMemoState) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     AnimatedContent(isExpanded, label = "") {
         TransactionDetailInfoMemo(
@@ -79,9 +80,9 @@ private fun ExpandableMemo(stringResource: StringResource) {
                 TransactionDetailInfoMemoState(
                     content =
                         if (it) {
-                            stringResource
+                            state.content
                         } else {
-                            stringRes("${stringResource.getValue().take(MAX_MEMO_LENGTH)}...")
+                            stringRes("${state.content.getValue().take(MAX_MEMO_LENGTH)}...")
                         },
                     bottomButton =
                         ButtonState(
@@ -93,20 +94,22 @@ private fun ExpandableMemo(stringResource: StringResource) {
                                 },
                             trailingIcon = if (it) R.drawable.ic_chevron_up_small else R.drawable.ic_chevron_down_small,
                             onClick = { isExpanded = !isExpanded }
-                        )
+                        ),
+                    onClick = state.onClick
                 )
         )
     }
 }
 
 @Composable
-private fun NonExpandableMemo(stringResource: StringResource) {
+private fun NonExpandableMemo(state: TransactionDetailMemoState) {
     TransactionDetailInfoMemo(
         modifier = Modifier.fillMaxWidth(),
         state =
             TransactionDetailInfoMemoState(
-                content = stringResource,
-                bottomButton = null
+                content = state.content,
+                bottomButton = null,
+                onClick = state.onClick
             )
     )
 }
@@ -119,24 +122,30 @@ private fun TransactionDetailInfoMemo(
     Surface(
         modifier =
             modifier then
-                if (state.bottomButton != null) {
-                    Modifier.clickable(
-                        indication = ripple(),
-                        interactionSource = remember { MutableInteractionSource() },
-                        onClick = state.bottomButton.onClick,
-                        role = Role.Button,
-                    )
-                } else {
-                    Modifier
-                },
+                Modifier.clickable(
+                    indication = ripple(),
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = state.onClick,
+                    role = Role.Button,
+                ),
         shape = TransactionDetailInfoShape.SINGLE.shape,
         color = ZashiColors.Surfaces.bgSecondary,
     ) {
         Column(
-            modifier = Modifier.padding(12.dp)
+            modifier =
+                Modifier.padding(
+                    start = if (state.bottomButton != null) 0.dp else 12.dp,
+                    top = 12.dp,
+                    end = if (state.bottomButton != null) 0.dp else 12.dp,
+                    bottom = if (state.bottomButton != null) 0.dp else 12.dp,
+                )
         ) {
             SelectionContainer {
                 Text(
+                    modifier =
+                        Modifier.padding(
+                            horizontal = if (state.bottomButton != null) 12.dp else 0.dp,
+                        ),
                     text = state.content.getValue(),
                     style = ZashiTypography.textSm,
                     color = ZashiColors.Text.textPrimary,
@@ -144,16 +153,27 @@ private fun TransactionDetailInfoMemo(
                 )
             }
             if (state.bottomButton != null) {
-                Spacer(Modifier.height(12.dp))
                 Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable(
+                                indication = ripple(),
+                                interactionSource = remember { MutableInteractionSource() },
+                                onClick = state.bottomButton.onClick,
+                                role = Role.Button,
+                            )
+                            .padding(12.dp),
                     verticalAlignment = CenterVertically
                 ) {
-                    Text(
-                        text = state.bottomButton.text.getValue(),
-                        style = ZashiTypography.textSm,
-                        color = ZashiColors.Text.textPrimary,
-                        fontWeight = FontWeight.Medium
-                    )
+                    SelectionContainer {
+                        Text(
+                            text = state.bottomButton.text.getValue(),
+                            style = ZashiTypography.textSm,
+                            color = ZashiColors.Text.textPrimary,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                     state.bottomButton.trailingIcon?.let {
                         Spacer(Modifier.width(6.dp))
                         Image(
@@ -170,6 +190,7 @@ private fun TransactionDetailInfoMemo(
 private data class TransactionDetailInfoMemoState(
     val content: StringResource,
     val bottomButton: ButtonState?,
+    val onClick: () -> Unit,
 )
 
 private const val MAX_MEMO_LENGTH = 130
@@ -184,7 +205,12 @@ private fun Preview() =
                 state =
                     TransactionDetailInfoMemoState(
                         content = stringRes("Message "),
-                        bottomButton = ButtonState(stringRes("Button"), trailingIcon = R.drawable.ic_chevron_down_small)
+                        bottomButton =
+                            ButtonState(
+                                text = stringRes("Button"),
+                                trailingIcon = R.drawable.ic_chevron_down_small
+                            ),
+                        onClick = {}
                     )
             )
         }

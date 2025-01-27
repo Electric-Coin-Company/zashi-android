@@ -89,7 +89,7 @@ private fun PreviewWithoutMemo() =
     ZcashTheme {
         BlankSurface {
             ReceiveShielded(
-                state = ReceiveShieldedStateFixture.new(memo = TransactionDetailMemoState(emptyList())),
+                state = ReceiveShieldedStateFixture.new(memo = TransactionDetailMemosState(emptyList())),
             )
         }
     }

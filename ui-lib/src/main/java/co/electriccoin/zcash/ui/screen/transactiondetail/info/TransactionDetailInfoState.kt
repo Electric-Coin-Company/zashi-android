@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.screen.transactiondetail.info
 
 import androidx.compose.runtime.Immutable
 import co.electriccoin.zcash.ui.design.util.StringResource
-import co.electriccoin.zcash.ui.design.util.getValue
 
 sealed interface TransactionDetailInfoState
 
@@ -16,7 +15,7 @@ data class SendShieldedState(
     val onTransactionAddressClick: () -> Unit,
     val fee: StringResource,
     val completedTimestamp: StringResource,
-    val memo: TransactionDetailMemoState
+    val memo: TransactionDetailMemosState
 ) : TransactionDetailInfoState
 
 @Immutable
@@ -33,7 +32,7 @@ data class SendTransparentState(
 
 @Immutable
 data class ReceiveShieldedState(
-    val memo: TransactionDetailMemoState,
+    val memo: TransactionDetailMemosState,
     val transactionId: StringResource,
     val onTransactionIdClick: () -> Unit,
     val completedTimestamp: StringResource
@@ -55,6 +54,12 @@ data class ShieldingState(
 ) : TransactionDetailInfoState
 
 @Immutable
+data class TransactionDetailMemosState(
+    val memos: List<TransactionDetailMemoState>,
+)
+
+@Immutable
 data class TransactionDetailMemoState(
-    val memos: List<StringResource>,
+    val content: StringResource,
+    val onClick: () -> Unit
 )

@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.info.SendShieldedState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.SendTransparentState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ShieldingState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemoState
+import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemosState
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
@@ -102,7 +103,16 @@ class TransactionDetailViewModel(
                         },
                         fee = createFeeStringRes(transaction),
                         completedTimestamp = createTimestampStringRes(transaction),
-                        memo = TransactionDetailMemoState(transaction.memos.orEmpty().map { stringRes(it) })
+                        memo =
+                            TransactionDetailMemosState(
+                                transaction.memos.orEmpty()
+                                    .map { memo ->
+                                        TransactionDetailMemoState(
+                                            content = stringRes(memo),
+                                            onClick = { onCopyToClipboard(memo) }
+                                        )
+                                    }
+                            )
                     )
                 }
             }
@@ -129,7 +139,16 @@ class TransactionDetailViewModel(
                             ),
                         onTransactionIdClick = { onCopyToClipboard(transaction.transaction.overview.txIdString()) },
                         completedTimestamp = createTimestampStringRes(transaction),
-                        memo = TransactionDetailMemoState(transaction.memos.orEmpty().map { stringRes(it) })
+                        memo =
+                            TransactionDetailMemosState(
+                                transaction.memos.orEmpty()
+                                    .map { memo ->
+                                        TransactionDetailMemoState(
+                                            content = stringRes(memo),
+                                            onClick = { onCopyToClipboard(memo) }
+                                        )
+                                    }
+                            )
                     )
                 }
             }
