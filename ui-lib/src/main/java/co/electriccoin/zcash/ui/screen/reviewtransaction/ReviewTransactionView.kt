@@ -536,7 +536,7 @@ private fun Zip321Preview() =
                                 name = stringRes("Name"),
                                 address = stringRes("Address"),
                                 ZashiChipButtonState(
-                                    icon = co.electriccoin.zcash.ui.R.drawable.ic_chevron_down,
+                                    startIcon = co.electriccoin.zcash.ui.R.drawable.ic_chevron_down,
                                     text =
                                         stringRes(
                                             co.electriccoin.zcash.ui.R.string.payment_request_btn_show_address,
@@ -544,7 +544,7 @@ private fun Zip321Preview() =
                                     onClick = {}
                                 ),
                                 ZashiChipButtonState(
-                                    icon = co.electriccoin.zcash.ui.R.drawable.ic_user_plus,
+                                    startIcon = co.electriccoin.zcash.ui.R.drawable.ic_user_plus,
                                     text =
                                         stringRes(
                                             co.electriccoin.zcash.ui.R.string.payment_request_btn_save_contact,

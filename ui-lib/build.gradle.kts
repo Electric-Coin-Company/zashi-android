@@ -33,6 +33,7 @@ android {
                     // This is a special case as these texts are not translated, they are replaced in build time via
                     // app/build.gradle.kts instead
                     "src/main/res/ui/non_translatable",
+
                     "src/main/res/ui/about",
                     "src/main/res/ui/account_list",
                     "src/main/res/ui/address_book",
@@ -65,6 +66,7 @@ android {
                     "src/main/res/ui/send_confirmation",
                     "src/main/res/ui/settings",
                     "src/main/res/ui/sign_keystone_transaction",
+                    "src/main/res/ui/transaction_filters",
                     "src/main/res/ui/transaction_history",
                     "src/main/res/ui/feedback",
                     "src/main/res/ui/update",

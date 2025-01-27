@@ -193,13 +193,13 @@ class ReviewTransactionViewModel(
                         },
                     showButton =
                         ZashiChipButtonState(
-                            icon = if (isReceiverExpanded) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down,
+                            startIcon = if (isReceiverExpanded) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down,
                             text = stringRes(R.string.payment_request_btn_show_address),
                             onClick = ::onExpandReceiverClick
                         ),
                     saveButton =
                         ZashiChipButtonState(
-                            icon = R.drawable.ic_user_plus,
+                            startIcon = R.drawable.ic_user_plus,
                             text = stringRes(R.string.payment_request_btn_save_contact),
                             onClick = { onAddContactClick(transactionProposal.destination.address) }
                         ).takeIf { addressBookContact == null }

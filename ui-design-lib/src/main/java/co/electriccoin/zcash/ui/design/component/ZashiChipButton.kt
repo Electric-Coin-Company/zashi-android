@@ -43,24 +43,35 @@ fun ZashiChipButton(
                     .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painterResource(state.icon),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(ZashiColors.Btns.Tertiary.btnTertiaryFg)
-            )
-            Spacer(Modifier.width(4.dp))
+            if (state.startIcon != null) {
+                Image(
+                    painterResource(state.startIcon),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(ZashiColors.Btns.Tertiary.btnTertiaryFg)
+                )
+                Spacer(Modifier.width(4.dp))
+            }
             Text(
                 text = state.text.getValue(),
                 color = ZashiColors.Btns.Tertiary.btnTertiaryFg,
                 style = ZashiTypography.textSm,
                 fontWeight = FontWeight.SemiBold
             )
+            if (state.endIcon != null) {
+                Spacer(Modifier.width(4.dp))
+                Image(
+                    painterResource(state.endIcon),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(ZashiColors.Btns.Tertiary.btnTertiaryFg)
+                )
+            }
         }
     }
 }
 
 data class ZashiChipButtonState(
-    @DrawableRes val icon: Int,
+    @DrawableRes val startIcon: Int? = null,
+    @DrawableRes val endIcon: Int? = null,
     val text: StringResource,
     val onClick: () -> Unit,
 )
@@ -72,9 +83,23 @@ private fun ZashiChipButtonPreview() =
         ZashiChipButton(
             state =
                 ZashiChipButtonState(
-                    icon = R.drawable.ic_radio_button_checked,
+                    startIcon = R.drawable.ic_radio_button_checked,
                     text = stringRes("Test"),
                     onClick = {}
                 )
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun ZashiChipButtonEndIconPreview() =
+    ZcashTheme {
+        ZashiChipButton(
+            state =
+            ZashiChipButtonState(
+                endIcon = R.drawable.ic_close,
+                text = stringRes("End Icon Chip"),
+                onClick = {}
+            )
         )
     }

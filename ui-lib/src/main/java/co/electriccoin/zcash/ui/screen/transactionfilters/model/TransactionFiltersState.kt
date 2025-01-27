@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.transactionfilters
+package co.electriccoin.zcash.ui.screen.transactionfilters.model
 
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.StringResource
@@ -11,7 +11,17 @@ data class TransactionFiltersState(
 )
 
 data class TransactionFilterState(
+    val type: TransactionFilterType,
     val text: StringResource,
     val isSelected: Boolean,
     val onClick: () -> Unit
 )
+
+enum class TransactionFilterType {
+    SENT,
+    RECEIVED,
+    MEMOS,
+    UNREAD,
+    BOOKMARKED,
+    NOTES
+}
