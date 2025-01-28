@@ -57,20 +57,26 @@ class TransactionHistoryViewModel(
 
                         when {
                             now == other ->
-                                stringRes(R.string.transaction_history_today)
+                                stringRes(R.string.transaction_history_today) to "today"
                             other == now.minusDays(1) ->
-                                stringRes(R.string.transaction_history_yesterday)
+                                stringRes(R.string.transaction_history_yesterday) to "yesterday"
                             other >= now.minusDays(WEEK_THRESHOLD) ->
-                                stringRes(R.string.transaction_history_previous_7_days)
+                                stringRes(R.string.transaction_history_previous_7_days) to "previous 7 days"
                             other >= now.minusDays(MONTH_THRESHOLD) ->
-                                stringRes(R.string.transaction_history_previous_30_days)
-                            else ->
-                                stringRes(YearMonth.from(other))
+                                stringRes(R.string.transaction_history_previous_30_days) to "previous 30 days"
+                            else -> {
+                                val yearMonth = YearMonth.from(other)
+                                stringRes(yearMonth) to yearMonth.toString()
+                            }
                         }
                     }
-                    .map { (headerStringRes, transactions) ->
+                    .map { (entry, transactions) ->
+                        val (headerStringRes, headerId) = entry
                         listOf(
-                            TransactionHistoryItem.Header(headerStringRes),
+                            TransactionHistoryItem.Header(
+                                title = headerStringRes,
+                                key = headerId,
+                            ),
                             *transactions.map { transaction ->
                                 TransactionHistoryItem.Transaction(
                                     state =

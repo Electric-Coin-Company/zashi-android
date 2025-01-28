@@ -129,7 +129,8 @@ fun TransactionHistoryView(
                     when (item) {
                         is TransactionHistoryItem.Header ->
                             stickyHeader(
-                                contentType = item.contentType
+                                contentType = item.contentType,
+                                key = item.key
                             ) {
                                 HeaderItem(
                                     item,
