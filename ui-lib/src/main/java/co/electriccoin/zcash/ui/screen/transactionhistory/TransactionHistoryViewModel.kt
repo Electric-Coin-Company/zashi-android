@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFilters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -87,7 +88,7 @@ class TransactionHistoryViewModel(
             filterButton =
                 IconButtonState(
                     icon = R.drawable.ic_transaction_filters,
-                    onClick = {},
+                    onClick = ::onTransactionFiltersClicked,
                     contentDescription = null
                 ),
             search = TextFieldState(stringRes("")) {}
@@ -101,6 +102,8 @@ class TransactionHistoryViewModel(
     private fun onTransactionClick(transactionData: TransactionData) {
         Twig.debug { "Clicked txid: ${transactionData.transactionOverview.txIdString()}" }
     }
+
+    private fun onTransactionFiltersClicked() = navigationRouter.forward(TransactionFilters)
 }
 
 private const val WEEK_THRESHOLD = 7L

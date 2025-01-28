@@ -53,18 +53,20 @@ object TransactionFiltersStateFixture {
     )
 
     val SECONDARY_BUTTON_STATE = ButtonState(
-        text = StringResource.ByString("Apply"),
+        text = StringResource.ByString("Reset"),
         isEnabled = true
     )
 
     fun new(
         onBack: () -> Unit = {},
+        onBottomSheetHidden: () -> Unit = {},
         filters: List<TransactionFilterState> = FILTERS,
         primaryButtonState: ButtonState = PRIMARY_BUTTON_STATE,
         secondaryButtonState: ButtonState = SECONDARY_BUTTON_STATE
     ) = TransactionFiltersState(
-        onBack = onBack,
         filters = filters,
+        onBack = onBack,
+        onBottomSheetHidden = onBottomSheetHidden,
         primaryButton = primaryButtonState,
         secondaryButton = secondaryButtonState
     )
