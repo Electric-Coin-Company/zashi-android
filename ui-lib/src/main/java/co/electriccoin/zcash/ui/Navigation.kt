@@ -398,10 +398,11 @@ internal fun MainActivity.Navigation() {
             AndroidTransactionHistory()
         }
         dialog<TransactionFilters>(
-            dialogProperties = DialogProperties(
-                dismissOnBackPress = false,
-                dismissOnClickOutside = false
-            )
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
         ) {
             AndroidTransactionFiltersList()
         }

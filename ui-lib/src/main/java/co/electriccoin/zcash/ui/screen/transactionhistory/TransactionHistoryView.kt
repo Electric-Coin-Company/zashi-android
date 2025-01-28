@@ -3,6 +3,10 @@ package co.electriccoin.zcash.ui.screen.transactionhistory
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,18 +14,26 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
@@ -49,7 +61,8 @@ import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 fun TransactionHistoryView(
     state: TransactionHistoryState,
     appBarState: TopAppBarSubTitleState,
-    mainAppBarState: ZashiMainTopAppBarState?
+    mainAppBarState: ZashiMainTopAppBarState?,
+    listState: LazyListState = rememberLazyListState()
 ) {
     BlankBgScaffold(
         topBar = {
@@ -70,7 +83,11 @@ fun TransactionHistoryView(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = ZashiDimensions.Spacing.spacing3xl),
+                        .padding(
+                            start = ZashiDimensions.Spacing.spacing3xl,
+                            end = ZashiDimensions.Spacing.spacing3xl,
+                            top = 8.dp
+                        ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 ZashiTextField(
@@ -95,7 +112,7 @@ fun TransactionHistoryView(
                     }
                 )
                 Spacer(Modifier.width(8.dp))
-                ZashiIconButton(
+                BadgeIconButton(
                     state = state.filterButton
                 )
             }
@@ -106,6 +123,7 @@ fun TransactionHistoryView(
                         .weight(1f)
                         .fillMaxWidth(),
                 contentPadding = paddingValues.asScaffoldScrollPaddingValues(top = 32.dp),
+                state = listState
             ) {
                 state.items.forEachIndexed { index, item ->
                     when (item) {
@@ -138,6 +156,49 @@ fun TransactionHistoryView(
                     }
                 }
             }
+        }
+    }
+}
+
+@Suppress("MagicNumber")
+@Composable
+private fun BadgeIconButton(
+    state: IconButtonState,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier =
+            modifier
+                .size(44.dp)
+                .clickable(
+                    indication = ripple(),
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = state.onClick,
+                    role = Role.Button,
+                )
+    ) {
+        Image(
+            painter = painterResource(state.icon),
+            contentDescription = state.contentDescription?.getValue(),
+        )
+
+        state.badge?.let {
+            Text(
+                modifier =
+                    Modifier
+                        .offset(8.dp, (-8).dp)
+                        .size(21.dp)
+                        .border(2.dp, ZashiColors.Surfaces.bgPrimary, CircleShape)
+                        .padding(2.dp)
+                        .background(ZashiColors.Utility.Gray.utilityGray900, CircleShape)
+                        .align(Alignment.TopEnd)
+                        .padding(top = 1.dp),
+                text = it.getValue(),
+                textAlign = TextAlign.Center,
+                color = ZashiColors.Surfaces.bgPrimary,
+                style = ZashiTypography.textXs,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }

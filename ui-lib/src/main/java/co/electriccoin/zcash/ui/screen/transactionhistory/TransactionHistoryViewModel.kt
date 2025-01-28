@@ -8,16 +8,21 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
 import co.electriccoin.zcash.ui.common.repository.TransactionData
-import co.electriccoin.zcash.ui.common.usecase.GetCurrentTransactionsUseCase
+import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
+import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
+import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFilters
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
 import java.time.YearMonth
@@ -25,74 +30,94 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 
 class TransactionHistoryViewModel(
-    getCurrentTransactions: GetCurrentTransactionsUseCase,
+    getCurrentTransactions: GetCurrentFilteredTransactionsUseCase,
+    getTransactionFilters: GetTransactionFiltersUseCase,
+    transactionFilterRepository: TransactionFilterRepository,
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
+    private val resetTransactionFilters: ResetTransactionFiltersUseCase,
 ) : ViewModel() {
+    val onScrollToTopRequested = transactionFilterRepository.onFilterChanged
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Suppress("SpreadOperator")
     val state =
-        getCurrentTransactions.observe()
-            .map { transactions ->
-                val items =
-                    transactions.orEmpty()
-                        .groupBy {
-                            val now = ZonedDateTime.now().toLocalDate()
-                            val other =
-                                Instant
-                                    .ofEpochSecond(it.transactionOverview.blockTimeEpochSeconds ?: 0)
-                                    .atZone(ZoneId.systemDefault())
-                                    .toLocalDate()
+        combine(getCurrentTransactions.observe(), getTransactionFilters.observe()) { transactions, filters ->
+            transactions to filters
+        }.mapLatest { (transactions, filters) ->
+            val items =
+                transactions.orEmpty()
+                    .groupBy {
+                        val now = ZonedDateTime.now().toLocalDate()
+                        val other =
+                            Instant
+                                .ofEpochSecond(it.transactionOverview.blockTimeEpochSeconds ?: 0)
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
 
-                            when {
-                                now == other ->
-                                    stringRes(R.string.transaction_history_today)
-                                other == now.minusDays(1) ->
-                                    stringRes(R.string.transaction_history_yesterday)
-                                other >= now.minusDays(WEEK_THRESHOLD) ->
-                                    stringRes(R.string.transaction_history_previous_7_days)
-                                other >= now.minusDays(MONTH_THRESHOLD) ->
-                                    stringRes(R.string.transaction_history_previous_30_days)
-                                else ->
-                                    stringRes(YearMonth.from(other))
-                            }
+                        when {
+                            now == other ->
+                                stringRes(R.string.transaction_history_today)
+                            other == now.minusDays(1) ->
+                                stringRes(R.string.transaction_history_yesterday)
+                            other >= now.minusDays(WEEK_THRESHOLD) ->
+                                stringRes(R.string.transaction_history_previous_7_days)
+                            other >= now.minusDays(MONTH_THRESHOLD) ->
+                                stringRes(R.string.transaction_history_previous_30_days)
+                            else ->
+                                stringRes(YearMonth.from(other))
                         }
-                        .map { (headerStringRes, transactions) ->
-                            listOf(
-                                TransactionHistoryItem.Header(headerStringRes),
-                                *transactions.map { transaction ->
-                                    TransactionHistoryItem.Transaction(
-                                        state =
-                                            transactionHistoryMapper.createTransactionState(
-                                                transaction = transaction,
-                                                onTransactionClick = ::onTransactionClick
-                                            )
-                                    )
-                                }.toTypedArray()
-                            )
-                        }
-                        .flatten()
+                    }
+                    .map { (headerStringRes, transactions) ->
+                        listOf(
+                            TransactionHistoryItem.Header(headerStringRes),
+                            *transactions.map { transaction ->
+                                TransactionHistoryItem.Transaction(
+                                    state =
+                                        transactionHistoryMapper.createTransactionState(
+                                            transaction = transaction,
+                                            onTransactionClick = ::onTransactionClick
+                                        )
+                                )
+                            }.toTypedArray()
+                        )
+                    }
+                    .flatten()
 
-                createState(items = items)
-            }
+            createState(items = items, filtersSize = filters.size)
+        }
             .flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = createState(items = emptyList())
+                initialValue = createState(items = emptyList(), filtersSize = 0)
             )
 
-    private fun createState(items: List<TransactionHistoryItem>) =
-        TransactionHistoryState(
-            onBack = ::onBack,
-            items = items,
-            filterButton =
-                IconButtonState(
-                    icon = R.drawable.ic_transaction_filters,
-                    onClick = ::onTransactionFiltersClicked,
-                    contentDescription = null
-                ),
-            search = TextFieldState(stringRes("")) {}
-        )
+    override fun onCleared() {
+        resetTransactionFilters()
+        super.onCleared()
+    }
+
+    private fun createState(
+        items: List<TransactionHistoryItem>,
+        filtersSize: Int
+    ) = TransactionHistoryState(
+        onBack = ::onBack,
+        items = items,
+        filterButton =
+            IconButtonState(
+                icon =
+                    if (filtersSize <= 0) {
+                        R.drawable.ic_transaction_filters
+                    } else {
+                        R.drawable.ic_transactions_filters_selected
+                    },
+                badge = stringRes(filtersSize.toString()).takeIf { filtersSize > 0 },
+                onClick = ::onTransactionFiltersClicked,
+                contentDescription = null
+            ),
+        search = TextFieldState(stringRes("")) {}
+    )
 
     private fun onBack() {
         navigationRouter.back()

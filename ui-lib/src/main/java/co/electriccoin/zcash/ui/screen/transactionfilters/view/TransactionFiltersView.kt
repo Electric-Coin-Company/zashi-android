@@ -1,9 +1,11 @@
 package co.electriccoin.zcash.ui.screen.transactionfilters.view
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
@@ -28,6 +31,7 @@ import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiChipButton
+import co.electriccoin.zcash.ui.design.component.ZashiChipButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
@@ -72,10 +76,11 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
             CircularScreenProgressIndicator()
         } else {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp)
             ) {
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
@@ -84,15 +89,29 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
                 ) {
                     state.filters.forEach { filter ->
                         ZashiChipButton(
-                            state = ZashiChipButtonState(
-                                endIcon = if (filter.isSelected) {
-                                    R.drawable.ic_x_close
+                            state =
+                                ZashiChipButtonState(
+                                    endIcon = if (filter.isSelected) R.drawable.ic_close_small else null,
+                                    onClick = filter.onClick,
+                                    text = filter.text,
+                                ),
+                            shape = CircleShape,
+                            border =
+                                BorderStroke(1.dp, ZashiColors.Btns.Secondary.btnSecondaryBorder)
+                                    .takeIf { filter.isSelected },
+                            color =
+                                if (filter.isSelected) {
+                                    ZashiColors.Btns.Secondary.btnSecondaryBg
                                 } else {
-                                    null
+                                    ZashiChipButtonDefaults.color
                                 },
-                                onClick = filter.onClick,
-                                text = filter.text,
-                            ),
+                            contentPadding =
+                                if (filter.isSelected) {
+                                    PaddingValues(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 10.dp)
+                                } else {
+                                    PaddingValues(horizontal = 16.dp, vertical = 10.dp)
+                                },
+                            endIconSpacer = 10.dp
                         )
                     }
                 }
@@ -101,17 +120,19 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
             Spacer(modifier = Modifier.height(20.dp))
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 ZashiButton(
                     state = state.secondaryButton,
                     modifier = Modifier.weight(1f),
-                    colors = ZashiButtonDefaults.secondaryColors(
-                        borderColor = ZashiColors.Btns.Secondary.btnSecondaryBorder
-                    )
+                    colors =
+                        ZashiButtonDefaults.secondaryColors(
+                            borderColor = ZashiColors.Btns.Secondary.btnSecondaryBorder
+                        )
                 )
 
                 ZashiButton(
@@ -145,5 +166,3 @@ private fun Preview() =
                 )
         )
     }
-
-

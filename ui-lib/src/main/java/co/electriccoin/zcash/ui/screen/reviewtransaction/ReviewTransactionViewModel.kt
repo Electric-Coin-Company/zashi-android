@@ -193,7 +193,12 @@ class ReviewTransactionViewModel(
                         },
                     showButton =
                         ZashiChipButtonState(
-                            startIcon = if (isReceiverExpanded) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down,
+                            startIcon =
+                                if (isReceiverExpanded) {
+                                    R.drawable.ic_chevron_up
+                                } else {
+                                    R.drawable.ic_chevron_down
+                                },
                             text = stringRes(R.string.payment_request_btn_show_address),
                             onClick = ::onExpandReceiverClick
                         ),

@@ -14,6 +14,8 @@ import co.electriccoin.zcash.ui.common.repository.FlexaRepository
 import co.electriccoin.zcash.ui.common.repository.FlexaRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepositoryImpl
+import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
+import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
@@ -35,5 +37,6 @@ val repositoryModule =
         singleOf(::BiometricRepositoryImpl) bind BiometricRepository::class
         singleOf(::KeystoneProposalRepositoryImpl) bind KeystoneProposalRepository::class
         singleOf(::TransactionRepositoryImpl) bind TransactionRepository::class
+        singleOf(::TransactionFilterRepositoryImpl) bind TransactionFilterRepository::class
         singleOf(::ZashiProposalRepositoryImpl) bind ZashiProposalRepository::class
     }
