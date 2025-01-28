@@ -1,5 +1,7 @@
 package co.electriccoin.zcash.ui.screen.transactionfilters.view
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -111,7 +113,18 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
                                 } else {
                                     PaddingValues(horizontal = 16.dp, vertical = 10.dp)
                                 },
-                            endIconSpacer = 10.dp
+                            endIconSpacer = 10.dp,
+                            hasRippleEffect = false,
+                            modifier =
+                                Modifier
+                                    // Customize the chip size change animation
+                                    .animateContentSize(
+                                        animationSpec =
+                                            spring(
+                                                dampingRatio = 0.85f,
+                                                stiffness = 200f
+                                            )
+                                    )
                         )
                     }
                 }

@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -172,7 +171,8 @@ private fun BadgeIconButton(
             modifier
                 .size(44.dp)
                 .clickable(
-                    indication = ripple(),
+                    // Remove the ripple effect rather than clipping the badge icon
+                    indication = null,
                     interactionSource = remember { MutableInteractionSource() },
                     onClick = state.onClick,
                     role = Role.Button,
