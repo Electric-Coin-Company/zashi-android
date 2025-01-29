@@ -160,7 +160,6 @@ fun TransactionHistoryView(
     }
 }
 
-@Suppress("MagicNumber")
 @Composable
 private fun BadgeIconButton(
     state: IconButtonState,
@@ -184,6 +183,7 @@ private fun BadgeIconButton(
         )
 
         state.badge?.let {
+            @Suppress("MagicNumber")
             Text(
                 modifier =
                     Modifier
