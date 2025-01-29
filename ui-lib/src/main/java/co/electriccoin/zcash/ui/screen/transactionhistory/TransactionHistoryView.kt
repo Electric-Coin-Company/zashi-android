@@ -121,7 +121,7 @@ fun TransactionHistoryView(
                     Modifier
                         .weight(1f)
                         .fillMaxWidth(),
-                contentPadding = paddingValues.asScaffoldScrollPaddingValues(top = 32.dp),
+                contentPadding = paddingValues.asScaffoldScrollPaddingValues(top = 26.dp),
                 state = listState
             ) {
                 state.items.forEachIndexed { index, item ->
@@ -212,6 +212,7 @@ private fun HeaderItem(
     Column(
         modifier = modifier,
     ) {
+        Spacer(Modifier.height(8.dp))
         Text(
             modifier = Modifier.padding(horizontal = 24.dp),
             text = item.title.getValue(),
@@ -219,7 +220,7 @@ private fun HeaderItem(
             color = ZashiColors.Text.textTertiary,
             fontWeight = FontWeight.Medium,
         )
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(8.dp))
     }
 }
 
@@ -252,7 +253,7 @@ private fun TransactionItem(
             )
         } else if (index != state.items.lastIndex && nextItem !is TransactionHistoryItem.Transaction) {
             Spacer(
-                modifier = Modifier.height(32.dp)
+                modifier = Modifier.height(26.dp)
             )
         }
     }
