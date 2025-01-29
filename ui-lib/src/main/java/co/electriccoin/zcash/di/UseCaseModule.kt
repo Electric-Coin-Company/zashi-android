@@ -23,6 +23,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetTransactionByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFulltextFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
@@ -54,6 +55,7 @@ import co.electriccoin.zcash.ui.common.usecase.ParseKeystonePCZTUseCase
 import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneSignInRequestUseCase
 import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneUrToZashiAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
+import co.electriccoin.zcash.ui.common.usecase.PrefillSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetAddressBookUseCase
@@ -62,6 +64,7 @@ import co.electriccoin.zcash.ui.common.usecase.SaveContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.SelectWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendSupportEmailUseCase
+import co.electriccoin.zcash.ui.common.usecase.SendTransactionAgainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SensitiveSettingsVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
@@ -69,6 +72,7 @@ import co.electriccoin.zcash.ui.common.usecase.UpdateContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
+import co.electriccoin.zcash.ui.common.usecase.ViewTransactionDetailAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
@@ -125,6 +129,7 @@ val useCaseModule =
         factoryOf(::GetExchangeRateUseCase)
         factoryOf(::GetSelectedWalletAccountUseCase)
         singleOf(::ObserveClearSendUseCase)
+        singleOf(::PrefillSendUseCase)
         factoryOf(::GetCurrentTransactionsUseCase)
         factoryOf(::GetCurrentFilteredTransactionsUseCase)
         factoryOf(::CreateProposalUseCase)
@@ -138,6 +143,7 @@ val useCaseModule =
         factoryOf(::CreateKeystoneProposalPCZTEncoderUseCase)
         factoryOf(::ObserveOnAccountChangedUseCase)
         factoryOf(::ViewTransactionsAfterSuccessfulProposalUseCase)
+        factoryOf(::ViewTransactionDetailAfterSuccessfulProposalUseCase)
         factoryOf(::NavigateToCoinbaseUseCase)
         factoryOf(::ObserveTransactionSubmitStateUseCase)
         factoryOf(::GetProposalUseCase)
@@ -150,4 +156,6 @@ val useCaseModule =
         factoryOf(::ApplyTransactionFulltextFiltersUseCase)
         factoryOf(::GetTransactionFiltersUseCase)
         factoryOf(::GetTransactionFulltextFiltersUseCase)
+        factoryOf(::GetTransactionByIdUseCase)
+        factoryOf(::SendTransactionAgainUseCase)
     }

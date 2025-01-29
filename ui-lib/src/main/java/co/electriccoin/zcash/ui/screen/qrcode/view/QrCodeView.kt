@@ -43,10 +43,10 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.design.component.OldZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.QrCodeDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
 import co.electriccoin.zcash.ui.design.component.ZashiBadgeColors
-import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiQr
@@ -205,7 +205,7 @@ private fun QrCodeBottomBar(
     state: QrCodeState.Prepared,
     qrCodeImage: ImageBitmap,
 ) {
-    ZashiBottomBar {
+    OldZashiBottomBar {
         ZashiButton(
             text = stringResource(id = R.string.qr_code_share_btn),
             icon = R.drawable.ic_share,

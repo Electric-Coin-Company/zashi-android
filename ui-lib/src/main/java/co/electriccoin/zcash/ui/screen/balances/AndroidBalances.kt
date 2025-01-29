@@ -240,7 +240,7 @@ internal fun WrapBalances(
                                     }
 
                                     when (result) {
-                                        SubmitResult.Success -> {
+                                        is SubmitResult.Success -> {
                                             Twig.info { "Shielding transaction done successfully" }
                                             showShieldingSuccess()
                                         }

@@ -142,7 +142,7 @@ class IntegrationsViewModel(
                 Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
                 val result = submitTransactions(proposal = proposal, spendingKey = getSpendingKey())
                 when (val output = result.first) {
-                    SubmitResult.Success -> {
+                    is SubmitResult.Success -> {
                         Twig.debug { "Transaction successful $result" }
                         Flexa.buildSpend()
                             .transactionSent(
@@ -223,7 +223,7 @@ class IntegrationsViewModel(
                 }
             } else {
                 // All transaction submissions were successful
-                SubmitResult.Success to
+                SubmitResult.Success(emptyList()) to
                     submitResults.filterIsInstance<TransactionSubmitResult.Success>()
                         .map { it.txIdString() }.firstOrNull()
             }

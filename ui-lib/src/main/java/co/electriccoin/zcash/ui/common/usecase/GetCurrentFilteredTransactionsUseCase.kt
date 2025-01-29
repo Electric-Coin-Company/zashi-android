@@ -31,15 +31,15 @@ class GetCurrentFilteredTransactionsUseCase(
                     }
 
                     if (filters.contains(TransactionFilter.SENT) &&
-                        it.transactionOverview.isSentTransaction &&
-                        !it.transactionOverview.isShielding
+                        it.overview.isSentTransaction &&
+                        !it.overview.isShielding
                     ) {
                         return@filter true
                     }
 
                     if (filters.contains(TransactionFilter.RECEIVED) &&
-                        !it.transactionOverview.isSentTransaction &&
-                        !it.transactionOverview.isShielding
+                        !it.overview.isSentTransaction &&
+                        !it.overview.isShielding
                     ) {
                         return@filter true
                     }

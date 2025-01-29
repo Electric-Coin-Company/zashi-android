@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.common.model
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 
 sealed interface SubmitResult {
-    data object Success : SubmitResult
+    data class Success(val txIds: List<String>) : SubmitResult
 
     data class MultipleTrxFailure(val results: List<TransactionSubmitResult>) : SubmitResult
 

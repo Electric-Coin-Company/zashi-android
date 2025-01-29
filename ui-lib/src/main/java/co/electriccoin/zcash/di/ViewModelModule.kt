@@ -35,6 +35,8 @@ import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewMo
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailViewModel
 import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersViewModel
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryViewModel
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetViewModel
@@ -123,4 +125,13 @@ val viewModelModule =
         viewModelOf(::TransactionProgressViewModel)
         viewModelOf(::TransactionHistoryWidgetViewModel)
         viewModelOf(::TransactionHistoryViewModel)
+        viewModel { (transactionDetail: TransactionDetail) ->
+            TransactionDetailViewModel(
+                transactionDetail = transactionDetail,
+                getTransactionById = get(),
+                copyToClipboard = get(),
+                navigationRouter = get(),
+                sendTransactionAgain = get()
+            )
+        }
     }

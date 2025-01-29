@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.transactionhistory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
@@ -15,6 +14,7 @@ import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFilters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -50,11 +51,12 @@ class TransactionHistoryViewModel(
                     .groupBy {
                         val now = ZonedDateTime.now().toLocalDate()
                         val other =
-                            Instant
-                                .ofEpochSecond(it.transactionOverview.blockTimeEpochSeconds ?: 0)
-                                .atZone(ZoneId.systemDefault())
-                                .toLocalDate()
-
+                            it.overview.blockTimeEpochSeconds?.let { sec ->
+                                Instant
+                                    .ofEpochSecond(sec)
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate()
+                            } ?: LocalDate.now()
                         when {
                             now == other ->
                                 stringRes(R.string.transaction_history_today) to "today"
@@ -129,9 +131,8 @@ class TransactionHistoryViewModel(
         navigationRouter.back()
     }
 
-    @Suppress("EmptyFunctionBlock")
     private fun onTransactionClick(transactionData: TransactionData) {
-        Twig.debug { "Clicked txid: ${transactionData.transactionOverview.txIdString()}" }
+        navigationRouter.forward(TransactionDetail(transactionData.overview.txIdString()))
     }
 
     private fun onTransactionFiltersClicked() = navigationRouter.forward(TransactionFilters)
