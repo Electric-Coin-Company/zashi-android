@@ -14,6 +14,7 @@ import co.electriccoin.zcash.ui.NavigationRouterImpl
 import co.electriccoin.zcash.ui.preference.PersistableWalletPreferenceDefault
 import co.electriccoin.zcash.ui.screen.update.AppUpdateChecker
 import co.electriccoin.zcash.ui.screen.update.AppUpdateCheckerImpl
+import com.google.gson.GsonBuilder
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -44,4 +45,6 @@ val coreModule =
 
         singleOf(::NavigationRouterImpl) bind NavigationRouter::class
         singleOf(::HomeTabNavigationRouterImpl) bind HomeTabNavigationRouter::class
+
+        single { GsonBuilder().create() }
     }

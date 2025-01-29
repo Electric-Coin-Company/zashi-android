@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -73,19 +74,21 @@ fun TransactionDetailHeader(
             color = ZashiColors.Text.textTertiary
         )
         Spacer(Modifier.height(2.dp))
-        Row {
-            Text(
-                text = state.amount.getValue(),
-                style = ZashiTypography.header3,
-                fontWeight = FontWeight.SemiBold,
-                color = ZashiColors.Text.textPrimary
-            )
-            Text(
-                text = stringResource(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
-                style = ZashiTypography.header3,
-                fontWeight = FontWeight.SemiBold,
-                color = ZashiColors.Text.textQuaternary
-            )
+        SelectionContainer {
+            Row {
+                Text(
+                    text = state.amount.getValue(),
+                    style = ZashiTypography.header3,
+                    fontWeight = FontWeight.SemiBold,
+                    color = ZashiColors.Text.textPrimary
+                )
+                Text(
+                    text = stringResource(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
+                    style = ZashiTypography.header3,
+                    fontWeight = FontWeight.SemiBold,
+                    color = ZashiColors.Text.textQuaternary
+                )
+            }
         }
     }
 }

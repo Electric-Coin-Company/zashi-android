@@ -101,6 +101,8 @@ import co.electriccoin.zcash.ui.screen.transactionfilters.AndroidTransactionFilt
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFilters
 import co.electriccoin.zcash.ui.screen.transactionhistory.AndroidTransactionHistory
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
+import co.electriccoin.zcash.ui.screen.transactionnote.AndroidTransactionNote
+import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
 import co.electriccoin.zcash.ui.screen.transactionprogress.AndroidTransactionProgress
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgress
 import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
@@ -424,6 +426,15 @@ internal fun MainActivity.Navigation() {
         }
         composable<TransactionDetail> {
             AndroidTransactionDetail(it.toRoute())
+        }
+        dialog<TransactionNote>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false,
+                )
+        ) {
+            AndroidTransactionNote(it.toRoute())
         }
     }
 }

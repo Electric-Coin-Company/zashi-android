@@ -5,7 +5,6 @@ import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookEncr
 import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookSerializer
 import java.io.File
-import kotlin.LazyThreadSafetyMode.NONE
 
 interface AddressBookProvider {
     fun writeAddressBookToFile(
@@ -22,21 +21,20 @@ interface AddressBookProvider {
     fun readLegacyUnencryptedAddressBookFromFile(file: File): AddressBook
 }
 
-class AddressBookProviderImpl : AddressBookProvider {
-    private val addressBookSerializer by lazy(NONE) { AddressBookSerializer() }
-    private val addressBookEncryptor by lazy(NONE) { AddressBookEncryptor() }
-
+class AddressBookProviderImpl(
+    private val addressBookEncryptor: AddressBookEncryptor,
+    private val addressBookSerializer: AddressBookSerializer,
+) : AddressBookProvider {
     override fun writeAddressBookToFile(
         file: File,
         addressBook: AddressBook,
         addressBookKey: AddressBookKey
     ) {
         file.outputStream().buffered().use { stream ->
-            addressBookEncryptor.encryptAddressBook(
-                addressBookKey,
-                addressBookSerializer,
-                stream,
-                addressBook
+            addressBookEncryptor.encrypt(
+                metadataKey = addressBookKey,
+                outputStream = stream,
+                metadata = addressBook
             )
             stream.flush()
         }
@@ -47,10 +45,9 @@ class AddressBookProviderImpl : AddressBookProvider {
         addressBookKey: AddressBookKey
     ): AddressBook {
         return file.inputStream().use { stream ->
-            addressBookEncryptor.decryptAddressBook(
-                addressBookKey,
-                addressBookSerializer,
-                stream
+            addressBookEncryptor.decrypt(
+                metadataKey = addressBookKey,
+                inputStream = stream
             )
         }
     }

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -74,7 +75,7 @@ fun Transaction(
                     painter = painterResource(state.icon),
                     contentDescription = null
                 )
-                if (state.hasMemo) {
+                if (state.isUnread) {
                     Box(
                         modifier =
                             Modifier
@@ -117,13 +118,15 @@ fun Transaction(
             }
             state.value?.let {
                 Spacer(Modifier.width(16.dp))
-                Text(
-                    text =
-                        it.resource orHiddenString
-                            stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
-                    color = it.getColor(),
-                    style = ZashiTypography.textSm
-                )
+                SelectionContainer {
+                    Text(
+                        text =
+                            it.resource orHiddenString
+                                stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                        color = it.getColor(),
+                        style = ZashiTypography.textSm
+                    )
+                }
             }
         }
     }
@@ -136,7 +139,7 @@ data class TransactionState(
     val subtitle: StringResource?,
     val isShielded: Boolean,
     val value: StyledStringResource?,
-    val hasMemo: Boolean,
+    val isUnread: Boolean,
     val onClick: () -> Unit,
 ) : Itemizable {
     override val contentType: Any = "Transaction"

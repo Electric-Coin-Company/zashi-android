@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common.mapper
 
 import cash.z.ecc.android.sdk.model.TransactionPool
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.Metadata
 import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVED
 import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVE_FAILED
@@ -26,6 +27,7 @@ import java.time.temporal.ChronoUnit
 class TransactionHistoryMapper {
     fun createTransactionState(
         transaction: TransactionData,
+        metadata: Metadata,
         onTransactionClick: (TransactionData) -> Unit
     ) = TransactionState(
         key = transaction.overview.txIdString(),
@@ -35,8 +37,21 @@ class TransactionHistoryMapper {
         isShielded = isShielded(transaction),
         value = getValue(transaction),
         onClick = { onTransactionClick(transaction) },
-        hasMemo = transaction.overview.memoCount > 0
+        isUnread = isUnread(transaction, metadata)
     )
+
+    private fun isUnread(
+        transaction: TransactionData,
+        metadata: Metadata
+    ): Boolean {
+        val hasMemo = transaction.overview.memoCount > 0
+        val transactionMetadata =
+            metadata.transactions
+                .find {
+                    it.txId == transaction.overview.txIdString()
+                }
+        return hasMemo && (transactionMetadata == null || transactionMetadata.isMemoRead.not())
+    }
 
     private fun getIcon(transaction: TransactionData) =
         when (transaction.state) {

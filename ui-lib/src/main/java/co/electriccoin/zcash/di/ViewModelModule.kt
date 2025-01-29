@@ -40,6 +40,8 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailViewMo
 import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersViewModel
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryViewModel
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetViewModel
+import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
+import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNoteViewModel
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressViewModel
 import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
 import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
@@ -73,8 +75,6 @@ val viewModelModule =
             )
         }
         viewModelOf(::ChooseServerViewModel)
-        viewModelOf(::AddressBookViewModel)
-        viewModelOf(::SelectRecipientViewModel)
         viewModel { (address: String?) ->
             AddContactViewModel(
                 address = address,
@@ -131,7 +131,23 @@ val viewModelModule =
                 getTransactionById = get(),
                 copyToClipboard = get(),
                 navigationRouter = get(),
-                sendTransactionAgain = get()
+                sendTransactionAgain = get(),
+                transactionHasNote = get(),
+                isTransactionBookmark = get(),
+                flipTransactionBookmark = get(),
+                getTransactionNote = get(),
+                markTxMemoAsRead = get()
+            )
+        }
+        viewModelOf(::AddressBookViewModel)
+        viewModelOf(::SelectRecipientViewModel)
+        viewModel { (transactionNote: TransactionNote) ->
+            TransactionNoteViewModel(
+                transactionNote = transactionNote,
+                navigationRouter = get(),
+                getTransactionNote = get(),
+                createOrUpdateTransactionNote = get(),
+                deleteTransactionNote = get(),
             )
         }
     }

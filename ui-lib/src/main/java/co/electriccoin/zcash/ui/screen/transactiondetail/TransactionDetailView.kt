@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,9 +21,11 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.GradientBgScaffold
+import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
+import co.electriccoin.zcash.ui.design.component.ZashiIconButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -55,7 +58,7 @@ fun TransactionDetailView(
             TransactionDetailTopAppBar(
                 onBack = state.onBack,
                 appBarState = appBarState,
-                // state = state,
+                state = state,
             )
         }
     ) { paddingValues ->
@@ -202,7 +205,7 @@ fun getHeaderIconState(info: TransactionDetailInfoState): TransactionDetailIconH
 private fun TransactionDetailTopAppBar(
     onBack: () -> Unit,
     appBarState: TopAppBarSubTitleState,
-    // state: TransactionDetailState
+    state: TransactionDetailState
 ) {
     ZashiSmallTopAppBar(
         subtitle =
@@ -215,7 +218,8 @@ private fun TransactionDetailTopAppBar(
             ZashiTopAppBarBackNavigation(onBack = onBack)
         },
         regularActions = {
-            // ZashiIconButton(state.bookmarkButton, modifier = Modifier.size(40.dp))
+            ZashiIconButton(state.bookmarkButton, modifier = Modifier.size(40.dp))
+            Spacer(Modifier.width(20.dp))
         },
         colors =
             ZcashTheme.colors.topAppBarColors orDark
@@ -242,6 +246,7 @@ private fun SendShieldPreview() =
                     info = SendShieldStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary")),
                     secondaryButton = ButtonState(stringRes("Secondary")),
+                    bookmarkButton = IconButtonState(R.drawable.ic_transaction_detail_no_bookmark) {}
                 )
         )
     }
@@ -263,6 +268,7 @@ private fun SendTransparentPreview() =
                     info = SendTransparentStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary")),
                     secondaryButton = ButtonState(stringRes("Secondary")),
+                    bookmarkButton = IconButtonState(R.drawable.ic_transaction_detail_no_bookmark) {}
                 )
         )
     }
@@ -284,6 +290,7 @@ private fun ReceiveShieldPreview() =
                     info = ReceiveShieldedStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary")),
                     secondaryButton = ButtonState(stringRes("Secondary")),
+                    bookmarkButton = IconButtonState(R.drawable.ic_transaction_detail_no_bookmark) {}
                 )
         )
     }
@@ -305,6 +312,7 @@ private fun ReceiveTransparentPreview() =
                     info = ReceiveTransparentStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary")),
                     secondaryButton = ButtonState(stringRes("Secondary")),
+                    bookmarkButton = IconButtonState(R.drawable.ic_transaction_detail_no_bookmark) {}
                 )
         )
     }
@@ -326,6 +334,7 @@ private fun ShieldingPreview() =
                     info = ShieldingStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary")),
                     secondaryButton = ButtonState(stringRes("Secondary")),
+                    bookmarkButton = IconButtonState(R.drawable.ic_transaction_detail_no_bookmark) {}
                 )
         )
     }

@@ -9,6 +9,7 @@ import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
 import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetMetadataUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.design.component.IconButtonState
@@ -34,6 +35,7 @@ class TransactionHistoryViewModel(
     getCurrentTransactions: GetCurrentFilteredTransactionsUseCase,
     getTransactionFilters: GetTransactionFiltersUseCase,
     transactionFilterRepository: TransactionFilterRepository,
+    getMetadata: GetMetadataUseCase,
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
     private val resetTransactionFilters: ResetTransactionFiltersUseCase,
@@ -43,9 +45,13 @@ class TransactionHistoryViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     @Suppress("SpreadOperator")
     val state =
-        combine(getCurrentTransactions.observe(), getTransactionFilters.observe()) { transactions, filters ->
-            transactions to filters
-        }.mapLatest { (transactions, filters) ->
+        combine(
+            getCurrentTransactions.observe(),
+            getTransactionFilters.observe(),
+            getMetadata.observe()
+        ) { transactions, filters, metadata ->
+            Triple(transactions, filters, metadata)
+        }.mapLatest { (transactions, filters, metadata) ->
             val items =
                 transactions.orEmpty()
                     .groupBy {
@@ -84,6 +90,7 @@ class TransactionHistoryViewModel(
                                     state =
                                         transactionHistoryMapper.createTransactionState(
                                             transaction = transaction,
+                                            metadata = metadata,
                                             onTransactionClick = ::onTransactionClick
                                         )
                                 )

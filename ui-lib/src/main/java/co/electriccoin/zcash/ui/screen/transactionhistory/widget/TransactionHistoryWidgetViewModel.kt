@@ -9,6 +9,7 @@ import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentTransactionsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetMetadataUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSendUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -23,12 +24,17 @@ import kotlinx.coroutines.flow.stateIn
 class TransactionHistoryWidgetViewModel(
     getCurrentTransactions: GetCurrentTransactionsUseCase,
     getWalletRestoringState: GetWalletRestoringStateUseCase,
+    getMetadata: GetMetadataUseCase,
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
     private val navigateToSend: NavigateToSendUseCase,
 ) : ViewModel() {
     val state =
-        combine(getCurrentTransactions.observe(), getWalletRestoringState.observe()) { transactions, restoringState ->
+        combine(
+            getCurrentTransactions.observe(),
+            getWalletRestoringState.observe(),
+            getMetadata.observe(),
+        ) { transactions, restoringState, metadata ->
             if (transactions.isNullOrEmpty()) {
                 TransactionHistoryWidgetState.Empty(
                     subtitle =
@@ -59,6 +65,7 @@ class TransactionHistoryWidgetViewModel(
                             .map { transaction ->
                                 transactionHistoryMapper.createTransactionState(
                                     transaction = transaction,
+                                    metadata = metadata,
                                     onTransactionClick = ::onTransactionClick
                                 )
                             }

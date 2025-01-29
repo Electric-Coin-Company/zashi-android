@@ -33,6 +33,7 @@ object SendShieldStateFixture {
                         TransactionDetailMemoState(content = stringRes("Short message"), onClick = {}),
                     )
                 ),
+            note = stringRes("None")
         )
 }
 
@@ -48,6 +49,7 @@ object SendTransparentStateFixture {
             onTransactionAddressClick = {},
             fee = stringRes(Zatoshi(1011)),
             completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
+            note = stringRes("None")
         )
 }
 
@@ -66,6 +68,7 @@ object ReceiveShieldedStateFixture {
         onTransactionIdClick = {},
         completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
         memo = memo,
+        note = stringRes("None")
     )
 }
 
@@ -76,6 +79,7 @@ object ReceiveTransparentStateFixture {
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
             completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
+            note = stringRes("None")
         )
 }
 
@@ -86,6 +90,7 @@ object ShieldingStateFixture {
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
             completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
-            fee = stringRes(Zatoshi(1011))
+            fee = stringRes(Zatoshi(1011)),
+            note = stringRes("None")
         )
 }

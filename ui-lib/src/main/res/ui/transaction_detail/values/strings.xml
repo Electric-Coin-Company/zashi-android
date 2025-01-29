@@ -24,4 +24,7 @@
     <string name="transaction_detail_shielded">Shielded</string>
     <string name="transaction_detail_shielding">Shielding</string>
     <string name="transaction_detail_shielding_failed">Shielding failed</string>
+    <string name="transaction_detail_edit_note">Edit note</string>
+    <string name="transaction_detail_add_a_note">Add a note</string>
+    <string name="transaction_detail_info_note">Note</string>
 </resources>

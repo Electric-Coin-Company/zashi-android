@@ -1,7 +1,5 @@
 package co.electriccoin.zcash.di
 
-import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
-import co.electriccoin.zcash.ui.common.repository.AddressBookRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.BalanceRepository
 import co.electriccoin.zcash.ui.common.repository.BalanceRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.BiometricRepository
@@ -32,7 +30,6 @@ val repositoryModule =
         singleOf(::ConfigurationRepositoryImpl) bind ConfigurationRepository::class
         singleOf(::ExchangeRateRepositoryImpl) bind ExchangeRateRepository::class
         singleOf(::BalanceRepositoryImpl) bind BalanceRepository::class
-        singleOf(::AddressBookRepositoryImpl) bind AddressBookRepository::class
         singleOf(::FlexaRepositoryImpl) bind FlexaRepository::class
         singleOf(::BiometricRepositoryImpl) bind BiometricRepository::class
         singleOf(::KeystoneProposalRepositoryImpl) bind KeystoneProposalRepository::class

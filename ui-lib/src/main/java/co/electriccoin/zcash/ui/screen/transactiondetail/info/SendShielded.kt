@@ -61,10 +61,28 @@ fun SendShielded(
                             else -> null
                         },
                     trailingIcon = if (isExpanded) R.drawable.ic_chevron_up_small else R.drawable.ic_chevron_down_small,
-                    shape = if (isExpanded) TransactionDetailInfoShape.FIRST else TransactionDetailInfoShape.SINGLE,
+                    shape =
+                        if (state.note != null) {
+                            TransactionDetailInfoShape.MIDDLE
+                        } else {
+                            if (isExpanded) TransactionDetailInfoShape.FIRST else TransactionDetailInfoShape.SINGLE
+                        },
                     onClick = { isExpanded = !isExpanded }
-                )
+                ),
         )
+        if (state.note != null) {
+            ZashiHorizontalDivider()
+            TransactionDetailInfoColumn(
+                modifier = Modifier.fillMaxWidth(),
+                state =
+                    TransactionDetailInfoColumnState(
+                        title = stringRes(R.string.transaction_detail_info_note),
+                        message = state.note,
+                        shape = TransactionDetailInfoShape.LAST,
+                        onClick = null
+                    )
+            )
+        }
 
         AnimatedVisibility(
             visible = isExpanded,
