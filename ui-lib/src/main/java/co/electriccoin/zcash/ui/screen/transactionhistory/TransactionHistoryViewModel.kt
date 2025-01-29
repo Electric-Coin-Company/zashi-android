@@ -61,9 +61,9 @@ class TransactionHistoryViewModel(
                             other == now.minusDays(1) ->
                                 stringRes(R.string.transaction_history_yesterday) to "yesterday"
                             other >= now.minusDays(WEEK_THRESHOLD) ->
-                                stringRes(R.string.transaction_history_previous_7_days) to "previous 7 days"
+                                stringRes(R.string.transaction_history_previous_7_days) to "previous_7_days"
                             other >= now.minusDays(MONTH_THRESHOLD) ->
-                                stringRes(R.string.transaction_history_previous_30_days) to "previous 30 days"
+                                stringRes(R.string.transaction_history_previous_30_days) to "previous_30_days"
                             else -> {
                                 val yearMonth = YearMonth.from(other)
                                 stringRes(yearMonth) to yearMonth.toString()
@@ -129,7 +129,7 @@ class TransactionHistoryViewModel(
         navigationRouter.back()
     }
 
-    @Suppress("EmptyFunctionBlock", "UnusedParameter")
+    @Suppress("EmptyFunctionBlock")
     private fun onTransactionClick(transactionData: TransactionData) {
         Twig.debug { "Clicked txid: ${transactionData.transactionOverview.txIdString()}" }
     }
