@@ -7,6 +7,7 @@ import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -15,7 +16,9 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -24,6 +27,8 @@ class GetTransactionByIdUseCase(
     private val addressBookRepository: AddressBookRepository,
     private val synchronizerProvider: SynchronizerProvider,
 ) {
+    suspend operator fun invoke(txId: String) = observe(txId).filterNotNull().first()
+
     @OptIn(ExperimentalCoroutinesApi::class)
     fun observe(txId: String): Flow<DetailedTransactionData> =
         transactionRepository.currentTransactions
@@ -78,6 +83,7 @@ class GetTransactionByIdUseCase(
                 }
             }
             .distinctUntilChanged()
+            .flowOn(Dispatchers.Default)
 
     private suspend fun getWalletAddress(address: String?): WalletAddress? {
         if (address == null) return null

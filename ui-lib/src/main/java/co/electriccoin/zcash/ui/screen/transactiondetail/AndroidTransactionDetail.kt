@@ -15,7 +15,7 @@ fun AndroidTransactionDetail(transactionDetail: TransactionDetail) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val appBarState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
 
-    BackHandler {
+    BackHandler(state != null) {
         state?.onBack?.invoke()
     }
 

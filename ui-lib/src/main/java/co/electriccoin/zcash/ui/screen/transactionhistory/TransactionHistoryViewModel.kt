@@ -19,12 +19,16 @@ import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFilters
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
-import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -41,24 +45,39 @@ class TransactionHistoryViewModel(
 ) : ViewModel() {
     val onScrollToTopRequested = transactionFilterRepository.onFilterChanged
 
+    val search =
+        transactionFilterRepository.fulltextFilter.map {
+            TextFieldState(stringRes(it.orEmpty()), onValueChange = ::onFulltextFilterChanged)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue =
+                TextFieldState(
+                    stringRes(
+                        transactionFilterRepository.fulltextFilter.value.orEmpty()
+                    ),
+                    onValueChange = ::onFulltextFilterChanged
+                )
+        )
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     val state =
         combine(
             getCurrentFilteredTransactions.observe(),
             getTransactionFilters.observe(),
             getMetadata.observe(),
-            transactionFilterRepository.fulltextFilter
-        ) { transactions, filters, metadata, fullText ->
+        ) { transactions, filters, metadata ->
+            Triple(transactions, filters, metadata)
+        }.mapLatest { (transactions, filters, metadata) ->
             when {
                 transactions == null ->
                     createLoadingState(
                         filtersSize = filters.size,
-                        fulltextFilter = fullText.orEmpty()
                     )
 
                 transactions.isEmpty() ->
                     createEmptyState(
                         filtersSize = filters.size,
-                        fulltextFilter = fullText.orEmpty()
                     )
 
                 else ->
@@ -66,16 +85,14 @@ class TransactionHistoryViewModel(
                         transactions = transactions,
                         metadata = metadata,
                         filtersSize = filters.size,
-                        fulltextFilter = fullText.orEmpty()
                     )
             }
-        }.stateIn(
+        }.flowOn(Dispatchers.Default).stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue =
                 createLoadingState(
                     filtersSize = 0,
-                    fulltextFilter = transactionFilterRepository.fulltextFilter.value.orEmpty()
                 )
         )
 
@@ -84,24 +101,23 @@ class TransactionHistoryViewModel(
         super.onCleared()
     }
 
-    @Suppress("SpreadOperator")
     private fun createDataState(
         transactions: List<TransactionData>,
         metadata: Metadata,
         filtersSize: Int,
-        fulltextFilter: String,
     ): TransactionHistoryState.Data {
+        val now = ZonedDateTime.now().toLocalDate()
+
         val items =
             transactions
                 .groupBy {
-                    val now = ZonedDateTime.now().toLocalDate()
                     val other =
                         it.overview.blockTimeEpochSeconds?.let { sec ->
                             Instant
                                 .ofEpochSecond(sec)
                                 .atZone(ZoneId.systemDefault())
                                 .toLocalDate()
-                        } ?: LocalDate.now()
+                        } ?: now
                     when {
                         now == other ->
                             stringRes(R.string.transaction_history_today) to "today"
@@ -128,7 +144,8 @@ class TransactionHistoryViewModel(
                             title = headerStringRes,
                             key = headerId,
                         ),
-                        *transactions.map { transaction ->
+                    ) +
+                        transactions.map { transaction ->
                             TransactionHistoryItem.Transaction(
                                 state =
                                     transactionHistoryMapper.createTransactionState(
@@ -137,8 +154,7 @@ class TransactionHistoryViewModel(
                                         onTransactionClick = ::onTransactionClick
                                     )
                             )
-                        }.toTypedArray()
-                    )
+                        }
                 }
                 .flatten()
 
@@ -157,7 +173,6 @@ class TransactionHistoryViewModel(
                     onClick = ::onTransactionFiltersClicked,
                     contentDescription = null
                 ),
-            search = TextFieldState(stringRes(fulltextFilter), onValueChange = ::onFulltextFilterChanged)
         )
     }
 
@@ -165,45 +180,39 @@ class TransactionHistoryViewModel(
         applyTransactionFulltextFilters(value)
     }
 
-    private fun createLoadingState(
-        filtersSize: Int,
-        fulltextFilter: String
-    ) = TransactionHistoryState.Loading(
-        onBack = ::onBack,
-        filterButton =
-            IconButtonState(
-                icon =
-                    if (filtersSize <= 0) {
-                        R.drawable.ic_transaction_filters
-                    } else {
-                        R.drawable.ic_transactions_filters_selected
-                    },
-                badge = stringRes(filtersSize.toString()).takeIf { filtersSize > 0 },
-                onClick = ::onTransactionFiltersClicked,
-                contentDescription = null
-            ),
-        search = TextFieldState(stringRes(fulltextFilter), onValueChange = ::onFulltextFilterChanged)
-    )
+    private fun createLoadingState(filtersSize: Int,) =
+        TransactionHistoryState.Loading(
+            onBack = ::onBack,
+            filterButton =
+                IconButtonState(
+                    icon =
+                        if (filtersSize <= 0) {
+                            R.drawable.ic_transaction_filters
+                        } else {
+                            R.drawable.ic_transactions_filters_selected
+                        },
+                    badge = stringRes(filtersSize.toString()).takeIf { filtersSize > 0 },
+                    onClick = ::onTransactionFiltersClicked,
+                    contentDescription = null
+                ),
+        )
 
-    private fun createEmptyState(
-        filtersSize: Int,
-        fulltextFilter: String
-    ) = TransactionHistoryState.Empty(
-        onBack = ::onBack,
-        filterButton =
-            IconButtonState(
-                icon =
-                    if (filtersSize <= 0) {
-                        R.drawable.ic_transaction_filters
-                    } else {
-                        R.drawable.ic_transactions_filters_selected
-                    },
-                badge = stringRes(filtersSize.toString()).takeIf { filtersSize > 0 },
-                onClick = ::onTransactionFiltersClicked,
-                contentDescription = null
-            ),
-        search = TextFieldState(stringRes(fulltextFilter), onValueChange = ::onFulltextFilterChanged)
-    )
+    private fun createEmptyState(filtersSize: Int,) =
+        TransactionHistoryState.Empty(
+            onBack = ::onBack,
+            filterButton =
+                IconButtonState(
+                    icon =
+                        if (filtersSize <= 0) {
+                            R.drawable.ic_transaction_filters
+                        } else {
+                            R.drawable.ic_transactions_filters_selected
+                        },
+                    badge = stringRes(filtersSize.toString()).takeIf { filtersSize > 0 },
+                    onClick = ::onTransactionFiltersClicked,
+                    contentDescription = null
+                ),
+        )
 
     private fun onBack() {
         navigationRouter.back()

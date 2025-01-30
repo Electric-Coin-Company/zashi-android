@@ -47,7 +47,7 @@ fun AndroidTransactionFiltersList() {
         }
     }
 
-    BackHandler {
+    BackHandler(state != null) {
         state?.onBack?.invoke()
     }
 }

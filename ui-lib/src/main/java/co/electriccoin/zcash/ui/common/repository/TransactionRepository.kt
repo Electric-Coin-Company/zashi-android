@@ -50,7 +50,7 @@ class TransactionRepositoryImpl(
     accountDataSource: AccountDataSource,
     private val synchronizerProvider: SynchronizerProvider,
 ) : TransactionRepository {
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val currentTransactions: Flow<List<TransactionData>?> =
@@ -96,7 +96,7 @@ class TransactionRepositoryImpl(
             }
         }.stateIn(
             scope = scope,
-            started = SharingStarted.WhileSubscribed(Duration.ZERO, 5.seconds),
+            started = SharingStarted.WhileSubscribed(5.seconds, Duration.ZERO),
             initialValue = null
         )
 

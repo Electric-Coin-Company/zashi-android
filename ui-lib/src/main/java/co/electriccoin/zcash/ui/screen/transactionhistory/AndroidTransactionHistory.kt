@@ -19,6 +19,7 @@ fun AndroidTransactionHistory() {
     val mainAppBarState by mainTopAppBarViewModel.state.collectAsStateWithLifecycle()
     val topAppbarState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val searchState by viewModel.search.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
 
     LaunchedEffect(Unit) {
@@ -35,6 +36,7 @@ fun AndroidTransactionHistory() {
         state = state,
         mainAppBarState = mainAppBarState,
         appBarState = topAppbarState,
-        listState = listState
+        listState = listState,
+        search = searchState
     )
 }

@@ -45,6 +45,8 @@ import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -64,9 +66,18 @@ class TransactionDetailViewModel(
     private val sendTransactionAgain: SendTransactionAgainUseCase,
     private val flipTransactionBookmark: FlipTransactionBookmarkUseCase,
 ) : ViewModel() {
+    private val transaction =
+        getTransactionById
+            .observe(transactionDetail.transactionId)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
+            )
+
     val state =
         combine(
-            getTransactionById.observe(transactionDetail.transactionId),
+            transaction.filterNotNull(),
             transactionHasNote.observe(transactionDetail.transactionId),
             isTransactionBookmark.observe(transactionDetail.transactionId),
             getTransactionNote.observe(transactionDetail.transactionId)
@@ -105,7 +116,10 @@ class TransactionDetailViewModel(
 
     init {
         viewModelScope.launch {
-            markTxMemoAsRead.invoke(transactionDetail.transactionId)
+            val transaction = transaction.filterNotNull().first()
+            if (transaction.transaction.overview.memoCount > 0) {
+                markTxMemoAsRead.invoke(transactionDetail.transactionId)
+            }
         }
     }
 

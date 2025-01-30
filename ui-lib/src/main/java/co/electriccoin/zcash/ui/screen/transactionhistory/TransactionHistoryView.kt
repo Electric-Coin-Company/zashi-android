@@ -62,6 +62,7 @@ import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 @Composable
 fun TransactionHistoryView(
     state: TransactionHistoryState,
+    search: TextFieldState,
     appBarState: TopAppBarSubTitleState,
     mainAppBarState: ZashiMainTopAppBarState?,
     listState: LazyListState = rememberLazyListState()
@@ -94,7 +95,7 @@ fun TransactionHistoryView(
             ) {
                 ZashiTextField(
                     modifier = Modifier.weight(1f),
-                    state = state.search,
+                    state = search,
                     singleLine = true,
                     maxLines = 1,
                     prefix = {
@@ -383,7 +384,6 @@ private fun DataPreview() =
             state =
                 TransactionHistoryState.Data(
                     onBack = {},
-                    search = TextFieldState(stringRes(value = "")) {},
                     filterButton =
                         IconButtonState(
                             icon = R.drawable.ic_transaction_filters,
@@ -413,7 +413,8 @@ private fun DataPreview() =
                         )
                 ),
             appBarState = TopAppBarSubTitleState.None,
-            mainAppBarState = ZashiMainTopAppBarStateFixture.new()
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
+            search = TextFieldState(stringRes(value = "")) {},
         )
     }
 
@@ -425,7 +426,6 @@ private fun EmptyPreview() =
             state =
                 TransactionHistoryState.Empty(
                     onBack = {},
-                    search = TextFieldState(stringRes(value = "")) {},
                     filterButton =
                         IconButtonState(
                             icon = R.drawable.ic_transaction_filters,
@@ -434,7 +434,8 @@ private fun EmptyPreview() =
                         )
                 ),
             appBarState = TopAppBarSubTitleState.None,
-            mainAppBarState = ZashiMainTopAppBarStateFixture.new()
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
+            search = TextFieldState(stringRes(value = "")) {},
         )
     }
 
@@ -446,7 +447,6 @@ private fun LoadingPreview() =
             state =
                 TransactionHistoryState.Loading(
                     onBack = {},
-                    search = TextFieldState(stringRes(value = "")) {},
                     filterButton =
                         IconButtonState(
                             icon = R.drawable.ic_transaction_filters,
@@ -455,6 +455,7 @@ private fun LoadingPreview() =
                         )
                 ),
             appBarState = TopAppBarSubTitleState.None,
-            mainAppBarState = ZashiMainTopAppBarStateFixture.new()
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
+            search = TextFieldState(stringRes(value = "")) {},
         )
     }

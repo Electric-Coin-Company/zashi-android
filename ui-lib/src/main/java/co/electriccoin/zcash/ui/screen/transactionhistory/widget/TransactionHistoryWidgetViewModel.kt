@@ -36,11 +36,6 @@ class TransactionHistoryWidgetViewModel(
             getMetadata.observe(),
         ) { transactions, restoringState, metadata ->
             when {
-                transactions == null && restoringState == WalletRestoringState.RESTORING ->
-                    TransactionHistoryWidgetState.Empty(
-                        subtitle = null,
-                        sendTransaction = null
-                    )
                 transactions == null -> TransactionHistoryWidgetState.Loading
                 transactions.isEmpty() ->
                     TransactionHistoryWidgetState.Empty(
