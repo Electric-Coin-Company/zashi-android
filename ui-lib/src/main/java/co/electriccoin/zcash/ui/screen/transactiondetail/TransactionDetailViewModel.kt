@@ -42,6 +42,7 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.info.ShieldingState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemoState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemosState
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
@@ -50,6 +51,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.ZoneId
 
@@ -116,9 +118,11 @@ class TransactionDetailViewModel(
 
     init {
         viewModelScope.launch {
-            val transaction = transaction.filterNotNull().first()
-            if (transaction.transaction.overview.memoCount > 0) {
-                markTxMemoAsRead.invoke(transactionDetail.transactionId)
+            withContext(Dispatchers.Default) {
+                val transaction = transaction.filterNotNull().first()
+                if (transaction.transaction.overview.memoCount > 0) {
+                    markTxMemoAsRead.invoke(transactionDetail.transactionId)
+                }
             }
         }
     }
