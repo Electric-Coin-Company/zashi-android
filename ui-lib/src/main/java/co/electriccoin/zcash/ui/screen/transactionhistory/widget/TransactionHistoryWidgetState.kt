@@ -18,4 +18,7 @@ sealed interface TransactionHistoryWidgetState {
         val subtitle: StringResource?,
         val sendTransaction: ButtonState?
     ) : TransactionHistoryWidgetState
+
+    @Immutable
+    data object Loading : TransactionHistoryWidgetState
 }

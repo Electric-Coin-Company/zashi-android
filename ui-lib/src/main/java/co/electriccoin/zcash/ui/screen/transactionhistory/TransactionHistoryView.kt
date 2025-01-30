@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.screen.transactionhistory
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -27,6 +29,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,7 +59,6 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TransactionHistoryView(
     state: TransactionHistoryState,
@@ -116,46 +119,185 @@ fun TransactionHistoryView(
                 )
             }
 
-            LazyColumn(
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                contentPadding = paddingValues.asScaffoldScrollPaddingValues(top = 26.dp),
-                state = listState
-            ) {
-                state.items.forEachIndexed { index, item ->
-                    when (item) {
-                        is TransactionHistoryItem.Header ->
-                            stickyHeader(
-                                contentType = item.contentType,
-                                key = item.key
-                            ) {
-                                HeaderItem(
-                                    item,
-                                    modifier =
-                                        Modifier
-                                            .fillParentMaxWidth()
-                                            .background(ZashiColors.Surfaces.bgPrimary)
-                                            .animateItem()
-                                )
-                            }
+            when (state) {
+                is TransactionHistoryState.Data ->
+                    Data(
+                        paddingValues = paddingValues,
+                        listState = listState,
+                        state = state,
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
+                    )
 
-                        is TransactionHistoryItem.Transaction ->
-                            item(
-                                contentType = item.contentType,
-                                key = item.key,
-                            ) {
-                                TransactionItem(
-                                    item = item,
-                                    index = index,
-                                    state = state,
-                                    modifier = Modifier.animateItem()
-                                )
-                            }
-                    }
-                }
+                is TransactionHistoryState.Empty -> Empty(modifier = Modifier.fillMaxSize())
+                is TransactionHistoryState.Loading ->
+                    Loading(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(top = 20.dp)
+                    )
             }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalFoundationApi::class)
+private fun Data(
+    paddingValues: PaddingValues,
+    listState: LazyListState,
+    state: TransactionHistoryState.Data,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = paddingValues.asScaffoldScrollPaddingValues(top = 26.dp),
+        state = listState
+    ) {
+        state.items.forEachIndexed { index, item ->
+            when (item) {
+                is TransactionHistoryItem.Header ->
+                    stickyHeader(
+                        contentType = item.contentType,
+                        key = item.key
+                    ) {
+                        HeaderItem(
+                            item,
+                            modifier =
+                                Modifier
+                                    .fillParentMaxWidth()
+                                    .background(ZashiColors.Surfaces.bgPrimary)
+                                    .animateItem()
+                        )
+                    }
+
+                is TransactionHistoryItem.Transaction ->
+                    item(
+                        contentType = item.contentType,
+                        key = item.key,
+                    ) {
+                        TransactionItem(
+                            item = item,
+                            index = index,
+                            state = state,
+                            modifier = Modifier.animateItem()
+                        )
+                    }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Loading(modifier: Modifier = Modifier) {
+    TransactionShimmerLoading(
+        modifier = modifier,
+        shimmerItemsCount = 10,
+    )
+}
+
+@Composable
+private fun Empty(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+    ) {
+        TransactionShimmerLoading(
+            modifier = Modifier.padding(top = 32.dp),
+            shimmerItemsCount = 3,
+            disableShimmer = true,
+            showDivider = false,
+            contentPaddingValues = PaddingValues(horizontal = 24.dp, vertical = 10.dp)
+        )
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(
+                        brush =
+                            Brush.verticalGradient(
+                                0f to Color.Transparent,
+                                EMPTY_GRADIENT_THRESHOLD to ZashiColors.Surfaces.bgPrimary,
+                                1f to ZashiColors.Surfaces.bgPrimary,
+                            )
+                    ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(Modifier.height(128.dp))
+            Image(
+                painter = painterResource(R.drawable.ic_transaction_widget_empty),
+                contentDescription = null,
+            )
+            Spacer(Modifier.height(20.dp))
+            Text(
+                text = "No results",
+                color = ZashiColors.Text.textPrimary,
+                style = ZashiTypography.textLg,
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "We tried but couldn’t find anything.",
+                color = ZashiColors.Text.textTertiary,
+                style = ZashiTypography.textSm,
+            )
+        }
+    }
+}
+
+@Composable
+private fun HeaderItem(
+    item: TransactionHistoryItem.Header,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        Spacer(Modifier.height(8.dp))
+        Text(
+            modifier = Modifier.padding(horizontal = 24.dp),
+            text = item.title.getValue(),
+            style = ZashiTypography.textMd,
+            color = ZashiColors.Text.textTertiary,
+            fontWeight = FontWeight.Medium,
+        )
+        Spacer(Modifier.height(8.dp))
+    }
+}
+
+@Composable
+private fun TransactionItem(
+    item: TransactionHistoryItem.Transaction,
+    index: Int,
+    state: TransactionHistoryState.Data,
+    modifier: Modifier = Modifier
+) {
+    val previousItem = if (index != 0) state.items[index - 1] else null
+    val nextItem = if (index != state.items.lastIndex) state.items[index + 1] else null
+
+    Column(
+        modifier = modifier,
+    ) {
+        if (previousItem is TransactionHistoryItem.Header) {
+            Spacer(Modifier.height(6.dp))
+        }
+
+        Transaction(
+            modifier = Modifier.padding(horizontal = 4.dp),
+            state = item.state,
+            contentPadding = PaddingValues(vertical = 12.dp, horizontal = 20.dp)
+        )
+
+        if (index != state.items.lastIndex && nextItem is TransactionHistoryItem.Transaction) {
+            ZashiHorizontalDivider(
+                modifier = Modifier.padding(horizontal = 4.dp),
+            )
+        } else if (index != state.items.lastIndex && nextItem !is TransactionHistoryItem.Transaction) {
+            Spacer(
+                modifier = Modifier.height(26.dp)
+            )
         }
     }
 }
@@ -205,61 +347,6 @@ private fun BadgeIconButton(
 }
 
 @Composable
-private fun HeaderItem(
-    item: TransactionHistoryItem.Header,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier,
-    ) {
-        Spacer(Modifier.height(8.dp))
-        Text(
-            modifier = Modifier.padding(horizontal = 24.dp),
-            text = item.title.getValue(),
-            style = ZashiTypography.textMd,
-            color = ZashiColors.Text.textTertiary,
-            fontWeight = FontWeight.Medium,
-        )
-        Spacer(Modifier.height(8.dp))
-    }
-}
-
-@Composable
-private fun TransactionItem(
-    item: TransactionHistoryItem.Transaction,
-    index: Int,
-    state: TransactionHistoryState,
-    modifier: Modifier = Modifier
-) {
-    val previousItem = if (index != 0) state.items[index - 1] else null
-    val nextItem = if (index != state.items.lastIndex) state.items[index + 1] else null
-
-    Column(
-        modifier = modifier,
-    ) {
-        if (previousItem is TransactionHistoryItem.Header) {
-            Spacer(Modifier.height(6.dp))
-        }
-
-        Transaction(
-            modifier = Modifier.padding(horizontal = 4.dp),
-            state = item.state,
-            contentPadding = PaddingValues(vertical = 12.dp, horizontal = 20.dp)
-        )
-
-        if (index != state.items.lastIndex && nextItem is TransactionHistoryItem.Transaction) {
-            ZashiHorizontalDivider(
-                modifier = Modifier.padding(horizontal = 4.dp),
-            )
-        } else if (index != state.items.lastIndex && nextItem !is TransactionHistoryItem.Transaction) {
-            Spacer(
-                modifier = Modifier.height(26.dp)
-            )
-        }
-    }
-}
-
-@Composable
 private fun TransactionHistoryAppBar(
     appBarState: TopAppBarSubTitleState,
     mainAppBarState: ZashiMainTopAppBarState?,
@@ -286,13 +373,15 @@ private fun TransactionHistoryAppBar(
     )
 }
 
+private const val EMPTY_GRADIENT_THRESHOLD = .28f
+
 @PreviewScreens
 @Composable
-private fun Preview() =
+private fun DataPreview() =
     ZcashTheme {
         TransactionHistoryView(
             state =
-                TransactionHistoryState(
+                TransactionHistoryState.Data(
                     onBack = {},
                     search = TextFieldState(stringRes(value = "")) {},
                     filterButton =
@@ -321,6 +410,48 @@ private fun Preview() =
                             TransactionHistoryItem.Transaction(
                                 state = TransactionStateFixture.new()
                             ),
+                        )
+                ),
+            appBarState = TopAppBarSubTitleState.None,
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new()
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun EmptyPreview() =
+    ZcashTheme {
+        TransactionHistoryView(
+            state =
+                TransactionHistoryState.Empty(
+                    onBack = {},
+                    search = TextFieldState(stringRes(value = "")) {},
+                    filterButton =
+                        IconButtonState(
+                            icon = R.drawable.ic_transaction_filters,
+                            badge = stringRes("1"),
+                            onClick = {}
+                        )
+                ),
+            appBarState = TopAppBarSubTitleState.None,
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new()
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun LoadingPreview() =
+    ZcashTheme {
+        TransactionHistoryView(
+            state =
+                TransactionHistoryState.Loading(
+                    onBack = {},
+                    search = TextFieldState(stringRes(value = "")) {},
+                    filterButton =
+                        IconButtonState(
+                            icon = R.drawable.ic_transaction_filters,
+                            badge = stringRes("1"),
+                            onClick = {}
                         )
                 ),
             appBarState = TopAppBarSubTitleState.None,

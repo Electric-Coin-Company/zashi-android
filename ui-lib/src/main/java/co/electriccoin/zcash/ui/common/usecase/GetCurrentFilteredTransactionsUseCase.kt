@@ -6,13 +6,15 @@ import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.common.repository.TransactionFilter
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
-import co.electriccoin.zcash.ui.util.Quadruple
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 
 class GetCurrentFilteredTransactionsUseCase(
     private val metadataRepository: MetadataRepository,
@@ -26,20 +28,30 @@ class GetCurrentFilteredTransactionsUseCase(
     fun observe() =
         combine(
             transactionRepository.currentTransactions,
-            transactionFilterRepository.filters,
             metadataRepository.metadata.filterNotNull(),
-            transactionFilterRepository.fulltextFilter.map { it.orEmpty() }
-        ) { transactions, filters, metadata, fulltextFilter ->
-            Quadruple(transactions, filters, metadata, fulltextFilter)
-        }.mapLatest { (transactions, filters, metadata, _) ->
-            transactions
-                ?.filter { transaction ->
-                    filterBySentReceived(filters, transaction)
+        ) { transactions, metadata ->
+            transactions to metadata
+        }.flatMapLatest { (transactions, metadata) ->
+            combine(
+                transactionFilterRepository.filters,
+                transactionFilterRepository.fulltextFilter.map { it.orEmpty() }
+            ) { filters, fullTextFilters ->
+                filters to fullTextFilters
+            }.flatMapLatest { (filters, _) ->
+                flow {
+                    // emit(null)
+                    emit(
+                        transactions
+                            ?.filter { transaction ->
+                                filterBySentReceived(filters, transaction)
+                            }
+                            ?.filter { transaction ->
+                                filterByGeneralFilters(filters, transaction, metadata)
+                            }
+                    )
                 }
-                ?.filter { transaction ->
-                    filterByGeneralFilters(filters, transaction, metadata)
-                }
-        }
+            }
+        }.flowOn(Dispatchers.Default)
 
     private fun filterByGeneralFilters(
         filters: List<TransactionFilter>,
@@ -65,9 +77,11 @@ class GetCurrentFilteredTransactionsUseCase(
                 filters.contains(TransactionFilter.SENT) &&
                     transaction.overview.isSentTransaction &&
                     !transaction.overview.isShielding -> true
+
                 filters.contains(TransactionFilter.RECEIVED) &&
                     !transaction.overview.isSentTransaction &&
                     !transaction.overview.isShielding -> true
+
                 else -> false
             }
         } else {

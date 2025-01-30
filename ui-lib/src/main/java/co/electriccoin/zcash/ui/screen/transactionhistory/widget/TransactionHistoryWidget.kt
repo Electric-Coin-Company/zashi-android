@@ -35,11 +35,13 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactionhistory.Transaction
+import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionShimmerLoading
 
 fun LazyListScope.createTransactionHistoryWidgets(state: TransactionHistoryWidgetState) {
     when (state) {
         is TransactionHistoryWidgetState.Data -> transactionHistoryWidgets(state)
         is TransactionHistoryWidgetState.Empty -> transactionHistoryEmptyWidget(state)
+        TransactionHistoryWidgetState.Loading -> transactionHistoryLoadingWidget()
     }
 }
 
@@ -78,18 +80,13 @@ private fun LazyListScope.transactionHistoryWidgets(state: TransactionHistoryWid
 private fun LazyListScope.transactionHistoryEmptyWidget(state: TransactionHistoryWidgetState.Empty) {
     item {
         Box {
-            Column {
-                Spacer(Modifier.height(32.dp))
-                Image(
-                    painter = painterResource(id = R.drawable.transaction_widget_loading_background),
-                    contentDescription = null
-                )
-                Spacer(Modifier.height(20.dp))
-                Image(
-                    painter = painterResource(id = R.drawable.transaction_widget_loading_background),
-                    contentDescription = null
-                )
-            }
+            TransactionShimmerLoading(
+                modifier = Modifier.padding(top = 32.dp),
+                shimmerItemsCount = 2,
+                contentPaddingValues = PaddingValues(horizontal = 24.dp, vertical = 10.dp),
+                disableShimmer = true,
+                showDivider = false
+            )
             Column(
                 modifier =
                     Modifier
@@ -136,6 +133,26 @@ private fun LazyListScope.transactionHistoryEmptyWidget(state: TransactionHistor
     }
 }
 
+private fun LazyListScope.transactionHistoryLoadingWidget() {
+    item {
+        Column {
+            Spacer(Modifier.height(13.dp))
+            Text(
+                modifier = Modifier.fillParentMaxWidth().padding(horizontal = 24.dp),
+                text = stringResource(R.string.transaction_history_widget_title),
+                color = ZashiColors.Text.textPrimary,
+                fontWeight = FontWeight.SemiBold,
+                style = ZashiTypography.textLg
+            )
+            Spacer(Modifier.height(10.dp))
+            TransactionShimmerLoading(
+                modifier = Modifier.fillParentMaxWidth(),
+                shimmerItemsCount = 5
+            )
+        }
+    }
+}
+
 private const val EMPTY_GRADIENT_THRESHOLD = .41f
 
 @PreviewScreens
@@ -167,6 +184,19 @@ private fun EmptyPreview() =
                                     onClick = {}
                                 )
                         )
+                )
+            }
+        }
+    }
+
+@PreviewScreens
+@Composable
+private fun LoadingPreview() =
+    ZcashTheme {
+        BlankSurface {
+            LazyColumn {
+                createTransactionHistoryWidgets(
+                    state = TransactionHistoryWidgetState.Loading
                 )
             }
         }

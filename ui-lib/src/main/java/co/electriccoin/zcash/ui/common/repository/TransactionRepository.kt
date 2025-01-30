@@ -19,18 +19,24 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 interface TransactionRepository {
     val currentTransactions: Flow<List<TransactionData>?>
@@ -50,32 +56,47 @@ class TransactionRepositoryImpl(
     override val currentTransactions: Flow<List<TransactionData>?> =
         combine(
             synchronizerProvider.synchronizer,
-            synchronizerProvider.synchronizer.flatMapLatest { it?.networkHeight ?: flowOf(null) },
             accountDataSource.selectedAccount.map { it?.sdkAccount }
-        ) { synchronizer, networkHeight, account ->
-            Triple(synchronizer, networkHeight, account)
-        }.flatMapLatest { (synchronizer, networkHeight, account) ->
+        ) { synchronizer, account ->
+            synchronizer to account
+        }.distinctUntilChanged().flatMapLatest { (synchronizer, account) ->
             if (synchronizer == null || account == null) {
                 flowOf(null)
             } else {
-                flowOf(null).flatMapLatest {
-                    synchronizer.getTransactions(account.accountUuid)
-                        .map {
-                            it.map { transaction ->
-                                TransactionData(
-                                    overview = transaction,
-                                    transactionOutputs = synchronizer.getTransactionOutputs(transaction),
-                                    state = transaction.getExtendedState()
-                                )
-                            }.sortedByDescending { transaction ->
-                                transaction.overview.getSortHeight(networkHeight)
+                channelFlow<List<TransactionData>?> {
+                    send(null)
+
+                    launch {
+                        synchronizer.getTransactions(account.accountUuid)
+                            .flatMapLatest { transactions ->
+                                synchronizer.networkHeight.mapLatest {
+                                    transactions to it
+                                }
                             }
-                        }
+                            .map { (transactions, networkHeight) ->
+                                transactions.map { transaction ->
+                                    TransactionData(
+                                        overview = transaction,
+                                        transactionOutputs = synchronizer.getTransactionOutputs(transaction),
+                                        state = transaction.getExtendedState()
+                                    )
+                                }.sortedByDescending { transaction ->
+                                    transaction.overview.getSortHeight(networkHeight)
+                                }
+                            }
+                            .collect {
+                                send(it)
+                            }
+                    }
+
+                    awaitClose {
+                        // do nothing
+                    }
                 }
             }
         }.stateIn(
             scope = scope,
-            started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
+            started = SharingStarted.WhileSubscribed(Duration.ZERO, 5.seconds),
             initialValue = null
         )
 

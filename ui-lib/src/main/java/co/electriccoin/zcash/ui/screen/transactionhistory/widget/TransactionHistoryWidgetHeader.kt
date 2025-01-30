@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.transactionhistory.widget
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,10 +33,11 @@ fun TransactionHistoryWidgetHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f) then if (state.button == null) Modifier.padding(top = 13.dp) else Modifier,
             text = state.title.getValue(),
             color = ZashiColors.Text.textPrimary,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            style = ZashiTypography.textLg
         )
         state.button?.let {
             ZashiButton(
@@ -68,6 +70,20 @@ private fun Preview() =
                             trailingIcon = R.drawable.ic_chevron_right_small,
                             onClick = {}
                         )
+                )
+            )
+        }
+    }
+
+@PreviewScreens
+@Composable
+private fun PreviewWithoutButton() =
+    ZcashTheme {
+        BlankSurface {
+            TransactionHistoryWidgetHeader(
+                TransactionHistoryWidgetHeaderState(
+                    title = stringRes("Transactions"),
+                    button = null
                 )
             )
         }

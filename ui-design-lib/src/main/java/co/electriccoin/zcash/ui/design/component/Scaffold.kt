@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.util.orDark
 
 @Preview("Scaffold with blank background")
@@ -30,7 +31,7 @@ fun BlankBgScaffold(
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
-        containerColor = ZcashTheme.colors.backgroundColor,
+        containerColor = ZashiColors.Surfaces.bgPrimary,
         topBar = topBar,
         snackbarHost = snackbarHost,
         bottomBar = bottomBar,

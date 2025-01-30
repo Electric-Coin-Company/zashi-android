@@ -35,49 +35,56 @@ class TransactionHistoryWidgetViewModel(
             getWalletRestoringState.observe(),
             getMetadata.observe(),
         ) { transactions, restoringState, metadata ->
-            if (transactions.isNullOrEmpty()) {
-                TransactionHistoryWidgetState.Empty(
-                    subtitle =
-                        stringRes(R.string.transaction_history_widget_empty_subtitle)
-                            .takeIf { restoringState != WalletRestoringState.RESTORING },
-                    sendTransaction =
-                        ButtonState(
-                            text = stringRes(R.string.transaction_history_send_transaction),
-                            onClick = ::onSendTransactionClick
-                        ).takeIf { restoringState != WalletRestoringState.RESTORING },
-                )
-            } else {
-                TransactionHistoryWidgetState.Data(
-                    header =
-                        TransactionHistoryWidgetHeaderState(
-                            title = stringRes(R.string.transaction_history_widget_title),
-                            button =
-                                ButtonState(
-                                    text = stringRes(R.string.transaction_history_widget_header_button),
-                                    onClick = ::onSeeAllTransactionsClick
-                                ).takeIf {
-                                    transactions.size > MAX_TRANSACTION_COUNT
+            when {
+                transactions == null && restoringState == WalletRestoringState.RESTORING ->
+                    TransactionHistoryWidgetState.Empty(
+                        subtitle = null,
+                        sendTransaction = null
+                    )
+                transactions == null -> TransactionHistoryWidgetState.Loading
+                transactions.isEmpty() ->
+                    TransactionHistoryWidgetState.Empty(
+                        subtitle =
+                            stringRes(R.string.transaction_history_widget_empty_subtitle)
+                                .takeIf { restoringState != WalletRestoringState.RESTORING },
+                        sendTransaction =
+                            ButtonState(
+                                text = stringRes(R.string.transaction_history_send_transaction),
+                                onClick = ::onSendTransactionClick
+                            ).takeIf { restoringState != WalletRestoringState.RESTORING },
+                    )
+
+                else ->
+                    TransactionHistoryWidgetState.Data(
+                        header =
+                            TransactionHistoryWidgetHeaderState(
+                                title = stringRes(R.string.transaction_history_widget_title),
+                                button =
+                                    ButtonState(
+                                        text = stringRes(R.string.transaction_history_widget_header_button),
+                                        onClick = ::onSeeAllTransactionsClick
+                                    ).takeIf {
+                                        transactions.size > MAX_TRANSACTION_COUNT
+                                    }
+                            ),
+                        transactions =
+                            transactions
+                                .take(MAX_TRANSACTION_COUNT)
+                                .map { transaction ->
+                                    transactionHistoryMapper.createTransactionState(
+                                        transaction = transaction,
+                                        metadata = metadata,
+                                        onTransactionClick = ::onTransactionClick
+                                    )
                                 }
-                        ),
-                    transactions =
-                        transactions
-                            .take(MAX_TRANSACTION_COUNT)
-                            .map { transaction ->
-                                transactionHistoryMapper.createTransactionState(
-                                    transaction = transaction,
-                                    metadata = metadata,
-                                    onTransactionClick = ::onTransactionClick
-                                )
-                            }
-                )
+                    )
             }
-        }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue =
-                    TransactionHistoryWidgetState.Empty(subtitle = null, sendTransaction = null)
-            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue =
+                TransactionHistoryWidgetState.Loading
+        )
 
     private fun onTransactionClick(transactionData: TransactionData) {
         navigationRouter.forward(TransactionDetail(transactionData.overview.txIdString()))

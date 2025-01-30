@@ -189,7 +189,7 @@ private fun AccountMainContent(
                 animateDpAsState(
                     targetValue =
                         if (balanceState.exchangeRate is ExchangeRateState.OptIn) {
-                            120.dp
+                            112.dp
                         } else {
                             0.dp
                         },
