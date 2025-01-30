@@ -62,28 +62,14 @@ fun SendShielded(
                         },
                     trailingIcon = if (isExpanded) R.drawable.ic_chevron_up_small else R.drawable.ic_chevron_down_small,
                     shape =
-                        if (state.note != null) {
-                            TransactionDetailInfoShape.MIDDLE
-                        } else {
-                            if (isExpanded) TransactionDetailInfoShape.FIRST else TransactionDetailInfoShape.SINGLE
+                        when {
+                            state.note != null -> TransactionDetailInfoShape.FIRST
+                            isExpanded -> TransactionDetailInfoShape.FIRST
+                            else -> TransactionDetailInfoShape.SINGLE
                         },
                     onClick = { isExpanded = !isExpanded }
                 ),
         )
-        if (state.note != null) {
-            ZashiHorizontalDivider()
-            TransactionDetailInfoColumn(
-                modifier = Modifier.fillMaxWidth(),
-                state =
-                    TransactionDetailInfoColumnState(
-                        title = stringRes(R.string.transaction_detail_info_note),
-                        message = state.note,
-                        shape = TransactionDetailInfoShape.LAST,
-                        onClick = null
-                    )
-            )
-        }
-
         AnimatedVisibility(
             visible = isExpanded,
             enter = expandVertically(),
@@ -134,10 +120,28 @@ fun SendShielded(
                         TransactionDetailInfoRowState(
                             title = stringRes(R.string.transaction_detail_info_transaction_completed),
                             message = state.completedTimestamp,
-                            shape = TransactionDetailInfoShape.LAST,
+                            shape =
+                                if (state.note == null) {
+                                    TransactionDetailInfoShape.LAST
+                                } else {
+                                    TransactionDetailInfoShape.MIDDLE
+                                },
                         )
                 )
             }
+        }
+        if (state.note != null) {
+            ZashiHorizontalDivider()
+            TransactionDetailInfoColumn(
+                modifier = Modifier.fillMaxWidth(),
+                state =
+                    TransactionDetailInfoColumnState(
+                        title = stringRes(R.string.transaction_detail_info_note),
+                        message = state.note,
+                        shape = TransactionDetailInfoShape.LAST,
+                        onClick = null
+                    )
+            )
         }
         Spacer(Modifier.height(20.dp))
         TransactionDetailInfoHeader(

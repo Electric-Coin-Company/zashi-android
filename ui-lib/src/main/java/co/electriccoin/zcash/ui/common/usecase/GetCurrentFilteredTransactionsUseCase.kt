@@ -6,14 +6,12 @@ import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.common.repository.TransactionFilter
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 class GetCurrentFilteredTransactionsUseCase(
@@ -51,7 +49,7 @@ class GetCurrentFilteredTransactionsUseCase(
                     )
                 }
             }
-        }.flowOn(Dispatchers.Default)
+        }
 
     private fun filterByGeneralFilters(
         filters: List<TransactionFilter>,
