@@ -1,9 +1,7 @@
 package co.electriccoin.zcash.ui.screen.transactionhistory
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
@@ -20,13 +18,6 @@ fun AndroidTransactionHistory() {
     val topAppbarState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val searchState by viewModel.search.collectAsStateWithLifecycle()
-    val listState = rememberLazyListState()
-
-    LaunchedEffect(Unit) {
-        viewModel.onScrollToTopRequested.collect {
-            listState.scrollToItem(0)
-        }
-    }
 
     BackHandler {
         state.onBack()
@@ -36,7 +27,6 @@ fun AndroidTransactionHistory() {
         state = state,
         mainAppBarState = mainAppBarState,
         appBarState = topAppbarState,
-        listState = listState,
         search = searchState
     )
 }

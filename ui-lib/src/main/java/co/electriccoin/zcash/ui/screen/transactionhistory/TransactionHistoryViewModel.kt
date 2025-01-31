@@ -45,8 +45,6 @@ class TransactionHistoryViewModel(
     private val resetTransactionFilters: ResetTransactionFiltersUseCase,
     private val restoreTimestampDataSource: RestoreTimestampDataSource
 ) : ViewModel() {
-    val onScrollToTopRequested = transactionFilterRepository.onFilterChanged
-
     val search =
         transactionFilterRepository.fulltextFilter.map {
             TextFieldState(stringRes(it.orEmpty()), onValueChange = ::onFulltextFilterChanged)

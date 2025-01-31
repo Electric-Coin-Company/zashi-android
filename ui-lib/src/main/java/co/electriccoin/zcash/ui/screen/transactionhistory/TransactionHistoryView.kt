@@ -21,8 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -65,7 +63,6 @@ fun TransactionHistoryView(
     search: TextFieldState,
     appBarState: TopAppBarSubTitleState,
     mainAppBarState: ZashiMainTopAppBarState?,
-    listState: LazyListState = rememberLazyListState()
 ) {
     BlankBgScaffold(
         topBar = {
@@ -124,7 +121,6 @@ fun TransactionHistoryView(
                 is TransactionHistoryState.Data ->
                     Data(
                         paddingValues = paddingValues,
-                        listState = listState,
                         state = state,
                         modifier =
                             Modifier
@@ -149,14 +145,12 @@ fun TransactionHistoryView(
 @OptIn(ExperimentalFoundationApi::class)
 private fun Data(
     paddingValues: PaddingValues,
-    listState: LazyListState,
     state: TransactionHistoryState.Data,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier,
         contentPadding = paddingValues.asScaffoldScrollPaddingValues(top = 26.dp),
-        state = listState
     ) {
         state.items.forEachIndexed { index, item ->
             when (item) {
