@@ -8,9 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,8 +27,6 @@ fun AndroidTransactionNote(transactionNote: TransactionNote) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    val focusRequester = remember { FocusRequester() }
-
     val parent = LocalView.current.parent
 
     SideEffect {
@@ -42,18 +38,15 @@ fun AndroidTransactionNote(transactionNote: TransactionNote) {
         state = state,
         sheetState = sheetState,
         onDismissRequest = state.onBack,
-        focusRequester = focusRequester
     )
 
     LaunchedEffect(Unit) {
         sheetState.show()
-        focusRequester.requestFocus()
     }
 
     LaunchedEffect(Unit) {
         snapshotFlow { sheetState.currentValue }.collect {
             if (it == Expanded) {
-                focusRequester.requestFocus()
                 this.cancel()
             }
         }
@@ -61,7 +54,6 @@ fun AndroidTransactionNote(transactionNote: TransactionNote) {
 
     LaunchedEffect(Unit) {
         viewModel.hideBottomSheetRequest.collect {
-            focusRequester.freeFocus()
             sheetState.hide()
             state.onBottomSheetHidden()
         }
