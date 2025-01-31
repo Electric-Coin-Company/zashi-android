@@ -32,7 +32,10 @@ class MockPreferenceProvider(
         map[key.key] = value
     }
 
-    override suspend fun putLong(key: PreferenceKey, value: Long?) {
+    override suspend fun putLong(
+        key: PreferenceKey,
+        value: Long?
+    ) {
         map[key.key] = value?.toString()
     }
 

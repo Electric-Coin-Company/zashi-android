@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.common.datasource
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.Metadata
 import co.electriccoin.zcash.ui.common.model.Note
-import co.electriccoin.zcash.ui.common.model.TransactionInfo
+import co.electriccoin.zcash.ui.common.model.TransactionMetadata
 import co.electriccoin.zcash.ui.common.provider.MetadataProvider
 import co.electriccoin.zcash.ui.common.provider.MetadataStorageProvider
 import co.electriccoin.zcash.ui.common.serialization.METADATA_SERIALIZATION_V1
@@ -70,7 +70,7 @@ class MetadataDataSourceImpl(
                 it?.copy(
                     isBookmark = isBookmark,
                     lastUpdated = Instant.now(),
-                ) ?: TransactionInfo(
+                ) ?: TransactionMetadata(
                     txId = txId,
                     lastUpdated = Instant.now(),
                     notes = emptyList(),
@@ -91,7 +91,7 @@ class MetadataDataSourceImpl(
                 it?.copy(
                     notes = newNotes,
                     lastUpdated = Instant.now(),
-                ) ?: TransactionInfo(
+                ) ?: TransactionMetadata(
                     txId = txId,
                     lastUpdated = Instant.now(),
                     notes = newNotes,
@@ -111,7 +111,7 @@ class MetadataDataSourceImpl(
                 it?.copy(
                     notes = newNotes,
                     lastUpdated = Instant.now(),
-                ) ?: TransactionInfo(
+                ) ?: TransactionMetadata(
                     txId = txId,
                     lastUpdated = Instant.now(),
                     notes = newNotes,
@@ -130,7 +130,7 @@ class MetadataDataSourceImpl(
                 it?.copy(
                     isMemoRead = true,
                     lastUpdated = Instant.now(),
-                ) ?: TransactionInfo(
+                ) ?: TransactionMetadata(
                     txId = txId,
                     lastUpdated = Instant.now(),
                     notes = emptyList(),
@@ -200,11 +200,11 @@ class MetadataDataSourceImpl(
     private suspend fun updateMetadataTransactions(
         txId: String,
         key: MetadataKey,
-        transform: (TransactionInfo?) -> TransactionInfo
+        transform: (TransactionMetadata?) -> TransactionMetadata
     ): Metadata {
-        fun List<TransactionInfo>.replaceOrAdd(
+        fun List<TransactionMetadata>.replaceOrAdd(
             txId: String,
-            transform: (TransactionInfo?) -> TransactionInfo
+            transform: (TransactionMetadata?) -> TransactionMetadata
         ) = if (this.any { it.txId == txId }) {
             this.map { if (it.txId == txId) transform(it) else it }
         } else {

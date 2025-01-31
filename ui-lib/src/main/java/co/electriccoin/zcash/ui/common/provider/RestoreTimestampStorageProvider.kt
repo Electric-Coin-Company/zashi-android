@@ -7,7 +7,6 @@ import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 import java.time.Instant
 
 interface RestoreTimestampStorageProvider {
-
     suspend fun get(): Instant?
 
     suspend fun store(key: Instant)
@@ -18,7 +17,6 @@ interface RestoreTimestampStorageProvider {
 class RestoreTimestampStorageProviderImpl(
     private val encryptedPreferenceProvider: EncryptedPreferenceProvider
 ) : RestoreTimestampStorageProvider {
-
     private val default = RestoreTimestampPreferenceDefault()
 
     override suspend fun get(): Instant? {
@@ -37,9 +35,10 @@ class RestoreTimestampStorageProviderImpl(
 private class RestoreTimestampPreferenceDefault : PreferenceDefault<Instant?> {
     override val key: PreferenceKey = PreferenceKey("restore_timestamp")
 
-    override suspend fun getValue(preferenceProvider: PreferenceProvider) = preferenceProvider.getLong(key)?.let {
-        Instant.ofEpochMilli(it)
-    }
+    override suspend fun getValue(preferenceProvider: PreferenceProvider) =
+        preferenceProvider.getLong(key)?.let {
+            Instant.ofEpochMilli(it)
+        }
 
     override suspend fun putValue(
         preferenceProvider: PreferenceProvider,

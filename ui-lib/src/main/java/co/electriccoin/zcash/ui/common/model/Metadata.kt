@@ -9,7 +9,7 @@ data class Metadata(
     @SerializedName("lastUpdated")
     val lastUpdated: Instant,
     @SerializedName("transactions")
-    val transactions: List<TransactionInfo>
+    val transactions: List<TransactionMetadata>
 )
 
 data class Note(
@@ -17,7 +17,7 @@ data class Note(
     val content: String
 )
 
-data class TransactionInfo(
+data class TransactionMetadata(
     @SerializedName("txId")
     val txId: String,
     @SerializedName("lastUpdated")

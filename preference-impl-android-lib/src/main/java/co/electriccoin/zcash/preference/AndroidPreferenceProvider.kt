@@ -60,7 +60,10 @@ class AndroidPreferenceProvider private constructor(
     }
 
     @SuppressLint("ApplySharedPref")
-    override suspend fun putLong(key: PreferenceKey, value: Long?) = withContext(dispatcher) {
+    override suspend fun putLong(
+        key: PreferenceKey,
+        value: Long?
+    ) = withContext(dispatcher) {
         mutex.withLock {
             val editor = sharedPreferences.edit()
 
@@ -74,13 +77,14 @@ class AndroidPreferenceProvider private constructor(
         }
     }
 
-    override suspend fun getLong(key: PreferenceKey): Long? = withContext(dispatcher) {
-        if (sharedPreferences.contains(key.key)) {
-            sharedPreferences.getLong(key.key, 0)
-        } else {
-            null
+    override suspend fun getLong(key: PreferenceKey): Long? =
+        withContext(dispatcher) {
+            if (sharedPreferences.contains(key.key)) {
+                sharedPreferences.getLong(key.key, 0)
+            } else {
+                null
+            }
         }
-    }
 
     override suspend fun getString(key: PreferenceKey) =
         withContext(dispatcher) {

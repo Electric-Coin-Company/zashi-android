@@ -3,13 +3,17 @@ package co.electriccoin.zcash.ui.common.repository
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.MetadataDataSource
 import co.electriccoin.zcash.ui.common.model.Metadata
+import co.electriccoin.zcash.ui.common.model.TransactionMetadata
 import co.electriccoin.zcash.ui.common.provider.MetadataKeyStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.sync.Mutex
@@ -34,6 +38,8 @@ interface MetadataRepository {
     suspend fun markTxMemoAsRead(txId: String)
 
     suspend fun resetMetadata()
+
+    suspend fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata?>
 }
 
 class MetadataRepositoryImpl(
@@ -98,6 +104,14 @@ class MetadataRepositoryImpl(
             cache.update { null }
         }
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override suspend fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata?> =
+        metadata
+            .mapLatest { metadata ->
+                metadata?.transactions?.firstOrNull { it.txId == txId }
+            }
+            .distinctUntilChanged()
 
     private suspend fun ensureSynchronization() {
         if (cache.value == null) {

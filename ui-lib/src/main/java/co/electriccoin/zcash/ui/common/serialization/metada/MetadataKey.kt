@@ -4,7 +4,6 @@ import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import co.electriccoin.zcash.ui.common.model.WalletAccount
-import co.electriccoin.zcash.ui.common.serialization.ADDRESS_BOOK_SALT_SIZE
 import co.electriccoin.zcash.ui.common.serialization.Key
 import co.electriccoin.zcash.ui.common.serialization.METADATA_ENCRYPTION_KEY_SIZE
 import co.electriccoin.zcash.ui.common.serialization.METADATA_FILE_IDENTIFIER_SIZE

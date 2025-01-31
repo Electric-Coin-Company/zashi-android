@@ -32,7 +32,6 @@ class TransactionHistoryMapper {
         restoreTimestamp: Instant,
         onTransactionClick: (TransactionData) -> Unit
     ): TransactionState {
-
         val transactionDate =
             transaction.overview.blockTimeEpochSeconds
                 ?.let { blockTimeEpochSeconds ->

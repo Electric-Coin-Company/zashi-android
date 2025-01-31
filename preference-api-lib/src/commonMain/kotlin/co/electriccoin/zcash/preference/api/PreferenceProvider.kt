@@ -11,7 +11,10 @@ interface PreferenceProvider {
         value: String?
     )
 
-    suspend fun putLong(key: PreferenceKey, value: Long?)
+    suspend fun putLong(
+        key: PreferenceKey,
+        value: Long?
+    )
 
     suspend fun getLong(key: PreferenceKey): Long?
 
