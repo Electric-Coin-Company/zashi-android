@@ -19,6 +19,7 @@ class GetCurrentFilteredTransactionsUseCase(
     private val metadataRepository: MetadataRepository,
     private val transactionRepository: TransactionRepository,
     private val transactionFilterRepository: TransactionFilterRepository,
+    private val fulltextFilterUseCase: GetTransactionFulltextFiltersUseCase
 ) {
     suspend operator fun invoke() = observe().filterNotNull().first()
 
@@ -36,19 +37,25 @@ class GetCurrentFilteredTransactionsUseCase(
                 transactionFilterRepository.fulltextFilter.map { it.orEmpty() }
             ) { filters, fullTextFilters ->
                 filters to fullTextFilters
-            }.flatMapLatest { (filters, _) ->
-                flow {
-                    // emit(null)
-                    emit(
-                        transactions
-                            ?.filter { transaction ->
-                                filterBySentReceived(filters, transaction)
-                            }
-                            ?.filter { transaction ->
+            }.flatMapLatest { (filters, fullTextFilters) ->
+                val filteredTransactions =
+                    transactions?.run {
+                        filter { transaction ->
+                            filterBySentReceived(filters, transaction)
+                        }
+                            .filter { transaction ->
                                 filterByGeneralFilters(filters, transaction, metadata)
                             }
-                    )
-                }
+                    }
+                val fullTextFilteredTransactions =
+                    filteredTransactions?.filter {
+                        if (fullTextFilters.isNotEmpty()) {
+                            fulltextFilterUseCase(it.overview.rawId)
+                        } else {
+                            true
+                        }
+                    }
+                flow { emit(fullTextFilteredTransactions) }
             }
         }.distinctUntilChanged()
 
