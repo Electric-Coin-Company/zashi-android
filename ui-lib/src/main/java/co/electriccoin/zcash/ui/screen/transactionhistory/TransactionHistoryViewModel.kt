@@ -180,7 +180,7 @@ class TransactionHistoryViewModel(
         applyTransactionFulltextFilters(value)
     }
 
-    private fun createLoadingState(filtersSize: Int,) =
+    private fun createLoadingState(filtersSize: Int) =
         TransactionHistoryState.Loading(
             onBack = ::onBack,
             filterButton =
@@ -197,7 +197,7 @@ class TransactionHistoryViewModel(
                 ),
         )
 
-    private fun createEmptyState(filtersSize: Int,) =
+    private fun createEmptyState(filtersSize: Int) =
         TransactionHistoryState.Empty(
             onBack = ::onBack,
             filterButton =

@@ -52,9 +52,7 @@ internal fun TransactionNoteView(
 }
 
 @Composable
-private fun BottomSheetContent(
-    state: TransactionNoteState,
-) {
+private fun BottomSheetContent(state: TransactionNoteState) {
     Column {
         Text(
             modifier = Modifier.padding(horizontal = 24.dp),
