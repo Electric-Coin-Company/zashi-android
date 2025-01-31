@@ -8,6 +8,7 @@ import co.electriccoin.zcash.ui.common.serialization.ADDRESS_BOOK_SALT_SIZE
 import co.electriccoin.zcash.ui.common.serialization.Key
 import co.electriccoin.zcash.ui.common.serialization.METADATA_ENCRYPTION_KEY_SIZE
 import co.electriccoin.zcash.ui.common.serialization.METADATA_FILE_IDENTIFIER_SIZE
+import co.electriccoin.zcash.ui.common.serialization.METADATA_SALT_SIZE
 import com.google.crypto.tink.InsecureSecretKeyAccess
 import com.google.crypto.tink.aead.ChaCha20Poly1305Key
 import com.google.crypto.tink.subtle.Hkdf
@@ -41,7 +42,7 @@ class MetadataKey(val key: SecretBytes) : Key {
      * random 32-byte salt.
      */
     override fun deriveEncryptionKey(salt: ByteArray): ChaCha20Poly1305Key {
-        assert(salt.size == ADDRESS_BOOK_SALT_SIZE)
+        assert(salt.size == METADATA_SALT_SIZE)
         val access = InsecureSecretKeyAccess.get()
         val subKey =
             Hkdf.computeHkdf(

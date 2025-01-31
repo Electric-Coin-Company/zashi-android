@@ -11,7 +11,6 @@ import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
-import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.OnboardingState
@@ -23,7 +22,8 @@ import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
-import co.electriccoin.zcash.ui.common.usecase.ResetAddressBookUseCase
+import co.electriccoin.zcash.ui.common.usecase.ResetInMemoryDataUseCase
+import co.electriccoin.zcash.ui.common.usecase.ResetSharedPrefsDataUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import com.flexa.core.Flexa
 import com.flexa.identity.buildIdentity
@@ -46,10 +46,10 @@ class WalletViewModel(
     private val walletCoordinator: WalletCoordinator,
     private val walletRepository: WalletRepository,
     private val exchangeRateRepository: ExchangeRateRepository,
-    private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getAvailableServers: GetDefaultServersProvider,
-    private val resetAddressBook: ResetAddressBookUseCase,
+    private val resetInMemoryData: ResetInMemoryDataUseCase,
+    private val resetSharedPrefsData: ResetSharedPrefsDataUseCase,
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
 ) : AndroidViewModel(application) {
@@ -137,17 +137,9 @@ class WalletViewModel(
     private fun clearAppStateFlow(): Flow<Boolean> =
         callbackFlow {
             viewModelScope.launch {
-                val standardPrefsCleared =
-                    standardPreferenceProvider()
-                        .clearPreferences()
-                val encryptedPrefsCleared =
-                    encryptedPreferenceProvider()
-                        .clearPreferences()
-                resetAddressBook()
-
-                Twig.info { "Both preferences cleared: ${standardPrefsCleared && encryptedPrefsCleared}" }
-
-                trySend(standardPrefsCleared && encryptedPrefsCleared)
+                val prefReset = resetSharedPrefsData()
+                resetInMemoryData()
+                trySend(prefReset)
             }
 
             awaitClose {

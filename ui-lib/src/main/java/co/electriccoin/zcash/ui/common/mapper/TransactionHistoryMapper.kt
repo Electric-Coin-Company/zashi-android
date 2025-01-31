@@ -22,35 +22,56 @@ import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionState
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
 class TransactionHistoryMapper {
     fun createTransactionState(
         transaction: TransactionData,
         metadata: Metadata,
+        restoreTimestamp: Instant,
         onTransactionClick: (TransactionData) -> Unit
-    ) = TransactionState(
-        key = transaction.overview.txIdString(),
-        icon = getIcon(transaction),
-        title = getTitle(transaction),
-        subtitle = getSubtitle(transaction),
-        isShielded = isShielded(transaction),
-        value = getValue(transaction),
-        onClick = { onTransactionClick(transaction) },
-        isUnread = isUnread(transaction, metadata)
-    )
+    ): TransactionState {
+
+        val transactionDate =
+            transaction.overview.blockTimeEpochSeconds
+                ?.let { blockTimeEpochSeconds ->
+                    Instant.ofEpochSecond(blockTimeEpochSeconds).atZone(ZoneId.systemDefault())
+                }
+
+        return TransactionState(
+            key = transaction.overview.txIdString(),
+            icon = getIcon(transaction),
+            title = getTitle(transaction),
+            subtitle = getSubtitle(transactionDate),
+            isShielded = isShielded(transaction),
+            value = getValue(transaction),
+            onClick = { onTransactionClick(transaction) },
+            isUnread = isUnread(transaction, transactionDate, metadata, restoreTimestamp)
+        )
+    }
 
     private fun isUnread(
         transaction: TransactionData,
-        metadata: Metadata
+        transactionDateTime: ZonedDateTime?,
+        metadata: Metadata,
+        restoreTimestamp: Instant,
     ): Boolean {
         val hasMemo = transaction.overview.memoCount > 0
-        val transactionMetadata =
-            metadata.transactions
-                .find {
-                    it.txId == transaction.overview.txIdString()
-                }
-        return hasMemo && (transactionMetadata == null || transactionMetadata.isMemoRead.not())
+        val transactionDate = transactionDateTime?.toLocalDate() ?: LocalDate.now()
+        val restoreDate = restoreTimestamp.atZone(ZoneId.systemDefault()).toLocalDate()
+
+        return if (hasMemo && transactionDate < restoreDate) {
+            false
+        } else {
+            val transactionMetadata =
+                metadata.transactions
+                    .find {
+                        it.txId == transaction.overview.txIdString()
+                    }
+
+            hasMemo && (transactionMetadata == null || transactionMetadata.isMemoRead.not())
+        }
     }
 
     private fun getIcon(transaction: TransactionData) =
@@ -81,30 +102,20 @@ class TransactionHistoryMapper {
             SHIELDING_FAILED -> stringRes(R.string.transaction_history_shielding_failed)
         }
 
-    private fun getSubtitle(transaction: TransactionData): StringResource? {
-        val transactionDate =
-            transaction.overview.blockTimeEpochSeconds
-                ?.let { blockTimeEpochSeconds ->
-                    Instant.ofEpochSecond(blockTimeEpochSeconds)
-                }
-                ?.atZone(ZoneId.systemDefault()) ?: return null
+    private fun getSubtitle(transactionDate: ZonedDateTime?): StringResource? {
+        if (transactionDate == null) return null
         val daysBetween = ChronoUnit.DAYS.between(transactionDate.toLocalDate(), LocalDate.now())
         return when {
-            LocalDate.now() == transactionDate.toLocalDate() -> {
+            LocalDate.now() == transactionDate.toLocalDate() ->
                 stringRes(R.string.transaction_history_today)
-            }
 
-            LocalDate.now().minusDays(1) == transactionDate.toLocalDate() -> {
+            LocalDate.now().minusDays(1) == transactionDate.toLocalDate() ->
                 stringRes(R.string.transaction_history_yesterday)
-            }
 
-            daysBetween < MONTH_THRESHOLD -> {
+            daysBetween < MONTH_THRESHOLD ->
                 stringRes(R.string.transaction_history_days_ago, daysBetween.toString())
-            }
 
-            else -> {
-                stringResByDateTime(zonedDateTime = transactionDate, useFullFormat = false)
-            }
+            else -> stringResByDateTime(zonedDateTime = transactionDate, useFullFormat = false)
         }
     }
 

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.repository.TransactionData
@@ -28,6 +29,7 @@ class TransactionHistoryWidgetViewModel(
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
     private val navigateToSend: NavigateToSendUseCase,
+    private val restoreTimestampDataSource: RestoreTimestampDataSource,
 ) : ViewModel() {
     val state =
         combine(
@@ -69,7 +71,8 @@ class TransactionHistoryWidgetViewModel(
                                     transactionHistoryMapper.createTransactionState(
                                         transaction = transaction,
                                         metadata = metadata,
-                                        onTransactionClick = ::onTransactionClick
+                                        restoreTimestamp = restoreTimestampDataSource.getOrCreate(),
+                                        onTransactionClick = ::onTransactionClick,
                                     )
                                 }
                     )

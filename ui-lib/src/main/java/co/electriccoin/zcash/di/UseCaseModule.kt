@@ -65,7 +65,8 @@ import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.PrefillSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
-import co.electriccoin.zcash.ui.common.usecase.ResetAddressBookUseCase
+import co.electriccoin.zcash.ui.common.usecase.ResetInMemoryDataUseCase
+import co.electriccoin.zcash.ui.common.usecase.ResetSharedPrefsDataUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.SelectWalletAccountUseCase
@@ -164,7 +165,8 @@ val useCaseModule =
         factoryOf(::GetTransactionByIdUseCase)
         factoryOf(::SendTransactionAgainUseCase)
         factoryOf(::ObserveAddressBookContactsUseCase)
-        factoryOf(::ResetAddressBookUseCase)
+        factoryOf(::ResetInMemoryDataUseCase)
+        factoryOf(::ResetSharedPrefsDataUseCase)
         factoryOf(::NavigateToAddressBookUseCase)
         factoryOf(::GetTransactionNoteUseCase)
         factoryOf(::IsTransactionBookmarkUseCase)

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
 import co.electriccoin.zcash.ui.common.model.Metadata
 import co.electriccoin.zcash.ui.common.repository.TransactionData
@@ -42,6 +43,7 @@ class TransactionHistoryViewModel(
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
     private val resetTransactionFilters: ResetTransactionFiltersUseCase,
+    private val restoreTimestampDataSource: RestoreTimestampDataSource
 ) : ViewModel() {
     val onScrollToTopRequested = transactionFilterRepository.onFilterChanged
 
@@ -85,6 +87,7 @@ class TransactionHistoryViewModel(
                         transactions = transactions,
                         metadata = metadata,
                         filtersSize = filters.size,
+                        restoreTimestamp = restoreTimestampDataSource.getOrCreate()
                     )
             }
         }.flowOn(Dispatchers.Default).stateIn(
@@ -105,6 +108,7 @@ class TransactionHistoryViewModel(
         transactions: List<TransactionData>,
         metadata: Metadata,
         filtersSize: Int,
+        restoreTimestamp: Instant,
     ): TransactionHistoryState.Data {
         val now = ZonedDateTime.now().toLocalDate()
 
@@ -151,7 +155,8 @@ class TransactionHistoryViewModel(
                                     transactionHistoryMapper.createTransactionState(
                                         transaction = transaction,
                                         metadata = metadata,
-                                        onTransactionClick = ::onTransactionClick
+                                        onTransactionClick = ::onTransactionClick,
+                                        restoreTimestamp = restoreTimestamp
                                     )
                             )
                         }

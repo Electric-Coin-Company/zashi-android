@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.usecase
 
+import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.model.Metadata
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionData
@@ -14,12 +15,16 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 
 class GetCurrentFilteredTransactionsUseCase(
     private val metadataRepository: MetadataRepository,
     private val transactionRepository: TransactionRepository,
     private val transactionFilterRepository: TransactionFilterRepository,
-    private val fulltextFilterUseCase: GetTransactionFulltextFiltersUseCase
+    private val fulltextFilterUseCase: GetTransactionFulltextFiltersUseCase,
+    private val restoreTimestampDataSource: RestoreTimestampDataSource
 ) {
     suspend operator fun invoke() = observe().filterNotNull().first()
 
@@ -44,7 +49,12 @@ class GetCurrentFilteredTransactionsUseCase(
                             filterBySentReceived(filters, transaction)
                         }
                             .filter { transaction ->
-                                filterByGeneralFilters(filters, transaction, metadata)
+                                filterByGeneralFilters(
+                                    filters = filters,
+                                    transaction = transaction,
+                                    metadata = metadata,
+                                    restoreTimestamp = restoreTimestampDataSource.getOrCreate()
+                                )
                             }
                     }
                 val fullTextFilteredTransactions =
@@ -62,13 +72,29 @@ class GetCurrentFilteredTransactionsUseCase(
     private fun filterByGeneralFilters(
         filters: List<TransactionFilter>,
         transaction: TransactionData,
-        metadata: Metadata
+        metadata: Metadata,
+        restoreTimestamp: Instant,
     ): Boolean {
-        val memoPass = if (filters.contains(TransactionFilter.MEMOS)) transaction.overview.memoCount > 0 else true
-        val unreadPass = if (filters.contains(TransactionFilter.UNREAD)) isUnread(metadata, transaction) else true
-        val bookmarkPass =
-            if (filters.contains(TransactionFilter.BOOKMARKED)) isBookmark(metadata, transaction) else true
-        val notesPass = if (filters.contains(TransactionFilter.NOTES)) hasNotes(metadata, transaction) else true
+        val memoPass = if (filters.contains(TransactionFilter.MEMOS)) {
+            transaction.overview.memoCount > 0
+        } else {
+            true
+        }
+        val unreadPass = if (filters.contains(TransactionFilter.UNREAD)) {
+            isUnread(metadata, transaction, restoreTimestamp)
+        } else {
+            true
+        }
+        val bookmarkPass = if (filters.contains(TransactionFilter.BOOKMARKED)) {
+            isBookmark(metadata, transaction)
+        } else {
+            true
+        }
+        val notesPass = if (filters.contains(TransactionFilter.NOTES)) {
+            hasNotes(metadata, transaction)
+        } else {
+            true
+        }
 
         return memoPass && unreadPass && bookmarkPass && notesPass
     }
@@ -97,15 +123,29 @@ class GetCurrentFilteredTransactionsUseCase(
 
     private fun isUnread(
         metadata: Metadata,
-        transaction: TransactionData
+        transaction: TransactionData,
+        restoreTimestamp: Instant,
     ): Boolean {
+        val transactionDate =
+            transaction.overview.blockTimeEpochSeconds
+                ?.let { blockTimeEpochSeconds ->
+                    Instant.ofEpochSecond(blockTimeEpochSeconds).atZone(ZoneId.systemDefault()).toLocalDate()
+                } ?: LocalDate.now()
+
         val hasMemo = transaction.overview.memoCount > 0
-        val transactionMetadata =
-            metadata.transactions
-                .find {
-                    it.txId == transaction.overview.txIdString()
-                }
-        return hasMemo && (transactionMetadata == null || transactionMetadata.isMemoRead.not())
+        val restoreDate = restoreTimestamp.atZone(ZoneId.systemDefault()).toLocalDate()
+
+        return if (hasMemo && transactionDate < restoreDate) {
+            false
+        } else {
+            val transactionMetadata =
+                metadata.transactions
+                    .find {
+                        it.txId == transaction.overview.txIdString()
+                    }
+
+            hasMemo && (transactionMetadata == null || transactionMetadata.isMemoRead.not())
+        }
     }
 
     private fun isBookmark(
