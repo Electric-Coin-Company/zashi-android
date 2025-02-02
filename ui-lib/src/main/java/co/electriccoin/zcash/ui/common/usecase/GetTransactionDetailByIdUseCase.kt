@@ -11,14 +11,16 @@ import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.launch
 
 class GetTransactionDetailByIdUseCase(
     private val transactionRepository: TransactionRepository,
@@ -27,46 +29,42 @@ class GetTransactionDetailByIdUseCase(
     private val synchronizerProvider: SynchronizerProvider,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun observe(txId: String) = combine(
-        transactionRepository.observeTransaction(txId).filterNotNull(),
-        metadataRepository.observeTransactionMetadataByTxId(txId)
-    ) { transaction, metadata ->
-        transaction to metadata
-    }.flatMapLatest { (transaction, metadata) ->
-        flow {
-            emit(
-                DetailedTransactionData(
-                    transaction = transaction,
-                    memos = null,
-                    contact = null,
-                    recipientAddress = null,
-                    metadata = metadata
-                )
-            )
-            val memos = transaction.let { transactionRepository.getMemos(it) }
-            val recipientAddress = getWalletAddress(transactionRepository.getRecipients(transaction))
-            emit(
-                DetailedTransactionData(
-                    transaction = transaction,
-                    memos = memos,
-                    contact = null,
-                    recipientAddress = recipientAddress,
-                    metadata = metadata
-                )
-            )
-            emitAll(
-                addressBookRepository
-                    .observeContactByAddress(recipientAddress?.address.orEmpty())
-                    .mapLatest { contact ->
-                        DetailedTransactionData(
-                            transaction = transaction,
-                            memos = memos,
-                            contact = contact,
-                            recipientAddress = recipientAddress,
-                            metadata = metadata
-                        )
-                    }
-            )
+    fun observe(txId: String) =
+        transactionRepository
+            .observeTransaction(txId).filterNotNull().flatMapLatest { transaction ->
+        channelFlow {
+            launch {
+                combine(
+                    flow {
+                        emit(null)
+                        emit(getWalletAddress(transactionRepository.getRecipients(transaction)))
+                    },
+                    flow {
+                        emit(null)
+                        emit(transaction.let { transactionRepository.getMemos(it) })
+                    },
+                    metadataRepository.observeTransactionMetadataByTxId(txId)
+                ) { address, memos, metadata ->
+                    Triple(address, memos, metadata)
+                }.flatMapLatest { (address, memos, metadata) ->
+                    addressBookRepository
+                        .observeContactByAddress(address?.address.orEmpty())
+                        .mapLatest { contact ->
+                            DetailedTransactionData(
+                                transaction = transaction,
+                                memos = memos,
+                                contact = contact,
+                                recipientAddress = address,
+                                metadata = metadata
+                            )
+                        }
+                }.collect {
+                    send(it)
+                }
+            }
+            awaitClose {
+                // do nothing
+            }
         }
     }.distinctUntilChanged().flowOn(Dispatchers.Default)
 

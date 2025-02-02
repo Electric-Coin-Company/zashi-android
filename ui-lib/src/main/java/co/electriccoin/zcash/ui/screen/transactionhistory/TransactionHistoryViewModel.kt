@@ -86,7 +86,7 @@ class TransactionHistoryViewModel(
             }
         }.flowOn(Dispatchers.Default).stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            started = SharingStarted.Lazily,
             initialValue =
                 createLoadingState(
                     filtersSize = 0,

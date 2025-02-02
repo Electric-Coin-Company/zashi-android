@@ -39,9 +39,9 @@ import kotlin.time.Duration.Companion.seconds
 
 @Suppress("TooManyFunctions")
 class GetCurrentFilteredTransactionsUseCase(
+    transactionFilterRepository: TransactionFilterRepository,
     private val metadataRepository: MetadataRepository,
     private val transactionRepository: TransactionRepository,
-    private val transactionFilterRepository: TransactionFilterRepository,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val addressBookRepository: AddressBookRepository,
     private val context: Context
@@ -128,36 +128,37 @@ class GetCurrentFilteredTransactionsUseCase(
             .distinctUntilChanged()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun observe() =
-        transactionFilterRepository.filters
-            .flatMapLatest { filters ->
-                flow {
-                    emit(null)
-                    emitAll(
-                        transactionsFilteredByFulltext
-                            .mapLatest { transactions ->
-                                transactions
-                                    ?.filter { transaction ->
-                                        filterBySentReceived(filters, transaction)
-                                    }
-                                    ?.filter { transaction ->
-                                        filterByGeneralFilters(
-                                            filters = filters,
-                                            transaction = transaction,
-                                            restoreTimestamp = restoreTimestampDataSource.getOrCreate()
-                                        )
-                                    }
-                                    ?.map { transaction ->
-                                        ListTransactionData(
-                                            data = transaction.transaction,
-                                            metadata = transaction.transactionMetadata
-                                        )
-                                    }
-                            }
-                    )
-                }
+    val result = transactionFilterRepository.filters
+        .flatMapLatest { filters ->
+            flow {
+                emit(null)
+                emitAll(
+                    transactionsFilteredByFulltext
+                        .mapLatest { transactions ->
+                            transactions
+                                ?.filter { transaction ->
+                                    filterBySentReceived(filters, transaction)
+                                }
+                                ?.filter { transaction ->
+                                    filterByGeneralFilters(
+                                        filters = filters,
+                                        transaction = transaction,
+                                        restoreTimestamp = restoreTimestampDataSource.getOrCreate()
+                                    )
+                                }
+                                ?.map { transaction ->
+                                    ListTransactionData(
+                                        data = transaction.transaction,
+                                        metadata = transaction.transactionMetadata
+                                    )
+                                }
+                        }
+                )
             }
-            .distinctUntilChanged()
+        }
+        .distinctUntilChanged()
+
+    fun observe() = result
 
     private fun filterByGeneralFilters(
         filters: List<TransactionFilter>,
