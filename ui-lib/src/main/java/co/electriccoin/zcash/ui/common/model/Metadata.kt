@@ -12,7 +12,7 @@ data class Metadata(
     val transactions: List<TransactionMetadata>
 )
 
-data class Note(
+data class NoteMetadata(
     @SerializedName("content")
     val content: String
 )
@@ -23,7 +23,7 @@ data class TransactionMetadata(
     @SerializedName("lastUpdated")
     val lastUpdated: Instant,
     @SerializedName("notes")
-    val notes: List<Note>,
+    val noteMetadata: List<NoteMetadata>,
     @SerializedName("isMemoRead")
     val isMemoRead: Boolean,
     @SerializedName("isBookmark")

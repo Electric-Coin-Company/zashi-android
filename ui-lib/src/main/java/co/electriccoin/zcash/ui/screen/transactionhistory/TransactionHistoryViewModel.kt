@@ -7,13 +7,12 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
-import co.electriccoin.zcash.ui.common.model.Metadata
 import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFulltextFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetMetadataUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
+import co.electriccoin.zcash.ui.common.usecase.ListTransactionData
 import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
@@ -38,7 +37,6 @@ class TransactionHistoryViewModel(
     getCurrentFilteredTransactions: GetCurrentFilteredTransactionsUseCase,
     getTransactionFilters: GetTransactionFiltersUseCase,
     transactionFilterRepository: TransactionFilterRepository,
-    getMetadata: GetMetadataUseCase,
     private val applyTransactionFulltextFilters: ApplyTransactionFulltextFiltersUseCase,
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
@@ -65,10 +63,9 @@ class TransactionHistoryViewModel(
         combine(
             getCurrentFilteredTransactions.observe(),
             getTransactionFilters.observe(),
-            getMetadata.observe(),
-        ) { transactions, filters, metadata ->
-            Triple(transactions, filters, metadata)
-        }.mapLatest { (transactions, filters, metadata) ->
+        ) { transactions, filters ->
+            transactions to filters
+        }.mapLatest { (transactions, filters) ->
             when {
                 transactions == null ->
                     createLoadingState(
@@ -83,7 +80,6 @@ class TransactionHistoryViewModel(
                 else ->
                     createDataState(
                         transactions = transactions,
-                        metadata = metadata,
                         filtersSize = filters.size,
                         restoreTimestamp = restoreTimestampDataSource.getOrCreate()
                     )
@@ -103,8 +99,7 @@ class TransactionHistoryViewModel(
     }
 
     private fun createDataState(
-        transactions: List<TransactionData>,
-        metadata: Metadata,
+        transactions: List<ListTransactionData>,
         filtersSize: Int,
         restoreTimestamp: Instant,
     ): TransactionHistoryState.Data {
@@ -114,7 +109,7 @@ class TransactionHistoryViewModel(
             transactions
                 .groupBy {
                     val other =
-                        it.overview.blockTimeEpochSeconds?.let { sec ->
+                        it.data.overview.blockTimeEpochSeconds?.let { sec ->
                             Instant
                                 .ofEpochSecond(sec)
                                 .atZone(ZoneId.systemDefault())
@@ -152,7 +147,6 @@ class TransactionHistoryViewModel(
                                 state =
                                     transactionHistoryMapper.createTransactionState(
                                         transaction = transaction,
-                                        metadata = metadata,
                                         onTransactionClick = ::onTransactionClick,
                                         restoreTimestamp = restoreTimestamp
                                     )

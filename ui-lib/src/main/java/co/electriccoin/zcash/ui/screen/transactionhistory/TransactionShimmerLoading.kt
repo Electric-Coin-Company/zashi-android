@@ -54,9 +54,9 @@ fun TransactionShimmerLoading(
                                         infiniteRepeatable(
                                             animation =
                                                 tween(
-                                                    800,
+                                                    durationMillis = 750,
                                                     easing = LinearEasing,
-                                                    delayMillis = 750,
+                                                    delayMillis = 450,
                                                 ),
                                             repeatMode = RepeatMode.Restart,
                                         )

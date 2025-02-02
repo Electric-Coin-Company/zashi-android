@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.common.datasource
 
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.Metadata
-import co.electriccoin.zcash.ui.common.model.Note
+import co.electriccoin.zcash.ui.common.model.NoteMetadata
 import co.electriccoin.zcash.ui.common.model.TransactionMetadata
 import co.electriccoin.zcash.ui.common.provider.MetadataProvider
 import co.electriccoin.zcash.ui.common.provider.MetadataStorageProvider
@@ -73,7 +73,7 @@ class MetadataDataSourceImpl(
                 ) ?: TransactionMetadata(
                     txId = txId,
                     lastUpdated = Instant.now(),
-                    notes = emptyList(),
+                    noteMetadata = emptyList(),
                     isMemoRead = false,
                     isBookmark = isBookmark,
                 )
@@ -87,14 +87,14 @@ class MetadataDataSourceImpl(
     ): Metadata =
         mutex.withLock {
             updateMetadataTransactions(txId = txId, key = key) {
-                val newNotes = listOf(Note(content = note))
+                val newNoteMetadata = listOf(NoteMetadata(content = note))
                 it?.copy(
-                    notes = newNotes,
+                    noteMetadata = newNoteMetadata,
                     lastUpdated = Instant.now(),
                 ) ?: TransactionMetadata(
                     txId = txId,
                     lastUpdated = Instant.now(),
-                    notes = newNotes,
+                    noteMetadata = newNoteMetadata,
                     isMemoRead = false,
                     isBookmark = false,
                 )
@@ -107,14 +107,14 @@ class MetadataDataSourceImpl(
     ): Metadata =
         mutex.withLock {
             updateMetadataTransactions(txId = txId, key = key) {
-                val newNotes = emptyList<Note>()
+                val newNoteMetadata = emptyList<NoteMetadata>()
                 it?.copy(
-                    notes = newNotes,
+                    noteMetadata = newNoteMetadata,
                     lastUpdated = Instant.now(),
                 ) ?: TransactionMetadata(
                     txId = txId,
                     lastUpdated = Instant.now(),
-                    notes = newNotes,
+                    noteMetadata = newNoteMetadata,
                     isMemoRead = false,
                     isBookmark = false,
                 )
@@ -133,7 +133,7 @@ class MetadataDataSourceImpl(
                 ) ?: TransactionMetadata(
                     txId = txId,
                     lastUpdated = Instant.now(),
-                    notes = emptyList(),
+                    noteMetadata = emptyList(),
                     isMemoRead = true,
                     isBookmark = false,
                 )

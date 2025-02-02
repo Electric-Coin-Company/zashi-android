@@ -39,7 +39,7 @@ interface MetadataRepository {
 
     suspend fun resetMetadata()
 
-    suspend fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata?>
+    fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata?>
 }
 
 class MetadataRepositoryImpl(
@@ -106,7 +106,7 @@ class MetadataRepositoryImpl(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata?> =
+    override fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata?> =
         metadata
             .mapLatest { metadata ->
                 metadata?.transactions?.firstOrNull { it.txId == txId }

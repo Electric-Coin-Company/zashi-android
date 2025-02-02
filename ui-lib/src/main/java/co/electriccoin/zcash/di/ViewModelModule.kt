@@ -128,14 +128,11 @@ val viewModelModule =
         viewModel { (transactionDetail: TransactionDetail) ->
             TransactionDetailViewModel(
                 transactionDetail = transactionDetail,
-                getTransactionById = get(),
+                getTransactionDetailById = get(),
                 copyToClipboard = get(),
                 navigationRouter = get(),
                 sendTransactionAgain = get(),
-                transactionHasNote = get(),
-                isTransactionBookmark = get(),
                 flipTransactionBookmark = get(),
-                getTransactionNote = get(),
                 markTxMemoAsRead = get()
             )
         }

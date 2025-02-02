@@ -27,16 +27,15 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetTransactionByIdUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetTransactionNoteUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetTransactionMetadataUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
-import co.electriccoin.zcash.ui.common.usecase.IsTransactionBookmarkUseCase
 import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
@@ -75,7 +74,6 @@ import co.electriccoin.zcash.ui.common.usecase.SendTransactionAgainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SensitiveSettingsVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
-import co.electriccoin.zcash.ui.common.usecase.TransactionHasNoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameUseCase
@@ -160,15 +158,13 @@ val useCaseModule =
         factoryOf(::ResetTransactionFiltersUseCase)
         factoryOf(::ApplyTransactionFulltextFiltersUseCase)
         factoryOf(::GetTransactionFiltersUseCase)
-        factoryOf(::GetTransactionByIdUseCase)
+        factoryOf(::GetTransactionDetailByIdUseCase)
         factoryOf(::SendTransactionAgainUseCase)
         factoryOf(::ObserveAddressBookContactsUseCase)
         factoryOf(::ResetInMemoryDataUseCase)
         factoryOf(::ResetSharedPrefsDataUseCase)
         factoryOf(::NavigateToAddressBookUseCase)
-        factoryOf(::GetTransactionNoteUseCase)
-        factoryOf(::IsTransactionBookmarkUseCase)
-        factoryOf(::TransactionHasNoteUseCase)
+        factoryOf(::GetTransactionMetadataUseCase)
         factoryOf(::FlipTransactionBookmarkUseCase)
         factoryOf(::DeleteTransactionNoteUseCase)
         factoryOf(::CreateOrUpdateTransactionNoteUseCase)

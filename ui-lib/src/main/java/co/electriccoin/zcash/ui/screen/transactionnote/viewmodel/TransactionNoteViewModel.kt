@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.Note
+import co.electriccoin.zcash.ui.common.model.NoteMetadata
 import co.electriccoin.zcash.ui.common.usecase.CreateOrUpdateTransactionNoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteTransactionNoteUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetTransactionNoteUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetTransactionMetadataUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 internal class TransactionNoteViewModel(
     private val transactionNote: TransactionNote,
     private val navigationRouter: NavigationRouter,
-    private val getTransactionNote: GetTransactionNoteUseCase,
+    private val getTransactionNote: GetTransactionMetadataUseCase,
     private val createOrUpdateTransactionNote: CreateOrUpdateTransactionNoteUseCase,
     private val deleteTransactionNote: DeleteTransactionNoteUseCase
 ) : ViewModel() {
@@ -39,20 +39,20 @@ internal class TransactionNoteViewModel(
     private val bottomSheetHiddenResponse = MutableSharedFlow<Unit>()
 
     private val noteText = MutableStateFlow("")
-    private val foundNote = MutableStateFlow<Note?>(null)
+    private val foundNoteMetadata = MutableStateFlow<NoteMetadata?>(null)
 
     val state: StateFlow<TransactionNoteState> =
-        combine(noteText, foundNote) { noteText, foundNote ->
+        combine(noteText, foundNoteMetadata) { noteText, foundNote ->
             createState(noteText, foundNote)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = createState(noteText = "", foundNote = null)
+            initialValue = createState(noteText = "", foundNoteMetadata = null)
         )
 
     private fun createState(
         noteText: String,
-        foundNote: Note?
+        foundNoteMetadata: NoteMetadata?
     ): TransactionNoteState {
         val isNoteTextTooLong = noteText.length > MAX_NOTE_LENGTH
 
@@ -60,7 +60,7 @@ internal class TransactionNoteViewModel(
             onBack = ::onBack,
             onBottomSheetHidden = ::onBottomSheetHidden,
             title =
-                if (foundNote == null) {
+                if (foundNoteMetadata == null) {
                     stringRes(R.string.transaction_note_add_note_title)
                 } else {
                     stringRes(R.string.transaction_note_edit_note_title)
@@ -81,26 +81,26 @@ internal class TransactionNoteViewModel(
                     text = stringRes(R.string.transaction_note_add_note),
                     onClick = ::onAddOrUpdateNoteClick,
                     isEnabled = !isNoteTextTooLong && noteText.isNotEmpty()
-                ).takeIf { foundNote == null },
+                ).takeIf { foundNoteMetadata == null },
             secondaryButton =
                 ButtonState(
                     text = stringRes(R.string.transaction_note_save_note),
                     onClick = ::onAddOrUpdateNoteClick,
                     isEnabled = !isNoteTextTooLong && noteText.isNotEmpty()
-                ).takeIf { foundNote != null },
+                ).takeIf { foundNoteMetadata != null },
             negative =
                 ButtonState(
                     text = stringRes(R.string.transaction_note_delete_note),
                     onClick = ::onDeleteNoteClick,
-                ).takeIf { foundNote != null },
+                ).takeIf { foundNoteMetadata != null },
         )
     }
 
     init {
         viewModelScope.launch {
-            val note = getTransactionNote(transactionNote.txId)
-            foundNote.update { note }
-            noteText.update { note?.content.orEmpty() }
+            val metadata = getTransactionNote(transactionNote.txId)
+            foundNoteMetadata.update { metadata.noteMetadata.firstOrNull() }
+            noteText.update { metadata.noteMetadata.firstOrNull()?.content.orEmpty() }
         }
     }
 

@@ -200,7 +200,7 @@ private fun Empty(modifier: Modifier = Modifier) {
         modifier = modifier
     ) {
         TransactionShimmerLoading(
-            modifier = Modifier.padding(top = 32.dp),
+            modifier = Modifier.padding(top = 22.dp),
             shimmerItemsCount = 3,
             disableShimmer = true,
             showDivider = false,
@@ -220,7 +220,7 @@ private fun Empty(modifier: Modifier = Modifier) {
                     ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(128.dp))
+            Spacer(Modifier.height(118.dp))
             Image(
                 painter = painterResource(R.drawable.ic_transaction_widget_empty),
                 contentDescription = null,

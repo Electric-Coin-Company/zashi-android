@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.common.mapper
 
 import cash.z.ecc.android.sdk.model.TransactionPool
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.Metadata
 import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVED
 import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVE_FAILED
@@ -13,6 +12,7 @@ import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SENT
 import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDED
 import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDING
 import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDING_FAILED
+import co.electriccoin.zcash.ui.common.usecase.ListTransactionData
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
@@ -27,69 +27,62 @@ import java.time.temporal.ChronoUnit
 
 class TransactionHistoryMapper {
     fun createTransactionState(
-        transaction: TransactionData,
-        metadata: Metadata,
+        transaction: ListTransactionData,
         restoreTimestamp: Instant,
         onTransactionClick: (TransactionData) -> Unit
     ): TransactionState {
         val transactionDate =
-            transaction.overview.blockTimeEpochSeconds
+            transaction.data.overview.blockTimeEpochSeconds
                 ?.let { blockTimeEpochSeconds ->
                     Instant.ofEpochSecond(blockTimeEpochSeconds).atZone(ZoneId.systemDefault())
                 }
 
         return TransactionState(
-            key = transaction.overview.txIdString(),
+            key = transaction.data.overview.txIdString(),
             icon = getIcon(transaction),
             title = getTitle(transaction),
             subtitle = getSubtitle(transactionDate),
             isShielded = isShielded(transaction),
             value = getValue(transaction),
-            onClick = { onTransactionClick(transaction) },
-            isUnread = isUnread(transaction, transactionDate, metadata, restoreTimestamp)
+            onClick = { onTransactionClick(transaction.data) },
+            isUnread = isUnread(transaction, transactionDate, restoreTimestamp)
         )
     }
 
     private fun isUnread(
-        transaction: TransactionData,
+        transaction: ListTransactionData,
         transactionDateTime: ZonedDateTime?,
-        metadata: Metadata,
         restoreTimestamp: Instant,
     ): Boolean {
-        val hasMemo = transaction.overview.memoCount > 0
+        val hasMemo = transaction.data.overview.memoCount > 0
         val transactionDate = transactionDateTime?.toLocalDate() ?: LocalDate.now()
         val restoreDate = restoreTimestamp.atZone(ZoneId.systemDefault()).toLocalDate()
 
         return if (hasMemo && transactionDate < restoreDate) {
             false
         } else {
-            val transactionMetadata =
-                metadata.transactions
-                    .find {
-                        it.txId == transaction.overview.txIdString()
-                    }
-
+            val transactionMetadata = transaction.metadata
             hasMemo && (transactionMetadata == null || transactionMetadata.isMemoRead.not())
         }
     }
 
-    private fun getIcon(transaction: TransactionData) =
-        when (transaction.state) {
-            SENT,
-            SENDING,
-            SEND_FAILED -> R.drawable.ic_transaction_sent
+    private fun getIcon(transaction: ListTransactionData) =
+        when (transaction.data.state) {
+            SENT  -> R.drawable.ic_transaction_sent
+            SENDING  -> R.drawable.ic_transaction_send_pending
+            SEND_FAILED -> R.drawable.ic_transaction_send_failed
 
-            RECEIVED,
-            RECEIVING,
-            RECEIVE_FAILED -> R.drawable.ic_transaction_received
+            RECEIVED  -> R.drawable.ic_transaction_received
+            RECEIVING  -> R.drawable.ic_transaction_receive_pending
+            RECEIVE_FAILED -> R.drawable.ic_transaction_receive_pending
 
-            SHIELDED,
-            SHIELDING,
-            SHIELDING_FAILED -> R.drawable.ic_transaction_shielded
+            SHIELDED  -> R.drawable.ic_transaction_shielded
+            SHIELDING  -> R.drawable.ic_transaction_shield_pending
+            SHIELDING_FAILED -> R.drawable.ic_transaction_shield_failed
         }
 
-    private fun getTitle(transaction: TransactionData) =
-        when (transaction.state) {
+    private fun getTitle(transaction: ListTransactionData) =
+        when (transaction.data.state) {
             SENT -> stringRes(R.string.transaction_history_sent)
             SENDING -> stringRes(R.string.transaction_history_sending)
             SEND_FAILED -> stringRes(R.string.transaction_history_sending_failed)
@@ -118,19 +111,19 @@ class TransactionHistoryMapper {
         }
     }
 
-    private fun isShielded(transaction: TransactionData) =
-        transaction.transactionOutputs
+    private fun isShielded(transaction: ListTransactionData) =
+        transaction.data.transactionOutputs
             .none { output -> output.pool == TransactionPool.TRANSPARENT } &&
-            !transaction.overview.isShielding
+            !transaction.data.overview.isShielding
 
-    private fun getValue(transaction: TransactionData) =
-        when (transaction.state) {
+    private fun getValue(transaction: ListTransactionData) =
+        when (transaction.data.state) {
             SENT,
             SENDING ->
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_minus,
-                        stringRes(transaction.overview.netValue)
+                        stringRes(transaction.data.overview.netValue)
                     )
                 )
 
@@ -138,7 +131,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_minus,
-                        stringRes(transaction.overview.netValue)
+                        stringRes(transaction.data.overview.netValue)
                     ),
                     StringResourceColor.NEGATIVE
                 )
@@ -147,7 +140,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(transaction.overview.netValue)
+                        stringRes(transaction.data.overview.netValue)
                     ),
                     StringResourceColor.POSITIVE
                 )
@@ -156,7 +149,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(transaction.overview.netValue)
+                        stringRes(transaction.data.overview.netValue)
                     ),
                 )
 
@@ -164,7 +157,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(transaction.overview.netValue)
+                        stringRes(transaction.data.overview.netValue)
                     ),
                     StringResourceColor.NEGATIVE
                 )
@@ -173,7 +166,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(transaction.overview.netValue)
+                        stringRes(transaction.data.overview.netValue)
                     )
                 )
 
@@ -181,7 +174,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(transaction.overview.netValue)
+                        stringRes(transaction.data.overview.netValue)
                     )
                 )
 
@@ -189,7 +182,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(transaction.overview.netValue)
+                        stringRes(transaction.data.overview.netValue)
                     ),
                     StringResourceColor.NEGATIVE
                 )

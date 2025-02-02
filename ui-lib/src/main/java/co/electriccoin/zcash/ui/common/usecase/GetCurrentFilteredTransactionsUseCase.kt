@@ -1,12 +1,10 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import android.content.Context
-import android.util.Log
 import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.TransactionMetadata
-import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionData
@@ -15,6 +13,7 @@ import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.util.combineToFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,15 +25,12 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onEmpty
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import java.time.Instant
 import java.time.LocalDate
@@ -47,7 +43,6 @@ class GetCurrentFilteredTransactionsUseCase(
     private val transactionRepository: TransactionRepository,
     private val transactionFilterRepository: TransactionFilterRepository,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
-    private val synchronizerProvider: SynchronizerProvider,
     private val addressBookRepository: AddressBookRepository,
     private val context: Context
 ) {
@@ -65,7 +60,7 @@ class GetCurrentFilteredTransactionsUseCase(
                             if (recipient == null) {
                                 metadataRepository.observeTransactionMetadataByTxId(transaction.overview.txIdString())
                                     .map {
-                                        DetailedFilterTransactionData(
+                                        FilterTransactionData(
                                             transaction = transaction,
                                             contact = null,
                                             recipientAddress = null,
@@ -79,7 +74,7 @@ class GetCurrentFilteredTransactionsUseCase(
                                         txId = transaction.overview.txIdString(),
                                     )
                                 ) { contact, transactionMetadata ->
-                                    DetailedFilterTransactionData(
+                                    FilterTransactionData(
                                         transaction = transaction,
                                         contact = contact,
                                         recipientAddress = recipient,
@@ -89,11 +84,7 @@ class GetCurrentFilteredTransactionsUseCase(
                             }
                         }
 
-                if (enhancedTransactions != null) {
-                    combine(enhancedTransactions.map { it }) { it.toList() }
-                } else {
-                    flowOf(null)
-                }
+                enhancedTransactions?.combineToFlow() ?: flowOf(null)
             }
             .shareIn(
                 scope = scope,
@@ -102,82 +93,75 @@ class GetCurrentFilteredTransactionsUseCase(
             )
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-    private val transactionsFilteredByFulltext: Flow<List<DetailedFilterTransactionData>?> =
+    private val transactionsFilteredByFulltext: Flow<List<FilterTransactionData>?> =
         transactionFilterRepository
             .fulltextFilter
             .debounce(.69.seconds)
             .distinctUntilChanged()
             .flatMapLatest { fulltextFilter ->
-                if (fulltextFilter == null || fulltextFilter.length < MIN_TEXT_FILTER_LENGTH) {
-                    detailedCurrentTransactions
-                        .onStart { emit(null) }
-                } else {
-                    combine(
-                        detailedCurrentTransactions,
-                        observeTransactionsByMemo(fulltextFilter)
-                    ) { transactions, memoTxIds ->
-                        transactions to memoTxIds
-                    }.mapLatest { (transactions, memoTxIds) ->
-                        transactions
-                            ?.filter { transaction ->
-                                hasMemoInFilteredIds(memoTxIds, transaction) ||
-                                    hasContactInAddressBookWithFulltext(transaction, fulltextFilter) ||
-                                    hasAddressWithFulltext(transaction, fulltextFilter) ||
-                                    hasNotesWithFulltext(transaction, fulltextFilter) ||
-                                    hasAmountWithFulltext(transaction, fulltextFilter)
+                flow {
+                    emit(null)
+
+                    emitAll(
+                        if (fulltextFilter == null || fulltextFilter.length < MIN_TEXT_FILTER_LENGTH) {
+                            detailedCurrentTransactions
+                        } else {
+                            combine(
+                                detailedCurrentTransactions,
+                                transactionRepository.observeTransactionsByMemo(fulltextFilter)
+                            ) { transactions, memoTxIds ->
+                                transactions to memoTxIds
+                            }.mapLatest { (transactions, memoTxIds) ->
+                                transactions
+                                    ?.filter { transaction ->
+                                        hasMemoInFilteredIds(memoTxIds, transaction) ||
+                                            hasContactInAddressBookWithFulltext(transaction, fulltextFilter) ||
+                                            hasAddressWithFulltext(transaction, fulltextFilter) ||
+                                            hasNotesWithFulltext(transaction, fulltextFilter) ||
+                                            hasAmountWithFulltext(transaction, fulltextFilter)
+                                    }
                             }
-                    }.onStart { emit(null) }
+                        }
+                    )
                 }
             }
             .distinctUntilChanged()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun observe() =
-        transactionsFilteredByFulltext.flatMapLatest { transactions ->
-            transactionFilterRepository.filters
-                .flatMapLatest { filters ->
-
-                    flow {
-                        emit(null)
-                        val result =
-                            transactions
-                                ?.filter { transaction ->
-                                    filterBySentReceived(filters, transaction)
-                                }
-                                ?.filter { transaction ->
-                                    filterByGeneralFilters(
-                                        filters = filters,
-                                        transaction = transaction,
-                                        restoreTimestamp = restoreTimestampDataSource.getOrCreate()
-                                    )
-                                }
-                                ?.map { transaction -> transaction.transaction }
-
-                        if (result != null) {
-                            emit(result)
-                        } else {
-                            emit(null)
-                        }
-                    }
+        transactionFilterRepository.filters
+            .flatMapLatest { filters ->
+                flow {
+                    emit(null)
+                    emitAll(
+                        transactionsFilteredByFulltext
+                            .mapLatest { transactions ->
+                                transactions
+                                    ?.filter { transaction ->
+                                        filterBySentReceived(filters, transaction)
+                                    }
+                                    ?.filter { transaction ->
+                                        filterByGeneralFilters(
+                                            filters = filters,
+                                            transaction = transaction,
+                                            restoreTimestamp = restoreTimestampDataSource.getOrCreate()
+                                        )
+                                    }
+                                    ?.map { transaction ->
+                                        ListTransactionData(
+                                            data = transaction.transaction,
+                                            metadata = transaction.transactionMetadata
+                                        )
+                                    }
+                            }
+                    )
                 }
-        }.distinctUntilChanged()
-            .onEach {
-                Log.d("KKTINA", it.toString())
-            }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun observeTransactionsByMemo(memo: String): Flow<List<FirstClassByteArray>?> =
-        synchronizerProvider
-            .synchronizer
-            .filterNotNull()
-            .flatMapLatest { synchronizer ->
-                synchronizer.getTransactionsByMemoSubstring(memo).onEmpty { emit(listOf()) }
             }
             .distinctUntilChanged()
 
     private fun filterByGeneralFilters(
         filters: List<TransactionFilter>,
-        transaction: DetailedFilterTransactionData,
+        transaction: FilterTransactionData,
         restoreTimestamp: Instant,
     ): Boolean {
         val memoPass =
@@ -211,7 +195,7 @@ class GetCurrentFilteredTransactionsUseCase(
     @Suppress
     private fun filterBySentReceived(
         filters: List<TransactionFilter>,
-        transaction: DetailedFilterTransactionData
+        transaction: FilterTransactionData
     ): Boolean {
         return if (filters.contains(TransactionFilter.SENT) || filters.contains(TransactionFilter.RECEIVED)) {
             when {
@@ -231,7 +215,7 @@ class GetCurrentFilteredTransactionsUseCase(
     }
 
     private fun isUnread(
-        transaction: DetailedFilterTransactionData,
+        transaction: FilterTransactionData,
         restoreTimestamp: Instant,
     ): Boolean {
         val transactionDate =
@@ -252,22 +236,28 @@ class GetCurrentFilteredTransactionsUseCase(
         }
     }
 
-    private fun isBookmark(transaction: DetailedFilterTransactionData): Boolean {
+    private fun isBookmark(transaction: FilterTransactionData): Boolean {
         return transaction.transactionMetadata?.isBookmark ?: false
     }
 
-    private fun hasNotes(transaction: DetailedFilterTransactionData) = transaction.transactionMetadata != null
+    private fun hasNotes(transaction: FilterTransactionData): Boolean =
+        transaction.transactionMetadata?.noteMetadata?.any() == true
 
     private fun hasNotesWithFulltext(
-        transaction: DetailedFilterTransactionData,
+        transaction: FilterTransactionData,
         fulltextFilter: String
     ): Boolean {
-        return transaction.transactionMetadata?.notes?.any { it.content.contains(fulltextFilter, ignoreCase = true) }
+        return transaction.transactionMetadata?.noteMetadata?.any {
+            it.content.contains(
+                fulltextFilter,
+                ignoreCase = true
+            )
+        }
             ?: false
     }
 
     private fun hasAmountWithFulltext(
-        transaction: DetailedFilterTransactionData,
+        transaction: FilterTransactionData,
         fulltextFilter: String
     ): Boolean {
         val text = stringRes(transaction.transaction.overview.netValue).getString(context)
@@ -275,14 +265,14 @@ class GetCurrentFilteredTransactionsUseCase(
     }
 
     private fun hasAddressWithFulltext(
-        transaction: DetailedFilterTransactionData,
+        transaction: FilterTransactionData,
         fulltextFilter: String
     ): Boolean {
         return transaction.recipientAddress?.contains(fulltextFilter, ignoreCase = true) ?: false
     }
 
     private fun hasContactInAddressBookWithFulltext(
-        transaction: DetailedFilterTransactionData,
+        transaction: FilterTransactionData,
         fulltextFilter: String
     ): Boolean {
         return transaction.contact?.name?.contains(fulltextFilter, ignoreCase = true) ?: false
@@ -290,11 +280,11 @@ class GetCurrentFilteredTransactionsUseCase(
 
     private fun hasMemoInFilteredIds(
         memoTxIds: List<FirstClassByteArray>?,
-        transaction: DetailedFilterTransactionData
+        transaction: FilterTransactionData
     ) = memoTxIds?.contains(transaction.transaction.overview.rawId) ?: false
 }
 
-data class DetailedFilterTransactionData(
+private data class FilterTransactionData(
     val transaction: TransactionData,
     val contact: AddressBookContact?,
     val recipientAddress: String?,

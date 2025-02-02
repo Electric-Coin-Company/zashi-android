@@ -16,7 +16,8 @@ sealed interface TransactionHistoryWidgetState {
     @Immutable
     data class Empty(
         val subtitle: StringResource?,
-        val sendTransaction: ButtonState?
+        val sendTransaction: ButtonState?,
+        val enableShimmer: Boolean
     ) : TransactionHistoryWidgetState
 
     @Immutable

@@ -84,7 +84,7 @@ private fun LazyListScope.transactionHistoryEmptyWidget(state: TransactionHistor
                 modifier = Modifier.padding(top = 32.dp),
                 shimmerItemsCount = 2,
                 contentPaddingValues = PaddingValues(horizontal = 24.dp, vertical = 10.dp),
-                disableShimmer = true,
+                disableShimmer = !state.enableShimmer,
                 showDivider = false
             )
             Column(
@@ -182,7 +182,8 @@ private fun EmptyPreview() =
                                 ButtonState(
                                     text = stringRes("Send a transaction"),
                                     onClick = {}
-                                )
+                                ),
+                            enableShimmer = true
                         )
                 )
             }

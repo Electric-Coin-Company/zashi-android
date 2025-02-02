@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.model.BlockHeight
+import cash.z.ecc.android.sdk.model.FirstClassByteArray
 import cash.z.ecc.android.sdk.model.TransactionOutput
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
@@ -26,15 +27,18 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -44,6 +48,10 @@ interface TransactionRepository {
     suspend fun getMemos(transactionData: TransactionData): List<String>
 
     suspend fun getRecipients(transactionData: TransactionData): String?
+
+    fun observeTransaction(txId: String): Flow<TransactionData?>
+
+    fun observeTransactionsByMemo(memo: String): Flow<List<FirstClassByteArray>?>
 }
 
 class TransactionRepositoryImpl(
@@ -100,20 +108,34 @@ class TransactionRepositoryImpl(
             initialValue = null
         )
 
-    override suspend fun getMemos(transactionData: TransactionData): List<String> {
-        return synchronizerProvider.getSynchronizer().getMemos(transactionData.overview)
+    override suspend fun getMemos(transactionData: TransactionData): List<String> = withContext(Dispatchers.IO) {
+        synchronizerProvider.getSynchronizer().getMemos(transactionData.overview)
             .mapNotNull { memo -> memo.takeIf { it.isNotEmpty() } }
             .toList()
     }
 
-    override suspend fun getRecipients(transactionData: TransactionData): String? {
+    override suspend fun getRecipients(transactionData: TransactionData): String? = withContext(Dispatchers.IO) {
         if (transactionData.overview.isSentTransaction) {
             val result = synchronizerProvider.getSynchronizer().getRecipients(transactionData.overview).firstOrNull()
-            return (result as? TransactionRecipient.RecipientAddress)?.addressValue
+            (result as? TransactionRecipient.RecipientAddress)?.addressValue
         } else {
-            return null
+            null
         }
     }
+
+    override fun observeTransaction(txId: String): Flow<TransactionData?> = currentTransactions
+        .map { transactions ->
+            transactions?.find { it.overview.txIdString() == txId }
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun observeTransactionsByMemo(memo: String): Flow<List<FirstClassByteArray>?> =
+        synchronizerProvider
+            .synchronizer
+            .flatMapLatest { synchronizer ->
+                synchronizer?.getTransactionsByMemoSubstring(memo)?.onEmpty { emit(listOf()) } ?: flowOf(null)
+            }
+            .distinctUntilChanged()
 
     private fun TransactionOverview.getSortHeight(networkHeight: BlockHeight?): BlockHeight? {
         // Non-null assertion operator is necessary here as the smart cast to is impossible because `minedHeight` and
