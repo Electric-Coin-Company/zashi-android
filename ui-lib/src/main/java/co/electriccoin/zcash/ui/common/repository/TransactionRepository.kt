@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.model.BlockHeight
-import cash.z.ecc.android.sdk.model.FirstClassByteArray
+import cash.z.ecc.android.sdk.model.TransactionId
 import cash.z.ecc.android.sdk.model.TransactionOutput
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
@@ -27,7 +27,6 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -51,7 +50,7 @@ interface TransactionRepository {
 
     fun observeTransaction(txId: String): Flow<TransactionData?>
 
-    fun observeTransactionsByMemo(memo: String): Flow<List<FirstClassByteArray>?>
+    fun observeTransactionsByMemo(memo: String): Flow<List<TransactionId>?>
 }
 
 class TransactionRepositoryImpl(
@@ -108,28 +107,31 @@ class TransactionRepositoryImpl(
             initialValue = null
         )
 
-    override suspend fun getMemos(transactionData: TransactionData): List<String> = withContext(Dispatchers.IO) {
-        synchronizerProvider.getSynchronizer().getMemos(transactionData.overview)
-            .mapNotNull { memo -> memo.takeIf { it.isNotEmpty() } }
-            .toList()
-    }
-
-    override suspend fun getRecipients(transactionData: TransactionData): String? = withContext(Dispatchers.IO) {
-        if (transactionData.overview.isSentTransaction) {
-            val result = synchronizerProvider.getSynchronizer().getRecipients(transactionData.overview).firstOrNull()
-            (result as? TransactionRecipient.RecipientAddress)?.addressValue
-        } else {
-            null
+    override suspend fun getMemos(transactionData: TransactionData): List<String> =
+        withContext(Dispatchers.IO) {
+            synchronizerProvider.getSynchronizer().getMemos(transactionData.overview)
+                .mapNotNull { memo -> memo.takeIf { it.isNotEmpty() } }
+                .toList()
         }
-    }
 
-    override fun observeTransaction(txId: String): Flow<TransactionData?> = currentTransactions
-        .map { transactions ->
-            transactions?.find { it.overview.txIdString() == txId }
+    override suspend fun getRecipients(transactionData: TransactionData): String? =
+        withContext(Dispatchers.IO) {
+            if (transactionData.overview.isSentTransaction) {
+                val result = synchronizerProvider.getSynchronizer().getRecipients(transactionData.overview).firstOrNull()
+                (result as? TransactionRecipient.RecipientAddress)?.addressValue
+            } else {
+                null
+            }
         }
+
+    override fun observeTransaction(txId: String): Flow<TransactionData?> =
+        currentTransactions
+            .map { transactions ->
+                transactions?.find { it.overview.txId.txIdString() == txId }
+            }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun observeTransactionsByMemo(memo: String): Flow<List<FirstClassByteArray>?> =
+    override fun observeTransactionsByMemo(memo: String): Flow<List<TransactionId>?> =
         synchronizerProvider
             .synchronizer
             .flatMapLatest { synchronizer ->

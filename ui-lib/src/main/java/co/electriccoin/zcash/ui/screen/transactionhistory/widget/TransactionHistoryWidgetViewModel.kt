@@ -82,7 +82,7 @@ class TransactionHistoryWidgetViewModel(
         )
 
     private fun onTransactionClick(transactionData: TransactionData) {
-        navigationRouter.forward(TransactionDetail(transactionData.overview.txIdString()))
+        navigationRouter.forward(TransactionDetail(transactionData.overview.txId.txIdString()))
     }
 
     private fun onSeeAllTransactionsClick() {

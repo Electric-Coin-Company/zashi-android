@@ -32,41 +32,41 @@ class GetTransactionDetailByIdUseCase(
     fun observe(txId: String) =
         transactionRepository
             .observeTransaction(txId).filterNotNull().flatMapLatest { transaction ->
-        channelFlow {
-            launch {
-                combine(
-                    flow {
-                        emit(null)
-                        emit(getWalletAddress(transactionRepository.getRecipients(transaction)))
-                    },
-                    flow {
-                        emit(null)
-                        emit(transaction.let { transactionRepository.getMemos(it) })
-                    },
-                    metadataRepository.observeTransactionMetadataByTxId(txId)
-                ) { address, memos, metadata ->
-                    Triple(address, memos, metadata)
-                }.flatMapLatest { (address, memos, metadata) ->
-                    addressBookRepository
-                        .observeContactByAddress(address?.address.orEmpty())
-                        .mapLatest { contact ->
-                            DetailedTransactionData(
-                                transaction = transaction,
-                                memos = memos,
-                                contact = contact,
-                                recipientAddress = address,
-                                metadata = metadata
-                            )
+                channelFlow {
+                    launch {
+                        combine(
+                            flow {
+                                emit(null)
+                                emit(getWalletAddress(transactionRepository.getRecipients(transaction)))
+                            },
+                            flow {
+                                emit(null)
+                                emit(transaction.let { transactionRepository.getMemos(it) })
+                            },
+                            metadataRepository.observeTransactionMetadataByTxId(txId)
+                        ) { address, memos, metadata ->
+                            Triple(address, memos, metadata)
+                        }.flatMapLatest { (address, memos, metadata) ->
+                            addressBookRepository
+                                .observeContactByAddress(address?.address.orEmpty())
+                                .mapLatest { contact ->
+                                    DetailedTransactionData(
+                                        transaction = transaction,
+                                        memos = memos,
+                                        contact = contact,
+                                        recipientAddress = address,
+                                        metadata = metadata
+                                    )
+                                }
+                        }.collect {
+                            send(it)
                         }
-                }.collect {
-                    send(it)
+                    }
+                    awaitClose {
+                        // do nothing
+                    }
                 }
-            }
-            awaitClose {
-                // do nothing
-            }
-        }
-    }.distinctUntilChanged().flowOn(Dispatchers.Default)
+            }.distinctUntilChanged().flowOn(Dispatchers.Default)
 
     private suspend fun getWalletAddress(address: String?): WalletAddress? {
         if (address == null) return null

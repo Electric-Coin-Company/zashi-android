@@ -15,26 +15,27 @@ class GetCurrentTransactionsUseCase(
     private val metadataRepository: MetadataRepository,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun observe() = transactionRepository.currentTransactions
-        .flatMapLatest { transactions ->
-            if (transactions == null) {
-                flowOf(null)
-            } else if (transactions.isEmpty()) {
-                flowOf(emptyList())
-            } else {
-                transactions
-                    .map {
-                        metadataRepository.observeTransactionMetadataByTxId(it.overview.txIdString())
-                            .mapLatest { metadata ->
-                                ListTransactionData(
-                                    data = it,
-                                    metadata = metadata
-                                )
-                            }
-                    }
-                    .combineToFlow()
+    fun observe() =
+        transactionRepository.currentTransactions
+            .flatMapLatest { transactions ->
+                if (transactions == null) {
+                    flowOf(null)
+                } else if (transactions.isEmpty()) {
+                    flowOf(emptyList())
+                } else {
+                    transactions
+                        .map {
+                            metadataRepository.observeTransactionMetadataByTxId(it.overview.txId.txIdString())
+                                .mapLatest { metadata ->
+                                    ListTransactionData(
+                                        data = it,
+                                        metadata = metadata
+                                    )
+                                }
+                        }
+                        .combineToFlow()
+                }
             }
-        }
 }
 
 data class ListTransactionData(

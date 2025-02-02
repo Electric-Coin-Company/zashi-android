@@ -38,7 +38,7 @@ class TransactionHistoryMapper {
                 }
 
         return TransactionState(
-            key = transaction.data.overview.txIdString(),
+            key = transaction.data.overview.txId.txIdString(),
             icon = getIcon(transaction),
             title = getTitle(transaction),
             subtitle = getSubtitle(transactionDate),
@@ -68,16 +68,16 @@ class TransactionHistoryMapper {
 
     private fun getIcon(transaction: ListTransactionData) =
         when (transaction.data.state) {
-            SENT  -> R.drawable.ic_transaction_sent
-            SENDING  -> R.drawable.ic_transaction_send_pending
+            SENT -> R.drawable.ic_transaction_sent
+            SENDING -> R.drawable.ic_transaction_send_pending
             SEND_FAILED -> R.drawable.ic_transaction_send_failed
 
-            RECEIVED  -> R.drawable.ic_transaction_received
-            RECEIVING  -> R.drawable.ic_transaction_receive_pending
+            RECEIVED -> R.drawable.ic_transaction_received
+            RECEIVING -> R.drawable.ic_transaction_receive_pending
             RECEIVE_FAILED -> R.drawable.ic_transaction_receive_pending
 
-            SHIELDED  -> R.drawable.ic_transaction_shielded
-            SHIELDING  -> R.drawable.ic_transaction_shield_pending
+            SHIELDED -> R.drawable.ic_transaction_shielded
+            SHIELDING -> R.drawable.ic_transaction_shield_pending
             SHIELDING_FAILED -> R.drawable.ic_transaction_shield_failed
         }
 

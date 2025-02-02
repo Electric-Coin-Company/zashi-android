@@ -133,11 +133,13 @@ class TransactionDetailViewModel(
                         address = createAddressStringRes(transaction),
                         addressAbbreviated = createAbbreviatedAddressStringRes(transaction),
                         transactionId =
-                        stringResByTransactionId(
-                            value = transaction.transaction.overview.txIdString(),
-                            abbreviated = true
-                        ),
-                        onTransactionIdClick = { onCopyToClipboard(transaction.transaction.overview.txIdString()) },
+                            stringResByTransactionId(
+                                value = transaction.transaction.overview.txId.txIdString(),
+                                abbreviated = true
+                            ),
+                        onTransactionIdClick = {
+                            onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
+                        },
                         onTransactionAddressClick = { onCopyToClipboard(transaction.recipientAddress.address) },
                         fee = createFeeStringRes(transaction),
                         completedTimestamp = createTimestampStringRes(transaction),
@@ -149,12 +151,12 @@ class TransactionDetailViewModel(
                         address = createAddressStringRes(transaction),
                         addressAbbreviated = createAbbreviatedAddressStringRes(transaction),
                         transactionId =
-                        stringResByTransactionId(
-                            value = transaction.transaction.overview.txIdString(),
-                            abbreviated = true
-                        ),
+                            stringResByTransactionId(
+                                value = transaction.transaction.overview.txId.txIdString(),
+                                abbreviated = true
+                            ),
                         onTransactionIdClick = {
-                            onCopyToClipboard(transaction.transaction.overview.txIdString())
+                            onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
                         },
                         onTransactionAddressClick = {
                             onCopyToClipboard(transaction.recipientAddress?.address.orEmpty())
@@ -162,15 +164,15 @@ class TransactionDetailViewModel(
                         fee = createFeeStringRes(transaction),
                         completedTimestamp = createTimestampStringRes(transaction),
                         memo =
-                        TransactionDetailMemosState(
-                            transaction.memos.orEmpty()
-                                .map { memo ->
-                                    TransactionDetailMemoState(
-                                        content = stringRes(memo),
-                                        onClick = { onCopyToClipboard(memo) }
-                                    )
-                                }
-                        ),
+                            TransactionDetailMemosState(
+                                transaction.memos.orEmpty()
+                                    .map { memo ->
+                                        TransactionDetailMemoState(
+                                            content = stringRes(memo),
+                                            onClick = { onCopyToClipboard(memo) }
+                                        )
+                                    }
+                            ),
                         note = noteMetadata?.let { stringRes(it.content) }
                     )
                 }
@@ -182,33 +184,37 @@ class TransactionDetailViewModel(
                 if (transaction.transaction.transactionOutputs.all { it.pool == TransactionPool.TRANSPARENT }) {
                     ReceiveTransparentState(
                         transactionId =
-                        stringResByTransactionId(
-                            value = transaction.transaction.overview.txIdString(),
-                            abbreviated = true
-                        ),
-                        onTransactionIdClick = { onCopyToClipboard(transaction.transaction.overview.txIdString()) },
+                            stringResByTransactionId(
+                                value = transaction.transaction.overview.txId.txIdString(),
+                                abbreviated = true
+                            ),
+                        onTransactionIdClick = {
+                            onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
+                        },
                         completedTimestamp = createTimestampStringRes(transaction),
                         note = noteMetadata?.let { stringRes(it.content) }
                     )
                 } else {
                     ReceiveShieldedState(
                         transactionId =
-                        stringResByTransactionId(
-                            value = transaction.transaction.overview.txIdString(),
-                            abbreviated = true
-                        ),
-                        onTransactionIdClick = { onCopyToClipboard(transaction.transaction.overview.txIdString()) },
+                            stringResByTransactionId(
+                                value = transaction.transaction.overview.txId.txIdString(),
+                                abbreviated = true
+                            ),
+                        onTransactionIdClick = {
+                            onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
+                        },
                         completedTimestamp = createTimestampStringRes(transaction),
                         memo =
-                        TransactionDetailMemosState(
-                            transaction.memos.orEmpty()
-                                .map { memo ->
-                                    TransactionDetailMemoState(
-                                        content = stringRes(memo),
-                                        onClick = { onCopyToClipboard(memo) }
-                                    )
-                                }
-                        ),
+                            TransactionDetailMemosState(
+                                transaction.memos.orEmpty()
+                                    .map { memo ->
+                                        TransactionDetailMemoState(
+                                            content = stringRes(memo),
+                                            onClick = { onCopyToClipboard(memo) }
+                                        )
+                                    }
+                            ),
                         note = noteMetadata?.let { stringRes(it.content) }
                     )
                 }
@@ -219,11 +225,13 @@ class TransactionDetailViewModel(
             SHIELDING_FAILED -> {
                 ShieldingState(
                     transactionId =
-                    stringResByTransactionId(
-                        value = transaction.transaction.overview.txIdString(),
-                        abbreviated = true
-                    ),
-                    onTransactionIdClick = { onCopyToClipboard(transaction.transaction.overview.txIdString()) },
+                        stringResByTransactionId(
+                            value = transaction.transaction.overview.txId.txIdString(),
+                            abbreviated = true
+                        ),
+                    onTransactionIdClick = {
+                        onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
+                    },
                     completedTimestamp = createTimestampStringRes(transaction),
                     fee = createFeeStringRes(transaction),
                     note = noteMetadata?.let { stringRes(it.content) }

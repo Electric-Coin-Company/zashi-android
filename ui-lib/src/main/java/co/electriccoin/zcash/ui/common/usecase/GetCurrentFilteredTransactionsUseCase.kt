@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import android.content.Context
-import cash.z.ecc.android.sdk.model.FirstClassByteArray
+import cash.z.ecc.android.sdk.model.TransactionId
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.TransactionMetadata
@@ -58,20 +58,21 @@ class GetCurrentFilteredTransactionsUseCase(
                             val recipient = transactionRepository.getRecipients(transaction)
 
                             if (recipient == null) {
-                                metadataRepository.observeTransactionMetadataByTxId(transaction.overview.txIdString())
-                                    .map {
-                                        FilterTransactionData(
-                                            transaction = transaction,
-                                            contact = null,
-                                            recipientAddress = null,
-                                            transactionMetadata = it
-                                        )
-                                    }
+                                metadataRepository.observeTransactionMetadataByTxId(
+                                    transaction.overview.txId.txIdString()
+                                ).map {
+                                    FilterTransactionData(
+                                        transaction = transaction,
+                                        contact = null,
+                                        recipientAddress = null,
+                                        transactionMetadata = it
+                                    )
+                                }
                             } else {
                                 combine(
                                     addressBookRepository.observeContactByAddress(recipient),
                                     metadataRepository.observeTransactionMetadataByTxId(
-                                        txId = transaction.overview.txIdString(),
+                                        txId = transaction.overview.txId.txIdString(),
                                     )
                                 ) { contact, transactionMetadata ->
                                     FilterTransactionData(
@@ -128,35 +129,36 @@ class GetCurrentFilteredTransactionsUseCase(
             .distinctUntilChanged()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val result = transactionFilterRepository.filters
-        .flatMapLatest { filters ->
-            flow {
-                emit(null)
-                emitAll(
-                    transactionsFilteredByFulltext
-                        .mapLatest { transactions ->
-                            transactions
-                                ?.filter { transaction ->
-                                    filterBySentReceived(filters, transaction)
-                                }
-                                ?.filter { transaction ->
-                                    filterByGeneralFilters(
-                                        filters = filters,
-                                        transaction = transaction,
-                                        restoreTimestamp = restoreTimestampDataSource.getOrCreate()
-                                    )
-                                }
-                                ?.map { transaction ->
-                                    ListTransactionData(
-                                        data = transaction.transaction,
-                                        metadata = transaction.transactionMetadata
-                                    )
-                                }
-                        }
-                )
+    val result =
+        transactionFilterRepository.filters
+            .flatMapLatest { filters ->
+                flow {
+                    emit(null)
+                    emitAll(
+                        transactionsFilteredByFulltext
+                            .mapLatest { transactions ->
+                                transactions
+                                    ?.filter { transaction ->
+                                        filterBySentReceived(filters, transaction)
+                                    }
+                                    ?.filter { transaction ->
+                                        filterByGeneralFilters(
+                                            filters = filters,
+                                            transaction = transaction,
+                                            restoreTimestamp = restoreTimestampDataSource.getOrCreate()
+                                        )
+                                    }
+                                    ?.map { transaction ->
+                                        ListTransactionData(
+                                            data = transaction.transaction,
+                                            metadata = transaction.transactionMetadata
+                                        )
+                                    }
+                            }
+                    )
+                }
             }
-        }
-        .distinctUntilChanged()
+            .distinctUntilChanged()
 
     fun observe() = result
 
@@ -241,8 +243,7 @@ class GetCurrentFilteredTransactionsUseCase(
         return transaction.transactionMetadata?.isBookmark ?: false
     }
 
-    private fun hasNotes(transaction: FilterTransactionData): Boolean =
-        transaction.transactionMetadata?.noteMetadata?.any() == true
+    private fun hasNotes(transaction: FilterTransactionData): Boolean = transaction.transactionMetadata?.noteMetadata?.any() == true
 
     private fun hasNotesWithFulltext(
         transaction: FilterTransactionData,
@@ -280,9 +281,9 @@ class GetCurrentFilteredTransactionsUseCase(
     }
 
     private fun hasMemoInFilteredIds(
-        memoTxIds: List<FirstClassByteArray>?,
+        memoTxIds: List<TransactionId>?,
         transaction: FilterTransactionData
-    ) = memoTxIds?.contains(transaction.transaction.overview.rawId) ?: false
+    ) = memoTxIds?.contains(transaction.transaction.overview.txId) ?: false
 }
 
 private data class FilterTransactionData(
