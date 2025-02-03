@@ -23,10 +23,12 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.orHiddenString
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
@@ -77,17 +79,21 @@ fun TransactionDetailHeader(
         SelectionContainer {
             Row {
                 Text(
-                    text = state.amount.getValue(),
+                    text =
+                        state.amount orHiddenString
+                            stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                     style = ZashiTypography.header3,
                     fontWeight = FontWeight.SemiBold,
                     color = ZashiColors.Text.textPrimary
                 )
-                Text(
-                    text = stringResource(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
-                    style = ZashiTypography.header3,
-                    fontWeight = FontWeight.SemiBold,
-                    color = ZashiColors.Text.textQuaternary
-                )
+                if (LocalBalancesAvailable.current) {
+                    Text(
+                        text = stringResource(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
+                        style = ZashiTypography.header3,
+                        fontWeight = FontWeight.SemiBold,
+                        color = ZashiColors.Text.textQuaternary
+                    )
+                }
             }
         }
     }

@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -12,6 +13,8 @@ import org.koin.core.parameter.parametersOf
 fun AndroidTransactionDetail(transactionDetail: TransactionDetail) {
     val viewModel: TransactionDetailViewModel = koinViewModel { parametersOf(transactionDetail) }
     val walletViewModel: WalletViewModel = koinViewModel()
+    val mainTopAppBarViewModel = koinViewModel<ZashiMainTopAppBarViewModel>()
+    val mainAppBarState by mainTopAppBarViewModel.state.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val appBarState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
 
@@ -19,5 +22,11 @@ fun AndroidTransactionDetail(transactionDetail: TransactionDetail) {
         state?.onBack?.invoke()
     }
 
-    state?.let { TransactionDetailView(state = it, appBarState = appBarState) }
+    state?.let {
+        TransactionDetailView(
+            state = it,
+            appBarState = appBarState,
+            mainAppBarState = mainAppBarState
+        )
+    }
 }

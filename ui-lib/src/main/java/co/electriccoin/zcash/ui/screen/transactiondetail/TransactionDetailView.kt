@@ -26,6 +26,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
+import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -34,6 +35,7 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveShielded
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveShieldedState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveTransparent
@@ -49,7 +51,8 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailI
 @Composable
 fun TransactionDetailView(
     state: TransactionDetailState,
-    appBarState: TopAppBarSubTitleState
+    appBarState: TopAppBarSubTitleState,
+    mainAppBarState: ZashiMainTopAppBarState?,
 ) {
     GradientBgScaffold(
         startColor = ZashiColors.Surfaces.bgPrimary orDark ZashiColors.Surfaces.bgAdjust,
@@ -58,6 +61,7 @@ fun TransactionDetailView(
             TransactionDetailTopAppBar(
                 onBack = state.onBack,
                 appBarState = appBarState,
+                mainAppBarState = mainAppBarState,
                 state = state,
             )
         }
@@ -205,7 +209,8 @@ fun getHeaderIconState(info: TransactionDetailInfoState): TransactionDetailIconH
 private fun TransactionDetailTopAppBar(
     onBack: () -> Unit,
     appBarState: TopAppBarSubTitleState,
-    state: TransactionDetailState
+    state: TransactionDetailState,
+    mainAppBarState: ZashiMainTopAppBarState?,
 ) {
     ZashiSmallTopAppBar(
         subtitle =
@@ -218,6 +223,10 @@ private fun TransactionDetailTopAppBar(
             ZashiTopAppBarBackNavigation(onBack = onBack)
         },
         regularActions = {
+            mainAppBarState?.balanceVisibilityButton?.let {
+                ZashiIconButton(it, modifier = Modifier.size(40.dp))
+                Spacer(Modifier.width(4.dp))
+            }
             ZashiIconButton(state.bookmarkButton, modifier = Modifier.size(40.dp))
             Spacer(Modifier.width(20.dp))
         },
@@ -247,7 +256,8 @@ private fun SendShieldPreview() =
                     primaryButton = ButtonState(stringRes("Primary")),
                     secondaryButton = ButtonState(stringRes("Secondary")),
                     bookmarkButton = IconButtonState(R.drawable.ic_transaction_detail_no_bookmark) {}
-                )
+                ),
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
         )
     }
 
@@ -269,7 +279,8 @@ private fun SendTransparentPreview() =
                     primaryButton = ButtonState(stringRes("Primary")),
                     secondaryButton = ButtonState(stringRes("Secondary")),
                     bookmarkButton = IconButtonState(R.drawable.ic_transaction_detail_no_bookmark) {}
-                )
+                ),
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
         )
     }
 
@@ -291,7 +302,8 @@ private fun ReceiveShieldPreview() =
                     primaryButton = ButtonState(stringRes("Primary")),
                     secondaryButton = ButtonState(stringRes("Secondary")),
                     bookmarkButton = IconButtonState(R.drawable.ic_transaction_detail_no_bookmark) {}
-                )
+                ),
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
         )
     }
 
@@ -313,7 +325,8 @@ private fun ReceiveTransparentPreview() =
                     primaryButton = ButtonState(stringRes("Primary")),
                     secondaryButton = ButtonState(stringRes("Secondary")),
                     bookmarkButton = IconButtonState(R.drawable.ic_transaction_detail_no_bookmark) {}
-                )
+                ),
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
         )
     }
 
@@ -335,6 +348,7 @@ private fun ShieldingPreview() =
                     primaryButton = ButtonState(stringRes("Primary")),
                     secondaryButton = ButtonState(stringRes("Secondary")),
                     bookmarkButton = IconButtonState(R.drawable.ic_transaction_detail_no_bookmark) {}
-                )
+                ),
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
         )
     }
