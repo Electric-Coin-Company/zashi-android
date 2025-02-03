@@ -42,24 +42,26 @@ internal class TransactionNoteViewModel(
 
     val state: StateFlow<TransactionNoteState> =
         combine(noteText, foundNote) { noteText, foundNote ->
-            createState(noteText, foundNote)
+            createState(noteText = noteText, foundNote = foundNote)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = createState(noteText = "", note = null)
+            initialValue = createState(noteText = "", foundNote = null)
         )
 
     private fun createState(
         noteText: String,
-        note: String?
+        foundNote: String?
     ): TransactionNoteState {
+        val noteTextNormalized = noteText.trim()
+
         val isNoteTextTooLong = noteText.length > MAX_NOTE_LENGTH
 
         return TransactionNoteState(
             onBack = ::onBack,
             onBottomSheetHidden = ::onBottomSheetHidden,
             title =
-                if (note == null) {
+                if (foundNote == null) {
                     stringRes(R.string.transaction_note_add_note_title)
                 } else {
                     stringRes(R.string.transaction_note_edit_note_title)
@@ -79,26 +81,26 @@ internal class TransactionNoteViewModel(
                 ButtonState(
                     text = stringRes(R.string.transaction_note_add_note),
                     onClick = ::onAddOrUpdateNoteClick,
-                    isEnabled = !isNoteTextTooLong && noteText.isNotEmpty()
-                ).takeIf { note == null },
+                    isEnabled = !isNoteTextTooLong && noteTextNormalized.isNotEmpty()
+                ).takeIf { foundNote == null },
             secondaryButton =
                 ButtonState(
                     text = stringRes(R.string.transaction_note_save_note),
                     onClick = ::onAddOrUpdateNoteClick,
-                    isEnabled = !isNoteTextTooLong && noteText.isNotEmpty()
-                ).takeIf { note != null },
+                    isEnabled = !isNoteTextTooLong && noteTextNormalized.isNotEmpty()
+                ).takeIf { foundNote != null },
             negative =
                 ButtonState(
                     text = stringRes(R.string.transaction_note_delete_note),
                     onClick = ::onDeleteNoteClick,
-                ).takeIf { note != null },
+                ).takeIf { foundNote != null },
         )
     }
 
     init {
         viewModelScope.launch {
             val metadata = getTransactionNote(transactionNote.txId)
-            foundNote.update { metadata.note.orEmpty() }
+            foundNote.update { metadata.note }
             noteText.update { metadata.note.orEmpty() }
         }
     }
