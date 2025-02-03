@@ -31,6 +31,7 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import com.flexa.core.Flexa
@@ -104,6 +105,12 @@ class IntegrationsViewModel(
                             subtitle = stringRes(R.string.integrations_flexa_subtitle),
                             onClick = ::onFlexaClicked
                         ).takeIf { isFlexaAvailable == true },
+                        ZashiListItemState(
+                            title = stringRes(R.string.integrations_keystone),
+                            subtitle = stringRes(R.string.integrations_keystone_subtitle),
+                            icon = R.drawable.ic_integrations_keystone,
+                            onClick = ::onConnectKeystoneClick
+                        ),
                     ).toImmutableList()
             )
         }.stateIn(
@@ -118,6 +125,8 @@ class IntegrationsViewModel(
         viewModelScope.launch {
             navigateToCoinbase()
         }
+
+    private fun onConnectKeystoneClick() = navigationRouter.forward(ConnectKeystone)
 
     private fun onFlexaClicked() =
         viewModelScope.launch {
