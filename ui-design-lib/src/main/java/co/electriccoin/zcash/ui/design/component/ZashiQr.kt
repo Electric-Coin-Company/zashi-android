@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -34,6 +36,7 @@ fun ZashiQr(
     modifier: Modifier = Modifier,
     qrSize: Dp = ZashiQrDefaults.width,
     colors: QrCodeColors = QrCodeDefaults.colors(),
+    contentPadding: PaddingValues = QrCodeDefaults.contentPadding()
 ) {
     val qrSizePx = with(LocalDensity.current) { qrSize.roundToPx() }
     val bitmap = getQrCode(state.qrData, qrSizePx, colors)
@@ -41,16 +44,21 @@ fun ZashiQr(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(ZashiDimensions.Radius.radius4xl),
-        border = BorderStroke(width = 1.dp, color = ZashiColors.Surfaces.strokePrimary),
+        border = BorderStroke(width = 1.dp, color = colors.border).takeIf { colors.border.isSpecified },
         color = colors.background,
     ) {
         Box(
-            modifier = Modifier.padding(all = 16.dp)
+            modifier = Modifier.padding(contentPadding)
         ) {
             Image(
                 bitmap = bitmap,
                 contentDescription = state.contentDescription?.getValue(),
-                Modifier.clickable { state.onClick() }
+                Modifier then
+                    if (state.onClick != null) {
+                        Modifier.clickable { state.onClick.invoke() }
+                    } else {
+                        Modifier
+                    }
             )
             if (state.centerImageResId != null) {
                 Image(
@@ -84,19 +92,23 @@ object ZashiQrDefaults {
 private const val WIDTH_RATIO = 0.66
 
 object QrCodeDefaults {
+    fun contentPadding() = PaddingValues(16.dp)
+
     @Composable
     fun colors(
         background: Color = Color.White orDark ZashiColors.Surfaces.bgPrimary,
-        foreground: Color = Color.Black orDark Color.White
+        foreground: Color = Color.Black orDark Color.White,
+        border: Color = ZashiColors.Surfaces.strokePrimary
     ) = QrCodeColors(
         background = background,
-        foreground = foreground
+        foreground = foreground,
+        border = border
     )
 }
 
 data class QrState(
     val qrData: String,
     val contentDescription: StringResource? = null,
-    val onClick: () -> Unit = {},
+    val onClick: (() -> Unit)? = null,
     val centerImageResId: Int? = null,
 )

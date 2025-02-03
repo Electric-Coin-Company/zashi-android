@@ -77,6 +77,8 @@ import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
 import co.electriccoin.zcash.ui.screen.home.WrapHome
 import co.electriccoin.zcash.ui.screen.integrations.WrapIntegrations
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
+import co.electriccoin.zcash.ui.screen.qrdialog.AndroidQrDialog
+import co.electriccoin.zcash.ui.screen.qrdialog.QrDialog
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
@@ -424,6 +426,16 @@ internal fun MainActivity.Navigation() {
         }
         composable<TransactionDetail> {
             AndroidTransactionDetail(it.toRoute())
+        }
+        dialog<QrDialog>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false,
+                    usePlatformDefaultWidth = false
+                )
+        ) {
+            AndroidQrDialog(it.toRoute())
         }
     }
 }

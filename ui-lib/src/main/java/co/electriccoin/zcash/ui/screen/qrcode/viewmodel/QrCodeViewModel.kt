@@ -21,6 +21,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCa
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeType
+import co.electriccoin.zcash.ui.screen.qrdialog.QrDialog
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.util.FileShareUtil
 import kotlinx.coroutines.Dispatchers
@@ -58,8 +59,11 @@ class QrCodeViewModel(
                     onAddressCopy = { address -> onAddressCopyClick(address) },
                     onQrCodeShare = { onQrCodeShareClick(it, versionInfo) },
                     onQrCodeClick = {
-                        // TODO [#1731]: Allow QR codes colors switching
-                        // TODO [#1731]: https://github.com/Electric-Coin-Company/zashi-android/issues/1731
+                        navigationRouter.forward(
+                            QrDialog(
+                                qr = walletAddress.address,
+                            )
+                        )
                     },
                     onBack = ::onBack,
                     qrCodeType =
