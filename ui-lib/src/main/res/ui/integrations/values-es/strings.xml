@@ -8,4 +8,6 @@
     <string name="integrations_flexa">Paga con Flexa</string>
     <string name="integrations_flexa_subtitle">Paga con clips de pago de Flexa y explora una nueva forma de gastar Zcash.</string>
     <string name="integrations_flexa_biometric_message">Autentifícate para pagar con Flexa</string>
+    <string name="integrations_keystone">Connect Keystone Device</string>
+    <string name="integrations_keystone_subtitle">Pair your Keystone hardware wallet with Zashi to sign transactions.</string>
 </resources>
