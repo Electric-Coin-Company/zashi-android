@@ -1,8 +1,8 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import co.electriccoin.zcash.ui.common.model.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionData
+import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import co.electriccoin.zcash.ui.util.combineToFlow
 import kotlinx.coroutines.ExperimentalCoroutinesApi

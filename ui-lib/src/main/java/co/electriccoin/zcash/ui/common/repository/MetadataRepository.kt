@@ -1,19 +1,21 @@
 package co.electriccoin.zcash.ui.common.repository
 
+import cash.z.ecc.android.sdk.model.AccountUuid
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.MetadataDataSource
 import co.electriccoin.zcash.ui.common.model.Metadata
-import co.electriccoin.zcash.ui.common.model.TransactionMetadata
 import co.electriccoin.zcash.ui.common.provider.MetadataKeyStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.sync.Mutex
@@ -23,10 +25,7 @@ import kotlinx.coroutines.withContext
 interface MetadataRepository {
     val metadata: Flow<Metadata?>
 
-    suspend fun markTxAsBookmark(
-        txId: String,
-        isBookmark: Boolean
-    )
+    suspend fun flipTxBookmark(txId: String)
 
     suspend fun createOrUpdateTxNote(
         txId: String,
@@ -60,16 +59,14 @@ class MetadataRepositoryImpl(
                 }
             }
 
-    override suspend fun markTxAsBookmark(
-        txId: String,
-        isBookmark: Boolean
-    ) = mutateMetadata {
-        metadataDataSource.markTxAsBookmark(
-            txId = txId,
-            key = getMetadataKey(),
-            isBookmark = isBookmark
-        )
-    }
+    override suspend fun flipTxBookmark(txId: String) =
+        mutateMetadata {
+            metadataDataSource.flipTxAsBookmarked(
+                txId = txId,
+                key = getMetadataKey(),
+                account = accountDataSource.getSelectedAccount().sdkAccount.accountUuid
+            )
+        }
 
     override suspend fun createOrUpdateTxNote(
         txId: String,
@@ -79,6 +76,7 @@ class MetadataRepositoryImpl(
             txId = txId,
             note = note,
             key = getMetadataKey(),
+            account = accountDataSource.getSelectedAccount().sdkAccount.accountUuid
         )
     }
 
@@ -86,7 +84,8 @@ class MetadataRepositoryImpl(
         mutateMetadata {
             metadataDataSource.deleteTxNote(
                 txId = txId,
-                key = getMetadataKey()
+                key = getMetadataKey(),
+                account = accountDataSource.getSelectedAccount().sdkAccount.accountUuid
             )
         }
 
@@ -95,6 +94,7 @@ class MetadataRepositoryImpl(
             metadataDataSource.markTxMemoAsRead(
                 txId = txId,
                 key = getMetadataKey(),
+                account = accountDataSource.getSelectedAccount().sdkAccount.accountUuid
             )
         }
 
@@ -105,13 +105,20 @@ class MetadataRepositoryImpl(
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalStdlibApi::class)
     override fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata?> =
-        metadata
-            .mapLatest { metadata ->
-                metadata?.transactions?.firstOrNull { it.txId == txId }
-            }
-            .distinctUntilChanged()
+        combine<Metadata?, AccountUuid, TransactionMetadata?>(
+            metadata,
+            accountDataSource.selectedAccount.filterNotNull().map { it.sdkAccount.accountUuid }.distinctUntilChanged()
+        ) { metadata, account ->
+            val accountMetadata = metadata?.accountMetadata?.get(account.value.toHexString())
+
+            TransactionMetadata(
+                isBookmarked = accountMetadata?.bookmarked?.find { it.txId == txId }?.isBookmarked == true,
+                isRead = accountMetadata?.read?.any { it == txId } == true,
+                note = accountMetadata?.annotations?.find { it.txId == txId }?.content,
+            )
+        }.distinctUntilChanged().onStart { emit(null) }
 
     private suspend fun ensureSynchronization() {
         if (cache.value == null) {
@@ -152,3 +159,9 @@ class MetadataRepositoryImpl(
         }
     }
 }
+
+data class TransactionMetadata(
+    val isBookmarked: Boolean,
+    val isRead: Boolean,
+    val note: String?
+)

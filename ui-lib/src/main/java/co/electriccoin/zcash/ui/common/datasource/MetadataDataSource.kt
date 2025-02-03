@@ -1,12 +1,13 @@
 package co.electriccoin.zcash.ui.common.datasource
 
+import cash.z.ecc.android.sdk.model.AccountUuid
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.model.AccountMetadata
+import co.electriccoin.zcash.ui.common.model.AnnotationMetadata
+import co.electriccoin.zcash.ui.common.model.BookmarkMetadata
 import co.electriccoin.zcash.ui.common.model.Metadata
-import co.electriccoin.zcash.ui.common.model.NoteMetadata
-import co.electriccoin.zcash.ui.common.model.TransactionMetadata
 import co.electriccoin.zcash.ui.common.provider.MetadataProvider
 import co.electriccoin.zcash.ui.common.provider.MetadataStorageProvider
-import co.electriccoin.zcash.ui.common.serialization.METADATA_SERIALIZATION_V1
 import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -17,25 +18,28 @@ import java.time.Instant
 interface MetadataDataSource {
     suspend fun getMetadata(key: MetadataKey): Metadata
 
-    suspend fun markTxAsBookmark(
+    suspend fun flipTxAsBookmarked(
         txId: String,
-        key: MetadataKey,
-        isBookmark: Boolean
+        account: AccountUuid,
+        key: MetadataKey
     ): Metadata
 
     suspend fun createOrUpdateTxNote(
         txId: String,
         note: String,
+        account: AccountUuid,
         key: MetadataKey
     ): Metadata
 
     suspend fun deleteTxNote(
         txId: String,
+        account: AccountUuid,
         key: MetadataKey
     ): Metadata
 
     suspend fun markTxMemoAsRead(
         txId: String,
+        account: AccountUuid,
         key: MetadataKey
     ): Metadata
 
@@ -47,6 +51,7 @@ interface MetadataDataSource {
     suspend fun resetMetadata()
 }
 
+@Suppress("TooManyFunctions")
 class MetadataDataSourceImpl(
     private val metadataStorageProvider: MetadataStorageProvider,
     private val metadataProvider: MetadataProvider,
@@ -60,22 +65,16 @@ class MetadataDataSourceImpl(
             getMetadataInternal(key)
         }
 
-    override suspend fun markTxAsBookmark(
+    override suspend fun flipTxAsBookmarked(
         txId: String,
+        account: AccountUuid,
         key: MetadataKey,
-        isBookmark: Boolean
     ): Metadata =
         mutex.withLock {
-            updateMetadataTransactions(txId = txId, key = key) {
-                it?.copy(
-                    isBookmark = isBookmark,
+            updateMetadataBookmark(txId = txId, account = account, key = key) {
+                it.copy(
+                    isBookmarked = !it.isBookmarked,
                     lastUpdated = Instant.now(),
-                ) ?: TransactionMetadata(
-                    txId = txId,
-                    lastUpdated = Instant.now(),
-                    noteMetadata = emptyList(),
-                    isMemoRead = false,
-                    isBookmark = isBookmark,
                 )
             }
         }
@@ -83,61 +82,55 @@ class MetadataDataSourceImpl(
     override suspend fun createOrUpdateTxNote(
         txId: String,
         note: String,
+        account: AccountUuid,
         key: MetadataKey
     ): Metadata =
         mutex.withLock {
-            updateMetadataTransactions(txId = txId, key = key) {
-                val newNoteMetadata = listOf(NoteMetadata(content = note))
-                it?.copy(
-                    noteMetadata = newNoteMetadata,
+            updateMetadataAnnotation(
+                txId = txId,
+                account = account,
+                key = key
+            ) {
+                it.copy(
+                    content = note,
                     lastUpdated = Instant.now(),
-                ) ?: TransactionMetadata(
-                    txId = txId,
-                    lastUpdated = Instant.now(),
-                    noteMetadata = newNoteMetadata,
-                    isMemoRead = false,
-                    isBookmark = false,
                 )
             }
         }
 
     override suspend fun deleteTxNote(
         txId: String,
+        account: AccountUuid,
         key: MetadataKey
     ): Metadata =
         mutex.withLock {
-            updateMetadataTransactions(txId = txId, key = key) {
-                val newNoteMetadata = emptyList<NoteMetadata>()
-                it?.copy(
-                    noteMetadata = newNoteMetadata,
+            updateMetadataAnnotation(
+                txId = txId,
+                account = account,
+                key = key
+            ) {
+                it.copy(
+                    content = null,
                     lastUpdated = Instant.now(),
-                ) ?: TransactionMetadata(
-                    txId = txId,
-                    lastUpdated = Instant.now(),
-                    noteMetadata = newNoteMetadata,
-                    isMemoRead = false,
-                    isBookmark = false,
                 )
             }
         }
 
     override suspend fun markTxMemoAsRead(
         txId: String,
+        account: AccountUuid,
         key: MetadataKey
     ): Metadata =
         mutex.withLock {
-            updateMetadataTransactions(txId = txId, key = key) {
-                it?.copy(
-                    isMemoRead = true,
-                    lastUpdated = Instant.now(),
-                ) ?: TransactionMetadata(
-                    txId = txId,
-                    lastUpdated = Instant.now(),
-                    noteMetadata = emptyList(),
-                    isMemoRead = true,
-                    isBookmark = false,
-                )
-            }
+            updateMetadata(
+                account = account,
+                key = key,
+                transform = { metadata ->
+                    metadata.copy(
+                        read = (metadata.read.toSet() + txId).toList()
+                    )
+                }
+            )
         }
 
     override suspend fun save(
@@ -174,7 +167,7 @@ class MetadataDataSourceImpl(
                         Metadata(
                             version = 1,
                             lastUpdated = Instant.now(),
-                            transactions = emptyList(),
+                            accountMetadata = emptyMap(),
                         ).also {
                             this@MetadataDataSourceImpl.metadata = it
                         }
@@ -197,29 +190,120 @@ class MetadataDataSourceImpl(
         }.onFailure { e -> Twig.warn(e) { "Failed to write address book" } }
     }
 
-    private suspend fun updateMetadataTransactions(
+    private suspend fun updateMetadataAnnotation(
         txId: String,
+        account: AccountUuid,
         key: MetadataKey,
-        transform: (TransactionMetadata?) -> TransactionMetadata
+        transform: (AnnotationMetadata) -> AnnotationMetadata
     ): Metadata {
-        fun List<TransactionMetadata>.replaceOrAdd(
-            txId: String,
-            transform: (TransactionMetadata?) -> TransactionMetadata
-        ) = if (this.any { it.txId == txId }) {
-            this.map { if (it.txId == txId) transform(it) else it }
-        } else {
-            this + transform(null)
-        }
-
-        return withContext(Dispatchers.IO) {
-            Metadata(
-                lastUpdated = Instant.now(),
-                version = METADATA_SERIALIZATION_V1,
-                transactions = getMetadataInternal(key).transactions.replaceOrAdd(txId, transform),
-            ).also {
-                this@MetadataDataSourceImpl.metadata = it
-                writeToLocalStorage(it, key)
+        return updateMetadata(
+            account = account,
+            key = key,
+            transform = { metadata ->
+                metadata.copy(
+                    annotations =
+                        metadata.annotations
+                            .replaceOrAdd(
+                                predicate = { it.txId == txId },
+                                transform = {
+                                    val bookmarkMetadata = it ?: defaultAnnotationMetadata(txId)
+                                    transform(bookmarkMetadata)
+                                }
+                            )
+                )
             }
+        )
+    }
+
+    private suspend fun updateMetadataBookmark(
+        txId: String,
+        account: AccountUuid,
+        key: MetadataKey,
+        transform: (BookmarkMetadata) -> BookmarkMetadata
+    ): Metadata {
+        return updateMetadata(
+            account = account,
+            key = key,
+            transform = { metadata ->
+                metadata.copy(
+                    bookmarked =
+                        metadata.bookmarked
+                            .replaceOrAdd(
+                                predicate = { it.txId == txId },
+                                transform = {
+                                    val bookmarkMetadata = it ?: defaultBookmarkMetadata(txId)
+                                    transform(bookmarkMetadata)
+                                }
+                            )
+                )
+            }
+        )
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private suspend fun updateMetadata(
+        account: AccountUuid,
+        key: MetadataKey,
+        transform: (AccountMetadata) -> AccountMetadata
+    ): Metadata {
+        return withContext(Dispatchers.IO) {
+            val metadata = getMetadataInternal(key)
+
+            val accountMetadata = metadata.accountMetadata[account.value.toHexString()] ?: defaultAccountMetadata()
+
+            val updatedMetadata =
+                metadata.copy(
+                    lastUpdated = Instant.now(),
+                    accountMetadata =
+                        metadata.accountMetadata
+                            .toMutableMap()
+                            .apply {
+                                put(account.value.toHexString(), transform(accountMetadata))
+                            }
+                            .toMap()
+                )
+
+            this@MetadataDataSourceImpl.metadata = updatedMetadata
+            writeToLocalStorage(updatedMetadata, key)
+
+            updatedMetadata
         }
+    }
+}
+
+private fun defaultAccountMetadata() =
+    AccountMetadata(
+        bookmarked = emptyList(),
+        read = emptyList(),
+        annotations = emptyList(),
+    )
+
+private fun defaultBookmarkMetadata(txId: String) =
+    BookmarkMetadata(
+        txId = txId,
+        lastUpdated = Instant.now(),
+        isBookmarked = false
+    )
+
+private fun defaultAnnotationMetadata(txId: String) =
+    AnnotationMetadata(
+        txId = txId,
+        lastUpdated = Instant.now(),
+        content = null
+    )
+
+private fun <T : Any> List<T>.replaceOrAdd(
+    predicate: (T) -> Boolean,
+    transform: (T?) -> T
+): List<T> {
+    val index = this.indexOfFirst(predicate)
+    return if (index != -1) {
+        this.toMutableList()
+            .apply {
+                set(index, transform(this[index]))
+            }
+            .toList()
+    } else {
+        this + transform(null)
     }
 }

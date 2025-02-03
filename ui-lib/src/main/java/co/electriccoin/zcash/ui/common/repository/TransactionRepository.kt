@@ -117,7 +117,11 @@ class TransactionRepositoryImpl(
     override suspend fun getRecipients(transactionData: TransactionData): String? =
         withContext(Dispatchers.IO) {
             if (transactionData.overview.isSentTransaction) {
-                val result = synchronizerProvider.getSynchronizer().getRecipients(transactionData.overview).firstOrNull()
+                val result =
+                    synchronizerProvider
+                        .getSynchronizer()
+                        .getRecipients(transactionData.overview)
+                        .firstOrNull()
                 (result as? TransactionRecipient.RecipientAddress)?.addressValue
             } else {
                 null

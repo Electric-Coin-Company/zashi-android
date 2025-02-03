@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.NoteMetadata
 import co.electriccoin.zcash.ui.common.usecase.CreateOrUpdateTransactionNoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteTransactionNoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionMetadataUseCase
@@ -39,20 +38,20 @@ internal class TransactionNoteViewModel(
     private val bottomSheetHiddenResponse = MutableSharedFlow<Unit>()
 
     private val noteText = MutableStateFlow("")
-    private val foundNoteMetadata = MutableStateFlow<NoteMetadata?>(null)
+    private val foundNote = MutableStateFlow<String?>(null)
 
     val state: StateFlow<TransactionNoteState> =
-        combine(noteText, foundNoteMetadata) { noteText, foundNote ->
+        combine(noteText, foundNote) { noteText, foundNote ->
             createState(noteText, foundNote)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = createState(noteText = "", foundNoteMetadata = null)
+            initialValue = createState(noteText = "", note = null)
         )
 
     private fun createState(
         noteText: String,
-        foundNoteMetadata: NoteMetadata?
+        note: String?
     ): TransactionNoteState {
         val isNoteTextTooLong = noteText.length > MAX_NOTE_LENGTH
 
@@ -60,7 +59,7 @@ internal class TransactionNoteViewModel(
             onBack = ::onBack,
             onBottomSheetHidden = ::onBottomSheetHidden,
             title =
-                if (foundNoteMetadata == null) {
+                if (note == null) {
                     stringRes(R.string.transaction_note_add_note_title)
                 } else {
                     stringRes(R.string.transaction_note_edit_note_title)
@@ -81,26 +80,26 @@ internal class TransactionNoteViewModel(
                     text = stringRes(R.string.transaction_note_add_note),
                     onClick = ::onAddOrUpdateNoteClick,
                     isEnabled = !isNoteTextTooLong && noteText.isNotEmpty()
-                ).takeIf { foundNoteMetadata == null },
+                ).takeIf { note == null },
             secondaryButton =
                 ButtonState(
                     text = stringRes(R.string.transaction_note_save_note),
                     onClick = ::onAddOrUpdateNoteClick,
                     isEnabled = !isNoteTextTooLong && noteText.isNotEmpty()
-                ).takeIf { foundNoteMetadata != null },
+                ).takeIf { note != null },
             negative =
                 ButtonState(
                     text = stringRes(R.string.transaction_note_delete_note),
                     onClick = ::onDeleteNoteClick,
-                ).takeIf { foundNoteMetadata != null },
+                ).takeIf { note != null },
         )
     }
 
     init {
         viewModelScope.launch {
             val metadata = getTransactionNote(transactionNote.txId)
-            foundNoteMetadata.update { metadata.noteMetadata.firstOrNull() }
-            noteText.update { metadata.noteMetadata.firstOrNull()?.content.orEmpty() }
+            foundNote.update { metadata.note.orEmpty() }
+            noteText.update { metadata.note.orEmpty() }
         }
     }
 

@@ -1,31 +1,49 @@
 package co.electriccoin.zcash.ui.common.model
 
-import com.google.gson.annotations.SerializedName
+import co.electriccoin.zcash.ui.common.serialization.InstantSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.time.Instant
 
+@Serializable
 data class Metadata(
-    @SerializedName("version")
+    @SerialName("version")
     val version: Int,
-    @SerializedName("lastUpdated")
+    @SerialName("lastUpdated")
+    @Serializable(InstantSerializer::class)
     val lastUpdated: Instant,
-    @SerializedName("transactions")
-    val transactions: List<TransactionMetadata>
+    @SerialName("accountMetadata")
+    val accountMetadata: Map<String, AccountMetadata>
 )
 
-data class NoteMetadata(
-    @SerializedName("content")
-    val content: String
+@Serializable
+data class AccountMetadata(
+    @SerialName("bookmarked")
+    val bookmarked: List<BookmarkMetadata>,
+    @SerialName("read")
+    val read: List<String>,
+    @SerialName("annotations")
+    val annotations: List<AnnotationMetadata>
 )
 
-data class TransactionMetadata(
-    @SerializedName("txId")
+@Serializable
+data class BookmarkMetadata(
+    @SerialName("txId")
     val txId: String,
-    @SerializedName("lastUpdated")
+    @SerialName("lastUpdated")
+    @Serializable(InstantSerializer::class)
     val lastUpdated: Instant,
-    @SerializedName("notes")
-    val noteMetadata: List<NoteMetadata>,
-    @SerializedName("isMemoRead")
-    val isMemoRead: Boolean,
-    @SerializedName("isBookmark")
-    val isBookmark: Boolean,
+    @SerialName("isBookmarked")
+    val isBookmarked: Boolean
+)
+
+@Serializable
+data class AnnotationMetadata(
+    @SerialName("txId")
+    val txId: String,
+    @SerialName("content")
+    val content: String?,
+    @SerialName("lastUpdated")
+    @Serializable(InstantSerializer::class)
+    val lastUpdated: Instant,
 )

@@ -4,12 +4,12 @@ import android.content.Context
 import cash.z.ecc.android.sdk.model.TransactionId
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
-import co.electriccoin.zcash.ui.common.model.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.common.repository.TransactionFilter
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
+import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -235,26 +235,27 @@ class GetCurrentFilteredTransactionsUseCase(
         } else {
             val transactionMetadata = transaction.transactionMetadata
 
-            hasMemo && (transactionMetadata == null || transactionMetadata.isMemoRead.not())
+            hasMemo && (transactionMetadata == null || transactionMetadata.isRead.not())
         }
     }
 
     private fun isBookmark(transaction: FilterTransactionData): Boolean {
-        return transaction.transactionMetadata?.isBookmark ?: false
+        return transaction.transactionMetadata?.isBookmarked ?: false
     }
 
-    private fun hasNotes(transaction: FilterTransactionData): Boolean = transaction.transactionMetadata?.noteMetadata?.any() == true
+    private fun hasNotes(transaction: FilterTransactionData): Boolean {
+        return transaction.transactionMetadata?.note != null
+    }
 
     private fun hasNotesWithFulltext(
         transaction: FilterTransactionData,
         fulltextFilter: String
     ): Boolean {
-        return transaction.transactionMetadata?.noteMetadata?.any {
-            it.content.contains(
+        return transaction.transactionMetadata?.note
+            ?.contains(
                 fulltextFilter,
                 ignoreCase = true
             )
-        }
             ?: false
     }
 

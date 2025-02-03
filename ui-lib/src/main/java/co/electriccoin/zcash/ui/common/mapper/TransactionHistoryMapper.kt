@@ -62,7 +62,7 @@ class TransactionHistoryMapper {
             false
         } else {
             val transactionMetadata = transaction.metadata
-            hasMemo && (transactionMetadata == null || transactionMetadata.isMemoRead.not())
+            hasMemo && (transactionMetadata == null || transactionMetadata.isRead.not())
         }
     }
 

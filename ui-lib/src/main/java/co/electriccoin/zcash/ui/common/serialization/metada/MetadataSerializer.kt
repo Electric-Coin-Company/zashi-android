@@ -1,28 +1,24 @@
 package co.electriccoin.zcash.ui.common.serialization.metada
 
 import co.electriccoin.zcash.ui.common.model.Metadata
-import com.google.gson.Gson
-import com.google.gson.JsonParser
-import com.google.gson.reflect.TypeToken
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.json.encodeToStream
 import java.io.InputStream
-import java.io.InputStreamReader
 import java.io.OutputStream
 
-class MetadataSerializer(
-    private val gson: Gson
-) {
+class MetadataSerializer {
+    @OptIn(ExperimentalSerializationApi::class)
     fun serialize(
         outputStream: OutputStream,
         metadata: Metadata
     ) {
-        val json = gson.toJson(metadata)
-        outputStream.write(json.toByteArray(Charsets.UTF_8))
+        Json.encodeToStream(metadata, outputStream)
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     fun deserialize(inputStream: InputStream): Metadata {
-        return InputStreamReader(inputStream).use { reader ->
-            val temp = JsonParser.parseReader(reader).getAsJsonObject()
-            gson.fromJson(temp, object : TypeToken<Metadata>() {}.type)
-        }
+        return Json.decodeFromStream(inputStream)
     }
 }

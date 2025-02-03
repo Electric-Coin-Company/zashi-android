@@ -3,11 +3,11 @@ package co.electriccoin.zcash.ui.common.usecase
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
-import co.electriccoin.zcash.ui.common.model.TransactionMetadata
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionData
+import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -87,10 +87,4 @@ data class DetailedTransactionData(
     val contact: AddressBookContact?,
     val recipientAddress: WalletAddress?,
     val metadata: TransactionMetadata?
-) {
-    val hasNoteMetadata: Boolean
-        get() = metadata?.noteMetadata?.isNotEmpty() == true
-
-    val isBookmarked: Boolean
-        get() = metadata?.isBookmark == true
-}
+)

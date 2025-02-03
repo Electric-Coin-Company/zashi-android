@@ -82,7 +82,7 @@ class TransactionDetailViewModel(
                 secondaryButton =
                     ButtonState(
                         text =
-                            if (transaction.hasNoteMetadata) {
+                            if (transaction.metadata?.note != null) {
                                 stringRes(R.string.transaction_detail_edit_note)
                             } else {
                                 stringRes(R.string.transaction_detail_add_a_note)
@@ -92,7 +92,7 @@ class TransactionDetailViewModel(
                 bookmarkButton =
                     IconButtonState(
                         icon =
-                            if (transaction.isBookmarked) {
+                            if (transaction.metadata?.isBookmarked == true) {
                                 R.drawable.ic_transaction_detail_bookmark
                             } else {
                                 R.drawable.ic_transaction_detail_no_bookmark
@@ -111,7 +111,7 @@ class TransactionDetailViewModel(
             withContext(Dispatchers.Default) {
                 val transaction = transaction.filterNotNull().first()
                 if (transaction.transaction.overview.memoCount > 0) {
-                    markTxMemoAsRead.invoke(transactionDetail.transactionId)
+                    markTxMemoAsRead(transactionDetail.transactionId)
                 }
             }
         }
@@ -122,7 +122,6 @@ class TransactionDetailViewModel(
     }
 
     private fun createTransactionInfoState(transaction: DetailedTransactionData): TransactionDetailInfoState {
-        val noteMetadata = transaction.metadata?.noteMetadata?.firstOrNull()
         return when (transaction.transaction.state) {
             SENT,
             SENDING,
@@ -143,7 +142,7 @@ class TransactionDetailViewModel(
                         onTransactionAddressClick = { onCopyToClipboard(transaction.recipientAddress.address) },
                         fee = createFeeStringRes(transaction),
                         completedTimestamp = createTimestampStringRes(transaction),
-                        note = noteMetadata?.let { stringRes(it.content) }
+                        note = transaction.metadata?.note?.let { stringRes(it) }
                     )
                 } else {
                     SendShieldedState(
@@ -173,7 +172,7 @@ class TransactionDetailViewModel(
                                         )
                                     }
                             ),
-                        note = noteMetadata?.let { stringRes(it.content) }
+                        note = transaction.metadata?.note?.let { stringRes(it) }
                     )
                 }
             }
@@ -192,7 +191,7 @@ class TransactionDetailViewModel(
                             onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
                         },
                         completedTimestamp = createTimestampStringRes(transaction),
-                        note = noteMetadata?.let { stringRes(it.content) }
+                        note = transaction.metadata?.note?.let { stringRes(it) }
                     )
                 } else {
                     ReceiveShieldedState(
@@ -215,7 +214,7 @@ class TransactionDetailViewModel(
                                         )
                                     }
                             ),
-                        note = noteMetadata?.let { stringRes(it.content) }
+                        note = transaction.metadata?.note?.let { stringRes(it) }
                     )
                 }
             }
@@ -234,7 +233,7 @@ class TransactionDetailViewModel(
                     },
                     completedTimestamp = createTimestampStringRes(transaction),
                     fee = createFeeStringRes(transaction),
-                    note = noteMetadata?.let { stringRes(it.content) }
+                    note = transaction.metadata?.note?.let { stringRes(it) }
                 )
             }
         }
