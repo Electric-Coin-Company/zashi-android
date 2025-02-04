@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.design.component
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -108,7 +107,7 @@ private fun ZashiQrInternal(
     modifier: Modifier = Modifier,
 ) {
     val qrSizePx = with(LocalDensity.current) { qrSize.roundToPx() }
-    var bitmap: ImageBitmap? by remember {
+    var bitmap: ImageBitmap by remember {
         mutableStateOf(getQrCode(state.qrData, qrSizePx, colors))
     }
 
@@ -131,17 +130,11 @@ private fun ZashiQrInternal(
         Box(
             modifier = Modifier.padding(contentPadding)
         ) {
-            if (bitmap == null) {
-                Box(modifier = Modifier.size(qrSize))
-            } else {
-                bitmap?.let {
-                    Image(
-                        modifier = Modifier,
-                        bitmap = it,
-                        contentDescription = state.contentDescription?.getValue(),
-                    )
-                }
-            }
+            Image(
+                modifier = Modifier,
+                bitmap = bitmap,
+                contentDescription = state.contentDescription?.getValue(),
+            )
 
             if (centerImageResId != null) {
                 Image(
