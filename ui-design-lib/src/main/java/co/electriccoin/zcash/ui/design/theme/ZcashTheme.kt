@@ -36,11 +36,10 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypographyInternal
 @Composable
 fun ZcashTheme(
     forceDarkMode: Boolean = false,
-    forceLightMode: Boolean = false,
     balancesAvailable: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val useDarkMode = !forceLightMode && (forceDarkMode || isSystemInDarkTheme())
+    val useDarkMode = forceDarkMode || isSystemInDarkTheme()
     val baseColors = if (useDarkMode) DarkColorPalette else LightColorPalette
     val extendedColors = if (useDarkMode) DarkExtendedColorPalette else LightExtendedColorPalette
     val zashiColors = if (useDarkMode) DarkZashiColorsInternal else LightZashiColorsInternal

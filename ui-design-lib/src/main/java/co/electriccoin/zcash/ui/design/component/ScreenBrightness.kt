@@ -37,12 +37,13 @@ val LocalScreenBrightness = compositionLocalOf { ScreenBrightness }
 fun BrightenScreen() {
     val screenBrightness = LocalScreenBrightness.current
     DisposableEffect(screenBrightness) {
-        ScreenBrightness.fullBrightness()
-        onDispose { ScreenBrightness.restoreBrightness() }
+        screenBrightness.fullBrightness()
+        onDispose { screenBrightness.restoreBrightness() }
     }
 }
 
 @Composable
 fun RestoreScreenBrightness() {
-    ScreenBrightness.restoreBrightness()
+    val screenBrightness = LocalScreenBrightness.current
+    screenBrightness.restoreBrightness()
 }
