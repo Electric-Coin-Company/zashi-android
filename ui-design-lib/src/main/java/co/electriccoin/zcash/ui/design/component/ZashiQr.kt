@@ -69,7 +69,6 @@ fun ZashiQr(
         qrSize = qrSize,
         enableBitmapReload = !isFullscreenDialogVisible,
         centerImageResId = state.centerImageResId,
-        tag = "kktina 1"
     )
 
     if (isFullscreenDialogVisible) {
@@ -106,12 +105,10 @@ private fun ZashiQrInternal(
     contentPadding: PaddingValues,
     enableBitmapReload: Boolean,
     centerImageResId: Int?,
-    tag: String,
     modifier: Modifier = Modifier,
 ) {
     val qrSizePx = with(LocalDensity.current) { qrSize.roundToPx() }
     var bitmap: ImageBitmap? by remember {
-        Log.d(tag, "loaded")
         mutableStateOf(getQrCode(state.qrData, qrSizePx, colors))
     }
 
@@ -120,7 +117,6 @@ private fun ZashiQrInternal(
     LaunchedEffect(state.qrData, qrSizePx, colors) {
         if (enableBitmapReload && reload) {
             bitmap = getQrCode(state.qrData, qrSizePx, colors)
-            Log.d(tag, "launchedeffect")
         }
 
         reload = true
@@ -193,7 +189,6 @@ private fun FullscreenDialogContent(
             qrSize = LocalConfiguration.current.screenWidthDp.dp - 44.dp,
             enableBitmapReload = true,
             centerImageResId = state.fullscreenCenterImageResId,
-            tag = "kktina 2"
         )
     }
 }
