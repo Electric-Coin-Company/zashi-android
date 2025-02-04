@@ -146,6 +146,7 @@ private fun ZashiListTrailingItem(
     }
 }
 
+@Suppress("MagicNumber")
 @Composable
 private fun ZashiListContentItem(
     text: String,
@@ -183,10 +184,12 @@ private fun ZashiListContentItem(
                         contentDescription = null,
                     )
                 } else {
+                    val offset = if (index == 1) (-2).dp else (-6).dp
+
                     Image(
                         modifier =
                             Modifier
-                                .offset(x = (-2).dp)
+                                .offset(x = offset)
                                 .size(24.dp)
                                 .border(2.dp, ZashiColors.Surfaces.bgPrimary, CircleShape)
                                 .size(20.dp)
