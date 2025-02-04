@@ -15,7 +15,6 @@ import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
-import co.electriccoin.zcash.ui.screen.qrdialog.QrDialog
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.state.SignKeystoneTransactionState
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.state.ZashiAccountInfoListItemState
@@ -77,13 +76,6 @@ class SignKeystoneTransactionViewModel(
                         onClick = ::onSharePCZTClick
                     ).takeIf { BuildConfig.DEBUG },
                 onBack = ::onBack,
-                onQrCodeClick = {
-                    navigationRouter.forward(
-                        QrDialog(
-                            qr = qrData.orEmpty(),
-                        )
-                    )
-                },
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 

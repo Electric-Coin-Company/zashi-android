@@ -36,9 +36,9 @@ internal sealed class RequestState {
 
     data class QrCode(
         val icon: Int,
+        val fullScreenIcon: Int,
         val request: Request,
         val walletAddress: WalletAddress,
-        val onQrCodeClick: () -> Unit,
         val onQrCodeShare: (colors: QrCodeColors, pixels: Int, uri: String) -> Unit,
         override val onBack: () -> Unit,
         val onClose: () -> Unit,
@@ -47,11 +47,12 @@ internal sealed class RequestState {
         fun toQrState(
             contentDescription: StringResource? = null,
             centerImageResId: Int? = null,
+            fullscreenCenterImageResId: Int? = null
         ) = QrState(
             qrData = request.qrCodeState.requestUri,
-            onClick = onQrCodeClick,
             contentDescription = contentDescription,
-            centerImageResId = centerImageResId
+            centerImageResId = centerImageResId,
+            fullscreenCenterImageResId = fullscreenCenterImageResId
         )
     }
 }

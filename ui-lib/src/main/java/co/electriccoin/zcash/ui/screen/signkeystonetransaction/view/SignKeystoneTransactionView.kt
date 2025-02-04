@@ -192,7 +192,6 @@ private fun Preview() =
                     positiveButton = ButtonState(stringRes("Get Signature")),
                     negativeButton = ButtonState(stringRes("Reject")),
                     onBack = {},
-                    onQrCodeClick = {},
                 )
         )
     }
@@ -216,7 +215,6 @@ private fun DebugPreview() =
                     positiveButton = ButtonState(stringRes("Get Signature")),
                     negativeButton = ButtonState(stringRes("Reject")),
                     onBack = {},
-                    onQrCodeClick = {},
                 )
         )
     }

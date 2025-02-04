@@ -8,10 +8,10 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.filters.MediumTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
-import co.electriccoin.zcash.ui.common.compose.BrightenScreen
-import co.electriccoin.zcash.ui.common.compose.LocalScreenBrightness
-import co.electriccoin.zcash.ui.common.compose.ScreenBrightness
-import co.electriccoin.zcash.ui.common.compose.ScreenBrightnessState
+import co.electriccoin.zcash.ui.design.component.BrightenScreen
+import co.electriccoin.zcash.ui.design.component.LocalScreenBrightness
+import co.electriccoin.zcash.ui.design.component.ScreenBrightness
+import co.electriccoin.zcash.ui.design.component.ScreenBrightnessState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

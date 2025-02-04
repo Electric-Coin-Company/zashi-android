@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.common.compose
+package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -37,13 +37,12 @@ val LocalScreenBrightness = compositionLocalOf { ScreenBrightness }
 fun BrightenScreen() {
     val screenBrightness = LocalScreenBrightness.current
     DisposableEffect(screenBrightness) {
-        screenBrightness.fullBrightness()
-        onDispose { screenBrightness.restoreBrightness() }
+        ScreenBrightness.fullBrightness()
+        onDispose { ScreenBrightness.restoreBrightness() }
     }
 }
 
 @Composable
 fun RestoreScreenBrightness() {
-    val screenBrightness = LocalScreenBrightness.current
-    screenBrightness.restoreBrightness()
+    ScreenBrightness.restoreBrightness()
 }

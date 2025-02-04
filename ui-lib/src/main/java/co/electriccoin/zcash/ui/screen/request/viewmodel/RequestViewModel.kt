@@ -24,7 +24,6 @@ import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
 import co.electriccoin.zcash.ui.design.util.QrCodeColors
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
-import co.electriccoin.zcash.ui.screen.qrdialog.QrDialog
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
@@ -139,15 +138,15 @@ class RequestViewModel(
                                         .ic_item_keystone_qr
                                 is ZashiAccount -> R.drawable.logo_zec_fill_stroke
                             },
+                        fullScreenIcon =
+                            when (account) {
+                                is KeystoneAccount ->
+                                    co.electriccoin.zcash.ui.design.R.drawable
+                                        .ic_item_keystone_qr_white
+                                is ZashiAccount -> R.drawable.logo_zec_fill_stroke_white
+                            },
                         walletAddress = walletAddress,
                         request = request,
-                        onQrCodeClick = {
-                            navigationRouter.forward(
-                                QrDialog(
-                                    qr = request.qrCodeState.requestUri
-                                )
-                            )
-                        },
                         onQrCodeShare = { colors, pixels, uri ->
                             onShareQrCode(
                                 colors = colors,

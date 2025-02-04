@@ -21,7 +21,6 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCa
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeType
-import co.electriccoin.zcash.ui.screen.qrdialog.QrDialog
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.util.FileShareUtil
 import kotlinx.coroutines.Dispatchers
@@ -58,13 +57,6 @@ class QrCodeViewModel(
                     walletAddress = walletAddress,
                     onAddressCopy = { address -> onAddressCopyClick(address) },
                     onQrCodeShare = { onQrCodeShareClick(it, versionInfo) },
-                    onQrCodeClick = {
-                        navigationRouter.forward(
-                            QrDialog(
-                                qr = walletAddress.address,
-                            )
-                        )
-                    },
                     onBack = ::onBack,
                     qrCodeType =
                         when (account) {
