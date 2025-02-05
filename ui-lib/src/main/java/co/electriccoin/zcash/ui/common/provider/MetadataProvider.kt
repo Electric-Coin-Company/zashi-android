@@ -28,9 +28,9 @@ class MetadataProviderImpl(
     ) {
         file.outputStream().buffered().use { stream ->
             metadataEncryptor.encrypt(
-                metadataKey = metadataKey,
+                key = metadataKey,
                 outputStream = stream,
-                metadata = metadata
+                data = metadata
             )
             stream.flush()
         }
@@ -42,7 +42,7 @@ class MetadataProviderImpl(
     ): Metadata {
         return file.inputStream().use { stream ->
             metadataEncryptor.decrypt(
-                metadataKey = addressBookKey,
+                key = addressBookKey,
                 inputStream = stream
             )
         }

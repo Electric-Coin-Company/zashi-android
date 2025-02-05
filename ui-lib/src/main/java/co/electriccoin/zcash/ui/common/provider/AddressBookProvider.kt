@@ -32,9 +32,9 @@ class AddressBookProviderImpl(
     ) {
         file.outputStream().buffered().use { stream ->
             addressBookEncryptor.encrypt(
-                metadataKey = addressBookKey,
+                key = addressBookKey,
                 outputStream = stream,
-                metadata = addressBook
+                data = addressBook
             )
             stream.flush()
         }
@@ -46,7 +46,7 @@ class AddressBookProviderImpl(
     ): AddressBook {
         return file.inputStream().use { stream ->
             addressBookEncryptor.decrypt(
-                metadataKey = addressBookKey,
+                key = addressBookKey,
                 inputStream = stream
             )
         }

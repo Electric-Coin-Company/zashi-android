@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common.serialization
 
-import co.electriccoin.zcash.ui.common.serialization.metada.UnknownEncryptionVersionException
 import com.google.crypto.tink.subtle.ChaCha20Poly1305
 import com.google.crypto.tink.subtle.Random
 import java.io.ByteArrayInputStream
@@ -10,13 +9,13 @@ import java.io.OutputStream
 
 interface Encryptor<KEY : Key, T> {
     fun encrypt(
-        metadataKey: KEY,
+        key: KEY,
         outputStream: OutputStream,
-        metadata: T
+        data: T
     )
 
     fun decrypt(
-        metadataKey: KEY,
+        key: KEY,
         inputStream: InputStream
     ): T
 }
@@ -33,21 +32,21 @@ abstract class BaseEncryptor<KEY : Key, T> : BaseSerializer(), Encryptor<KEY, T>
     protected abstract fun deserialize(inputStream: ByteArrayInputStream): T
 
     override fun encrypt(
-        metadataKey: KEY,
+        key: KEY,
         outputStream: OutputStream,
-        metadata: T
+        data: T
     ) {
         // Generate a fresh one-time key for this ciphertext.
         val salt = Random.randBytes(saltSize)
         val cipherText =
             ByteArrayOutputStream()
                 .use { stream ->
-                    serialize(stream, metadata)
+                    serialize(stream, data)
                     stream.toByteArray()
                 }.let {
-                    val key = metadataKey.deriveEncryptionKey(salt)
+                    val derivedKey = key.deriveEncryptionKey(salt)
                     // Tink encodes the ciphertext as `nonce || ciphertext || tag`.
-                    val cipher = ChaCha20Poly1305.create(key)
+                    val cipher = ChaCha20Poly1305.create(derivedKey)
                     cipher.encrypt(it, null)
                 }
 
@@ -57,7 +56,7 @@ abstract class BaseEncryptor<KEY : Key, T> : BaseSerializer(), Encryptor<KEY, T>
     }
 
     override fun decrypt(
-        metadataKey: KEY,
+        key: KEY,
         inputStream: InputStream
     ): T {
         val version = inputStream.readInt()
@@ -70,8 +69,8 @@ abstract class BaseEncryptor<KEY : Key, T> : BaseSerializer(), Encryptor<KEY, T>
 
         val ciphertext = inputStream.readBytes()
 
-        val key = metadataKey.deriveEncryptionKey(salt)
-        val cipher = ChaCha20Poly1305.create(key)
+        val derivedKey = key.deriveEncryptionKey(salt)
+        val cipher = ChaCha20Poly1305.create(derivedKey)
         val plaintext = cipher.decrypt(ciphertext, null)
 
         return plaintext.inputStream().use { stream ->
@@ -79,3 +78,5 @@ abstract class BaseEncryptor<KEY : Key, T> : BaseSerializer(), Encryptor<KEY, T>
         }
     }
 }
+
+class UnknownEncryptionVersionException : RuntimeException("Unknown encryption version")
