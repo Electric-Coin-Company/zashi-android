@@ -13,12 +13,12 @@ import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.util.CloseableScopeHolder
+import co.electriccoin.zcash.ui.util.CloseableScopeHolderImpl
 import co.electriccoin.zcash.ui.util.combineToFlow
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -45,9 +45,7 @@ class GetCurrentFilteredTransactionsUseCase(
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val addressBookRepository: AddressBookRepository,
     private val context: Context
-) {
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-
+) : CloseableScopeHolder by CloseableScopeHolderImpl(coroutineContext = Dispatchers.IO) {
     @OptIn(ExperimentalCoroutinesApi::class)
     private val detailedCurrentTransactions =
         transactionRepository.currentTransactions

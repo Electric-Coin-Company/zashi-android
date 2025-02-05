@@ -82,9 +82,11 @@ import co.electriccoin.zcash.ui.common.usecase.ViewTransactionDetailAfterSuccess
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
+import co.electriccoin.zcash.ui.util.closeableCallback
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
+import org.koin.dsl.onClose
 
 val useCaseModule =
     module {
@@ -121,7 +123,7 @@ val useCaseModule =
         factoryOf(::SendEmailUseCase)
         factoryOf(::SendSupportEmailUseCase)
         factoryOf(::IsFlexaAvailableUseCase)
-        factoryOf(::SensitiveSettingsVisibleUseCase)
+        singleOf(::SensitiveSettingsVisibleUseCase)
         factoryOf(::ObserveWalletAccountsUseCase)
         factoryOf(::SelectWalletAccountUseCase)
         factoryOf(::ObserveSelectedWalletAccountUseCase)
@@ -135,7 +137,7 @@ val useCaseModule =
         singleOf(::ObserveClearSendUseCase)
         singleOf(::PrefillSendUseCase)
         factoryOf(::GetCurrentTransactionsUseCase)
-        factoryOf(::GetCurrentFilteredTransactionsUseCase)
+        factoryOf(::GetCurrentFilteredTransactionsUseCase) onClose ::closeableCallback
         factoryOf(::CreateProposalUseCase)
         factoryOf(::CreateZip321ProposalUseCase)
         factoryOf(::CreateKeystoneShieldProposalUseCase)
