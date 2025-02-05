@@ -1,3 +1,7 @@
+import model.ZASHI_FLAVOR_DIMENSION
+import model.ZashiBuildType
+import model.ZashiFlavorType
+
 plugins {
     id("com.android.test")
     kotlin("android")
@@ -14,20 +18,20 @@ android {
         // to enable benchmarking for emulators, although only a physical device gives real results
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
         // To simplify module variants, we assume to run benchmarking against mainnet only
-        missingDimensionStrategy("network", "zcashmainnet")
+        missingDimensionStrategy(ZASHI_FLAVOR_DIMENSION, ZashiFlavorType.Mainnet.name)
     }
 
     buildTypes {
-        create("release") {
+        create(ZashiBuildType.Release.name) {
             // To provide compatibility with other modules
         }
-        create("benchmark") {
+        create(ZashiBuildType.Benchmark.name) {
             // We provide the extra benchmark build variants for benchmarking. We still need to support debug
             // variants to be compatible with debug variants in other modules, although benchmarking does not allow
             // not minified build variants - benchmarking with the debug build variants will fail.
             isDebuggable = true
-            signingConfig = signingConfigs.getByName("debug")
-            matchingFallbacks += listOf("release")
+            signingConfig = signingConfigs.getByName(ZashiBuildType.Debug.name)
+            matchingFallbacks += listOf(ZashiBuildType.Release.name)
         }
     }
 }

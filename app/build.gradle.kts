@@ -1,6 +1,9 @@
 import co.electriccoin.zcash.Git
 import com.android.build.api.variant.BuildConfigField
 import com.android.build.api.variant.ResValue
+import model.ZASHI_FLAVOR_DIMENSION
+import model.ZashiBuildType
+import model.ZashiFlavorType
 import java.util.Locale
 
 plugins {
@@ -65,21 +68,20 @@ android {
         buildConfig = true
     }
 
-    flavorDimensions.add("network")
+    flavorDimensions.add(ZASHI_FLAVOR_DIMENSION)
 
-    val testNetFlavorName = "zcashtestnet"
     productFlavors {
-        // would rather name them "testnet" and "mainnet" but product flavor names cannot start with the word "test"
-        create(testNetFlavorName) {
-            dimension = "network"
-            applicationId = "$packageName.testnet" // allow to be installed alongside mainnet
-            matchingFallbacks.addAll(listOf("zcashtestnet", "debug"))
+        create(ZashiFlavorType.Testnet.name) {
+            dimension = ZASHI_FLAVOR_DIMENSION
+            // This allows to be installed alongside mainnet
+            applicationId = "$packageName.testnet"
+            matchingFallbacks.addAll(listOf(ZashiFlavorType.Testnet.name, ZashiBuildType.Debug.name))
         }
 
-        create("zcashmainnet") {
-            dimension = "network"
+        create(ZashiFlavorType.Mainnet.name) {
+            dimension = ZASHI_FLAVOR_DIMENSION
             applicationId = packageName
-            matchingFallbacks.addAll(listOf("zcashmainnet", "release"))
+            matchingFallbacks.addAll(listOf(ZashiFlavorType.Mainnet.name, ZashiBuildType.Release.name))
         }
     }
 
@@ -98,7 +100,7 @@ android {
     signingConfigs {
         if (isReleaseSigningConfigured) {
             // If this block doesn't execute, the output will be unsigned
-            create("release").apply {
+            create(ZashiBuildType.Release.name).apply {
                 storeFile = File(releaseKeystorePath)
                 storePassword = releaseKeystorePassword
                 keyAlias = releaseKeyAlias
@@ -108,16 +110,16 @@ android {
     }
 
     buildTypes {
-        getByName("debug").apply {
+        getByName(ZashiBuildType.Debug.name).apply {
             // Note that the build-conventions defines the res configs
             isPseudoLocalesEnabled = true
 
-            // Suffixing app package name and version to avoid collisions with other installed Zcash
+            // Suffixing app package name and version to avoid collisions with other installed Zashi
             // apps (e.g. from Google Play)
             versionNameSuffix = "-debug"
             applicationIdSuffix = ".debug"
         }
-        getByName("release").apply {
+        getByName(ZashiBuildType.Release.name).apply {
             isMinifyEnabled = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
             isShrinkResources = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
             ndk.debugSymbolLevel = project.property("NDK_DEBUG_SYMBOL_LEVEL").toString()
@@ -134,11 +136,20 @@ android {
             val isSignReleaseBuildWithDebugKey = project.property("IS_SIGN_RELEASE_BUILD_WITH_DEBUG_KEY")
                 .toString().toBoolean()
             if (isReleaseSigningConfigured) {
-                signingConfig = signingConfigs.getByName("release")
+                signingConfig = signingConfigs.getByName(ZashiBuildType.Release.name)
             } else if (isSignReleaseBuildWithDebugKey) {
                 // Warning: in this case is the release build signed with the debug key
-                signingConfig = signingConfigs.getByName("debug")
+                signingConfig = signingConfigs.getByName(ZashiBuildType.Debug.name)
             }
+        }
+        getByName(ZashiBuildType.Foss.name).apply {
+            // Based on the release build type settings
+            initWith(buildTypes.getByName(ZashiBuildType.Release.name))
+
+            // Suffixing app package name and version to avoid collisions with other installed Zashi
+            // apps (e.g. from Google Play)
+            versionNameSuffix = "-foss"
+            applicationIdSuffix = ".foss"
         }
     }
 
@@ -146,19 +157,26 @@ android {
     applicationVariants.all {
         val defaultAppName = project.property("ZCASH_RELEASE_APP_NAME").toString()
         val debugAppNameSuffix = project.property("ZCASH_DEBUG_APP_NAME_SUFFIX").toString()
+        val fossAppNameSuffix = project.property("ZCASH_FOSS_APP_NAME_SUFFIX").toString()
         val supportEmailAddress = project.property("ZCASH_SUPPORT_EMAIL_ADDRESS").toString()
         when (this.name) {
             "zcashtestnetDebug" -> {
-                resValue("string", "app_name", "$defaultAppName ($testnetNetworkName)$debugAppNameSuffix")
+                resValue("string", "app_name", "$defaultAppName $debugAppNameSuffix $testnetNetworkName")
             }
             "zcashmainnetDebug" -> {
-                resValue("string", "app_name", "$defaultAppName$debugAppNameSuffix")
+                resValue("string", "app_name", "$defaultAppName $debugAppNameSuffix")
             }
             "zcashtestnetRelease" -> {
-                resValue("string", "app_name", "$defaultAppName ($testnetNetworkName)")
+                resValue("string", "app_name", "$defaultAppName $testnetNetworkName")
             }
             "zcashmainnetRelease" -> {
                 resValue("string", "app_name", defaultAppName)
+            }
+            "zcashtestnetFoss" -> {
+                resValue("string", "app_name", "$defaultAppName $fossAppNameSuffix $testnetNetworkName")
+            }
+            "zcashmainnetFoss" -> {
+                resValue("string", "app_name", "$defaultAppName $fossAppNameSuffix")
             }
         }
         resValue("string", "support_email_address", supportEmailAddress)
@@ -255,7 +273,7 @@ androidComponents {
         ))
 
         // The fixed Locale.US is intended
-        if (variant.name.lowercase(Locale.US).contains("release")) {
+        if (variant.name.lowercase(Locale.US).contains(ZashiBuildType.Release.name)) {
             variant.packaging.resources.excludes.addAll(listOf(
                 "**/*.kotlin_metadata",
                 "DebugProbesKt.bin",

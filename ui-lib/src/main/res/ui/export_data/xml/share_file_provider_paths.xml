@@ -21,6 +21,14 @@
         name="root_testnet_debug"
         path="/data/data/co.electriccoin.zcash.testnet.debug/."
     />
+    <root-path
+        name="root_mainnet_foss"
+        path="/data/data/co.electriccoin.zcash.foss/."
+    />
+    <root-path
+        name="root_testnet_foss"
+        path="/data/data/co.electriccoin.zcash.testnet.foss/."
+    />
 
     <files-path
         name="files"

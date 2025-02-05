@@ -1,3 +1,7 @@
+import model.ZASHI_FLAVOR_DIMENSION
+import model.ZashiBuildType
+import model.ZashiFlavorType
+
 plugins {
     id("com.android.test")
     kotlin("android")
@@ -25,17 +29,17 @@ android {
     }
 
     // Define the same flavors as in app module
-    flavorDimensions.add("network")
+    flavorDimensions.add(ZASHI_FLAVOR_DIMENSION)
     productFlavors {
-        create("zcashtestnet") {
-            dimension = "network"
+        create(ZashiFlavorType.Testnet.name) {
+            dimension = ZASHI_FLAVOR_DIMENSION
         }
-        create("zcashmainnet") {
-            dimension = "network"
+        create(ZashiFlavorType.Mainnet.name) {
+            dimension = ZASHI_FLAVOR_DIMENSION
         }
     }
     buildTypes {
-        create("release") {
+        create(ZashiBuildType.Release.name) {
             // To provide compatibility with other modules
         }
     }
