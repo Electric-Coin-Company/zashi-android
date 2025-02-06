@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.QrCodeDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
 import co.electriccoin.zcash.ui.design.component.ZashiBadgeDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -35,7 +36,6 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.QrCodeColors
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -132,7 +132,7 @@ private fun ColumnScope.QrContent(ksState: SignKeystoneTransactionState) {
             state = ksState.toQrState(),
             modifier = Modifier.align(CenterHorizontally),
             colors =
-                QrCodeColors(
+                QrCodeDefaults.colors(
                     background = Color.White,
                     foreground = Color.Black
                 )
@@ -192,7 +192,6 @@ private fun Preview() =
                     positiveButton = ButtonState(stringRes("Get Signature")),
                     negativeButton = ButtonState(stringRes("Reject")),
                     onBack = {},
-                    onQrCodeClick = {},
                 )
         )
     }
@@ -216,7 +215,6 @@ private fun DebugPreview() =
                     positiveButton = ButtonState(stringRes("Get Signature")),
                     negativeButton = ButtonState(stringRes("Reject")),
                     onBack = {},
-                    onQrCodeClick = {},
                 )
         )
     }

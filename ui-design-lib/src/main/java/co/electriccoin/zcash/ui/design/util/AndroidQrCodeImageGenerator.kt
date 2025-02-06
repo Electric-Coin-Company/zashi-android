@@ -30,5 +30,6 @@ private fun BooleanArray.toThemeColorArray(colors: QrCodeColors) =
 
 data class QrCodeColors(
     val background: Color,
-    val foreground: Color
+    val foreground: Color,
+    val border: Color,
 )

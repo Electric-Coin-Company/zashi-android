@@ -20,12 +20,12 @@ import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.HomeTabNavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
-import co.electriccoin.zcash.ui.common.compose.RestoreScreenBrightness
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.isSynced
+import co.electriccoin.zcash.ui.design.component.RestoreScreenBrightness
 import co.electriccoin.zcash.ui.screen.account.WrapAccount
 import co.electriccoin.zcash.ui.screen.balances.WrapBalances
 import co.electriccoin.zcash.ui.screen.home.model.TabItem

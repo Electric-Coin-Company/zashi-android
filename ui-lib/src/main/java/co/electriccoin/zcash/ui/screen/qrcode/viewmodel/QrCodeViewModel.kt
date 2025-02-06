@@ -57,10 +57,6 @@ class QrCodeViewModel(
                     walletAddress = walletAddress,
                     onAddressCopy = { address -> onAddressCopyClick(address) },
                     onQrCodeShare = { onQrCodeShareClick(it, versionInfo) },
-                    onQrCodeClick = {
-                        // TODO [#1731]: Allow QR codes colors switching
-                        // TODO [#1731]: https://github.com/Electric-Coin-Company/zashi-android/issues/1731
-                    },
                     onBack = ::onBack,
                     qrCodeType =
                         when (account) {

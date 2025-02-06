@@ -7,7 +7,6 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 
 data class SignKeystoneTransactionState(
     val onBack: () -> Unit,
-    val onQrCodeClick: () -> Unit,
     val accountInfo: ZashiAccountInfoListItemState,
     val qrData: String?,
     val generateNextQrCode: () -> Unit,
@@ -22,7 +21,6 @@ data class SignKeystoneTransactionState(
         requireNotNull(qrData) { "The QR code data needs to be set at this point" }
         return QrState(
             qrData = qrData,
-            onClick = onQrCodeClick,
             contentDescription = contentDescription,
             centerImageResId = centerImageResId
         )
