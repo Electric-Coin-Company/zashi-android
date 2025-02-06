@@ -20,7 +20,7 @@ import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SensitiveSettingsVisibleUseCase
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
@@ -44,8 +44,8 @@ import kotlinx.coroutines.launch
 @Suppress("TooManyFunctions")
 class SettingsViewModel(
     observeConfiguration: ObserveConfigurationUseCase,
+    observeWalletAccounts: ObserveWalletAccountsUseCase,
     isSensitiveSettingsVisible: SensitiveSettingsVisibleUseCase,
-    observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     isFlexaAvailable: IsFlexaAvailableUseCase,
     isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
@@ -67,7 +67,7 @@ class SettingsViewModel(
             observeConfiguration(),
             isAnalyticsEnabled,
             isBackgroundSyncEnabled,
-            isKeepScreenOnWhileSyncingEnabled
+            isKeepScreenOnWhileSyncingEnabled,
         ) { configuration, isAnalyticsEnabled, isBackgroundSyncEnabled, isKeepScreenOnWhileSyncingEnabled ->
             if (configuration != null &&
                 isAnalyticsEnabled != null &&
@@ -103,17 +103,18 @@ class SettingsViewModel(
     val state: StateFlow<SettingsState> =
         combine(
             troubleshootingState,
-            observeSelectedWalletAccount(),
+            observeWalletAccounts(),
             isSensitiveSettingsVisible(),
             isFlexaAvailable.observe(),
-            isCoinbaseAvailable.observe()
-        ) { troubleshootingState, account, isSensitiveSettingsVisible, isFlexaAvailable, isCoinbaseAvailable ->
+            isCoinbaseAvailable.observe(),
+        ) { troubleshootingState, accounts, isSensitiveSettingsVisible, isFlexaAvailable, isCoinbaseAvailable ->
             createState(
-                selectedAccount = account,
+                selectedAccount = accounts?.firstOrNull { it.isSelected },
                 troubleshootingState = troubleshootingState,
                 isSensitiveSettingsVisible = isSensitiveSettingsVisible,
                 isFlexaAvailable = isFlexaAvailable == true,
-                isCoinbaseAvailable = isCoinbaseAvailable == true
+                isCoinbaseAvailable = isCoinbaseAvailable == true,
+                isKeystoneAvailable = accounts?.none { it is KeystoneAccount } == true
             )
         }.stateIn(
             scope = viewModelScope,
@@ -124,7 +125,8 @@ class SettingsViewModel(
                     troubleshootingState = null,
                     isSensitiveSettingsVisible = isSensitiveSettingsVisible().value,
                     isFlexaAvailable = isFlexaAvailable.observe().value == true,
-                    isCoinbaseAvailable = isCoinbaseAvailable.observe().value == true
+                    isCoinbaseAvailable = isCoinbaseAvailable.observe().value == true,
+                    isKeystoneAvailable = observeWalletAccounts().value?.none { it is KeystoneAccount } == true
                 )
         )
 
@@ -134,6 +136,7 @@ class SettingsViewModel(
         isSensitiveSettingsVisible: Boolean,
         isFlexaAvailable: Boolean,
         isCoinbaseAvailable: Boolean,
+        isKeystoneAvailable: Boolean
     ) = SettingsState(
         debugMenu = troubleshootingState,
         onBack = ::onBack,
@@ -169,7 +172,9 @@ class SettingsViewModel(
                                 is KeystoneAccount -> R.drawable.ic_integrations_flexa_disabled
                                 is ZashiAccount -> R.drawable.ic_integrations_flexa
                                 null -> R.drawable.ic_integrations_flexa
-                            }.takeIf { isFlexaAvailable }
+                            }.takeIf { isFlexaAvailable },
+                            R.drawable.ic_integrations_keystone
+                                .takeIf { isKeystoneAvailable }
                         ).toImmutableList()
                 ).takeIf { isSensitiveSettingsVisible },
                 ZashiListItemState(
