@@ -105,9 +105,7 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
             enableAndroidTestCoverage = coverageEnabled
             enableUnitTestCoverage = coverageEnabled
         }
-        create(ZashiBuildType.Foss.name) {
-            // TODO any common settings here?
-        }
+        create(ZashiBuildType.Foss.name)
     }
 
     signingConfigs {

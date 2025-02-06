@@ -9,6 +9,7 @@ sealed class ZashiFlavorType {
     object Mainnet : ZashiBuildType() {
         override val name = "zcashmainnet"
     }
+
     object Testnet : ZashiBuildType() {
         override val name = "zcashtestnet"
     }

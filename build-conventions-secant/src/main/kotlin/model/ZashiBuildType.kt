@@ -6,12 +6,15 @@ sealed class ZashiBuildType {
     object Debug : ZashiBuildType() {
         override val name = "debug"
     }
+
     object Benchmark : ZashiBuildType() {
         override val name = "benchmark"
     }
+
     object Release : ZashiBuildType() {
         override val name = "release"
     }
+
     object Foss : ZashiBuildType() {
         override val name = "foss"
     }
