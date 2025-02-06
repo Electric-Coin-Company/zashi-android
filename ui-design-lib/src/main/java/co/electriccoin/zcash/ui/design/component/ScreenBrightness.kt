@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.common.compose
+package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
