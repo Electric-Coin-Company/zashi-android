@@ -27,11 +27,26 @@ dependencies {
     api(libs.androidx.annotation)
     api(projects.crashLib)
 
-    implementation(platform(libs.firebase.bom))
+    api(libs.bundles.koin)
 
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.crashlytics.ndk)
-    implementation(libs.firebase.installations)
+    debugImplementation(platform(libs.firebase.bom))
+    releaseImplementation(platform(libs.firebase.bom))
+
+    debugImplementation(libs.firebase.crashlytics)
+    releaseImplementation(libs.firebase.crashlytics)
+
+    // NOTE: couldn't make it working this way
+    // implementation(libs.firebase.crashlytics)
+    // fossImplementation(libs.firebase.crashlytics) {
+    //     exclude("com.google.firebase", "firebase-crashlytics-ktx")
+    // }
+
+    debugImplementation(libs.firebase.crashlytics.ndk)
+    releaseImplementation(libs.firebase.crashlytics.ndk)
+
+    debugImplementation(libs.firebase.installations)
+    releaseImplementation(libs.firebase.installations)
+
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.datetime)
     implementation(projects.spackleAndroidLib)
