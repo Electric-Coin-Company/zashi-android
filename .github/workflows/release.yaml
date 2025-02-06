@@ -1,0 +1,45 @@
+name: Deploy GCP on Tagging
+
+on:
+  push:
+    tags:
+      - '*'  # Runs when any tag is pushed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Configure gsutil
+        run: gcloud auth activate-service-account --key-file <(echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}')
+
+      - name: Download file from GCS
+        run: gsutil -q cp gs://${{ secrets.GCP_PROJECT_ID_PROD }}-apt-packages/encrypted_gpg.kms encrypted_gpg.kms
+
+      - name: Decrypt file using KMS
+        run: |
+          gcloud kms decrypt \
+            --key gpg \
+            --keyring gpg \
+            --location global \
+            --plaintext-file private.pgp \
+            --ciphertext-file encrypted_gpg.kms
+
+      - name: Import GPG
+        run: |
+          gpg --import private.pgp
+
+      - name: Import GPG
+        run: |
+          gpg --import private.pgp
+
+      - name: Show Public GPG Key Info
+        run: gpg --list-keys
