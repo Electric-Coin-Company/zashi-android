@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common.repository
 
-import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.TransactionId
 import cash.z.ecc.android.sdk.model.TransactionOutput
 import cash.z.ecc.android.sdk.model.TransactionOverview
@@ -38,6 +37,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.ZonedDateTime
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -75,12 +75,7 @@ class TransactionRepositoryImpl(
 
                     launch {
                         synchronizer.getTransactions(account.accountUuid)
-                            .flatMapLatest { transactions ->
-                                synchronizer.networkHeight.mapLatest {
-                                    transactions to it
-                                }
-                            }
-                            .map { (transactions, networkHeight) ->
+                            .mapLatest { transactions ->
                                 transactions.map { transaction ->
                                     TransactionData(
                                         overview = transaction,
@@ -88,7 +83,7 @@ class TransactionRepositoryImpl(
                                         state = transaction.getExtendedState()
                                     )
                                 }.sortedByDescending { transaction ->
-                                    transaction.overview.getSortHeight(networkHeight)
+                                    transaction.overview.blockTimeEpochSeconds ?: ZonedDateTime.now().toEpochSecond()
                                 }
                             }
                             .collect {
@@ -142,16 +137,6 @@ class TransactionRepositoryImpl(
                 synchronizer?.getTransactionsByMemoSubstring(memo)?.onEmpty { emit(listOf()) } ?: flowOf(null)
             }
             .distinctUntilChanged()
-
-    private fun TransactionOverview.getSortHeight(networkHeight: BlockHeight?): BlockHeight? {
-        // Non-null assertion operator is necessary here as the smart cast to is impossible because `minedHeight` and
-        // `expiryHeight` are declared in a different module
-        return when {
-            minedHeight != null -> minedHeight!!
-            (expiryHeight?.value ?: 0) > 0 -> expiryHeight!!
-            else -> networkHeight
-        }
-    }
 }
 
 data class TransactionData(
