@@ -201,7 +201,7 @@ jobs:
           # Disable minify, since it makes lint run faster
           ORG_GRADLE_PROJECT_IS_MINIFY_ENABLED: false
         run: |
-          ./gradlew :app:lintZcashmainnetRelease
+          ./gradlew :app:lintZcashmainnetStoreRelease
       - name: Collect Artifacts
         if: ${{ always() }}
         timeout-minutes: 1
@@ -285,7 +285,7 @@ jobs:
       - name: Build
         timeout-minutes: 20
         run: |
-          ./gradlew assembleDebug assembleAndroidTest assembleZcashmainnetDebug assembleZcashtestnetDebug
+          ./gradlew assembleDebug assembleAndroidTest assembleZcashmainnetStoreDebug assembleZcashtestnetStoreDebug
       - name: Authenticate to Google Cloud for Firebase Test Lab
         id: auth_test_lab
         uses: google-github-actions/auth@71f986410dfbc7added4569d411d040a91dc6935
@@ -358,7 +358,7 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
           ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
         run: |
-          ./gradlew testDebugWithEmulatorWtf :ui-integration-test:testZcashmainnetDebugWithEmulatorWtf
+          ./gradlew testDebugWithEmulatorWtf :ui-integration-test:testZcashmainnetStoreDebugWithEmulatorWtf
       - name: Collect Artifacts
         if: ${{ always() }}
         timeout-minutes: 1
@@ -407,7 +407,7 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
           ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
         run: |
-          ./gradlew :app:testZcashmainnetDebugWithEmulatorWtf :ui-screenshot-test:testZcashmainnetDebugWithEmulatorWtf
+          ./gradlew :app:testZcashmainnetStoreDebugWithEmulatorWtf :ui-screenshot-test:testZcashmainnetStoreDebugWithEmulatorWtf
       - name: Collect Artifacts
         if: ${{ always() }}
         timeout-minutes: 1
@@ -539,7 +539,7 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
           ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
         run: |
-          ./gradlew :app:assembleDebug :app:bundleRelease :app:packageZcashmainnetReleaseUniversalApk
+          ./gradlew :app:assembleDebug :app:bundleRelease :app:packageZcashmainnetStoreReleaseUniversalApk
       - name: Collect Artifacts
         timeout-minutes: 1
         env:
@@ -549,8 +549,8 @@ jobs:
           COMPOSE_METRICS_ZIP_PATH: ${{ format('{0}/artifacts/compose_metrics.zip', env.home) }}
         run: |
           mkdir ${ARTIFACTS_DIR_PATH}
-          zip -r ${BINARIES_ZIP_PATH} . -i app/build/outputs/apk/\*/\*.apk app/build/outputs/apk_from_bundle/\*/\*.apk app/build/outputs/bundle/\*/\*.aab
-          zip -r ${MAPPINGS_ZIP_PATH} . -i *app/build/outputs/mapping/*/mapping.txt
+          zip -r ${BINARIES_ZIP_PATH} . -i app/build/outputs/apk/\*/\*/\*.apk app/build/outputs/apk_from_bundle/\*/\*.apk app/build/outputs/bundle/\*/\*.aab
+          zip -r ${MAPPINGS_ZIP_PATH} . -i *app/build/outputs/mapping/\*/\*/mapping.txt
           zip -r ${COMPOSE_METRICS_ZIP_PATH} . -i \*/build/compose-metrics/\* \*/build/compose-reports/\*
       - name: Upload Artifacts
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
