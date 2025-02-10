@@ -2,7 +2,7 @@ import co.electriccoin.zcash.Git
 import com.android.build.api.variant.BuildConfigField
 import com.android.build.api.variant.ResValue
 import model.DistributionDimension
-import model.ZashiBuildType
+import model.BuildType
 import model.NetworkDimension
 import java.util.Locale
 
@@ -75,25 +75,25 @@ android {
             dimension = NetworkDimension.DIMENSION_NAME
             applicationId = packageName
             applicationIdSuffix = ".testnet"
-            matchingFallbacks.addAll(listOf(NetworkDimension.TESTNET.value, ZashiBuildType.Debug.name))
+            matchingFallbacks.addAll(listOf(NetworkDimension.TESTNET.value, BuildType.DEBUG.value))
         }
 
         create(NetworkDimension.MAINNET.value) {
             dimension = NetworkDimension.DIMENSION_NAME
             applicationId = packageName
-            matchingFallbacks.addAll(listOf(NetworkDimension.MAINNET.value, ZashiBuildType.Release.name))
+            matchingFallbacks.addAll(listOf(NetworkDimension.MAINNET.value, BuildType.RELEASE.value))
         }
 
         create(DistributionDimension.STORE.value) {
             dimension = DistributionDimension.DIMENSION_NAME
             applicationId = packageName
-            matchingFallbacks.addAll(listOf(NetworkDimension.MAINNET.value, ZashiBuildType.Release.name))
+            matchingFallbacks.addAll(listOf(DistributionDimension.STORE.value, BuildType.RELEASE.value))
         }
 
         create(DistributionDimension.FOSS.value) {
             dimension = DistributionDimension.DIMENSION_NAME
             applicationId = packageName
-            matchingFallbacks.addAll(listOf(NetworkDimension.MAINNET.value, ZashiBuildType.Release.name))
+            matchingFallbacks.addAll(listOf(DistributionDimension.FOSS.value, BuildType.RELEASE.value))
             versionNameSuffix = "-foss"
             applicationIdSuffix = ".foss"
         }
@@ -114,7 +114,7 @@ android {
     signingConfigs {
         if (isReleaseSigningConfigured) {
             // If this block doesn't execute, the output will be unsigned
-            create(ZashiBuildType.Release.name).apply {
+            create(BuildType.RELEASE.value).apply {
                 storeFile = File(releaseKeystorePath)
                 storePassword = releaseKeystorePassword
                 keyAlias = releaseKeyAlias
@@ -124,7 +124,7 @@ android {
     }
 
     buildTypes {
-        getByName(ZashiBuildType.Debug.name).apply {
+        getByName(BuildType.DEBUG.value).apply {
             // Note that the build-conventions defines the res configs
             isPseudoLocalesEnabled = true
 
@@ -133,7 +133,7 @@ android {
             versionNameSuffix = "-debug"
             applicationIdSuffix = ".debug"
         }
-        getByName(ZashiBuildType.Release.name).apply {
+        getByName(BuildType.RELEASE.value).apply {
             isMinifyEnabled = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
             isShrinkResources = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
             ndk.debugSymbolLevel = project.property("NDK_DEBUG_SYMBOL_LEVEL").toString()
@@ -150,10 +150,10 @@ android {
             val isSignReleaseBuildWithDebugKey = project.property("IS_SIGN_RELEASE_BUILD_WITH_DEBUG_KEY")
                 .toString().toBoolean()
             if (isReleaseSigningConfigured) {
-                signingConfig = signingConfigs.getByName(ZashiBuildType.Release.name)
+                signingConfig = signingConfigs.getByName(BuildType.RELEASE.value)
             } else if (isSignReleaseBuildWithDebugKey) {
                 // Warning: in this case is the release build signed with the debug key
-                signingConfig = signingConfigs.getByName(ZashiBuildType.Debug.name)
+                signingConfig = signingConfigs.getByName(BuildType.DEBUG.value)
             }
         }
     }
@@ -284,7 +284,7 @@ androidComponents {
         ))
 
         // The fixed Locale.US is intended
-        if (variant.name.lowercase(Locale.US).contains(ZashiBuildType.Release.name)) {
+        if (variant.name.lowercase(Locale.US).contains(BuildType.RELEASE.value)) {
             variant.packaging.resources.excludes.addAll(listOf(
                 "**/*.kotlin_metadata",
                 "DebugProbesKt.bin",

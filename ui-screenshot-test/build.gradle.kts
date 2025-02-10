@@ -1,5 +1,5 @@
 import model.DistributionDimension
-import model.ZashiBuildType
+import model.BuildType
 import model.NetworkDimension
 
 plugins {
@@ -45,7 +45,7 @@ android {
         }
     }
     buildTypes {
-        create(ZashiBuildType.Release.name) {
+        create(BuildType.RELEASE.value) {
             // To provide compatibility with other modules
         }
     }

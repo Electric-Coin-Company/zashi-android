@@ -1,5 +1,5 @@
 import model.DistributionDimension
-import model.ZashiBuildType
+import model.BuildType
 import model.NetworkDimension
 
 plugins {
@@ -24,16 +24,16 @@ android {
     }
 
     buildTypes {
-        create(ZashiBuildType.Release.name) {
+        create(BuildType.RELEASE.value) {
             // To provide compatibility with other modules
         }
-        create(ZashiBuildType.Benchmark.name) {
+        create(BuildType.BENCHMARK.value) {
             // We provide the extra benchmark build variants for benchmarking. We still need to support debug
             // variants to be compatible with debug variants in other modules, although benchmarking does not allow
             // not minified build variants - benchmarking with the debug build variants will fail.
             isDebuggable = true
-            signingConfig = signingConfigs.getByName(ZashiBuildType.Debug.name)
-            matchingFallbacks += listOf(ZashiBuildType.Release.name)
+            signingConfig = signingConfigs.getByName(BuildType.DEBUG.value)
+            matchingFallbacks += listOf(BuildType.RELEASE.value)
         }
     }
 }

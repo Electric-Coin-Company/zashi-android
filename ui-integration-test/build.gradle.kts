@@ -1,5 +1,5 @@
 import model.DistributionDimension
-import model.ZashiBuildType
+import model.BuildType
 import model.NetworkDimension
 
 plugins {
@@ -47,7 +47,7 @@ android {
         }
     }
     buildTypes {
-        create(ZashiBuildType.Release.name) {
+        create(BuildType.RELEASE.value) {
             // to align with the benchmark module requirement - run against minified application
         }
     }
