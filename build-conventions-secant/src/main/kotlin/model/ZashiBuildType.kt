@@ -14,8 +14,4 @@ sealed class ZashiBuildType {
     object Release : ZashiBuildType() {
         override val name = "release"
     }
-
-    object Foss : ZashiBuildType() {
-        override val name = "foss"
-    }
 }

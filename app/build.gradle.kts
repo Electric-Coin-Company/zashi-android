@@ -1,9 +1,9 @@
 import co.electriccoin.zcash.Git
 import com.android.build.api.variant.BuildConfigField
 import com.android.build.api.variant.ResValue
-import model.ZASHI_FLAVOR_DIMENSION
+import model.DistributionDimension
 import model.ZashiBuildType
-import model.ZashiFlavorType
+import model.NetworkDimension
 import java.util.Locale
 
 plugins {
@@ -68,20 +68,34 @@ android {
         buildConfig = true
     }
 
-    flavorDimensions.add(ZASHI_FLAVOR_DIMENSION)
+    flavorDimensions += listOf(NetworkDimension.DIMENSION_NAME, DistributionDimension.DIMENSION_NAME)
 
     productFlavors {
-        create(ZashiFlavorType.Testnet.name) {
-            dimension = ZASHI_FLAVOR_DIMENSION
-            // This allows to be installed alongside mainnet
-            applicationId = "$packageName.testnet"
-            matchingFallbacks.addAll(listOf(ZashiFlavorType.Testnet.name, ZashiBuildType.Debug.name))
+        create(NetworkDimension.TESTNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
+            applicationId = packageName
+            applicationIdSuffix = ".testnet"
+            matchingFallbacks.addAll(listOf(NetworkDimension.TESTNET.value, ZashiBuildType.Debug.name))
         }
 
-        create(ZashiFlavorType.Mainnet.name) {
-            dimension = ZASHI_FLAVOR_DIMENSION
+        create(NetworkDimension.MAINNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
             applicationId = packageName
-            matchingFallbacks.addAll(listOf(ZashiFlavorType.Mainnet.name, ZashiBuildType.Release.name))
+            matchingFallbacks.addAll(listOf(NetworkDimension.MAINNET.value, ZashiBuildType.Release.name))
+        }
+
+        create(DistributionDimension.STORE.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
+            applicationId = packageName
+            matchingFallbacks.addAll(listOf(NetworkDimension.MAINNET.value, ZashiBuildType.Release.name))
+        }
+
+        create(DistributionDimension.FOSS.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
+            applicationId = packageName
+            matchingFallbacks.addAll(listOf(NetworkDimension.MAINNET.value, ZashiBuildType.Release.name))
+            versionNameSuffix = "-foss"
+            applicationIdSuffix = ".foss"
         }
     }
 
@@ -142,15 +156,6 @@ android {
                 signingConfig = signingConfigs.getByName(ZashiBuildType.Debug.name)
             }
         }
-        getByName(ZashiBuildType.Foss.name).apply {
-            // Based on the release build type settings
-            initWith(buildTypes.getByName(ZashiBuildType.Release.name))
-
-            // Suffixing app package name and version to avoid collisions with other installed Zashi
-            // apps (e.g. from Google Play)
-            versionNameSuffix = "-foss"
-            applicationIdSuffix = ".foss"
-        }
     }
 
     // Resolve final app name
@@ -160,23 +165,29 @@ android {
         val fossAppNameSuffix = project.property("ZCASH_FOSS_APP_NAME_SUFFIX").toString()
         val supportEmailAddress = project.property("ZCASH_SUPPORT_EMAIL_ADDRESS").toString()
         when (this.name) {
-            "zcashtestnetDebug" -> {
+            "zcashtestnetStoreDebug" -> {
                 resValue("string", "app_name", "$defaultAppName $debugAppNameSuffix $testnetNetworkName")
             }
-            "zcashmainnetDebug" -> {
+            "zcashmainnetStoreDebug" -> {
                 resValue("string", "app_name", "$defaultAppName $debugAppNameSuffix")
             }
-            "zcashtestnetRelease" -> {
+            "zcashtestnetStoreRelease" -> {
                 resValue("string", "app_name", "$defaultAppName $testnetNetworkName")
             }
-            "zcashmainnetRelease" -> {
+            "zcashmainnetStoreRelease" -> {
                 resValue("string", "app_name", defaultAppName)
             }
-            "zcashtestnetFoss" -> {
+            "zcashtestnetFossDebug" -> {
+                resValue("string", "app_name", "$defaultAppName $debugAppNameSuffix $debugAppNameSuffix $testnetNetworkName")
+            }
+            "zcashmainnetFossDebug" -> {
+                resValue("string", "app_name", "$defaultAppName $fossAppNameSuffix $debugAppNameSuffix")
+            }
+            "zcashtestnetFossRelease" -> {
                 resValue("string", "app_name", "$defaultAppName $fossAppNameSuffix $testnetNetworkName")
             }
-            "zcashmainnetFoss" -> {
-                resValue("string", "app_name", "$defaultAppName $fossAppNameSuffix")
+            "zcashmainnetFossRelease" -> {
+                resValue("string", "app_name", defaultAppName)
             }
         }
         resValue("string", "support_email_address", supportEmailAddress)

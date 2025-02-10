@@ -1,6 +1,6 @@
-import model.ZASHI_FLAVOR_DIMENSION
+import model.DistributionDimension
 import model.ZashiBuildType
-import model.ZashiFlavorType
+import model.NetworkDimension
 
 plugins {
     id("com.android.test")
@@ -29,13 +29,19 @@ android {
     }
 
     // Define the same flavors as in app module
-    flavorDimensions.add(ZASHI_FLAVOR_DIMENSION)
+    flavorDimensions += listOf(NetworkDimension.DIMENSION_NAME, DistributionDimension.DIMENSION_NAME)
     productFlavors {
-        create(ZashiFlavorType.Testnet.name) {
-            dimension = ZASHI_FLAVOR_DIMENSION
+        create(NetworkDimension.TESTNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
         }
-        create(ZashiFlavorType.Mainnet.name) {
-            dimension = ZASHI_FLAVOR_DIMENSION
+        create(NetworkDimension.MAINNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
+        }
+        create(DistributionDimension.STORE.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
+        }
+        create(DistributionDimension.FOSS.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
         }
     }
     buildTypes {

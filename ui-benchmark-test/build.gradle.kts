@@ -1,6 +1,6 @@
-import model.ZASHI_FLAVOR_DIMENSION
+import model.DistributionDimension
 import model.ZashiBuildType
-import model.ZashiFlavorType
+import model.NetworkDimension
 
 plugins {
     id("com.android.test")
@@ -18,7 +18,9 @@ android {
         // to enable benchmarking for emulators, although only a physical device gives real results
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
         // To simplify module variants, we assume to run benchmarking against mainnet only
-        missingDimensionStrategy(ZASHI_FLAVOR_DIMENSION, ZashiFlavorType.Mainnet.name)
+        missingDimensionStrategy(NetworkDimension.DIMENSION_NAME, NetworkDimension.MAINNET.value)
+        missingDimensionStrategy(DistributionDimension.DIMENSION_NAME, DistributionDimension.STORE.value)
+        missingDimensionStrategy(DistributionDimension.DIMENSION_NAME, DistributionDimension.FOSS.value)
     }
 
     buildTypes {
