@@ -77,7 +77,6 @@ dependencies {
 
     implementation(libs.bundles.androidx.test)
     implementation(libs.bundles.androidx.compose.core)
-    implementation(libs.bundles.play.update)
 
     implementation(libs.androidx.compose.test.junit)
     implementation(libs.androidx.navigation.compose)

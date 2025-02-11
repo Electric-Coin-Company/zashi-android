@@ -35,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
@@ -90,7 +89,6 @@ private fun ComposableBalancesPreview() {
         Balances(
             balanceState = BalanceStateFixture.new(),
             isHideBalances = false,
-            isUpdateAvailable = false,
             isShowingErrorDialog = false,
             hideStatusDialog = {},
             showStatusDialog = null,
@@ -114,7 +112,6 @@ private fun ComposableBalancesShieldDarkPreview() {
         Balances(
             balanceState = BalanceStateFixture.new(),
             isHideBalances = false,
-            isUpdateAvailable = false,
             isShowingErrorDialog = true,
             hideStatusDialog = {},
             showStatusDialog = null,
@@ -150,7 +147,6 @@ private fun ComposableBalancesShieldErrorDialogPreview() {
 fun Balances(
     balanceState: BalanceState,
     isHideBalances: Boolean,
-    isUpdateAvailable: Boolean,
     isShowingErrorDialog: Boolean,
     hideStatusDialog: () -> Unit,
     onContactSupport: (String?) -> Unit,
@@ -178,7 +174,6 @@ fun Balances(
             BalancesMainContent(
                 balanceState = balanceState,
                 isHideBalances = isHideBalances,
-                isUpdateAvailable = isUpdateAvailable,
                 onShielding = onShielding,
                 onStatusClick = onStatusClick,
                 walletSnapshot = walletSnapshot,
@@ -287,7 +282,6 @@ fun ShieldingErrorGrpcDialog(onDone: () -> Unit) {
 private fun BalancesMainContent(
     balanceState: BalanceState,
     isHideBalances: Boolean,
-    isUpdateAvailable: Boolean,
     onShielding: () -> Unit,
     onStatusClick: (StatusAction) -> Unit,
     walletSnapshot: WalletSnapshot,
@@ -355,7 +349,6 @@ private fun BalancesMainContent(
         }
 
         SynchronizationStatus(
-            isUpdateAvailable = isUpdateAvailable,
             onStatusClick = onStatusClick,
             testTag = BalancesTag.STATUS,
             walletSnapshot = walletSnapshot,
