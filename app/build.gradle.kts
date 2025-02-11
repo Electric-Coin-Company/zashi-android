@@ -95,7 +95,6 @@ android {
             applicationId = packageName
             matchingFallbacks.addAll(listOf(DistributionDimension.FOSS.value, BuildType.RELEASE.value))
             versionNameSuffix = "-foss"
-            applicationIdSuffix = ".foss"
         }
     }
 

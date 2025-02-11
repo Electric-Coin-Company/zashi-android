@@ -24,19 +24,19 @@
 
     <root-path
         name="root_mainnet_foss_release"
-        path="/data/data/co.electriccoin.zcash.foss/."
+        path="/data/data/co.electriccoin.zcash/."
         />
     <root-path
         name="root_mainnet_foss_debug"
-        path="/data/data/co.electriccoin.zcash.foss.debug/."
+        path="/data/data/co.electriccoin.zcash.debug/."
         />
     <root-path
         name="root_testnet_foss_release"
-        path="/data/data/co.electriccoin.zcash.testnet.foss/."
+        path="/data/data/co.electriccoin.zcash.testnet/."
         />
     <root-path
         name="root_testnet_store_debug"
-        path="/data/data/co.electriccoin.zcash.testnet.foss.debug/."
+        path="/data/data/co.electriccoin.zcash.testnet.debug/."
         />
 
     <files-path
