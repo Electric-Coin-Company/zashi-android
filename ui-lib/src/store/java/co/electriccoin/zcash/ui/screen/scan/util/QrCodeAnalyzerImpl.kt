@@ -2,9 +2,7 @@ package co.electriccoin.zcash.ui.screen.scan.util
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
-import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.screen.scankeystone.view.FramePosition
@@ -13,13 +11,13 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 
-class MlkitQrCodeAnalyzer(
+class QrCodeAnalyzerImpl(
     private val framePosition: FramePosition,
     private val onQrCodeScanned: (String) -> Unit,
-) : ImageAnalysis.Analyzer {
+) : QrCodeAnalyzer {
     private val supportedImageFormat = Barcode.FORMAT_QR_CODE
 
-    @OptIn(ExperimentalGetImage::class)
+    @androidx.annotation.OptIn(ExperimentalGetImage::class)
     override fun analyze(imageProxy: ImageProxy) {
         Twig.verbose { "Mlkit image proxy: ${imageProxy.imageInfo}" }
 
