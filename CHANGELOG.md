@@ -6,6 +6,12 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Added
+- Confirm the rejection of a Keystone transaction dialog added.
+
+### Added
+- Keystone flows swapped the buttons for the better UX, the main CTA is the closes button for a thumb.
+
 ## [1.3.3 (839)] - 2025-01-23
 
 ### Changed
