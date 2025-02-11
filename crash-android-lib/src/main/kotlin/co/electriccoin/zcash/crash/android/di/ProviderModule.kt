@@ -5,5 +5,5 @@ import org.koin.dsl.module
 
 val crashProviderModule =
     module {
-        factoryOf(::GetCrashReportersProvider)
+        factoryOf(::CrashReportersProvider)
     }

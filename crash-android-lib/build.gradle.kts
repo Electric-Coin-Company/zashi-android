@@ -1,3 +1,6 @@
+import model.DistributionDimension
+import model.NetworkDimension
+
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -21,6 +24,26 @@ android {
     testOptions {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
+
+    flavorDimensions += listOf(NetworkDimension.DIMENSION_NAME, DistributionDimension.DIMENSION_NAME)
+
+    productFlavors {
+        create(NetworkDimension.TESTNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
+        }
+
+        create(NetworkDimension.MAINNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
+        }
+
+        create(DistributionDimension.STORE.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
+        }
+
+        create(DistributionDimension.FOSS.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
+        }
+    }
 }
 
 dependencies {
@@ -29,23 +52,10 @@ dependencies {
 
     api(libs.bundles.koin)
 
-    debugImplementation(platform(libs.firebase.bom))
-    releaseImplementation(platform(libs.firebase.bom))
-
-    debugImplementation(libs.firebase.crashlytics)
-    releaseImplementation(libs.firebase.crashlytics)
-
-    // NOTE: couldn't make it working this way
-    // implementation(libs.firebase.crashlytics)
-    // fossImplementation(libs.firebase.crashlytics) {
-    //     exclude("com.google.firebase", "firebase-crashlytics-ktx")
-    // }
-
-    debugImplementation(libs.firebase.crashlytics.ndk)
-    releaseImplementation(libs.firebase.crashlytics.ndk)
-
-    debugImplementation(libs.firebase.installations)
-    releaseImplementation(libs.firebase.installations)
+    "storeImplementation"(platform(libs.firebase.bom))
+    "storeImplementation"(libs.firebase.crashlytics)
+    "storeImplementation"(libs.firebase.crashlytics.ndk)
+    "storeImplementation"(libs.firebase.installations)
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.datetime)
