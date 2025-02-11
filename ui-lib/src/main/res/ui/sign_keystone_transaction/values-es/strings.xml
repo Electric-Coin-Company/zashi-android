@@ -6,4 +6,8 @@
     <string name="sign_keystone_transaction_badge">Hardware</string>
     <string name="sign_keystone_transaction_positive">Obtener Firma</string>
     <string name="sign_keystone_transaction_negative">Rechazar</string>
+    <string name="sign_keystone_transaction_bottom_sheet_title">Are you sure?</string>
+    <string name="sign_keystone_transaction_bottom_sheet_subtitle">Rejecting the signature will cancel the transaction, and you’ll need to start over if you want to proceed. This action cannot be undone.</string>
+    <string name="sign_keystone_transaction_bottom_sheet_go_back">Go back</string>
+    <string name="sign_keystone_transaction_bottom_sheet_reject">Reject Signature</string>
 </resources>
