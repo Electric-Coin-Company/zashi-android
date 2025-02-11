@@ -10,7 +10,7 @@
 
         <provider
             android:name="co.electriccoin.zcash.global.ShareFileProvider"
-            android:authorities="co.electriccoin.zcash.foss.provider"
+            android:authorities="co.electriccoin.zcash.provider"
             android:exported="false"
             android:grantUriPermissions="true"
             tools:replace="android:authorities" >
