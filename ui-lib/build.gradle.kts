@@ -154,7 +154,6 @@ dependencies {
     implementation(libs.bundles.androidx.compose.core)
     implementation(libs.bundles.androidx.compose.extended)
     api(libs.bundles.koin)
-    "storeImplementation"(libs.bundles.play.update)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)

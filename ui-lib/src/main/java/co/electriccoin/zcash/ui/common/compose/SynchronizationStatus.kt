@@ -45,7 +45,6 @@ private fun BalanceWidgetPreview() {
             modifier = Modifier.fillMaxWidth()
         ) {
             SynchronizationStatus(
-                isUpdateAvailable = false,
                 onStatusClick = {},
                 walletSnapshot = WalletSnapshotFixture.new(),
             )
@@ -55,7 +54,6 @@ private fun BalanceWidgetPreview() {
 
 @Composable
 fun SynchronizationStatus(
-    isUpdateAvailable: Boolean,
     onStatusClick: (StatusAction) -> Unit,
     walletSnapshot: WalletSnapshot,
     modifier: Modifier = Modifier,
@@ -65,7 +63,6 @@ fun SynchronizationStatus(
         WalletDisplayValues.getNextValues(
             context = LocalContext.current,
             walletSnapshot = walletSnapshot,
-            isUpdateAvailable = isUpdateAvailable,
         )
 
     Column(

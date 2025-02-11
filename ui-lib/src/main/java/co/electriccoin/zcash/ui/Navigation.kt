@@ -45,8 +45,6 @@ import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.SerializableAddress
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.provider.isInForeground
-import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
-import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
@@ -97,7 +95,6 @@ import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeysto
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.transactionprogress.AndroidTransactionProgress
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgress
-import co.electriccoin.zcash.ui.screen.update.WrapCheckForUpdate
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.whatsnew.WrapWhatsNew
 import kotlinx.coroutines.flow.StateFlow
@@ -447,8 +444,6 @@ private fun MainActivity.NavigationHome(
                 // Keep the current navigation location
             }
         )
-    } else if (ConfigurationEntries.IS_APP_UPDATE_CHECK_ENABLED.getValue(RemoteConfig.current)) {
-        WrapCheckForUpdate()
     }
 }
 
