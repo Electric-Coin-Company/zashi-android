@@ -1,3 +1,6 @@
+import model.DistributionDimension
+import model.NetworkDimension
+
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -21,17 +24,39 @@ android {
     testOptions {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
+
+    flavorDimensions += listOf(NetworkDimension.DIMENSION_NAME, DistributionDimension.DIMENSION_NAME)
+
+    productFlavors {
+        create(NetworkDimension.TESTNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
+        }
+
+        create(NetworkDimension.MAINNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
+        }
+
+        create(DistributionDimension.STORE.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
+        }
+
+        create(DistributionDimension.FOSS.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
+        }
+    }
 }
 
 dependencies {
     api(libs.androidx.annotation)
     api(projects.crashLib)
 
-    implementation(platform(libs.firebase.bom))
+    api(libs.bundles.koin)
 
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.crashlytics.ndk)
-    implementation(libs.firebase.installations)
+    "storeImplementation"(platform(libs.firebase.bom))
+    "storeImplementation"(libs.firebase.crashlytics)
+    "storeImplementation"(libs.firebase.crashlytics.ndk)
+    "storeImplementation"(libs.firebase.installations)
+
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.datetime)
     implementation(projects.spackleAndroidLib)
