@@ -1,6 +1,8 @@
 package co.electriccoin.zcash.ui.design.component
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,7 +29,16 @@ fun <T : ModalBottomSheetState> ZashiInScreenModalBottomSheet(
             },
             modifier = modifier,
             sheetState = sheetState,
+            properties = ModalBottomSheetProperties(
+                shouldDismissOnBackPress = false
+            )
         ) {
+            BackHandler(
+                enabled = normalizedState != null
+            ) {
+                normalizedState?.onBack?.invoke()
+            }
+
             content(it)
         }
     }

@@ -149,7 +149,7 @@ class SignKeystoneTransactionViewModel(
         }
 
     private fun onBack() {
-        cancelKeystoneProposalFlow()
+        isBottomSheetVisible.update { !it }
     }
 
     private fun onRejectClick() {
