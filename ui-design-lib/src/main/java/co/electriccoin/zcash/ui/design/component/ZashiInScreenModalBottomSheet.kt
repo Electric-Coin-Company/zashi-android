@@ -29,14 +29,13 @@ fun <T : ModalBottomSheetState> ZashiInScreenModalBottomSheet(
             },
             modifier = modifier,
             sheetState = sheetState,
-            properties = ModalBottomSheetProperties(
-                shouldDismissOnBackPress = false
-            )
+            properties =
+                ModalBottomSheetProperties(
+                    shouldDismissOnBackPress = false
+                )
         ) {
-            BackHandler(
-                enabled = normalizedState != null
-            ) {
-                normalizedState?.onBack?.invoke()
+            BackHandler {
+                it.onBack()
             }
 
             content(it)
