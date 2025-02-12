@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:name="co.electriccoin.zcash.app.ZcashApplication"
+        android:icon="@mipmap/ic_launcher_square"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name">
+
+        <provider
+            android:name="co.electriccoin.zcash.global.ShareFileProvider"
+            android:authorities="co.electriccoin.zcash.foss.provider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/share_file_provider_paths" />
+        </provider>
+
+    </application>
+
+</manifest>
