@@ -1,3 +1,7 @@
+import model.DistributionDimension
+import model.BuildType
+import model.NetworkDimension
+
 plugins {
     id("com.android.test")
     kotlin("android")
@@ -14,20 +18,22 @@ android {
         // to enable benchmarking for emulators, although only a physical device gives real results
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
         // To simplify module variants, we assume to run benchmarking against mainnet only
-        missingDimensionStrategy("network", "zcashmainnet")
+        missingDimensionStrategy(NetworkDimension.DIMENSION_NAME, NetworkDimension.MAINNET.value)
+        missingDimensionStrategy(DistributionDimension.DIMENSION_NAME, DistributionDimension.STORE.value)
+        missingDimensionStrategy(DistributionDimension.DIMENSION_NAME, DistributionDimension.FOSS.value)
     }
 
     buildTypes {
-        create("release") {
+        create(BuildType.RELEASE.value) {
             // To provide compatibility with other modules
         }
-        create("benchmark") {
+        create(BuildType.BENCHMARK.value) {
             // We provide the extra benchmark build variants for benchmarking. We still need to support debug
             // variants to be compatible with debug variants in other modules, although benchmarking does not allow
             // not minified build variants - benchmarking with the debug build variants will fail.
             isDebuggable = true
-            signingConfig = signingConfigs.getByName("debug")
-            matchingFallbacks += listOf("release")
+            signingConfig = signingConfigs.getByName(BuildType.DEBUG.value)
+            matchingFallbacks += listOf(BuildType.RELEASE.value)
         }
     }
 }

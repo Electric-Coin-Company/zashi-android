@@ -1,5 +1,6 @@
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.ManagedVirtualDevice
+import model.BuildType
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
 pluginManager.withPlugin("com.android.application") {
@@ -97,7 +98,7 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
     }
 
     buildTypes {
-        getByName("debug").apply {
+        getByName(BuildType.DEBUG.value).apply {
             val coverageEnabled =
                 project.property("IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED").toString().toBoolean()
             isTestCoverageEnabled = coverageEnabled
@@ -111,7 +112,7 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
         val isExplicitDebugSigningEnabled = !debugKeystorePath.isNullOrBlank()
         if (isExplicitDebugSigningEnabled) {
             // If this block doesn't execute, the output will still be signed with the default keystore
-            getByName("debug").apply {
+            getByName(BuildType.DEBUG.value).apply {
                 storeFile = File(debugKeystorePath)
             }
         }
