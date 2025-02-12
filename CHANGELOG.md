@@ -10,6 +10,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - Confirm the rejection of a Keystone transaction dialog added.
 
 ### Changed
+- `Flexa` version has been bumped to 1.0.11
 - Keystone flows swapped the buttons for the better UX, the main CTA is the closes button for a thumb.
 
 ## [1.3.3 (839)] - 2025-01-23
