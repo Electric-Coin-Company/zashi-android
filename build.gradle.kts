@@ -30,14 +30,13 @@ buildscript {
                 }
             }
         }
-        // We don't use mavenCentral now, but in the future we may want to use it for some dependencies
-        // mavenCentral {
-        //     if (isRepoRestrictionEnabled) {
-        //         content {
-        //             googleGroups.forEach { excludeGroup(it) }
-        //         }
-        //     }
-        // }
+        mavenCentral {
+            if (isRepoRestrictionEnabled) {
+                content {
+                    googleGroups.forEach { excludeGroup(it) }
+                }
+            }
+        }
         gradlePluginPortal {
             if (isRepoRestrictionEnabled) {
                 content {
@@ -45,7 +44,6 @@ buildscript {
                 }
             }
         }
-        maven("${rootProject.projectDir}/maven") // url to a local maven in this repository
         maven("https://jitpack.io")
     }
 
