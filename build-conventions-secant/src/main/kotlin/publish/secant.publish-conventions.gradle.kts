@@ -415,7 +415,7 @@ tasks {
         deployTrack.toGooglePlayIdentifier(),
         deployStatus.toGooglePlayIdentifier()
     )
-        .dependsOn(":app:assembleDebug")
+        .dependsOn(":app:assembleZcashmainnetStoreDebug")
         .dependsOn(":app:bundleZcashmainnetStoreRelease")
         .dependsOn(":app:packageZcashmainnetStoreReleaseUniversalApk")
 }
