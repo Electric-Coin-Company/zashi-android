@@ -255,8 +255,9 @@ androidComponents {
                 ResValue(value = hasFirebaseApiKeys.toString())
             )
 
-            if (project.property("ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY").toString().isNotEmpty() &&
-                project.property("ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY").toString().isNotEmpty()
+            if ((project.property("ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY").toString().isNotEmpty() &&
+                project.property("ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY").toString().isNotEmpty()) ||
+                variant.productFlavors.any { it.second == DistributionDimension.FOSS.value }
             ) {
                 // Update the versionName to reflect bumps in versionCode
 
