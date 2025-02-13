@@ -70,6 +70,7 @@ android {
                     "src/main/res/ui/transaction_filters",
                     "src/main/res/ui/transaction_history",
                     "src/main/res/ui/transaction_note",
+                    "src/main/res/ui/tax_export",
                     "src/main/res/ui/feedback",
                     "src/main/res/ui/update",
                     "src/main/res/ui/update_contact",
