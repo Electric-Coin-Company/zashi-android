@@ -130,6 +130,7 @@ dependencyResolutionManagement {
                 }
             }
         }
+        // start wtf maven
         maven("https://maven.emulator.wtf/releases/") {
             if (isRepoRestrictionEnabled) {
                 content {
@@ -137,6 +138,7 @@ dependencyResolutionManagement {
                 }
             }
         }
+        // end wtf maven
         maven("https://jitpack.io")
     }
 

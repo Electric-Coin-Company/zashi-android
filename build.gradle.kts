@@ -62,9 +62,6 @@ plugins {
     id("secant.rosetta-conventions")
 }
 
-val uiIntegrationModuleName: String = projects.uiIntegrationTest.name
-val uiScreenshotModuleName: String = projects.uiScreenshotTest.name
-
 tasks {
     withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask> {
         gradleReleaseChannel = "current"
