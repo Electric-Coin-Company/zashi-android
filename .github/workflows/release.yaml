@@ -6,7 +6,6 @@ on:
       - '*'  # Runs when any tag is pushed
 
 jobs:
-
   validate_gradle_wrapper:
     permissions:
       contents: read
@@ -22,7 +21,6 @@ jobs:
         uses: gradle/wrapper-validation-action@f9c9c575b8b21b6485636a91ffecd10e558c62f6
 
   check_secrets:
-    environment: deployment
     permissions:
       contents: read
     runs-on: ubuntu-latest
@@ -50,7 +48,6 @@ jobs:
   release:
     if: needs.check_secrets.outputs.has-secrets == 'true'
     needs: [validate_gradle_wrapper, check_secrets]
-    environment: deployment
     permissions:
       contents: read
       id-token: write
