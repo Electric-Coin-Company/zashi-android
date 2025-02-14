@@ -6,51 +6,7 @@ on:
       - '*'  # Runs when any tag is pushed
 
 jobs:
-  validate_gradle_wrapper:
-    permissions:
-      contents: read
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        timeout-minutes: 1
-        uses: actions/checkout@v4
-      # Gradle Wrapper validation can be flaky
-      # https://github.com/gradle/wrapper-validation-action/issues/40
-      - name: Gradle Wrapper Validation
-        timeout-minutes: 1
-        uses: gradle/wrapper-validation-action@v3
-
-  check_secrets:
-    permissions:
-      contents: read
-    runs-on: ubuntu-latest
-    outputs:
-      has-secrets: ${{ steps.check_secrets.outputs.defined }}
-    steps:
-      - id: check_secrets
-        env:
-          GOOGLE_PLAY_CLOUD_PROJECT: ${{ secrets.GOOGLE_PLAY_CLOUD_PROJECT }}
-          # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
-          # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
-          # Note that these properties are not currently used due to #1033
-          # GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
-          # GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.GOOGLE_PLAY_WORKLOAD_IDENTITY_PROVIDER }}
-          GOOGLE_PLAY_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
-          GOOGLE_PLAY_PUBLISHER_API_KEY: ${{ secrets.GOOGLE_PLAY_PUBLISHER_API_KEY }}
-          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
-        if: "${{ env.GOOGLE_PLAY_CLOUD_PROJECT != '' &&  
-          env.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY != '' && 
-          env.GOOGLE_PLAY_PUBLISHER_API_KEY != '' &&
-          env.COINBASE_APP_ID != ''      
-        }}"
-        run: echo "defined=true" >> $GITHUB_OUTPUT
-
   release:
-    if: needs.check_secrets.outputs.has-secrets == 'true'
-    needs: [validate_gradle_wrapper, check_secrets]
-    permissions:
-      contents: read
-      id-token: write
     runs-on: ubuntu-latest
 
     steps:
