@@ -16,8 +16,8 @@ private val gitCommitCountKey = "gitCommitCount"
 private val releaseNotesEn = "releaseNotesEn"
 private val releaseNotesEs = "releaseNotesEs"
 
-private val releaseNotesEnPath = "docs/whatsNew/WHATS_NEW_EN.md"
-private val releaseNotesEsPath = "docs/whatsNew/WHATS_NEW_ES.md"
+private val releaseNotesEnPath = file("${project.rootDir}/docs/whatsNew/WHATS_NEW_EN.md")
+private val releaseNotesEsPath = file("${project.rootDir}/docs/whatsNew/WHATS_NEW_ES.md")
 
 // Injects build information
 // Note timestamp is not currently injected because it effectively disables the cache since it
