@@ -41,7 +41,6 @@ class BalancesTestSetup(
             showStatusDialog = null,
             onStatusClick = {},
             snackbarHostState = SnackbarHostState(),
-            isUpdateAvailable = false,
             isShowingErrorDialog = false,
             setShowErrorDialog = {},
             onContactSupport = {},
