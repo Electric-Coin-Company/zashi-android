@@ -181,7 +181,7 @@ android {
                 resValue(
                     "string",
                     "app_name",
-                    "$defaultAppName $debugAppNameSuffix $debugAppNameSuffix $testnetNetworkName"
+                    "$defaultAppName $fossAppNameSuffix $debugAppNameSuffix $testnetNetworkName"
                 )
             }
             "zcashmainnetFossDebug" -> {
