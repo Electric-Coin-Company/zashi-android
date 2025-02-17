@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
@@ -11,9 +12,9 @@ import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.repository.TransactionData
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToSendUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,7 +27,6 @@ class TransactionHistoryWidgetViewModel(
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
-    private val navigateToSend: NavigateToSendUseCase,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
 ) : ViewModel() {
     val state =
@@ -44,7 +44,7 @@ class TransactionHistoryWidgetViewModel(
                         sendTransaction =
                             ButtonState(
                                 text = stringRes(R.string.transaction_history_send_transaction),
-                                onClick = ::onSendTransactionClick
+                                onClick = ::onRequestZecClick
                             ).takeIf { restoringState != WalletRestoringState.RESTORING },
                         enableShimmer = restoringState == WalletRestoringState.RESTORING
                     )
@@ -89,8 +89,8 @@ class TransactionHistoryWidgetViewModel(
         navigationRouter.forward(TransactionHistory)
     }
 
-    private fun onSendTransactionClick() {
-        navigateToSend()
+    private fun onRequestZecClick() {
+        navigationRouter.forward("${NavigationTargets.REQUEST}/${ReceiveAddressType.Unified.ordinal}")
     }
 }
 

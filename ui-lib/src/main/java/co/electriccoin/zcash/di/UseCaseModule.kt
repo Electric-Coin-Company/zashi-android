@@ -39,7 +39,6 @@ import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
@@ -154,7 +153,6 @@ val useCaseModule =
         factoryOf(::ObserveTransactionSubmitStateUseCase)
         factoryOf(::GetProposalUseCase)
         factoryOf(::ConfirmProposalUseCase)
-        factoryOf(::NavigateToSendUseCase)
         factoryOf(::GetWalletRestoringStateUseCase)
         factoryOf(::ApplyTransactionFiltersUseCase)
         factoryOf(::ResetTransactionFiltersUseCase)
