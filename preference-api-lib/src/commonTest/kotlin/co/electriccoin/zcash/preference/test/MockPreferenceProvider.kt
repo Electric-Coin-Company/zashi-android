@@ -15,6 +15,10 @@ class MockPreferenceProvider(
 
     override suspend fun getString(key: PreferenceKey) = map[key.key]
 
+    override suspend fun getStringSet(key: PreferenceKey): Set<String>? {
+        TODO("Not yet implemented")
+    }
+
     // For the mock implementation, does not support observability of changes
     override fun observe(key: PreferenceKey): Flow<String?> = flow { emit(getString(key)) }
 
@@ -30,6 +34,13 @@ class MockPreferenceProvider(
         value: String?
     ) {
         map[key.key] = value
+    }
+
+    override suspend fun putStringSet(
+        key: PreferenceKey,
+        value: Set<String>?
+    ) {
+        TODO("Not yet implemented")
     }
 
     override suspend fun putLong(

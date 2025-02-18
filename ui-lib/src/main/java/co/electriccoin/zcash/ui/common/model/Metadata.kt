@@ -13,7 +13,7 @@ data class Metadata(
     @Serializable(InstantSerializer::class)
     val lastUpdated: Instant,
     @SerialName("accountMetadata")
-    val accountMetadata: Map<String, AccountMetadata>
+    val accountMetadata: AccountMetadata
 )
 
 @Serializable
