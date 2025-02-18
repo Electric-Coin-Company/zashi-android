@@ -1,9 +1,12 @@
 name: Deploy GCP on Tagging
 
 on:
-  push:
-    tags:
-      - '*'  # Runs when any tag is pushed
+  release:
+    types:
+      - published  # Runs only when a release is published
+
+permissions:  
+  contents: write  # Grant write permissions to GITHUB_TOKEN
 
 jobs:
   validate_gradle_wrapper:
