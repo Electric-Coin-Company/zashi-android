@@ -239,6 +239,22 @@ object ZashiButtonDefaults {
         borderColor = borderColor,
         disabledBorderColor = Color.Unspecified
     )
+
+    @Composable
+    fun destructive2Colors(
+        containerColor: Color = ZashiColors.Btns.Destructive2.btnDestroy2Bg,
+        contentColor: Color = ZashiColors.Btns.Destructive2.btnDestroy2Fg,
+        borderColor: Color = Color.Unspecified,
+        disabledContainerColor: Color = ZashiColors.Btns.Destructive2.btnDestroy2BgDisabled,
+        disabledContentColor: Color = ZashiColors.Btns.Destructive2.btnDestroy2FgDisabled,
+    ) = ZashiButtonColors(
+        containerColor = containerColor,
+        contentColor = contentColor,
+        disabledContainerColor = disabledContainerColor,
+        disabledContentColor = disabledContentColor,
+        borderColor = borderColor,
+        disabledBorderColor = Color.Unspecified
+    )
 }
 
 @Immutable

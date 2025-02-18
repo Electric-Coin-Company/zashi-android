@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.common.repository
 import cash.z.ecc.android.sdk.model.TransactionId
 import cash.z.ecc.android.sdk.model.TransactionOutput
 import cash.z.ecc.android.sdk.model.TransactionOverview
-import cash.z.ecc.android.sdk.model.TransactionRecipient
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVED
@@ -112,12 +111,11 @@ class TransactionRepositoryImpl(
     override suspend fun getRecipients(transactionData: TransactionData): String? =
         withContext(Dispatchers.IO) {
             if (transactionData.overview.isSentTransaction) {
-                val result =
-                    synchronizerProvider
-                        .getSynchronizer()
-                        .getRecipients(transactionData.overview)
-                        .firstOrNull()
-                (result as? TransactionRecipient.RecipientAddress)?.addressValue
+                synchronizerProvider
+                    .getSynchronizer()
+                    .getRecipients(transactionData.overview)
+                    .firstOrNull()
+                    ?.addressValue
             } else {
                 null
             }
