@@ -20,22 +20,21 @@ jobs:
         timeout-minutes: 1
         uses: gradle/wrapper-validation-action@f9c9c575b8b21b6485636a91ffecd10e558c62f6
 
-  check_secrets:
-    environment: deployment
-    permissions:
-      contents: read
-    runs-on: ubuntu-latest
-    outputs:
-      has-secrets: ${{ steps.check_secrets.outputs.defined }}
-    steps:
-      - id: check_secrets
-        env:
-          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
-        if: "${{
-          env.COINBASE_APP_ID != ''      
-        }}"
-        run: echo "defined=true" >> $GITHUB_OUTPUT
-
+#  check_secrets:
+#    environment: deployment
+#    permissions:
+#      contents: read
+#    runs-on: ubuntu-latest
+#    outputs:
+#      has-secrets: ${{ steps.check_secrets.outputs.defined }}
+#    steps:
+#      - id: check_secrets
+#        env:
+#          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
+#        if: "${{
+#          env.COINBASE_APP_ID != ''
+#        }}"
+#        run: echo "defined=true" >> $GITHUB_OUTPUT
 
   release:
     runs-on: ubuntu-latest
@@ -135,5 +134,5 @@ jobs:
       - name: Collect Artifacts
         timeout-minutes: 1
         run: |
-          ls -la app/build/outputs/apk/*
+          ls -la app/build/outputs/apk_from_bundle/*
 
