@@ -130,9 +130,18 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
         run: |
           ./gradlew :app:assembleZcashmainnetDebug :app:bundleZcashmainnetRelease :app:packageZcashmainnetReleaseUniversalApk
+          mv app/build/outputs/apk_from_bundle/app-zcashmainnet-release-universal-unsigned.apk app/build/outputs/apk_from_bundle/zashi-github-release.apk
           
-      - name: Collect Artifacts
+      - name: Sign APK
         timeout-minutes: 1
         run: |
-          ls -la app/build/outputs/apk_from_bundle/*
+          cd app/build/outputs/apk_from_bundle/
+          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign zashi-github-release.apk
+          ls -la
 
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: app/build/outputs/apk_from_bundle/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
