@@ -245,7 +245,7 @@ androidComponents {
 
                 output.versionName.set(processedVersionCode)
 
-                val gitInfo = Git.newInfo(Git.MAIN, parent!!.projectDir)
+                val gitInfo = Git.newInfo(Git.MAIN, rootDir)
                 output.versionCode.set(gitInfo.commitCount)
             }
         }

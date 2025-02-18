@@ -16,7 +16,7 @@ object Git {
         val git = Git.open(workingDirectory)
         val repository = git.repository
 
-        val head: ObjectId = repository.resolve(branch)
+        val head = repository.resolve(branch)
         val count = git.log().call().count()
 
         return GitInfo(ObjectId.toString(head), count)

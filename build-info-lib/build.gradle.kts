@@ -25,9 +25,9 @@ private val releaseNotesEsPath = "docs/whatsNew/WHATS_NEW_ES.md"
 val generateBuildConfigTask = tasks.create("buildConfig") {
     val generatedDir = layout.buildDirectory.dir("generated").get().asFile
 
-    val gitInfo = co.electriccoin.zcash.Git.newInfo(
+    val gitInfo = Git.newInfo(
         Git.HEAD,
-        parent!!.projectDir
+        rootDir
     )
 
     inputs.property(gitShaKey, gitInfo.sha)
