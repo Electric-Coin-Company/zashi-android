@@ -135,6 +135,7 @@ jobs:
         run: |
           mkdir artifacts/
           mv app/build/outputs/apk_from_bundle/*/* artifacts/
+          cd artifacts/
           ls -la
           gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *
           ls -la
