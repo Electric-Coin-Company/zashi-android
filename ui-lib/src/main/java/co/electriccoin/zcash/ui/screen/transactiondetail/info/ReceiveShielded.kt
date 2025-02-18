@@ -14,6 +14,8 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactiondetail.ReceiveShieldedStateFixture
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumn
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumnState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoHeader
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoHeaderState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRow
@@ -66,9 +68,27 @@ fun ReceiveShielded(
                 TransactionDetailInfoRowState(
                     title = stringRes(R.string.transaction_detail_info_transaction_completed),
                     message = state.completedTimestamp,
-                    shape = TransactionDetailInfoShape.LAST,
+                    shape =
+                        if (state.note != null) {
+                            TransactionDetailInfoShape.MIDDLE
+                        } else {
+                            TransactionDetailInfoShape.LAST
+                        },
                 )
         )
+        if (state.note != null) {
+            ZashiHorizontalDivider()
+            TransactionDetailInfoColumn(
+                modifier = Modifier.fillMaxWidth(),
+                state =
+                    TransactionDetailInfoColumnState(
+                        title = stringRes(R.string.transaction_detail_info_note),
+                        message = state.note,
+                        shape = TransactionDetailInfoShape.LAST,
+                        onClick = null
+                    )
+            )
+        }
     }
 }
 

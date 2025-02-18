@@ -162,7 +162,7 @@ object StringResourceDefaults {
     }
 
     fun convertAddress(res: StringResource.ByAddress): String {
-        return if (res.abbreviated) {
+        return if (res.abbreviated && res.address.isNotBlank()) {
             "${res.address.take(ADDRESS_MAX_LENGTH_ABBREVIATED)}..."
         } else {
             res.address

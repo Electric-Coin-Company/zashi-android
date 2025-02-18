@@ -15,7 +15,8 @@ data class SendShieldedState(
     val onTransactionAddressClick: () -> Unit,
     val fee: StringResource,
     val completedTimestamp: StringResource,
-    val memo: TransactionDetailMemosState
+    val memo: TransactionDetailMemosState,
+    val note: StringResource?
 ) : TransactionDetailInfoState
 
 @Immutable
@@ -28,6 +29,7 @@ data class SendTransparentState(
     val onTransactionAddressClick: () -> Unit,
     val fee: StringResource,
     val completedTimestamp: StringResource,
+    val note: StringResource?
 ) : TransactionDetailInfoState
 
 @Immutable
@@ -35,14 +37,16 @@ data class ReceiveShieldedState(
     val memo: TransactionDetailMemosState,
     val transactionId: StringResource,
     val onTransactionIdClick: () -> Unit,
-    val completedTimestamp: StringResource
+    val completedTimestamp: StringResource,
+    val note: StringResource?
 ) : TransactionDetailInfoState
 
 @Immutable
 data class ReceiveTransparentState(
     val transactionId: StringResource,
     val onTransactionIdClick: () -> Unit,
-    val completedTimestamp: StringResource
+    val completedTimestamp: StringResource,
+    val note: StringResource?
 ) : TransactionDetailInfoState
 
 @Immutable
@@ -51,6 +55,7 @@ data class ShieldingState(
     val onTransactionIdClick: () -> Unit,
     val completedTimestamp: StringResource,
     val fee: StringResource,
+    val note: StringResource?
 ) : TransactionDetailInfoState
 
 @Immutable

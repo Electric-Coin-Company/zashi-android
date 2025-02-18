@@ -14,6 +14,7 @@ import cash.z.ecc.android.sdk.model.ObserveFiatCurrencyResult
 import cash.z.ecc.android.sdk.model.Pczt
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.Proposal
+import cash.z.ecc.android.sdk.model.TransactionId
 import cash.z.ecc.android.sdk.model.TransactionOutput
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
@@ -44,6 +45,9 @@ internal class MockSynchronizer : CloseableSynchronizer {
     }
 
     override val accountsFlow: Flow<List<Account>?>
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+
+    override val allTransactions: Flow<List<TransactionOverview>>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override suspend fun importAccountByUfvk(setup: AccountImportSetup): Account {
@@ -89,9 +93,6 @@ internal class MockSynchronizer : CloseableSynchronizer {
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val status: Flow<Synchronizer.Status>
-        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-
-    override val transactions: Flow<List<TransactionOverview>>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override fun close() {
@@ -236,6 +237,10 @@ internal class MockSynchronizer : CloseableSynchronizer {
     }
 
     override suspend fun getTransactions(accountUuid: AccountUuid): Flow<List<TransactionOverview>> {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
+    override fun getTransactionsByMemoSubstring(query: String): Flow<List<TransactionId>> {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 

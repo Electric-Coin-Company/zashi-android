@@ -69,6 +69,7 @@ android {
                     "src/main/res/ui/transaction_detail",
                     "src/main/res/ui/transaction_filters",
                     "src/main/res/ui/transaction_history",
+                    "src/main/res/ui/transaction_note",
                     "src/main/res/ui/feedback",
                     "src/main/res/ui/update",
                     "src/main/res/ui/update_contact",
@@ -149,6 +150,7 @@ dependencies {
     implementation(libs.zcash.bip39)
     implementation(libs.tink)
     implementation(libs.zxing)
+    api(libs.compose.shimmer)
 
     api(libs.flexa.core)
     api(libs.flexa.spend)

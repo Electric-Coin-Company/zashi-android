@@ -8,33 +8,37 @@ import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneProposalPCZTEncoderUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneShieldProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.CreateOrUpdateTransactionNoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateZip321ProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.DeleteTransactionNoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.FlipTransactionBookmarkUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetBackupPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetMetadataUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetTransactionByIdUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetTransactionFulltextFiltersUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetTransactionMetadataUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
@@ -58,7 +62,8 @@ import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.PrefillSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
-import co.electriccoin.zcash.ui.common.usecase.ResetAddressBookUseCase
+import co.electriccoin.zcash.ui.common.usecase.ResetInMemoryDataUseCase
+import co.electriccoin.zcash.ui.common.usecase.ResetSharedPrefsDataUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.SelectWalletAccountUseCase
@@ -76,9 +81,11 @@ import co.electriccoin.zcash.ui.common.usecase.ViewTransactionDetailAfterSuccess
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
+import co.electriccoin.zcash.ui.util.closeableCallback
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
+import org.koin.dsl.onClose
 
 val useCaseModule =
     module {
@@ -94,8 +101,6 @@ val useCaseModule =
         factoryOf(::ObserveConfigurationUseCase)
         factoryOf(::RescanBlockchainUseCase)
         factoryOf(::GetTransparentAddressUseCase)
-        factoryOf(::ObserveAddressBookContactsUseCase)
-        factoryOf(::ResetAddressBookUseCase)
         factoryOf(::ValidateContactAddressUseCase)
         factoryOf(::ValidateContactNameUseCase)
         factoryOf(::SaveContactUseCase)
@@ -117,7 +122,7 @@ val useCaseModule =
         factoryOf(::SendEmailUseCase)
         factoryOf(::SendSupportEmailUseCase)
         factoryOf(::IsFlexaAvailableUseCase)
-        factoryOf(::SensitiveSettingsVisibleUseCase)
+        singleOf(::SensitiveSettingsVisibleUseCase)
         factoryOf(::ObserveWalletAccountsUseCase)
         factoryOf(::SelectWalletAccountUseCase)
         factoryOf(::ObserveSelectedWalletAccountUseCase)
@@ -131,7 +136,7 @@ val useCaseModule =
         singleOf(::ObserveClearSendUseCase)
         singleOf(::PrefillSendUseCase)
         factoryOf(::GetCurrentTransactionsUseCase)
-        factoryOf(::GetCurrentFilteredTransactionsUseCase)
+        factoryOf(::GetCurrentFilteredTransactionsUseCase) onClose ::closeableCallback
         factoryOf(::CreateProposalUseCase)
         factoryOf(::CreateZip321ProposalUseCase)
         factoryOf(::CreateKeystoneShieldProposalUseCase)
@@ -148,14 +153,21 @@ val useCaseModule =
         factoryOf(::ObserveTransactionSubmitStateUseCase)
         factoryOf(::GetProposalUseCase)
         factoryOf(::ConfirmProposalUseCase)
-        factoryOf(::NavigateToAddressBookUseCase)
-        factoryOf(::NavigateToSendUseCase)
         factoryOf(::GetWalletRestoringStateUseCase)
         factoryOf(::ApplyTransactionFiltersUseCase)
         factoryOf(::ResetTransactionFiltersUseCase)
         factoryOf(::ApplyTransactionFulltextFiltersUseCase)
         factoryOf(::GetTransactionFiltersUseCase)
-        factoryOf(::GetTransactionFulltextFiltersUseCase)
-        factoryOf(::GetTransactionByIdUseCase)
+        factoryOf(::GetTransactionDetailByIdUseCase)
         factoryOf(::SendTransactionAgainUseCase)
+        factoryOf(::ObserveAddressBookContactsUseCase)
+        factoryOf(::ResetInMemoryDataUseCase)
+        factoryOf(::ResetSharedPrefsDataUseCase)
+        factoryOf(::NavigateToAddressBookUseCase)
+        factoryOf(::GetTransactionMetadataUseCase)
+        factoryOf(::FlipTransactionBookmarkUseCase)
+        factoryOf(::DeleteTransactionNoteUseCase)
+        factoryOf(::CreateOrUpdateTransactionNoteUseCase)
+        factoryOf(::MarkTxMemoAsReadUseCase)
+        factoryOf(::GetMetadataUseCase)
     }

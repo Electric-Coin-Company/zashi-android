@@ -235,10 +235,19 @@ internal fun WrapSend(
                     type = type
                 )
             )
+
+            val fee = it.transaction.overview.feePaid
+            val value =
+                if (fee == null) {
+                    it.transaction.overview.netValue
+                } else {
+                    it.transaction.overview.netValue - fee
+                }
+
             setAmountState(
                 AmountState.newFromZec(
                     context = context,
-                    value = it.transaction.overview.netValue.convertZatoshiToZecString(),
+                    value = value.convertZatoshiToZecString(),
                     monetarySeparators = monetarySeparators,
                     isTransparentOrTextRecipient = type == AddressType.Transparent,
                     fiatValue = amountState.fiatValue,

@@ -22,6 +22,6 @@ object TransactionStateFixture {
                 ),
             onClick = {},
             key = UUID.randomUUID().toString(),
-            hasMemo = true,
+            isUnread = true,
         )
 }

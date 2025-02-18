@@ -18,9 +18,12 @@ import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIEL
 import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDING_FAILED
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.DetailedTransactionData
-import co.electriccoin.zcash.ui.common.usecase.GetTransactionByIdUseCase
+import co.electriccoin.zcash.ui.common.usecase.FlipTransactionBookmarkUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
+import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendTransactionAgainUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
@@ -32,42 +35,94 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveTransparent
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.SendShieldedState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.SendTransparentState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ShieldingState
+import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailInfoState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemoState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemosState
+import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.Instant
 import java.time.ZoneId
 
 @Suppress("TooManyFunctions")
 class TransactionDetailViewModel(
-    transactionDetail: TransactionDetail,
-    getTransactionById: GetTransactionByIdUseCase,
+    getTransactionDetailById: GetTransactionDetailByIdUseCase,
+    private val markTxMemoAsRead: MarkTxMemoAsReadUseCase,
+    private val transactionDetail: TransactionDetail,
     private val copyToClipboard: CopyToClipboardUseCase,
     private val navigationRouter: NavigationRouter,
-    private val sendTransactionAgain: SendTransactionAgainUseCase
+    private val sendTransactionAgain: SendTransactionAgainUseCase,
+    private val flipTransactionBookmark: FlipTransactionBookmarkUseCase,
 ) : ViewModel() {
-    val state =
-        getTransactionById.observe(transactionDetail.transactionId)
-            .map { transaction ->
-                TransactionDetailState(
-                    onBack = ::onBack,
-                    header = createTransactionHeaderState(transaction),
-                    info = createTransactionInfoState(transaction),
-                    primaryButton = createPrimaryButtonState(transaction),
-                    secondaryButton = null
-                )
-            }
+    private val transaction =
+        getTransactionDetailById
+            .observe(transactionDetail.transactionId)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = null
             )
 
-    private fun createTransactionInfoState(transaction: DetailedTransactionData) =
-        when (transaction.transaction.state) {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val state =
+        transaction.filterNotNull().mapLatest { transaction ->
+            TransactionDetailState(
+                onBack = ::onBack,
+                header = createTransactionHeaderState(transaction),
+                info = createTransactionInfoState(transaction),
+                primaryButton = createPrimaryButtonState(transaction),
+                secondaryButton =
+                    ButtonState(
+                        text =
+                            if (transaction.metadata?.note != null) {
+                                stringRes(R.string.transaction_detail_edit_note)
+                            } else {
+                                stringRes(R.string.transaction_detail_add_a_note)
+                            },
+                        onClick = ::onAddOrEditNoteClick
+                    ),
+                bookmarkButton =
+                    IconButtonState(
+                        icon =
+                            if (transaction.metadata?.isBookmarked == true) {
+                                R.drawable.ic_transaction_detail_bookmark
+                            } else {
+                                R.drawable.ic_transaction_detail_no_bookmark
+                            },
+                        onClick = ::onBookmarkClick
+                    )
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
+        )
+
+    init {
+        viewModelScope.launch {
+            withContext(Dispatchers.Default) {
+                val transaction = transaction.filterNotNull().first()
+                if (transaction.transaction.overview.memoCount > 0) {
+                    markTxMemoAsRead(transactionDetail.transactionId)
+                }
+            }
+        }
+    }
+
+    private fun onAddOrEditNoteClick() {
+        navigationRouter.forward(TransactionNote(transactionDetail.transactionId))
+    }
+
+    private fun createTransactionInfoState(transaction: DetailedTransactionData): TransactionDetailInfoState {
+        return when (transaction.transaction.state) {
             SENT,
             SENDING,
             SEND_FAILED -> {
@@ -78,13 +133,16 @@ class TransactionDetailViewModel(
                         addressAbbreviated = createAbbreviatedAddressStringRes(transaction),
                         transactionId =
                             stringResByTransactionId(
-                                value = transaction.transaction.overview.txIdString(),
+                                value = transaction.transaction.overview.txId.txIdString(),
                                 abbreviated = true
                             ),
-                        onTransactionIdClick = { onCopyToClipboard(transaction.transaction.overview.txIdString()) },
+                        onTransactionIdClick = {
+                            onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
+                        },
                         onTransactionAddressClick = { onCopyToClipboard(transaction.recipientAddress.address) },
                         fee = createFeeStringRes(transaction),
                         completedTimestamp = createTimestampStringRes(transaction),
+                        note = transaction.metadata?.note?.let { stringRes(it) }
                     )
                 } else {
                     SendShieldedState(
@@ -93,11 +151,11 @@ class TransactionDetailViewModel(
                         addressAbbreviated = createAbbreviatedAddressStringRes(transaction),
                         transactionId =
                             stringResByTransactionId(
-                                value = transaction.transaction.overview.txIdString(),
+                                value = transaction.transaction.overview.txId.txIdString(),
                                 abbreviated = true
                             ),
                         onTransactionIdClick = {
-                            onCopyToClipboard(transaction.transaction.overview.txIdString())
+                            onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
                         },
                         onTransactionAddressClick = {
                             onCopyToClipboard(transaction.recipientAddress?.address.orEmpty())
@@ -113,7 +171,8 @@ class TransactionDetailViewModel(
                                             onClick = { onCopyToClipboard(memo) }
                                         )
                                     }
-                            )
+                            ),
+                        note = transaction.metadata?.note?.let { stringRes(it) }
                     )
                 }
             }
@@ -125,20 +184,25 @@ class TransactionDetailViewModel(
                     ReceiveTransparentState(
                         transactionId =
                             stringResByTransactionId(
-                                value = transaction.transaction.overview.txIdString(),
+                                value = transaction.transaction.overview.txId.txIdString(),
                                 abbreviated = true
                             ),
-                        onTransactionIdClick = { onCopyToClipboard(transaction.transaction.overview.txIdString()) },
+                        onTransactionIdClick = {
+                            onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
+                        },
                         completedTimestamp = createTimestampStringRes(transaction),
+                        note = transaction.metadata?.note?.let { stringRes(it) }
                     )
                 } else {
                     ReceiveShieldedState(
                         transactionId =
                             stringResByTransactionId(
-                                value = transaction.transaction.overview.txIdString(),
+                                value = transaction.transaction.overview.txId.txIdString(),
                                 abbreviated = true
                             ),
-                        onTransactionIdClick = { onCopyToClipboard(transaction.transaction.overview.txIdString()) },
+                        onTransactionIdClick = {
+                            onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
+                        },
                         completedTimestamp = createTimestampStringRes(transaction),
                         memo =
                             TransactionDetailMemosState(
@@ -149,7 +213,8 @@ class TransactionDetailViewModel(
                                             onClick = { onCopyToClipboard(memo) }
                                         )
                                     }
-                            )
+                            ),
+                        note = transaction.metadata?.note?.let { stringRes(it) }
                     )
                 }
             }
@@ -160,15 +225,19 @@ class TransactionDetailViewModel(
                 ShieldingState(
                     transactionId =
                         stringResByTransactionId(
-                            value = transaction.transaction.overview.txIdString(),
+                            value = transaction.transaction.overview.txId.txIdString(),
                             abbreviated = true
                         ),
-                    onTransactionIdClick = { onCopyToClipboard(transaction.transaction.overview.txIdString()) },
+                    onTransactionIdClick = {
+                        onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
+                    },
                     completedTimestamp = createTimestampStringRes(transaction),
                     fee = createFeeStringRes(transaction),
+                    note = transaction.metadata?.note?.let { stringRes(it) }
                 )
             }
         }
+    }
 
     private fun createFeeStringRes(transaction: DetailedTransactionData): StringResource {
         val feePaid =
@@ -271,6 +340,11 @@ class TransactionDetailViewModel(
     private fun onBack() {
         navigationRouter.back()
     }
+
+    private fun onBookmarkClick() =
+        viewModelScope.launch {
+            flipTransactionBookmark(transactionDetail.transactionId)
+        }
 }
 
 private const val MIN_FEE_THRESHOLD = 100000

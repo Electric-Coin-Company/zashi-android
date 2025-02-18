@@ -1,9 +1,9 @@
-package co.electriccoin.zcash.ui.common.serialization.addressbook
+package co.electriccoin.zcash.ui.common.serialization
 
 import java.io.InputStream
 import java.nio.ByteBuffer
 
-internal abstract class BaseAddressBookSerializer {
+abstract class BaseSerializer {
     protected fun Int.createByteArray(): ByteArray {
         return this.toLong().createByteArray()
     }
