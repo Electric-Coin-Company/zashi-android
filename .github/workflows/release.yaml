@@ -133,13 +133,14 @@ jobs:
       - name: Sign APK
         timeout-minutes: 1
         run: |
-          cd app/build/outputs/apk_from_bundle/
-          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *
           ls -la
+          cd app/build/outputs/apk_from_bundle/*/
+          ls -la
+          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
         with:
-          files: app/build/outputs/apk_from_bundle/*
+          files: app/build/outputs/apk_from_bundle/*/
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
