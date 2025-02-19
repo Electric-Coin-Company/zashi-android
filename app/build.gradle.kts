@@ -1,8 +1,8 @@
 import co.electriccoin.zcash.Git
 import com.android.build.api.variant.BuildConfigField
 import com.android.build.api.variant.ResValue
-import model.DistributionDimension
 import model.BuildType
+import model.DistributionDimension
 import model.NetworkDimension
 import java.util.Locale
 
@@ -259,25 +259,8 @@ androidComponents {
                 project.property("ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY").toString().isNotEmpty()) ||
                 variant.productFlavors.any { it.second == DistributionDimension.FOSS.value }
             ) {
-                // Update the versionName to reflect bumps in versionCode
-
-                val versionCodeOffset = 0  // Change this to zero the final digit of the versionName
-
-                val processedVersionCode = output.versionCode.map { playVersionCode ->
-                    val defaultVersionName = project.property("ZCASH_VERSION_NAME").toString()
-                    // Version names will look like `myCustomVersionName.123`
-                    @Suppress("UNNECESSARY_SAFE_CALL")
-                    playVersionCode?.let {
-                        val delta = it - versionCodeOffset
-                        if (delta < 0) {
-                            defaultVersionName
-                        } else {
-                            "$defaultVersionName ($delta)"
-                        }
-                    } ?: defaultVersionName
-                }
-
-                output.versionName.set(processedVersionCode)
+                val defaultVersionName = project.property("ZCASH_VERSION_NAME").toString()
+                output.versionName.set(defaultVersionName)
 
                 val gitInfo = Git.newInfo(Git.MAIN, rootDir)
                 output.versionCode.set(gitInfo.commitCount)
