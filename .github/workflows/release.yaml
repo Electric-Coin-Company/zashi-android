@@ -134,7 +134,14 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
         run: |
           ./gradlew :app:assembleZcashmainnetStoreDebug :app:bundleZcashmainnetStoreRelease :app:packageZcashmainnetStoreReleaseUniversalApk
-      - name: Get Foss APK
+      - name: Strip non-FOSS libraries
+        timeout-minutes: 5
+        run: |
+          - sed -i -e '/start wtf maven/,/end wtf maven/d' -e '/include("ui-screenshot-test")/d' settings.gradle.kts
+          - sed -i -e '/wtf.emulator.gradle/d' -e '/secant.emulator-wtf-conventions/d' */build.gradle.kts
+          - sed -i -e '/gms/d' -e '/com.google.firebase/d' build.gradle.kts
+          - sed -i -e '/wtf.emulator/d' -e '/com.vdurmont/d' -e '/org.json:json/d' -e '/gms/d' -e '/firebase/d' buildscript-gradle.lockfile build-conventions-secant/gradle.lockfile
+      - name: Get FOSS APK
         timeout-minutes: 25
         env:
           ORG_GRADLE_PROJECT_ZCASH_SUPPORT_EMAIL_ADDRESS: ${{ vars.SUPPORT_EMAIL_ADDRESS }}
