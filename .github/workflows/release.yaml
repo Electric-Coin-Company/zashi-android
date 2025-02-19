@@ -167,14 +167,14 @@ jobs:
           gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *
           ls -la
 
-      - name: Create Versions File
+      - name: Create FOSS Versions File
         timeout-minutes: 1
         run: |
           TAG=$(git describe --tags --abbrev=0)
           VERSION_NAME=$(echo "$TAG" | cut -d'-' -f1)
           VERSION_CODE=$(echo "$TAG" | cut -d'-' -f2)
-          echo $VERSION_NAME > version_name.txt
-          echo $VERSION_CODE > version_code.txt
+          echo $VERSION_NAME > app/build/outputs/apk_from_bundle/zcashmainnetFossRelease/version_name.txt
+          echo $VERSION_CODE > app/build/outputs/apk_from_bundle/zcashmainnetFossRelease/version_code.txt
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
