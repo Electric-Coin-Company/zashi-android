@@ -130,6 +130,7 @@ dependencyResolutionManagement {
                 }
             }
         }
+        // start wtf maven
         maven("https://maven.emulator.wtf/releases/") {
             if (isRepoRestrictionEnabled) {
                 content {
@@ -137,7 +138,7 @@ dependencyResolutionManagement {
                 }
             }
         }
-        maven("${rootProject.projectDir}/maven") // url to a local maven in this repository
+        // end wtf maven
         maven("https://jitpack.io")
     }
 
@@ -256,8 +257,8 @@ dependencyResolutionManagement {
             library("zxing", "com.google.zxing:core:$zxingVersion")
             library("koin", "io.insert-koin:koin-android:$koinVersion")
             library("koin-compose", "io.insert-koin:koin-androidx-compose:$koinVersion")
-            library("flexa-core", "com.flexa:core:$flexaVersion")
-            library("flexa-spend", "com.flexa:spend:$flexaVersion")
+            library("flexa-core", "co.flexa:core:$flexaVersion")
+            library("flexa-spend", "co.flexa:spend:$flexaVersion")
             library("keystone", "com.github.KeystoneHQ:keystone-sdk-android:$keystoneVersion")
 
             // Test libraries

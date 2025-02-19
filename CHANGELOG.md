@@ -7,7 +7,10 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [Unreleased]
 
 ### Added
-- The new `Foss` build dimension has been added that suits for Zashi build that follows FOSS principles 
+- The new `Foss` build dimension has been added that suits for Zashi build that follows FOSS principles
+
+### Changed
+- `Flexa` version has been bumped to 1.0.11
 
 ## [1.3.3 (839)] - 2025-01-23
 
