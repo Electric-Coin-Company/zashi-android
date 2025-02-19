@@ -173,8 +173,8 @@ jobs:
           TAG=$(git describe --tags --abbrev=0)
           VERSION_NAME=$(echo "$TAG" | cut -d'-' -f1)
           VERSION_CODE=$(echo "$TAG" | cut -d'-' -f2)
-          echo "- versionName: $VERSION_NAME" > version_name.txt
-          echo "- versionCode: $VERSION_CODE" > version_code.txt
+          echo $VERSION_NAME > version_name.txt
+          echo $VERSION_CODE > version_code.txt
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
