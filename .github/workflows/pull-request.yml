@@ -33,6 +33,8 @@ jobs:
       - name: Checkout
         timeout-minutes: 1
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0 # to fetch all commits
       # Gradle Wrapper validation can be flaky
       # https://github.com/gradle/wrapper-validation-action/issues/40
       - name: Gradle Wrapper Validation
@@ -108,6 +110,8 @@ jobs:
       - name: Checkout
         timeout-minutes: 1
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0 # to fetch all commits
       - name: Set up Java
         uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12
         timeout-minutes: 1
@@ -148,6 +152,8 @@ jobs:
       - name: Checkout
         timeout-minutes: 1
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0 # to fetch all commits
       - name: Set up Java
         uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12
         timeout-minutes: 1
@@ -188,6 +194,8 @@ jobs:
       - name: Checkout
         timeout-minutes: 1
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0 # to fetch all commits
       - name: Set up Java
         uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12
         timeout-minutes: 1
@@ -231,6 +239,8 @@ jobs:
       - name: Checkout
         timeout-minutes: 1
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0 # to fetch all commits
       - name: Set up Java
         uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12
         timeout-minutes: 1
@@ -275,6 +285,8 @@ jobs:
       - name: Checkout
         timeout-minutes: 1
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0 # to fetch all commits
       - name: Set up Java
         uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12
         timeout-minutes: 1
@@ -340,6 +352,8 @@ jobs:
       - name: Checkout
         timeout-minutes: 1
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0 # to fetch all commits
       - name: Set up Java
         uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12
         timeout-minutes: 1
@@ -389,6 +403,8 @@ jobs:
       - name: Checkout
         timeout-minutes: 1
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0 # to fetch all commits
       - name: Set up Java
         uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12
         timeout-minutes: 1
@@ -441,6 +457,8 @@ jobs:
       - name: Checkout
         timeout-minutes: 1
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0 # to fetch all commits
       - name: Set up Java
         uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12
         timeout-minutes: 1
@@ -499,6 +517,8 @@ jobs:
       - name: Checkout
         timeout-minutes: 1
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0 # to fetch all commits
       - name: Set up Java
         uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12
         timeout-minutes: 1
@@ -574,6 +594,8 @@ jobs:
       - name: Checkout
         timeout-minutes: 1
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0 # to fetch all commits
       - name: Set up Java
         uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12
         timeout-minutes: 1
