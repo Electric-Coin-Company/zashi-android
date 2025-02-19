@@ -358,15 +358,15 @@ private fun AmountWidget(state: AmountState) {
 private fun BottomBar(state: ReviewTransactionState) {
     OldZashiBottomBar {
         ZashiButton(
-            state = state.negativeButton,
-            colors = ZashiButtonDefaults.secondaryColors(),
+            state = state.primaryButton,
             modifier =
                 Modifier
                     .padding(horizontal = 24.dp)
                     .fillMaxWidth()
         )
         ZashiButton(
-            state = state.primaryButton,
+            state = state.negativeButton,
+            colors = ZashiButtonDefaults.secondaryColors(),
             modifier =
                 Modifier
                     .padding(horizontal = 24.dp)
