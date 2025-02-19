@@ -6,9 +6,6 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
-### Changed
-- `Flexa` version has been bumped to 1.0.11
-
 ## [1.3.3 (839)] - 2025-01-23
 
 ### Changed
