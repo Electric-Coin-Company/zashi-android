@@ -261,7 +261,6 @@ androidComponents {
             ) {
                 val defaultVersionName = project.property("ZCASH_VERSION_NAME").toString()
                 output.versionName.set(defaultVersionName)
-
                 val gitInfo = Git.newInfo(Git.MAIN, rootDir)
                 output.versionCode.set(gitInfo.commitCount)
             }

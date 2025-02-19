@@ -1,0 +1,152 @@
+name: Deploy GCP on Tagging
+
+on:
+  release:
+    types:
+      - published  # Runs only when a release is published
+
+permissions:  
+  contents: write  # Grant write permissions to GITHUB_TOKEN
+
+jobs:
+  validate_gradle_wrapper:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      # Gradle Wrapper validation can be flaky
+      # https://github.com/gradle/wrapper-validation-action/issues/40
+      - name: Gradle Wrapper Validation
+        timeout-minutes: 1
+        uses: gradle/wrapper-validation-action@f9c9c575b8b21b6485636a91ffecd10e558c62f6
+
+#  check_secrets:
+#    environment: deployment
+#    permissions:
+#      contents: read
+#    runs-on: ubuntu-latest
+#    outputs:
+#      has-secrets: ${{ steps.check_secrets.outputs.defined }}
+#    steps:
+#      - id: check_secrets
+#        env:
+#          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
+#        if: "${{
+#          env.COINBASE_APP_ID != ''
+#        }}"
+#        run: echo "defined=true" >> $GITHUB_OUTPUT
+
+  release:
+    environment: deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+            fetch-depth: 0 # to fetch all commits
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Configure gsutil
+        run: gcloud auth activate-service-account --key-file <(echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}')
+
+      - name: Download file from GCS
+        run: gsutil -q cp gs://${{ secrets.GCP_PROJECT_ID_PROD }}-apt-packages/encrypted_gpg.kms encrypted_gpg.kms
+
+      - name: Decrypt file using KMS
+        run: |
+          gcloud kms decrypt \
+            --key gpg \
+            --keyring gpg \
+            --location global \
+            --plaintext-file private.pgp \
+            --ciphertext-file encrypted_gpg.kms
+
+      - name: Import GPG
+        run: |
+          gpg --import private.pgp
+
+      - name: Set up Java
+        uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12
+        timeout-minutes: 1
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1
+        timeout-minutes: 10
+        with:
+          gradle-home-cache-cleanup: true
+      - name: Export Google Services JSON
+        env:
+          FIREBASE_DEBUG_JSON_BASE64: ${{ secrets.FIREBASE_DEBUG_JSON_BASE64 }}
+          FIREBASE_RELEASE_JSON_BASE64: ${{ secrets.FIREBASE_RELEASE_JSON_BASE64 }}
+        if: "${{ env.FIREBASE_DEBUG_JSON_BASE64 != '' && env.FIREBASE_RELEASE_JSON_BASE64 != '' }}"
+        shell: bash
+        run: |
+          mkdir -p app/src/debug/
+          mkdir -p app/src/release/
+          echo ${FIREBASE_DEBUG_JSON_BASE64} | base64 --decode > app/src/debug/google-services.json
+          echo ${FIREBASE_RELEASE_JSON_BASE64} | base64 --decode > app/src/release/google-services.json
+      - name: Set Env
+        shell: bash
+        run: |
+          echo "home=${HOME}" >> "$GITHUB_ENV"
+          
+      - name: Export Signing Key
+        env:
+          # The upload key must be exported using `base64 -w 0 <filename.jks>` for use
+          # as a Github Secrets value; if the key is exported with standard wrapping,
+          # it will fail to import correctly.
+          # NOTE: This is the upload signing key, which may be replaced at will, not
+          # the application signing key which is escrowed by Google and may only be
+          # replaced once a year (and has a bunch of additional hassles associated with
+          # replacing it.)
+          SIGNING_KEYSTORE_BASE_64: ${{ secrets.UPLOAD_KEYSTORE_BASE_64 }}
+          SIGNING_KEY_PATH: ${{ format('{0}/release.jks', env.home) }}
+        shell: bash
+        run: |
+          echo ${SIGNING_KEYSTORE_BASE_64} | base64 --decode > ${SIGNING_KEY_PATH}
+          
+      - name: Get APK
+        timeout-minutes: 25
+        env:
+          ORG_GRADLE_PROJECT_ZCASH_SUPPORT_EMAIL_ADDRESS: ${{ vars.SUPPORT_EMAIL_ADDRESS }}
+          # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
+          # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
+          # Note that these properties are not currently used due to #1033
+          # ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
+          # ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH: ${{ steps.auth_google_play.outputs.credentials_file_path }}
+          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
+          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY: ${{ secrets.GOOGLE_PLAY_PUBLISHER_API_KEY }}
+          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_TRACK: internal
+          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_STATUS: completed
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ format('{0}/release.jks', env.home) }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: ${{ secrets.UPLOAD_KEY_ALIAS_PASSWORD }}
+          ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
+          ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
+        run: |
+          ./gradlew :app:assembleZcashmainnetDebug :app:bundleZcashmainnetRelease :app:packageZcashmainnetReleaseUniversalApk          
+      - name: Sign APK
+        timeout-minutes: 1
+        run: |
+          mkdir artifacts/
+          mv app/build/outputs/apk_from_bundle/*/* artifacts/
+          cd artifacts/
+          ls -la
+          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *
+          ls -la
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
