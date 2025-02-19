@@ -142,6 +142,7 @@ jobs:
           sed -i -e '/wtf.emulator.gradle/d' -e '/secant.emulator-wtf-conventions/d' */build.gradle.kts
           sed -i -e '/gms/d' -e '/com.google.firebase/d' build.gradle.kts
           sed -i -e '/wtf.emulator/d' -e '/com.vdurmont/d' -e '/org.json:json/d' -e '/gms/d' -e '/firebase/d' buildscript-gradle.lockfile build-conventions-secant/gradle.lockfile
+          rm -f build-conventions-secant/src/main/kotlin/secant.emulator-wtf-conventions.gradle.kts
 
       - name: Build FOSS APK
         timeout-minutes: 25
