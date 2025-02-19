@@ -1,0 +1,8 @@
+Changed:
+- We refactored the QR code logic and changed the colors of the QR code to improve scanning by the Keystone device.
+- We improved the block synchronization progress logic.
+- We updated the Keystone SDK to version 0.7.10 which includes QR code scanning improvement.
+
+Fixed:
+- We fixed the logic for the Disconnected popup for cases when the app is backgrounded.
+- We also resolved an issue with the app's navigation stack not getting cleared up after clicking on the View Transactions button.

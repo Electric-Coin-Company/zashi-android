@@ -1,6 +1,9 @@
 import co.electriccoin.zcash.Git
 import com.android.build.api.variant.BuildConfigField
 import com.android.build.api.variant.ResValue
+import model.BuildType
+import model.DistributionDimension
+import model.NetworkDimension
 import java.util.Locale
 
 plugins {
@@ -65,21 +68,34 @@ android {
         buildConfig = true
     }
 
-    flavorDimensions.add("network")
+    flavorDimensions += listOf(NetworkDimension.DIMENSION_NAME, DistributionDimension.DIMENSION_NAME)
 
-    val testNetFlavorName = "zcashtestnet"
     productFlavors {
-        // would rather name them "testnet" and "mainnet" but product flavor names cannot start with the word "test"
-        create(testNetFlavorName) {
-            dimension = "network"
-            applicationId = "$packageName.testnet" // allow to be installed alongside mainnet
-            matchingFallbacks.addAll(listOf("zcashtestnet", "debug"))
+        create(NetworkDimension.TESTNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
+            applicationId = packageName
+            applicationIdSuffix = ".testnet"
+            matchingFallbacks.addAll(listOf(NetworkDimension.TESTNET.value, BuildType.DEBUG.value))
         }
 
-        create("zcashmainnet") {
-            dimension = "network"
+        create(NetworkDimension.MAINNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
             applicationId = packageName
-            matchingFallbacks.addAll(listOf("zcashmainnet", "release"))
+            matchingFallbacks.addAll(listOf(NetworkDimension.MAINNET.value, BuildType.RELEASE.value))
+        }
+
+        create(DistributionDimension.STORE.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
+            applicationId = packageName
+            matchingFallbacks.addAll(listOf(DistributionDimension.STORE.value, BuildType.RELEASE.value))
+        }
+
+        create(DistributionDimension.FOSS.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
+            applicationId = packageName
+            matchingFallbacks.addAll(listOf(DistributionDimension.FOSS.value, BuildType.RELEASE.value))
+            versionNameSuffix = "-foss"
+            applicationIdSuffix = ".foss"
         }
     }
 
@@ -98,7 +114,7 @@ android {
     signingConfigs {
         if (isReleaseSigningConfigured) {
             // If this block doesn't execute, the output will be unsigned
-            create("release").apply {
+            create(BuildType.RELEASE.value).apply {
                 storeFile = File(releaseKeystorePath)
                 storePassword = releaseKeystorePassword
                 keyAlias = releaseKeyAlias
@@ -108,16 +124,16 @@ android {
     }
 
     buildTypes {
-        getByName("debug").apply {
+        getByName(BuildType.DEBUG.value).apply {
             // Note that the build-conventions defines the res configs
             isPseudoLocalesEnabled = true
 
-            // Suffixing app package name and version to avoid collisions with other installed Zcash
+            // Suffixing app package name and version to avoid collisions with other installed Zashi
             // apps (e.g. from Google Play)
             versionNameSuffix = "-debug"
             applicationIdSuffix = ".debug"
         }
-        getByName("release").apply {
+        getByName(BuildType.RELEASE.value).apply {
             isMinifyEnabled = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
             isShrinkResources = project.property("IS_MINIFY_ENABLED").toString().toBoolean()
             ndk.debugSymbolLevel = project.property("NDK_DEBUG_SYMBOL_LEVEL").toString()
@@ -134,10 +150,10 @@ android {
             val isSignReleaseBuildWithDebugKey = project.property("IS_SIGN_RELEASE_BUILD_WITH_DEBUG_KEY")
                 .toString().toBoolean()
             if (isReleaseSigningConfigured) {
-                signingConfig = signingConfigs.getByName("release")
+                signingConfig = signingConfigs.getByName(BuildType.RELEASE.value)
             } else if (isSignReleaseBuildWithDebugKey) {
                 // Warning: in this case is the release build signed with the debug key
-                signingConfig = signingConfigs.getByName("debug")
+                signingConfig = signingConfigs.getByName(BuildType.DEBUG.value)
             }
         }
     }
@@ -146,18 +162,35 @@ android {
     applicationVariants.all {
         val defaultAppName = project.property("ZCASH_RELEASE_APP_NAME").toString()
         val debugAppNameSuffix = project.property("ZCASH_DEBUG_APP_NAME_SUFFIX").toString()
+        val fossAppNameSuffix = project.property("ZCASH_FOSS_APP_NAME_SUFFIX").toString()
         val supportEmailAddress = project.property("ZCASH_SUPPORT_EMAIL_ADDRESS").toString()
         when (this.name) {
-            "zcashtestnetDebug" -> {
-                resValue("string", "app_name", "$defaultAppName ($testnetNetworkName)$debugAppNameSuffix")
+            "zcashtestnetStoreDebug" -> {
+                resValue("string", "app_name", "$defaultAppName $debugAppNameSuffix $testnetNetworkName")
             }
-            "zcashmainnetDebug" -> {
-                resValue("string", "app_name", "$defaultAppName$debugAppNameSuffix")
+            "zcashmainnetStoreDebug" -> {
+                resValue("string", "app_name", "$defaultAppName $debugAppNameSuffix")
             }
-            "zcashtestnetRelease" -> {
-                resValue("string", "app_name", "$defaultAppName ($testnetNetworkName)")
+            "zcashtestnetStoreRelease" -> {
+                resValue("string", "app_name", "$defaultAppName $testnetNetworkName")
             }
-            "zcashmainnetRelease" -> {
+            "zcashmainnetStoreRelease" -> {
+                resValue("string", "app_name", defaultAppName)
+            }
+            "zcashtestnetFossDebug" -> {
+                resValue(
+                    "string",
+                    "app_name",
+                    "$defaultAppName $fossAppNameSuffix $debugAppNameSuffix $testnetNetworkName"
+                )
+            }
+            "zcashmainnetFossDebug" -> {
+                resValue("string", "app_name", "$defaultAppName $fossAppNameSuffix $debugAppNameSuffix")
+            }
+            "zcashtestnetFossRelease" -> {
+                resValue("string", "app_name", "$defaultAppName $fossAppNameSuffix $testnetNetworkName")
+            }
+            "zcashmainnetFossRelease" -> {
                 resValue("string", "app_name", defaultAppName)
             }
         }
@@ -222,30 +255,14 @@ androidComponents {
                 ResValue(value = hasFirebaseApiKeys.toString())
             )
 
-            if (project.property("ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY").toString().isNotEmpty() &&
-                project.property("ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY").toString().isNotEmpty()
+            if ((project.property("ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY").toString().isNotEmpty() &&
+                project.property("ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY").toString().isNotEmpty()) ||
+                variant.productFlavors.any { it.second == DistributionDimension.FOSS.value }
             ) {
-                // Update the versionName to reflect bumps in versionCode
+                val defaultVersionName = project.property("ZCASH_VERSION_NAME").toString()
+                output.versionName.set(defaultVersionName)
 
-                val versionCodeOffset = 0  // Change this to zero the final digit of the versionName
-
-                val processedVersionCode = output.versionCode.map { playVersionCode ->
-                    val defaultVersionName = project.property("ZCASH_VERSION_NAME").toString()
-                    // Version names will look like `myCustomVersionName.123`
-                    @Suppress("UNNECESSARY_SAFE_CALL")
-                    playVersionCode?.let {
-                        val delta = it - versionCodeOffset
-                        if (delta < 0) {
-                            defaultVersionName
-                        } else {
-                            "$defaultVersionName ($delta)"
-                        }
-                    } ?: defaultVersionName
-                }
-
-                output.versionName.set(processedVersionCode)
-
-                val gitInfo = Git.newInfo(Git.MAIN, parent!!.projectDir)
+                val gitInfo = Git.newInfo(Git.MAIN, rootDir)
                 output.versionCode.set(gitInfo.commitCount)
             }
         }
@@ -255,7 +272,7 @@ androidComponents {
         ))
 
         // The fixed Locale.US is intended
-        if (variant.name.lowercase(Locale.US).contains("release")) {
+        if (variant.name.lowercase(Locale.US).contains(BuildType.RELEASE.value)) {
             variant.packaging.resources.excludes.addAll(listOf(
                 "**/*.kotlin_metadata",
                 "DebugProbesKt.bin",
@@ -318,7 +335,7 @@ fladle {
 
             debugApk.set(
                 project.provider {
-                    "${buildDirectory}/outputs/apk/zcashmainnet/debug/app-zcashmainnet-debug.apk"
+                    "${buildDirectory}/outputs/apk/zcashmainnetStore/debug/app-zcashmainnet-store-debug.apk"
                 }
             )
 
@@ -337,7 +354,7 @@ fladle {
             debugApk.set(
                 project.provider {
                     "$buildDirectory" +
-                        "/outputs/apk_from_bundle/zcashmainnetRelease/app-zcashmainnet-release-universal.apk"
+                        "/outputs/apk_from_bundle/zcashmainnetStoreRelease/app-zcashmainnet-store-release-universal.apk"
                 }
             )
 

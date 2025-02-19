@@ -4,8 +4,6 @@ import co.electriccoin.zcash.configuration.model.entry.BooleanConfigurationEntry
 import co.electriccoin.zcash.configuration.model.entry.ConfigKey
 
 object ConfigurationEntries {
-    val IS_APP_UPDATE_CHECK_ENABLED = BooleanConfigurationEntry(ConfigKey("is_update_check_enabled"), true)
-
     /*
      * A troubleshooting step. If we fix our bugs, this should be unnecessary.
      */
