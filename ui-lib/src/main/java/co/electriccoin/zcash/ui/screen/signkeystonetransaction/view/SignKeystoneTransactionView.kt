@@ -163,12 +163,12 @@ private fun BottomSection(
         }
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
-            state = state.negativeButton,
-            colors = ZashiButtonDefaults.destructive1Colors()
+            state = state.positiveButton
         )
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
-            state = state.positiveButton
+            state = state.negativeButton,
+            colors = ZashiButtonDefaults.secondaryColors()
         )
     }
 }

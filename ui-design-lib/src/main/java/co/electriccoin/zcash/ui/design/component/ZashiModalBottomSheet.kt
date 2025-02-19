@@ -12,8 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalBottomSheetDefaults
-import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SheetValue.Expanded
@@ -38,7 +36,6 @@ fun ZashiModalBottomSheet(
     modifier: Modifier = Modifier,
     scrimColor: Color = BottomSheetDefaults.ScrimColor,
     sheetState: SheetState = rememberModalBottomSheetState(),
-    properties: ModalBottomSheetProperties = ModalBottomSheetDefaults.properties,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     ModalBottomSheet(
@@ -49,7 +46,6 @@ fun ZashiModalBottomSheet(
         shape = ZashiModalBottomSheetDefaults.SheetShape,
         containerColor = ZashiModalBottomSheetDefaults.ContainerColor,
         dragHandle = { ZashiModalBottomSheetDragHandle() },
-        properties = properties,
         content = content,
     )
 }
