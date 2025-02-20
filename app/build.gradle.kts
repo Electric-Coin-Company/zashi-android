@@ -163,7 +163,6 @@ android {
         val defaultAppName = project.property("ZCASH_RELEASE_APP_NAME").toString()
         val debugAppNameSuffix = project.property("ZCASH_DEBUG_APP_NAME_SUFFIX").toString()
         val fossAppNameSuffix = project.property("ZCASH_FOSS_APP_NAME_SUFFIX").toString()
-        val supportEmailAddress = project.property("ZCASH_SUPPORT_EMAIL_ADDRESS").toString()
         when (this.name) {
             "zcashtestnetStoreDebug" -> {
                 resValue("string", "app_name", "$defaultAppName $debugAppNameSuffix $testnetNetworkName")
@@ -194,7 +193,13 @@ android {
                 resValue("string", "app_name", defaultAppName)
             }
         }
-        resValue("string", "support_email_address", supportEmailAddress)
+    }
+
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs
+        includeInApk = false
+        // Disables dependency metadata when building Android App Bundles
+        includeInBundle = false
     }
 
     testCoverage {

@@ -98,7 +98,6 @@ tasks {
 
             "ZCASH_RELEASE_APP_NAME" to "Zashi",
             "ZCASH_RELEASE_PACKAGE_NAME" to "co.electriccoin.zcash",
-            "ZCASH_SUPPORT_EMAIL_ADDRESS" to "support@electriccoin.co",
             "IS_SECURE_SCREEN_PROTECTION_ACTIVE" to "true",
             "IS_SCREEN_ROTATION_ENABLED" to "false",
 

@@ -1,4 +1,4 @@
-name: Deploy GCP on Tagging
+name: Release
 
 on:
   release:
@@ -23,21 +23,21 @@ jobs:
         timeout-minutes: 1
         uses: gradle/wrapper-validation-action@f9c9c575b8b21b6485636a91ffecd10e558c62f6
 
-#  check_secrets:
-#    environment: deployment
-#    permissions:
-#      contents: read
-#    runs-on: ubuntu-latest
-#    outputs:
-#      has-secrets: ${{ steps.check_secrets.outputs.defined }}
-#    steps:
-#      - id: check_secrets
-#        env:
-#          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
-#        if: "${{
-#          env.COINBASE_APP_ID != ''
-#        }}"
-#        run: echo "defined=true" >> $GITHUB_OUTPUT
+  check_secrets:
+    environment: deployment
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    outputs:
+      has-secrets: ${{ steps.check_secrets.outputs.defined }}
+    steps:
+      - id: check_secrets
+        env:
+          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
+        if: "${{
+          env.COINBASE_APP_ID != ''
+        }}"
+        run: echo "defined=true" >> $GITHUB_OUTPUT
 
   release:
     environment: deployment
@@ -113,10 +113,9 @@ jobs:
         run: |
           echo ${SIGNING_KEYSTORE_BASE_64} | base64 --decode > ${SIGNING_KEY_PATH}
           
-      - name: Get APK
+      - name: Build Store APK
         timeout-minutes: 25
         env:
-          ORG_GRADLE_PROJECT_ZCASH_SUPPORT_EMAIL_ADDRESS: ${{ vars.SUPPORT_EMAIL_ADDRESS }}
           # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
           # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
           # Note that these properties are not currently used due to #1033
@@ -133,16 +132,72 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
           ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
         run: |
-          ./gradlew :app:assembleZcashmainnetDebug :app:bundleZcashmainnetRelease :app:packageZcashmainnetReleaseUniversalApk          
-      - name: Sign APK
+          ./gradlew :app:bundleZcashmainnetStoreRelease :app:packageZcashmainnetStoreReleaseUniversalApk
+
+      - name: Prepare Store Artifacts
         timeout-minutes: 1
         run: |
           mkdir artifacts/
-          mv app/build/outputs/apk_from_bundle/*/* artifacts/
+          mv app/build/outputs/apk_from_bundle/*/* artifacts/          
+
+      - name: Strip non-Foss libraries
+        timeout-minutes: 10
+        run: |
+          rm app/src/debug/google-services.json
+          rm app/src/release/google-services.json
+          rm -rf build-conventions-secant/build/
+          rm -rf build-conventions-secant/.gradle/
+          rm -rf buildSrc/build/
+          rm -rf buildSrc/.gradle/
+          rm -rf ui-screenshot-test
+          rm -rf .gradle
+          rm -rf build-conventions-secant/src/main/kotlin/secant.emulator-wtf-conventions.gradle.kts
+          sed -i '/\/\/ start wtf maven/,/\/\/ end wtf maven/d' settings.gradle.kts
+          find . -type f -name "build.gradle.kts" -exec sed -i -e '/wtf.emulator.gradle/d' {} +
+          find . -type f -name "build.gradle.kts" -exec sed -i -e '/secant.emulator-wtf-conventions/d' {} +
+          find . -type f -name "gradle.lockfile" -exec sed -i -e '/wtf.emulator/d' {} +
+          find . -type f -name "buildscript-gradle.lockfile" -exec sed -i -e '/wtf.emulator/d' {} +
+          find . -type f -name "gradle.lockfile" -exec sed -i -e '/com.vdurmont/d' {} +
+          find . -type f -name "buildscript-gradle.lockfile" -exec sed -i -e '/com.vdurmont/d' {} +
+          find . -type f -name "gradle.lockfile" -exec sed -i -e '/org.json:json/d' {} +
+          find . -type f -name "buildscript-gradle.lockfile" -exec sed -i -e '/org.json:json/d' {} +
+          sed -i -e '/include("ui-screenshot-test")/d' settings.gradle.kts
+          sed -i -e '/com.google.gms/d' -e '/com.google.android.gms/d' -e '/com.google.firebase/d' -e '/crashlyticsVersion/d' build.gradle.kts
+          sed -i -e '/libs.google.services/d' -e '/libs.firebase/d' build.gradle.kts
+          sed -i -e '/com.google.gms/d' -e '/com.google.android.gms/d' -e '/com.google.firebase/d' buildscript-gradle.lockfile
+          sed -i -e '/libs.google.services/d' -e '/libs.firebase/d' buildscript-gradle.lockfile
+          sed -i -e '/com.google.gms.google-services/d' -e '/com.google.firebase.crashlytics/d' */build.gradle.kts
+          ./gradlew clean
+
+      - name: Build Foss APK
+        timeout-minutes: 25
+        env:
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ format('{0}/release.jks', env.home) }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: ${{ secrets.UPLOAD_KEY_ALIAS_PASSWORD }}
+          # TODO [#1789] Re-enable Coinbase and Flexa integrations for FOSS variant
+          # ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
+          # ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
+        run: |        
+          ./gradlew :app:assembleZcashmainnetFossRelease
+
+      - name: Prepare Foss artifacts
+        timeout-minutes: 1
+        run: |        
+          mv app/build/outputs/apk/zcashmainnetFoss/release/app-zcashmainnet-foss-release.apk artifacts/
+
+      - name: Prepare Signature artifacts
+        timeout-minutes: 1
+        run: |          
           cd artifacts/
-          ls -la
-          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *
-          ls -la
+          TAG=$(git describe --tags --abbrev=0)
+          VERSION_NAME=$(echo "$TAG" | cut -d'-' -f1)
+          VERSION_CODE=$(echo "$TAG" | cut -d'-' -f2)
+          echo $VERSION_NAME > version_code.txt
+          echo $VERSION_CODE > version_code.txt
+          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *foss*.apk
+          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *store*.apk
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
