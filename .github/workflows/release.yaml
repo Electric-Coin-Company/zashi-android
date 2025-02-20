@@ -116,7 +116,6 @@ jobs:
       - name: Build Store APK
         timeout-minutes: 25
         env:
-          ORG_GRADLE_PROJECT_ZCASH_SUPPORT_EMAIL_ADDRESS: ${{ vars.SUPPORT_EMAIL_ADDRESS }}
           # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
           # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
           # Note that these properties are not currently used due to #1033
@@ -173,7 +172,6 @@ jobs:
       - name: Build Foss APK
         timeout-minutes: 25
         env:
-          ORG_GRADLE_PROJECT_ZCASH_SUPPORT_EMAIL_ADDRESS: ${{ vars.SUPPORT_EMAIL_ADDRESS }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ format('{0}/release.jks', env.home) }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
