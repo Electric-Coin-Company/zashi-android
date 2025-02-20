@@ -1,4 +1,4 @@
-name: Deploy GCP on Tagging
+name: Release
 
 on:
   release:
@@ -175,9 +175,9 @@ jobs:
           mkdir artifacts/
           mv app/build/outputs/apk_from_bundle/*/* artifacts/
           cd artifacts/
-          ls -la
-          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *
-          ls -la
+          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *foss*.apk
+          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *store*.apk
+
 
       - name: Create FOSS Versions File
         timeout-minutes: 1
