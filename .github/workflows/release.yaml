@@ -141,7 +141,7 @@ jobs:
           mv app/build/outputs/apk_from_bundle/*/* artifacts/          
 
       - name: Strip non-Foss libraries
-        timeout-minutes: 1
+        timeout-minutes: 10
         run: |
           rm app/src/debug/google-services.json
           rm app/src/release/google-services.json
