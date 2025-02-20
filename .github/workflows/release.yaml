@@ -176,26 +176,22 @@ jobs:
           # ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
         run: |
           ./gradlew clean
-          ./gradlew :app:bundleZcashmainnetFossRelease :app:packageZcashmainnetFossReleaseUniversalApk
+          ./gradlew :app:assembleZcashmainnetFossRelease
 
-      - name: Create FOSS Versions File
-        timeout-minutes: 1
-        run: |
-          TAG=$(git describe --tags --abbrev=0)
-          VERSION_NAME=$(echo "$TAG" | cut -d'-' -f1)
-          VERSION_CODE=$(echo "$TAG" | cut -d'-' -f2)
-          echo $VERSION_NAME > app/build/outputs/apk_from_bundle/zcashmainnetFossRelease/version_name.txt
-          echo $VERSION_CODE > app/build/outputs/apk_from_bundle/zcashmainnetFossRelease/version_code.txt
-
-      - name: Sign APKs
+      - name: Prepare Artifacts
         timeout-minutes: 1
         run: |
           mkdir artifacts/
           mv app/build/outputs/apk_from_bundle/*/* artifacts/
+          mv app/build/outputs/apk/zcashmainnetFoss/release/app-zcashmainnet-foss-release.apk artifacts/
           cd artifacts/
+          TAG=$(git describe --tags --abbrev=0)
+          VERSION_NAME=$(echo "$TAG" | cut -d'-' -f1)
+          VERSION_CODE=$(echo "$TAG" | cut -d'-' -f2)
+          echo $VERSION_NAME > version_code.txt
+          echo $VERSION_CODE > version_code.txt
           gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *foss*.apk
           gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *store*.apk
-
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
