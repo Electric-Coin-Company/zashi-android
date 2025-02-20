@@ -165,7 +165,7 @@ class SettingsViewModel(
                                 null -> R.drawable.ic_integrations_flexa
                             }.takeIf { isFlexaAvailable }
                         ).toImmutableList()
-                ),
+                ).takeIf { isFlexaAvailable || isCoinbaseAvailable },
                 ZashiListItemState(
                     title = stringRes(R.string.settings_advanced_settings),
                     icon = R.drawable.ic_advanced_settings,
