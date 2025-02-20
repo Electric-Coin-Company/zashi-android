@@ -11,9 +11,6 @@
 # FIREBASE_DEBUG_JSON_BASE64 - Optional JSON to enable Firebase (e.g. Crashlytics) for debug builds
 # FIREBASE_RELEASE_JSON_BASE64 - Optional JSON to enable Firebase (e.g. Crashlytics) for release builds
 
-# Expected variables
-# SUPPORT_EMAIL_ADDRESS - Contact email address for sending requests from the app
-
 name: Deploy
 
 on:
@@ -142,7 +139,6 @@ jobs:
       - name: Upload to Play Store
         timeout-minutes: 25
         env:
-          ORG_GRADLE_PROJECT_ZCASH_SUPPORT_EMAIL_ADDRESS: ${{ vars.SUPPORT_EMAIL_ADDRESS }}
           # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
           # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
           # Note that these properties are not currently used due to #1033

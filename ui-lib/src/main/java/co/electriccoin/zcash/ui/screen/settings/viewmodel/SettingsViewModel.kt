@@ -22,7 +22,6 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
-import co.electriccoin.zcash.ui.common.usecase.SensitiveSettingsVisibleUseCase
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -44,7 +43,6 @@ import kotlinx.coroutines.launch
 @Suppress("TooManyFunctions")
 class SettingsViewModel(
     observeConfiguration: ObserveConfigurationUseCase,
-    isSensitiveSettingsVisible: SensitiveSettingsVisibleUseCase,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     isFlexaAvailable: IsFlexaAvailableUseCase,
     isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
@@ -104,14 +102,12 @@ class SettingsViewModel(
         combine(
             troubleshootingState,
             observeSelectedWalletAccount(),
-            isSensitiveSettingsVisible(),
             isFlexaAvailable.observe(),
             isCoinbaseAvailable.observe()
-        ) { troubleshootingState, account, isSensitiveSettingsVisible, isFlexaAvailable, isCoinbaseAvailable ->
+        ) { troubleshootingState, account, isFlexaAvailable, isCoinbaseAvailable ->
             createState(
                 selectedAccount = account,
                 troubleshootingState = troubleshootingState,
-                isSensitiveSettingsVisible = isSensitiveSettingsVisible,
                 isFlexaAvailable = isFlexaAvailable == true,
                 isCoinbaseAvailable = isCoinbaseAvailable == true
             )
@@ -122,7 +118,6 @@ class SettingsViewModel(
                 createState(
                     selectedAccount = null,
                     troubleshootingState = null,
-                    isSensitiveSettingsVisible = isSensitiveSettingsVisible().value,
                     isFlexaAvailable = isFlexaAvailable.observe().value == true,
                     isCoinbaseAvailable = isCoinbaseAvailable.observe().value == true
                 )
@@ -131,7 +126,6 @@ class SettingsViewModel(
     private fun createState(
         selectedAccount: WalletAccount?,
         troubleshootingState: SettingsTroubleshootingState?,
-        isSensitiveSettingsVisible: Boolean,
         isFlexaAvailable: Boolean,
         isCoinbaseAvailable: Boolean,
     ) = SettingsState(
@@ -171,7 +165,7 @@ class SettingsViewModel(
                                 null -> R.drawable.ic_integrations_flexa
                             }.takeIf { isFlexaAvailable }
                         ).toImmutableList()
-                ).takeIf { isSensitiveSettingsVisible },
+                ).takeIf { isFlexaAvailable || isCoinbaseAvailable },
                 ZashiListItemState(
                     title = stringRes(R.string.settings_advanced_settings),
                     icon = R.drawable.ic_advanced_settings,

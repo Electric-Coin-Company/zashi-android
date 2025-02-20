@@ -29,7 +29,7 @@ data class VersionInfo(
 
             return VersionInfo(
                 // Should only be null during tests
-                versionName = packageInfo.versionName ?: "null",
+                versionName = packageInfo.versionName?.let { "$it (${packageInfo.versionCodeCompat})" } ?: "null",
                 // Should only be 0 during tests
                 versionCode = packageInfo.versionCodeCompat,
                 isDebuggable = (0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE),
