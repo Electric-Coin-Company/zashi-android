@@ -138,6 +138,8 @@ jobs:
       - name: Strip non-FOSS libraries
         timeout-minutes: 1
         run: |
+          rm app/src/debug/google-services.json
+          rm app/src/release/google-services.json
           sed -i '/\/\/ start wtf maven/,/\/\/ end wtf maven/d' settings.gradle.kts
           find . -type f -name "build.gradle.kts" -exec sed -i -e '/wtf.emulator.gradle/d' {} +
           find . -type f -name "build.gradle.kts" -exec sed -i -e '/secant.emulator-wtf-conventions/d' {} +
