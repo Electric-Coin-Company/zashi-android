@@ -70,7 +70,6 @@ import co.electriccoin.zcash.ui.common.usecase.SelectWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendSupportEmailUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendTransactionAgainUseCase
-import co.electriccoin.zcash.ui.common.usecase.SensitiveSettingsVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateContactUseCase
@@ -122,7 +121,6 @@ val useCaseModule =
         factoryOf(::SendEmailUseCase)
         factoryOf(::SendSupportEmailUseCase)
         factoryOf(::IsFlexaAvailableUseCase)
-        singleOf(::SensitiveSettingsVisibleUseCase)
         factoryOf(::ObserveWalletAccountsUseCase)
         factoryOf(::SelectWalletAccountUseCase)
         factoryOf(::ObserveSelectedWalletAccountUseCase)

@@ -1,4 +1,6 @@
 import com.android.build.api.variant.BuildConfigField
+import model.DistributionDimension
+import model.NetworkDimension
 
 plugins {
     id("com.android.library")
@@ -81,6 +83,26 @@ android {
             )
         }
     }
+
+    flavorDimensions += listOf(NetworkDimension.DIMENSION_NAME, DistributionDimension.DIMENSION_NAME)
+
+    productFlavors {
+        create(NetworkDimension.TESTNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
+        }
+
+        create(NetworkDimension.MAINNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
+        }
+
+        create(DistributionDimension.STORE.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
+        }
+
+        create(DistributionDimension.FOSS.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
+        }
+    }
 }
 
 androidComponents {
@@ -136,7 +158,6 @@ dependencies {
     implementation(libs.bundles.androidx.compose.core)
     implementation(libs.bundles.androidx.compose.extended)
     api(libs.bundles.koin)
-    implementation(libs.bundles.play.update)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
@@ -144,7 +165,7 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.immutable)
     implementation(libs.kotlinx.serializable.json)
-    implementation(libs.mlkit.scanning)
+    "storeImplementation"(libs.mlkit.scanning)
     api(libs.zcash.sdk)
     implementation(libs.zcash.sdk.incubator)
     implementation(libs.zcash.bip39)

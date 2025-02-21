@@ -130,6 +130,7 @@ dependencyResolutionManagement {
                 }
             }
         }
+        // start wtf maven
         maven("https://maven.emulator.wtf/releases/") {
             if (isRepoRestrictionEnabled) {
                 content {
@@ -137,6 +138,7 @@ dependencyResolutionManagement {
                 }
             }
         }
+        // end wtf maven
         maven("https://jitpack.io")
     }
 
@@ -183,8 +185,6 @@ dependencyResolutionManagement {
             val lottieVersion = extra["LOTTIE_VERSION"].toString()
             val markdownVersion = extra["MARKDOWN_VERSION"].toString()
             val mlkitScanningVersion = extra["MLKIT_SCANNING_VERSION"].toString()
-            val playAppUpdateVersion = extra["PLAY_APP_UPDATE_VERSION"].toString()
-            val playAppUpdateKtxVersion = extra["PLAY_APP_UPDATE_KTX_VERSION"].toString()
             val tinkVersion = extra["TINK_VERSION"].toString()
             val zcashBip39Version = extra["ZCASH_BIP39_VERSION"].toString()
             val zcashSdkVersion = extra["ZCASH_SDK_VERSION"].toString()
@@ -250,8 +250,6 @@ dependencyResolutionManagement {
             library("lottie", "com.airbnb.android:lottie-compose:$lottieVersion")
             library("markdown", "org.jetbrains:markdown:$markdownVersion")
             library("mlkit-scanning", "com.google.mlkit:barcode-scanning:$mlkitScanningVersion")
-            library("play-update", "com.google.android.play:app-update:$playAppUpdateVersion")
-            library("play-update-ktx", "com.google.android.play:app-update-ktx:$playAppUpdateKtxVersion")
             library("tink", "com.google.crypto.tink:tink-android:$tinkVersion")
             library("zcash-sdk", "cash.z.ecc.android:zcash-android-sdk:$zcashSdkVersion")
             library("zcash-sdk-incubator", "cash.z.ecc.android:zcash-android-sdk-incubator:$zcashSdkVersion")
@@ -333,13 +331,6 @@ dependencyResolutionManagement {
                 listOf(
                     "koin",
                     "koin-compose",
-                )
-            )
-            bundle(
-                "play-update",
-                listOf(
-                    "play-update",
-                    "play-update-ktx",
                 )
             )
         }
