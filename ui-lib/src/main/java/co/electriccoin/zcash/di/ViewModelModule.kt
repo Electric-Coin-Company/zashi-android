@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.di
 
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
-import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
@@ -44,8 +43,6 @@ import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHist
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
 import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNoteViewModel
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressViewModel
-import co.electriccoin.zcash.ui.screen.update.model.UpdateInfo
-import co.electriccoin.zcash.ui.screen.update.viewmodel.UpdateViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.screen.whatsnew.viewmodel.WhatsNewViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -56,7 +53,6 @@ val viewModelModule =
     module {
         viewModelOf(::WalletViewModel)
         viewModelOf(::AuthenticationViewModel)
-        viewModelOf(::CheckUpdateViewModel)
         viewModelOf(::HomeViewModel)
         viewModelOf(::OnboardingViewModel)
         viewModelOf(::StorageCheckViewModel)
@@ -68,13 +64,6 @@ val viewModelModule =
         viewModelOf(::CreateTransactionsViewModel)
         viewModelOf(::RestoreSuccessViewModel)
         viewModelOf(::WhatsNewViewModel)
-        viewModel { (updateInfo: UpdateInfo) ->
-            UpdateViewModel(
-                application = get(),
-                updateInfo = updateInfo,
-                appUpdateChecker = get(),
-            )
-        }
         viewModelOf(::ChooseServerViewModel)
         viewModel { (address: String?) ->
             AddContactViewModel(

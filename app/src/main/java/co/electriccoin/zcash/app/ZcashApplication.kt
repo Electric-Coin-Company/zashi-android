@@ -3,6 +3,8 @@ package co.electriccoin.zcash.app
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ProcessLifecycleOwner
 import co.electriccoin.zcash.crash.android.GlobalCrashReporter
+import co.electriccoin.zcash.crash.android.di.CrashReportersProvider
+import co.electriccoin.zcash.crash.android.di.crashProviderModule
 import co.electriccoin.zcash.di.addressBookModule
 import co.electriccoin.zcash.di.coreModule
 import co.electriccoin.zcash.di.dataSourceModule
@@ -28,6 +30,7 @@ class ZcashApplication : CoroutineApplication() {
     private val standardPreferenceProvider by inject<StandardPreferenceProvider>()
     private val flexaRepository by inject<FlexaRepository>()
     private val applicationStateProvider: ApplicationStateProvider by inject()
+    private val getAvailableCrashReporters: CrashReportersProvider by inject()
 
     override fun onCreate() {
         super.onCreate()
@@ -42,6 +45,7 @@ class ZcashApplication : CoroutineApplication() {
             modules(
                 coreModule,
                 providerModule,
+                crashProviderModule,
                 dataSourceModule,
                 repositoryModule,
                 addressBookModule,
@@ -83,7 +87,7 @@ class ZcashApplication : CoroutineApplication() {
     }
 
     private fun configureAnalytics() {
-        if (GlobalCrashReporter.register(this)) {
+        if (GlobalCrashReporter.register(this, getAvailableCrashReporters())) {
             applicationScope.launch {
                 StandardPreferenceKeys.IS_ANALYTICS_ENABLED.observe(standardPreferenceProvider()).collect {
                     if (it) {
