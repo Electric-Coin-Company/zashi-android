@@ -3,17 +3,12 @@ package co.electriccoin.zcash.ui.common.repository
 import cash.z.ecc.android.sdk.model.TransactionId
 import cash.z.ecc.android.sdk.model.TransactionOutput
 import cash.z.ecc.android.sdk.model.TransactionOverview
+import cash.z.ecc.android.sdk.model.TransactionState.Confirmed
+import cash.z.ecc.android.sdk.model.TransactionState.Expired
+import cash.z.ecc.android.sdk.model.TransactionState.Pending
+import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVED
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVE_FAILED
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVING
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SENDING
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SEND_FAILED
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SENT
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDED
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDING
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDING_FAILED
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,22 +33,22 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.ZonedDateTime
+import java.time.Instant
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 interface TransactionRepository {
-    val currentTransactions: Flow<List<TransactionData>?>
+    val currentTransactions: Flow<List<Transaction>?>
 
-    suspend fun getMemos(transactionData: TransactionData): List<String>
+    suspend fun getMemos(transaction: Transaction): List<String>
 
-    suspend fun getRecipients(transactionData: TransactionData): String?
+    suspend fun getRecipients(transaction: Transaction): String?
 
-    fun observeTransaction(txId: String): Flow<TransactionData?>
+    fun observeTransaction(txId: String): Flow<Transaction?>
 
     fun observeTransactionsByMemo(memo: String): Flow<List<TransactionId>?>
 
-    suspend fun getTransactions(): List<TransactionData>
+    suspend fun getTransactions(): List<Transaction>
 }
 
 class TransactionRepositoryImpl(
@@ -63,7 +58,7 @@ class TransactionRepositoryImpl(
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val currentTransactions: Flow<List<TransactionData>?> =
+    override val currentTransactions: Flow<List<Transaction>?> =
         combine(
             synchronizerProvider.synchronizer,
             accountDataSource.selectedAccount.map { it?.sdkAccount }
@@ -73,20 +68,142 @@ class TransactionRepositoryImpl(
             if (synchronizer == null || account == null) {
                 flowOf(null)
             } else {
-                channelFlow<List<TransactionData>?> {
+                channelFlow<List<Transaction>?> {
                     send(null)
 
                     launch {
-                        synchronizer.getTransactions(account.accountUuid)
+                        synchronizer
+                            .getTransactions(account.accountUuid)
                             .mapLatest { transactions ->
                                 transactions.map { transaction ->
-                                    TransactionData(
-                                        overview = transaction,
-                                        transactionOutputs = synchronizer.getTransactionOutputs(transaction),
-                                        state = transaction.getExtendedState()
-                                    )
+                                    when (transaction.transactionState) {
+                                        Expired ->
+                                            when {
+                                                transaction.isShielding ->
+                                                    ShieldTransaction.Failed(
+                                                        timestamp = createTimestamp(transaction),
+                                                        transactionOutputs =
+                                                            synchronizer.getTransactionOutputs
+                                                                (transaction),
+                                                        amount = transaction.totalSpent,
+                                                        id = transaction.txId,
+                                                        memoCount = transaction.memoCount,
+                                                        fee = transaction.netValue,
+                                                        overview = transaction
+                                                    )
+
+                                                transaction.isSentTransaction ->
+                                                    SendTransaction.Failed(
+                                                        timestamp = createTimestamp(transaction),
+                                                        transactionOutputs =
+                                                            synchronizer.getTransactionOutputs
+                                                                (transaction),
+                                                        amount = transaction.netValue,
+                                                        id = transaction.txId,
+                                                        memoCount = transaction.memoCount,
+                                                        fee = transaction.feePaid,
+                                                        overview = transaction
+                                                    )
+
+                                                else ->
+                                                    ReceiveTransaction.Failed(
+                                                        timestamp = createTimestamp(transaction),
+                                                        transactionOutputs =
+                                                            synchronizer.getTransactionOutputs
+                                                                (transaction),
+                                                        amount = transaction.netValue,
+                                                        id = transaction.txId,
+                                                        memoCount = transaction.memoCount,
+                                                        overview = transaction
+                                                    )
+                                            }
+
+                                        Confirmed ->
+                                            when {
+                                                transaction.isShielding ->
+                                                    ShieldTransaction.Success(
+                                                        timestamp = createTimestamp(transaction),
+                                                        transactionOutputs =
+                                                            synchronizer.getTransactionOutputs
+                                                                (transaction),
+                                                        amount = transaction.totalSpent,
+                                                        id = transaction.txId,
+                                                        memoCount = transaction.memoCount,
+                                                        fee = transaction.netValue,
+                                                        overview = transaction
+                                                    )
+
+                                                transaction.isSentTransaction ->
+                                                    SendTransaction.Success(
+                                                        timestamp = createTimestamp(transaction),
+                                                        transactionOutputs =
+                                                            synchronizer.getTransactionOutputs
+                                                                (transaction),
+                                                        amount = transaction.netValue,
+                                                        id = transaction.txId,
+                                                        memoCount = transaction.memoCount,
+                                                        fee = transaction.feePaid,
+                                                        overview = transaction
+                                                    )
+
+                                                else ->
+                                                    ReceiveTransaction.Success(
+                                                        timestamp = createTimestamp(transaction),
+                                                        transactionOutputs =
+                                                            synchronizer.getTransactionOutputs
+                                                                (transaction),
+                                                        amount = transaction.netValue,
+                                                        id = transaction.txId,
+                                                        memoCount = transaction.memoCount,
+                                                        overview = transaction
+                                                    )
+                                            }
+
+                                        Pending ->
+                                            when {
+                                                transaction.isShielding ->
+                                                    ShieldTransaction.Pending(
+                                                        timestamp = createTimestamp(transaction),
+                                                        transactionOutputs =
+                                                            synchronizer.getTransactionOutputs
+                                                                (transaction),
+                                                        amount = transaction.totalSpent,
+                                                        id = transaction.txId,
+                                                        memoCount = transaction.memoCount,
+                                                        fee = transaction.netValue,
+                                                        overview = transaction
+                                                    )
+
+                                                transaction.isSentTransaction ->
+                                                    SendTransaction.Pending(
+                                                        timestamp = createTimestamp(transaction),
+                                                        transactionOutputs =
+                                                            synchronizer.getTransactionOutputs
+                                                                (transaction),
+                                                        amount = transaction.netValue,
+                                                        id = transaction.txId,
+                                                        memoCount = transaction.memoCount,
+                                                        fee = transaction.feePaid,
+                                                        overview = transaction
+                                                    )
+
+                                                else ->
+                                                    ReceiveTransaction.Pending(
+                                                        timestamp = createTimestamp(transaction),
+                                                        transactionOutputs =
+                                                            synchronizer.getTransactionOutputs
+                                                                (transaction),
+                                                        amount = transaction.netValue,
+                                                        id = transaction.txId,
+                                                        memoCount = transaction.memoCount,
+                                                        overview = transaction
+                                                    )
+                                            }
+
+                                        else -> error("Unexpected transaction stat")
+                                    }
                                 }.sortedByDescending { transaction ->
-                                    transaction.overview.blockTimeEpochSeconds ?: ZonedDateTime.now().toEpochSecond()
+                                    transaction.timestamp ?: Instant.now()
                                 }
                             }
                             .collect {
@@ -105,19 +222,26 @@ class TransactionRepositoryImpl(
             initialValue = null
         )
 
-    override suspend fun getMemos(transactionData: TransactionData): List<String> =
+    private fun createTimestamp(transaction: TransactionOverview): Instant =
+        transaction.blockTimeEpochSeconds
+            ?.let {
+                Instant.ofEpochSecond(it)
+            }
+            ?: Instant.now()
+
+    override suspend fun getMemos(transaction: Transaction): List<String> =
         withContext(Dispatchers.IO) {
-            synchronizerProvider.getSynchronizer().getMemos(transactionData.overview)
+            synchronizerProvider.getSynchronizer().getMemos(transaction.overview)
                 .mapNotNull { memo -> memo.takeIf { it.isNotEmpty() } }
                 .toList()
         }
 
-    override suspend fun getRecipients(transactionData: TransactionData): String? =
+    override suspend fun getRecipients(transaction: Transaction): String? =
         withContext(Dispatchers.IO) {
-            if (transactionData.overview.isSentTransaction) {
+            if (transaction is SendTransaction) {
                 synchronizerProvider
                     .getSynchronizer()
-                    .getRecipients(transactionData.overview)
+                    .getRecipients(transaction.overview)
                     .firstOrNull()
                     ?.addressValue
             } else {
@@ -125,10 +249,10 @@ class TransactionRepositoryImpl(
             }
         }
 
-    override fun observeTransaction(txId: String): Flow<TransactionData?> =
+    override fun observeTransaction(txId: String): Flow<Transaction?> =
         currentTransactions
             .map { transactions ->
-                transactions?.find { it.overview.txId.txIdString() == txId }
+                transactions?.find { it.id.txIdString() == txId }
             }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -140,52 +264,111 @@ class TransactionRepositoryImpl(
             }
             .distinctUntilChanged()
 
-    override suspend fun getTransactions(): List<TransactionData> {
-        return currentTransactions.filterNotNull().first()
-    }
+    override suspend fun getTransactions(): List<Transaction> = currentTransactions.filterNotNull().first()
 }
 
-data class TransactionData(
-    val overview: TransactionOverview,
-    val transactionOutputs: List<TransactionOutput>,
-    val state: TransactionExtendedState,
-)
-
-enum class TransactionExtendedState {
-    SENT,
-    SENDING,
-    SEND_FAILED,
-    RECEIVED,
-    RECEIVING,
-    RECEIVE_FAILED,
-    SHIELDED,
-    SHIELDING,
-    SHIELDING_FAILED
+sealed interface Transaction {
+    val id: TransactionId
+    val amount: Zatoshi
+    val memoCount: Int
+    val timestamp: Instant?
+    val transactionOutputs: List<TransactionOutput>
+    val overview: TransactionOverview
+    val fee: Zatoshi?
 }
 
-private fun TransactionOverview.getExtendedState(): TransactionExtendedState {
-    return when (transactionState) {
-        cash.z.ecc.android.sdk.model.TransactionState.Expired ->
-            when {
-                isShielding -> SHIELDING_FAILED
-                isSentTransaction -> SEND_FAILED
-                else -> RECEIVE_FAILED
-            }
+sealed interface SendTransaction : Transaction {
+    data class Success(
+        override val id: TransactionId,
+        override val amount: Zatoshi,
+        override val timestamp: Instant,
+        override val memoCount: Int,
+        override val fee: Zatoshi?,
+        override val transactionOutputs: List<TransactionOutput>,
+        override val overview: TransactionOverview,
+    ) : SendTransaction
 
-        cash.z.ecc.android.sdk.model.TransactionState.Confirmed ->
-            when {
-                isShielding -> SHIELDED
-                isSentTransaction -> SENT
-                else -> RECEIVED
-            }
+    data class Pending(
+        override val id: TransactionId,
+        override val amount: Zatoshi,
+        override val timestamp: Instant?,
+        override val memoCount: Int,
+        override val fee: Zatoshi?,
+        override val transactionOutputs: List<TransactionOutput>,
+        override val overview: TransactionOverview,
+    ) : SendTransaction
 
-        cash.z.ecc.android.sdk.model.TransactionState.Pending ->
-            when {
-                isShielding -> SHIELDING
-                isSentTransaction -> SENDING
-                else -> RECEIVING
-            }
+    data class Failed(
+        override val id: TransactionId,
+        override val amount: Zatoshi,
+        override val timestamp: Instant,
+        override val memoCount: Int,
+        override val fee: Zatoshi?,
+        override val transactionOutputs: List<TransactionOutput>,
+        override val overview: TransactionOverview,
+    ) : SendTransaction
+}
 
-        else -> error("Unexpected transaction state found while calculating its extended state.")
-    }
+sealed interface ReceiveTransaction : Transaction {
+    override val fee: Zatoshi?
+        get() = null
+
+    data class Success(
+        override val id: TransactionId,
+        override val amount: Zatoshi,
+        override val timestamp: Instant,
+        override val memoCount: Int,
+        override val transactionOutputs: List<TransactionOutput>,
+        override val overview: TransactionOverview,
+    ) : ReceiveTransaction
+
+    data class Pending(
+        override val id: TransactionId,
+        override val amount: Zatoshi,
+        override val timestamp: Instant?,
+        override val memoCount: Int,
+        override val transactionOutputs: List<TransactionOutput>,
+        override val overview: TransactionOverview,
+    ) : ReceiveTransaction
+
+    data class Failed(
+        override val id: TransactionId,
+        override val amount: Zatoshi,
+        override val timestamp: Instant,
+        override val memoCount: Int,
+        override val transactionOutputs: List<TransactionOutput>,
+        override val overview: TransactionOverview,
+    ) : ReceiveTransaction
+}
+
+sealed interface ShieldTransaction : Transaction {
+    data class Success(
+        override val id: TransactionId,
+        override val amount: Zatoshi,
+        override val timestamp: Instant,
+        override val memoCount: Int,
+        override val fee: Zatoshi?,
+        override val transactionOutputs: List<TransactionOutput>,
+        override val overview: TransactionOverview,
+    ) : ShieldTransaction
+
+    data class Pending(
+        override val id: TransactionId,
+        override val amount: Zatoshi,
+        override val timestamp: Instant?,
+        override val memoCount: Int,
+        override val fee: Zatoshi?,
+        override val transactionOutputs: List<TransactionOutput>,
+        override val overview: TransactionOverview,
+    ) : ShieldTransaction
+
+    data class Failed(
+        override val id: TransactionId,
+        override val amount: Zatoshi,
+        override val memoCount: Int,
+        override val timestamp: Instant,
+        override val transactionOutputs: List<TransactionOutput>,
+        override val fee: Zatoshi?,
+        override val overview: TransactionOverview,
+    ) : ShieldTransaction
 }

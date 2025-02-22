@@ -9,7 +9,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
-import co.electriccoin.zcash.ui.common.repository.TransactionData
+import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -67,7 +67,7 @@ class TransactionHistoryWidgetViewModel(
                                 .take(MAX_TRANSACTION_COUNT)
                                 .map { transaction ->
                                     transactionHistoryMapper.createTransactionState(
-                                        transaction = transaction,
+                                        data = transaction,
                                         restoreTimestamp = restoreTimestampDataSource.getOrCreate(),
                                         onTransactionClick = ::onTransactionClick,
                                     )
@@ -81,8 +81,8 @@ class TransactionHistoryWidgetViewModel(
                 TransactionHistoryWidgetState.Loading
         )
 
-    private fun onTransactionClick(transactionData: TransactionData) {
-        navigationRouter.forward(TransactionDetail(transactionData.overview.txId.txIdString()))
+    private fun onTransactionClick(transaction: Transaction) {
+        navigationRouter.forward(TransactionDetail(transaction.id.txIdString()))
     }
 
     private fun onSeeAllTransactionsClick() {

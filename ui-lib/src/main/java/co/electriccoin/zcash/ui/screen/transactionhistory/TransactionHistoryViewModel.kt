@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
-import co.electriccoin.zcash.ui.common.repository.TransactionData
+import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFulltextFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
@@ -109,12 +109,7 @@ class TransactionHistoryViewModel(
             transactions
                 .groupBy {
                     val other =
-                        it.data.overview.blockTimeEpochSeconds?.let { sec ->
-                            Instant
-                                .ofEpochSecond(sec)
-                                .atZone(ZoneId.systemDefault())
-                                .toLocalDate()
-                        } ?: now
+                        it.transaction.timestamp?.atZone(ZoneId.systemDefault())?.toLocalDate() ?: now
                     when {
                         now == other ->
                             stringRes(R.string.transaction_history_today) to "today"
@@ -146,7 +141,7 @@ class TransactionHistoryViewModel(
                             TransactionHistoryItem.Transaction(
                                 state =
                                     transactionHistoryMapper.createTransactionState(
-                                        transaction = transaction,
+                                        data = transaction,
                                         onTransactionClick = ::onTransactionClick,
                                         restoreTimestamp = restoreTimestamp
                                     )
@@ -215,8 +210,8 @@ class TransactionHistoryViewModel(
         navigationRouter.back()
     }
 
-    private fun onTransactionClick(transactionData: TransactionData) {
-        navigationRouter.forward(TransactionDetail(transactionData.overview.txId.txIdString()))
+    private fun onTransactionClick(transaction: Transaction) {
+        navigationRouter.forward(TransactionDetail(transaction.id.txIdString()))
     }
 
     private fun onTransactionFiltersClicked() = navigationRouter.forward(TransactionFilters)

@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
-import co.electriccoin.zcash.ui.common.repository.TransactionData
+import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import co.electriccoin.zcash.ui.util.combineToFlow
@@ -25,10 +25,10 @@ class GetCurrentTransactionsUseCase(
                 } else {
                     transactions
                         .map {
-                            metadataRepository.observeTransactionMetadataByTxId(it.overview.txId.txIdString())
+                            metadataRepository.observeTransactionMetadataByTxId(it.id.txIdString())
                                 .mapLatest { metadata ->
                                     ListTransactionData(
-                                        data = it,
+                                        transaction = it,
                                         metadata = metadata
                                     )
                                 }
@@ -39,6 +39,6 @@ class GetCurrentTransactionsUseCase(
 }
 
 data class ListTransactionData(
-    val data: TransactionData,
+    val transaction: Transaction,
     val metadata: TransactionMetadata?
 )
