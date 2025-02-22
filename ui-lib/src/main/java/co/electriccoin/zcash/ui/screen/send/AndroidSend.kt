@@ -236,13 +236,8 @@ internal fun WrapSend(
                 )
             )
 
-            val fee = it.transaction.overview.feePaid
-            val value =
-                if (fee == null) {
-                    it.transaction.overview.netValue
-                } else {
-                    it.transaction.overview.netValue - fee
-                }
+            val fee = it.transaction.fee
+            val value = if (fee == null) it.transaction.amount else it.transaction.amount - fee
 
             setAmountState(
                 AmountState.newFromZec(

@@ -6,7 +6,7 @@ import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
-import co.electriccoin.zcash.ui.common.repository.TransactionData
+import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import kotlinx.coroutines.Dispatchers
@@ -82,7 +82,7 @@ class GetTransactionDetailByIdUseCase(
 }
 
 data class DetailedTransactionData(
-    val transaction: TransactionData,
+    val transaction: Transaction,
     val memos: List<String>?,
     val contact: AddressBookContact?,
     val recipientAddress: WalletAddress?,
