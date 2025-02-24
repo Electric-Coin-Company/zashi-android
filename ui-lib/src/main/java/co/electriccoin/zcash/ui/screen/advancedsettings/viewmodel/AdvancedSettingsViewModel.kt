@@ -6,9 +6,9 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -22,22 +22,22 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class AdvancedSettingsViewModel(
-    observeWalletState: ObserveWalletStateUseCase,
+    getWalletRestoringState: GetWalletRestoringStateUseCase,
     private val navigationRouter: NavigationRouter,
     private val navigateToTaxExport: NavigateToTaxExportUseCase,
 ) : ViewModel() {
     val state: StateFlow<AdvancedSettingsState> =
-        observeWalletState()
+        getWalletRestoringState.observe()
             .map { walletState ->
                 createState(walletState)
             }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = createState(observeWalletState().value)
+                initialValue = createState(getWalletRestoringState.observe().value)
             )
 
-    private fun createState(topAppBarSubTitleState: TopAppBarSubTitleState) =
+    private fun createState(walletRestoringState: WalletRestoringState) =
         AdvancedSettingsState(
             onBack = ::onBack,
             items =
@@ -55,17 +55,12 @@ class AdvancedSettingsViewModel(
                     ZashiListItemState(
                         title = stringRes(R.string.advanced_settings_tax),
                         icon =
-                            when (topAppBarSubTitleState) {
-                                TopAppBarSubTitleState.Restoring -> R.drawable.ic_advanced_settings_tax_disabled
-                                TopAppBarSubTitleState.Disconnected -> R.drawable.ic_advanced_settings_tax
-                                TopAppBarSubTitleState.None -> R.drawable.ic_advanced_settings_tax
+                            if (walletRestoringState == WalletRestoringState.RESTORING) {
+                                R.drawable.ic_advanced_settings_tax_disabled
+                            } else {
+                                R.drawable.ic_advanced_settings_tax
                             },
-                        isEnabled =
-                            when (topAppBarSubTitleState) {
-                                TopAppBarSubTitleState.Restoring -> false
-                                TopAppBarSubTitleState.Disconnected -> true
-                                TopAppBarSubTitleState.None -> true
-                            },
+                        isEnabled = walletRestoringState != WalletRestoringState.RESTORING,
                         onClick = ::onTaxExportClick
                     ),
                     ZashiListItemState(
