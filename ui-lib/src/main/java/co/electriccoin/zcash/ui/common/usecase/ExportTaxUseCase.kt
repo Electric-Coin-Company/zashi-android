@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.common.usecase
 import android.content.Context
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
@@ -65,8 +66,8 @@ class ExportTaxUseCase(
                     FileShareUtil.newShareContentIntent(
                         context = context,
                         file = outputFile,
-                        shareText = "Tax export",
-                        sharePickerText = "Tax export",
+                        shareText = context.getString(R.string.export_data_share_text),
+                        sharePickerText = context.getString(R.string.export_data_share_text),
                         versionInfo = versionInfoProvider(),
                         fileType = ZASHI_INTERNAL_DATA_MIME_TYPE
                     )
@@ -84,14 +85,14 @@ class ExportTaxUseCase(
         outputFile.outputStream().bufferedWriter().use { writer ->
             writer.write(
                 listOf(
-                    "Date",
-                    "Received Quantity",
-                    "Received Currency",
-                    "Sent Quantity",
-                    "Sent Currency",
-                    "Fee Amount",
-                    "Fee Currency",
-                    "Tag"
+                    context.getString(R.string.tax_export_date),
+                    context.getString(R.string.tax_export_received_quantity),
+                    context.getString(R.string.tax_export_received_currency),
+                    context.getString(R.string.tax_export_sent_quantity),
+                    context.getString(R.string.tax_export_sent_currency),
+                    context.getString(R.string.tax_export_fee_amount),
+                    context.getString(R.string.tax_export_fee_currency),
+                    context.getString(R.string.tax_export_tag)
                 ).joinToString(separator = CSV_SEPARATOR)
             )
             writer.newLine()
