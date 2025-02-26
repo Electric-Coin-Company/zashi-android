@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -50,6 +52,8 @@ interface TransactionRepository {
     fun observeTransaction(txId: String): Flow<TransactionData?>
 
     fun observeTransactionsByMemo(memo: String): Flow<List<TransactionId>?>
+
+    suspend fun getTransactions(): List<TransactionData>
 }
 
 class TransactionRepositoryImpl(
@@ -135,6 +139,10 @@ class TransactionRepositoryImpl(
                 synchronizer?.getTransactionsByMemoSubstring(memo)?.onEmpty { emit(listOf()) } ?: flowOf(null)
             }
             .distinctUntilChanged()
+
+    override suspend fun getTransactions(): List<TransactionData> {
+        return currentTransactions.filterNotNull().first()
+    }
 }
 
 data class TransactionData(
