@@ -38,6 +38,8 @@ import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 @Composable
 fun ZashiListItem(
@@ -184,7 +186,7 @@ private fun ZashiListContentItem(
                         contentDescription = null,
                     )
                 } else {
-                    val offset = if (index == 1) (-2).dp else (-6).dp
+                    val offset = (-index.toDouble().pow(2.0) - index).roundToInt().dp
 
                     Image(
                         modifier =
