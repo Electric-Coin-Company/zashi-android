@@ -36,7 +36,6 @@ internal fun LazyListScope.createRestoringProgressView(
                 // Do not calculate and use the app update information here, as the sync bar won't be displayed after
                 // the wallet is fully restored
                 SynchronizationStatus(
-                    isUpdateAvailable = false,
                     onStatusClick = onStatusClick,
                     testTag = BalancesTag.STATUS,
                     walletSnapshot = walletSnapshot,

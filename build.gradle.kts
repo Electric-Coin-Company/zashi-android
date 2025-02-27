@@ -30,14 +30,13 @@ buildscript {
                 }
             }
         }
-        // We don't use mavenCentral now, but in the future we may want to use it for some dependencies
-        // mavenCentral {
-        //     if (isRepoRestrictionEnabled) {
-        //         content {
-        //             googleGroups.forEach { excludeGroup(it) }
-        //         }
-        //     }
-        // }
+        mavenCentral {
+            if (isRepoRestrictionEnabled) {
+                content {
+                    googleGroups.forEach { excludeGroup(it) }
+                }
+            }
+        }
         gradlePluginPortal {
             if (isRepoRestrictionEnabled) {
                 content {
@@ -45,7 +44,6 @@ buildscript {
                 }
             }
         }
-        maven("${rootProject.projectDir}/maven") // url to a local maven in this repository
         maven("https://jitpack.io")
     }
 
@@ -63,9 +61,6 @@ plugins {
     id("secant.ktlint-conventions")
     id("secant.rosetta-conventions")
 }
-
-val uiIntegrationModuleName: String = projects.uiIntegrationTest.name
-val uiScreenshotModuleName: String = projects.uiScreenshotTest.name
 
 tasks {
     withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask> {
@@ -103,7 +98,6 @@ tasks {
 
             "ZCASH_RELEASE_APP_NAME" to "Zashi",
             "ZCASH_RELEASE_PACKAGE_NAME" to "co.electriccoin.zcash",
-            "ZCASH_SUPPORT_EMAIL_ADDRESS" to "support@electriccoin.co",
             "IS_SECURE_SCREEN_PROTECTION_ACTIVE" to "true",
             "IS_SCREEN_ROTATION_ENABLED" to "false",
 

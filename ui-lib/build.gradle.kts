@@ -1,4 +1,6 @@
 import com.android.build.api.variant.BuildConfigField
+import model.DistributionDimension
+import model.NetworkDimension
 
 plugins {
     id("com.android.library")
@@ -70,6 +72,7 @@ android {
                     "src/main/res/ui/transaction_filters",
                     "src/main/res/ui/transaction_history",
                     "src/main/res/ui/transaction_note",
+                    "src/main/res/ui/tax_export",
                     "src/main/res/ui/feedback",
                     "src/main/res/ui/update",
                     "src/main/res/ui/update_contact",
@@ -79,6 +82,26 @@ android {
                     "src/main/res/ui/exchange_rate",
                 )
             )
+        }
+    }
+
+    flavorDimensions += listOf(NetworkDimension.DIMENSION_NAME, DistributionDimension.DIMENSION_NAME)
+
+    productFlavors {
+        create(NetworkDimension.TESTNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
+        }
+
+        create(NetworkDimension.MAINNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
+        }
+
+        create(DistributionDimension.STORE.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
+        }
+
+        create(DistributionDimension.FOSS.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
         }
     }
 }
@@ -136,7 +159,6 @@ dependencies {
     implementation(libs.bundles.androidx.compose.core)
     implementation(libs.bundles.androidx.compose.extended)
     api(libs.bundles.koin)
-    implementation(libs.bundles.play.update)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
@@ -144,7 +166,7 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.immutable)
     implementation(libs.kotlinx.serializable.json)
-    implementation(libs.mlkit.scanning)
+    "storeImplementation"(libs.mlkit.scanning)
     api(libs.zcash.sdk)
     implementation(libs.zcash.sdk.incubator)
     implementation(libs.zcash.bip39)

@@ -6,6 +6,17 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Added
+- The new `Foss` build dimension has been added that suits for Zashi build that follows FOSS principles
+- The `release.yaml` has been added. It provides us with ability to build and deploy Zashi to GitHub Releases and 
+  F-Droid store.
+- Confirm the rejection of a Keystone transaction dialog added.
+
+### Changed
+- `Flexa` version has been bumped to 1.0.11
+- Several non-FOSS dependencies has been removed for the new FOSS Zashi build type
+- Keystone flows swapped the buttons for the better UX, the main CTA is the closes button for a thumb.
+
 ## [1.3.3 (839)] - 2025-01-23
 
 ### Changed

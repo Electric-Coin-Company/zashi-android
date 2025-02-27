@@ -11,9 +11,6 @@
 # FIREBASE_DEBUG_JSON_BASE64 - Optional JSON to enable Firebase (e.g. Crashlytics) for debug builds
 # FIREBASE_RELEASE_JSON_BASE64 - Optional JSON to enable Firebase (e.g. Crashlytics) for release builds
 
-# Expected variables
-# SUPPORT_EMAIL_ADDRESS - Contact email address for sending requests from the app
-
 name: Deploy
 
 on:
@@ -87,7 +84,7 @@ jobs:
           ref: main
           fetch-depth: 0  # To fetch all commits
       - name: Set up Java
-        uses: actions/setup-java@7a6d8a8234af8eb26422e24e3006232cccaa061b
+        uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12
         timeout-minutes: 1
         with:
           distribution: 'temurin'
@@ -114,7 +111,7 @@ jobs:
         # Note that this step is not currently used due to #1033
         if: false
         id: auth_google_play
-        uses: google-github-actions/auth@6fc4af4b145ae7821d527454aa9bd537d1f2dc5f
+        uses: google-github-actions/auth@71f986410dfbc7added4569d411d040a91dc6935
         with:
           create_credentials_file: true
           project_id: ${{ secrets.GOOGLE_PLAY_CLOUD_PROJECT }}
@@ -142,7 +139,6 @@ jobs:
       - name: Upload to Play Store
         timeout-minutes: 25
         env:
-          ORG_GRADLE_PROJECT_ZCASH_SUPPORT_EMAIL_ADDRESS: ${{ vars.SUPPORT_EMAIL_ADDRESS }}
           # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
           # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
           # Note that these properties are not currently used due to #1033

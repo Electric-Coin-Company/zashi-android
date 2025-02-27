@@ -26,7 +26,6 @@ data class WalletDisplayValues(
         internal fun getNextValues(
             context: Context,
             walletSnapshot: WalletSnapshot,
-            isUpdateAvailable: Boolean = false,
         ): WalletDisplayValues {
             var progress = PercentDecimal.ZERO_PERCENT
             val zecAmountText = walletSnapshot.totalBalance().toZecString()
@@ -55,17 +54,8 @@ data class WalletDisplayValues(
                     statusAction = StatusAction.Syncing
                 }
                 Synchronizer.Status.SYNCED -> {
-                    if (isUpdateAvailable) {
-                        statusText =
-                            context.getString(
-                                R.string.balances_status_update,
-                                context.getString(R.string.app_name)
-                            )
-                        statusAction = StatusAction.AppUpdate
-                    } else {
-                        statusText = context.getString(R.string.balances_status_synced)
-                        statusAction = StatusAction.Synced
-                    }
+                    statusText = context.getString(R.string.balances_status_synced)
+                    statusAction = StatusAction.Synced
                 }
                 Synchronizer.Status.DISCONNECTED -> {
                     statusText =

@@ -99,7 +99,7 @@ class MetadataKey(
                                 is ZashiAccount -> null
                             },
                         network = network,
-                        privateSubject = "metadata".toByteArray()
+                        privateUseSubject = "metadata".toByteArray()
                     )
             return MetadataKey(
                 encryptionBytes = SecretBytes.copyFrom(key[0], InsecureSecretKeyAccess.get()),
