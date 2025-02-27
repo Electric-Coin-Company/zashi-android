@@ -57,10 +57,14 @@ interface ProposalDataSource {
         proposal: Proposal,
         usk: UnifiedSpendingKey
     ): SubmitResult
+
+    @Throws(PcztException.RedactPcztForSignerException::class)
+    suspend fun redactPcztForSigner(pczt: Pczt): Pczt
 }
 
 class TransactionProposalNotCreatedException(reason: Exception) : Exception(reason)
 
+@Suppress("TooManyFunctions")
 class ProposalDataSourceImpl(
     private val synchronizerProvider: SynchronizerProvider,
 ) : ProposalDataSource {
@@ -170,6 +174,12 @@ class ProposalDataSourceImpl(
                 proposal = proposal,
                 usk = usk,
             )
+        }
+
+    override suspend fun redactPcztForSigner(pczt: Pczt): Pczt =
+        withContext(Dispatchers.IO) {
+            synchronizerProvider.getSynchronizer()
+                .redactPcztForSigner(pczt)
         }
 
     private suspend inline fun submitTransactionInternal(
