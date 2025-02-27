@@ -162,19 +162,12 @@ class TransactionHistoryMapper {
                     StringResourceColor.NEGATIVE
                 )
 
-            SHIELDED ->
-                StyledStringResource(
-                    stringRes(
-                        R.string.transaction_history_plus,
-                        stringRes(transaction.data.overview.netValue)
-                    )
-                )
-
+            SHIELDED,
             SHIELDING ->
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(transaction.data.overview.netValue)
+                        stringRes(transaction.data.overview.totalSpent)
                     )
                 )
 
@@ -182,7 +175,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(transaction.data.overview.netValue)
+                        stringRes(transaction.data.overview.totalSpent)
                     ),
                     StringResourceColor.NEGATIVE
                 )

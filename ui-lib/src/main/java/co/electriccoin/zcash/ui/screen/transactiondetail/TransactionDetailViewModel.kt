@@ -241,8 +241,17 @@ class TransactionDetailViewModel(
 
     private fun createFeeStringRes(transaction: DetailedTransactionData): StringResource {
         val feePaid =
-            transaction.transaction.overview.feePaid
-                ?: return stringRes(R.string.transaction_detail_fee_minimal)
+            when (transaction.transaction.state) {
+                SENT,
+                SENDING,
+                SEND_FAILED,
+                RECEIVED,
+                RECEIVING,
+                RECEIVE_FAILED -> transaction.transaction.overview.feePaid
+                SHIELDED,
+                SHIELDING,
+                SHIELDING_FAILED -> transaction.transaction.overview.netValue
+            } ?: return stringRes(R.string.transaction_detail_fee_minimal)
 
         return if (feePaid.value < MIN_FEE_THRESHOLD) {
             stringRes(R.string.transaction_detail_fee_minimal)
@@ -334,7 +343,18 @@ class TransactionDetailViewModel(
                     SHIELDING -> stringRes(R.string.transaction_detail_shielding)
                     SHIELDING_FAILED -> stringRes(R.string.transaction_detail_shielding_failed)
                 },
-            amount = stringRes(transaction.transaction.overview.netValue)
+            amount =
+                when (transaction.transaction.state) {
+                    SENT,
+                    SENDING,
+                    SEND_FAILED,
+                    RECEIVED,
+                    RECEIVING,
+                    RECEIVE_FAILED -> stringRes(transaction.transaction.overview.netValue)
+                    SHIELDED,
+                    SHIELDING,
+                    SHIELDING_FAILED -> stringRes(transaction.transaction.overview.totalSpent)
+                }
         )
 
     private fun onBack() {
