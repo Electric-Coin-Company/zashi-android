@@ -6,7 +6,9 @@ import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
-import co.electriccoin.zcash.ui.common.repository.TransactionData
+import co.electriccoin.zcash.ui.common.repository.SendTransaction
+import co.electriccoin.zcash.ui.common.repository.ShieldTransaction
+import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionFilter
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
@@ -57,7 +59,7 @@ class GetCurrentFilteredTransactionsUseCase(
 
                             if (recipient == null) {
                                 metadataRepository.observeTransactionMetadataByTxId(
-                                    transaction.overview.txId.txIdString()
+                                    transaction.id.txIdString()
                                 ).map {
                                     FilterTransactionData(
                                         transaction = transaction,
@@ -70,7 +72,7 @@ class GetCurrentFilteredTransactionsUseCase(
                                 combine(
                                     addressBookRepository.observeContactByAddress(recipient),
                                     metadataRepository.observeTransactionMetadataByTxId(
-                                        txId = transaction.overview.txId.txIdString(),
+                                        txId = transaction.id.txIdString(),
                                     )
                                 ) { contact, transactionMetadata ->
                                     FilterTransactionData(
@@ -148,7 +150,7 @@ class GetCurrentFilteredTransactionsUseCase(
                                     }
                                     ?.map { transaction ->
                                         ListTransactionData(
-                                            data = transaction.transaction,
+                                            transaction = transaction.transaction,
                                             metadata = transaction.transactionMetadata
                                         )
                                     }
@@ -167,7 +169,7 @@ class GetCurrentFilteredTransactionsUseCase(
     ): Boolean {
         val memoPass =
             if (filters.contains(TransactionFilter.MEMOS)) {
-                transaction.transaction.overview.memoCount > 0
+                transaction.transaction.memoCount > 0
             } else {
                 true
             }
@@ -201,12 +203,11 @@ class GetCurrentFilteredTransactionsUseCase(
         return if (filters.contains(TransactionFilter.SENT) || filters.contains(TransactionFilter.RECEIVED)) {
             when {
                 filters.contains(TransactionFilter.SENT) &&
-                    transaction.transaction.overview.isSentTransaction &&
-                    !transaction.transaction.overview.isShielding -> true
+                    transaction.transaction is SendTransaction -> true
 
                 filters.contains(TransactionFilter.RECEIVED) &&
-                    !transaction.transaction.overview.isSentTransaction &&
-                    !transaction.transaction.overview.isShielding -> true
+                    transaction.transaction !is SendTransaction &&
+                    transaction.transaction !is ShieldTransaction -> true
 
                 else -> false
             }
@@ -220,12 +221,10 @@ class GetCurrentFilteredTransactionsUseCase(
         restoreTimestamp: Instant,
     ): Boolean {
         val transactionDate =
-            transaction.transaction.overview.blockTimeEpochSeconds
-                ?.let { blockTimeEpochSeconds ->
-                    Instant.ofEpochSecond(blockTimeEpochSeconds).atZone(ZoneId.systemDefault()).toLocalDate()
-                } ?: LocalDate.now()
+            transaction.transaction.timestamp?.atZone(ZoneId.systemDefault())?.toLocalDate()
+                ?: LocalDate.now()
 
-        val hasMemo = transaction.transaction.overview.memoCount > 0
+        val hasMemo = transaction.transaction.memoCount > 0
         val restoreDate = restoreTimestamp.atZone(ZoneId.systemDefault()).toLocalDate()
 
         return if (hasMemo && transactionDate < restoreDate) {
@@ -261,7 +260,7 @@ class GetCurrentFilteredTransactionsUseCase(
         transaction: FilterTransactionData,
         fulltextFilter: String
     ): Boolean {
-        val text = stringRes(transaction.transaction.overview.netValue).getString(context)
+        val text = stringRes(transaction.transaction.amount).getString(context)
         return text.contains(fulltextFilter, ignoreCase = true)
     }
 
@@ -282,11 +281,11 @@ class GetCurrentFilteredTransactionsUseCase(
     private fun hasMemoInFilteredIds(
         memoTxIds: List<TransactionId>?,
         transaction: FilterTransactionData
-    ) = memoTxIds?.contains(transaction.transaction.overview.txId) ?: false
+    ) = memoTxIds?.contains(transaction.transaction.id) ?: false
 }
 
 private data class FilterTransactionData(
-    val transaction: TransactionData,
+    val transaction: Transaction,
     val contact: AddressBookContact?,
     val recipientAddress: String?,
     val transactionMetadata: TransactionMetadata?
