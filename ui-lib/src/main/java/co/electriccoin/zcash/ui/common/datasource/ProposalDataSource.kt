@@ -64,6 +64,7 @@ interface ProposalDataSource {
 
 class TransactionProposalNotCreatedException(reason: Exception) : Exception(reason)
 
+@Suppress("TooManyFunctions")
 class ProposalDataSourceImpl(
     private val synchronizerProvider: SynchronizerProvider,
 ) : ProposalDataSource {
