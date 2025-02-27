@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.util.asScaffoldPaddingValues
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -143,7 +144,7 @@ private fun BottomBar(
 ) {
     ZashiBottomBar(
         isElevated = scrollState.value > 0,
-        modifier = Modifier.scaffoldPadding(paddingValues, top = 0.dp, bottom = 0.dp)
+        contentPadding = paddingValues.asScaffoldPaddingValues(top = 0.dp, bottom = 0.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth()
