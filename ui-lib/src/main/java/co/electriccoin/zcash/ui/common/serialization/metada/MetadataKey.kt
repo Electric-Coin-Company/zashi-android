@@ -53,17 +53,18 @@ class MetadataKey(
     }
 
     fun deriveFirstDecryptionKey(salt: ByteArray): ChaCha20Poly1305Key {
-        return deriveDecryptionkey(salt, encryptionBytes)
+        return deriveDecryptionkey(salt, encryptionBytes, "encryption_key")
     }
 
     fun deriveSecondDecryptionKey(salt: ByteArray): ChaCha20Poly1305Key? {
         if (decryptionBytes == null) return null
-        return deriveDecryptionkey(salt, decryptionBytes)
+        return deriveDecryptionkey(salt, decryptionBytes, "decryption_key")
     }
 
     private fun deriveDecryptionkey(
         salt: ByteArray,
-        decryptionBytes: SecretBytes
+        decryptionBytes: SecretBytes,
+        infoKey: String
     ): ChaCha20Poly1305Key {
         assert(salt.size == METADATA_SALT_SIZE)
         val access = InsecureSecretKeyAccess.get()
@@ -72,7 +73,7 @@ class MetadataKey(
                 "HMACSHA256",
                 decryptionBytes.toByteArray(access),
                 null,
-                salt + "decryption_key".toByteArray(),
+                salt + infoKey.toByteArray(),
                 METADATA_ENCRYPTION_KEY_SIZE
             )
         return ChaCha20Poly1305Key.create(SecretBytes.copyFrom(subKey, access))
