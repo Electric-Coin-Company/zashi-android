@@ -6,26 +6,26 @@
     <string name="transaction_history_minus" formatted="true">
         - <xliff:g example="0.2" id="amount">%s</xliff:g> ZEC
     </string>
-    <string name="transaction_history_today">Today</string>
-    <string name="transaction_history_yesterday">Yesterday</string>
-    <string name="transaction_history_previous_7_days">Previous 7 days</string>
-    <string name="transaction_history_previous_30_days">Previous 30 days</string>
-    <string name="transaction_history_days_ago" formatted="true"><xliff:g example="$" id="days">%s</xliff:g> days ago</string>
-    <string name="transaction_history_screen_title">Transactions</string>
-    <string name="transaction_history_send_transaction">Get some ZEC</string>
-    <string name="transaction_history_widget_title">Transactions</string>
-    <string name="transaction_history_widget_header_button">See All</string>
-    <string name="transaction_history_widget_send_transaction">Send a transaction</string>
-    <string name="transaction_history_widget_empty_title">There’s nothing here, yet.</string>
-    <string name="transaction_history_widget_empty_subtitle">Make the first move…</string>
-    <string name="transaction_history_search">Search</string>
-    <string name="transaction_history_sent">Sent</string>
-    <string name="transaction_history_sending">Sending…</string>
-    <string name="transaction_history_sending_failed">Sending failed</string>
-    <string name="transaction_history_received">Received</string>
-    <string name="transaction_history_receiving">Receiving…</string>
-    <string name="transaction_history_receiving_failed">Receiving failed</string>
-    <string name="transaction_history_shielded">Shielded</string>
-    <string name="transaction_history_shielding">Shielding…</string>
-    <string name="transaction_history_shielding_failed">Shielding failed</string>
+    <string name="transaction_history_today">Hoy</string>
+    <string name="transaction_history_yesterday">Ayer</string>
+    <string name="transaction_history_previous_7_days">Últimos 7 días</string>
+    <string name="transaction_history_previous_30_days">Últimos 30 días</string>
+    <string name="transaction_history_days_ago" formatted="true">Hace <xliff:g example="$" id="days">%s</xliff:g> días</string>
+    <string name="transaction_history_screen_title">Transacciones</string>
+    <string name="transaction_history_send_transaction">Enviar una transacción</string>
+    <string name="transaction_history_widget_title">Transacciones</string>
+    <string name="transaction_history_widget_header_button">Ver todo</string>
+    <string name="transaction_history_widget_send_transaction">Enviar una transacción</string>
+    <string name="transaction_history_widget_empty_title">Aún no hay nada aquí.</string>
+    <string name="transaction_history_widget_empty_subtitle">Haz el primer movimiento…</string>
+    <string name="transaction_history_search">Buscar</string>
+    <string name="transaction_history_sent">Enviado</string>
+    <string name="transaction_history_sending">Enviando…</string>
+    <string name="transaction_history_sending_failed">Error al enviar</string>
+    <string name="transaction_history_received">Recibido</string>
+    <string name="transaction_history_receiving">Recibiendo…</string>
+    <string name="transaction_history_receiving_failed">Error al recibir</string>
+    <string name="transaction_history_shielded">Protegido</string>
+    <string name="transaction_history_shielding">Protegiendo…</string>
+    <string name="transaction_history_shielding_failed">Error al proteger</string>
 </resources>

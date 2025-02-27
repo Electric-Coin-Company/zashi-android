@@ -9,4 +9,5 @@
     <string name="export_data_agree">Estoy de acuerdo con las Políticas de Exportación de Datos Privados y la Política de Privacidad de Zashi</string>
     <string name="export_data_export_data_chooser_title">Compartir datos internos de Zashi con:</string>
     <string name="export_data_unable_to_share">No se encontró una aplicación con la cual compartir.</string>
+    <string name="export_data_share_text">Exportar Archivo de Impuestos</string>
 </resources>

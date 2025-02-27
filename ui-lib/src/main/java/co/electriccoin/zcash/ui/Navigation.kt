@@ -93,6 +93,8 @@ import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.taxexport.AndroidTaxExport
+import co.electriccoin.zcash.ui.screen.taxexport.TaxExport
 import co.electriccoin.zcash.ui.screen.transactiondetail.AndroidTransactionDetail
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
 import co.electriccoin.zcash.ui.screen.transactionfilters.AndroidTransactionFiltersList
@@ -432,6 +434,9 @@ internal fun MainActivity.Navigation() {
                 )
         ) {
             AndroidTransactionNote(it.toRoute())
+        }
+        composable<TaxExport> {
+            AndroidTaxExport()
         }
     }
 }

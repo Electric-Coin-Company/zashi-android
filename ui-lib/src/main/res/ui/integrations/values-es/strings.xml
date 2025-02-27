@@ -3,11 +3,11 @@
     <string name="integrations_title">Integraciones</string>
     <string name="integrations_coinbase">Compra <xliff:g id="currency" example="ZEC">%1$s</xliff:g> con Coinbase</string>
     <string name="integrations_coinbase_subtitle">Una forma sencilla de comprar <xliff:g id="currency" example="ZEC">%1$s</xliff:g> y recibirlo directamente en tu billetera Zashi.</string>
-    <string name="integrations_info">Zashi integrations provide access to third party services. Features and information shared with them are outside of our control and subject to their privacy policies.</string>
+    <string name="integrations_info">Las integraciones de Zashi proporcionan acceso a servicios de terceros. Las funciones e información compartida con ellos están fuera de nuestro control y están sujetas a sus políticas de privacidad.</string>
     <string name="integrations_disabled_info">Durante el proceso de restauración, no es posible utilizar integraciones de pago.</string>
-    <string name="integrations_flexa">Paga con Flexa</string>
-    <string name="integrations_flexa_subtitle">Paga con clips de pago de Flexa y explora una nueva forma de gastar Zcash.</string>
-    <string name="integrations_flexa_biometric_message">Autentifícate para pagar con Flexa</string>
-    <string name="integrations_keystone">Connect Keystone Device</string>
-    <string name="integrations_keystone_subtitle">Pair your Keystone hardware wallet with Zashi to sign transactions.</string>
+    <string name="integrations_flexa">Pagar con Flexa</string>
+    <string name="integrations_flexa_subtitle">Paga con clips de pago de Flexa y descubre una nueva forma de gastar Zcash.</string>
+    <string name="integrations_flexa_biometric_message">Autentícate para pagar con Flexa</string>
+    <string name="integrations_keystone">Conectar Dispositivo Keystone</string>
+    <string name="integrations_keystone_subtitle">Empareja tu billetera de hardware Keystone con Zashi para firmar transacciones.</string>
 </resources>
