@@ -9,12 +9,14 @@ import co.electriccoin.zcash.ui.design.util.orDark
 @Composable
 fun zashiVerticalGradient(
     startColor: Color = ZashiColors.Utility.WarningYellow.utilityOrange100,
-    endColor: Color = ZashiColors.Surfaces.bgPrimary
+    endColor: Color = ZashiColors.Surfaces.bgPrimary,
+    startStop: Float = VERTICAL_GRADIENT_START_STOP,
+    endStop: Float = VERTICAL_GRADIENT_END_STOP_LIGHT orDark VERTICAL_GRADIENT_END_STOP_DARK
 ) = Brush.verticalGradient(
-    START_STOP to startColor,
-    (END_STOP_LIGHT orDark END_STOP_DARK) to endColor,
+    startStop to startColor,
+    endStop to endColor,
 )
 
-private const val START_STOP = .0f
-private const val END_STOP_DARK = .35f
-private const val END_STOP_LIGHT = .4f
+const val VERTICAL_GRADIENT_START_STOP = .0f
+const val VERTICAL_GRADIENT_END_STOP_DARK = .35f
+const val VERTICAL_GRADIENT_END_STOP_LIGHT = .4f

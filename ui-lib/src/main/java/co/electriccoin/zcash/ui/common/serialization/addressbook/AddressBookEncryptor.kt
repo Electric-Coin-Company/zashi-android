@@ -1,61 +1,29 @@
 package co.electriccoin.zcash.ui.common.serialization.addressbook
 
 import co.electriccoin.zcash.ui.common.model.AddressBook
-import com.google.crypto.tink.subtle.ChaCha20Poly1305
-import com.google.crypto.tink.subtle.Random
+import co.electriccoin.zcash.ui.common.serialization.ADDRESS_BOOK_ENCRYPTION_V1
+import co.electriccoin.zcash.ui.common.serialization.ADDRESS_BOOK_SALT_SIZE
+import co.electriccoin.zcash.ui.common.serialization.BaseEncryptor
+import co.electriccoin.zcash.ui.common.serialization.Encryptor
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.InputStream
-import java.io.OutputStream
 
-internal class AddressBookEncryptor : BaseAddressBookSerializer() {
-    fun encryptAddressBook(
-        addressBookKey: AddressBookKey,
-        serializer: AddressBookSerializer,
-        outputStream: OutputStream,
-        addressBook: AddressBook
+interface AddressBookEncryptor : Encryptor<AddressBookKey, AddressBook>
+
+class AddressBookEncryptorImpl(
+    private val addressBookSerializer: AddressBookSerializer,
+) : AddressBookEncryptor, BaseEncryptor<AddressBookKey, AddressBook>() {
+    override val version: Int = ADDRESS_BOOK_ENCRYPTION_V1
+    override val saltSize: Int = ADDRESS_BOOK_SALT_SIZE
+
+    override fun serialize(
+        outputStream: ByteArrayOutputStream,
+        data: AddressBook
     ) {
-        // Generate a fresh one-time key for this ciphertext.
-        val salt = Random.randBytes(ADDRESS_BOOK_SALT_SIZE)
-        val cipherText =
-            ByteArrayOutputStream()
-                .use { stream ->
-                    serializer.serializeAddressBook(stream, addressBook)
-                    stream.toByteArray()
-                }.let {
-                    val key = addressBookKey.deriveEncryptionKey(salt)
-                    // Tink encodes the ciphertext as `nonce || ciphertext || tag`.
-                    val cipher = ChaCha20Poly1305.create(key)
-                    cipher.encrypt(it, null)
-                }
-
-        outputStream.write(ADDRESS_BOOK_ENCRYPTION_V1.createByteArray())
-        outputStream.write(salt)
-        outputStream.write(cipherText)
+        addressBookSerializer.serializeAddressBook(outputStream, data)
     }
 
-    fun decryptAddressBook(
-        addressBookKey: AddressBookKey,
-        serializer: AddressBookSerializer,
-        inputStream: InputStream
-    ): AddressBook {
-        val version = inputStream.readInt()
-        if (version != ADDRESS_BOOK_ENCRYPTION_V1) {
-            throw UnknownAddressBookEncryptionVersionException()
-        }
-
-        val salt = ByteArray(ADDRESS_BOOK_SALT_SIZE)
-        require(inputStream.read(salt) == salt.size) { "Input is too short" }
-
-        val ciphertext = inputStream.readBytes()
-
-        val key = addressBookKey.deriveEncryptionKey(salt)
-        val cipher = ChaCha20Poly1305.create(key)
-        val plaintext = cipher.decrypt(ciphertext, null)
-
-        return plaintext.inputStream().use { stream ->
-            serializer.deserializeAddressBook(stream)
-        }
+    override fun deserialize(inputStream: ByteArrayInputStream): AddressBook {
+        return addressBookSerializer.deserializeAddressBook(inputStream)
     }
 }
-
-class UnknownAddressBookEncryptionVersionException : RuntimeException("Unknown address book encryption version")

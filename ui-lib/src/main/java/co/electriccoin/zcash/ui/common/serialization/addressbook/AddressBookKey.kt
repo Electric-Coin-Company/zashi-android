@@ -4,6 +4,10 @@ import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.serialization.ADDRESS_BOOK_ENCRYPTION_KEY_SIZE
+import co.electriccoin.zcash.ui.common.serialization.ADDRESS_BOOK_FILE_IDENTIFIER_SIZE
+import co.electriccoin.zcash.ui.common.serialization.ADDRESS_BOOK_SALT_SIZE
+import co.electriccoin.zcash.ui.common.serialization.Key
 import com.google.crypto.tink.InsecureSecretKeyAccess
 import com.google.crypto.tink.aead.ChaCha20Poly1305Key
 import com.google.crypto.tink.subtle.Hkdf
@@ -12,12 +16,12 @@ import com.google.crypto.tink.util.SecretBytes
 /**
  * The long-term key that can decrypt an account's encrypted address book.
  */
-class AddressBookKey(val key: SecretBytes) {
+class AddressBookKey(val key: SecretBytes) : Key {
     /**
      * Derives the filename that this key is able to decrypt.
      */
     @OptIn(ExperimentalStdlibApi::class)
-    fun fileIdentifier(): String {
+    override fun fileIdentifier(): String {
         val access = InsecureSecretKeyAccess.get()
         val fileIdentifier =
             Hkdf.computeHkdf(
@@ -36,7 +40,7 @@ class AddressBookKey(val key: SecretBytes) {
      * At encryption time, the one-time property MUST be ensured by generating a
      * random 32-byte salt.
      */
-    fun deriveEncryptionKey(salt: ByteArray): ChaCha20Poly1305Key {
+    override fun deriveEncryptionKey(salt: ByteArray): ChaCha20Poly1305Key {
         assert(salt.size == ADDRESS_BOOK_SALT_SIZE)
         val access = InsecureSecretKeyAccess.get()
         val subKey =

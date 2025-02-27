@@ -1,3 +1,7 @@
+import model.DistributionDimension
+import model.BuildType
+import model.NetworkDimension
+
 plugins {
     id("com.android.test")
     kotlin("android")
@@ -26,17 +30,24 @@ android {
     }
 
     // Define the same flavors as in app module
-    flavorDimensions.add("network")
+    flavorDimensions += listOf(NetworkDimension.DIMENSION_NAME, DistributionDimension.DIMENSION_NAME)
+
     productFlavors {
-        create("zcashtestnet") {
-            dimension = "network"
+        create(NetworkDimension.TESTNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
         }
-        create("zcashmainnet") {
-            dimension = "network"
+        create(NetworkDimension.MAINNET.value) {
+            dimension = NetworkDimension.DIMENSION_NAME
+        }
+        create(DistributionDimension.STORE.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
+        }
+        create(DistributionDimension.FOSS.value) {
+            dimension = DistributionDimension.DIMENSION_NAME
         }
     }
     buildTypes {
-        create("release") {
+        create(BuildType.RELEASE.value) {
             // to align with the benchmark module requirement - run against minified application
         }
     }
@@ -66,7 +77,6 @@ dependencies {
 
     implementation(libs.bundles.androidx.test)
     implementation(libs.bundles.androidx.compose.core)
-    implementation(libs.bundles.play.update)
 
     implementation(libs.androidx.compose.test.junit)
     implementation(libs.androidx.navigation.compose)

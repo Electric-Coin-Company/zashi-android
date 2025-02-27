@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="transaction_history_plus" formatted="true">
+        <xliff:g example="1.2345" id="amount">%s</xliff:g> ZEC
+    </string>
+    <string name="transaction_history_minus" formatted="true">
+        - <xliff:g example="0.2" id="amount">%s</xliff:g> ZEC
+    </string>
+    <string name="transaction_history_today">Hoy</string>
+    <string name="transaction_history_yesterday">Ayer</string>
+    <string name="transaction_history_previous_7_days">Últimos 7 días</string>
+    <string name="transaction_history_previous_30_days">Últimos 30 días</string>
+    <string name="transaction_history_days_ago" formatted="true">Hace <xliff:g example="$" id="days">%s</xliff:g> días</string>
+    <string name="transaction_history_screen_title">Transacciones</string>
+    <string name="transaction_history_send_transaction">Enviar una transacción</string>
+    <string name="transaction_history_widget_title">Transacciones</string>
+    <string name="transaction_history_widget_header_button">Ver todo</string>
+    <string name="transaction_history_widget_send_transaction">Enviar una transacción</string>
+    <string name="transaction_history_widget_empty_title">Aún no hay nada aquí.</string>
+    <string name="transaction_history_widget_empty_subtitle">Haz el primer movimiento…</string>
+    <string name="transaction_history_search">Buscar</string>
+    <string name="transaction_history_sent">Enviado</string>
+    <string name="transaction_history_sending">Enviando…</string>
+    <string name="transaction_history_sending_failed">Error al enviar</string>
+    <string name="transaction_history_received">Recibido</string>
+    <string name="transaction_history_receiving">Recibiendo…</string>
+    <string name="transaction_history_receiving_failed">Error al recibir</string>
+    <string name="transaction_history_shielded">Protegido</string>
+    <string name="transaction_history_shielding">Protegiendo…</string>
+    <string name="transaction_history_shielding_failed">Error al proteger</string>
+</resources>

@@ -13,6 +13,8 @@ interface NavigationRouter {
 
     fun replace(route: Any)
 
+    fun replaceAll(route: Any)
+
     fun newRoot(route: Any)
 
     fun back()
@@ -36,6 +38,12 @@ class NavigationRouterImpl : NavigationRouter {
     override fun replace(route: Any) {
         scope.launch {
             channel.send(NavigationCommand.Replace(route))
+        }
+    }
+
+    override fun replaceAll(route: Any) {
+        scope.launch {
+            channel.send(NavigationCommand.ReplaceAll(route))
         }
     }
 
@@ -64,6 +72,8 @@ sealed interface NavigationCommand {
     data class Forward(val route: Any) : NavigationCommand
 
     data class Replace(val route: Any) : NavigationCommand
+
+    data class ReplaceAll(val route: Any) : NavigationCommand
 
     data class NewRoot(val route: Any) : NavigationCommand
 

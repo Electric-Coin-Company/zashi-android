@@ -12,6 +12,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.sync.Mutex
@@ -35,6 +39,10 @@ interface AddressBookRepository {
     suspend fun deleteContact(contact: AddressBookContact)
 
     suspend fun resetAddressBook()
+
+    suspend fun getContactByAddress(address: String): AddressBookContact?
+
+    fun observeContactByAddress(address: String): Flow<AddressBookContact?>
 }
 
 class AddressBookRepositoryImpl(
@@ -95,6 +103,19 @@ class AddressBookRepositoryImpl(
             localAddressBookDataSource.resetAddressBook()
             addressBookCache.update { null }
         }
+
+    override suspend fun getContactByAddress(address: String): AddressBookContact? {
+        return observeContactByAddress(address).first()
+    }
+
+    override fun observeContactByAddress(address: String): Flow<AddressBookContact?> {
+        return addressBook
+            .filterNotNull()
+            .map {
+                it.contacts.find { contact -> contact.address == address }
+            }
+            .distinctUntilChanged()
+    }
 
     private suspend fun ensureSynchronization() {
         if (addressBookCache.value == null) {

@@ -31,7 +31,6 @@ import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneShieldProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
-import co.electriccoin.zcash.ui.common.viewmodel.CheckUpdateViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
@@ -44,7 +43,6 @@ import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransact
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfo
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
-import co.electriccoin.zcash.ui.screen.update.model.UpdateState
 import co.electriccoin.zcash.ui.util.EmailUtil
 import co.electriccoin.zcash.ui.util.PlayStoreUtil
 import kotlinx.coroutines.CoroutineScope
@@ -73,8 +71,6 @@ internal fun WrapBalances() {
 
     val isHideBalances = homeViewModel.isHideBalances.collectAsStateWithLifecycle().value ?: false
 
-    val checkUpdateViewModel = koinActivityViewModel<CheckUpdateViewModel>()
-
     val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
 
     val supportInfo = supportViewModel.supportInfo.collectAsStateWithLifecycle().value
@@ -86,7 +82,6 @@ internal fun WrapBalances() {
     WrapBalances(
         balanceState = balanceState,
         createTransactionsViewModel = createTransactionsViewModel,
-        checkUpdateViewModel = checkUpdateViewModel,
         isHideBalances = isHideBalances,
         lifecycleScope = activity.lifecycleScope,
         supportInfo = supportInfo,
@@ -105,7 +100,6 @@ const val DEFAULT_SHIELDING_THRESHOLD = 100000L
 @Suppress("LongParameterList", "LongMethod", "CyclomaticComplexMethod")
 internal fun WrapBalances(
     balanceState: BalanceState,
-    checkUpdateViewModel: CheckUpdateViewModel,
     createTransactionsViewModel: CreateTransactionsViewModel,
     lifecycleScope: CoroutineScope,
     isHideBalances: Boolean,
@@ -120,12 +114,6 @@ internal fun WrapBalances(
     val context = LocalContext.current
 
     val snackbarHostState = remember { SnackbarHostState() }
-
-    // To show information about the app update, if available
-    val isUpdateAvailable =
-        checkUpdateViewModel.updateInfo.collectAsStateWithLifecycle().value.let {
-            it?.appUpdateInfo != null && it.state == UpdateState.Prepared
-        }
 
     val (shieldState, setShieldState) =
         rememberSaveable(walletSnapshot?.isZashi, stateSaver = ShieldState.Saver) { mutableStateOf(ShieldState.None) }
@@ -170,7 +158,6 @@ internal fun WrapBalances(
         Balances(
             balanceState = balanceState,
             isHideBalances = isHideBalances,
-            isUpdateAvailable = isUpdateAvailable,
             isShowingErrorDialog = isShowingErrorDialog,
             setShowErrorDialog = setShowErrorDialog,
             showStatusDialog = showStatusDialog.value,
@@ -240,7 +227,7 @@ internal fun WrapBalances(
                                     }
 
                                     when (result) {
-                                        SubmitResult.Success -> {
+                                        is SubmitResult.Success -> {
                                             Twig.info { "Shielding transaction done successfully" }
                                             showShieldingSuccess()
                                         }

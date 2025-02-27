@@ -182,7 +182,7 @@ abstract class PublishToGooglePlay @Inject constructor(
         val packageName = project.property("ZCASH_RELEASE_PACKAGE_NAME").toString()
 
         // Walk through the build directory and find the prepared release aab file
-        val apkFile = File("app/build/outputs/bundle/").walk()
+        val apkFile = File("app/build/outputs/bundle/zcashmainnetStoreRelease/").walk()
             .filter { it.name.endsWith("release.aab") }
             .firstOrNull() ?: error("Universal release apk not found")
 
@@ -408,11 +408,6 @@ tasks {
         PublishStatus.new(it)
     }
 
-    // The new task [publishToGooglePlay] runs [assembleDebug] and [bundleZcashmainnetRelease] as its
-    // dependencies.
-
-    // Note that we need to convert these Enums to Strings as enums are not assignable via Kotlin DSL to Gradle
-    // custom task, although it would be better to work with more type-safe Enums furthermore.
     register<PublishToGooglePlay>(
         "publishToGooglePlay",  // $NON-NLS-1$
         googlePlayServiceAccountKey,
@@ -420,7 +415,7 @@ tasks {
         deployTrack.toGooglePlayIdentifier(),
         deployStatus.toGooglePlayIdentifier()
     )
-        .dependsOn(":app:assembleDebug")
-        .dependsOn(":app:bundleZcashmainnetRelease")
-        .dependsOn(":app:packageZcashmainnetReleaseUniversalApk")
+        .dependsOn(":app:assembleZcashmainnetStoreDebug")
+        .dependsOn(":app:bundleZcashmainnetStoreRelease")
+        .dependsOn(":app:packageZcashmainnetStoreReleaseUniversalApk")
 }

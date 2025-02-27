@@ -208,7 +208,13 @@ class ProposalDataSourceImpl(
                         }
                     } else {
                         // All transaction submissions were successful
-                        SubmitResult.Success
+                        SubmitResult.Success(
+                            submitResults
+                                .filterIsInstance<TransactionSubmitResult.Success>()
+                                .map {
+                                    it.txIdString()
+                                }
+                        )
                     }
                 }.onSuccess {
                     Twig.debug { "Transactions submitted successfully" }

@@ -7,4 +7,5 @@
     <string name="advanced_settings_currency_conversion">Currency Conversion</string>
     <string name="advanced_settings_info">You will be asked to confirm on the next screen</string>
     <string name="advanced_settings_delete_button">Reset Zashi</string>
+    <string name="advanced_settings_tax">Export Tax File</string>
 </resources>

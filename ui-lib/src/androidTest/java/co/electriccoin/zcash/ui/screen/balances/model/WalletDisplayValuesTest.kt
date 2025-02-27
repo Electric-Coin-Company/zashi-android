@@ -31,7 +31,6 @@ class WalletDisplayValuesTest {
             WalletDisplayValues.getNextValues(
                 context = getAppContext(),
                 walletSnapshot = walletSnapshot,
-                isUpdateAvailable = false
             )
 
         assertNotNull(values)

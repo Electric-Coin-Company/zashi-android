@@ -138,12 +138,15 @@ class RequestViewModel(
                                         .ic_item_keystone_qr
                                 is ZashiAccount -> R.drawable.logo_zec_fill_stroke
                             },
+                        fullScreenIcon =
+                            when (account) {
+                                is KeystoneAccount ->
+                                    co.electriccoin.zcash.ui.design.R.drawable
+                                        .ic_item_keystone_qr_white
+                                is ZashiAccount -> R.drawable.logo_zec_fill_stroke_white
+                            },
                         walletAddress = walletAddress,
                         request = request,
-                        onQrCodeClick = {
-                            // TODO [#1731]: Allow QR codes colors switching
-                            // TODO [#1731]: https://github.com/Electric-Coin-Company/zashi-android/issues/1731
-                        },
                         onQrCodeShare = { colors, pixels, uri ->
                             onShareQrCode(
                                 colors = colors,
