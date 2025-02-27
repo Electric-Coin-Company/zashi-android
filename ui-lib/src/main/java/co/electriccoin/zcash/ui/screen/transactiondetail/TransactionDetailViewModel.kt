@@ -343,17 +343,18 @@ class TransactionDetailViewModel(
                     SHIELDING -> stringRes(R.string.transaction_detail_shielding)
                     SHIELDING_FAILED -> stringRes(R.string.transaction_detail_shielding_failed)
                 },
-            amount = when (transaction.transaction.state) {
-                SENT,
-                SENDING,
-                SEND_FAILED,
-                RECEIVED,
-                RECEIVING,
-                RECEIVE_FAILED -> stringRes(transaction.transaction.overview.netValue)
-                SHIELDED,
-                SHIELDING,
-                SHIELDING_FAILED -> stringRes(transaction.transaction.overview.totalSpent)
-            }
+            amount =
+                when (transaction.transaction.state) {
+                    SENT,
+                    SENDING,
+                    SEND_FAILED,
+                    RECEIVED,
+                    RECEIVING,
+                    RECEIVE_FAILED -> stringRes(transaction.transaction.overview.netValue)
+                    SHIELDED,
+                    SHIELDING,
+                    SHIELDING_FAILED -> stringRes(transaction.transaction.overview.totalSpent)
+                }
         )
 
     private fun onBack() {
