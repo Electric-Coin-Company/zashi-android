@@ -81,7 +81,7 @@ class TransactionRepositoryImpl(
                                             when {
                                                 transaction.isShielding ->
                                                     ShieldTransaction.Failed(
-                                                        timestamp = createTimestamp(transaction),
+                                                        timestamp = createTimestamp(transaction) ?: Instant.now(),
                                                         transactionOutputs =
                                                             synchronizer.getTransactionOutputs
                                                                 (transaction),
@@ -94,7 +94,7 @@ class TransactionRepositoryImpl(
 
                                                 transaction.isSentTransaction ->
                                                     SendTransaction.Failed(
-                                                        timestamp = createTimestamp(transaction),
+                                                        timestamp = createTimestamp(transaction) ?: Instant.now(),
                                                         transactionOutputs =
                                                             synchronizer.getTransactionOutputs
                                                                 (transaction),
@@ -107,10 +107,9 @@ class TransactionRepositoryImpl(
 
                                                 else ->
                                                     ReceiveTransaction.Failed(
-                                                        timestamp = createTimestamp(transaction),
+                                                        timestamp = createTimestamp(transaction) ?: Instant.now(),
                                                         transactionOutputs =
-                                                            synchronizer.getTransactionOutputs
-                                                                (transaction),
+                                                            synchronizer.getTransactionOutputs(transaction),
                                                         amount = transaction.netValue,
                                                         id = transaction.txId,
                                                         memoCount = transaction.memoCount,
@@ -122,7 +121,7 @@ class TransactionRepositoryImpl(
                                             when {
                                                 transaction.isShielding ->
                                                     ShieldTransaction.Success(
-                                                        timestamp = createTimestamp(transaction),
+                                                        timestamp = createTimestamp(transaction) ?: Instant.now(),
                                                         transactionOutputs =
                                                             synchronizer.getTransactionOutputs
                                                                 (transaction),
@@ -135,7 +134,7 @@ class TransactionRepositoryImpl(
 
                                                 transaction.isSentTransaction ->
                                                     SendTransaction.Success(
-                                                        timestamp = createTimestamp(transaction),
+                                                        timestamp = createTimestamp(transaction) ?: Instant.now(),
                                                         transactionOutputs =
                                                             synchronizer.getTransactionOutputs
                                                                 (transaction),
@@ -148,7 +147,7 @@ class TransactionRepositoryImpl(
 
                                                 else ->
                                                     ReceiveTransaction.Success(
-                                                        timestamp = createTimestamp(transaction),
+                                                        timestamp = createTimestamp(transaction) ?: Instant.now(),
                                                         transactionOutputs =
                                                             synchronizer.getTransactionOutputs
                                                                 (transaction),
@@ -222,12 +221,9 @@ class TransactionRepositoryImpl(
             initialValue = null
         )
 
-    private fun createTimestamp(transaction: TransactionOverview): Instant =
-        transaction.blockTimeEpochSeconds
-            ?.let {
-                Instant.ofEpochSecond(it)
-            }
-            ?: Instant.now()
+    private fun createTimestamp(transaction: TransactionOverview): Instant? {
+        return transaction.blockTimeEpochSeconds?.let { Instant.ofEpochSecond(it) }
+    }
 
     override suspend fun getMemos(transaction: Transaction): List<String> =
         withContext(Dispatchers.IO) {
