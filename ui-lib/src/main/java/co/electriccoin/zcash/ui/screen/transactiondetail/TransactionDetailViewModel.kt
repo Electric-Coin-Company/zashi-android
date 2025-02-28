@@ -234,11 +234,8 @@ class TransactionDetailViewModel(
 
     private fun createFeeStringRes(data: DetailedTransactionData): StringResource {
         val feePaid =
-            when (val transaction = data.transaction) {
-                is SendTransaction -> transaction.fee
-                is ShieldTransaction -> transaction.fee
-                else -> null
-            } ?: return stringRes(R.string.transaction_detail_fee_minimal)
+            data.transaction.fee.takeIf { data.transaction !is ReceiveTransaction }
+                ?: return stringRes(R.string.transaction_detail_fee_minimal)
 
         return if (feePaid.value < MIN_FEE_THRESHOLD) {
             stringRes(R.string.transaction_detail_fee_minimal)
