@@ -7,15 +7,9 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVED
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVE_FAILED
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVING
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SENDING
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SEND_FAILED
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SENT
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDED
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDING
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDING_FAILED
+import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
+import co.electriccoin.zcash.ui.common.repository.SendTransaction
+import co.electriccoin.zcash.ui.common.repository.ShieldTransaction
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.DetailedTransactionData
 import co.electriccoin.zcash.ui.common.usecase.FlipTransactionBookmarkUseCase
@@ -49,7 +43,6 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.Instant
 import java.time.ZoneId
 
 @Suppress("TooManyFunctions")
@@ -110,7 +103,7 @@ class TransactionDetailViewModel(
         viewModelScope.launch {
             withContext(Dispatchers.Default) {
                 val transaction = transaction.filterNotNull().first()
-                if (transaction.transaction.overview.memoCount > 0) {
+                if (transaction.transaction.memoCount > 0) {
                     markTxMemoAsRead(transactionDetail.transactionId)
                 }
             }
@@ -122,10 +115,10 @@ class TransactionDetailViewModel(
     }
 
     private fun createTransactionInfoState(transaction: DetailedTransactionData): TransactionDetailInfoState {
-        return when (transaction.transaction.state) {
-            SENT,
-            SENDING,
-            SEND_FAILED -> {
+        return when (transaction.transaction) {
+            is SendTransaction.Success,
+            is SendTransaction.Pending,
+            is SendTransaction.Failed -> {
                 if (transaction.recipientAddress is WalletAddress.Transparent) {
                     SendTransparentState(
                         contact = transaction.contact?.let { stringRes(it.name) },
@@ -133,11 +126,11 @@ class TransactionDetailViewModel(
                         addressAbbreviated = createAbbreviatedAddressStringRes(transaction),
                         transactionId =
                             stringResByTransactionId(
-                                value = transaction.transaction.overview.txId.txIdString(),
+                                value = transaction.transaction.id.txIdString(),
                                 abbreviated = true
                             ),
                         onTransactionIdClick = {
-                            onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
+                            onCopyToClipboard(transaction.transaction.id.txIdString())
                         },
                         onTransactionAddressClick = { onCopyToClipboard(transaction.recipientAddress.address) },
                         fee = createFeeStringRes(transaction),
@@ -151,11 +144,11 @@ class TransactionDetailViewModel(
                         addressAbbreviated = createAbbreviatedAddressStringRes(transaction),
                         transactionId =
                             stringResByTransactionId(
-                                value = transaction.transaction.overview.txId.txIdString(),
+                                value = transaction.transaction.id.txIdString(),
                                 abbreviated = true
                             ),
                         onTransactionIdClick = {
-                            onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
+                            onCopyToClipboard(transaction.transaction.id.txIdString())
                         },
                         onTransactionAddressClick = {
                             onCopyToClipboard(transaction.recipientAddress?.address.orEmpty())
@@ -177,18 +170,18 @@ class TransactionDetailViewModel(
                 }
             }
 
-            RECEIVED,
-            RECEIVING,
-            RECEIVE_FAILED -> {
+            is ReceiveTransaction.Success,
+            is ReceiveTransaction.Pending,
+            is ReceiveTransaction.Failed -> {
                 if (transaction.transaction.transactionOutputs.all { it.pool == TransactionPool.TRANSPARENT }) {
                     ReceiveTransparentState(
                         transactionId =
                             stringResByTransactionId(
-                                value = transaction.transaction.overview.txId.txIdString(),
+                                value = transaction.transaction.id.txIdString(),
                                 abbreviated = true
                             ),
                         onTransactionIdClick = {
-                            onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
+                            onCopyToClipboard(transaction.transaction.id.txIdString())
                         },
                         completedTimestamp = createTimestampStringRes(transaction),
                         note = transaction.metadata?.note?.let { stringRes(it) }
@@ -197,11 +190,11 @@ class TransactionDetailViewModel(
                     ReceiveShieldedState(
                         transactionId =
                             stringResByTransactionId(
-                                value = transaction.transaction.overview.txId.txIdString(),
+                                value = transaction.transaction.id.txIdString(),
                                 abbreviated = true
                             ),
                         onTransactionIdClick = {
-                            onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
+                            onCopyToClipboard(transaction.transaction.id.txIdString())
                         },
                         completedTimestamp = createTimestampStringRes(transaction),
                         memo =
@@ -219,17 +212,17 @@ class TransactionDetailViewModel(
                 }
             }
 
-            SHIELDED,
-            SHIELDING,
-            SHIELDING_FAILED -> {
+            is ShieldTransaction.Success,
+            is ShieldTransaction.Pending,
+            is ShieldTransaction.Failed -> {
                 ShieldingState(
                     transactionId =
                         stringResByTransactionId(
-                            value = transaction.transaction.overview.txId.txIdString(),
+                            value = transaction.transaction.id.txIdString(),
                             abbreviated = true
                         ),
                     onTransactionIdClick = {
-                        onCopyToClipboard(transaction.transaction.overview.txId.txIdString())
+                        onCopyToClipboard(transaction.transaction.id.txIdString())
                     },
                     completedTimestamp = createTimestampStringRes(transaction),
                     fee = createFeeStringRes(transaction),
@@ -239,19 +232,10 @@ class TransactionDetailViewModel(
         }
     }
 
-    private fun createFeeStringRes(transaction: DetailedTransactionData): StringResource {
+    private fun createFeeStringRes(data: DetailedTransactionData): StringResource {
         val feePaid =
-            when (transaction.transaction.state) {
-                SENT,
-                SENDING,
-                SEND_FAILED,
-                RECEIVED,
-                RECEIVING,
-                RECEIVE_FAILED -> transaction.transaction.overview.feePaid
-                SHIELDED,
-                SHIELDING,
-                SHIELDING_FAILED -> transaction.transaction.overview.netValue
-            } ?: return stringRes(R.string.transaction_detail_fee_minimal)
+            data.transaction.fee.takeIf { data.transaction !is ReceiveTransaction }
+                ?: return stringRes(R.string.transaction_detail_fee_minimal)
 
         return if (feePaid.value < MIN_FEE_THRESHOLD) {
             stringRes(R.string.transaction_detail_fee_minimal)
@@ -272,11 +256,8 @@ class TransactionDetailViewModel(
             abbreviated = true
         )
 
-    private fun createTimestampStringRes(transaction: DetailedTransactionData) =
-        transaction.transaction.overview.blockTimeEpochSeconds
-            ?.let { blockTimeEpochSeconds ->
-                Instant.ofEpochSecond(blockTimeEpochSeconds)
-            }
+    private fun createTimestampStringRes(data: DetailedTransactionData) =
+        data.transaction.timestamp
             ?.atZone(ZoneId.systemDefault())
             ?.let {
                 stringResByDateTime(
@@ -292,27 +273,27 @@ class TransactionDetailViewModel(
         )
     }
 
-    private fun createPrimaryButtonState(transaction: DetailedTransactionData) =
-        if (transaction.contact == null) {
-            when (transaction.transaction.state) {
-                SENT,
-                SENDING,
-                SEND_FAILED ->
+    private fun createPrimaryButtonState(data: DetailedTransactionData) =
+        if (data.contact == null) {
+            when (data.transaction) {
+                is SendTransaction.Success,
+                is SendTransaction.Pending,
+                is SendTransaction.Failed ->
                     ButtonState(
                         text = stringRes(R.string.transaction_detail_save_address),
-                        onClick = { onSaveAddressClick(transaction) }
+                        onClick = { onSaveAddressClick(data) }
                     )
 
                 else -> null
             }
         } else {
-            when (transaction.transaction.state) {
-                SENT,
-                SENDING,
-                SEND_FAILED ->
+            when (data.transaction) {
+                is ReceiveTransaction.Success,
+                is ReceiveTransaction.Pending,
+                is ReceiveTransaction.Failed ->
                     ButtonState(
                         text = stringRes(R.string.transaction_detail_send_again),
-                        onClick = { onSendAgainClick(transaction) }
+                        onClick = { onSendAgainClick(data) }
                     )
 
                 else -> null
@@ -329,32 +310,22 @@ class TransactionDetailViewModel(
         sendTransactionAgain(transaction)
     }
 
-    private fun createTransactionHeaderState(transaction: DetailedTransactionData) =
+    private fun createTransactionHeaderState(data: DetailedTransactionData) =
         TransactionDetailHeaderState(
             title =
-                when (transaction.transaction.state) {
-                    SENT -> stringRes(R.string.transaction_detail_sent)
-                    SENDING -> stringRes(R.string.transaction_detail_sending)
-                    SEND_FAILED -> stringRes(R.string.transaction_detail_send_failed)
-                    RECEIVED -> stringRes(R.string.transaction_detail_received)
-                    RECEIVING -> stringRes(R.string.transaction_detail_receiving)
-                    RECEIVE_FAILED -> stringRes(R.string.transaction_detail_receive_failed)
-                    SHIELDED -> stringRes(R.string.transaction_detail_shielded)
-                    SHIELDING -> stringRes(R.string.transaction_detail_shielding)
-                    SHIELDING_FAILED -> stringRes(R.string.transaction_detail_shielding_failed)
+                when (data.transaction) {
+                    is SendTransaction.Success -> stringRes(R.string.transaction_detail_sent)
+                    is SendTransaction.Pending -> stringRes(R.string.transaction_detail_sending)
+                    is SendTransaction.Failed -> stringRes(R.string.transaction_detail_send_failed)
+                    is ReceiveTransaction.Success -> stringRes(R.string.transaction_detail_received)
+                    is ReceiveTransaction.Pending -> stringRes(R.string.transaction_detail_receiving)
+                    is ReceiveTransaction.Failed -> stringRes(R.string.transaction_detail_receive_failed)
+                    is ShieldTransaction.Success -> stringRes(R.string.transaction_detail_shielded)
+                    is ShieldTransaction.Pending -> stringRes(R.string.transaction_detail_shielding)
+                    is ShieldTransaction.Failed -> stringRes(R.string.transaction_detail_shielding_failed)
                 },
             amount =
-                when (transaction.transaction.state) {
-                    SENT,
-                    SENDING,
-                    SEND_FAILED,
-                    RECEIVED,
-                    RECEIVING,
-                    RECEIVE_FAILED -> stringRes(transaction.transaction.overview.netValue)
-                    SHIELDED,
-                    SHIELDING,
-                    SHIELDING_FAILED -> stringRes(transaction.transaction.overview.totalSpent)
-                }
+                stringRes(data.transaction.amount)
         )
 
     private fun onBack() {

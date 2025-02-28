@@ -8,15 +8,9 @@ import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVED
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVE_FAILED
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVING
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SENDING
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SEND_FAILED
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SENT
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDED
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDING
-import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDING_FAILED
+import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
+import co.electriccoin.zcash.ui.common.repository.SendTransaction
+import co.electriccoin.zcash.ui.common.repository.ShieldTransaction
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -25,7 +19,6 @@ import co.electriccoin.zcash.ui.util.FileShareUtil.ZASHI_INTERNAL_DATA_MIME_TYPE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.time.Instant
 import java.time.Year
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -122,12 +115,7 @@ class ExportTaxUseCase(
             .mapNotNull { transaction ->
                 val previousYear = Year.now().minusYears(1)
 
-                val date =
-                    transaction.overview.blockTimeEpochSeconds
-                        ?.let {
-                            Instant.ofEpochSecond(it).atZone(ZoneId.of("UTC"))
-                        } ?: return@mapNotNull null
-
+                val date = transaction.timestamp?.atZone(ZoneId.of("UTC")) ?: return@mapNotNull null
                 if (date.year != previousYear.value) return@mapNotNull null
 
                 val dateString =
@@ -139,16 +127,16 @@ class ExportTaxUseCase(
                         formatter.format(date)
                     } ?: return@mapNotNull null
 
-                when (transaction.state) {
-                    SENT,
-                    SENDING -> {
-                        val fee = transaction.overview.feePaid
+                when (transaction) {
+                    is SendTransaction.Success,
+                    is SendTransaction.Pending -> {
+                        val fee = transaction.fee
 
                         val sentQuantity =
                             if (fee != null) {
-                                stringRes(transaction.overview.netValue - fee)
+                                stringRes(transaction.amount - fee)
                             } else {
-                                stringRes(transaction.overview.netValue)
+                                stringRes(transaction.amount)
                             }
 
                         CsvEntry(
@@ -163,12 +151,12 @@ class ExportTaxUseCase(
                         )
                     }
 
-                    SEND_FAILED -> null
-                    RECEIVED,
-                    RECEIVING -> {
+                    is SendTransaction.Failed -> null
+                    is ReceiveTransaction.Success,
+                    is ReceiveTransaction.Pending -> {
                         CsvEntry(
                             date = dateString,
-                            receivedQuantity = stringRes(transaction.overview.netValue).getString(context),
+                            receivedQuantity = stringRes(transaction.amount).getString(context),
                             receivedCurrency = ZEC_SYMBOL,
                             sentQuantity = "",
                             sentCurrency = "",
@@ -178,10 +166,10 @@ class ExportTaxUseCase(
                         )
                     }
 
-                    RECEIVE_FAILED -> null
-                    SHIELDED,
-                    SHIELDING,
-                    SHIELDING_FAILED -> null
+                    is ReceiveTransaction.Failed -> null
+                    is ShieldTransaction.Success,
+                    is ShieldTransaction.Pending,
+                    is ShieldTransaction.Failed -> null
                 }
             }
 }
