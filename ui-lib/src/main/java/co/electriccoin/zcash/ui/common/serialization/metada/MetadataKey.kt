@@ -3,8 +3,9 @@ package co.electriccoin.zcash.ui.common.serialization.metada
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
-import co.electriccoin.zcash.ui.common.serialization.Key
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.serialization.METADATA_ENCRYPTION_KEY_SIZE
 import co.electriccoin.zcash.ui.common.serialization.METADATA_FILE_IDENTIFIER_SIZE
 import co.electriccoin.zcash.ui.common.serialization.METADATA_SALT_SIZE
@@ -16,17 +17,20 @@ import com.google.crypto.tink.util.SecretBytes
 /**
  * The long-term key that can decrypt an account's encrypted address book.
  */
-class MetadataKey(val key: SecretBytes) : Key {
+class MetadataKey(
+    val encryptionBytes: SecretBytes,
+    val decryptionBytes: SecretBytes?
+) {
     /**
      * Derives the filename that this key is able to decrypt.
      */
     @OptIn(ExperimentalStdlibApi::class)
-    override fun fileIdentifier(): String {
+    fun fileIdentifier(): String {
         val access = InsecureSecretKeyAccess.get()
         val fileIdentifier =
             Hkdf.computeHkdf(
                 "HMACSHA256",
-                key.toByteArray(access),
+                encryptionBytes.toByteArray(access),
                 null,
                 "file_identifier".toByteArray(),
                 METADATA_FILE_IDENTIFIER_SIZE
@@ -34,19 +38,13 @@ class MetadataKey(val key: SecretBytes) : Key {
         return "zashi-metadata-" + fileIdentifier.toHexString()
     }
 
-    /**
-     * Derives a one-time address book encryption key.
-     *
-     * At encryption time, the one-time property MUST be ensured by generating a
-     * random 32-byte salt.
-     */
-    override fun deriveEncryptionKey(salt: ByteArray): ChaCha20Poly1305Key {
+    fun deriveEncryptionKey(salt: ByteArray): ChaCha20Poly1305Key {
         assert(salt.size == METADATA_SALT_SIZE)
         val access = InsecureSecretKeyAccess.get()
         val subKey =
             Hkdf.computeHkdf(
                 "HMACSHA256",
-                key.toByteArray(access),
+                encryptionBytes.toByteArray(access),
                 null,
                 salt + "encryption_key".toByteArray(),
                 METADATA_ENCRYPTION_KEY_SIZE
@@ -54,28 +52,64 @@ class MetadataKey(val key: SecretBytes) : Key {
         return ChaCha20Poly1305Key.create(SecretBytes.copyFrom(subKey, access))
     }
 
+    fun deriveFirstDecryptionKey(salt: ByteArray): ChaCha20Poly1305Key {
+        return deriveDecryptionkey(salt, encryptionBytes, "encryption_key")
+    }
+
+    fun deriveSecondDecryptionKey(salt: ByteArray): ChaCha20Poly1305Key? {
+        if (decryptionBytes == null) return null
+        return deriveDecryptionkey(salt, decryptionBytes, "decryption_key")
+    }
+
+    private fun deriveDecryptionkey(
+        salt: ByteArray,
+        decryptionBytes: SecretBytes,
+        infoKey: String
+    ): ChaCha20Poly1305Key {
+        assert(salt.size == METADATA_SALT_SIZE)
+        val access = InsecureSecretKeyAccess.get()
+        val subKey =
+            Hkdf.computeHkdf(
+                "HMACSHA256",
+                decryptionBytes.toByteArray(access),
+                null,
+                salt + infoKey.toByteArray(),
+                METADATA_ENCRYPTION_KEY_SIZE
+            )
+        return ChaCha20Poly1305Key.create(SecretBytes.copyFrom(subKey, access))
+    }
+
     companion object {
-        /**
-         * Derives the long-term key that can decrypt the given account's encrypted
-         * address book.
-         *
-         * This requires access to the seed phrase. If the app has separate access
-         * control requirements for the seed phrase and the address book, this key
-         * should be cached in the app's keystore.
-         */
         suspend fun derive(
             seedPhrase: SeedPhrase,
             network: ZcashNetwork,
-            account: WalletAccount
+            zashiAccount: ZashiAccount,
+            selectedAccount: WalletAccount
         ): MetadataKey {
             val key =
-                DerivationTool.getInstance().deriveArbitraryAccountKey(
-                    contextString = "ZashiMetadataEncryptionV1".toByteArray(),
-                    seed = seedPhrase.toByteArray(),
-                    network = network,
-                    accountIndex = account.hdAccountIndex,
-                )
-            return MetadataKey(SecretBytes.copyFrom(key, InsecureSecretKeyAccess.get()))
+                DerivationTool.getInstance()
+                    .deriveAccountMetadataKey(
+                        seed = seedPhrase.toByteArray(),
+                        network = network,
+                        accountIndex = zashiAccount.hdAccountIndex,
+                    )
+                    .derivePrivateUseMetadataKey(
+                        ufvk =
+                            when (selectedAccount) {
+                                is KeystoneAccount -> selectedAccount.sdkAccount.ufvk
+                                is ZashiAccount -> null
+                            },
+                        network = network,
+                        privateUseSubject = "metadata".toByteArray()
+                    )
+            return MetadataKey(
+                encryptionBytes = SecretBytes.copyFrom(key[0], InsecureSecretKeyAccess.get()),
+                decryptionBytes =
+                    key.getOrNull(1)
+                        ?.let {
+                            SecretBytes.copyFrom(it, InsecureSecretKeyAccess.get())
+                        }
+            )
         }
     }
 }

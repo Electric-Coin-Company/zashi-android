@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 fun ZashiBottomBar(
     isElevated: Boolean,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Surface(
@@ -29,7 +31,9 @@ fun ZashiBottomBar(
         color = ZashiColors.Surfaces.bgPrimary,
         modifier = modifier,
     ) {
-        Column {
+        Column(
+            modifier = Modifier.padding(contentPadding),
+        ) {
             Spacer(modifier = Modifier.height(16.dp))
             content()
             Spacer(modifier = Modifier.height(24.dp))
