@@ -36,11 +36,32 @@ object FileShareUtil {
         sharePickerText: String,
         versionInfo: VersionInfo,
     ): Intent {
+        return newShareContentIntent(
+            context = context,
+            file = File(dataFilePath),
+            shareText = shareText,
+            sharePickerText = sharePickerText,
+            versionInfo = versionInfo,
+            fileType = fileType,
+        )
+    }
+
+    internal fun newShareContentIntent(
+        context: Context,
+        file: File,
+        shareText: String? = null,
+        sharePickerText: String,
+        versionInfo: VersionInfo,
+        fileType: String = ZASHI_INTERNAL_DATA_MIME_TYPE,
+    ): Intent {
         val fileUri =
             FileProvider.getUriForFile(
+                // context =
                 context,
+                // authority =
                 getAuthorityByVersionInfo(versionInfo),
-                File(dataFilePath)
+                // file =
+                file
             )
 
         val dataIntent: Intent =

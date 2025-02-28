@@ -33,6 +33,7 @@ local.properties
 .idea/kotlinc.xml
 .idea/other.xml
 .idea/appInsightsSettings.xml
+.idea/runConfigurations.xml
 
 # Other configuration files
 google-services.json

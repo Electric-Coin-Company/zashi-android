@@ -5,8 +5,11 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import co.electriccoin.zcash.crash.android.GlobalCrashReporter
 import co.electriccoin.zcash.crash.android.di.CrashReportersProvider
 import co.electriccoin.zcash.crash.android.di.crashProviderModule
+import co.electriccoin.zcash.di.addressBookModule
 import co.electriccoin.zcash.di.coreModule
 import co.electriccoin.zcash.di.dataSourceModule
+import co.electriccoin.zcash.di.mapperModule
+import co.electriccoin.zcash.di.metadataModule
 import co.electriccoin.zcash.di.providerModule
 import co.electriccoin.zcash.di.repositoryModule
 import co.electriccoin.zcash.di.useCaseModule
@@ -45,7 +48,10 @@ class ZcashApplication : CoroutineApplication() {
                 crashProviderModule,
                 dataSourceModule,
                 repositoryModule,
+                addressBookModule,
+                metadataModule,
                 useCaseModule,
+                mapperModule,
                 viewModelModule
             )
         }

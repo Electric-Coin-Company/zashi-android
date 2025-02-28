@@ -174,7 +174,19 @@ private fun IntegrationSettings() =
                                 title = stringRes("Coinbase"),
                                 subtitle = stringRes("subtitle"),
                                 onClick = {}
-                            )
+                            ),
+                            ZashiListItemState(
+                                title = stringRes(R.string.integrations_flexa),
+                                subtitle = stringRes(R.string.integrations_flexa),
+                                icon = R.drawable.ic_integrations_flexa,
+                                onClick = {}
+                            ),
+                            ZashiListItemState(
+                                title = stringRes(R.string.integrations_keystone),
+                                subtitle = stringRes(R.string.integrations_keystone_subtitle),
+                                icon = R.drawable.ic_integrations_keystone,
+                                onClick = {}
+                            ),
                         )
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,

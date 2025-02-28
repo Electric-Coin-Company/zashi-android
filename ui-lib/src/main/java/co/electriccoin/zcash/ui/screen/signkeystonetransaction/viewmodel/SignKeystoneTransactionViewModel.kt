@@ -18,15 +18,19 @@ import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.state.SignKeystoneTransactionState
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.state.ZashiAccountInfoListItemState
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.view.SignKeystoneTransactionBottomSheetState
 import com.sparrowwallet.hummingbird.UREncoder
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 class SignKeystoneTransactionViewModel(
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
@@ -38,7 +42,36 @@ class SignKeystoneTransactionViewModel(
 ) : ViewModel() {
     private var encoder: UREncoder? = null
 
+    private val isBottomSheetVisible = MutableStateFlow(false)
+
     private val currentQrPart = MutableStateFlow<String?>(null)
+
+    val bottomSheetState =
+        isBottomSheetVisible
+            .map { isVisible ->
+                if (isVisible) {
+                    SignKeystoneTransactionBottomSheetState(
+                        onBack = ::onCloseBottomSheetClick,
+                        positiveButton =
+                            ButtonState(
+                                text = stringRes(R.string.sign_keystone_transaction_bottom_sheet_go_back),
+                                onClick = ::onCloseBottomSheetClick
+                            ),
+                        negativeButton =
+                            ButtonState(
+                                text = stringRes(R.string.sign_keystone_transaction_bottom_sheet_reject),
+                                onClick = ::onRejectBottomSheetClick
+                            ),
+                    )
+                } else {
+                    null
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
+            )
 
     val state: StateFlow<SignKeystoneTransactionState?> =
         combine(
@@ -76,12 +109,12 @@ class SignKeystoneTransactionViewModel(
                         onClick = ::onSharePCZTClick
                     ).takeIf { BuildConfig.DEBUG },
                 onBack = ::onBack,
-                onQrCodeClick = {
-                    // TODO [#1731]: Allow QR codes colors switching
-                    // TODO [#1731]: https://github.com/Electric-Coin-Company/zashi-android/issues/1731
-                },
             )
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
+        )
 
     init {
         viewModelScope.launch {
@@ -94,17 +127,29 @@ class SignKeystoneTransactionViewModel(
         }
     }
 
+    private fun onRejectBottomSheetClick() {
+        viewModelScope.launch {
+            isBottomSheetVisible.update { false }
+            delay(350.milliseconds)
+            cancelKeystoneProposalFlow()
+        }
+    }
+
+    private fun onCloseBottomSheetClick() {
+        isBottomSheetVisible.update { false }
+    }
+
     private fun onSharePCZTClick() =
         viewModelScope.launch {
             sharePCZT()
         }
 
     private fun onBack() {
-        cancelKeystoneProposalFlow()
+        isBottomSheetVisible.update { !it }
     }
 
     private fun onRejectClick() {
-        cancelKeystoneProposalFlow()
+        isBottomSheetVisible.update { true }
     }
 
     private fun onSignTransactionClick() {

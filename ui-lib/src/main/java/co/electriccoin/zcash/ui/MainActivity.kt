@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
@@ -142,7 +143,10 @@ class MainActivity : FragmentActivity() {
         enableEdgeToEdge()
         setContentCompat {
             Override(configurationOverrideFlow) {
-                ZcashTheme {
+                val isHideBalances by homeViewModel.isHideBalances.collectAsStateWithLifecycle()
+                ZcashTheme(
+                    balancesAvailable = isHideBalances == false
+                ) {
                     BlankSurface(
                         Modifier
                             .fillMaxWidth()
@@ -189,6 +193,7 @@ class MainActivity : FragmentActivity() {
                 Twig.debug { "Authentication initial state" }
                 // Wait for the state update
             }
+
             AuthenticationUIState.NotRequired -> {
                 Twig.debug { "App access authentication NOT required - welcome animation only" }
                 // Wait until the welcome animation finishes then mark it was shown
@@ -197,6 +202,7 @@ class MainActivity : FragmentActivity() {
                     authenticationViewModel.setWelcomeAnimationDisplayed()
                 }
             }
+
             AuthenticationUIState.Required -> {
                 Twig.debug { "App access authentication required" }
 
@@ -219,6 +225,7 @@ class MainActivity : FragmentActivity() {
                     useCase = AuthenticationUseCase.AppAccess
                 )
             }
+
             AuthenticationUIState.Successful -> {
                 Twig.debug { "Authentication successful - entering the app" }
                 // No action is needed - the main app content is laid out now

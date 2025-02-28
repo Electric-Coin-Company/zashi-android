@@ -1,44 +1,191 @@
 package co.electriccoin.zcash.ui.common.repository
 
+import cash.z.ecc.android.sdk.model.TransactionId
+import cash.z.ecc.android.sdk.model.TransactionOutput
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVED
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVE_FAILED
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.RECEIVING
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SENDING
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SEND_FAILED
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SENT
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDED
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDING
+import co.electriccoin.zcash.ui.common.repository.TransactionExtendedState.SHIELDING_FAILED
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.time.ZonedDateTime
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 interface TransactionRepository {
-    val currentTransactions: Flow<List<TransactionOverview>?>
+    val currentTransactions: Flow<List<TransactionData>?>
+
+    suspend fun getMemos(transactionData: TransactionData): List<String>
+
+    suspend fun getRecipients(transactionData: TransactionData): String?
+
+    fun observeTransaction(txId: String): Flow<TransactionData?>
+
+    fun observeTransactionsByMemo(memo: String): Flow<List<TransactionId>?>
+
+    suspend fun getTransactions(): List<TransactionData>
 }
 
 class TransactionRepositoryImpl(
-    synchronizerProvider: SynchronizerProvider,
-    accountDataSource: AccountDataSource
+    accountDataSource: AccountDataSource,
+    private val synchronizerProvider: SynchronizerProvider,
 ) : TransactionRepository {
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val currentTransactions: Flow<List<TransactionOverview>?> =
-        combine(synchronizerProvider.synchronizer, accountDataSource.selectedAccount) { synchronizer, account ->
+    override val currentTransactions: Flow<List<TransactionData>?> =
+        combine(
+            synchronizerProvider.synchronizer,
+            accountDataSource.selectedAccount.map { it?.sdkAccount }
+        ) { synchronizer, account ->
             synchronizer to account
-        }.flatMapLatest { (synchronizer, account) ->
+        }.distinctUntilChanged().flatMapLatest { (synchronizer, account) ->
             if (synchronizer == null || account == null) {
                 flowOf(null)
             } else {
-                synchronizer.getTransactions(account.sdkAccount.accountUuid)
+                channelFlow<List<TransactionData>?> {
+                    send(null)
+
+                    launch {
+                        synchronizer.getTransactions(account.accountUuid)
+                            .mapLatest { transactions ->
+                                transactions.map { transaction ->
+                                    TransactionData(
+                                        overview = transaction,
+                                        transactionOutputs = synchronizer.getTransactionOutputs(transaction),
+                                        state = transaction.getExtendedState()
+                                    )
+                                }.sortedByDescending { transaction ->
+                                    transaction.overview.blockTimeEpochSeconds ?: ZonedDateTime.now().toEpochSecond()
+                                }
+                            }
+                            .collect {
+                                send(it)
+                            }
+                    }
+
+                    awaitClose {
+                        // do nothing
+                    }
+                }
             }
         }.stateIn(
             scope = scope,
-            started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
+            started = SharingStarted.WhileSubscribed(5.seconds, Duration.ZERO),
             initialValue = null
         )
+
+    override suspend fun getMemos(transactionData: TransactionData): List<String> =
+        withContext(Dispatchers.IO) {
+            synchronizerProvider.getSynchronizer().getMemos(transactionData.overview)
+                .mapNotNull { memo -> memo.takeIf { it.isNotEmpty() } }
+                .toList()
+        }
+
+    override suspend fun getRecipients(transactionData: TransactionData): String? =
+        withContext(Dispatchers.IO) {
+            if (transactionData.overview.isSentTransaction) {
+                synchronizerProvider
+                    .getSynchronizer()
+                    .getRecipients(transactionData.overview)
+                    .firstOrNull()
+                    ?.addressValue
+            } else {
+                null
+            }
+        }
+
+    override fun observeTransaction(txId: String): Flow<TransactionData?> =
+        currentTransactions
+            .map { transactions ->
+                transactions?.find { it.overview.txId.txIdString() == txId }
+            }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun observeTransactionsByMemo(memo: String): Flow<List<TransactionId>?> =
+        synchronizerProvider
+            .synchronizer
+            .flatMapLatest { synchronizer ->
+                synchronizer?.getTransactionsByMemoSubstring(memo)?.onEmpty { emit(listOf()) } ?: flowOf(null)
+            }
+            .distinctUntilChanged()
+
+    override suspend fun getTransactions(): List<TransactionData> {
+        return currentTransactions.filterNotNull().first()
+    }
+}
+
+data class TransactionData(
+    val overview: TransactionOverview,
+    val transactionOutputs: List<TransactionOutput>,
+    val state: TransactionExtendedState,
+)
+
+enum class TransactionExtendedState {
+    SENT,
+    SENDING,
+    SEND_FAILED,
+    RECEIVED,
+    RECEIVING,
+    RECEIVE_FAILED,
+    SHIELDED,
+    SHIELDING,
+    SHIELDING_FAILED
+}
+
+private fun TransactionOverview.getExtendedState(): TransactionExtendedState {
+    return when (transactionState) {
+        cash.z.ecc.android.sdk.model.TransactionState.Expired ->
+            when {
+                isShielding -> SHIELDING_FAILED
+                isSentTransaction -> SEND_FAILED
+                else -> RECEIVE_FAILED
+            }
+
+        cash.z.ecc.android.sdk.model.TransactionState.Confirmed ->
+            when {
+                isShielding -> SHIELDED
+                isSentTransaction -> SENT
+                else -> RECEIVED
+            }
+
+        cash.z.ecc.android.sdk.model.TransactionState.Pending ->
+            when {
+                isShielding -> SHIELDING
+                isSentTransaction -> SENDING
+                else -> RECEIVING
+            }
+
+        else -> error("Unexpected transaction state found while calculating its extended state.")
+    }
 }

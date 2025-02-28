@@ -1,24 +1,43 @@
 package co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.advancedsettings.model.AdvancedSettingsState
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class AdvancedSettingsViewModel(
+    getWalletRestoringState: GetWalletRestoringStateUseCase,
     private val navigationRouter: NavigationRouter,
+    private val navigateToTaxExport: NavigateToTaxExportUseCase,
 ) : ViewModel() {
-    val state: StateFlow<AdvancedSettingsState> = MutableStateFlow(createState()).asStateFlow()
+    val state: StateFlow<AdvancedSettingsState> =
+        getWalletRestoringState.observe()
+            .map { walletState ->
+                createState(walletState)
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = createState(getWalletRestoringState.observe().value)
+            )
 
-    private fun createState() =
+    private fun createState(walletRestoringState: WalletRestoringState) =
         AdvancedSettingsState(
             onBack = ::onBack,
             items =
@@ -32,6 +51,17 @@ class AdvancedSettingsViewModel(
                         title = stringRes(R.string.advanced_settings_export),
                         icon = R.drawable.ic_advanced_settings_export,
                         onClick = {}
+                    ),
+                    ZashiListItemState(
+                        title = stringRes(R.string.advanced_settings_tax),
+                        icon =
+                            if (walletRestoringState == WalletRestoringState.RESTORING) {
+                                R.drawable.ic_advanced_settings_tax_disabled
+                            } else {
+                                R.drawable.ic_advanced_settings_tax
+                            },
+                        isEnabled = walletRestoringState != WalletRestoringState.RESTORING,
+                        onClick = ::onTaxExportClick
                     ),
                     ZashiListItemState(
                         title = stringRes(R.string.advanced_settings_choose_server),
@@ -48,14 +78,19 @@ class AdvancedSettingsViewModel(
                 ).toImmutableList(),
             deleteButton =
                 ButtonState(
-                    stringRes(R.string.advanced_settings_delete_button),
+                    text = stringRes(R.string.advanced_settings_delete_button),
                     onClick = {}
                 ),
         )
+
+    fun onBack() = navigationRouter.back()
 
     private fun onChooseServerClick() = navigationRouter.forward(NavigationTargets.CHOOSE_SERVER)
 
     private fun onCurrencyConversionClick() = navigationRouter.forward(NavigationTargets.SETTINGS_EXCHANGE_RATE_OPT_IN)
 
-    fun onBack() = navigationRouter.back()
+    private fun onTaxExportClick() =
+        viewModelScope.launch {
+            navigateToTaxExport()
+        }
 }

@@ -9,12 +9,8 @@ import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
-import cash.z.ecc.android.sdk.model.TransactionOverview
-import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.ZcashNetwork
-import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import cash.z.ecc.sdk.type.fromResources
-import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.OnboardingState
@@ -26,29 +22,17 @@ import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveCurrentTransactionsUseCase
-import co.electriccoin.zcash.ui.common.usecase.ResetAddressBookUseCase
+import co.electriccoin.zcash.ui.common.usecase.ResetInMemoryDataUseCase
+import co.electriccoin.zcash.ui.common.usecase.ResetSharedPrefsDataUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
-import co.electriccoin.zcash.ui.screen.account.ext.TransactionOverviewExt
-import co.electriccoin.zcash.ui.screen.account.ext.getSortHeight
-import co.electriccoin.zcash.ui.screen.account.state.TransactionHistorySyncState
 import com.flexa.core.Flexa
 import com.flexa.identity.buildIdentity
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 // To make this more multiplatform compatible, we need to remove the dependency on Context
@@ -62,13 +46,12 @@ class WalletViewModel(
     private val walletCoordinator: WalletCoordinator,
     private val walletRepository: WalletRepository,
     private val exchangeRateRepository: ExchangeRateRepository,
-    private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getAvailableServers: GetDefaultServersProvider,
-    private val resetAddressBook: ResetAddressBookUseCase,
+    private val resetInMemoryData: ResetInMemoryDataUseCase,
+    private val resetSharedPrefsData: ResetSharedPrefsDataUseCase,
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
-    private val observeCurrentTransactions: ObserveCurrentTransactionsUseCase
 ) : AndroidViewModel(application) {
     val synchronizer = walletRepository.synchronizer
 
@@ -79,65 +62,6 @@ class WalletViewModel(
     val secretState: StateFlow<SecretState> = walletRepository.secretState
 
     val currentWalletSnapshot: StateFlow<WalletSnapshot?> = walletRepository.currentWalletSnapshot
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val transactionHistoryState =
-        synchronizer
-            .filterNotNull()
-            .flatMapLatest { synchronizer ->
-                combine(
-                    observeCurrentTransactions(),
-                    synchronizer.status,
-                    synchronizer.networkHeight
-                ) { transactions: List<TransactionOverview>?,
-                    status: Synchronizer.Status,
-                    networkHeight: BlockHeight? ->
-                    val enhancedTransactions =
-                        transactions
-                            .orEmpty()
-                            .sortedByDescending {
-                                it.getSortHeight(networkHeight)
-                            }
-                            .map {
-                                val outputs = synchronizer.getTransactionOutputs(it)
-
-                                if (it.isSentTransaction) {
-                                    val recipient = synchronizer.getRecipients(it).firstOrNull()
-                                    TransactionOverviewExt(
-                                        overview = it,
-                                        recipient = recipient,
-                                        recipientAddressType =
-                                            if (recipient != null &&
-                                                (recipient is TransactionRecipient.RecipientAddress)
-                                            ) {
-                                                synchronizer.validateAddress(recipient.addressValue)
-                                            } else {
-                                                null
-                                            },
-                                        transactionOutputs = outputs,
-                                    )
-                                } else {
-                                    // Note that recipients can only be queried for sent transactions
-                                    TransactionOverviewExt(
-                                        overview = it,
-                                        recipient = null,
-                                        recipientAddressType = null,
-                                        transactionOutputs = outputs,
-                                    )
-                                }
-                            }
-                    if (status.isSyncing()) {
-                        TransactionHistorySyncState.Syncing(enhancedTransactions.toPersistentList())
-                    } else {
-                        TransactionHistorySyncState.Done(enhancedTransactions.toPersistentList())
-                    }
-                }
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = TransactionHistorySyncState.Loading
-            )
 
     val isExchangeRateUsdOptedIn = exchangeRateRepository.isExchangeRateUsdOptedIn
 
@@ -155,31 +79,6 @@ class WalletViewModel(
 
     fun dismissOptInExchangeRateUsd() {
         exchangeRateRepository.dismissOptInExchangeRateUsd()
-    }
-
-    /**
-     * Creates a wallet asynchronously and then persists it.  Clients observe
-     * [secretState] to see the side effects.  This would be used for a user creating a new wallet.
-     */
-    fun persistNewWallet() {
-        /*
-         * Although waiting for the wallet to be written and then read back is slower, it is probably
-         * safer because it 1. guarantees the wallet is written to disk and 2. has a single source of truth.
-         */
-
-        val application = getApplication<Application>()
-
-        viewModelScope.launch {
-            val zcashNetwork = ZcashNetwork.fromResources(application)
-            val newWallet =
-                PersistableWallet.new(
-                    application = application,
-                    zcashNetwork = zcashNetwork,
-                    endpoint = getAvailableServers().first(),
-                    walletInitMode = WalletInitMode.NewWallet
-                )
-            walletRepository.persistWallet(newWallet)
-        }
     }
 
     fun persistNewWalletAndRestoringState(state: WalletRestoringState) {
@@ -238,17 +137,9 @@ class WalletViewModel(
     private fun clearAppStateFlow(): Flow<Boolean> =
         callbackFlow {
             viewModelScope.launch {
-                val standardPrefsCleared =
-                    standardPreferenceProvider()
-                        .clearPreferences()
-                val encryptedPrefsCleared =
-                    encryptedPreferenceProvider()
-                        .clearPreferences()
-                resetAddressBook()
-
-                Twig.info { "Both preferences cleared: ${standardPrefsCleared && encryptedPrefsCleared}" }
-
-                trySend(standardPrefsCleared && encryptedPrefsCleared)
+                val prefReset = resetSharedPrefsData()
+                resetInMemoryData()
+                trySend(prefReset)
             }
 
             awaitClose {
@@ -382,7 +273,5 @@ sealed class SynchronizerError {
         override fun getStackTrace(limit: Int?): String? = null
     }
 }
-
-fun Synchronizer.Status.isSyncing() = this == Synchronizer.Status.SYNCING
 
 fun Synchronizer.Status.isSynced() = this == Synchronizer.Status.SYNCED

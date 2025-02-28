@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="transaction_detail_fee">%s ZEC</string>
+    <string name="transaction_detail_fee_minimal">&lt; 0.001 ZEC</string>
+    <string name="transaction_detail_memo_view_less">Ver menos</string>
+    <string name="transaction_detail_memo_view_more">Ver más</string>
+    <string name="transaction_detail_memo_empty">Sin mensaje</string>
+    <string name="transaction_detail_info_transaction_details">Detalles de la Transacción</string>
+    <string name="transaction_detail_info_transaction_id">ID de la Transacción</string>
+    <string name="transaction_detail_info_transaction_completed">Completada</string>
+    <string name="transaction_detail_info_transaction_fee">Tarifa</string>
+    <string name="transaction_detail_info_address">Dirección</string>
+    <string name="transaction_detail_info_sent_to">Enviado a</string>
+    <string name="transaction_detail_info_message">Mensaje</string>
+    <string name="transaction_detail_pending">Pendiente…</string>
+    <string name="transaction_detail_save_address">Guardar dirección</string>
+    <string name="transaction_detail_send_again">Enviar de nuevo</string>
+    <string name="transaction_detail_sent">Enviado</string>
+    <string name="transaction_detail_sending">Enviando</string>
+    <string name="transaction_detail_send_failed">Error al enviar</string>
+    <string name="transaction_detail_received">Recibido</string>
+    <string name="transaction_detail_receiving">Recibiendo</string>
+    <string name="transaction_detail_receive_failed">Error al recibir</string>
+    <string name="transaction_detail_shielded">Protegido</string>
+    <string name="transaction_detail_shielding">Protegiendo</string>
+    <string name="transaction_detail_shielding_failed">Error al proteger</string>
+    <string name="transaction_detail_edit_note">Editar nota</string>
+    <string name="transaction_detail_add_a_note">Agregar una nota</string>
+    <string name="transaction_detail_info_note">Nota</string>
+</resources>

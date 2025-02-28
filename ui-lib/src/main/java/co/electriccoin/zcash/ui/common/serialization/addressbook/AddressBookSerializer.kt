@@ -2,11 +2,12 @@ package co.electriccoin.zcash.ui.common.serialization.addressbook
 
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
+import co.electriccoin.zcash.ui.common.serialization.BaseSerializer
 import kotlinx.datetime.Instant
 import java.io.InputStream
 import java.io.OutputStream
 
-internal class AddressBookSerializer : BaseAddressBookSerializer() {
+class AddressBookSerializer : BaseSerializer() {
     fun serializeAddressBook(
         outputStream: OutputStream,
         addressBook: AddressBook

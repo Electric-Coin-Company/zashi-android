@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tax_export_date" translatable="false">Date</string>
+    <string name="tax_export_received_quantity" translatable="false">Received Quantity</string>
+    <string name="tax_export_received_currency" translatable="false">Received Currency</string>
+    <string name="tax_export_sent_quantity" translatable="false">Sent Quantity</string>
+    <string name="tax_export_sent_currency" translatable="false">Sent Currency</string>
+    <string name="tax_export_fee_amount" translatable="false">Fee Amount</string>
+    <string name="tax_export_fee_currency" translatable="false">Fee Currency</string>
+    <string name="tax_export_tag" translatable="false">Tag</string>
+</resources>
