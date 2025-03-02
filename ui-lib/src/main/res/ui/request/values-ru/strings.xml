@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="request_title">Запросить</string>
+    <string name="request_amount_btn">Далее</string>
+    <string name="request_memo_btn">Запрос</string>
+    <string name="request_qr_close_btn">Закрыть</string>
+    <string name="request_amount_keyboard_one">1</string>
+    <string name="request_amount_keyboard_delete">Удалить</string>
+    <string name="request_qr_code_share_chooser_text">Здравствуйте, отсканируйте этот QR-код, чтобы отправить мне платеж ZEC! Ссылка для скачивания: https://play.google.com/store/apps/details?id=co.electriccoin.zcash</string>
+    <string name="request_amount_invalid">Эта сумма транзакции недействительна</string>
+    <string name="request_qr_share_btn">Поделиться с помощью QR-кода</string>
+    <string name="request_privacy_level_shielded">Максимальная конфиденциальность</string>
+    <string name="request_privacy_level_transparent">Низкая конфиденциальность</string>
+    <string name="request_memo_payment_request_subtitle">Запрос на оплату</string>
+    <string name="request_memo_text_field_hint">Для чего это?</string>
+    <string name="request_qr_code_content_description">Запросить QR-код</string>
+    <string name="request_qr_code_data_unable_to_share">Не удалось найти приложение для обмена QR-кодом.</string>
+    <string name="request_qr_code_share_chooser_title">Запрос ZEC</string>
+</resources>
