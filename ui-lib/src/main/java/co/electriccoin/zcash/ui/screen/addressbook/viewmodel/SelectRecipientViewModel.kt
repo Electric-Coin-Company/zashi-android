@@ -20,7 +20,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookItem
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
-import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
+import co.electriccoin.zcash.ui.screen.scan.Scan
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -174,5 +174,5 @@ class SelectRecipientViewModel(
 
     private fun onAddContactManuallyClick() = navigationRouter.forward(AddContactArgs(null))
 
-    private fun onScanContactClick() = navigationRouter.forward(ScanNavigationArgs(ScanNavigationArgs.ADDRESS_BOOK))
+    private fun onScanContactClick() = navigationRouter.forward(Scan(Scan.ADDRESS_BOOK))
 }

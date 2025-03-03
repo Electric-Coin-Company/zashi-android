@@ -114,11 +114,6 @@ class SendViewTestSetup(
                 onQrScannerOpen = {
                     onScannerCount.incrementAndGet()
                 },
-                goBalances = {
-                    // TODO [#1194]: Cover Current balances UI widget with tests
-                    // TODO [#1194]: https://github.com/Electric-Coin-Company/zashi-android/issues/1194
-                },
-                isHideBalances = false,
                 hasCameraFeature = hasCameraFeature,
                 recipientAddressState = RecipientAddressState("", AddressType.Invalid()),
                 onRecipientAddressChange = {
@@ -137,7 +132,7 @@ class SendViewTestSetup(
                     ),
                 setMemoState = {},
                 memoState = MemoState.new(""),
-                walletSnapshot =
+                selectedAccount =
                     WalletSnapshotFixture.new(
                         saplingBalance =
                             WalletBalanceFixture.new(

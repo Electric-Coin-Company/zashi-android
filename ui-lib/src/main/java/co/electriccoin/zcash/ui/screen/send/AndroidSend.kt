@@ -19,22 +19,25 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.di.koinActivityViewModel
-import co.electriccoin.zcash.ui.common.compose.BalanceState
+import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarViewModel
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
-import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
+import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
+import co.electriccoin.zcash.ui.common.usecase.PrefillSendData
 import co.electriccoin.zcash.ui.common.usecase.PrefillSendUseCase
-import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.screen.balances.BalanceState
+import co.electriccoin.zcash.ui.screen.balances.BalanceViewModel
+import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
-import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.launch
@@ -43,45 +46,39 @@ import org.koin.compose.koinInject
 import java.util.Locale
 
 @Composable
-@Suppress("LongParameterList")
-internal fun WrapSend(
-    sendArguments: SendArguments?,
-    goToQrScanner: () -> Unit,
-    goBack: () -> Unit,
-    goBalances: () -> Unit,
-) {
+internal fun WrapSend(args: Send) {
     val activity = LocalActivity.current
+
+    val navigationRouter = koinInject<NavigationRouter>()
 
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
-    val homeViewModel = koinActivityViewModel<HomeViewModel>()
+    val balanceViewModel = koinActivityViewModel<BalanceViewModel>()
+
+    val accountDataSource = koinInject<AccountDataSource>()
 
     val hasCameraFeature = activity.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    val walletSnapshot = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value
+    val selectedAccount = accountDataSource.selectedAccount.collectAsStateWithLifecycle(null).value
 
     val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
 
-    val balanceState = walletViewModel.balanceState.collectAsStateWithLifecycle().value
-
-    val isHideBalances = homeViewModel.isHideBalances.collectAsStateWithLifecycle().value ?: false
+    val balanceState = balanceViewModel.state.collectAsStateWithLifecycle().value
 
     val exchangeRateState = walletViewModel.exchangeRateUsd.collectAsStateWithLifecycle().value
 
     WrapSend(
         balanceState = balanceState,
         exchangeRateState = exchangeRateState,
-        isHideBalances = isHideBalances,
-        goToQrScanner = goToQrScanner,
-        goBack = goBack,
-        goBalances = goBalances,
+        goToQrScanner = { navigationRouter.forward(Scan(Scan.SEND)) },
+        goBack = { navigationRouter.back() },
         hasCameraFeature = hasCameraFeature,
         monetarySeparators = monetarySeparators,
-        sendArguments = sendArguments,
+        sendArguments = args,
         synchronizer = synchronizer,
-        walletSnapshot = walletSnapshot
+        selectedAccount = selectedAccount
     )
 }
 
@@ -91,15 +88,13 @@ internal fun WrapSend(
 internal fun WrapSend(
     balanceState: BalanceState,
     exchangeRateState: ExchangeRateState,
-    isHideBalances: Boolean,
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
-    goBalances: () -> Unit,
     hasCameraFeature: Boolean,
     monetarySeparators: MonetarySeparators,
-    sendArguments: SendArguments?,
+    sendArguments: Send,
     synchronizer: Synchronizer?,
-    walletSnapshot: WalletSnapshot?,
+    selectedAccount: WalletAccount?,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -115,7 +110,7 @@ internal fun WrapSend(
 
     val sendAddressBookState by viewModel.sendAddressBookState.collectAsStateWithLifecycle()
 
-    val topAppBarViewModel = koinActivityViewModel<ZashiMainTopAppBarViewModel>()
+    val topAppBarViewModel = koinActivityViewModel<ZashiTopAppBarViewModel>()
 
     val zashiMainTopAppBarState by topAppBarViewModel.state.collectAsStateWithLifecycle()
 
@@ -131,25 +126,18 @@ internal fun WrapSend(
     val observeClearSend = koinInject<ObserveClearSendUseCase>()
     val prefillSend = koinInject<PrefillSendUseCase>()
 
-    if (sendArguments?.recipientAddress != null) {
+    if (sendArguments.recipientAddress != null && sendArguments.recipientAddressType != null) {
         viewModel.onRecipientAddressChanged(
             RecipientAddressState.new(
-                sendArguments.recipientAddress.address,
-                sendArguments.recipientAddress.type
+                sendArguments.recipientAddress,
+                when (sendArguments.recipientAddressType) {
+                    cash.z.ecc.sdk.model.AddressType.UNIFIED -> AddressType.Unified
+                    cash.z.ecc.sdk.model.AddressType.TRANSPARENT -> AddressType.Transparent
+                    cash.z.ecc.sdk.model.AddressType.SAPLING -> AddressType.Shielded
+                    cash.z.ecc.sdk.model.AddressType.TEX -> AddressType.Tex
+                }
             )
         )
-    }
-
-    // Zip321 Uri scan result processing
-    if (sendArguments?.zip321Uri != null &&
-        synchronizer != null
-    ) {
-        LaunchedEffect(Unit) {
-            viewModel.onCreateZecSend321Click(
-                zip321Uri = sendArguments.zip321Uri,
-                setSendStage = setSendStage,
-            )
-        }
     }
 
     // Amount computation:
@@ -226,49 +214,46 @@ internal fun WrapSend(
 
     LaunchedEffect(Unit) {
         prefillSend().collect {
-            val type = synchronizer?.validateAddress(it.recipientAddress?.address.orEmpty())
-            setSendStage(SendStage.Form)
-            setZecSend(null)
-            viewModel.onRecipientAddressChanged(
-                RecipientAddressState.new(
-                    address = it.recipientAddress?.address.orEmpty(),
-                    type = type
-                )
-            )
+            when (it) {
+                is PrefillSendData.All -> {
+                    val type = synchronizer?.validateAddress(it.address.orEmpty())
+                    setSendStage(SendStage.Form)
+                    setZecSend(null)
+                    viewModel.onRecipientAddressChanged(
+                        RecipientAddressState.new(
+                            address = it.address.orEmpty(),
+                            type = type
+                        )
+                    )
 
-            val fee = it.transaction.fee
-            val value = if (fee == null) it.transaction.amount else it.transaction.amount - fee
+                    val fee = it.fee
+                    val value = if (fee == null) it.amount else it.amount - fee
 
-            setAmountState(
-                AmountState.newFromZec(
-                    context = context,
-                    value = value.convertZatoshiToZecString(),
-                    monetarySeparators = monetarySeparators,
-                    isTransparentOrTextRecipient = type == AddressType.Transparent,
-                    fiatValue = amountState.fiatValue,
-                    exchangeRateState = exchangeRateState
-                )
-            )
-            setMemoState(MemoState.new(it.memos?.firstOrNull().orEmpty()))
+                    setAmountState(
+                        AmountState.newFromZec(
+                            context = context,
+                            value = value.convertZatoshiToZecString(),
+                            monetarySeparators = monetarySeparators,
+                            isTransparentOrTextRecipient = type == AddressType.Transparent,
+                            fiatValue = amountState.fiatValue,
+                            exchangeRateState = exchangeRateState
+                        )
+                    )
+                    setMemoState(MemoState.new(it.memos?.firstOrNull().orEmpty()))
+                }
+                is PrefillSendData.FromAddressScan -> {
+                    val type = synchronizer?.validateAddress(it.address)
+                    setSendStage(SendStage.Form)
+                    setZecSend(null)
+                    viewModel.onRecipientAddressChanged(
+                        RecipientAddressState.new(
+                            address = it.address,
+                            type = type
+                        )
+                    )
+                }
+            }
         }
-    }
-
-    // Clearing form from the previous navigation destination if required
-    if (sendArguments?.clearForm == true) {
-        setSendStage(SendStage.Form)
-        setZecSend(null)
-        viewModel.onRecipientAddressChanged(RecipientAddressState.new("", null))
-        setAmountState(
-            AmountState.newFromZec(
-                context = context,
-                monetarySeparators = monetarySeparators,
-                value = "",
-                fiatValue = "",
-                isTransparentOrTextRecipient = false,
-                exchangeRateState = exchangeRateState
-            )
-        )
-        setMemoState(MemoState.new(""))
     }
 
     val onBackAction = {
@@ -282,7 +267,7 @@ internal fun WrapSend(
         }
     }
 
-    if (null == synchronizer || null == walletSnapshot) {
+    if (null == synchronizer || null == selectedAccount) {
         // TODO [#1146]: Consider moving CircularScreenProgressIndicator from Android layer to View layer
         // TODO [#1146]: Improve this by allowing screen composition and updating it after the data is available
         // TODO [#1146]: https://github.com/Electric-Coin-Company/zashi-android/issues/1146
@@ -290,7 +275,6 @@ internal fun WrapSend(
     } else {
         Send(
             balanceState = balanceState,
-            isHideBalances = isHideBalances,
             sendStage = sendStage,
             onCreateZecSend = { newZecSend ->
                 viewModel.onCreateZecSendClick(
@@ -299,6 +283,8 @@ internal fun WrapSend(
                 )
             },
             onBack = onBackAction,
+            onQrScannerOpen = goToQrScanner,
+            hasCameraFeature = hasCameraFeature,
             recipientAddressState = recipientAddressState,
             onRecipientAddressChange = {
                 scope.launch {
@@ -312,14 +298,11 @@ internal fun WrapSend(
                     )
                 }
             },
-            memoState = memoState,
-            setMemoState = setMemoState,
-            amountState = amountState,
             setAmountState = setAmountState,
-            onQrScannerOpen = goToQrScanner,
-            goBalances = goBalances,
-            hasCameraFeature = hasCameraFeature,
-            walletSnapshot = walletSnapshot,
+            amountState = amountState,
+            setMemoState = setMemoState,
+            memoState = memoState,
+            selectedAccount = selectedAccount,
             exchangeRateState = exchangeRateState,
             sendAddressBookState = sendAddressBookState,
             zashiMainTopAppBarState = zashiMainTopAppBarState

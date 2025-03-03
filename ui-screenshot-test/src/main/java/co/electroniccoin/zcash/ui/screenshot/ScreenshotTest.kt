@@ -43,9 +43,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.UiMode
-import co.electriccoin.zcash.ui.screen.account.AccountTag
 import co.electriccoin.zcash.ui.screen.authentication.view.AnimationConstants.WELCOME_ANIM_TEST_TAG
-import co.electriccoin.zcash.ui.screen.home.HomeTag
+import co.electriccoin.zcash.ui.screen.balances.BalanceTag
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.securitywarning.view.SecurityScreenTag.ACKNOWLEDGE_CHECKBOX_TAG
@@ -273,10 +272,6 @@ class ScreenshotTest : UiTestPrerequisites() {
             it.performClick()
         }
 
-        composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-            composeTestRule.activity.walletViewModel.currentWalletSnapshot.value != null
-        }
-
         composeTestRule.waitUntilDoesNotExist(hasTestTag(ACKNOWLEDGE_CHECKBOX_TAG), DEFAULT_TIMEOUT_MILLISECONDS)
     }
 
@@ -451,11 +446,7 @@ private fun accountScreenshots(
     composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
         composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready
     }
-    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-        composeTestRule.activity.walletViewModel.currentWalletSnapshot.value != null
-    }
-
-    composeTestRule.onNodeWithTag(AccountTag.BALANCE_VIEWS).also {
+    composeTestRule.onNodeWithTag(BalanceTag.BALANCE_VIEWS).also {
         it.assertExists()
         ScreenshotTest.takeScreenshot(tag, "Account 1")
     }
@@ -513,9 +504,6 @@ private fun sendZecScreenshots(
 ) {
     composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
         composeTestRule.activity.walletViewModel.synchronizer.value != null
-    }
-    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-        composeTestRule.activity.walletViewModel.currentWalletSnapshot.value != null
     }
 
     composeTestRule.onNode(hasText(resContext.getString(R.string.send_stage_send_title))).also {

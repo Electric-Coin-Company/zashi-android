@@ -8,4 +8,5 @@ data class IntegrationsState(
     val disabledInfo: StringResource?,
     val onBack: () -> Unit,
     val items: ImmutableList<ZashiListItemState>,
+    val onBottomSheetHidden: () -> Unit,
 )
