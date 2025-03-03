@@ -11,12 +11,19 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - The `release.yaml` has been added. It provides us with ability to build and deploy Zashi to GitHub Releases and 
   F-Droid store.
 - Confirm the rejection of a Keystone transaction dialog added.
+- A new transaction history screen added with capability to use fulltext and predefined filters
+- A new transaction detail screen added
+- A capability to bookmark and add a note to transaction added
+- A new QR detail screen added when clicking any QR
+- A new Tax Export screen added to Advanced Settings
+- Keystone added to integrations
 
 ### Changed
 - `Flexa` version has been bumped to 1.0.11
 - Several non-FOSS dependencies has been removed for the new FOSS Zashi build type
 - Keystone flows swapped the buttons for the better UX, the main CTA is the closes button for a thumb.
 - `Synchronizer.redactPcztForSigner` is now called in order to generate pczt bytes to display as QR for Keystone
+- Transaction history widget has been redesigned
 
 ## [1.3.3 (839)] - 2025-01-23
 
