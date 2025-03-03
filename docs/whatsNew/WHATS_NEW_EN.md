@@ -18,7 +18,7 @@ directly impact users rather than highlighting other key architectural updates.*
 - Export your last year's transaction history with a new Export Tax File feature.
 - Bookmark transactions, and add private notes to them.
 - Filter for Received, Sent, Memos, Notes, and Bookmarked transactions.
-- Download Zashi Android from F-droid and GitHub.
+- Download Zashi Android from F-Droid and GitHub.
 
 ### Changed
 - Discover completely redesigned Transaction History!
