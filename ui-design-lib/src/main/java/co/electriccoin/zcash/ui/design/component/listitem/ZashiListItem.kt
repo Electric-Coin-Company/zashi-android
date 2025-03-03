@@ -38,6 +38,8 @@ import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 @Composable
 fun ZashiListItem(
@@ -146,6 +148,7 @@ private fun ZashiListTrailingItem(
     }
 }
 
+@Suppress("MagicNumber")
 @Composable
 private fun ZashiListContentItem(
     text: String,
@@ -183,10 +186,12 @@ private fun ZashiListContentItem(
                         contentDescription = null,
                     )
                 } else {
+                    val offset = (-index.toDouble().pow(2.0) - index).roundToInt().dp
+
                     Image(
                         modifier =
                             Modifier
-                                .offset(x = (-2).dp)
+                                .offset(x = offset)
                                 .size(24.dp)
                                 .border(2.dp, ZashiColors.Surfaces.bgPrimary, CircleShape)
                                 .size(20.dp)

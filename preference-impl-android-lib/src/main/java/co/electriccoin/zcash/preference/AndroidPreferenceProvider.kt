@@ -59,9 +59,57 @@ class AndroidPreferenceProvider private constructor(
         }
     }
 
+    @SuppressLint("ApplySharedPref")
+    override suspend fun putStringSet(
+        key: PreferenceKey,
+        value: Set<String>?
+    ) = withContext(dispatcher) {
+        mutex.withLock {
+            val editor = sharedPreferences.edit()
+
+            editor.putStringSet(key.key, value)
+
+            editor.commit()
+
+            Unit
+        }
+    }
+
+    @SuppressLint("ApplySharedPref")
+    override suspend fun putLong(
+        key: PreferenceKey,
+        value: Long?
+    ) = withContext(dispatcher) {
+        mutex.withLock {
+            val editor = sharedPreferences.edit()
+
+            if (value != null) {
+                editor.putLong(key.key, value)
+            } else {
+                editor.remove(key.key)
+            }
+            editor.commit()
+            Unit
+        }
+    }
+
+    override suspend fun getLong(key: PreferenceKey): Long? =
+        withContext(dispatcher) {
+            if (sharedPreferences.contains(key.key)) {
+                sharedPreferences.getLong(key.key, 0)
+            } else {
+                null
+            }
+        }
+
     override suspend fun getString(key: PreferenceKey) =
         withContext(dispatcher) {
             sharedPreferences.getString(key.key, null)
+        }
+
+    override suspend fun getStringSet(key: PreferenceKey): Set<String>? =
+        withContext(dispatcher) {
+            sharedPreferences.getStringSet(key.key, null)
         }
 
     @SuppressLint("ApplySharedPref")

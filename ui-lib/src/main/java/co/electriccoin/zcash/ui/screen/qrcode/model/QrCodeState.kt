@@ -13,17 +13,17 @@ sealed class QrCodeState {
         val walletAddress: WalletAddress,
         val onAddressCopy: (String) -> Unit,
         val onQrCodeShare: (ImageBitmap) -> Unit,
-        val onQrCodeClick: () -> Unit,
         val onBack: () -> Unit,
     ) : QrCodeState() {
         fun toQrState(
             contentDescription: StringResource? = null,
-            centerImageResId: Int? = null
+            centerImageResId: Int? = null,
+            fullscreenCenterImageResId: Int? = null
         ) = QrState(
             qrData = walletAddress.address,
-            onClick = onQrCodeClick,
             contentDescription = contentDescription,
-            centerImageResId = centerImageResId
+            centerImageResId = centerImageResId,
+            fullscreenCenterImageResId = fullscreenCenterImageResId
         )
     }
 }

@@ -17,14 +17,15 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
+import co.electriccoin.zcash.ui.HomeTabNavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
-import co.electriccoin.zcash.ui.common.compose.RestoreScreenBrightness
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.isSynced
+import co.electriccoin.zcash.ui.design.component.RestoreScreenBrightness
 import co.electriccoin.zcash.ui.screen.account.WrapAccount
 import co.electriccoin.zcash.ui.screen.balances.WrapBalances
 import co.electriccoin.zcash.ui.screen.home.model.TabItem
@@ -35,6 +36,7 @@ import co.electriccoin.zcash.ui.screen.send.model.SendArguments
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 @Composable
 @Suppress("LongParameterList")
@@ -103,6 +105,8 @@ internal fun WrapHome(
 
     val focusManager = LocalFocusManager.current
 
+    val homeTabNavigationRouter = koinInject<HomeTabNavigationRouter>()
+
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
     val scope = rememberCoroutineScope()
@@ -127,6 +131,12 @@ internal fun WrapHome(
                         }
                 }
             }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        homeTabNavigationRouter.observe().collect {
+            pagerState.scrollToPage(it.pageIndex)
         }
     }
 

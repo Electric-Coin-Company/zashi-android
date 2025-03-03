@@ -4,7 +4,6 @@ import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
-import co.electriccoin.zcash.ui.screen.account.viewmodel.TransactionHistoryViewModel
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.SelectRecipientViewModel
@@ -35,6 +34,14 @@ import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewMo
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
+import co.electriccoin.zcash.ui.screen.taxexport.TaxExportViewModel
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailViewModel
+import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersViewModel
+import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryViewModel
+import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetViewModel
+import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
+import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNoteViewModel
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.screen.whatsnew.viewmodel.WhatsNewViewModel
@@ -47,7 +54,6 @@ val viewModelModule =
         viewModelOf(::WalletViewModel)
         viewModelOf(::AuthenticationViewModel)
         viewModelOf(::HomeViewModel)
-        viewModelOf(::TransactionHistoryViewModel)
         viewModelOf(::OnboardingViewModel)
         viewModelOf(::StorageCheckViewModel)
         viewModelOf(::RestoreViewModel)
@@ -59,8 +65,6 @@ val viewModelModule =
         viewModelOf(::RestoreSuccessViewModel)
         viewModelOf(::WhatsNewViewModel)
         viewModelOf(::ChooseServerViewModel)
-        viewModelOf(::AddressBookViewModel)
-        viewModelOf(::SelectRecipientViewModel)
         viewModel { (address: String?) ->
             AddContactViewModel(
                 address = address,
@@ -107,5 +111,31 @@ val viewModelModule =
             )
         }
         viewModelOf(::ReviewTransactionViewModel)
+        viewModelOf(::TransactionFiltersViewModel)
         viewModelOf(::TransactionProgressViewModel)
+        viewModelOf(::TransactionHistoryWidgetViewModel)
+        viewModelOf(::TransactionHistoryViewModel)
+        viewModel { (transactionDetail: TransactionDetail) ->
+            TransactionDetailViewModel(
+                transactionDetail = transactionDetail,
+                getTransactionDetailById = get(),
+                copyToClipboard = get(),
+                navigationRouter = get(),
+                sendTransactionAgain = get(),
+                flipTransactionBookmark = get(),
+                markTxMemoAsRead = get()
+            )
+        }
+        viewModelOf(::AddressBookViewModel)
+        viewModelOf(::SelectRecipientViewModel)
+        viewModel { (transactionNote: TransactionNote) ->
+            TransactionNoteViewModel(
+                transactionNote = transactionNote,
+                navigationRouter = get(),
+                getTransactionNote = get(),
+                createOrUpdateTransactionNote = get(),
+                deleteTransactionNote = get(),
+            )
+        }
+        viewModelOf(::TaxExportViewModel)
     }

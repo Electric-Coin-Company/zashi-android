@@ -17,6 +17,7 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
@@ -28,9 +29,11 @@ import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveWalletStateUseCase
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import com.flexa.core.Flexa
@@ -57,7 +60,8 @@ class IntegrationsViewModel(
     private val context: Context,
     private val biometricRepository: BiometricRepository,
     private val navigationRouter: NavigationRouter,
-    private val navigateToCoinbase: NavigateToCoinbaseUseCase
+    private val navigateToCoinbase: NavigateToCoinbaseUseCase,
+    private val observeWalletAccounts: ObserveWalletAccountsUseCase,
 ) : ViewModel() {
     val flexaNavigationCommand = MutableSharedFlow<Unit>()
 
@@ -71,8 +75,9 @@ class IntegrationsViewModel(
         combine(
             isFlexaAvailableUseCase.observe(),
             isCoinbaseAvailable.observe(),
-            isEnabled
-        ) { isFlexaAvailable, isCoinbaseAvailable, isEnabled ->
+            isEnabled,
+            observeWalletAccounts()
+        ) { isFlexaAvailable, isCoinbaseAvailable, isEnabled, accounts ->
             IntegrationsState(
                 disabledInfo = stringRes(R.string.integrations_disabled_info).takeIf { isEnabled.not() },
                 onBack = ::onBack,
@@ -104,6 +109,12 @@ class IntegrationsViewModel(
                             subtitle = stringRes(R.string.integrations_flexa_subtitle),
                             onClick = ::onFlexaClicked
                         ).takeIf { isFlexaAvailable == true },
+                        ZashiListItemState(
+                            title = stringRes(R.string.integrations_keystone),
+                            subtitle = stringRes(R.string.integrations_keystone_subtitle),
+                            icon = R.drawable.ic_integrations_keystone,
+                            onClick = ::onConnectKeystoneClick
+                        ).takeIf { accounts.orEmpty().none { it is KeystoneAccount } },
                     ).toImmutableList()
             )
         }.stateIn(
@@ -118,6 +129,8 @@ class IntegrationsViewModel(
         viewModelScope.launch {
             navigateToCoinbase()
         }
+
+    private fun onConnectKeystoneClick() = navigationRouter.forward(ConnectKeystone)
 
     private fun onFlexaClicked() =
         viewModelScope.launch {
@@ -142,7 +155,7 @@ class IntegrationsViewModel(
                 Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
                 val result = submitTransactions(proposal = proposal, spendingKey = getSpendingKey())
                 when (val output = result.first) {
-                    SubmitResult.Success -> {
+                    is SubmitResult.Success -> {
                         Twig.debug { "Transaction successful $result" }
                         Flexa.buildSpend()
                             .transactionSent(
@@ -223,7 +236,7 @@ class IntegrationsViewModel(
                 }
             } else {
                 // All transaction submissions were successful
-                SubmitResult.Success to
+                SubmitResult.Success(emptyList()) to
                     submitResults.filterIsInstance<TransactionSubmitResult.Success>()
                         .map { it.txIdString() }.firstOrNull()
             }
