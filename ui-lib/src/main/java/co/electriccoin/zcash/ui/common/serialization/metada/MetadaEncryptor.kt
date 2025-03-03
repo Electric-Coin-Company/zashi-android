@@ -12,7 +12,6 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.OutputStream
-import kotlin.jvm.Throws
 
 interface MetadataEncryptor {
     fun encrypt(
@@ -74,9 +73,12 @@ class MetadataEncryptorImpl(
 
         val ciphertext = inputStream.readBytes()
 
-        return decrypt(key.deriveFirstDecryptionKey(salt), ciphertext)
-            ?: decrypt(key.deriveSecondDecryptionKey(salt), ciphertext)
-            ?: throw DecryptionException()
+        return key.deriveDecryptionKeys(salt)
+            .asSequence()
+            .mapNotNull {
+                decrypt(it, ciphertext)
+            }
+            .firstOrNull() ?: throw DecryptionException()
     }
 
     private fun decrypt(

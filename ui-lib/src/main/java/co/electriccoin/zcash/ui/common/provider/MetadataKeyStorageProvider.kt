@@ -74,24 +74,22 @@ private class MetadataKeyPreferenceDefault {
 
     @OptIn(ExperimentalEncodingApi::class)
     private fun MetadataKey?.encode(): Set<String>? {
-        return if (this != null) {
-            setOfNotNull(
-                Base64.encode(this.encryptionBytes.toByteArray(secretKeyAccess)),
-                this.decryptionBytes?.let { Base64.encode(it.toByteArray(secretKeyAccess)) }
-            )
-        } else {
-            null
-        }
+        return this
+            ?.bytes
+            ?.map {
+                Base64.encode(it.toByteArray(secretKeyAccess))
+            }
+            ?.toSet()
     }
 
     @OptIn(ExperimentalEncodingApi::class)
     private fun Set<String>?.decode() =
         if (this != null) {
             MetadataKey(
-                encryptionBytes = SecretBytes.copyFrom(Base64.decode(this.toList()[0]), secretKeyAccess),
-                decryptionBytes =
-                    this.toList().getOrNull(1)
-                        ?.let { SecretBytes.copyFrom(Base64.decode(it), secretKeyAccess) },
+                this.toList()
+                    .map {
+                        SecretBytes.copyFrom(Base64.decode(it), secretKeyAccess)
+                    }
             )
         } else {
             null

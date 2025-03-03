@@ -18,8 +18,7 @@ import com.google.crypto.tink.util.SecretBytes
  * The long-term key that can decrypt an account's encrypted address book.
  */
 class MetadataKey(
-    val encryptionBytes: SecretBytes,
-    val decryptionBytes: SecretBytes?
+    val bytes: List<SecretBytes>
 ) {
     /**
      * Derives the filename that this key is able to decrypt.
@@ -30,7 +29,7 @@ class MetadataKey(
         val fileIdentifier =
             Hkdf.computeHkdf(
                 "HMACSHA256",
-                encryptionBytes.toByteArray(access),
+                bytes.first().toByteArray(access),
                 null,
                 "file_identifier".toByteArray(),
                 METADATA_FILE_IDENTIFIER_SIZE
@@ -39,31 +38,26 @@ class MetadataKey(
     }
 
     fun deriveEncryptionKey(salt: ByteArray): ChaCha20Poly1305Key {
-        assert(salt.size == METADATA_SALT_SIZE)
-        val access = InsecureSecretKeyAccess.get()
-        val subKey =
-            Hkdf.computeHkdf(
-                "HMACSHA256",
-                encryptionBytes.toByteArray(access),
-                null,
-                salt + "encryption_key".toByteArray(),
-                METADATA_ENCRYPTION_KEY_SIZE
+        return deriveKey(
+            salt = salt,
+            bytes = bytes.first(),
+            infoKey = ENCRYPTION_KEY
+        )
+    }
+
+    fun deriveDecryptionKeys(salt: ByteArray): List<ChaCha20Poly1305Key> {
+        return bytes.mapIndexed { index, secretBytes ->
+            deriveKey(
+                salt = salt,
+                bytes = secretBytes,
+                infoKey = if (index == 0) ENCRYPTION_KEY else "decryption_key"
             )
-        return ChaCha20Poly1305Key.create(SecretBytes.copyFrom(subKey, access))
+        }
     }
 
-    fun deriveFirstDecryptionKey(salt: ByteArray): ChaCha20Poly1305Key {
-        return deriveDecryptionkey(salt, encryptionBytes, "encryption_key")
-    }
-
-    fun deriveSecondDecryptionKey(salt: ByteArray): ChaCha20Poly1305Key? {
-        if (decryptionBytes == null) return null
-        return deriveDecryptionkey(salt, decryptionBytes, "decryption_key")
-    }
-
-    private fun deriveDecryptionkey(
+    private fun deriveKey(
         salt: ByteArray,
-        decryptionBytes: SecretBytes,
+        bytes: SecretBytes,
         infoKey: String
     ): ChaCha20Poly1305Key {
         assert(salt.size == METADATA_SALT_SIZE)
@@ -71,7 +65,7 @@ class MetadataKey(
         val subKey =
             Hkdf.computeHkdf(
                 "HMACSHA256",
-                decryptionBytes.toByteArray(access),
+                bytes.toByteArray(access),
                 null,
                 salt + infoKey.toByteArray(),
                 METADATA_ENCRYPTION_KEY_SIZE
@@ -103,13 +97,10 @@ class MetadataKey(
                         privateUseSubject = "metadata".toByteArray()
                     )
             return MetadataKey(
-                encryptionBytes = SecretBytes.copyFrom(key[0], InsecureSecretKeyAccess.get()),
-                decryptionBytes =
-                    key.getOrNull(1)
-                        ?.let {
-                            SecretBytes.copyFrom(it, InsecureSecretKeyAccess.get())
-                        }
+                bytes = key.map { SecretBytes.copyFrom(it, InsecureSecretKeyAccess.get()) }
             )
         }
     }
 }
+
+private const val ENCRYPTION_KEY = "encryption_key"
