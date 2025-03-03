@@ -6,7 +6,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
-## [1.4 (xxx)] - 2025-03-03
+## [1.4 (873)] - 2025-03-03
 
 ### Added
 - The new `Foss` build dimension has been added that suits for Zashi build that follows FOSS principles
