@@ -40,25 +40,22 @@ class MetadataKey(
     fun deriveEncryptionKey(salt: ByteArray): ChaCha20Poly1305Key {
         return deriveKey(
             salt = salt,
-            bytes = bytes.first(),
-            infoKey = ENCRYPTION_KEY
+            bytes = bytes.first()
         )
     }
 
     fun deriveDecryptionKeys(salt: ByteArray): List<ChaCha20Poly1305Key> {
-        return bytes.mapIndexed { index, secretBytes ->
+        return bytes.map { secretBytes ->
             deriveKey(
                 salt = salt,
-                bytes = secretBytes,
-                infoKey = if (index == 0) ENCRYPTION_KEY else "decryption_key"
+                bytes = secretBytes
             )
         }
     }
 
     private fun deriveKey(
         salt: ByteArray,
-        bytes: SecretBytes,
-        infoKey: String
+        bytes: SecretBytes
     ): ChaCha20Poly1305Key {
         assert(salt.size == METADATA_SALT_SIZE)
         val access = InsecureSecretKeyAccess.get()
@@ -67,7 +64,7 @@ class MetadataKey(
                 "HMACSHA256",
                 bytes.toByteArray(access),
                 null,
-                salt + infoKey.toByteArray(),
+                salt + "metadata_key".toByteArray(),
                 METADATA_ENCRYPTION_KEY_SIZE
             )
         return ChaCha20Poly1305Key.create(SecretBytes.copyFrom(subKey, access))
@@ -89,10 +86,10 @@ class MetadataKey(
                     )
                     .derivePrivateUseMetadataKey(
                         ufvk =
-                            when (selectedAccount) {
-                                is KeystoneAccount -> selectedAccount.sdkAccount.ufvk
-                                is ZashiAccount -> null
-                            },
+                        when (selectedAccount) {
+                            is KeystoneAccount -> selectedAccount.sdkAccount.ufvk
+                            is ZashiAccount -> null
+                        },
                         network = network,
                         privateUseSubject = "metadata".toByteArray()
                     )
@@ -102,5 +99,3 @@ class MetadataKey(
         }
     }
 }
-
-private const val ENCRYPTION_KEY = "encryption_key"
