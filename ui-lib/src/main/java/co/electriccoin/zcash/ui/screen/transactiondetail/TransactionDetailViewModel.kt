@@ -116,9 +116,7 @@ class TransactionDetailViewModel(
 
     private fun createTransactionInfoState(transaction: DetailedTransactionData): TransactionDetailInfoState {
         return when (transaction.transaction) {
-            is SendTransaction.Success,
-            is SendTransaction.Pending,
-            is SendTransaction.Failed -> {
+            is SendTransaction -> {
                 if (transaction.recipientAddress is WalletAddress.Transparent) {
                     SendTransparentState(
                         contact = transaction.contact?.let { stringRes(it.name) },
@@ -170,9 +168,7 @@ class TransactionDetailViewModel(
                 }
             }
 
-            is ReceiveTransaction.Success,
-            is ReceiveTransaction.Pending,
-            is ReceiveTransaction.Failed -> {
+            is ReceiveTransaction -> {
                 if (transaction.transaction.transactionOutputs.all { it.pool == TransactionPool.TRANSPARENT }) {
                     ReceiveTransparentState(
                         transactionId =
@@ -212,9 +208,7 @@ class TransactionDetailViewModel(
                 }
             }
 
-            is ShieldTransaction.Success,
-            is ShieldTransaction.Pending,
-            is ShieldTransaction.Failed -> {
+            is ShieldTransaction -> {
                 ShieldingState(
                     transactionId =
                         stringResByTransactionId(
@@ -275,28 +269,22 @@ class TransactionDetailViewModel(
 
     private fun createPrimaryButtonState(data: DetailedTransactionData) =
         if (data.contact == null) {
-            when (data.transaction) {
-                is SendTransaction.Success,
-                is SendTransaction.Pending,
-                is SendTransaction.Failed ->
-                    ButtonState(
-                        text = stringRes(R.string.transaction_detail_save_address),
-                        onClick = { onSaveAddressClick(data) }
-                    )
-
-                else -> null
+            if (data.transaction is SendTransaction) {
+                ButtonState(
+                    text = stringRes(R.string.transaction_detail_save_address),
+                    onClick = { onSaveAddressClick(data) }
+                )
+            } else {
+                null
             }
         } else {
-            when (data.transaction) {
-                is ReceiveTransaction.Success,
-                is ReceiveTransaction.Pending,
-                is ReceiveTransaction.Failed ->
-                    ButtonState(
-                        text = stringRes(R.string.transaction_detail_send_again),
-                        onClick = { onSendAgainClick(data) }
-                    )
-
-                else -> null
+            if (data.transaction is SendTransaction) {
+                ButtonState(
+                    text = stringRes(R.string.transaction_detail_send_again),
+                    onClick = { onSendAgainClick(data) }
+                )
+            } else {
+                null
             }
         }
 

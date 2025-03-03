@@ -86,10 +86,10 @@ class MetadataKey(
                     )
                     .derivePrivateUseMetadataKey(
                         ufvk =
-                        when (selectedAccount) {
-                            is KeystoneAccount -> selectedAccount.sdkAccount.ufvk
-                            is ZashiAccount -> null
-                        },
+                            when (selectedAccount) {
+                                is KeystoneAccount -> selectedAccount.sdkAccount.ufvk
+                                is ZashiAccount -> null
+                            },
                         network = network,
                         privateUseSubject = "metadata".toByteArray()
                     )
