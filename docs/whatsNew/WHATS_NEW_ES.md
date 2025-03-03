@@ -12,6 +12,22 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.4 (873)] - 2025-03-03
+
+### Añadido
+- Nueva funcionalidad “Exporta Archivo de Impuestos”.
+- Transacciones Favoritas y notas personalizadas.
+- Filtros para transacciones recibidas, enviadas, favoritas y personalizadas.
+- Descarga Zashi Android desde F-Droid y GitHub.
+
+### Cambiado
+- Rediseño total del Historial de Transacciones. 
+- Accede a KeyStone desde la pantalla de integraciones.
+- Mejoramos la experiencia de firmado de transacciones.
+
+### Corregido 
+- No más problemas con el envío de KeyStone, lo arreglamos!
+  
 ## [1.3.3 (839)] - 2025-01-23
 
 ### Cambiado

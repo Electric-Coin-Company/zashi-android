@@ -12,6 +12,22 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.4 (873)] - 2025-03-03
+
+### Added
+- Export your last year's transaction history with a new Export Tax File feature.
+- Bookmark transactions, and add private notes to them.
+- Filter for Received, Sent, Memos, Notes, and Bookmarked transactions.
+- Download Zashi Android from F-Droid and GitHub.
+
+### Changed
+- Discover completely redesigned Transaction History!
+- Access Keystone from the Integrations screen.
+- Enjoy improved transaction signing experience.
+
+### Fixed
+- No more failures of Keystone Send, we fixed the issue!
+
 ## [1.3.3 (839)] - 2025-01-23
 
 ### Changed
