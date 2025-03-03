@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class TaxExportViewModel(
+    isZashiAccount: Boolean?,
     private val exportTax: ExportTaxUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
@@ -23,6 +24,7 @@ class TaxExportViewModel(
                         text = stringRes(R.string.tax_export_export_button),
                         onClick = ::onExportClick
                     ),
+                isZashiAccount = isZashiAccount ?: true,
                 onBack = ::onBack
             )
         )

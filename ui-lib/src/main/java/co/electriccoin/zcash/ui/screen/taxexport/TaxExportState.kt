@@ -4,5 +4,6 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 
 data class TaxExportState(
     val exportButton: ButtonState,
+    val isZashiAccount: Boolean,
     val onBack: () -> Unit,
 )

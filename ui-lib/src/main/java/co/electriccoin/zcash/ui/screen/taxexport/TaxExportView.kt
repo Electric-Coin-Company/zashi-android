@@ -86,7 +86,15 @@ private fun Content(
         Spacer(Modifier.height(12.dp))
 
         Text(
-            text = stringResource(R.string.tax_export_message),
+            text =
+                stringResource(
+                    R.string.tax_export_message,
+                    if (state.isZashiAccount) {
+                        stringResource(R.string.zashi_wallet_name)
+                    } else {
+                        stringResource(R.string.keystone_wallet_name)
+                    }
+                ),
             style = ZashiTypography.textSm,
             color = ZashiColors.Text.textPrimary
         )
@@ -112,7 +120,8 @@ private fun ExportPrivateDataPreview() =
                         ButtonState(
                             text = stringRes(R.string.tax_export_export_button),
                             onClick = {}
-                        )
+                        ),
+                    isZashiAccount = true,
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
