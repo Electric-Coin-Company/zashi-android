@@ -21,4 +21,5 @@
     <string name="authentication_failed_welcome_subtitle">Нажмите на значок ключа чтобы разблокировать.</string>
     <string name="authentication_error_text">Аутентификация не прошла по следующей причине. Повторите аутентификацию или обратитесь за помощью в службу поддержки.</string>
     <string name="authentication_failed_text">Аутентификация была представлена, но не признана. Повторите аутентификацию или обратитесь за помощью в службу поддержки.</string>
+    <string name="authentication_use_case_tax_export">Налоговый экспорт</string>
 </resources>
