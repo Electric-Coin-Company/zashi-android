@@ -210,7 +210,8 @@ private fun PreviewSettings() {
                                 titleIcons =
                                     persistentListOf(
                                         R.drawable.ic_integrations_coinbase,
-                                        R.drawable.ic_integrations_flexa
+                                        R.drawable.ic_integrations_flexa,
+                                        R.drawable.ic_integrations_keystone
                                     )
                             ),
                             ZashiListItemState(

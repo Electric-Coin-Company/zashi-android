@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.toZecString
@@ -23,6 +24,7 @@ import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
+import co.electriccoin.zcash.ui.common.usecase.PrefillSendUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
@@ -127,6 +129,7 @@ internal fun WrapSend(
     val recipientAddressState by viewModel.recipientAddressState.collectAsStateWithLifecycle()
 
     val observeClearSend = koinInject<ObserveClearSendUseCase>()
+    val prefillSend = koinInject<PrefillSendUseCase>()
 
     if (sendArguments?.recipientAddress != null) {
         viewModel.onRecipientAddressChanged(
@@ -218,6 +221,35 @@ internal fun WrapSend(
                 )
             )
             setMemoState(MemoState.new(""))
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        prefillSend().collect {
+            val type = synchronizer?.validateAddress(it.recipientAddress?.address.orEmpty())
+            setSendStage(SendStage.Form)
+            setZecSend(null)
+            viewModel.onRecipientAddressChanged(
+                RecipientAddressState.new(
+                    address = it.recipientAddress?.address.orEmpty(),
+                    type = type
+                )
+            )
+
+            val fee = it.transaction.fee
+            val value = if (fee == null) it.transaction.amount else it.transaction.amount - fee
+
+            setAmountState(
+                AmountState.newFromZec(
+                    context = context,
+                    value = value.convertZatoshiToZecString(),
+                    monetarySeparators = monetarySeparators,
+                    isTransparentOrTextRecipient = type == AddressType.Transparent,
+                    fiatValue = amountState.fiatValue,
+                    exchangeRateState = exchangeRateState
+                )
+            )
+            setMemoState(MemoState.new(it.memos?.firstOrNull().orEmpty()))
         }
     }
 

@@ -15,4 +15,5 @@
     <string name="export_data_agree">I agree to Zashi\'s Export Private Data Policies and Privacy Policy</string>
     <string name="export_data_export_data_chooser_title">Share internal Zashi data with:</string>
     <string name="export_data_unable_to_share">Unable to find an application to share with.</string>
+    <string name="export_data_share_text">Export Tax File</string>
 </resources>

@@ -3,4 +3,7 @@
     <include
         domain="file"
         path="address_book/." />
+    <include
+        domain="file"
+        path="metadata/." />
 </full-backup-content>

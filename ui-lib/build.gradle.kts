@@ -35,8 +35,8 @@ android {
                     // This is a special case as these texts are not translated, they are replaced in build time via
                     // app/build.gradle.kts instead
                     "src/main/res/ui/non_translatable",
+
                     "src/main/res/ui/about",
-                    "src/main/res/ui/account",
                     "src/main/res/ui/account_list",
                     "src/main/res/ui/address_book",
                     "src/main/res/ui/add_contact",
@@ -68,6 +68,11 @@ android {
                     "src/main/res/ui/send_confirmation",
                     "src/main/res/ui/settings",
                     "src/main/res/ui/sign_keystone_transaction",
+                    "src/main/res/ui/transaction_detail",
+                    "src/main/res/ui/transaction_filters",
+                    "src/main/res/ui/transaction_history",
+                    "src/main/res/ui/transaction_note",
+                    "src/main/res/ui/tax_export",
                     "src/main/res/ui/feedback",
                     "src/main/res/ui/update",
                     "src/main/res/ui/update_contact",
@@ -162,11 +167,12 @@ dependencies {
     implementation(libs.kotlinx.immutable)
     implementation(libs.kotlinx.serializable.json)
     "storeImplementation"(libs.mlkit.scanning)
-    implementation(libs.zcash.sdk)
+    api(libs.zcash.sdk)
     implementation(libs.zcash.sdk.incubator)
     implementation(libs.zcash.bip39)
     implementation(libs.tink)
     implementation(libs.zxing)
+    api(libs.compose.shimmer)
 
     api(libs.flexa.core)
     api(libs.flexa.spend)

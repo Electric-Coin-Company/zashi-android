@@ -57,10 +57,14 @@ interface ProposalDataSource {
         proposal: Proposal,
         usk: UnifiedSpendingKey
     ): SubmitResult
+
+    @Throws(PcztException.RedactPcztForSignerException::class)
+    suspend fun redactPcztForSigner(pczt: Pczt): Pczt
 }
 
 class TransactionProposalNotCreatedException(reason: Exception) : Exception(reason)
 
+@Suppress("TooManyFunctions")
 class ProposalDataSourceImpl(
     private val synchronizerProvider: SynchronizerProvider,
 ) : ProposalDataSource {
@@ -172,6 +176,12 @@ class ProposalDataSourceImpl(
             )
         }
 
+    override suspend fun redactPcztForSigner(pczt: Pczt): Pczt =
+        withContext(Dispatchers.IO) {
+            synchronizerProvider.getSynchronizer()
+                .redactPcztForSigner(pczt)
+        }
+
     private suspend inline fun submitTransactionInternal(
         crossinline block: suspend (Synchronizer) -> Flow<TransactionSubmitResult>
     ): SubmitResult =
@@ -199,7 +209,13 @@ class ProposalDataSourceImpl(
                         }
                     } else {
                         // All transaction submissions were successful
-                        SubmitResult.Success
+                        SubmitResult.Success(
+                            submitResults
+                                .filterIsInstance<TransactionSubmitResult.Success>()
+                                .map {
+                                    it.txIdString()
+                                }
+                        )
                     }
                 }.onSuccess {
                     Twig.debug { "Transactions submitted successfully" }

@@ -146,8 +146,9 @@ class KeystoneProposalRepositoryImpl(
     override suspend fun createPCZTEncoder(): UREncoder =
         withContext(Dispatchers.IO) {
             val pczt = proposalPczt ?: throw IllegalStateException("Proposal not created")
+            val redactedPczt = proposalDataSource.redactPcztForSigner(pczt.clonePczt())
             keystoneZcashSDK.generatePczt(
-                pczt = pczt.clonePczt().toByteArray()
+                pczt = redactedPczt.toByteArray()
             )
         }
 

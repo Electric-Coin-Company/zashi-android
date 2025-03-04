@@ -10,6 +10,9 @@ import cash.z.ecc.android.sdk.ext.collectWith
 import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.design.component.LocalScreenBrightness
+import co.electriccoin.zcash.ui.design.component.ScreenBrightness
+import co.electriccoin.zcash.ui.design.component.ScreenBrightnessState
 import kotlinx.coroutines.flow.map
 
 @Composable

@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.screen.settings.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import co.electriccoin.zcash.ui.common.compose.ScreenBrightness
+import co.electriccoin.zcash.ui.design.component.ScreenBrightness
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class ScreenBrightnessViewModel(application: Application) : AndroidViewModel(application) {

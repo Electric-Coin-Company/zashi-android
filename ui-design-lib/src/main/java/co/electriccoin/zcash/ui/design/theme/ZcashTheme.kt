@@ -9,6 +9,7 @@ import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.RippleDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.DarkZashiColorsInternal
 import co.electriccoin.zcash.ui.design.theme.colors.LightZashiColorsInternal
 import co.electriccoin.zcash.ui.design.theme.colors.LocalZashiColors
@@ -35,6 +36,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypographyInternal
 @Composable
 fun ZcashTheme(
     forceDarkMode: Boolean = false,
+    balancesAvailable: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val useDarkMode = forceDarkMode || isSystemInDarkTheme()
@@ -47,6 +49,7 @@ fun ZcashTheme(
         LocalZashiColors provides zashiColors,
         LocalZashiTypography provides ZashiTypographyInternal,
         LocalRippleConfiguration provides MaterialRippleConfig,
+        LocalBalancesAvailable provides balancesAvailable
     ) {
         ProvideDimens {
             MaterialTheme(

@@ -43,10 +43,10 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.design.component.OldZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.QrCodeDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
 import co.electriccoin.zcash.ui.design.component.ZashiBadgeColors
-import co.electriccoin.zcash.ui.design.component.ZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiQr
@@ -86,7 +86,6 @@ private fun ZashiPreview() =
                     walletAddress = runBlocking { WalletAddressFixture.unified() },
                     onAddressCopy = {},
                     onQrCodeShare = {},
-                    onQrCodeClick = {},
                     onBack = {},
                 ),
             snackbarHostState = SnackbarHostState(),
@@ -105,7 +104,6 @@ private fun KeystonePreview() =
                     walletAddress = runBlocking { WalletAddressFixture.unified() },
                     onAddressCopy = {},
                     onQrCodeShare = {},
-                    onQrCodeClick = {},
                     onBack = {},
                 ),
             snackbarHostState = SnackbarHostState(),
@@ -205,7 +203,7 @@ private fun QrCodeBottomBar(
     state: QrCodeState.Prepared,
     qrCodeImage: ImageBitmap,
 ) {
-    ZashiBottomBar {
+    OldZashiBottomBar {
         ZashiButton(
             text = stringResource(id = R.string.qr_code_share_btn),
             icon = R.drawable.ic_share,
@@ -438,6 +436,11 @@ private fun ColumnScope.QrCode(
                     when (preparedState.qrCodeType) {
                         QrCodeType.ZASHI -> R.drawable.logo_zec_fill_stroke
                         QrCodeType.KEYSTONE -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr
+                    },
+                fullscreenCenterImageResId =
+                    when (preparedState.qrCodeType) {
+                        QrCodeType.ZASHI -> R.drawable.logo_zec_fill_stroke_white
+                        QrCodeType.KEYSTONE -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr_white
                     }
             ),
         modifier = modifier.align(CenterHorizontally),

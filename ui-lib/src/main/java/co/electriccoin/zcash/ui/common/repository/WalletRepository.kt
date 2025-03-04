@@ -17,6 +17,7 @@ import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
+import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.model.FastestServersState
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
@@ -116,6 +117,7 @@ class WalletRepositoryImpl(
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val persistableWalletPreference: PersistableWalletPreferenceDefault,
     private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
+    private val restoreTimestampDataSource: RestoreTimestampDataSource,
 ) : WalletRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -358,6 +360,7 @@ class WalletRepositoryImpl(
                     standardPreferenceProvider(),
                     WalletRestoringState.RESTORING.toNumber()
                 )
+                restoreTimestampDataSource.getOrCreate()
                 persistOnboardingStateInternal(OnboardingState.READY)
             }
         }

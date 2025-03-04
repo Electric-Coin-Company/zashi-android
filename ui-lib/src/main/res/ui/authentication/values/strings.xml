@@ -12,6 +12,7 @@
     <string name="authentication_use_case_seed_recovery">Seed Recovery feature</string>
     <string name="authentication_use_case_send_funds">Send Funds feature</string>
     <string name="authentication_use_case_adress_book">Address Book feature</string>
+    <string name="authentication_use_case_tax_export">Tax export</string>
 
     <string name="authentication_toast_canceled">Authentication canceled</string>
     <string name="authentication_toast_failed">Authentication failed</string>

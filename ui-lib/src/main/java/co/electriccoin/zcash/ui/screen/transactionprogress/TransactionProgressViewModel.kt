@@ -15,6 +15,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveTransactionSubmitStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
+import co.electriccoin.zcash.ui.common.usecase.ViewTransactionDetailAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
@@ -35,6 +36,7 @@ class TransactionProgressViewModel(
     private val sendEmailUseCase: SendEmailUseCase,
     private val cancelKeystoneProposalFlow: CancelProposalFlowUseCase,
     private val viewTransactionsAfterSuccessfulProposal: ViewTransactionsAfterSuccessfulProposalUseCase,
+    private val viewTransactionDetailAfterSuccessfulProposal: ViewTransactionDetailAfterSuccessfulProposalUseCase
 ) : ViewModel() {
     private val supportContacted = MutableStateFlow(false)
 
@@ -60,7 +62,7 @@ class TransactionProgressViewModel(
                         is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit ->
                             createFailureTransactionState(proposal, result)
 
-                        SubmitResult.Success -> createSuccessfulTransactionState(proposal)
+                        is SubmitResult.Success -> createSuccessfulTransactionState(proposal, result)
                     }
             }
         }.stateIn(
@@ -101,32 +103,47 @@ class TransactionProgressViewModel(
             onCloseClick = ::onViewTransactions
         )
 
-    private suspend fun createSuccessfulTransactionState(proposal: TransactionProposal?) =
-        SuccessfulTransactionState(
-            onBack = ::onViewTransactions,
-            onViewTransactionClick = ::onViewTransactions,
-            onCloseClick = ::onViewTransactions,
-            text =
-                if (proposal is ShieldTransactionProposal) {
-                    stringRes(R.string.send_confirmation_success_subtitle_transparent)
-                } else {
-                    stringRes(R.string.send_confirmation_success_subtitle, getAddressAbbreviated())
-                },
-            title =
-                if (proposal is ShieldTransactionProposal) {
-                    stringRes(R.string.send_confirmation_success_title_transparent)
-                } else {
-                    stringRes(R.string.send_confirmation_success_title, getAddressAbbreviated())
-                }
-        )
+    private suspend fun createSuccessfulTransactionState(
+        proposal: TransactionProposal?,
+        result: SubmitResult.Success
+    ) = SuccessfulTransactionState(
+        onBack = ::onViewTransactions,
+        onViewTransactionClick = {
+            val txId = result.txIds.firstOrNull()
+            if (txId == null) {
+                onViewTransactions()
+            } else {
+                onViewTransactionDetailClick(txId)
+            }
+        },
+        onCloseClick = ::onViewTransactions,
+        text =
+            if (proposal is ShieldTransactionProposal) {
+                stringRes(R.string.send_confirmation_success_subtitle_transparent)
+            } else {
+                stringRes(R.string.send_confirmation_success_subtitle, getAddressAbbreviated())
+            },
+        title =
+            if (proposal is ShieldTransactionProposal) {
+                stringRes(R.string.send_confirmation_success_title_transparent)
+            } else {
+                stringRes(R.string.send_confirmation_success_title, getAddressAbbreviated())
+            }
+    )
 
     private fun createFailureTransactionState(
         proposal: TransactionProposal?,
-        result: SubmitResult.SimpleTrxFailure
+        result: SubmitResult.SimpleTrxFailure,
     ) = FailureTransactionState(
         onBack = ::onBackToSendForm,
         onCloseClick = ::onBackToSendForm,
-        onViewTransactionClick = ::onViewTransactions,
+        onViewTransactionClick = {
+            if (result is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit) {
+                onViewTransactionDetailClick(result.result.txIdString())
+            } else {
+                onViewTransactions()
+            }
+        },
         onReportClick = {
             viewModelScope.launch {
                 sendEmailUseCase(result)
@@ -181,5 +198,9 @@ class TransactionProgressViewModel(
 
     private fun onViewTransactions() {
         viewTransactionsAfterSuccessfulProposal()
+    }
+
+    private fun onViewTransactionDetailClick(txId: String) {
+        viewTransactionDetailAfterSuccessfulProposal(txId)
     }
 }

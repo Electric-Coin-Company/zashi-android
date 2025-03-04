@@ -797,7 +797,7 @@ fun SendFormMemoTextField(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         ZashiTextField(
-            minLines = if (isMemoFieldAvailable) 2 else 1,
+            minLines = if (isMemoFieldAvailable) 4 else 1,
             isEnabled = isMemoFieldAvailable,
             value =
                 if (isMemoFieldAvailable) {
