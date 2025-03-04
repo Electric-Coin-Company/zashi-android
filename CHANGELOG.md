@@ -9,7 +9,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [1.4 (876)] - 2025-03-04
 
 ### Fixed
-- Export tax now works correctly for fdroid build
+- Export tax now works correctly for F-Droid build and other Testnet based build variants
 
 ## [1.4 (873)] - 2025-03-03
 

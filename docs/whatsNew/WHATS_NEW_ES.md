@@ -15,10 +15,10 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [1.4 (876)] - 2025-03-04
 
 ### Añadido
-- Nueva funcionalidad “Exporta Archivo de Impuestos”.
+- Nueva funcionalidad ”Exporta Archivo de Impuestos”.
 - Transacciones Favoritas y notas personalizadas.
-- Filtros para transacciones recibidas, enviadas, favoritas y personalizadas.
-- Descarga Zashi Android desde F-Droid y GitHub.
+- Filtros para transacciones.
+- Descarga Zashi desde F-Droid y GitHub.
 
 ### Cambiado
 - Rediseño total del Historial de Transacciones.
@@ -26,7 +26,8 @@ directly impact users rather than highlighting other key architectural updates.*
 - Mejoramos la experiencia de firmado de transacciones.
 
 ### Corregido
-- No más problemas con el envío de KeyStone, lo arreglamos!
+- No más fallos al enviar en KeyStone, han sido arreglados.
+- ”Exporta Archivo de Impuestos” también está corregido.
 
 ## [1.4 (873)] - 2025-03-03
 
