@@ -11,6 +11,7 @@ import co.electriccoin.zcash.spackle.EmulatorWtfUtil
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.spackle.getPackageInfoCompat
 import co.electriccoin.zcash.spackle.versionCodeCompat
+import co.electriccoin.zcash.ui.BuildConfig
 
 data class VersionInfo(
     val gitSha: String,
@@ -21,6 +22,7 @@ data class VersionInfo(
     val isTestnet: Boolean,
     val versionCode: Long,
     val versionName: String,
+    val distributionDimension: DistributionDimension
 ) {
     companion object {
         fun new(context: Context): VersionInfo {
@@ -40,7 +42,10 @@ data class VersionInfo(
                 isTestnet = context.resources.getBoolean(cash.z.ecc.sdk.ext.R.bool.zcash_is_testnet),
                 gitSha = gitSha,
                 gitCommitCount = gitCommitCount.toLong(),
-                changelog = Changelog.new(json = resolveBestReleaseNotes())
+                changelog = Changelog.new(json = resolveBestReleaseNotes()),
+                distributionDimension =
+                    DistributionDimension.entries
+                        .first { it.value == BuildConfig.FLAVOR_distribution }
             )
         }
 
@@ -52,4 +57,9 @@ data class VersionInfo(
             }
         }
     }
+}
+
+enum class DistributionDimension(val value: String) {
+    STORE("store"),
+    FOSS("foss")
 }
