@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.util
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
-import co.electriccoin.zcash.ui.BuildConfig
+import co.electriccoin.zcash.ui.common.model.DistributionDimension
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import java.io.File
 
@@ -25,8 +25,9 @@ object FileShareUtil {
     const val ZASHI_INTERNAL_DATA_AUTHORITY_TESTNET_DEBUG = "co.electriccoin.zcash.debug.provider.testnet" // NON-NLS
 
     const val ZASHI_INTERNAL_DATA_FOSS_AUTHORITY_TESTNET = "co.electriccoin.zcash.foss.provider.testnet" // NON-NLS
-    const val ZASHI_INTERNAL_DATA_FOSS_AUTHORITY_TESTNET_DEBUG = "co.electriccoin.zcash.foss.debug.provider.testnet" //
+
     // NON-NLS
+    const val ZASHI_INTERNAL_DATA_FOSS_AUTHORITY_TESTNET_DEBUG = "co.electriccoin.zcash.foss.debug.provider.testnet"
 
     /**
      * Returns a new share internal app data intent with necessary permission granted exclusively to the data file.
@@ -98,13 +99,13 @@ object FileShareUtil {
 
     private fun getAuthorityByVersionInfo(versionInfo: VersionInfo) =
         if (versionInfo.isTestnet) {
-            if (BuildConfig.FLAVOR_distribution == "foss") {
+            if (versionInfo.distributionDimension == DistributionDimension.FOSS) {
                 getFossTestnetAuthority(versionInfo)
             } else {
                 getStoreTestnetAuthority(versionInfo)
             }
         } else {
-            if (BuildConfig.FLAVOR_distribution == "foss") {
+            if (versionInfo.distributionDimension == DistributionDimension.FOSS) {
                 getFossMainnetAuthority(versionInfo)
             } else {
                 getStoreMainnetAuthority(versionInfo)
