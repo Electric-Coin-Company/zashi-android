@@ -25,11 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.fixture.WalletFixture
+import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -156,7 +158,7 @@ private fun OnboardingMainContent(
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing3xl))
 
         Text(
-            text = stringResource(R.string.onboarding_header),
+            text = stringResource(R.string.onboarding_header, ZcashCurrency.getLocalizedName(LocalContext.current)),
             style = ZashiTypography.textXl,
             textAlign = TextAlign.Center,
             color = ZashiColors.Text.textSecondary
