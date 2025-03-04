@@ -6,6 +6,11 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [1.4 (876)] - 2025-03-04
+
+### Fixed
+- Export tax now works correctly for fdroid build
+
 ## [1.4 (873)] - 2025-03-03
 
 ### Added
