@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="seed_recovery_title">Фраза для восстановления</string>
+    <string name="seed_recovery_header">Защитите ваш кошелёк Zashi</string>
+    <string name="seed_recovery_description">Следующие 24 слова являются ключами к вашим средствам и являются единственным способом вернуть ваши средства если вы заблокированы или используете новое устройство.</string>
+    <string name="seed_recovery_reveal_button">Раскрыть подробности безопасности</string>
+    <string name="seed_recovery_hide_button">Скрыть подробности безопасности</string>
+    <string name="seed_recovery_phrase_title">Фраза для восстановления</string>
+    <string name="seed_recovery_bday_title">Высота дня рождения кошелька</string>
+    <string name="seed_recovery_bday_tooltip_title">Высота дня рождения кошелька</string>
+    <string name="seed_recovery_bday_tooltip_message">Высота дня рождения кошелька определяет высоту рождения (цепочки) кошелька и способствует ускорению процесса восстановления кошелька. Сохраните этот номер вместе со своей сид-фразой в безопасном месте.</string>
+    <string name="seed_recovery_warning">Защитите ZEC храня эту фразу в месте которому вы доверяете, и никогда не делитесь ею с кем-либо!</string>
+    <string name="seed_recovery_reveal">Расрыть фразу восстановления</string>
+    <string name="seed_recovery_next_button">Далее</string>
+</resources>
