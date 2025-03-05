@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.util
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
+import co.electriccoin.zcash.ui.common.model.DistributionDimension
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import java.io.File
 
@@ -17,8 +18,16 @@ object FileShareUtil {
     const val ZASHI_INTERNAL_DATA_AUTHORITY = "co.electriccoin.zcash.provider" // NON-NLS
     const val ZASHI_INTERNAL_DATA_AUTHORITY_DEBUG = "co.electriccoin.zcash.debug.provider" // NON-NLS
 
+    const val ZASHI_INTERNAL_DATA_FOSS_AUTHORITY = "co.electriccoin.zcash.foss.provider" // NON-NLS
+    const val ZASHI_INTERNAL_DATA_FOSS_AUTHORITY_DEBUG = "co.electriccoin.zcash.foss.debug.provider" // NON-NLS
+
     const val ZASHI_INTERNAL_DATA_AUTHORITY_TESTNET = "co.electriccoin.zcash.provider.testnet" // NON-NLS
     const val ZASHI_INTERNAL_DATA_AUTHORITY_TESTNET_DEBUG = "co.electriccoin.zcash.debug.provider.testnet" // NON-NLS
+
+    const val ZASHI_INTERNAL_DATA_FOSS_AUTHORITY_TESTNET = "co.electriccoin.zcash.foss.provider.testnet" // NON-NLS
+
+    // NON-NLS
+    const val ZASHI_INTERNAL_DATA_FOSS_AUTHORITY_TESTNET_DEBUG = "co.electriccoin.zcash.foss.debug.provider.testnet"
 
     /**
      * Returns a new share internal app data intent with necessary permission granted exclusively to the data file.
@@ -90,16 +99,44 @@ object FileShareUtil {
 
     private fun getAuthorityByVersionInfo(versionInfo: VersionInfo) =
         if (versionInfo.isTestnet) {
-            if (versionInfo.isDebuggable) {
-                ZASHI_INTERNAL_DATA_AUTHORITY_TESTNET_DEBUG
+            if (versionInfo.distributionDimension == DistributionDimension.FOSS) {
+                getFossTestnetAuthority(versionInfo)
             } else {
-                ZASHI_INTERNAL_DATA_AUTHORITY_TESTNET
+                getStoreTestnetAuthority(versionInfo)
             }
         } else {
-            if (versionInfo.isDebuggable) {
-                ZASHI_INTERNAL_DATA_AUTHORITY_DEBUG
+            if (versionInfo.distributionDimension == DistributionDimension.FOSS) {
+                getFossMainnetAuthority(versionInfo)
             } else {
-                ZASHI_INTERNAL_DATA_AUTHORITY
+                getStoreMainnetAuthority(versionInfo)
             }
+        }
+
+    private fun getStoreMainnetAuthority(versionInfo: VersionInfo) =
+        if (versionInfo.isDebuggable) {
+            ZASHI_INTERNAL_DATA_AUTHORITY_DEBUG
+        } else {
+            ZASHI_INTERNAL_DATA_AUTHORITY
+        }
+
+    private fun getFossMainnetAuthority(versionInfo: VersionInfo) =
+        if (versionInfo.isDebuggable) {
+            ZASHI_INTERNAL_DATA_FOSS_AUTHORITY_DEBUG
+        } else {
+            ZASHI_INTERNAL_DATA_FOSS_AUTHORITY
+        }
+
+    private fun getStoreTestnetAuthority(versionInfo: VersionInfo) =
+        if (versionInfo.isDebuggable) {
+            ZASHI_INTERNAL_DATA_AUTHORITY_TESTNET_DEBUG
+        } else {
+            ZASHI_INTERNAL_DATA_AUTHORITY_TESTNET
+        }
+
+    private fun getFossTestnetAuthority(versionInfo: VersionInfo) =
+        if (versionInfo.isDebuggable) {
+            ZASHI_INTERNAL_DATA_FOSS_AUTHORITY_TESTNET_DEBUG
+        } else {
+            ZASHI_INTERNAL_DATA_FOSS_AUTHORITY_TESTNET
         }
 }

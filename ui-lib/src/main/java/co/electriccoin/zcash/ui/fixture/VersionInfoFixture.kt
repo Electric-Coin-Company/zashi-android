@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.fixture
 
 import co.electriccoin.zcash.ui.common.model.Changelog
+import co.electriccoin.zcash.ui.common.model.DistributionDimension
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 
 // Magic Number doesn't matter here for hard-coded fixture values
@@ -14,6 +15,7 @@ object VersionInfoFixture {
     const val GIT_SHA = "635dac0eb9ddc2bc6da5177f0dd495d8b76af4dc"
     const val GIT_COMMIT_COUNT = 1L
     val CHANGELOG = ChangelogFixture.new()
+    val DISTRIBUTION_DIMENSION = DistributionDimension.STORE
 
     @Suppress("LongParameterList")
     fun new(
@@ -24,7 +26,8 @@ object VersionInfoFixture {
         isTestnet: Boolean = IS_TESTNET,
         gitSha: String = GIT_SHA,
         gitCommitCount: Long = GIT_COMMIT_COUNT,
-        changelog: Changelog = CHANGELOG
+        changelog: Changelog = CHANGELOG,
+        distributionDimension: DistributionDimension = DISTRIBUTION_DIMENSION
     ) = VersionInfo(
         versionName = versionName,
         versionCode = versionCode,
@@ -34,5 +37,6 @@ object VersionInfoFixture {
         gitSha = gitSha,
         gitCommitCount = gitCommitCount,
         changelog = changelog,
+        distributionDimension = distributionDimension
     )
 }
