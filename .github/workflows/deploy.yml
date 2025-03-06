@@ -111,7 +111,7 @@ jobs:
         # Note that this step is not currently used due to #1033
         if: false
         id: auth_google_play
-        uses: google-github-actions/auth@71f986410dfbc7added4569d411d040a91dc6935
+        uses: google-github-actions/auth@6fc4af4b145ae7821d527454aa9bd537d1f2dc5f
         with:
           create_credentials_file: true
           project_id: ${{ secrets.GOOGLE_PLAY_CLOUD_PROJECT }}
@@ -167,7 +167,7 @@ jobs:
           zip -r ${BINARIES_ZIP_PATH} . -i app/build/outputs/apk/\*/\*.apk app/build/outputs/apk_from_bundle/\*/\*.apk app/build/outputs/bundle/\*/\*.aab
           zip -r ${MAPPINGS_ZIP_PATH} . -i app/build/outputs/mapping/\*/mapping.txt
       - name: Upload Artifacts
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1
         timeout-minutes: 5
         with:
           name: Binaries
@@ -186,7 +186,7 @@ jobs:
         timeout-minutes: 1
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Download release artifact
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806
         with:
           name: Binaries
       - name: Unzip artifacts

@@ -35,7 +35,7 @@
         path="/data/data/co.electriccoin.zcash.testnet.foss/."
         />
     <root-path
-        name="root_testnet_store_debug"
+        name="root_testnet_foss_debug"
         path="/data/data/co.electriccoin.zcash.testnet.foss.debug/."
         />
 
