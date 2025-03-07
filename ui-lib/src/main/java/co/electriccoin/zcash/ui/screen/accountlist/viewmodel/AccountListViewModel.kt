@@ -104,6 +104,11 @@ class AccountListViewModel(
         bottomSheetHiddenResponse.first()
     }
 
+    private fun onBottomSheetHidden() =
+        viewModelScope.launch {
+            bottomSheetHiddenResponse.emit(Unit)
+        }
+
     private fun onAccountClicked(account: WalletAccount) =
         viewModelScope.launch {
             selectWalletAccount(account) { hideBottomSheet() }
@@ -113,11 +118,6 @@ class AccountListViewModel(
         viewModelScope.launch {
             hideBottomSheet()
             navigationRouter.forward(ConnectKeystone)
-        }
-
-    private fun onBottomSheetHidden() =
-        viewModelScope.launch {
-            bottomSheetHiddenResponse.emit(Unit)
         }
 
     private fun onBack() =

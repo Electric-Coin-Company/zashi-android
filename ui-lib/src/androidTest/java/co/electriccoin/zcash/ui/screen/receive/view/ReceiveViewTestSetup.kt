@@ -47,7 +47,7 @@ class ReceiveViewTestSetup(
                                     ),
                                 isLoading = false,
                             ),
-                        zashiMainTopAppBarState =
+                        appBarState =
                             ZashiMainTopAppBarStateFixture.new(
                                 settingsButton =
                                     IconButtonState(
