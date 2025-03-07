@@ -9,12 +9,10 @@ class ViewTransactionDetailAfterSuccessfulProposalUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
     private val zashiProposalRepository: ZashiProposalRepository,
     private val navigationRouter: NavigationRouter,
-    private val observeClearSend: ObserveClearSendUseCase,
 ) {
     operator fun invoke(txId: String) {
         zashiProposalRepository.clear()
         keystoneProposalRepository.clear()
-        observeClearSend.requestClear()
         navigationRouter.replaceAll(TransactionDetail(txId))
     }
 }

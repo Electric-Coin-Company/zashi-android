@@ -116,13 +116,13 @@ class IntegrationsViewModel(
     private fun onBuyWithCoinbaseClicked() =
         viewModelScope.launch {
             hideBottomSheet()
-            navigateToCoinbase()
+            navigateToCoinbase(isDialog)
         }
 
     private fun onConnectKeystoneClick() =
         viewModelScope.launch {
             hideBottomSheet()
-            navigationRouter.forward(ConnectKeystone)
+            navigationRouter.replace(ConnectKeystone)
         }
 
     private fun onFlexaClicked() =

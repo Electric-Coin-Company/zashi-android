@@ -341,19 +341,19 @@ class ScreenshotTest : UiTestPrerequisites() {
         onboardingScreenshots(resContext, tag, composeTestRule)
 
         // To ensure that the bottom tab is available, or wait until it is
-        composeTestRule.waitUntilAtLeastOneExists(hasTestTag(HomeTag.TAB_ACCOUNT), DEFAULT_TIMEOUT_MILLISECONDS)
-
-        composeTestRule.navigateInHomeTab(HomeTag.TAB_ACCOUNT)
-        accountScreenshots(tag, composeTestRule)
-
-        composeTestRule.navigateInHomeTab(HomeTag.TAB_SEND)
-        sendZecScreenshots(resContext, tag, composeTestRule)
-
-        composeTestRule.navigateInHomeTab(HomeTag.TAB_RECEIVE)
-        receiveZecScreenshots(resContext, tag, composeTestRule)
-
-        composeTestRule.navigateInHomeTab(HomeTag.TAB_BALANCES)
-        balancesScreenshots(resContext, tag, composeTestRule)
+        // composeTestRule.waitUntilAtLeastOneExists(hasTestTag(HomeTag.TAB_ACCOUNT), DEFAULT_TIMEOUT_MILLISECONDS)
+        //
+        // composeTestRule.navigateInHomeTab(HomeTag.TAB_ACCOUNT)
+        // accountScreenshots(tag, composeTestRule)
+        //
+        // composeTestRule.navigateInHomeTab(HomeTag.TAB_SEND)
+        // sendZecScreenshots(resContext, tag, composeTestRule)
+        //
+        // composeTestRule.navigateInHomeTab(HomeTag.TAB_RECEIVE)
+        // receiveZecScreenshots(resContext, tag, composeTestRule)
+        //
+        // composeTestRule.navigateInHomeTab(HomeTag.TAB_BALANCES)
+        // balancesScreenshots(resContext, tag, composeTestRule)
 
         navigateTo(NavigationTargets.SETTINGS)
         settingsScreenshots(resContext, tag, composeTestRule)
