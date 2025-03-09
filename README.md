@@ -3,9 +3,16 @@
 This is the official home of the Zashi Zcash wallet for Android, a no-frills
 Zcash mobile wallet leveraging the [Zcash Android SDK](https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk).  
 
-# Production
+# Download
 
-The Zashi Android wallet is publicly available for download in the [Play Store](https://play.google.com/store/apps/details?id=co.electriccoin.zcash).
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/co.electriccoin.zcash.foss/)
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
+     alt="Get it on Google Play"
+     height="80">](https://play.google.com/store/apps/details?id=co.electriccoin.zcash)
+
+Or download the latest APK from the [Releases Section](https://github.com/Electric-Coin-Company/zashi-android/releases/latest).
 
 # Zashi Discord
 
