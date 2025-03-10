@@ -23,7 +23,7 @@ private val releaseNotesEsPath = "${project.rootDir}/docs/whatsNew/WHATS_NEW_ES.
 // Injects build information
 // Note timestamp is not currently injected because it effectively disables the cache since it
 // changes with every build
-val generateBuildConfigTask = tasks.create("buildConfig") {
+val generateBuildConfigTask = tasks.register("buildConfig") {
     val generatedDir = layout.buildDirectory.dir("generated").get().asFile
 
     val gitInfo = Git.newInfo(

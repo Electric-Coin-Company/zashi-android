@@ -34,12 +34,16 @@ pluginManager.withPlugin("com.android.library") {
         defaultConfig {
             minSdk = project.property("ANDROID_MIN_SDK_VERSION").toString().toInt()
             // This is deprecated but we don't have a replacement for the instrumentation APKs yet
+            // TODO [#1815]: Gradle targetSdk deprecated #1815
+            // TODO [#1815]: https://github.com/Electric-Coin-Company/zashi-android/issues/1815
             targetSdk = project.property("ANDROID_TARGET_SDK_VERSION").toString().toInt()
 
             // The last two are for support of pseudolocales in debug builds.
             // If we add other localizations, they should be included in this list.
             // By explicitly setting supported locales, we strip out unused localizations from third party
             // libraries (e.g. play services)
+            // TODO [#1816]: Gradle resourceConfigurations deprecation #1816
+            // TODO [#1816]: https://github.com/Electric-Coin-Company/zashi-android/issues/1816
             resourceConfigurations.addAll(listOf("en", "en-rUS", "en-rGB", "en-rAU", "es", "en_XA", "ar_XB"))
 
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -62,13 +66,14 @@ pluginManager.withPlugin("com.android.test") {
 
         defaultConfig {
             minSdk = project.property("ANDROID_MIN_SDK_VERSION").toString().toInt()
-            // This is deprecated but we don't have a replacement for the instrumentation APKs yet
             targetSdk = project.property("ANDROID_TARGET_SDK_VERSION").toString().toInt()
 
             // The last two are for support of pseudolocales in debug builds.
             // If we add other localizations, they should be included in this list.
             // By explicitly setting supported locales, we strip out unused localizations from third party
             // libraries (e.g. play services)
+            // TODO [#1816]: Gradle resourceConfigurations deprecation #1816
+            // TODO [#1816]: https://github.com/Electric-Coin-Company/zashi-android/issues/1816
             resourceConfigurations.addAll(listOf("en", "en-rUS", "en-rGB", "en-rAU", "es", "en_XA", "ar_XB"))
 
             testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -136,7 +141,7 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
             }
             val testDeviceMaxSdkVersion = project.properties["ANDROID_TARGET_SDK_VERSION"].toString().toInt()
 
-            devices {
+            allDevices {
                 create<ManagedVirtualDevice>("pixel2Min") {
                     device = "Pixel 2"
                     apiLevel = testDeviceMinSdkVersion
@@ -151,7 +156,7 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
 
             groups {
                 create("defaultDevices") {
-                    targetDevices.addAll(devices.toList())
+                    targetDevices.addAll(allDevices.toList())
                 }
             }
         }
@@ -192,6 +197,8 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
     }
 }
 
+// TODO [#1817]: KotlinOptions deprecation
+// TODO [#1817]: https://github.com/Electric-Coin-Company/zashi-android/issues/1817
 fun CommonExtension<*, *, *, *, *, *>.kotlinOptions(block: KotlinJvmOptions.() -> Unit) {
     (this as ExtensionAware).extensions.configure("kotlinOptions", block)
 }
