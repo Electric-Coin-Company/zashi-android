@@ -34,6 +34,7 @@ local.properties
 .idea/other.xml
 .idea/appInsightsSettings.xml
 .idea/runConfigurations.xml
+.idea/AndroidProjectSystem.xml
 
 # Other configuration files
 google-services.json
