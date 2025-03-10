@@ -197,6 +197,8 @@ fun com.android.build.gradle.BaseExtension.configureBaseExtension() {
     }
 }
 
+// TODO [#1817]: KotlinOptions deprecation
+// TODO [#1817]: https://github.com/Electric-Coin-Company/zashi-android/issues/1817
 fun CommonExtension<*, *, *, *, *, *>.kotlinOptions(block: KotlinJvmOptions.() -> Unit) {
     (this as ExtensionAware).extensions.configure("kotlinOptions", block)
 }
