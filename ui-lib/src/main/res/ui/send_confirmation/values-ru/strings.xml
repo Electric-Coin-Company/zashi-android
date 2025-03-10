@@ -37,4 +37,9 @@
     <string name="send_confirmation_failure_view_trx">Просмотр транзакции</string>
     <string name="send_confirmation_failure_grpc_subtitle">Zashi столкнулся с проблемами с подключением при отправке транзакции. Он попытается повторно в ближайшие несколько минут.</string>
     <string name="send_confirmation_multiple_trx_failure_ids_title">Идентификаторы транзакций</string>
+    <string name="send_confirmation_multiple_trx_failure_text_1">Отправить этому получателю требовались многочисленные транзакции, но только некоторые из них увенчались успехом, а остальные потерпели неудачу. Ваши средства в безопасности, но они должны быть возвращены с нашей стороны.</string>
+    <string name="send_confirmation_multiple_trx_failure_text_2">Пожалуйста, используйте кнопку ниже, чтобы связаться с нами. Он автоматически готовит все данные, необходимые для восстановления ваших средств.</string>
+    <string name="send_confirmation_multiple_report_status_failure" formatted="true">&lt;xliff:g example=\"3\" id=\"index\"&gt;%1$d&lt;/xliff:g&gt;: Failure: gRPC: &lt;xliff:g example=\"true\" id=\" gRPC \"&gt;%2$s&lt;/xliff:g example=\"123\" id=\"code\"&gt;%3$d&lt;/xliff:g&gt;, description: &lt;xliff:g example=\"Network unreachable\" id=\"desc\"&gt;%4$s&lt;/xliff:g example &gt;</string>
+    <string name="send_confirmation_multiple_report_status_success"><xliff:g example="1" id="index">%1$d</xliff:g>: Success</string>
+    <string name="send_confirmation_multiple_report_status_not_attempt" formatted="true"><xliff:g example="2" id="index">%1$d</xliff:g>: не пытайтесь</string>
 </resources>
