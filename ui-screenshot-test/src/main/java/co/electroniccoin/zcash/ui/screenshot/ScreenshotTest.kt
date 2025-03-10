@@ -12,7 +12,6 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -40,11 +39,13 @@ import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.UiMode
 import co.electriccoin.zcash.ui.screen.authentication.view.AnimationConstants.WELCOME_ANIM_TEST_TAG
 import co.electriccoin.zcash.ui.screen.balances.BalanceTag
+import co.electriccoin.zcash.ui.screen.home.HomeTags
 import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.securitywarning.view.SecurityScreenTag.ACKNOWLEDGE_CHECKBOX_TAG
@@ -100,13 +101,6 @@ class ScreenshotTest : UiTestPrerequisites() {
                 composeTestRule.activity.navControllerForTesting.navigate(route)
             }
         }
-
-    private fun ComposeContentTestRule.navigateInHomeTab(destinationTag: String) {
-        onNodeWithTag(destinationTag).also {
-            it.assertExists()
-            it.performClick()
-        }
-    }
 
     private fun runWith(
         uiMode: UiMode,
@@ -192,9 +186,9 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         composeTestRule.onNodeWithText(
             text =
-                resContext.getString(
-                    R.string.onboarding_import_existing_wallet
-                ),
+            resContext.getString(
+                R.string.onboarding_import_existing_wallet
+            ),
             ignoreCase = true
         ).also {
             it.performScrollTo()
@@ -341,19 +335,26 @@ class ScreenshotTest : UiTestPrerequisites() {
         onboardingScreenshots(resContext, tag, composeTestRule)
 
         // To ensure that the bottom tab is available, or wait until it is
-        // composeTestRule.waitUntilAtLeastOneExists(hasTestTag(HomeTag.TAB_ACCOUNT), DEFAULT_TIMEOUT_MILLISECONDS)
-        //
-        // composeTestRule.navigateInHomeTab(HomeTag.TAB_ACCOUNT)
-        // accountScreenshots(tag, composeTestRule)
-        //
-        // composeTestRule.navigateInHomeTab(HomeTag.TAB_SEND)
-        // sendZecScreenshots(resContext, tag, composeTestRule)
-        //
-        // composeTestRule.navigateInHomeTab(HomeTag.TAB_RECEIVE)
-        // receiveZecScreenshots(resContext, tag, composeTestRule)
-        //
-        // composeTestRule.navigateInHomeTab(HomeTag.TAB_BALANCES)
-        // balancesScreenshots(resContext, tag, composeTestRule)
+        composeTestRule.waitUntilAtLeastOneExists(
+            hasTestTag(HomeTags.SEND),
+            15.seconds.inWholeMilliseconds
+        )
+        accountScreenshots(tag, composeTestRule)
+
+        composeTestRule.waitUntilAtLeastOneExists(
+            hasTestTag(HomeTags.SEND),
+            15.seconds.inWholeMilliseconds
+        )
+        composeTestRule.onNode(hasTestTag(HomeTags.SEND)).performClick()
+        sendZecScreenshots(resContext, tag, composeTestRule)
+
+        composeTestRule.onNode(hasTestTag(ZashiTopAppBarTags.BACK)).performClick()
+        composeTestRule.waitUntilAtLeastOneExists(
+            hasTestTag(HomeTags.RECEIVE),
+            15.seconds.inWholeMilliseconds
+        )
+        composeTestRule.onNode(hasTestTag(HomeTags.RECEIVE)).performClick()
+        receiveZecScreenshots(resContext, tag, composeTestRule)
 
         navigateTo(NavigationTargets.SETTINGS)
         settingsScreenshots(resContext, tag, composeTestRule)
@@ -452,20 +453,6 @@ private fun accountScreenshots(
     }
 }
 
-private fun balancesScreenshots(
-    resContext: Context,
-    tag: String,
-    composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
-) {
-    // TODO [#1127]: Implement Balances screen
-    // TODO [#1127]: https://github.com/Electric-Coin-Company/zashi-android/issues/1127
-
-    composeTestRule.onNodeWithText(resContext.getString(R.string.balances_title)).also {
-        it.assertExists()
-        ScreenshotTest.takeScreenshot(tag, "Balances 1")
-    }
-}
-
 private fun settingsScreenshots(
     resContext: Context,
     tag: String,
@@ -480,11 +467,20 @@ private fun settingsScreenshots(
     ScreenshotTest.takeScreenshot(tag, "Settings 1")
 }
 
+@OptIn(ExperimentalTestApi::class)
 private fun receiveZecScreenshots(
     resContext: Context,
     tag: String,
     composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
 ) {
+    composeTestRule.waitUntilAtLeastOneExists(
+        hasText(
+            text = resContext.getString(R.string.receive_header),
+            ignoreCase = true
+        ),
+        15.seconds.inWholeMilliseconds
+    )
+
     composeTestRule.onNode(
         hasText(
             text = resContext.getString(R.string.receive_header),
@@ -497,6 +493,7 @@ private fun receiveZecScreenshots(
     ScreenshotTest.takeScreenshot(tag, "Receive 1")
 }
 
+@OptIn(ExperimentalTestApi::class)
 private fun sendZecScreenshots(
     resContext: Context,
     tag: String,
@@ -506,7 +503,16 @@ private fun sendZecScreenshots(
         composeTestRule.activity.walletViewModel.synchronizer.value != null
     }
 
-    composeTestRule.onNode(hasText(resContext.getString(R.string.send_stage_send_title))).also {
+    composeTestRule.waitUntilAtLeastOneExists(
+        hasText(resContext.getString(R.string.send_create), ignoreCase = true),
+        15.seconds.inWholeMilliseconds
+    )
+
+    composeTestRule.onNode(
+        hasText(
+            resContext.getString(R.string.send_create), ignoreCase = true
+        )
+    ).also {
         it.assertExists()
     }
 

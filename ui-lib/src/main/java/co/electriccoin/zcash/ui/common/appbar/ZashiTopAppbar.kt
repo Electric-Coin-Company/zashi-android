@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
@@ -27,7 +28,10 @@ fun ZashiTopAppbar(
         title = title?.getValue(),
         subtitle = state?.subtitle?.getValue(),
         navigationAction = {
-            ZashiTopAppBarBackNavigation(onBack = onBack)
+            ZashiTopAppBarBackNavigation(
+                onBack = onBack,
+                modifier = Modifier.testTag(ZashiTopAppBarTags.BACK)
+            )
         },
         regularActions = {
             if (state?.balanceVisibilityButton != null && showHideBalances) {
@@ -38,9 +42,9 @@ fun ZashiTopAppbar(
             Spacer(Modifier.width(20.dp))
         },
         colors =
-            ZcashTheme.colors.topAppBarColors orDark
-                ZcashTheme.colors.topAppBarColors.copyColors(
-                    containerColor = Color.Transparent
-                ),
+        ZcashTheme.colors.topAppBarColors orDark
+            ZcashTheme.colors.topAppBarColors.copyColors(
+                containerColor = Color.Transparent
+            ),
     )
 }

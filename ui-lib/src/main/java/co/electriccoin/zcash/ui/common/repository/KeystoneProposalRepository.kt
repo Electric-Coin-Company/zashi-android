@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedE
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import com.keystone.sdk.KeystoneSDK
+import com.keystone.sdk.KeystoneZcashSDK
 import com.sparrowwallet.hummingbird.UR
 import com.sparrowwallet.hummingbird.UREncoder
 import kotlinx.coroutines.CoroutineScope
@@ -82,8 +83,9 @@ class KeystoneProposalRepositoryImpl(
     private var proposalPczt: Pczt? = null
     private var pcztWithSignatures: Pczt? = null
 
-    private val keystoneSDK = KeystoneSDK()
-    private val keystoneZcashSDK = keystoneSDK.zcash
+    private val keystoneSDK: KeystoneSDK by lazy { KeystoneSDK() }
+    private val keystoneZcashSDK: KeystoneZcashSDK
+        get() = keystoneSDK.zcash
     private var pcztWithProofsJob: Job? = null
     private var extractPCZTJob: Job? = null
 
