@@ -1,17 +1,20 @@
 package co.electriccoin.zcash.di
 
+import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
-import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
+import co.electriccoin.zcash.ui.common.viewmodel.OldHomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.SelectRecipientViewModel
 import co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel.AdvancedSettingsViewModel
+import co.electriccoin.zcash.ui.screen.balances.BalanceViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
+import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
+import co.electriccoin.zcash.ui.screen.home.HomeViewModel
 import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
@@ -20,7 +23,7 @@ import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
 import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
-import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
+import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
@@ -53,7 +56,7 @@ val viewModelModule =
     module {
         viewModelOf(::WalletViewModel)
         viewModelOf(::AuthenticationViewModel)
-        viewModelOf(::HomeViewModel)
+        viewModelOf(::OldHomeViewModel)
         viewModelOf(::OnboardingViewModel)
         viewModelOf(::StorageCheckViewModel)
         viewModelOf(::RestoreViewModel)
@@ -78,17 +81,30 @@ val viewModelModule =
         viewModelOf(::ReceiveViewModel)
         viewModelOf(::QrCodeViewModel)
         viewModelOf(::RequestViewModel)
-        viewModelOf(::IntegrationsViewModel)
-        viewModel { (args: ScanNavigationArgs) ->
+        viewModel { (args: Scan) ->
             ScanViewModel(
                 args = args,
                 getSynchronizer = get(),
                 zip321ParseUriValidationUseCase = get(),
+                onAddressScanned = get(),
+                zip321Scanned = get()
             )
         }
         viewModelOf(::ScanKeystoneSignInRequestViewModel)
         viewModelOf(::ScanKeystonePCZTViewModel)
-        viewModelOf(::IntegrationsViewModel)
+        viewModel { (isDialog: Boolean) ->
+            IntegrationsViewModel(
+                isDialog = isDialog,
+                getZcashCurrency = get(),
+                isFlexaAvailableUseCase = get(),
+                isCoinbaseAvailable = get(),
+                observeWalletAccounts = get(),
+                navigationRouter = get(),
+                navigateToCoinbase = get(),
+                getWalletRestoringState = get()
+            )
+        }
+        viewModelOf(::FlexaViewModel)
         viewModelOf(::SendViewModel)
         viewModel { (args: SeedNavigationArgs) ->
             SeedViewModel(
@@ -100,7 +116,7 @@ val viewModelModule =
         viewModelOf(::FeedbackViewModel)
         viewModelOf(::SignKeystoneTransactionViewModel)
         viewModelOf(::AccountListViewModel)
-        viewModelOf(::ZashiMainTopAppBarViewModel)
+        viewModelOf(::ZashiTopAppBarViewModel)
         viewModel { (args: SelectKeystoneAccount) ->
             SelectKeystoneAccountViewModel(
                 args = args,
@@ -138,4 +154,6 @@ val viewModelModule =
             )
         }
         viewModelOf(::TaxExportViewModel)
+        viewModelOf(::BalanceViewModel)
+        viewModelOf(::HomeViewModel)
     }

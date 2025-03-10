@@ -32,7 +32,7 @@ fun StyledExchangeLabel(
             if (!state.isStale && state.currencyConversion != null) {
                 Text(
                     modifier = modifier,
-                    text = createExchangeRateText(state, isHideBalances, hiddenBalancePlaceholder, zatoshi),
+                    text = createExchangeRateText(state, hiddenBalancePlaceholder, zatoshi, isHideBalances),
                     maxLines = 1,
                     color = textColor,
                     style = style,

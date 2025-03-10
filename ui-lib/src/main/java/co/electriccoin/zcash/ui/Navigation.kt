@@ -4,12 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.NavType
@@ -22,17 +22,12 @@ import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
-import co.electriccoin.zcash.ui.NavigationArguments.MULTIPLE_SUBMISSION_CLEAR_FORM
-import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_RECIPIENT_ADDRESS
-import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_ZIP_321_URI
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
 import co.electriccoin.zcash.ui.NavigationTargets.EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
-import co.electriccoin.zcash.ui.NavigationTargets.HOME
-import co.electriccoin.zcash.ui.NavigationTargets.INTEGRATIONS
 import co.electriccoin.zcash.ui.NavigationTargets.NOT_ENOUGH_SPACE
 import co.electriccoin.zcash.ui.NavigationTargets.QR_CODE
 import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
@@ -42,16 +37,13 @@ import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS_EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
-import co.electriccoin.zcash.ui.common.model.SerializableAddress
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.provider.isInForeground
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
-import co.electriccoin.zcash.ui.screen.ExternalUrl
 import co.electriccoin.zcash.ui.screen.about.WrapAbout
-import co.electriccoin.zcash.ui.screen.about.util.WebBrowserUtil
 import co.electriccoin.zcash.ui.screen.accountlist.AccountList
 import co.electriccoin.zcash.ui.screen.accountlist.AndroidAccountList
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
@@ -72,14 +64,21 @@ import co.electriccoin.zcash.ui.screen.exchangerate.optin.AndroidExchangeRateOpt
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.AndroidSettingsExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
-import co.electriccoin.zcash.ui.screen.home.WrapHome
-import co.electriccoin.zcash.ui.screen.integrations.WrapIntegrations
+import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
+import co.electriccoin.zcash.ui.screen.home.AndroidHome
+import co.electriccoin.zcash.ui.screen.home.Home
+import co.electriccoin.zcash.ui.screen.integrations.AndroidDialogIntegrations
+import co.electriccoin.zcash.ui.screen.integrations.AndroidIntegrations
+import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
+import co.electriccoin.zcash.ui.screen.integrations.Integrations
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
+import co.electriccoin.zcash.ui.screen.receive.AndroidReceive
+import co.electriccoin.zcash.ui.screen.receive.Receive
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
-import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
+import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneSignInRequest
@@ -89,7 +88,8 @@ import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
 import co.electriccoin.zcash.ui.screen.seed.WrapSeed
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.AndroidSelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
-import co.electriccoin.zcash.ui.screen.send.model.SendArguments
+import co.electriccoin.zcash.ui.screen.send.Send
+import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
@@ -110,8 +110,8 @@ import co.electriccoin.zcash.ui.screen.whatsnew.WrapWhatsNew
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import org.koin.android.ext.android.inject
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 // TODO [#1297]: Consider: Navigation passing complex data arguments different way
@@ -120,6 +120,8 @@ import org.koin.compose.koinInject
 @Suppress("LongMethod", "CyclomaticComplexMethod")
 internal fun MainActivity.Navigation() {
     val navController = LocalNavController.current
+    val flexaViewModel = koinViewModel<FlexaViewModel>()
+    val navigationRouter = koinInject<NavigationRouter>()
 
     // Helper properties for triggering the system security UI from callbacks
     val (exportPrivateDataAuthentication, setExportPrivateDataAuthentication) =
@@ -128,69 +130,25 @@ internal fun MainActivity.Navigation() {
         rememberSaveable { mutableStateOf(false) }
     val (deleteWalletAuthentication, setDeleteWalletAuthentication) =
         rememberSaveable { mutableStateOf(false) }
-    val navigationRouter = koinInject<NavigationRouter>()
+
+    val navigator: Navigator = remember { NavigatorImpl(this@Navigation, navController, flexaViewModel) }
 
     LaunchedEffect(Unit) {
-        navigationRouter.observe().collect {
-            when (it) {
-                is NavigationCommand.Forward ->
-                    if (it.route is ExternalUrl) {
-                        WebBrowserUtil.startActivity(this@Navigation, it.route.url)
-                    } else {
-                        navController.executeNavigation(route = it.route)
-                    }
-                is NavigationCommand.Replace ->
-                    if (it.route is ExternalUrl) {
-                        navController.popBackStack()
-                        WebBrowserUtil.startActivity(this@Navigation, it.route.url)
-                    } else {
-                        navController.executeNavigation(route = it.route) {
-                            popUpTo(navController.currentBackStackEntry?.destination?.id ?: 0) {
-                                inclusive = true
-                            }
-                        }
-                    }
-                is NavigationCommand.ReplaceAll ->
-                    if (it.route is ExternalUrl) {
-                        navController.popBackStack(
-                            route = navController.graph.startDestinationId,
-                            inclusive = false
-                        )
-                        WebBrowserUtil.startActivity(this@Navigation, it.route.url)
-                    } else {
-                        navController.executeNavigation(route = it.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = false
-                            }
-                        }
-                    }
-                is NavigationCommand.NewRoot ->
-                    navController.executeNavigation(route = it.route) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            inclusive = true
-                        }
-                    }
-                NavigationCommand.Back -> navController.popBackStack()
-
-                NavigationCommand.BackToRoot ->
-                    navController.popBackStack(
-                        destinationId = navController.graph.startDestinationId,
-                        inclusive = false
-                    )
-            }
+        navigationRouter.observePipeline().collect {
+            navigator.executeCommand(it)
         }
     }
 
     NavHost(
         navController = navController,
-        startDestination = HOME,
+        startDestination = Home,
         enterTransition = { enterTransition() },
         exitTransition = { exitTransition() },
         popEnterTransition = { popEnterTransition() },
         popExitTransition = { popExitTransition() }
     ) {
-        composable(HOME) { backStack ->
-            NavigationHome(navController, backStack)
+        composable<Home> {
+            NavigationHome(navController)
         }
         composable(SETTINGS) {
             WrapSettings()
@@ -287,8 +245,11 @@ internal fun MainActivity.Navigation() {
         composable(WHATS_NEW) {
             WrapWhatsNew()
         }
-        composable(INTEGRATIONS) {
-            WrapIntegrations()
+        composable<Integrations> {
+            AndroidIntegrations()
+        }
+        dialog<DialogIntegrations> {
+            AndroidDialogIntegrations()
         }
         composable(EXCHANGE_RATE_OPT_IN) {
             AndroidExchangeRateOptIn()
@@ -315,18 +276,18 @@ internal fun MainActivity.Navigation() {
             AndroidAccountList()
         }
         composable(
-            route = ScanNavigationArgs.ROUTE,
+            route = Scan.ROUTE,
             arguments =
                 listOf(
-                    navArgument(ScanNavigationArgs.KEY) {
-                        type = NavType.EnumType(ScanNavigationArgs::class.java)
-                        defaultValue = ScanNavigationArgs.DEFAULT
+                    navArgument(Scan.KEY) {
+                        type = NavType.EnumType(Scan::class.java)
+                        defaultValue = Scan.SEND
                     }
                 )
         ) { backStackEntry ->
             val mode =
                 backStackEntry.arguments
-                    ?.getSerializableCompat<ScanNavigationArgs>(ScanNavigationArgs.KEY) ?: ScanNavigationArgs.DEFAULT
+                    ?.getSerializableCompat<Scan>(Scan.KEY) ?: Scan.SEND
 
             WrapScanValidator(args = mode)
         }
@@ -438,6 +399,12 @@ internal fun MainActivity.Navigation() {
         composable<TaxExport> {
             AndroidTaxExport()
         }
+        composable<Receive> {
+            AndroidReceive()
+        }
+        composable<Send> {
+            WrapSend(it.toRoute())
+        }
     }
 }
 
@@ -445,30 +412,10 @@ internal fun MainActivity.Navigation() {
  * This is the Home screens sub-navigation. We could consider creating a separate sub-navigation graph.
  */
 @Composable
-private fun MainActivity.NavigationHome(
-    navController: NavHostController,
-    backStack: NavBackStackEntry
-) {
+private fun MainActivity.NavigationHome(navController: NavHostController) {
     val applicationStateProvider: ApplicationStateProvider by inject()
 
-    WrapHome(
-        goScan = { navController.navigateJustOnce(ScanNavigationArgs(ScanNavigationArgs.DEFAULT)) },
-        sendArguments =
-            SendArguments(
-                recipientAddress =
-                    backStack.savedStateHandle.get<String>(SEND_SCAN_RECIPIENT_ADDRESS)?.let {
-                        Json.decodeFromString<SerializableAddress>(it).toRecipient()
-                    },
-                zip321Uri = backStack.savedStateHandle.get<String>(SEND_SCAN_ZIP_321_URI),
-                clearForm = backStack.savedStateHandle.get<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM) ?: false
-            ).also {
-                // Remove Send screen arguments passed from the Scan or MultipleSubmissionFailure screens if
-                // some exist after we use them
-                backStack.savedStateHandle.remove<String>(SEND_SCAN_RECIPIENT_ADDRESS)
-                backStack.savedStateHandle.remove<String>(SEND_SCAN_ZIP_321_URI)
-                backStack.savedStateHandle.remove<Boolean>(MULTIPLE_SUBMISSION_CLEAR_FORM)
-            },
-    )
+    AndroidHome()
 
     val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle()
 
@@ -560,25 +507,6 @@ fun NavHostController.navigateJustOnce(
     }
 }
 
-private fun NavHostController.executeNavigation(
-    route: Any,
-    builder: (NavOptionsBuilder.() -> Unit)? = null
-) {
-    if (route is String) {
-        if (builder == null) {
-            navigate(route)
-        } else {
-            navigate(route, builder)
-        }
-    } else {
-        if (builder == null) {
-            navigate(route)
-        } else {
-            navigate(route, builder)
-        }
-    }
-}
-
 /**
  * Pops up the current screen from the back stack. Parameter currentRouteToBePopped is meant to be
  * set only to the current screen so we can easily debounce multiple screen popping from the back stack.
@@ -592,21 +520,13 @@ fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: String) {
     popBackStack()
 }
 
-object NavigationArguments {
-    const val SEND_SCAN_RECIPIENT_ADDRESS = "send_scan_recipient_address"
-    const val SEND_SCAN_ZIP_321_URI = "send_scan_zip_321_uri"
-    const val MULTIPLE_SUBMISSION_CLEAR_FORM = "multiple_submission_clear_form"
-}
-
 object NavigationTargets {
     const val ABOUT = "about"
     const val ADVANCED_SETTINGS = "advanced_settings"
     const val DELETE_WALLET = "delete_wallet"
     const val EXCHANGE_RATE_OPT_IN = "exchange_rate_opt_in"
     const val EXPORT_PRIVATE_DATA = "export_private_data"
-    const val HOME = "home"
     const val CHOOSE_SERVER = "choose_server"
-    const val INTEGRATIONS = "integrations"
     const val NOT_ENOUGH_SPACE = "not_enough_space"
     const val QR_CODE = "qr_code"
     const val REQUEST = "request"

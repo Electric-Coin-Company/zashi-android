@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="home_tab_account">Account</string>
-    <string name="home_tab_send">Send</string>
-    <string name="home_tab_receive">Receive</string>
-    <string name="home_tab_balances">Balances</string>
-</resources>

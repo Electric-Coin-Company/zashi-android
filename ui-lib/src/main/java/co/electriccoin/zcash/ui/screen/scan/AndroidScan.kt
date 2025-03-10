@@ -3,21 +3,17 @@ package co.electriccoin.zcash.ui.screen.scan
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
-import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_RECIPIENT_ADDRESS
-import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_ZIP_321_URI
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.popBackStackJustOnce
-import co.electriccoin.zcash.ui.screen.scan.model.ScanResultState
 import co.electriccoin.zcash.ui.screen.scan.view.Scan
 import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
 import co.electriccoin.zcash.ui.util.SettingsUtil
@@ -26,7 +22,7 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun WrapScanValidator(args: ScanNavigationArgs) {
+internal fun WrapScanValidator(args: Scan) {
     val navController = LocalNavController.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -38,26 +34,7 @@ internal fun WrapScanValidator(args: ScanNavigationArgs) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     BackHandler {
-        navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE)
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.navigateBack.collect { scanResult ->
-            navController.previousBackStackEntry?.savedStateHandle?.apply {
-                when (scanResult) {
-                    is ScanResultState.Address -> set(SEND_SCAN_RECIPIENT_ADDRESS, scanResult.address)
-                    is ScanResultState.Zip321Uri -> set(SEND_SCAN_ZIP_321_URI, scanResult.zip321Uri)
-                }
-            }
-            navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE)
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.navigateCommand.collect {
-            navController.popBackStack()
-            navController.navigate(it)
-        }
+        navController.popBackStackJustOnce(Scan.ROUTE)
     }
 
     if (synchronizer == null) {
@@ -69,7 +46,7 @@ internal fun WrapScanValidator(args: ScanNavigationArgs) {
         Scan(
             snackbarHostState = snackbarHostState,
             validationResult = state,
-            onBack = { navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE) },
+            onBack = { navController.popBackStackJustOnce(Scan.ROUTE) },
             onScanned = {
                 viewModel.onScanned(it)
             },
@@ -95,8 +72,9 @@ internal fun WrapScanValidator(args: ScanNavigationArgs) {
     }
 }
 
-enum class ScanNavigationArgs {
-    DEFAULT,
+enum class Scan {
+    HOMEPAGE,
+    SEND,
     ADDRESS_BOOK;
 
     companion object {
@@ -104,6 +82,6 @@ enum class ScanNavigationArgs {
         const val KEY = "mode"
         const val ROUTE = "$PATH/{$KEY}"
 
-        operator fun invoke(mode: ScanNavigationArgs) = "$PATH/${mode.name}"
+        operator fun invoke(mode: Scan) = "$PATH/${mode.name}"
     }
 }
