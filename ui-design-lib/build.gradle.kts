@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     kotlin("android")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("secant.android-build-conventions")
     id("secant.jacoco-conventions")
 }
