@@ -11,30 +11,31 @@ local.properties
 *.hprof
 
 # IDE-specific files
-.idea/caches
-.idea/compiler.xml
-.idea/dictionaries/
-.idea/gradle.xml
-.idea/libraries/
-.idea/modules.xml
-.idea/tasks.xml
-.idea/workspace.xml
-.idea/deploymentTargetSelector.xml
-.idea/migrations.xml
-.idea/studiobot.xml
-.idea/material_theme_project_new.xml
-.idea/csv-editor.xml
-.idea/vcs.xml
-.idea/deploymentTargetDropDown.xml
+.idea/AndroidProjectSystem.xml
+.idea/androidTestResultsUserPreferences.xml
+.idea/appInsightsSettings.xml
 .idea/artifacts
 .idea/assetWizardSettings.xml
+.idea/caches
+.idea/compiler.xml
+.idea/csv-editor.xml
+.idea/deploymentTargetDropDown.xml
+.idea/deploymentTargetSelector.xml
+.idea/dictionaries/
+.idea/gradle.xml
 .idea/inspectionProfiles/Project_Default.xml
-.idea/androidTestResultsUserPreferences.xml
 .idea/kotlinc.xml
+.idea/libraries/
+.idea/material_theme_project_new.xml
+.idea/migrations.xml
+.idea/modules.xml
 .idea/other.xml
-.idea/appInsightsSettings.xml
+.idea/project.prompts.xml
 .idea/runConfigurations.xml
-.idea/AndroidProjectSystem.xml
+.idea/studiobot.xml
+.idea/tasks.xml
+.idea/vcs.xml
+.idea/workspace.xml
 
 # Other configuration files
 google-services.json
