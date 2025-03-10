@@ -42,9 +42,9 @@ fun ZashiTopAppbar(
             Spacer(Modifier.width(20.dp))
         },
         colors =
-        ZcashTheme.colors.topAppBarColors orDark
-            ZcashTheme.colors.topAppBarColors.copyColors(
-                containerColor = Color.Transparent
-            ),
+            ZcashTheme.colors.topAppBarColors orDark
+                ZcashTheme.colors.topAppBarColors.copyColors(
+                    containerColor = Color.Transparent
+                ),
     )
 }

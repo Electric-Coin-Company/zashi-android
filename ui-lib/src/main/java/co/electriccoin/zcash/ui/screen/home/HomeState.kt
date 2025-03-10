@@ -8,3 +8,7 @@ data class HomeState(
     val scanButton: BigIconButtonState,
     val moreButton: BigIconButtonState,
 )
+
+data class HomeRestoreDialogState(
+    val onClick: () -> Unit
+)

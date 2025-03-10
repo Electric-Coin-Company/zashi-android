@@ -77,11 +77,11 @@ private fun Content(
 
             BalanceWidget(
                 modifier =
-                Modifier
-                    .padding(
-                        start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                        end = ZcashTheme.dimens.screenHorizontalSpacingRegular,
-                    ),
+                    Modifier
+                        .padding(
+                            start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                            end = ZcashTheme.dimens.screenHorizontalSpacingRegular,
+                        ),
                 balanceState = balanceState,
             )
 
@@ -92,15 +92,17 @@ private fun Content(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 ZashiBigIconButton(
-                    modifier = Modifier
-                        .weight(1f)
-                        .testTag(HomeTags.RECEIVE),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .testTag(HomeTags.RECEIVE),
                     state = state.receiveButton,
                 )
                 ZashiBigIconButton(
-                    modifier = Modifier
-                        .weight(1f)
-                        .testTag(HomeTags.SEND),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .testTag(HomeTags.SEND),
                     state = state.sendButton,
                 )
                 ZashiBigIconButton(
@@ -117,9 +119,9 @@ private fun Content(
 
             LazyColumn(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
             ) {
                 createTransactionHistoryWidgets(
                     state = transactionHistoryWidgetState
@@ -137,9 +139,9 @@ private fun Content(
                 StyledExchangeOptIn(
                     modifier = Modifier.padding(horizontal = 24.dp),
                     state =
-                    (balanceState.exchangeRate as? ExchangeRateState.OptIn) ?: ExchangeRateState.OptIn(
-                        onDismissClick = {},
-                    )
+                        (balanceState.exchangeRate as? ExchangeRateState.OptIn) ?: ExchangeRateState.OptIn(
+                            onDismissClick = {},
+                        )
                 )
             }
         }
@@ -155,31 +157,31 @@ private fun Preview() =
             balanceState = BalanceStateFixture.new(),
             transactionWidgetState = TransactionHistoryWidgetStateFixture.new(),
             state =
-            HomeState(
-                receiveButton =
-                BigIconButtonState(
-                    text = stringRes("Text"),
-                    icon = R.drawable.ic_warning,
-                    onClick = {}
-                ),
-                sendButton =
-                BigIconButtonState(
-                    text = stringRes("Text"),
-                    icon = R.drawable.ic_warning,
-                    onClick = {}
-                ),
-                scanButton =
-                BigIconButtonState(
-                    text = stringRes("Text"),
-                    icon = R.drawable.ic_warning,
-                    onClick = {}
-                ),
-                moreButton =
-                BigIconButtonState(
-                    text = stringRes("Text"),
-                    icon = R.drawable.ic_warning,
-                    onClick = {}
-                ),
-            )
+                HomeState(
+                    receiveButton =
+                        BigIconButtonState(
+                            text = stringRes("Text"),
+                            icon = R.drawable.ic_warning,
+                            onClick = {}
+                        ),
+                    sendButton =
+                        BigIconButtonState(
+                            text = stringRes("Text"),
+                            icon = R.drawable.ic_warning,
+                            onClick = {}
+                        ),
+                    scanButton =
+                        BigIconButtonState(
+                            text = stringRes("Text"),
+                            icon = R.drawable.ic_warning,
+                            onClick = {}
+                        ),
+                    moreButton =
+                        BigIconButtonState(
+                            text = stringRes("Text"),
+                            icon = R.drawable.ic_warning,
+                            onClick = {}
+                        ),
+                )
         )
     }

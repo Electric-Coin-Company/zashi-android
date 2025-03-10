@@ -38,6 +38,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiSpendingKeyUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
@@ -176,4 +177,5 @@ val useCaseModule =
         factoryOf(::ExportTaxUseCase)
         factoryOf(::NavigateToTaxExportUseCase)
         factoryOf(::CreateFlexaTransactionUseCase)
+        factoryOf(::IsRestoreSuccessDialogVisibleUseCase)
     }

@@ -186,9 +186,9 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         composeTestRule.onNodeWithText(
             text =
-            resContext.getString(
-                R.string.onboarding_import_existing_wallet
-            ),
+                resContext.getString(
+                    R.string.onboarding_import_existing_wallet
+                ),
             ignoreCase = true
         ).also {
             it.performScrollTo()
@@ -510,7 +510,8 @@ private fun sendZecScreenshots(
 
     composeTestRule.onNode(
         hasText(
-            resContext.getString(R.string.send_create), ignoreCase = true
+            resContext.getString(R.string.send_create),
+            ignoreCase = true
         )
     ).also {
         it.assertExists()
