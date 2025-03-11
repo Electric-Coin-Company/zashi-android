@@ -205,8 +205,7 @@ private fun SeedSecret(
                                     tooltipState.show()
                                 }
                             }
-                        }
-                        .padding(
+                        }.padding(
                             horizontal = ZashiDimensions.Spacing.spacingXs,
                             vertical = ZashiDimensions.Spacing.spacingSm
                         )
@@ -337,15 +336,14 @@ private fun SecretContent(state: SeedSecretState) {
 private fun Modifier.blurCompat(
     radius: Dp,
     max: Dp
-): Modifier {
-    return if (AndroidApiVersion.isAtLeastS) {
+): Modifier =
+    if (AndroidApiVersion.isAtLeastS) {
         this.blur(radius)
     } else {
         val progression = 1 - (radius.value / max.value)
         this
             .alpha(progression)
     }
-}
 
 @Composable
 private fun SecretBirthdayContent(

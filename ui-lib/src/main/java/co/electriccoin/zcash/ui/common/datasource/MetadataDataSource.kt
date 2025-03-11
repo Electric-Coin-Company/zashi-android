@@ -167,8 +167,8 @@ class MetadataDataSourceImpl(
         txId: String,
         key: MetadataKey,
         transform: (AnnotationMetadata) -> AnnotationMetadata
-    ): Metadata {
-        return updateMetadata(
+    ): Metadata =
+        updateMetadata(
             key = key,
             transform = { metadata ->
                 metadata.copy(
@@ -184,14 +184,13 @@ class MetadataDataSourceImpl(
                 )
             }
         )
-    }
 
     private suspend fun updateMetadataBookmark(
         txId: String,
         key: MetadataKey,
         transform: (BookmarkMetadata) -> BookmarkMetadata
-    ): Metadata {
-        return updateMetadata(
+    ): Metadata =
+        updateMetadata(
             key = key,
             transform = { metadata ->
                 metadata.copy(
@@ -207,13 +206,12 @@ class MetadataDataSourceImpl(
                 )
             }
         )
-    }
 
     private suspend fun updateMetadata(
         key: MetadataKey,
         transform: (AccountMetadata) -> AccountMetadata
-    ): Metadata {
-        return withContext(Dispatchers.IO) {
+    ): Metadata =
+        withContext(Dispatchers.IO) {
             val metadata = getMetadataInternal(key)
 
             val accountMetadata = metadata.accountMetadata
@@ -228,7 +226,6 @@ class MetadataDataSourceImpl(
 
             updatedMetadata
         }
-    }
 }
 
 private fun defaultAccountMetadata() =
@@ -258,11 +255,11 @@ private fun <T : Any> List<T>.replaceOrAdd(
 ): List<T> {
     val index = this.indexOfFirst(predicate)
     return if (index != -1) {
-        this.toMutableList()
+        this
+            .toMutableList()
             .apply {
                 set(index, transform(this[index]))
-            }
-            .toList()
+            }.toList()
     } else {
         this + transform(null)
     }

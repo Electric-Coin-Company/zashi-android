@@ -472,7 +472,11 @@ private fun MainActivity.NavigationHome(
 
     val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle()
 
-    val sdkStatus = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value?.status
+    val sdkStatus =
+        walletViewModel.currentWalletSnapshot
+            .collectAsStateWithLifecycle()
+            .value
+            ?.status
 
     val currentAppState = applicationStateProvider.state.collectAsStateWithLifecycle().value
 

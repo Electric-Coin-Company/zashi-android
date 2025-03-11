@@ -17,11 +17,13 @@ class ValidateContactAddressUseCase(
         val result = walletRepository.getSynchronizer().validateAddress(address)
         return when {
             result.isNotValid -> Result.Invalid
-            addressBookRepository.addressBook.filterNotNull().first().contacts
+            addressBookRepository.addressBook
+                .filterNotNull()
+                .first()
+                .contacts
                 .filter {
                     if (exclude == null) true else it != exclude
-                }
-                .any { it.address == address.trim() } -> Result.NotUnique
+                }.any { it.address == address.trim() } -> Result.NotUnique
 
             else -> Result.Valid
         }

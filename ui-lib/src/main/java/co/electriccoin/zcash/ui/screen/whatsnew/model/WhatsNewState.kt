@@ -32,4 +32,7 @@ data class WhatsNewState(
     }
 }
 
-data class WhatsNewSectionState(val title: StringResource, val content: StringResource)
+data class WhatsNewSectionState(
+    val title: StringResource,
+    val content: StringResource
+)

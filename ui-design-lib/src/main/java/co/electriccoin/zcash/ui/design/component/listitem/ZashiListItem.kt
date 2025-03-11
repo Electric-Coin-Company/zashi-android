@@ -260,17 +260,13 @@ object ZashiListItemDefaults {
     fun primaryColors(
         borderColor: Color = Color.Unspecified,
         backgroundColor: Color = Color.Transparent
-    ): ZashiListItemColors {
-        return ZashiListItemColors(borderColor = borderColor, backgroundColor = backgroundColor)
-    }
+    ): ZashiListItemColors = ZashiListItemColors(borderColor = borderColor, backgroundColor = backgroundColor)
 
     @Composable
     fun secondaryColors(
         borderColor: Color = ZashiColors.Surfaces.strokeSecondary,
         backgroundColor: Color = Color.Transparent
-    ): ZashiListItemColors {
-        return ZashiListItemColors(borderColor = borderColor, backgroundColor = backgroundColor)
-    }
+    ): ZashiListItemColors = ZashiListItemColors(borderColor = borderColor, backgroundColor = backgroundColor)
 }
 
 @PreviewScreens

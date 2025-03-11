@@ -120,8 +120,7 @@ fun ChipOnSurface(
                             color = ZcashTheme.colors.layoutStrokeSecondary
                         ),
                     shape = RoundedCornerShape(size = ZcashTheme.dimens.regularRippleEffectCorner),
-                )
-                .clickable { onClick() },
+                ).clickable { onClick() },
         color = ZcashTheme.colors.primaryColor,
         shadowElevation = ZcashTheme.dimens.chipShadowElevation,
     ) {
@@ -134,8 +133,7 @@ fun ChipOnSurface(
                     .padding(
                         vertical = ZcashTheme.dimens.spacingMid,
                         horizontal = ZcashTheme.dimens.spacingDefault
-                    )
-                    .testTag(CommonTag.CHIP)
+                    ).testTag(CommonTag.CHIP)
         )
     }
 }

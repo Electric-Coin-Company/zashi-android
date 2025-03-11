@@ -43,7 +43,8 @@ import kotlin.time.toJavaDuration
 class SyncWorker(
     context: Context,
     workerParameters: WorkerParameters
-) : CoroutineWorker(context, workerParameters), KoinComponent {
+) : CoroutineWorker(context, workerParameters),
+    KoinComponent {
     private val observeSynchronizer: ObserveSynchronizerUseCase by inject()
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -59,12 +60,10 @@ class SyncWorker(
                         Twig.debug { "BG Sync: result: $it" }
                     }
                 } ?: emptyFlow()
-            }
-            .takeWhile {
+            }.takeWhile {
                 it.status != Synchronizer.Status.DISCONNECTED &&
                     it.status != Synchronizer.Status.SYNCED
-            }
-            .collect()
+            }.collect()
 
         Twig.debug { "BG Sync: terminating..." }
 
@@ -83,7 +82,8 @@ class SyncWorker(
             Twig.debug { "BG Sync: necessary trigger delay time: $targetTimeDiff" }
 
             val constraints =
-                Constraints.Builder()
+                Constraints
+                    .Builder()
                     .setRequiresStorageNotLow(true)
                     .setRequiredNetworkType(NetworkType.UNMETERED)
                     .setRequiresCharging(true)
@@ -117,11 +117,12 @@ class SyncWorker(
 
             Twig.debug { "BG Sync: calculated target time: ${targetTime.time}" }
 
-            return now.until(
-                other = targetTime.toInstant(currentTimeZone),
-                unit = DateTimeUnit.MILLISECOND,
-                timeZone = currentTimeZone
-            ).toDuration(DurationUnit.MILLISECONDS)
+            return now
+                .until(
+                    other = targetTime.toInstant(currentTimeZone),
+                    unit = DateTimeUnit.MILLISECOND,
+                    timeZone = currentTimeZone
+                ).toDuration(DurationUnit.MILLISECONDS)
         }
     }
 }

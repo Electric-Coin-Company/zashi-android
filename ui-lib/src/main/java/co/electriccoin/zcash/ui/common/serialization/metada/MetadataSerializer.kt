@@ -18,7 +18,5 @@ class MetadataSerializer {
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    fun deserialize(inputStream: InputStream): Metadata {
-        return Json.decodeFromStream(inputStream)
-    }
+    fun deserialize(inputStream: InputStream): Metadata = Json.decodeFromStream(inputStream)
 }

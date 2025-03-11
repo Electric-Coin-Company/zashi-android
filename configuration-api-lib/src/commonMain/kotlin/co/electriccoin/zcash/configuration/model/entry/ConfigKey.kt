@@ -7,7 +7,9 @@ package co.electriccoin.zcash.configuration.model.entry
  * least common denominator with some reasonable limits on what the keys can contain.
  */
 @JvmInline
-value class ConfigKey(val key: String) {
+value class ConfigKey(
+    val key: String
+) {
     init {
         requireKeyConstraints(key)
     }

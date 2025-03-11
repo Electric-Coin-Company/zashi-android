@@ -42,11 +42,11 @@ class BiometricActivity : FragmentActivity() {
             )
 
         val promptInfo =
-            BiometricPrompt.PromptInfo.Builder()
+            BiometricPrompt.PromptInfo
+                .Builder()
                 .setTitle(
                     getString(R.string.authentication_system_ui_title, getString(R.string.app_name))
-                )
-                .setSubtitle(subtitle)
+                ).setSubtitle(subtitle)
                 .setAllowedAuthenticators(biometricRepository.allowedAuthenticators)
                 .build()
 

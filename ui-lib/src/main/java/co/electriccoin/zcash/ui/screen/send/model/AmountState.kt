@@ -23,7 +23,10 @@ sealed interface AmountState {
         val zatoshi: Zatoshi
     ) : AmountState
 
-    data class Invalid(override val value: String, override val fiatValue: String) : AmountState
+    data class Invalid(
+        override val value: String,
+        override val fiatValue: String
+    ) : AmountState
 
     companion object {
         @Suppress("LongParameterList")

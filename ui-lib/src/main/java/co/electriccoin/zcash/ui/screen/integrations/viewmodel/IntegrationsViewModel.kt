@@ -157,7 +157,8 @@ class IntegrationsViewModel(
                 when (val output = result.first) {
                     is SubmitResult.Success -> {
                         Twig.debug { "Transaction successful $result" }
-                        Flexa.buildSpend()
+                        Flexa
+                            .buildSpend()
                             .transactionSent(
                                 commerceSessionId = transaction.getOrNull()?.commerceSessionId.orEmpty(),
                                 txSignature = result.second.orEmpty()
@@ -165,7 +166,8 @@ class IntegrationsViewModel(
                     }
                     is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc -> {
                         Twig.warn { "Transaction grpc failure $result" }
-                        Flexa.buildSpend()
+                        Flexa
+                            .buildSpend()
                             .transactionSent(
                                 commerceSessionId = transaction.getOrNull()?.commerceSessionId.orEmpty(),
                                 txSignature = output.result.txIdString()
@@ -212,13 +214,14 @@ class IntegrationsViewModel(
         val submitResults = mutableListOf<TransactionSubmitResult>()
 
         return runCatching {
-            synchronizer.createProposedTransactions(
-                proposal = proposal,
-                usk = spendingKey
-            ).collect { submitResult ->
-                Twig.info { "Transaction submit result: $submitResult" }
-                submitResults.add(submitResult)
-            }
+            synchronizer
+                .createProposedTransactions(
+                    proposal = proposal,
+                    usk = spendingKey
+                ).collect { submitResult ->
+                    Twig.info { "Transaction submit result: $submitResult" }
+                    submitResults.add(submitResult)
+                }
             if (submitResults.find { it is TransactionSubmitResult.Failure } != null) {
                 if (submitResults.size == 1) {
                     // The first transaction submission failed - user might just be able to re-submit the transaction
@@ -237,8 +240,10 @@ class IntegrationsViewModel(
             } else {
                 // All transaction submissions were successful
                 SubmitResult.Success(emptyList()) to
-                    submitResults.filterIsInstance<TransactionSubmitResult.Success>()
-                        .map { it.txIdString() }.firstOrNull()
+                    submitResults
+                        .filterIsInstance<TransactionSubmitResult.Success>()
+                        .map { it.txIdString() }
+                        .firstOrNull()
             }
         }.onSuccess {
             Twig.debug { "Transactions submitted successfully" }

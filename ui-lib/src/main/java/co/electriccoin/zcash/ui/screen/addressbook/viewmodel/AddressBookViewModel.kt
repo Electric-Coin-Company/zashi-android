@@ -41,17 +41,18 @@ class AddressBookViewModel(
         AddressBookState(
             isLoading = contacts == null,
             items =
-                contacts?.map { contact ->
-                    AddressBookItem.Contact(
-                        ZashiContactListItemState(
-                            icon = getContactInitials(contact),
-                            isShielded = false,
-                            name = stringRes(contact.name),
-                            address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
-                            onClick = { onContactClick(contact) }
+                contacts
+                    ?.map { contact ->
+                        AddressBookItem.Contact(
+                            ZashiContactListItemState(
+                                icon = getContactInitials(contact),
+                                isShielded = false,
+                                name = stringRes(contact.name),
+                                address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
+                                onClick = { onContactClick(contact) }
+                            )
                         )
-                    )
-                }.orEmpty(),
+                    }.orEmpty(),
             onBack = ::onBack,
             manualButton =
                 ButtonState(
@@ -72,8 +73,7 @@ class AddressBookViewModel(
                 .split(" ")
                 .mapNotNull { part ->
                     part.takeIf { it.isNotEmpty() }?.first()?.toString()
-                }
-                .take(2)
+                }.take(2)
                 .joinToString(separator = "")
         )
 

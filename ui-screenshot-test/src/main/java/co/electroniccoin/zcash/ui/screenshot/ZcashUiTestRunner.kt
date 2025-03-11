@@ -21,9 +21,7 @@ class ZcashScreenshotTestRunner : ZcashUiTestRunner() {
         cl: ClassLoader?,
         className: String?,
         context: Context?
-    ): Application {
-        return super.newApplication(cl, ZcashUiTestApplication::class.java.name, context)
-    }
+    ): Application = super.newApplication(cl, ZcashUiTestApplication::class.java.name, context)
 }
 
 class ZcashUiTestApplication : Application() {

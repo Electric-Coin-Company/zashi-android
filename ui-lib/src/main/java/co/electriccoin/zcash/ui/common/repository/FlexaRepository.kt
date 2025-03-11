@@ -118,7 +118,8 @@ class FlexaRepositoryImpl(
     )
 
     private fun String.toSha256() =
-        MessageDigest.getInstance("SHA-256")
+        MessageDigest
+            .getInstance("SHA-256")
             .digest(toByteArray())
             .fold("") { str, value -> str + "%02x".format(value) }
 }

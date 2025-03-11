@@ -131,14 +131,14 @@ class ReviewTransactionViewModel(
                     title = stringRes(R.string.send_confirmation_fee),
                     amount = transactionProposal.proposal.totalFeeRequired()
                 ),
-                transactionProposal.memo.takeIf { it.value.isNotEmpty() }
+                transactionProposal.memo
+                    .takeIf { it.value.isNotEmpty() }
                     ?.let {
                         MessageState(
                             title = stringRes(R.string.send_memo_label),
                             message = stringRes(it.value)
                         )
-                    }
-                    ?.takeIf { transactionProposal.destination !is WalletAddress.Transparent },
+                    }?.takeIf { transactionProposal.destination !is WalletAddress.Transparent },
                 MessagePlaceholderState(
                     title = stringRes(R.string.send_memo_label),
                     message = stringRes(R.string.send_transparent_memo),

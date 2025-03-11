@@ -40,7 +40,8 @@ class ConfigurationRepositoryImpl(
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override val configurationFlow: StateFlow<Configuration?> =
-        androidConfigurationProvider.getConfigurationFlow()
+        androidConfigurationProvider
+            .getConfigurationFlow()
             .stateIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -55,8 +56,7 @@ class ConfigurationRepositoryImpl(
                 !versionInfo.isTestnet &&
                     ConfigurationEntries.IS_FLEXA_AVAILABLE.getValue(it) &&
                     BuildConfig.ZCASH_FLEXA_KEY.isNotEmpty()
-            }
-            .stateIn(
+            }.stateIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = null

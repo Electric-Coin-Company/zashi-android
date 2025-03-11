@@ -116,7 +116,8 @@ fun Scan(
     onScanStateChanged: (ScanScreenState) -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     validationResult: ScanValidationState
-) = ZcashTheme(forceDarkMode = true) { // forces dark theme for this screen
+) = ZcashTheme(forceDarkMode = true) {
+    // forces dark theme for this screen
     val permissionState =
         if (LocalInspectionMode.current) {
             remember {
@@ -449,8 +450,7 @@ private fun ScanMainContent(
                             .offset(
                                 x = 0.dp,
                                 y = with(density) { framePosition.bottom.toDp() }
-                            )
-                            .padding(top = 36.dp),
+                            ).padding(top = 36.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     ImageButton(
@@ -491,8 +491,7 @@ private fun ScanMainContent(
                         bottom.linkTo(bottomItems.top)
                         width = Dimension.matchParent
                         height = Dimension.fillToConstraints
-                    }
-                    .onSizeChanged {
+                    }.onSizeChanged {
                         scanFrameLayoutSizeWindow = it
                     }
         )
@@ -507,8 +506,7 @@ private fun ScanMainContent(
                         bottom.linkTo(bottomItems.top)
                         this.height = Dimension.ratio("1:1.08") // height is 8% larger than width
                         width = Dimension.matchParent
-                    }
-                    .onSizeChanged {
+                    }.onSizeChanged {
                         scanFrameLayoutSize = it
                     },
             contentAlignment = Alignment.Center
@@ -643,7 +641,8 @@ fun ScanCameraView(
         val contentDescription = stringResource(id = R.string.scan_preview_content_description)
 
         val imageAnalysis =
-            ImageAnalysis.Builder()
+            ImageAnalysis
+                .Builder()
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
 
@@ -660,7 +659,8 @@ fun ScanCameraView(
                     }
                 previewView.contentDescription = contentDescription
                 val selector =
-                    CameraSelector.Builder()
+                    CameraSelector
+                        .Builder()
                         .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                         .build()
                 val preview =
@@ -672,12 +672,13 @@ fun ScanCameraView(
                     // We must unbind the use-cases before rebinding them
                     collectedCameraProvider.unbindAll()
                     cameraController.value =
-                        collectedCameraProvider.bindToLifecycle(
-                            lifecycleOwner,
-                            selector,
-                            preview,
-                            imageAnalysis
-                        ).cameraControl
+                        collectedCameraProvider
+                            .bindToLifecycle(
+                                lifecycleOwner,
+                                selector,
+                                preview,
+                                imageAnalysis
+                            ).cameraControl
                 }.onFailure {
                     Twig.error { "Scan QR failed in bind phase with: ${it.message}" }
                     setScanState(ScanScreenState.Failed)
@@ -691,11 +692,14 @@ fun ScanCameraView(
                     .testTag(ScanTag.CAMERA_VIEW)
         )
 
-        imageAnalysis.qrCodeFlow(
-            framePosition = framePosition,
-        ).collectAsState(initial = null).value?.let {
-            onScanned(it)
-        }
+        imageAnalysis
+            .qrCodeFlow(
+                framePosition = framePosition,
+            ).collectAsState(initial = null)
+            .value
+            ?.let {
+                onScanned(it)
+            }
     }
 }
 

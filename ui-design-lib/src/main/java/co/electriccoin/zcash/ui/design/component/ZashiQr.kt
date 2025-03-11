@@ -163,8 +163,7 @@ private fun FullscreenDialogContent(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
                     onClick = onBack
-                )
-                .padding(start = 16.dp, end = 16.dp, bottom = 64.dp)
+                ).padding(start = 16.dp, end = 16.dp, bottom = 64.dp)
     ) {
         ZashiQrInternal(
             modifier =

@@ -109,14 +109,12 @@ class MergingConfigurationProviderTest {
         }
 }
 
-private class MockConfigurationProvider(private val configuration: Configuration) : ConfigurationProvider {
-    override fun peekConfiguration(): Configuration {
-        return configuration
-    }
+private class MockConfigurationProvider(
+    private val configuration: Configuration
+) : ConfigurationProvider {
+    override fun peekConfiguration(): Configuration = configuration
 
-    override fun getConfigurationFlow(): Flow<Configuration> {
-        return flowOf(configuration)
-    }
+    override fun getConfigurationFlow(): Flow<Configuration> = flowOf(configuration)
 
     override fun hintToRefresh() {
         // no-op

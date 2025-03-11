@@ -36,4 +36,6 @@ private suspend fun getFirebaseAppContainer(context: Context): FirebaseAppContai
         FirebaseAppContainer(firebaseApp)
     }
 
-private class FirebaseAppContainer(val firebaseApp: FirebaseApp?)
+private class FirebaseAppContainer(
+    val firebaseApp: FirebaseApp?
+)

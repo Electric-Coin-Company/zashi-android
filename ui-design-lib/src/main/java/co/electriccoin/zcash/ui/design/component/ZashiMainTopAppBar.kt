@@ -83,8 +83,7 @@ private fun AccountSwitch(state: AccountSwitchState) {
                     onClick =
                         state
                             .onAccountTypeClick
-                )
-                .padding(start = 4.dp),
+                ).padding(start = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(

@@ -20,13 +20,14 @@ class SendEmailUseCase(
         message: StringResource
     ) {
         val intent =
-            EmailUtil.newMailActivityIntent(
-                recipientAddress = address.getString(context),
-                messageSubject = subject.getString(context),
-                messageBody = message.getString(context)
-            ).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
+            EmailUtil
+                .newMailActivityIntent(
+                    recipientAddress = address.getString(context),
+                    messageSubject = subject.getString(context),
+                    messageBody = message.getString(context)
+                ).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
 
         context.startActivity(intent)
     }
@@ -53,21 +54,22 @@ class SendEmailUseCase(
             }
 
         val mailIntent =
-            EmailUtil.newMailActivityIntent(
-                context.getString(R.string.support_email_address),
-                context.getString(R.string.app_name),
-                fullMessage
-            ).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
+            EmailUtil
+                .newMailActivityIntent(
+                    context.getString(R.string.support_email_address),
+                    context.getString(R.string.app_name),
+                    fullMessage
+                ).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
 
         runCatching {
             context.startActivity(mailIntent)
         }
     }
 
-    private fun List<TransactionSubmitResult>.toSupportString(context: Context): String {
-        return buildString {
+    private fun List<TransactionSubmitResult>.toSupportString(context: Context): String =
+        buildString {
             appendLine(context.getString(R.string.send_confirmation_multiple_report_statuses))
 
             this@toSupportString.forEachIndexed { index, result ->
@@ -104,5 +106,4 @@ class SendEmailUseCase(
                 }
             }
         }
-    }
 }

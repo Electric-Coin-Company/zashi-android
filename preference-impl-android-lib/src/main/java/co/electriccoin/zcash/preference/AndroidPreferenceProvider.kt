@@ -172,9 +172,11 @@ class AndroidPreferenceProvider private constructor(
             val sharedPreferences =
                 withContext(singleThreadedDispatcher) {
                     val mainKey =
-                        MasterKey.Builder(context).apply {
-                            setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-                        }.build()
+                        MasterKey
+                            .Builder(context)
+                            .apply {
+                                setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                            }.build()
 
                     EncryptedSharedPreferences.create(
                         context,

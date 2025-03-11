@@ -43,18 +43,16 @@ class AddressBookProviderImpl(
     override fun readAddressBookFromFile(
         file: File,
         addressBookKey: AddressBookKey
-    ): AddressBook {
-        return file.inputStream().use { stream ->
+    ): AddressBook =
+        file.inputStream().use { stream ->
             addressBookEncryptor.decrypt(
                 key = addressBookKey,
                 inputStream = stream
             )
         }
-    }
 
-    override fun readLegacyUnencryptedAddressBookFromFile(file: File): AddressBook {
-        return file.inputStream().use { stream ->
+    override fun readLegacyUnencryptedAddressBookFromFile(file: File): AddressBook =
+        file.inputStream().use { stream ->
             addressBookSerializer.deserializeAddressBook(stream)
         }
-    }
 }

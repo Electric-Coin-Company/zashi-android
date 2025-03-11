@@ -104,8 +104,7 @@ private fun PagerTab(
                     .fillMaxSize()
                     .background(
                         if (selected) Color.Transparent else ZcashTheme.colors.layoutStroke
-                    )
-                    .padding(vertical = ZcashTheme.dimens.spacingMid, horizontal = ZcashTheme.dimens.spacingXtiny),
+                    ).padding(vertical = ZcashTheme.dimens.spacingMid, horizontal = ZcashTheme.dimens.spacingXtiny),
             contentAlignment = Alignment.Center,
         ) {
             Text(

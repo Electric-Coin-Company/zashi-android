@@ -556,8 +556,7 @@ private fun SeedGridWithText(
                                 width = ZcashTheme.dimens.layoutStroke,
                                 color = ZcashTheme.colors.layoutStroke
                             )
-                    )
-                    .fillMaxWidth()
+                    ).fillMaxWidth()
                     .defaultMinSize(minHeight = ZcashTheme.dimens.textFieldSeedPanelDefaultHeight)
                     .then(modifier)
                     .testTag(RestoreTag.CHIP_LAYOUT)
@@ -829,9 +828,10 @@ private fun RestoreBirthdayMainContent(
 
         // Empty birthday value is a valid birthday height too, thus run validation only in case of non-empty heights.
         val isBirthdayValid =
-            height.isEmpty() || height.toLongOrNull()?.let {
-                it >= zcashNetwork.saplingActivationHeight.value
-            } ?: false
+            height.isEmpty() ||
+                height.toLongOrNull()?.let {
+                    it >= zcashNetwork.saplingActivationHeight.value
+                } ?: false
 
         val isEmptyBirthday = height.isEmpty()
 

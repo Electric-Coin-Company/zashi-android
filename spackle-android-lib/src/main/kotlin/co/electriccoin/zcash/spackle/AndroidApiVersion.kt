@@ -13,9 +13,7 @@ object AndroidApiVersion {
     @ChecksSdkIntAtLeast(parameter = 0)
     private fun isAtLeast(
         @IntRange(from = Build.VERSION_CODES.BASE.toLong()) sdk: Int
-    ): Boolean {
-        return Build.VERSION.SDK_INT >= sdk
-    }
+    ): Boolean = Build.VERSION.SDK_INT >= sdk
 
     /**
      * @param sdk SDK version number to test against the current environment.
@@ -23,9 +21,7 @@ object AndroidApiVersion {
      */
     private fun isExactly(
         @IntRange(from = Build.VERSION_CODES.BASE.toLong()) sdk: Int
-    ): Boolean {
-        return Build.VERSION.SDK_INT == sdk
-    }
+    ): Boolean = Build.VERSION.SDK_INT == sdk
 
     val isExactlyO = isExactly(Build.VERSION_CODES.O_MR1)
 

@@ -22,7 +22,11 @@ data class ZashiAccountListItemState(
 )
 
 sealed interface AccountListItem {
-    data class Account(val state: ZashiAccountListItemState) : AccountListItem
+    data class Account(
+        val state: ZashiAccountListItemState
+    ) : AccountListItem
 
-    data class Other(val state: ZashiListItemState) : AccountListItem
+    data class Other(
+        val state: ZashiListItemState
+    ) : AccountListItem
 }

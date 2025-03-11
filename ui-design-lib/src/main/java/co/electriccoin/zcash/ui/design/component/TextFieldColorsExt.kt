@@ -32,6 +32,5 @@ internal val TextFieldColors.selectionColors: TextSelectionColors
     @Composable get() = textSelectionColors
 
 @Composable
-internal fun TextFieldColors.cursorColor(isError: Boolean): State<Color> {
-    return rememberUpdatedState(if (isError) errorCursorColor else cursorColor)
-}
+internal fun TextFieldColors.cursorColor(isError: Boolean): State<Color> =
+    rememberUpdatedState(if (isError) errorCursorColor else cursorColor)

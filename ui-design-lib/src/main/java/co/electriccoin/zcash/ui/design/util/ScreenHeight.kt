@@ -62,15 +62,13 @@ data class ScreenHeight(
     val systemStatusBarHeight: Dp,
     val systemNavigationBarHeight: Dp
 ) {
-    fun overallScreenHeight(): Dp {
-        return (contentHeight + systemBarsHeight()).also {
+    fun overallScreenHeight(): Dp =
+        (contentHeight + systemBarsHeight()).also {
             Twig.debug { "Screen height: Overall height: $it" }
         }
-    }
 
-    fun systemBarsHeight(): Dp {
-        return (systemStatusBarHeight + systemNavigationBarHeight).also {
+    fun systemBarsHeight(): Dp =
+        (systemStatusBarHeight + systemNavigationBarHeight).also {
             Twig.debug { "Screen height: System bars height: $it" }
         }
-    }
 }

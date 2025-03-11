@@ -15,9 +15,8 @@ class ParseKeystoneUrToZashiAccountsUseCase {
     }
 
     @Suppress("TooGenericExceptionCaught")
-    private fun getAccountsFromKeystone(ur: UR): ZcashAccounts {
-        return sdk.parseZcashAccounts(ur).also {
+    private fun getAccountsFromKeystone(ur: UR): ZcashAccounts =
+        sdk.parseZcashAccounts(ur).also {
             Twig.debug { "=========> progress: $it" }
         }
-    }
 }

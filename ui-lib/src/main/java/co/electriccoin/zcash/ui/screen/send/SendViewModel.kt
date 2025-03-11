@@ -44,62 +44,64 @@ class SendViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val sendAddressBookState =
-        recipientAddressState.flatMapLatest { recipientAddressState ->
-            combine(observeWalletAccounts.require(), observeContactByAddress(recipientAddressState.address)) {
-                    accounts, contact ->
-                accounts to contact
-            }.flatMapLatest { (accounts, contact) ->
-                flow {
-                    val exists =
-                        contact != null ||
-                            accounts.any { it.unified.address.address == recipientAddressState.address }
-                    val isValid = recipientAddressState.type?.isNotValid == false
-                    val mode =
-                        if (isValid) {
-                            if (exists) {
-                                SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK
-                            } else {
-                                SendAddressBookState.Mode.ADD_TO_ADDRESS_BOOK
-                            }
-                        } else {
-                            SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK
-                        }
-                    val isHintVisible = !exists && isValid
+        recipientAddressState
+            .flatMapLatest { recipientAddressState ->
+                combine(
+                    observeWalletAccounts.require(),
+                    observeContactByAddress(recipientAddressState.address)
+                ) { accounts, contact -> accounts to contact }
+                    .flatMapLatest { (accounts, contact) ->
+                        flow {
+                            val exists =
+                                contact != null ||
+                                    accounts.any { it.unified.address.address == recipientAddressState.address }
+                            val isValid = recipientAddressState.type?.isNotValid == false
+                            val mode =
+                                if (isValid) {
+                                    if (exists) {
+                                        SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK
+                                    } else {
+                                        SendAddressBookState.Mode.ADD_TO_ADDRESS_BOOK
+                                    }
+                                } else {
+                                    SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK
+                                }
+                            val isHintVisible = !exists && isValid
 
-                    emit(
-                        SendAddressBookState(
-                            mode = mode,
-                            isHintVisible = isHintVisible,
-                            onButtonClick = { onAddressBookButtonClicked(mode, recipientAddressState) }
-                        )
-                    )
-
-                    if (isHintVisible) {
-                        delay(3.seconds)
-                        emit(
-                            SendAddressBookState(
-                                mode = mode,
-                                isHintVisible = false,
-                                onButtonClick = { onAddressBookButtonClicked(mode, recipientAddressState) }
+                            emit(
+                                SendAddressBookState(
+                                    mode = mode,
+                                    isHintVisible = isHintVisible,
+                                    onButtonClick = { onAddressBookButtonClicked(mode, recipientAddressState) }
+                                )
                             )
+
+                            if (isHintVisible) {
+                                delay(3.seconds)
+                                emit(
+                                    SendAddressBookState(
+                                        mode = mode,
+                                        isHintVisible = false,
+                                        onButtonClick = { onAddressBookButtonClicked(mode, recipientAddressState) }
+                                    )
+                                )
+                            }
+                        }
+                    }
+            }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                SendAddressBookState(
+                    mode = SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK,
+                    isHintVisible = false,
+                    onButtonClick = {
+                        onAddressBookButtonClicked(
+                            mode = SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK,
+                            recipient = recipientAddressState.value
                         )
                     }
-                }
-            }
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            SendAddressBookState(
-                mode = SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK,
-                isHintVisible = false,
-                onButtonClick = {
-                    onAddressBookButtonClicked(
-                        mode = SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK,
-                        recipient = recipientAddressState.value
-                    )
-                }
+                )
             )
-        )
 
     init {
         viewModelScope.launch {

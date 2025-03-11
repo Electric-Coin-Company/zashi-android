@@ -30,7 +30,8 @@ class PersistEndpointUseCase(
     }
 
     private suspend fun validateServerEndpoint(endpoint: LightWalletEndpoint) =
-        synchronizerProvider.getSynchronizer()
+        synchronizerProvider
+            .getSynchronizer()
             .validateServerEndpoint(application, endpoint)
 
     private fun persistWallet(persistableWallet: PersistableWallet) {
@@ -38,4 +39,6 @@ class PersistEndpointUseCase(
     }
 }
 
-class PersistEndpointException(message: String?) : Exception(message)
+class PersistEndpointException(
+    message: String?
+) : Exception(message)

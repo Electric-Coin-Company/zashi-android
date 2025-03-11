@@ -1,6 +1,8 @@
 package model
 
-enum class NetworkDimension(val value: String) {
+enum class NetworkDimension(
+    val value: String
+) {
     MAINNET("zcashmainnet"),
     TESTNET("zcashtestnet");
 
@@ -9,7 +11,9 @@ enum class NetworkDimension(val value: String) {
     }
 }
 
-enum class DistributionDimension(val value: String) {
+enum class DistributionDimension(
+    val value: String
+) {
     STORE("store"),
     FOSS("foss");
 

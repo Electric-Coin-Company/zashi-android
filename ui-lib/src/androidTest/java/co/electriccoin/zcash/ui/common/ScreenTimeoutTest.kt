@@ -38,7 +38,9 @@ class ScreenTimeoutTest : UiTestPrerequisites() {
             assertEquals(0, testSetup.getScreenTimeoutCount())
         }
 
-    private class TestSetup(composeTestRule: ComposeContentTestRule) {
+    private class TestSetup(
+        composeTestRule: ComposeContentTestRule
+    ) {
         val mutableScreenTimeoutFlag = MutableStateFlow(true)
 
         private val screenTimeout = ScreenTimeout()

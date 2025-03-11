@@ -32,11 +32,12 @@ class ReceiveViewTest {
             newTestSetup()
 
             // Enable substring for ellipsizing
-            composeTestRule.onNodeWithText(
-                text = "${WalletAddressFixture.UNIFIED_ADDRESS_STRING.take(20)}...",
-                substring = true,
-                useUnmergedTree = true
-            ).assertExists()
+            composeTestRule
+                .onNodeWithText(
+                    text = "${WalletAddressFixture.UNIFIED_ADDRESS_STRING.take(20)}...",
+                    substring = true,
+                    useUnmergedTree = true
+                ).assertExists()
         }
 
     @Test
@@ -47,11 +48,12 @@ class ReceiveViewTest {
 
             assertEquals(0, testSetup.getOnSettingsCount())
 
-            composeTestRule.onNodeWithContentDescription(
-                getStringResource(R.string.settings_menu_content_description)
-            ).also {
-                it.performClick()
-            }
+            composeTestRule
+                .onNodeWithContentDescription(
+                    getStringResource(R.string.settings_menu_content_description)
+                ).also {
+                    it.performClick()
+                }
 
             assertEquals(1, testSetup.getOnSettingsCount())
         }

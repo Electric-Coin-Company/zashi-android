@@ -7,7 +7,9 @@ import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
-class SecurityWarningViewTestSetup(private val composeTestRule: ComposeContentTestRule) {
+class SecurityWarningViewTestSetup(
+    private val composeTestRule: ComposeContentTestRule
+) {
     private val onBackCount = AtomicInteger(0)
 
     private val onAcknowledged = AtomicBoolean(false)

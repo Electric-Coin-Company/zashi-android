@@ -24,11 +24,11 @@ internal fun WrapIntegrations() {
 
     LaunchedEffect(Unit) {
         viewModel.flexaNavigationCommand.collect {
-            Flexa.buildSpend()
+            Flexa
+                .buildSpend()
                 .onTransactionRequest {
                     viewModel.onFlexaResultCallback(it)
-                }
-                .build()
+                }.build()
                 .open(activity)
         }
     }

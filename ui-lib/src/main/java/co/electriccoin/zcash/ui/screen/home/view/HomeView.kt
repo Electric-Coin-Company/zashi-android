@@ -170,8 +170,7 @@ private fun HomeContent(
                                 .padding(
                                     horizontal = ZcashTheme.dimens.spacingXtiny,
                                     vertical = ZcashTheme.dimens.spacingDefault
-                                )
-                                .testTag(item.testTag)
+                                ).testTag(item.testTag)
                     )
                 }
             }

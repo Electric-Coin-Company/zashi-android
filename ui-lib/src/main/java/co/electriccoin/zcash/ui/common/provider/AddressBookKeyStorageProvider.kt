@@ -22,9 +22,7 @@ class AddressBookKeyStorageProviderImpl(
 ) : AddressBookKeyStorageProvider {
     private val default = AddressBookKeyPreferenceDefault()
 
-    override suspend fun getAddressBookKey(): AddressBookKey? {
-        return default.getValue(encryptedPreferenceProvider())
-    }
+    override suspend fun getAddressBookKey(): AddressBookKey? = default.getValue(encryptedPreferenceProvider())
 
     override suspend fun storeAddressBookKey(addressBookKey: AddressBookKey) {
         default.putValue(encryptedPreferenceProvider(), addressBookKey)

@@ -65,7 +65,8 @@ object ChangelogParser {
         log("Parser: index from: $fromIndex")
 
         val toIndex =
-            nodes.subList(fromIndex + 1, nodes.size)
+            nodes
+                .subList(fromIndex + 1, nodes.size)
                 .indexOfFirst { findNodeByPrefix(it) }
                 .let {
                     // Applies to the last or the only one entry
@@ -117,24 +118,22 @@ object ChangelogParser {
             subNode.startsWith("### ${titleByLanguage(TitleType.FIXED, languageTag)}") ||
             subNode.startsWith("### ${titleByLanguage(TitleType.REMOVED, languageTag)}")
 
-    private fun List<String>.getVersionPart(versionNameFallback: String): String {
-        return if (this.contains("## [Unreleased]")) {
+    private fun List<String>.getVersionPart(versionNameFallback: String): String =
+        if (this.contains("## [Unreleased]")) {
             versionNameFallback
         } else {
             // Parse just version name omitting version code as we currently don't need it in the UI
             this[0].split("[")[1].split(" ")[0].trim()
         }
-    }
 
     private val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
 
-    private fun List<String>.getDatePart(): String {
-        return if (this.contains("## [Unreleased]")) {
+    private fun List<String>.getDatePart(): String =
+        if (this.contains("## [Unreleased]")) {
             dateFormatter.format(Date())
         } else {
             this[0].split("- ")[1].trim()
         }
-    }
 
     private fun List<String>.getNodePart(title: String): ChangelogEntrySection? {
         val fromContent = "### $title"
@@ -160,7 +159,8 @@ object ChangelogParser {
             // To remove hard line wrap from AS
             .map { it.replace("\n  ", "") }
             .joinToString(prefix = "\n", separator = "\n")
-            .takeIf { it.isNotBlank() }?.let {
+            .takeIf { it.isNotBlank() }
+            ?.let {
                 ChangelogEntrySection(title = title, content = it)
             }
     }
@@ -168,8 +168,8 @@ object ChangelogParser {
     private fun titleByLanguage(
         type: TitleType,
         languageTag: LanguageTag
-    ): String {
-        return when (type) {
+    ): String =
+        when (type) {
             TitleType.ADDED ->
                 when (languageTag) {
                     is LanguageTag.English -> ADDED_PART_EN
@@ -191,13 +191,18 @@ object ChangelogParser {
                     is LanguageTag.Spanish -> REMOVED_PART_ES
                 }
         }
-    }
 }
 
-sealed class LanguageTag(open val tag: String) {
-    data class English(override val tag: String = ENGLISH_TAG) : LanguageTag(tag)
+sealed class LanguageTag(
+    open val tag: String
+) {
+    data class English(
+        override val tag: String = ENGLISH_TAG
+    ) : LanguageTag(tag)
 
-    data class Spanish(override val tag: String = SPANISH_TAG) : LanguageTag(tag)
+    data class Spanish(
+        override val tag: String = SPANISH_TAG
+    ) : LanguageTag(tag)
 }
 
 private enum class TitleType {

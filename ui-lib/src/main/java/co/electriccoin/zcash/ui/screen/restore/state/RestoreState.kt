@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.StateFlow
  * primarily useful on Android, for automated tests, and for iterative debugging with the Compose
  * layout preview. The default constructor argument is generally fine for other platforms.
  */
-class RestoreState(initialState: RestoreStage = RestoreStage.values().first()) {
+class RestoreState(
+    initialState: RestoreStage = RestoreStage.values().first()
+) {
     private val mutableState = MutableStateFlow(initialState)
 
     val current: StateFlow<RestoreStage> = mutableState

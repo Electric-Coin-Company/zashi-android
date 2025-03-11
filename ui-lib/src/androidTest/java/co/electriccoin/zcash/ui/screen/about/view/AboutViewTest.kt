@@ -30,8 +30,7 @@ class AboutViewTest {
             .onNodeWithContentDescription(
                 getStringResource(R.string.back_navigation_content_description),
                 ignoreCase = true
-            )
-            .also {
+            ).also {
                 it.assertExists()
             }
 
@@ -60,11 +59,12 @@ class AboutViewTest {
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithContentDescription(
-            getStringResource(R.string.back_navigation_content_description)
-        ).also {
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithContentDescription(
+                getStringResource(R.string.back_navigation_content_description)
+            ).also {
+                it.performClick()
+            }
 
         assertEquals(1, testSetup.getOnBackCount())
     }

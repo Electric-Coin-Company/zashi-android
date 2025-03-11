@@ -45,7 +45,10 @@ fun Override(
     }
 }
 
-data class ConfigurationOverride(val uiMode: UiMode?, val locale: LocaleList?) {
+data class ConfigurationOverride(
+    val uiMode: UiMode?,
+    val locale: LocaleList?
+) {
     fun newConfiguration(fromConfiguration: Configuration) =
         Configuration(fromConfiguration).apply {
             this@ConfigurationOverride.uiMode?.let {

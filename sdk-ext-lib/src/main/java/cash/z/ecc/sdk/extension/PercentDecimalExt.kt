@@ -10,9 +10,8 @@ import java.text.DecimalFormat
 import java.util.Locale
 
 @Suppress("MagicNumber")
-fun PercentDecimal.toPercentageWithDecimal(decimalFormat: DecimalFormat = preparePercentDecimalFormat()): String {
-    return decimalFormat.format(decimal * 100)
-}
+fun PercentDecimal.toPercentageWithDecimal(decimalFormat: DecimalFormat = preparePercentDecimalFormat()): String =
+    decimalFormat.format(decimal * 100)
 
 private fun preparePercentDecimalFormat(): DecimalFormat =
     DecimalFormat().apply {

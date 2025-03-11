@@ -72,13 +72,12 @@ abstract class BaseKeystoneScanner {
 
     abstract suspend fun onSuccess(ur: UR)
 
-    private fun decodeResult(result: String): DecodeResult {
-        return try {
+    private fun decodeResult(result: String): DecodeResult =
+        try {
             keystoneSDK.decodeQR(result)
         } catch (_: Exception) {
             throw InvalidKeystonePCZTQRException()
         }
-    }
 
     private suspend fun <T> withSemaphore(block: suspend () -> T) =
         mutex.withLock {
