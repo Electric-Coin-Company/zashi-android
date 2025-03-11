@@ -168,9 +168,9 @@ sealed class SecretState {
 
     object NeedsWarning : SecretState()
 
-    class NeedsBackup(val persistableWallet: PersistableWallet) : SecretState()
+    object NeedsBackup : SecretState()
 
-    class Ready(val persistableWallet: PersistableWallet) : SecretState()
+    object Ready : SecretState()
 }
 
 /**

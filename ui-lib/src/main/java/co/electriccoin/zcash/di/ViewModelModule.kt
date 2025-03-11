@@ -16,11 +16,11 @@ import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.home.HomeViewModel
 import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewModel
-import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
 import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
-import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
+import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightViewModel
+import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
 import co.electriccoin.zcash.ui.screen.scan.Scan
@@ -57,9 +57,8 @@ val viewModelModule =
         viewModelOf(::WalletViewModel)
         viewModelOf(::AuthenticationViewModel)
         viewModelOf(::OldHomeViewModel)
-        viewModelOf(::OnboardingViewModel)
         viewModelOf(::StorageCheckViewModel)
-        viewModelOf(::RestoreViewModel)
+        viewModelOf(::RestoreSeedViewModel)
         viewModelOf(::ScreenBrightnessViewModel)
         viewModelOf(::SettingsViewModel)
         viewModelOf(::AdvancedSettingsViewModel)
@@ -156,4 +155,5 @@ val viewModelModule =
         viewModelOf(::TaxExportViewModel)
         viewModelOf(::BalanceViewModel)
         viewModelOf(::HomeViewModel)
+        viewModelOf(::RestoreBDHeightViewModel)
     }

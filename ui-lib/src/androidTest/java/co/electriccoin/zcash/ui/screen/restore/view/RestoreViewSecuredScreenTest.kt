@@ -10,7 +10,8 @@ import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.common.compose.LocalScreenSecurity
 import co.electriccoin.zcash.ui.common.compose.ScreenSecurity
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.restore.state.RestoreState
+import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedState
+import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedView
 import co.electriccoin.zcash.ui.screen.restore.state.WordList
 import kotlinx.collections.immutable.toPersistentSet
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -43,9 +44,9 @@ class RestoreViewSecuredScreenTest : UiTestPrerequisites() {
             composeTestRule.setContent {
                 CompositionLocalProvider(LocalScreenSecurity provides screenSecurity) {
                     ZcashTheme {
-                        RestoreWallet(
+                        RestoreSeedView(
                             ZcashNetwork.Mainnet,
-                            RestoreState(),
+                            RestoreSeedState(),
                             Mnemonics.getCachedWords(Locale.ENGLISH.language).toPersistentSet(),
                             WordList(emptyList()),
                             restoreHeight = null,

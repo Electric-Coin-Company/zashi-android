@@ -4,74 +4,103 @@ package co.electriccoin.zcash.ui.screen.onboarding
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import cash.z.ecc.android.sdk.fixture.WalletFixture
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
-import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
+import co.electriccoin.zcash.ui.MainActivity
+import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.Navigator
+import co.electriccoin.zcash.ui.NavigatorImpl
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
+import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
+import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
+import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
+import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
+import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
-import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
-import co.electriccoin.zcash.ui.screen.restore.WrapRestore
+import co.electriccoin.zcash.ui.screen.restore.height.AndroidRestoreBDHeight
+import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeight
+import co.electriccoin.zcash.ui.screen.restore.seed.AndroidRestoreSeed
+import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeed
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
-@Suppress("LongMethod")
 @Composable
-internal fun WrapOnboarding() {
+fun MainActivity.RestoreNavigation() {
     val activity = LocalActivity.current
-    val walletViewModel = koinActivityViewModel<WalletViewModel>()
-    val onboardingViewModel = koinActivityViewModel<OnboardingViewModel>()
-
+    val navigationRouter = koinInject<NavigationRouter>()
+    val navController = LocalNavController.current
+    val flexaViewModel = koinViewModel<FlexaViewModel>()
+    val navigator: Navigator = remember { NavigatorImpl(this@RestoreNavigation, navController, flexaViewModel) }
     val versionInfo = VersionInfo.new(activity.applicationContext)
 
-    // TODO [#383]: https://github.com/Electric-Coin-Company/zashi-android/issues/383
-    // TODO [#383]: Refactoring of UI state retention into rememberSaveable fields
-
-    if (!onboardingViewModel.isImporting.collectAsStateWithLifecycle().value) {
-        val onCreateWallet = {
-            walletViewModel.persistOnboardingState(OnboardingState.NEEDS_WARN)
-        }
-        val onImportWallet = {
-            // In the case of the app currently being messed with by the robo test runner on
-            // Firebase Test Lab or Google Play pre-launch report, we want to skip creating
-            // a new or restoring an existing wallet screens by persisting an existing wallet
-            // with a mock seed.
-            if (FirebaseTestLabUtil.isFirebaseTestLab(activity.applicationContext)) {
-                persistExistingWalletWithSeedPhrase(
-                    activity.applicationContext,
-                    walletViewModel,
-                    SeedPhrase.new(WalletFixture.Alice.seedPhrase),
-                    birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(activity.applicationContext))
-                )
-            } else {
-                onboardingViewModel.setIsImporting(true)
-            }
-        }
-
-        val onFixtureWallet: (String) -> Unit = { seed ->
+    val onCreateWallet = {
+        walletViewModel.persistOnboardingState(OnboardingState.NEEDS_WARN)
+    }
+    val onImportWallet = {
+        // In the case of the app currently being messed with by the robo test runner on
+        // Firebase Test Lab or Google Play pre-launch report, we want to skip creating
+        // a new or restoring an existing wallet screens by persisting an existing wallet
+        // with a mock seed.
+        if (FirebaseTestLabUtil.isFirebaseTestLab(activity.applicationContext)) {
             persistExistingWalletWithSeedPhrase(
                 activity.applicationContext,
                 walletViewModel,
-                SeedPhrase.new(seed),
+                SeedPhrase.new(WalletFixture.Alice.seedPhrase),
                 birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(activity.applicationContext))
             )
+        } else {
+            navigationRouter.forward(RestoreSeed)
         }
+    }
 
-        Onboarding(
-            isDebugMenuEnabled = versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService,
-            onImportWallet = onImportWallet,
-            onCreateWallet = onCreateWallet,
-            onFixtureWallet = onFixtureWallet
+    val onFixtureWallet: (String) -> Unit = { seed ->
+        persistExistingWalletWithSeedPhrase(
+            activity.applicationContext,
+            walletViewModel,
+            SeedPhrase.new(seed),
+            birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(activity.applicationContext))
         )
+    }
 
-        activity.reportFullyDrawn()
-    } else {
-        WrapRestore()
+    LaunchedEffect(Unit) {
+        navigationRouter.observePipeline().collect {
+            navigator.executeCommand(it)
+        }
+    }
+    NavHost(
+        navController = navController,
+        startDestination = Onboarding,
+        enterTransition = { enterTransition() },
+        exitTransition = { exitTransition() },
+        popEnterTransition = { popEnterTransition() },
+        popExitTransition = { popExitTransition() }
+    ) {
+        composable<Onboarding> {
+            Onboarding(
+                isDebugMenuEnabled = versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService,
+                onImportWallet = onImportWallet,
+                onCreateWallet = onCreateWallet,
+                onFixtureWallet = onFixtureWallet
+            )
+        }
+        composable<RestoreSeed> {
+            AndroidRestoreSeed()
+        }
+        composable<RestoreBDHeight> {
+            AndroidRestoreBDHeight()
+        }
     }
 }
 

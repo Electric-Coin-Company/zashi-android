@@ -46,8 +46,8 @@ import co.electriccoin.zcash.ui.design.component.UiMode
 import co.electriccoin.zcash.ui.screen.authentication.view.AnimationConstants.WELCOME_ANIM_TEST_TAG
 import co.electriccoin.zcash.ui.screen.balances.BalanceTag
 import co.electriccoin.zcash.ui.screen.home.HomeTags
-import co.electriccoin.zcash.ui.screen.restore.RestoreTag
-import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
+import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedTag
+import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.securitywarning.view.SecurityScreenTag.ACKNOWLEDGE_CHECKBOX_TAG
 import co.electriccoin.zcash.ui.screen.send.SendTag
 import kotlinx.coroutines.Dispatchers
@@ -210,7 +210,7 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         val seedPhraseSplitLength = SeedPhraseFixture.new().split.size
         SeedPhraseFixture.new().split.forEachIndexed { index, string ->
-            composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+            composeTestRule.onNodeWithTag(RestoreSeedTag.SEED_WORD_TEXT_FIELD).also {
                 it.performTextInput(string)
 
                 // Take a screenshot half-way through filling in the seed phrase
@@ -221,7 +221,7 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
 
         composeTestRule.waitUntil {
-            composeTestRule.activity.viewModels<RestoreViewModel>().value.userWordList.current.value.size ==
+            composeTestRule.activity.viewModels<RestoreSeedViewModel>().value.userWordList.current.value.size ==
                 SeedPhrase.SEED_PHRASE_SIZE
         }
 

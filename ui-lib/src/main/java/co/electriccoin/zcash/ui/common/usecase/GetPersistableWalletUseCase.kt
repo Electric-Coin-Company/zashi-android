@@ -1,9 +1,9 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import co.electriccoin.zcash.ui.common.repository.WalletRepository
+import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 
 class GetPersistableWalletUseCase(
-    private val walletRepository: WalletRepository
+    private val persistableWalletProvider: PersistableWalletProvider
 ) {
-    suspend operator fun invoke() = walletRepository.getPersistableWallet()
+    suspend operator fun invoke() = persistableWalletProvider.getPersistableWallet()
 }

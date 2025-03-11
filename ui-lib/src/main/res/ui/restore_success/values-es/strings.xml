@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="restore_success_title">¡Mantén Zashi abierto!</string>
-    <string name="restore_success_subtitle">Tu billetera ha sido restaurada con éxito y ahora se está sincronizando</string>
-    <string name="restore_success_description">Para evitar interrupciones, mantén la pantalla encendida, conecta tu dispositivo a una fuente de energía y guárdalo en un lugar seguro.</string>
+    <string name="restore_success_subtitle">Your wallet is being restored.</string>
+    <string name="restore_success_description">Zashi is scanning the blockchain to retrieve your transactions. Older wallets can take hours to restore. Follow these steps to prevent interruption:</string>
     <string name="restoring_initial_dialog_checkbox">Mantener la pantalla encendida mientras se restaura.</string>
     <string name="restore_success_note_part_1">Nota:</string>
-    <string name="restore_success_note_part_2">Durante la sincronización inicial, tus fondos no se pueden enviar ni gastar. Dependiendo de la antigüedad de tu billetera, la sincronización completa puede tomar algunas horas.</string>
+    <string name="restore_success_note_part_2">Your funds cannot be spent with Zashi until your wallet is fully restored.</string>
     <string name="restore_success_button">¡Entendido!</string>
 </resources>

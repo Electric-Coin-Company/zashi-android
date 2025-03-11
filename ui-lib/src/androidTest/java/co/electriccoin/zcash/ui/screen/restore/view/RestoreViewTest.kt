@@ -25,9 +25,10 @@ import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.CommonTag
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.model.RestoreStage
-import co.electriccoin.zcash.ui.screen.restore.state.RestoreState
+import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedState
+import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedTag
+import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedView
 import co.electriccoin.zcash.ui.screen.restore.state.WordList
 import co.electriccoin.zcash.ui.test.getStringResource
 import kotlinx.collections.immutable.toPersistentSet
@@ -54,7 +55,7 @@ class RestoreViewTest : UiTestPrerequisites() {
     fun seed_autocomplete_suggestions_appear() {
         newTestSetup()
 
-        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.SEED_WORD_TEXT_FIELD).also {
             it.performTextInput("ab")
 
             // Make sure text isn't cleared
@@ -62,13 +63,13 @@ class RestoreViewTest : UiTestPrerequisites() {
         }
 
         composeTestRule.onNode(
-            matcher = hasText("abandon", substring = true) and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)
+            matcher = hasText("abandon", substring = true) and hasTestTag(RestoreSeedTag.AUTOCOMPLETE_ITEM)
         ).also {
             it.assertExists()
         }
 
         composeTestRule.onNode(
-            matcher = hasText("able", substring = true) and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)
+            matcher = hasText("able", substring = true) and hasTestTag(RestoreSeedTag.AUTOCOMPLETE_ITEM)
         ).also {
             it.assertExists()
         }
@@ -79,17 +80,17 @@ class RestoreViewTest : UiTestPrerequisites() {
     fun seed_choose_autocomplete() {
         newTestSetup()
 
-        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.SEED_WORD_TEXT_FIELD).also {
             it.performTextInput("ab")
         }
 
         composeTestRule.onNode(
-            matcher = hasText("abandon", substring = true) and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)
+            matcher = hasText("abandon", substring = true) and hasTestTag(RestoreSeedTag.AUTOCOMPLETE_ITEM)
         ).also {
             it.performClick()
         }
 
-        composeTestRule.onNodeWithTag(RestoreTag.AUTOCOMPLETE_LAYOUT).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.AUTOCOMPLETE_LAYOUT).also {
             it.assertDoesNotExist()
         }
 
@@ -97,7 +98,7 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.assertExists()
         }
 
-        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.SEED_WORD_TEXT_FIELD).also {
             it.assertTextEquals("abandon ", includeEditableText = true)
         }
     }
@@ -107,15 +108,15 @@ class RestoreViewTest : UiTestPrerequisites() {
     fun seed_type_full_word() {
         newTestSetup()
 
-        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.SEED_WORD_TEXT_FIELD).also {
             it.performTextInput("abandon")
         }
 
-        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.SEED_WORD_TEXT_FIELD).also {
             it.assertTextEquals("abandon ", includeEditableText = true)
         }
 
-        composeTestRule.onNodeWithTag(RestoreTag.AUTOCOMPLETE_LAYOUT).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.AUTOCOMPLETE_LAYOUT).also {
             it.assertDoesNotExist()
         }
 
@@ -209,7 +210,7 @@ class RestoreViewTest : UiTestPrerequisites() {
                 initialWordsList = SeedPhraseFixture.new().split
             )
 
-        composeTestRule.onNodeWithTag(RestoreTag.BIRTHDAY_TEXT_FIELD).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.BIRTHDAY_TEXT_FIELD).also {
             it.performTextInput(ZcashNetwork.Mainnet.saplingActivationHeight.value.toString())
         }
 
@@ -241,7 +242,7 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.assertIsEnabled()
         }
 
-        composeTestRule.onNodeWithTag(RestoreTag.BIRTHDAY_TEXT_FIELD).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.BIRTHDAY_TEXT_FIELD).also {
             it.performTextInput((ZcashNetwork.Mainnet.saplingActivationHeight.value - 1L).toString())
         }
 
@@ -266,7 +267,7 @@ class RestoreViewTest : UiTestPrerequisites() {
                 initialWordsList = SeedPhraseFixture.new().split
             )
 
-        composeTestRule.onNodeWithTag(RestoreTag.BIRTHDAY_TEXT_FIELD).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.BIRTHDAY_TEXT_FIELD).also {
             it.performTextInput("1.2")
         }
 
@@ -353,7 +354,7 @@ class RestoreViewTest : UiTestPrerequisites() {
         initialStage: RestoreStage,
         initialWordsList: List<String>
     ) {
-        private val state = RestoreState(initialStage)
+        private val state = RestoreSeedState(initialStage)
 
         private val wordList = WordList(initialWordsList)
 
@@ -391,7 +392,7 @@ class RestoreViewTest : UiTestPrerequisites() {
         init {
             composeTestRule.setContent {
                 ZcashTheme {
-                    RestoreWallet(
+                    RestoreSeedView(
                         ZcashNetwork.Mainnet,
                         state,
                         Mnemonics.getCachedWords(Locale.ENGLISH.language).toPersistentSet(),

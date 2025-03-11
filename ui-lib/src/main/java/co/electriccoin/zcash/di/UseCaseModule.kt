@@ -16,7 +16,6 @@ import co.electriccoin.zcash.ui.common.usecase.DeleteTransactionNoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ExportTaxUseCase
 import co.electriccoin.zcash.ui.common.usecase.FlipTransactionBookmarkUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetBackupPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentTransactionsUseCase
@@ -121,7 +120,6 @@ val useCaseModule =
         factoryOf(::IsCoinbaseAvailableUseCase)
         factoryOf(::GetZashiSpendingKeyUseCase)
         factoryOf(::ObservePersistableWalletUseCase)
-        factoryOf(::GetBackupPersistableWalletUseCase)
         factoryOf(::GetSupportUseCase)
         factoryOf(::SendEmailUseCase)
         factoryOf(::SendSupportEmailUseCase)

@@ -67,13 +67,13 @@ fun ZashiButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    style: TextStyle = ZashiButtonDefaults.style,
-    shape: Shape = ZashiButtonDefaults.shape,
-    contentPadding: PaddingValues = ZashiButtonDefaults.contentPadding,
     @DrawableRes icon: Int? = null,
     @DrawableRes trailingIcon: Int? = null,
     enabled: Boolean = true,
     isLoading: Boolean = false,
+    style: TextStyle = ZashiButtonDefaults.style,
+    shape: Shape = ZashiButtonDefaults.shape,
+    contentPadding: PaddingValues = ZashiButtonDefaults.contentPadding,
     colors: ZashiButtonColors = ZashiButtonDefaults.primaryColors(),
     content: @Composable RowScope.(ZashiButtonScope) -> Unit = ZashiButtonDefaults.content
 ) {
