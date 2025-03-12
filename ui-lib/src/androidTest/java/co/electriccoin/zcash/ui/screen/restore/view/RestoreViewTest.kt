@@ -423,7 +423,7 @@ class RestoreViewTest : UiTestPrerequisites() {
                             onBackCount.incrementAndGet()
                         },
                         paste = { "" },
-                        onFinished = {
+                        onFinish = {
                             onFinishedCount.incrementAndGet()
                         }
                     )

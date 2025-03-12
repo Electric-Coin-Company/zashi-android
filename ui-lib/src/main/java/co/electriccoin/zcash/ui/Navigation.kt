@@ -520,7 +520,7 @@ private fun MainActivity.ShowSystemAuthentication(
         onCancel = {
             setCheckedProperty(false)
         },
-        onFailed = {
+        onFail = {
             // No action needed
         },
         useCase = protectedUseCase

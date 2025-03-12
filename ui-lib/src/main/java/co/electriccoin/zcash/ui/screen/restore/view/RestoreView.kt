@@ -113,7 +113,7 @@ private fun RestoreSeedPreview() {
             setRestoreHeight = {},
             onBack = {},
             paste = { "" },
-            onFinished = {}
+            onFinish = {}
         )
     }
 }
@@ -143,7 +143,7 @@ private fun RestoreSeedDarkPreview() {
             setRestoreHeight = {},
             onBack = {},
             paste = { "" },
-            onFinished = {}
+            onFinish = {}
         )
     }
 }
@@ -173,7 +173,7 @@ private fun RestoreBirthdayPreview() {
             setRestoreHeight = {},
             onBack = {},
             paste = { "" },
-            onFinished = {}
+            onFinish = {}
         )
     }
 }
@@ -203,7 +203,7 @@ private fun RestoreBirthdayDarkPreview() {
             setRestoreHeight = {},
             onBack = {},
             paste = { "" },
-            onFinished = {}
+            onFinish = {}
         )
     }
 }
@@ -224,7 +224,7 @@ fun RestoreWallet(
     setRestoreHeight: (BlockHeight?) -> Unit,
     onBack: () -> Unit,
     paste: () -> String?,
-    onFinished: () -> Unit
+    onFinish: () -> Unit
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     val parseResult = ParseResult.new(completeWordList, text)
@@ -328,7 +328,7 @@ fun RestoreWallet(
                         zcashNetwork = zcashNetwork,
                         initialRestoreHeight = restoreHeight,
                         setRestoreHeight = setRestoreHeight,
-                        onDone = onFinished,
+                        onComplete = onFinish,
                         modifier =
                             commonModifier
                                 .imePadding()
@@ -342,8 +342,8 @@ fun RestoreWallet(
 
 @Composable
 private fun ClearSeedMenuItem(
-    modifier: Modifier = Modifier,
     onSeedClear: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Reference(
         text = stringResource(id = R.string.restore_button_clear),
@@ -669,7 +669,7 @@ fun processTextInput(
 @Suppress("UNUSED_VARIABLE")
 private fun Autocomplete(
     parseResult: ParseResult,
-    onSuggestionSelected: (String) -> Unit,
+    onSuggestionSelect: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // TODO [#1061]: Restore screen input validation refactoring and adding tests
@@ -701,7 +701,7 @@ private fun Autocomplete(
             items(it) {
                 ChipOnSurface(
                     text = it,
-                    onClick = { onSuggestionSelected(it) },
+                    onClick = { onSuggestionSelect(it) },
                     modifier = Modifier.testTag(RestoreTag.AUTOCOMPLETE_ITEM)
                 )
             }
@@ -756,7 +756,7 @@ private fun RestoreBirthdayMainContent(
     zcashNetwork: ZcashNetwork,
     initialRestoreHeight: BlockHeight?,
     setRestoreHeight: (BlockHeight?) -> Unit,
-    onDone: () -> Unit,
+    onComplete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -844,7 +844,7 @@ private fun RestoreBirthdayMainContent(
                 } else {
                     error("The restore button should not expect click events")
                 }
-                onDone()
+                onComplete()
             },
             text = stringResource(R.string.restore_birthday_button_restore),
             enabled = isBirthdayValid,

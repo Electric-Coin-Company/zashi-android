@@ -60,7 +60,7 @@ fun PagerTabs(
     tabs: ImmutableList<String>,
     modifier: Modifier = Modifier,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    onTabSelected: (index: Int) -> Unit = {},
+    onTabSelect: (index: Int) -> Unit = {},
 ) {
     TabRow(
         modifier = modifier.border(ZcashTheme.dimens.spacingTiny, ZcashTheme.colors.layoutStroke),
@@ -74,7 +74,7 @@ fun PagerTabs(
                 selected = pagerState.currentPage == index,
                 onClick = {
                     coroutineScope.launch {
-                        onTabSelected(index)
+                        onTabSelect(index)
                         pagerState.animateScrollToPage(index)
                     }
                 },

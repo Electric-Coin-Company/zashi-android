@@ -75,7 +75,7 @@ fun Home(
     )
 
     if (isShowingRestoreSuccess) {
-        WrapRestoreSuccess(onDone = setShowingRestoreSuccess)
+        WrapRestoreSuccess(onComplete = setShowingRestoreSuccess)
     }
 
     if (isKeepScreenOnWhileSyncing == true &&

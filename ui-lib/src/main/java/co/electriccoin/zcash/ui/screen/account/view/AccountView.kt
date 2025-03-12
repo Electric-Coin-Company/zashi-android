@@ -155,7 +155,7 @@ internal fun Account(
         if (showStatusDialog != null) {
             StatusDialog(
                 statusAction = showStatusDialog,
-                onDone = hideStatusDialog,
+                onConfirm = hideStatusDialog,
                 onReport = { status ->
                     hideStatusDialog()
                     onContactSupport(status)

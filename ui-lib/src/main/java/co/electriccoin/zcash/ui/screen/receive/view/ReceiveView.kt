@@ -231,8 +231,8 @@ private fun ReceiveIconButton(
     contentColor: Color,
     iconPainter: Painter,
     text: String,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

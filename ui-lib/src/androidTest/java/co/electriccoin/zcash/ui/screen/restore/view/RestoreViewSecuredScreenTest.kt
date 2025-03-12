@@ -54,7 +54,7 @@ class RestoreViewSecuredScreenTest : UiTestPrerequisites() {
                             setRestoreHeight = {},
                             onBack = { },
                             paste = { "" },
-                            onFinished = { }
+                            onFinish = { }
                         )
                     }
                 }

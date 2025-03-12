@@ -108,9 +108,9 @@ import kotlinx.coroutines.guava.await
 fun ScanKeystoneView(
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
-    onScanned: (String) -> Unit,
+    onScan: (String) -> Unit,
     onOpenSettings: () -> Unit,
-    onScanStateChanged: (ScanScreenState) -> Unit,
+    onScanStateChange: (ScanScreenState) -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     validationResult: ScanValidationState,
     state: ScanKeystoneState,
@@ -156,10 +156,10 @@ fun ScanKeystoneView(
             ScanMainContent(
                 state = state,
                 validationResult = validationResult,
-                onScanned = onScanned,
+                onScan = onScan,
                 onOpenSettings = onOpenSettings,
                 onBack = onBack,
-                onScanStateChanged = onScanStateChanged,
+                onScanStateChange = onScanStateChange,
                 permissionState = permissionState,
                 scanState = scanState,
                 setScanState = setScanState,
@@ -319,10 +319,10 @@ data class FramePosition(
 private fun ScanMainContent(
     state: ScanKeystoneState,
     validationResult: ScanValidationState,
-    onScanned: (String) -> Unit,
+    onScan: (String) -> Unit,
     onOpenSettings: () -> Unit,
     onBack: () -> Unit,
-    onScanStateChanged: (ScanScreenState) -> Unit,
+    onScanStateChange: (ScanScreenState) -> Unit,
     permissionState: PermissionState,
     scanState: ScanScreenState,
     setScanState: (ScanScreenState) -> Unit,
@@ -401,17 +401,17 @@ private fun ScanMainContent(
         when (scanState) {
             ScanScreenState.Permission -> {
                 // Keep initial ui state
-                onScanStateChanged(ScanScreenState.Permission)
+                onScanStateChange(ScanScreenState.Permission)
             }
 
             ScanScreenState.Scanning -> {
-                onScanStateChanged(ScanScreenState.Scanning)
+                onScanStateChange(ScanScreenState.Scanning)
 
                 if (!LocalInspectionMode.current) {
                     ScanCameraView(
                         framePosition = framePosition,
                         isTorchOn = isTorchOn,
-                        onScanned = onScanned,
+                        onScan = onScan,
                         permissionState = permissionState,
                         setScanState = setScanState,
                     )
@@ -490,14 +490,15 @@ private fun ScanMainContent(
                                 painterResource(R.drawable.ic_scan_torch)
                             },
                         contentDescription = stringResource(id = R.string.scan_keystone_torch_content_description),
-                    ) {
-                        setIsTorchOn(!isTorchOn)
-                    }
+                        onClick = {
+                            setIsTorchOn(!isTorchOn)
+                        }
+                    )
                 }
             }
 
             ScanScreenState.Failed -> {
-                onScanStateChanged(ScanScreenState.Failed)
+                onScanStateChange(ScanScreenState.Failed)
             }
         }
 
@@ -569,8 +570,8 @@ private fun ScanMainContent(
 private fun ImageButton(
     painter: Painter,
     contentDescription: String,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Image(
         painter = painter,
@@ -633,7 +634,7 @@ fun ScanFrame(modifier: Modifier = Modifier) {
 fun ScanCameraView(
     framePosition: FramePosition,
     isTorchOn: Boolean,
-    onScanned: (result: String) -> Unit,
+    onScan: (result: String) -> Unit,
     permissionState: PermissionState,
     setScanState: (ScanScreenState) -> Unit,
 ) {
@@ -719,7 +720,7 @@ fun ScanCameraView(
             ).collectAsState(initial = null)
             .value
             ?.let {
-                onScanned(it)
+                onScan(it)
             }
     }
 }
@@ -764,9 +765,9 @@ private fun ScanPreview() =
             ScanKeystoneView(
                 snackbarHostState = SnackbarHostState(),
                 onBack = {},
-                onScanned = {},
+                onScan = {},
                 onOpenSettings = {},
-                onScanStateChanged = {},
+                onScanStateChange = {},
                 topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 validationResult = ScanValidationState.INVALID,
                 state =
@@ -789,9 +790,9 @@ private fun ScanProgressPreview() =
             ScanKeystoneView(
                 snackbarHostState = SnackbarHostState(),
                 onBack = {},
-                onScanned = {},
+                onScan = {},
                 onOpenSettings = {},
-                onScanStateChanged = {},
+                onScanStateChange = {},
                 topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 validationResult = ScanValidationState.INVALID,
                 state =

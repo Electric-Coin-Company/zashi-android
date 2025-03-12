@@ -46,7 +46,7 @@ fun WrapRestore() {
                     val clipboardManager = applicationContext.getSystemService(ClipboardManager::class.java)
                     return@RestoreWallet clipboardManager?.primaryClip?.toString()
                 },
-                onFinished = {
+                onFinish = {
                     persistExistingWalletWithSeedPhrase(
                         applicationContext,
                         walletViewModel,

@@ -73,10 +73,23 @@ fun ZashiListItem(
 fun ZashiListItem(
     state: ZashiListItemState,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = ZashiListItemDefaults.contentPadding,
+    colors: ZashiListItemColors =
+        when (state.design) {
+            ZashiListItemDesignType.PRIMARY -> ZashiListItemDefaults.primaryColors()
+            ZashiListItemDesignType.SECONDARY -> ZashiListItemDefaults.secondaryColors()
+        },
     leading: @Composable (Modifier) -> Unit = {
         ZashiListItemDefaults.LeadingItem(
             modifier = it,
             icon = state.icon,
+            contentDescription = state.title.getValue()
+        )
+    },
+    trailing: @Composable (Modifier) -> Unit = {
+        ZashiListItemDefaults.TrailingItem(
+            modifier = it,
+            isEnabled = state.isEnabled && state.onClick != null,
             contentDescription = state.title.getValue()
         )
     },
@@ -89,19 +102,6 @@ fun ZashiListItem(
             isEnabled = state.isEnabled
         )
     },
-    trailing: @Composable (Modifier) -> Unit = {
-        ZashiListItemDefaults.TrailingItem(
-            modifier = it,
-            isEnabled = state.isEnabled && state.onClick != null,
-            contentDescription = state.title.getValue()
-        )
-    },
-    contentPadding: PaddingValues = ZashiListItemDefaults.contentPadding,
-    colors: ZashiListItemColors =
-        when (state.design) {
-            ZashiListItemDesignType.PRIMARY -> ZashiListItemDefaults.primaryColors()
-            ZashiListItemDesignType.SECONDARY -> ZashiListItemDefaults.secondaryColors()
-        }
 ) {
     BaseListItem(
         modifier = modifier,

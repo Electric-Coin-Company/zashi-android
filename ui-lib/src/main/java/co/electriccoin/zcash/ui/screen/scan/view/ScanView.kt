@@ -110,10 +110,10 @@ import kotlinx.coroutines.launch
 fun Scan(
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
-    onScanned: (String) -> Unit,
+    onScan: (String) -> Unit,
     onScanError: () -> Unit,
     onOpenSettings: () -> Unit,
-    onScanStateChanged: (ScanScreenState) -> Unit,
+    onScanStateChange: (ScanScreenState) -> Unit,
     topAppBarSubTitleState: TopAppBarSubTitleState,
     validationResult: ScanValidationState
 ) = ZcashTheme(forceDarkMode = true) {
@@ -157,11 +157,11 @@ fun Scan(
         Box {
             ScanMainContent(
                 validationResult = validationResult,
-                onScanned = onScanned,
+                onScan = onScan,
                 onScanError = onScanError,
                 onOpenSettings = onOpenSettings,
                 onBack = onBack,
-                onScanStateChanged = onScanStateChanged,
+                onScanStateChange = onScanStateChange,
                 permissionState = permissionState,
                 scanState = scanState,
                 setScanState = setScanState,
@@ -297,11 +297,11 @@ private fun ScanTopAppBar(
 @Composable
 private fun ScanMainContent(
     validationResult: ScanValidationState,
-    onScanned: (String) -> Unit,
+    onScan: (String) -> Unit,
     onScanError: () -> Unit,
     onOpenSettings: () -> Unit,
     onBack: () -> Unit,
-    onScanStateChanged: (ScanScreenState) -> Unit,
+    onScanStateChange: (ScanScreenState) -> Unit,
     permissionState: PermissionState,
     scanState: ScanScreenState,
     setScanState: (ScanScreenState) -> Unit,
@@ -356,7 +356,7 @@ private fun ScanMainContent(
                         if (qrCode == null) {
                             onScanError()
                         } else {
-                            onScanned(qrCode)
+                            onScan(qrCode)
                         }
                     }
                 }
@@ -403,17 +403,17 @@ private fun ScanMainContent(
         when (scanState) {
             ScanScreenState.Permission -> {
                 // Keep initial ui state
-                onScanStateChanged(ScanScreenState.Permission)
+                onScanStateChange(ScanScreenState.Permission)
             }
 
             ScanScreenState.Scanning -> {
-                onScanStateChanged(ScanScreenState.Scanning)
+                onScanStateChange(ScanScreenState.Scanning)
 
                 if (!LocalInspectionMode.current) {
                     ScanCameraView(
                         framePosition = framePosition,
                         isTorchOn = isTorchOn,
-                        onScanned = onScanned,
+                        onScan = onScan,
                         permissionState = permissionState,
                         setScanState = setScanState,
                     )
@@ -456,9 +456,10 @@ private fun ScanMainContent(
                     ImageButton(
                         painter = painterResource(R.drawable.ic_scan_gallery),
                         contentDescription = stringResource(id = R.string.gallery_content_description),
-                    ) {
-                        galleryLauncher.launch("image/*")
-                    }
+                        onClick = {
+                            galleryLauncher.launch("image/*")
+                        }
+                    )
 
                     Spacer(modifier = Modifier.width(16.dp))
 
@@ -470,14 +471,15 @@ private fun ScanMainContent(
                                 painterResource(R.drawable.ic_scan_torch)
                             },
                         contentDescription = stringResource(id = R.string.scan_torch_content_description),
-                    ) {
-                        setIsTorchOn(!isTorchOn)
-                    }
+                        onClick = {
+                            setIsTorchOn(!isTorchOn)
+                        }
+                    )
                 }
             }
 
             ScanScreenState.Failed -> {
-                onScanStateChanged(ScanScreenState.Failed)
+                onScanStateChange(ScanScreenState.Failed)
             }
         }
 
@@ -548,8 +550,8 @@ private fun ScanMainContent(
 private fun ImageButton(
     painter: Painter,
     contentDescription: String,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Image(
         painter = painter,
@@ -612,7 +614,7 @@ fun ScanFrame(modifier: Modifier = Modifier) {
 fun ScanCameraView(
     framePosition: FramePosition,
     isTorchOn: Boolean,
-    onScanned: (result: String) -> Unit,
+    onScan: (result: String) -> Unit,
     permissionState: PermissionState,
     setScanState: (ScanScreenState) -> Unit,
 ) {
@@ -698,7 +700,7 @@ fun ScanCameraView(
             ).collectAsState(initial = null)
             .value
             ?.let {
-                onScanned(it)
+                onScan(it)
             }
     }
 }
@@ -743,10 +745,10 @@ private fun ScanPreview() =
             Scan(
                 snackbarHostState = SnackbarHostState(),
                 onBack = {},
-                onScanned = {},
+                onScan = {},
                 onScanError = {},
                 onOpenSettings = {},
-                onScanStateChanged = {},
+                onScanStateChange = {},
                 topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 validationResult = ScanValidationState.INVALID,
             )

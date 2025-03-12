@@ -38,7 +38,7 @@ class SecurityWarningViewTestSetup(
             onBack = {
                 onBackCount.incrementAndGet()
             },
-            onAcknowledged = {
+            onAcknowledge = {
                 onAcknowledged.getAndSet(it)
             },
             onConfirm = {
