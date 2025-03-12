@@ -19,6 +19,7 @@ import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewMo
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
 import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
+import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateViewModel
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightViewModel
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
@@ -156,4 +157,5 @@ val viewModelModule =
         viewModelOf(::BalanceViewModel)
         viewModelOf(::HomeViewModel)
         viewModelOf(::RestoreBDHeightViewModel)
+        viewModelOf(::RestoreBDDateViewModel)
     }

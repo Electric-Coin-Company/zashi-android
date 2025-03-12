@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.update
 class RestoreSeedViewModel(
     private val navigationRouter: NavigationRouter
 ) : ViewModel() {
-
     @Suppress("MagicNumber")
     private val seedWords =
         MutableStateFlow(

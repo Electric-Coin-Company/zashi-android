@@ -29,6 +29,8 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransit
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
+import co.electriccoin.zcash.ui.screen.restore.date.AndroidRestoreBDDate
+import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDate
 import co.electriccoin.zcash.ui.screen.restore.height.AndroidRestoreBDHeight
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeight
 import co.electriccoin.zcash.ui.screen.restore.seed.AndroidRestoreSeed
@@ -100,6 +102,9 @@ fun MainActivity.RestoreNavigation() {
         }
         composable<RestoreBDHeight> {
             AndroidRestoreBDHeight()
+        }
+        composable<RestoreBDDate> {
+            AndroidRestoreBDDate()
         }
     }
 }
