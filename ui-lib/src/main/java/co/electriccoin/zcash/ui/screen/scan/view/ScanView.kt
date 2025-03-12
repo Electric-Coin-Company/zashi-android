@@ -667,7 +667,7 @@ fun ScanCameraView(
                         .build()
                 val preview =
                     androidx.camera.core.Preview.Builder().build().apply {
-                        setSurfaceProvider(previewView.surfaceProvider)
+                        surfaceProvider = previewView.surfaceProvider
                     }
 
                 runCatching {
