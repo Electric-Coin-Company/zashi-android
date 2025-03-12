@@ -3,6 +3,7 @@
 package co.electroniccoin.zcash.ui.screenshot
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.LocaleList
 import androidx.activity.viewModels
@@ -24,8 +25,8 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.graphics.writeToTestStorage
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.captureToBitmap
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
-import androidx.test.espresso.screenshot.captureToBitmap
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
@@ -87,8 +88,11 @@ class ScreenshotTest : UiTestPrerequisites() {
             screenshotName: String
         ) {
             onView(isRoot())
-                .captureToBitmap()
-                .writeToTestStorage("$screenshotName - $tag")
+                .perform(
+                    captureToBitmap { bitmap: Bitmap ->
+                        bitmap.writeToTestStorage("$screenshotName - $tag")
+                    }
+                )
         }
     }
 
