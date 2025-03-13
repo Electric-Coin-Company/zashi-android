@@ -8,11 +8,11 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
+import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
@@ -33,7 +33,7 @@ class IntegrationsViewModel(
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     isFlexaAvailableUseCase: IsFlexaAvailableUseCase,
     isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
-    observeWalletAccounts: ObserveWalletAccountsUseCase,
+    observeWalletAccounts: GetWalletAccountsUseCase,
     private val isDialog: Boolean,
     private val navigationRouter: NavigationRouter,
     private val navigateToCoinbase: NavigateToCoinbaseUseCase,
@@ -49,7 +49,7 @@ class IntegrationsViewModel(
             isFlexaAvailableUseCase.observe(),
             isCoinbaseAvailable.observe(),
             isRestoring,
-            observeWalletAccounts()
+            observeWalletAccounts.observe()
         ) { isFlexaAvailable, isCoinbaseAvailable, isRestoring, accounts ->
             IntegrationsState(
                 disabledInfo =

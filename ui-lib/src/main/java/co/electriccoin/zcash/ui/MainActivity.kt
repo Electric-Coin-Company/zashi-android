@@ -48,7 +48,7 @@ import co.electriccoin.zcash.ui.screen.authentication.RETRY_TRIGGER_DELAY
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.authentication.view.AnimationConstants
 import co.electriccoin.zcash.ui.screen.authentication.view.WelcomeAnimationAutostart
-import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
+import co.electriccoin.zcash.ui.screen.onboarding.RestoreNavigation
 import co.electriccoin.zcash.ui.screen.onboarding.persistExistingWalletWithSeedPhrase
 import co.electriccoin.zcash.ui.screen.securitywarning.WrapSecurityWarning
 import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
@@ -249,7 +249,7 @@ class MainActivity : FragmentActivity() {
             CompositionLocalProvider(RemoteConfig provides configuration) {
                 when (secretState) {
                     SecretState.None -> {
-                        WrapOnboarding()
+                        RestoreNavigation()
                     }
 
                     is SecretState.NeedsWarning -> {
@@ -263,7 +263,11 @@ class MainActivity : FragmentActivity() {
                                         applicationContext,
                                         walletViewModel,
                                         SeedPhrase.new(WalletFixture.Alice.seedPhrase),
-                                        WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
+                                        WalletFixture.Alice.getBirthday(
+                                            ZcashNetwork.fromResources(
+                                                applicationContext
+                                            )
+                                        )
                                     )
                                 } else {
                                     walletViewModel.persistNewWalletAndRestoringState(WalletRestoringState.INITIATING)
@@ -284,7 +288,7 @@ class MainActivity : FragmentActivity() {
                     }
 
                     else -> {
-                        error("Unhandled secret state: $secretState")
+                        // should not happen
                     }
                 }
             }

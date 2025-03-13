@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
-import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.SelectWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class AccountListViewModel(
-    observeWalletAccounts: ObserveWalletAccountsUseCase,
+    getWalletAccounts: GetWalletAccountsUseCase,
     private val selectWalletAccount: SelectWalletAccountUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
@@ -38,7 +38,7 @@ class AccountListViewModel(
 
     @Suppress("SpreadOperator")
     val state =
-        observeWalletAccounts().map { accounts ->
+        getWalletAccounts.observe().map { accounts ->
             val items =
                 listOfNotNull(
                     *accounts.orEmpty()

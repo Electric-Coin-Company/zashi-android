@@ -70,7 +70,6 @@ interface WalletRepository {
     val synchronizer: StateFlow<Synchronizer?>
     val secretState: StateFlow<SecretState>
     val fastestServers: StateFlow<FastestServersState>
-    val persistableWallet: Flow<PersistableWallet?>
     val onboardingState: Flow<OnboardingState>
 
     val allAccounts: Flow<List<WalletAccount>?>
@@ -99,8 +98,6 @@ interface WalletRepository {
 
     suspend fun getSynchronizer(): Synchronizer
 
-    suspend fun getPersistableWallet(): PersistableWallet
-
     fun persistExistingWalletWithSeedPhrase(
         network: ZcashNetwork,
         seedPhrase: SeedPhrase,
@@ -110,7 +107,7 @@ interface WalletRepository {
 
 class WalletRepositoryImpl(
     accountDataSource: AccountDataSource,
-    persistableWalletProvider: PersistableWalletProvider,
+    private val persistableWalletProvider: PersistableWalletProvider,
     private val synchronizerProvider: SynchronizerProvider,
     private val application: Application,
     private val getDefaultServers: GetDefaultServersProvider,
@@ -143,22 +140,12 @@ class WalletRepositoryImpl(
     override val allAccounts: StateFlow<List<WalletAccount>?> = accountDataSource.allAccounts
 
     override val secretState: StateFlow<SecretState> =
-        combine(
-            persistableWalletProvider.persistableWallet,
-            onboardingState
-        ) { persistableWallet: PersistableWallet?, onboardingState: OnboardingState ->
-            when {
-                onboardingState == OnboardingState.NONE -> SecretState.None
-                onboardingState == OnboardingState.NEEDS_WARN -> SecretState.NeedsWarning
-                onboardingState == OnboardingState.NEEDS_BACKUP && persistableWallet != null -> {
-                    SecretState.NeedsBackup(persistableWallet)
-                }
-
-                onboardingState == OnboardingState.READY && persistableWallet != null -> {
-                    SecretState.Ready(persistableWallet)
-                }
-
-                else -> SecretState.None
+        onboardingState.map { onboardingState: OnboardingState ->
+            when (onboardingState) {
+                OnboardingState.NONE -> SecretState.None
+                OnboardingState.NEEDS_WARN -> SecretState.NeedsWarning
+                OnboardingState.NEEDS_BACKUP -> SecretState.NeedsBackup
+                OnboardingState.READY -> SecretState.Ready
             }
         }.stateIn(
             scope = scope,
@@ -203,11 +190,6 @@ class WalletRepositoryImpl(
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = FastestServersState(servers = emptyList(), isLoading = true)
         )
-
-    override val persistableWallet: Flow<PersistableWallet?> =
-        secretState.map {
-            (it as? SecretState.Ready?)?.persistableWallet
-        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val currentWalletSnapshot: StateFlow<WalletSnapshot?> =
@@ -317,7 +299,7 @@ class WalletRepositoryImpl(
     }
 
     override suspend fun getSelectedServer(): LightWalletEndpoint {
-        return persistableWallet
+        return persistableWalletProvider.persistableWallet
             .map {
                 it?.endpoint
             }
@@ -337,8 +319,6 @@ class WalletRepositoryImpl(
     }
 
     override suspend fun getSynchronizer(): Synchronizer = synchronizerProvider.getSynchronizer()
-
-    override suspend fun getPersistableWallet(): PersistableWallet = persistableWallet.filterNotNull().first()
 
     override fun persistExistingWalletWithSeedPhrase(
         network: ZcashNetwork,
