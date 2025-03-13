@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.toInstant
+import kotlinx.datetime.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -81,8 +81,8 @@ class MergingConfigurationProviderTest {
     @Test
     fun getUpdatedAt_newest() =
         runTest {
-            val older = "2023-01-15T08:38:45.415Z".toInstant()
-            val newer = "2023-01-17T08:38:45.415Z".toInstant()
+            val older = Instant.parse("2023-01-15T08:38:45.415Z")
+            val newer = Instant.parse("2023-01-17T08:38:45.415Z")
 
             val configurationProvider =
                 MergingConfigurationProvider(
