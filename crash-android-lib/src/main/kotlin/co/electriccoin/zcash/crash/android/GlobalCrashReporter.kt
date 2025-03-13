@@ -64,5 +64,6 @@ object GlobalCrashReporter {
 }
 
 private fun isCrashProcess(context: Context) =
-    ProcessNameCompat.getProcessName(context)
+    ProcessNameCompat
+        .getProcessName(context)
         .endsWith(GlobalCrashReporter.CRASH_PROCESS_NAME_SUFFIX)

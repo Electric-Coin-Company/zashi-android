@@ -76,8 +76,4 @@ the project, these steps are not necessary.)
    running automated tests.
 1. Test coverage for Compose code will be low, due to [known limitations](https://github.com/jacoco/jacoco/issues/1208) in the interaction between Compose and Jacoco.
 1. Adding the `espresso-contrib` dependency will cause builds to fail, due to conflicting classes.  This is a [known issue](https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk/issues/306) with the Zcash Android SDK.
-1. Android Studio will warn about the Gradle checksum.  This is a [known issue](https://github.com/gradle/gradle/issues/9361) and can be safely ignored.
 1. During app first launch, the following exception starting with `AndroidKeysetManager: keyset not found, will generate a new one` is printed twice.  This exception is not an error, and the code is not being invoked twice.
-1. While syncing Gradle files, build error with `org.jetbrains:markdown` dependency locking might occur. It is a 
-   filed [known issue](https://github.com/Electric-Coin-Company/zashi-android/issues/1526) that does not block building 
-   the project.

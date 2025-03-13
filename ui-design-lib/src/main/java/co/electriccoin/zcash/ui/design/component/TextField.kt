@@ -90,8 +90,7 @@ fun FormTextField(
                                 }
                             }
                         }
-                    }
-                    .then(
+                    }.then(
                         if (withBorder) {
                             Modifier.border(
                                 width = 1.dp,
@@ -105,8 +104,7 @@ fun FormTextField(
                         } else {
                             Modifier
                         }
-                    )
-                    .then(
+                    ).then(
                         if (testTag.isNullOrEmpty()) {
                             Modifier
                         } else {

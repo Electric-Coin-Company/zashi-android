@@ -15,7 +15,9 @@ sealed class SeedPhraseValidation {
 
     object FailedChecksum : SeedPhraseValidation()
 
-    class Valid(val seedPhrase: SeedPhrase) : SeedPhraseValidation()
+    class Valid(
+        val seedPhrase: SeedPhrase
+    ) : SeedPhraseValidation()
 
     companion object {
         suspend fun new(list: List<String>): SeedPhraseValidation {

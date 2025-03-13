@@ -16,7 +16,9 @@ import com.google.crypto.tink.util.SecretBytes
 /**
  * The long-term key that can decrypt an account's encrypted address book.
  */
-class AddressBookKey(val key: SecretBytes) : Key {
+class AddressBookKey(
+    val key: SecretBytes
+) : Key {
     /**
      * Derives the filename that this key is able to decrypt.
      */

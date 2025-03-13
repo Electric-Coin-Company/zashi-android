@@ -39,8 +39,7 @@ internal class StaleLock(
                         emitWithLock(true)
                     }
                 }
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 
     private suspend fun <T> FlowCollector<T>.emitWithLock(value: T) =
         mutex.withLock {

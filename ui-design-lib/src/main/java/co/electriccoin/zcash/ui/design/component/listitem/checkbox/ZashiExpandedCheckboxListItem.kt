@@ -114,11 +114,11 @@ private fun ExpandedBaseListItem(
     contentPadding: PaddingValues,
     onClick: (() -> Unit)?,
     leading: @Composable (Modifier) -> Unit,
-    content: @Composable (Modifier) -> Unit,
     trailing: @Composable (Modifier) -> Unit,
     below: @Composable ColumnScope.(Modifier) -> Unit,
     modifier: Modifier = Modifier,
     border: BorderStroke? = null,
+    content: @Composable (Modifier) -> Unit,
 ) {
     Surface(
         modifier = modifier,

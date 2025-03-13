@@ -9,6 +9,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ### Added
 - Support for `zcashtestnetFossRelease` has been added to the app resources package
 
+### Changed
+- All internal dependencies have been updated
+
 ### Fixed
 - We fixed the `zcashtestnetStoreDebug` app build variant file provider, so the export private data and export tax 
   file features work for this build variant as expected

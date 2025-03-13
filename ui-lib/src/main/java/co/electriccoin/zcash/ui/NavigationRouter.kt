@@ -69,13 +69,21 @@ class NavigationRouterImpl : NavigationRouter {
 }
 
 sealed interface NavigationCommand {
-    data class Forward(val route: Any) : NavigationCommand
+    data class Forward(
+        val route: Any
+    ) : NavigationCommand
 
-    data class Replace(val route: Any) : NavigationCommand
+    data class Replace(
+        val route: Any
+    ) : NavigationCommand
 
-    data class ReplaceAll(val route: Any) : NavigationCommand
+    data class ReplaceAll(
+        val route: Any
+    ) : NavigationCommand
 
-    data class NewRoot(val route: Any) : NavigationCommand
+    data class NewRoot(
+        val route: Any
+    ) : NavigationCommand
 
     data object Back : NavigationCommand
 

@@ -9,12 +9,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
-import org.koin.androidx.compose.defaultExtras
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.currentKoinScope
 import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.qualifier.Qualifier
 import org.koin.core.scope.Scope
+import org.koin.viewmodel.defaultExtras
 
 @Suppress("LongParameterList")
 @Composable

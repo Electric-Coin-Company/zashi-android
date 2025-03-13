@@ -58,7 +58,9 @@ class ScreenSecurityTest : UiTestPrerequisites() {
             assertEquals(0, testSetup.getSecureScreenCount())
         }
 
-    private class TestSetup(composeTestRule: ComposeContentTestRule) {
+    private class TestSetup(
+        composeTestRule: ComposeContentTestRule
+    ) {
         val mutableSecureScreenFlag = MutableStateFlow(true)
 
         private val screenSecurity = ScreenSecurity()

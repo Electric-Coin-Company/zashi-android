@@ -3,7 +3,11 @@ package cash.z.ecc.sdk.model
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.Zatoshi
 
-data class ZecRequest(val address: WalletAddress.Unified, val amount: Zatoshi, val message: ZecRequestMessage) {
+data class ZecRequest(
+    val address: WalletAddress.Unified,
+    val amount: Zatoshi,
+    val message: ZecRequestMessage
+) {
     // TODO [#397]: Waiting for an implementation of Uri parser in SDK project
     // TODO [#397]: https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk/issues/397
     suspend fun toUri(): String {
@@ -21,7 +25,9 @@ data class ZecRequest(val address: WalletAddress.Unified, val amount: Zatoshi, v
 }
 
 @JvmInline
-value class ZecRequestMessage(val value: String) {
+value class ZecRequestMessage(
+    val value: String
+) {
     init {
         require(value.length <= MAX_MESSAGE_LENGTH)
     }

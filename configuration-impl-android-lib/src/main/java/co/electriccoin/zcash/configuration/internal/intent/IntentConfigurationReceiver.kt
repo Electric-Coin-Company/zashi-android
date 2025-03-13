@@ -34,8 +34,8 @@ class IntentConfigurationReceiver : BroadcastReceiver() {
 }
 
 // https://issuetracker.google.com/issues/36927401
-private fun Intent.defuse(): Intent? {
-    return try {
+private fun Intent.defuse(): Intent? =
+    try {
         extras?.containsKey(null)
         this
     } catch (
@@ -43,4 +43,3 @@ private fun Intent.defuse(): Intent? {
     ) {
         null
     }
-}

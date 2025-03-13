@@ -6,6 +6,8 @@ import android.view.ContextThemeWrapper
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.movableContentOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.flow.StateFlow
@@ -17,12 +19,13 @@ import kotlinx.coroutines.flow.StateFlow
 @Composable
 fun Override(
     configurationOverrideFlow: StateFlow<ConfigurationOverride?>,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val configurationOverride = configurationOverrideFlow.collectAsState().value
+    val contentSlot = remember { movableContentOf { content() } }
 
     if (null == configurationOverride) {
-        content()
+        contentSlot()
     } else {
         val configuration = configurationOverride.newConfiguration(LocalConfiguration.current)
 
@@ -40,12 +43,15 @@ fun Override(
             LocalConfiguration provides configuration,
             LocalContext provides contextWrapper
         ) {
-            content()
+            contentSlot()
         }
     }
 }
 
-data class ConfigurationOverride(val uiMode: UiMode?, val locale: LocaleList?) {
+data class ConfigurationOverride(
+    val uiMode: UiMode?,
+    val locale: LocaleList?
+) {
     fun newConfiguration(fromConfiguration: Configuration) =
         Configuration(fromConfiguration).apply {
             this@ConfigurationOverride.uiMode?.let {

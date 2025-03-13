@@ -42,7 +42,8 @@ class QrCodeAnalyzerImpl(
 
             // Configure Barcode Scanner Options
             val options =
-                BarcodeScannerOptions.Builder()
+                BarcodeScannerOptions
+                    .Builder()
                     .setBarcodeFormats(supportedImageFormat)
                     // We could optionally use this to enhance scan success ratio. If it's specified, then the library
                     // will suggest zooming the camera if the barcode is too far away or too small to be detected.
@@ -52,7 +53,8 @@ class QrCodeAnalyzerImpl(
             // Initialize Barcode Scanner
             val scanner = BarcodeScanning.getClient(options)
 
-            scanner.process(image)
+            scanner
+                .process(image)
                 .addOnSuccessListener { barcodes ->
                     for (barcode in barcodes) {
                         barcode.rawValue?.let { value ->
@@ -62,11 +64,9 @@ class QrCodeAnalyzerImpl(
                             return@addOnSuccessListener
                         }
                     }
-                }
-                .addOnFailureListener { e ->
+                }.addOnFailureListener { e ->
                     Twig.error(e) { "Barcode detection failed" }
-                }
-                .addOnCompleteListener {
+                }.addOnCompleteListener {
                     // Close the image proxy
                     imageProxy.close()
                 }

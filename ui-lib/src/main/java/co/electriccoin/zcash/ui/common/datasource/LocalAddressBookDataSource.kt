@@ -108,7 +108,10 @@ class LocalAddressBookDataSourceImpl(
                     lastUpdated = lastUpdated,
                     version = ADDRESS_BOOK_SERIALIZATION_V1,
                     contacts =
-                        addressBook?.contacts.orEmpty().toMutableList()
+                        addressBook
+                            ?.contacts
+                            .orEmpty()
+                            .toMutableList()
                             .apply {
                                 set(
                                     indexOf(contact),
@@ -118,8 +121,7 @@ class LocalAddressBookDataSourceImpl(
                                         lastUpdated = Clock.System.now()
                                     )
                                 )
-                            }
-                            .toList(),
+                            }.toList(),
                 ).also {
                     addressBook = it
                 }
@@ -138,11 +140,13 @@ class LocalAddressBookDataSourceImpl(
                     lastUpdated = lastUpdated,
                     version = ADDRESS_BOOK_SERIALIZATION_V1,
                     contacts =
-                        addressBook?.contacts.orEmpty().toMutableList()
+                        addressBook
+                            ?.contacts
+                            .orEmpty()
+                            .toMutableList()
                             .apply {
                                 remove(addressBookContact)
-                            }
-                            .toList(),
+                            }.toList(),
                 ).also {
                     addressBook = it
                 }
@@ -176,7 +180,8 @@ class LocalAddressBookDataSourceImpl(
         }
 
         return if (unencryptedFile != null) {
-            addressBookProvider.readLegacyUnencryptedAddressBookFromFile(unencryptedFile)
+            addressBookProvider
+                .readLegacyUnencryptedAddressBookFromFile(unencryptedFile)
                 .also { unencryptedAddressBook ->
                     writeAddressBookToLocalStorage(unencryptedAddressBook, addressBookKey)
                     unencryptedFile.deleteSuspend()

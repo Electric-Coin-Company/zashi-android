@@ -49,17 +49,18 @@ data class VersionInfo(
             )
         }
 
-        private fun resolveBestReleaseNotes(): String {
-            return if (Locale.getDefault().language.contains("es", ignoreCase = true)) {
+        private fun resolveBestReleaseNotes(): String =
+            if (Locale.getDefault().language.contains("es", ignoreCase = true)) {
                 releaseNotesEs
             } else {
                 releaseNotesEn
             }
-        }
     }
 }
 
-enum class DistributionDimension(val value: String) {
+enum class DistributionDimension(
+    val value: String
+) {
     STORE("store"),
     FOSS("foss")
 }

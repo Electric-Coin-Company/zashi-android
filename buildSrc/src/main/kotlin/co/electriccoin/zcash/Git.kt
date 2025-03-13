@@ -23,4 +23,7 @@ object Git {
     }
 }
 
-data class GitInfo(val sha: String, val commitCount: Int)
+data class GitInfo(
+    val sha: String,
+    val commitCount: Int
+)

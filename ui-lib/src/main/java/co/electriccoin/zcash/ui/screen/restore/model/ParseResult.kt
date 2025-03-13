@@ -9,17 +9,23 @@ internal sealed class ParseResult {
         override fun toString() = "Continue"
     }
 
-    data class Add(val words: List<String>) : ParseResult() {
+    data class Add(
+        val words: List<String>
+    ) : ParseResult() {
         // Override to prevent logging of user secrets
         override fun toString() = "Add"
     }
 
-    data class Autocomplete(val suggestions: List<String>) : ParseResult() {
+    data class Autocomplete(
+        val suggestions: List<String>
+    ) : ParseResult() {
         // Override to prevent logging of user secrets
         override fun toString() = "Autocomplete"
     }
 
-    data class Warn(val suggestions: List<String>) : ParseResult() {
+    data class Warn(
+        val suggestions: List<String>
+    ) : ParseResult() {
         // Override to prevent logging of user secrets
         override fun toString() = "Warn"
     }
@@ -49,7 +55,8 @@ internal sealed class ParseResult {
             }
 
             val multiple =
-                trimmed.split(SeedPhrase.DEFAULT_DELIMITER)
+                trimmed
+                    .split(SeedPhrase.DEFAULT_DELIMITER)
                     .filter { completeWordList.contains(it) }
                     .first(SeedPhrase.SEED_PHRASE_SIZE)
             if (multiple.isNotEmpty()) {
@@ -60,20 +67,17 @@ internal sealed class ParseResult {
         }
     }
 
-    override fun toString(): String {
-        return "ParseResult()"
-    }
+    override fun toString(): String = "ParseResult()"
 }
 
 internal fun findSuggestions(
     input: String,
     completeWordList: Set<String>
-): List<String> {
-    return if (input.isBlank()) {
+): List<String> =
+    if (input.isBlank()) {
         emptyList()
     } else {
         completeWordList.filter { it.startsWith(input) }.ifEmpty {
             findSuggestions(input.dropLast(1), completeWordList)
         }
     }
-}

@@ -23,8 +23,8 @@ class TransactionHistoryMapper {
         data: ListTransactionData,
         restoreTimestamp: Instant,
         onTransactionClick: (Transaction) -> Unit
-    ): TransactionState {
-        return TransactionState(
+    ): TransactionState =
+        TransactionState(
             key = data.transaction.id.txIdString(),
             icon = getIcon(data),
             title = getTitle(data),
@@ -34,7 +34,6 @@ class TransactionHistoryMapper {
             onClick = { onTransactionClick(data.transaction) },
             isUnread = isUnread(data, restoreTimestamp)
         )
-    }
 
     private fun isUnread(
         data: ListTransactionData,

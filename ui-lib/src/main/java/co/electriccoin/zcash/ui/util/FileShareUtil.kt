@@ -44,8 +44,8 @@ object FileShareUtil {
         shareText: String? = null,
         sharePickerText: String,
         versionInfo: VersionInfo,
-    ): Intent {
-        return newShareContentIntent(
+    ): Intent =
+        newShareContentIntent(
             context = context,
             file = File(dataFilePath),
             shareText = shareText,
@@ -53,7 +53,6 @@ object FileShareUtil {
             versionInfo = versionInfo,
             fileType = fileType,
         )
-    }
 
     internal fun newShareContentIntent(
         context: Context,
@@ -84,15 +83,16 @@ object FileShareUtil {
             }
 
         val shareDataIntent =
-            Intent.createChooser(
-                dataIntent,
-                sharePickerText
-            ).apply {
-                addFlags(
-                    SHARE_CONTENT_PERMISSION_FLAGS or
-                        SHARE_OUTSIDE_THE_APP_FLAGS
-                )
-            }
+            Intent
+                .createChooser(
+                    dataIntent,
+                    sharePickerText
+                ).apply {
+                    addFlags(
+                        SHARE_CONTENT_PERMISSION_FLAGS or
+                            SHARE_OUTSIDE_THE_APP_FLAGS
+                    )
+                }
 
         return shareDataIntent
     }

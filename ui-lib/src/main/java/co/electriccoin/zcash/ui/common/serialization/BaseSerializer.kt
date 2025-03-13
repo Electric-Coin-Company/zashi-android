@@ -4,22 +4,21 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 
 abstract class BaseSerializer {
-    protected fun Int.createByteArray(): ByteArray {
-        return this.toLong().createByteArray()
-    }
+    protected fun Int.createByteArray(): ByteArray = this.toLong().createByteArray()
 
-    protected fun Long.createByteArray(): ByteArray {
-        return ByteBuffer.allocate(Long.SIZE_BYTES).order(ADDRESS_BOOK_BYTE_ORDER).putLong(this).array()
-    }
+    protected fun Long.createByteArray(): ByteArray =
+        ByteBuffer
+            .allocate(Long.SIZE_BYTES)
+            .order(ADDRESS_BOOK_BYTE_ORDER)
+            .putLong(this)
+            .array()
 
     protected fun String.createByteArray(): ByteArray {
         val byteArray = this.toByteArray()
         return byteArray.size.createByteArray() + byteArray
     }
 
-    protected fun InputStream.readInt(): Int {
-        return readLong().toInt()
-    }
+    protected fun InputStream.readInt(): Int = readLong().toInt()
 
     protected fun InputStream.readLong(): Long {
         val buffer = ByteArray(Long.SIZE_BYTES)

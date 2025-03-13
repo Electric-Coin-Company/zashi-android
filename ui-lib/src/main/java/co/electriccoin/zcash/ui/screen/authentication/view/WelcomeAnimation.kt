@@ -123,8 +123,7 @@ fun WelcomeScreenView(
                     .verticalScroll(
                         state = rememberScrollState(),
                         enabled = false
-                    )
-                    .wrapContentSize()
+                    ).wrapContentSize()
             )
     ) {
         AnimatedVisibility(

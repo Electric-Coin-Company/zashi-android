@@ -91,7 +91,9 @@ fun StyledExchangeOptIn(
             ) { scope ->
                 Text(
                     text = stringResource(R.string.exchange_rate_opt_in_primary_btn),
-                    style = ZcashTheme.typography.primary.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                    style =
+                        ZcashTheme.typography.primary.titleSmall
+                            .copy(fontWeight = FontWeight.SemiBold),
                     fontSize = 14.sp
                 )
                 scope.Loading()

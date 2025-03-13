@@ -50,37 +50,27 @@ open class AbstractProcessNameContentProvider : ContentProvider() {
         selection: String?,
         selectionArgs: Array<out String>?,
         sortOrder: String?
-    ): Cursor? {
-        throw UnsupportedOperationException()
-    }
+    ): Cursor? = throw UnsupportedOperationException()
 
-    override fun getType(uri: Uri): String? {
-        throw UnsupportedOperationException()
-    }
+    override fun getType(uri: Uri): String? = throw UnsupportedOperationException()
 
     override fun insert(
         uri: Uri,
         values: ContentValues?
-    ): Uri? {
-        throw UnsupportedOperationException()
-    }
+    ): Uri? = throw UnsupportedOperationException()
 
     override fun delete(
         uri: Uri,
         selection: String?,
         selectionArgs: Array<out String>?
-    ): Int {
-        throw UnsupportedOperationException()
-    }
+    ): Int = throw UnsupportedOperationException()
 
     override fun update(
         uri: Uri,
         values: ContentValues?,
         selection: String?,
         selectionArgs: Array<out String>?
-    ): Int {
-        throw UnsupportedOperationException()
-    }
+    ): Int = throw UnsupportedOperationException()
 
     companion object {
         internal fun getProcessNameLegacy(

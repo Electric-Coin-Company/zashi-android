@@ -119,11 +119,17 @@ sealed class StatusAction {
 
     data object AppUpdate : StatusAction()
 
-    sealed class Detailed(open val details: String) : StatusAction()
+    sealed class Detailed(
+        open val details: String
+    ) : StatusAction()
 
-    data class Disconnected(override val details: String) : Detailed(details)
+    data class Disconnected(
+        override val details: String
+    ) : Detailed(details)
 
-    data class Stopped(override val details: String) : Detailed(details)
+    data class Stopped(
+        override val details: String
+    ) : Detailed(details)
 
     data class Error(
         override val details: String,
@@ -136,8 +142,8 @@ fun StatusAction.isReportable() = this is StatusAction.Error && fullStackTrace !
 private fun getFiatCurrencyRateValue(
     context: Context,
     fiatCurrencyAmountState: FiatCurrencyConversionRateState
-): String {
-    return fiatCurrencyAmountState.let { state ->
+): String =
+    fiatCurrencyAmountState.let { state ->
         when (state) {
             is FiatCurrencyConversionRateState.Current -> state.formattedFiatValue
             is FiatCurrencyConversionRateState.Stale -> state.formattedFiatValue
@@ -146,4 +152,3 @@ private fun getFiatCurrencyRateValue(
             }
         }
     }
-}

@@ -6,7 +6,5 @@ import com.sparrowwallet.hummingbird.UREncoder
 class CreateKeystoneProposalPCZTEncoderUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
 ) {
-    suspend operator fun invoke(): UREncoder {
-        return keystoneProposalRepository.createPCZTEncoder()
-    }
+    suspend operator fun invoke(): UREncoder = keystoneProposalRepository.createPCZTEncoder()
 }

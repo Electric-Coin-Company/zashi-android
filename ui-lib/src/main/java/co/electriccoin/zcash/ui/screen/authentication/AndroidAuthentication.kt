@@ -28,7 +28,7 @@ internal const val RETRY_TRIGGER_DELAY = 0
 internal fun MainActivity.WrapAuthentication(
     onSuccess: () -> Unit,
     onCancel: () -> Unit,
-    onFailed: () -> Unit,
+    onFail: () -> Unit,
     useCase: AuthenticationUseCase,
     goSupport: (() -> Unit)? = null,
 ) {
@@ -37,7 +37,7 @@ internal fun MainActivity.WrapAuthentication(
         goSupport = goSupport,
         onSuccess = onSuccess,
         onCancel = onCancel,
-        onFailed = onFailed,
+        onFail = onFail,
         useCase = useCase
     )
 }
@@ -48,7 +48,7 @@ private fun WrapAuthenticationUseCases(
     activity: MainActivity,
     onSuccess: () -> Unit,
     onCancel: () -> Unit,
-    onFailed: () -> Unit,
+    onFail: () -> Unit,
     useCase: AuthenticationUseCase,
     goSupport: (() -> Unit)? = null,
 ) {
@@ -59,7 +59,7 @@ private fun WrapAuthenticationUseCases(
                 activity = activity,
                 goToAppContent = onSuccess,
                 onCancel = onCancel,
-                onFailed = onFailed
+                onFail = onFail
             )
         }
         AuthenticationUseCase.ExportPrivateData -> {
@@ -69,7 +69,7 @@ private fun WrapAuthenticationUseCases(
                 goExportPrivateData = onSuccess,
                 goSupport = goSupport ?: {},
                 onCancel = onCancel,
-                onFailed = onFailed
+                onFail = onFail
             )
         }
         AuthenticationUseCase.DeleteWallet -> {
@@ -79,7 +79,7 @@ private fun WrapAuthenticationUseCases(
                 goDeleteWallet = onSuccess,
                 goSupport = goSupport ?: {},
                 onCancel = onCancel,
-                onFailed = onFailed
+                onFail = onFail
             )
         }
         AuthenticationUseCase.SeedRecovery -> {
@@ -89,7 +89,7 @@ private fun WrapAuthenticationUseCases(
                 goSeedRecovery = onSuccess,
                 goSupport = goSupport ?: {},
                 onCancel = onCancel,
-                onFailed = onFailed
+                onFail = onFail
             )
         }
         AuthenticationUseCase.SendFunds -> {
@@ -99,7 +99,7 @@ private fun WrapAuthenticationUseCases(
                 onSendFunds = onSuccess,
                 goSupport = goSupport ?: {},
                 onCancel = onCancel,
-                onFailed = onFailed
+                onFail = onFail
             )
         }
     }
@@ -111,13 +111,14 @@ private fun WrapDeleteWalletAuth(
     goSupport: () -> Unit,
     goDeleteWallet: () -> Unit,
     onCancel: () -> Unit,
-    onFailed: () -> Unit,
+    onFail: () -> Unit,
 ) {
     val authenticationViewModel = koinActivityViewModel<AuthenticationViewModel>()
 
     val authenticationResult =
         authenticationViewModel.authenticationResult
-            .collectAsStateWithLifecycle(initialValue = AuthenticationResult.None).value
+            .collectAsStateWithLifecycle(initialValue = AuthenticationResult.None)
+            .value
 
     when (authenticationResult) {
         AuthenticationResult.None -> {
@@ -137,8 +138,9 @@ private fun WrapDeleteWalletAuth(
         AuthenticationResult.Failed -> {
             Twig.warn { "Authentication result: failed" }
             authenticationViewModel.resetAuthenticationResult()
-            onFailed()
-            Toast.makeText(activity, activity.getString(R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
+            onFail()
+            Toast
+                .makeText(activity, activity.getString(R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
                 .show()
         }
         is AuthenticationResult.Error -> {
@@ -184,13 +186,14 @@ private fun WrapAppExportPrivateDataAuth(
     goSupport: () -> Unit,
     goExportPrivateData: () -> Unit,
     onCancel: () -> Unit,
-    onFailed: () -> Unit,
+    onFail: () -> Unit,
 ) {
     val authenticationViewModel = koinActivityViewModel<AuthenticationViewModel>()
 
     val authenticationResult =
         authenticationViewModel.authenticationResult
-            .collectAsStateWithLifecycle(initialValue = AuthenticationResult.None).value
+            .collectAsStateWithLifecycle(initialValue = AuthenticationResult.None)
+            .value
 
     when (authenticationResult) {
         AuthenticationResult.None -> {
@@ -210,8 +213,9 @@ private fun WrapAppExportPrivateDataAuth(
         AuthenticationResult.Failed -> {
             Twig.warn { "Authentication result: failed" }
             authenticationViewModel.resetAuthenticationResult()
-            onFailed()
-            Toast.makeText(activity, stringResource(id = R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
+            onFail()
+            Toast
+                .makeText(activity, stringResource(id = R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
                 .show()
         }
         is AuthenticationResult.Error -> {
@@ -257,13 +261,14 @@ private fun WrapSeedRecoveryAuth(
     goSupport: () -> Unit,
     goSeedRecovery: () -> Unit,
     onCancel: () -> Unit,
-    onFailed: () -> Unit,
+    onFail: () -> Unit,
 ) {
     val authenticationViewModel = koinActivityViewModel<AuthenticationViewModel>()
 
     val authenticationResult =
         authenticationViewModel.authenticationResult
-            .collectAsStateWithLifecycle(initialValue = AuthenticationResult.None).value
+            .collectAsStateWithLifecycle(initialValue = AuthenticationResult.None)
+            .value
 
     when (authenticationResult) {
         AuthenticationResult.None -> {
@@ -283,8 +288,9 @@ private fun WrapSeedRecoveryAuth(
         AuthenticationResult.Failed -> {
             Twig.warn { "Authentication result: failed" }
             authenticationViewModel.resetAuthenticationResult()
-            onFailed()
-            Toast.makeText(activity, stringResource(id = R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
+            onFail()
+            Toast
+                .makeText(activity, stringResource(id = R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
                 .show()
         }
         is AuthenticationResult.Error -> {
@@ -331,13 +337,14 @@ private fun WrapSendFundsAuth(
     goSupport: () -> Unit,
     onSendFunds: () -> Unit,
     onCancel: () -> Unit,
-    onFailed: () -> Unit,
+    onFail: () -> Unit,
 ) {
     val authenticationViewModel = koinActivityViewModel<AuthenticationViewModel>()
 
     val authenticationResult =
         authenticationViewModel.authenticationResult
-            .collectAsStateWithLifecycle(initialValue = AuthenticationResult.None).value
+            .collectAsStateWithLifecycle(initialValue = AuthenticationResult.None)
+            .value
 
     when (authenticationResult) {
         AuthenticationResult.None -> {
@@ -357,8 +364,9 @@ private fun WrapSendFundsAuth(
         AuthenticationResult.Failed -> {
             Twig.warn { "Authentication result: failed" }
             authenticationViewModel.resetAuthenticationResult()
-            onFailed()
-            Toast.makeText(activity, stringResource(id = R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
+            onFail()
+            Toast
+                .makeText(activity, stringResource(id = R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
                 .show()
         }
         is AuthenticationResult.Error -> {
@@ -404,7 +412,7 @@ private fun WrapAppAccessAuth(
     activity: MainActivity,
     goToAppContent: () -> Unit,
     onCancel: () -> Unit,
-    onFailed: () -> Unit,
+    onFail: () -> Unit,
 ) {
     val authenticationViewModel = koinActivityViewModel<AuthenticationViewModel>()
 
@@ -427,7 +435,8 @@ private fun WrapAppAccessAuth(
 
     val authenticationResult =
         authenticationViewModel.authenticationResult
-            .collectAsStateWithLifecycle(initialValue = AuthenticationResult.None).value
+            .collectAsStateWithLifecycle(initialValue = AuthenticationResult.None)
+            .value
 
     when (authenticationResult) {
         AuthenticationResult.None -> {
@@ -443,19 +452,20 @@ private fun WrapAppAccessAuth(
         AuthenticationResult.Canceled -> {
             Twig.info { "Authentication result: canceled: shutting down" }
             authenticationViewModel.resetAuthenticationResult()
-            Toast.makeText(activity, stringResource(id = R.string.authentication_toast_canceled), Toast.LENGTH_SHORT)
+            Toast
+                .makeText(activity, stringResource(id = R.string.authentication_toast_canceled), Toast.LENGTH_SHORT)
                 .show()
             onCancel()
         }
         AuthenticationResult.Failed -> {
             Twig.warn { "Authentication result: failed" }
-            onFailed()
+            onFail()
         }
         is AuthenticationResult.Error -> {
             Twig.error {
                 "Authentication result: error: ${authenticationResult.errorCode}: ${authenticationResult.errorMessage}"
             }
-            onFailed()
+            onFail()
         }
     }
 

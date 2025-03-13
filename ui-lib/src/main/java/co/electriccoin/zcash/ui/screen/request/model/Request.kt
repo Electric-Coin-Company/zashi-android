@@ -37,12 +37,13 @@ sealed class AmountState(
         context: Context,
         conversion: FiatCurrencyConversion
     ): String =
-        kotlin.runCatching {
-            Zatoshi.fromZecString(context, amount, Locale.getDefault())?.toFiatString(
-                currencyConversion = conversion,
-                locale = Locale.getDefault()
-            ) ?: ""
-        }.getOrElse { "" }
+        kotlin
+            .runCatching {
+                Zatoshi.fromZecString(context, amount, Locale.getDefault())?.toFiatString(
+                    currencyConversion = conversion,
+                    locale = Locale.getDefault()
+                ) ?: ""
+            }.getOrElse { "" }
 
     data class Valid(
         override val amount: String,

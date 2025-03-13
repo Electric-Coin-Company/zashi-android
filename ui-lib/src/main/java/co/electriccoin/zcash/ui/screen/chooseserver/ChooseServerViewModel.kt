@@ -59,8 +59,7 @@ class ChooseServerViewModel(
                     fastestServers.servers
                         ?.map { endpoint ->
                             createDefaultServerState(endpoint, userEndpointSelection, selectedEndpoint)
-                        }
-                        .orEmpty(),
+                        }.orEmpty(),
                 isLoading = fastestServers.isLoading,
                 retryButton =
                     ButtonState(
@@ -97,16 +96,13 @@ class ChooseServerViewModel(
                     getAvailableServers()
                         .filter {
                             !fastest.servers.orEmpty().contains(it)
-                        }
-                        .map<LightWalletEndpoint, ServerState> { endpoint ->
+                        }.map<LightWalletEndpoint, ServerState> { endpoint ->
                             createDefaultServerState(endpoint, userEndpointSelection, selectedEndpoint)
-                        }
-                        .toMutableList()
+                        }.toMutableList()
                         .apply {
                             val index = 1.coerceIn(0, size.coerceAtLeast(0))
                             add(index, customEndpointState)
-                        }
-                        .toList()
+                        }.toList()
             )
         }
 
@@ -133,7 +129,8 @@ class ChooseServerViewModel(
                         val isSelectedEndpointCustom = !getAvailableServers().contains(selectedEndpoint)
                         when {
                             isSelectedEndpointCustom && userCustomEndpointText == null -> false
-                            isSelectedEndpointCustom && selectedEndpoint?.generateUserString() !=
+                            isSelectedEndpointCustom &&
+                                selectedEndpoint?.generateUserString() !=
                                 userCustomEndpointText -> true
                             else -> false
                         }
@@ -153,8 +150,12 @@ class ChooseServerViewModel(
         }
 
     val state =
-        combine(fastest, other, buttonState, dialogState) { fastest, all,
-                                                            buttonState, dialogState ->
+        combine(fastest, other, buttonState, dialogState) {
+            fastest,
+            all,
+            buttonState,
+            dialogState
+            ->
             if (all == null) { // not loaded yet
                 return@combine null
             }
@@ -272,8 +273,8 @@ class ChooseServerViewModel(
      * @return an endpoint selected by user or null if user didn't select any new endpoint explicitly or if selected
      * custom endpoint is invalid
      */
-    private fun getUserEndpointSelectionOrShowError(): LightWalletEndpoint? {
-        return when (val selection = userEndpointSelection.value) {
+    private fun getUserEndpointSelectionOrShowError(): LightWalletEndpoint? =
+        when (val selection = userEndpointSelection.value) {
             is Selection.Custom -> {
                 val endpoint = userCustomEndpointText.value
                 val validated = validateEndpoint(endpoint.orEmpty())
@@ -286,7 +287,6 @@ class ChooseServerViewModel(
             is Selection.Endpoint -> selection.endpoint
             null -> null
         }
-    }
 
     private fun showValidationErrorDialog(reason: String?) {
         dialogState.update {
@@ -305,14 +305,15 @@ class ChooseServerViewModel(
         }
     }
 
-    private fun LightWalletEndpoint.generateUserString(): String {
-        return stringRes(resource = R.string.choose_server_full_server_name_text_field, host, port)
+    private fun LightWalletEndpoint.generateUserString(): String =
+        stringRes(resource = R.string.choose_server_full_server_name_text_field, host, port)
             .getString(getApplication())
-    }
 }
 
 private sealed interface Selection {
     data object Custom : Selection
 
-    data class Endpoint(val endpoint: LightWalletEndpoint) : Selection
+    data class Endpoint(
+        val endpoint: LightWalletEndpoint
+    ) : Selection
 }

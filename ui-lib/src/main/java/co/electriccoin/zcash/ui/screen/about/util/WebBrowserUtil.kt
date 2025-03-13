@@ -12,7 +12,8 @@ object WebBrowserUtil {
         url: String
     ) {
         val intent =
-            CustomTabsIntent.Builder()
+            CustomTabsIntent
+                .Builder()
                 .setUrlBarHidingEnabled(true)
                 .setShowTitle(true)
                 .setShareState(CustomTabsIntent.SHARE_STATE_OFF)

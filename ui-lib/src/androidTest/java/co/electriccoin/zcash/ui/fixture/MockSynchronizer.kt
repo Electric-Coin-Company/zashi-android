@@ -244,6 +244,14 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
+    override suspend fun pcztRequiresSaplingProofs(pczt: Pczt): Boolean {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
+    override suspend fun redactPcztForSigner(pczt: Pczt): Pczt {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
     companion object {
         fun new() = MockSynchronizer()
     }

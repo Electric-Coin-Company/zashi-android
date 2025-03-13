@@ -14,7 +14,9 @@ sealed interface ImageResource {
 
     @JvmInline
     @Immutable
-    value class DisplayString(val value: String) : ImageResource
+    value class DisplayString(
+        val value: String
+    ) : ImageResource
 }
 
 @Stable

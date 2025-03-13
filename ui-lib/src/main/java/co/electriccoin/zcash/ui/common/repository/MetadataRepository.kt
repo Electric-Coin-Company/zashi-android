@@ -47,7 +47,8 @@ class MetadataRepositoryImpl(
     private val metadataDataSource: MetadataDataSource,
     private val metadataKeyStorageProvider: MetadataKeyStorageProvider,
     private val persistableWalletProvider: PersistableWalletProvider,
-) : MetadataRepository, CloseableScopeHolder by CloseableScopeHolderImpl(Dispatchers.IO) {
+) : MetadataRepository,
+    CloseableScopeHolder by CloseableScopeHolderImpl(Dispatchers.IO) {
     private val command = Channel<Command>()
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -67,8 +68,7 @@ class MetadataRepositoryImpl(
                                 .receiveAsFlow()
                                 .filter {
                                     it.account.sdkAccount.accountUuid == account.sdkAccount.accountUuid
-                                }
-                                .collect { command ->
+                                }.collect { command ->
                                     val new =
                                         when (command) {
                                             is Command.CreateOrUpdateTxNote ->
@@ -106,8 +106,7 @@ class MetadataRepositoryImpl(
                         // do nothing
                     }
                 }
-            }
-            .stateIn(
+            }.stateIn(
                 scope = scope,
                 started = SharingStarted.Lazily,
                 initialValue = null
@@ -171,8 +170,7 @@ class MetadataRepositoryImpl(
                     isRead = accountMetadata?.read?.any { it == txId } == true,
                     note = accountMetadata?.annotations?.find { it.txId == txId }?.content,
                 )
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
             .onStart { emit(null) }
 
     private suspend fun getMetadataKey(selectedAccount: WalletAccount): MetadataKey {

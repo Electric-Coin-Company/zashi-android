@@ -76,8 +76,7 @@ fun About(
                     .fillMaxHeight()
                     .verticalScroll(
                         rememberScrollState()
-                    )
-                    .scaffoldScrollPadding(paddingValues)
+                    ).scaffoldScrollPadding(paddingValues)
         )
     }
 }

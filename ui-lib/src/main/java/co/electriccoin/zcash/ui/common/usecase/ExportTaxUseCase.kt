@@ -34,7 +34,9 @@ class ExportTaxUseCase(
     suspend operator fun invoke() =
         withContext(Dispatchers.IO) {
             val previousYear =
-                Year.now().minusYears(1)
+                Year
+                    .now()
+                    .minusYears(1)
                     .let {
                         val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy")
                         it.format(formatter)
@@ -111,7 +113,8 @@ class ExportTaxUseCase(
     }
 
     private suspend fun getCsvEntries() =
-        transactionRepository.getTransactions()
+        transactionRepository
+            .getTransactions()
             .mapNotNull { transaction ->
                 val previousYear = Year.now().minusYears(1)
 
@@ -121,7 +124,8 @@ class ExportTaxUseCase(
                 val dateString =
                     date.let {
                         val formatter =
-                            DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss")
+                            DateTimeFormatter
+                                .ofPattern("MM/dd/yyyy HH:mm:ss")
                                 .withZone(ZoneOffset.UTC)
 
                         formatter.format(date)

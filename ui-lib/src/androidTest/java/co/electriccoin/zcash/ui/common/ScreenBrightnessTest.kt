@@ -37,7 +37,9 @@ class ScreenBrightnessTest : UiTestPrerequisites() {
             assertEquals(ScreenBrightnessState.NORMAL, testSetup.getSecureBrightnessCount())
         }
 
-    private class TestSetup(composeTestRule: ComposeContentTestRule) {
+    private class TestSetup(
+        composeTestRule: ComposeContentTestRule
+    ) {
         val mutableScreenBrightnessFlag = MutableStateFlow(true)
 
         private val screenBrightness = ScreenBrightness

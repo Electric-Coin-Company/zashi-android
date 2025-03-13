@@ -26,22 +26,37 @@ sealed interface StringResource {
 
     @JvmInline
     @Immutable
-    value class ByString(val value: String) : StringResource
+    value class ByString(
+        val value: String
+    ) : StringResource
 
     @Immutable
-    data class ByZatoshi(val zatoshi: Zatoshi) : StringResource
+    data class ByZatoshi(
+        val zatoshi: Zatoshi
+    ) : StringResource
 
     @Immutable
-    data class ByDateTime(val zonedDateTime: ZonedDateTime, val useFullFormat: Boolean) : StringResource
+    data class ByDateTime(
+        val zonedDateTime: ZonedDateTime,
+        val useFullFormat: Boolean
+    ) : StringResource
 
     @Immutable
-    data class ByYearMonth(val yearMonth: YearMonth) : StringResource
+    data class ByYearMonth(
+        val yearMonth: YearMonth
+    ) : StringResource
 
     @Immutable
-    data class ByTransactionId(val transactionId: String, val abbreviated: Boolean) : StringResource
+    data class ByTransactionId(
+        val transactionId: String,
+        val abbreviated: Boolean
+    ) : StringResource
 
     @Immutable
-    data class ByAddress(val address: String, val abbreviated: Boolean) : StringResource
+    data class ByAddress(
+        val address: String,
+        val abbreviated: Boolean
+    ) : StringResource
 }
 
 @Stable
@@ -142,15 +157,28 @@ object StringResourceDefaults {
                 .getDateTimeInstance(
                     DateFormat.MEDIUM,
                     DateFormat.SHORT,
+                ).format(
+                    Date.from(
+                        res.zonedDateTime
+                            .toInstant()
+                            .toKotlinInstant()
+                            .toJavaInstant()
+                    )
                 )
-                .format(Date.from(res.zonedDateTime.toInstant().toKotlinInstant().toJavaInstant()))
         } else {
             val pattern = DateTimeFormatter.ofPattern("MMM dd")
             val start = res.zonedDateTime.format(pattern).orEmpty()
             val end =
                 DateFormat
                     .getTimeInstance(DateFormat.SHORT)
-                    .format(Date.from(res.zonedDateTime.toInstant().toKotlinInstant().toJavaInstant()))
+                    .format(
+                        Date.from(
+                            res.zonedDateTime
+                                .toInstant()
+                                .toKotlinInstant()
+                                .toJavaInstant()
+                        )
+                    )
 
             return "$start $end"
         }
@@ -161,23 +189,21 @@ object StringResourceDefaults {
         return yearMonth.format(pattern).orEmpty()
     }
 
-    fun convertAddress(res: StringResource.ByAddress): String {
-        return if (res.abbreviated && res.address.isNotBlank()) {
+    fun convertAddress(res: StringResource.ByAddress): String =
+        if (res.abbreviated && res.address.isNotBlank()) {
             "${res.address.take(ADDRESS_MAX_LENGTH_ABBREVIATED)}..."
         } else {
             res.address
         }
-    }
 
-    fun convertTransactionId(res: StringResource.ByTransactionId): String {
-        return if (res.abbreviated) {
+    fun convertTransactionId(res: StringResource.ByTransactionId): String =
+        if (res.abbreviated) {
             "${res.transactionId.take(TRANSACTION_MAX_PREFIX_SUFFIX_LENGHT)}...${res.transactionId.takeLast(
                 TRANSACTION_MAX_PREFIX_SUFFIX_LENGHT
             )}"
         } else {
             res.transactionId
         }
-    }
 }
 
 private const val TRANSACTION_MAX_PREFIX_SUFFIX_LENGHT = 5

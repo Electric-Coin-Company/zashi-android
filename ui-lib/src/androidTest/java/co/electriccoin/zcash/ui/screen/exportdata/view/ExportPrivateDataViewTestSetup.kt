@@ -8,7 +8,9 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
-class ExportPrivateDataViewTestSetup(private val composeTestRule: ComposeContentTestRule) {
+class ExportPrivateDataViewTestSetup(
+    private val composeTestRule: ComposeContentTestRule
+) {
     private val onBackCount = AtomicInteger(0)
 
     private val onAgree = AtomicBoolean(false)

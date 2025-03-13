@@ -104,18 +104,15 @@ class AddressBookRepositoryImpl(
             addressBookCache.update { null }
         }
 
-    override suspend fun getContactByAddress(address: String): AddressBookContact? {
-        return observeContactByAddress(address).first()
-    }
+    override suspend fun getContactByAddress(address: String): AddressBookContact? =
+        observeContactByAddress(address).first()
 
-    override fun observeContactByAddress(address: String): Flow<AddressBookContact?> {
-        return addressBook
+    override fun observeContactByAddress(address: String): Flow<AddressBookContact?> =
+        addressBook
             .filterNotNull()
             .map {
                 it.contacts.find { contact -> contact.address == address }
-            }
-            .distinctUntilChanged()
-    }
+            }.distinctUntilChanged()
 
     private suspend fun ensureSynchronization() {
         if (addressBookCache.value == null) {

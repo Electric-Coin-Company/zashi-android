@@ -34,10 +34,10 @@ class ScanViewBasicTestSetup(
             onBack = {
                 onBackCount.incrementAndGet()
             },
-            onScanned = {},
+            onScan = {},
             onScanError = {},
             onOpenSettings = {},
-            onScanStateChanged = {
+            onScanStateChange = {
                 scanState.set(it)
             },
             snackbarHostState = SnackbarHostState(),

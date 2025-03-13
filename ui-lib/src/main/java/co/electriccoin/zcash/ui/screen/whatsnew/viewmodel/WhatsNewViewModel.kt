@@ -12,7 +12,9 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 
-class WhatsNewViewModel(application: Application) : AndroidViewModel(application) {
+class WhatsNewViewModel(
+    application: Application
+) : AndroidViewModel(application) {
     val state: StateFlow<WhatsNewState?> =
         flow {
             val versionInfo = VersionInfo.new(application)

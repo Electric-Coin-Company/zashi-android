@@ -45,7 +45,8 @@ interface PreferenceDefault<T> {
      * indicating what was stored in the preferences, in addition to subsequent updates.
      */
     fun observe(preferenceProvider: PreferenceProvider): Flow<T> =
-        preferenceProvider.observe(key)
+        preferenceProvider
+            .observe(key)
             .map { getValue(preferenceProvider) }
             .distinctUntilChanged()
 }

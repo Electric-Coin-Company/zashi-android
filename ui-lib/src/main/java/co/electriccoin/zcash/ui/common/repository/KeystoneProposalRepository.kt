@@ -62,7 +62,9 @@ class ParsePCZTException : Exception()
 sealed interface SubmitProposalState {
     data object Submitting : SubmitProposalState
 
-    data class Result(val submitResult: SubmitResult) : SubmitProposalState
+    data class Result(
+        val submitResult: SubmitResult
+    ) : SubmitProposalState
 }
 
 @Suppress("TooManyFunctions")

@@ -31,7 +31,9 @@ class GetTransactionDetailByIdUseCase(
     @OptIn(ExperimentalCoroutinesApi::class)
     fun observe(txId: String) =
         transactionRepository
-            .observeTransaction(txId).filterNotNull().flatMapLatest { transaction ->
+            .observeTransaction(txId)
+            .filterNotNull()
+            .flatMapLatest { transaction ->
                 channelFlow {
                     launch {
                         combine(
@@ -66,7 +68,8 @@ class GetTransactionDetailByIdUseCase(
                         // do nothing
                     }
                 }
-            }.distinctUntilChanged().flowOn(Dispatchers.Default)
+            }.distinctUntilChanged()
+            .flowOn(Dispatchers.Default)
 
     private suspend fun getWalletAddress(address: String?): WalletAddress? {
         if (address == null) return null

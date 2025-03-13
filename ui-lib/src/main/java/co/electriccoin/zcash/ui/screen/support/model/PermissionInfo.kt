@@ -9,7 +9,10 @@ import co.electriccoin.zcash.spackle.getPackageInfoCompatSuspend
 // TODO [#1301]: Localize support text content
 // TODO [#1301]: https://github.com/Electric-Coin-Company/zashi-android/issues/1301
 
-data class PermissionInfo(val permissionName: String, val permissionStatus: PermissionStatus) {
+data class PermissionInfo(
+    val permissionName: String,
+    val permissionStatus: PermissionStatus
+) {
     fun toSupportString() =
         buildString {
             appendLine("$permissionName $permissionStatus")
@@ -30,15 +33,14 @@ data class PermissionInfo(val permissionName: String, val permissionStatus: Perm
             context: Context,
             packageInfo: PackageInfo,
             permissionName: String
-        ): PermissionInfo {
-            return if (isPermissionGrantedByUser(context, permissionName)) {
+        ): PermissionInfo =
+            if (isPermissionGrantedByUser(context, permissionName)) {
                 PermissionInfo(permissionName, PermissionStatus.Granted)
             } else if (isPermissionGrantedByManifest(packageInfo, permissionName)) {
                 PermissionInfo(permissionName, PermissionStatus.NotGrantedByUser)
             } else {
                 PermissionInfo(permissionName, PermissionStatus.NotGrantedByManifest)
             }
-        }
 
         private fun isPermissionGrantedByUser(
             context: Context,
@@ -52,9 +54,7 @@ data class PermissionInfo(val permissionName: String, val permissionStatus: Perm
         private fun isPermissionGrantedByManifest(
             packageInfo: PackageInfo,
             permissionName: String
-        ): Boolean {
-            return packageInfo.requestedPermissions?.any { permissionName == it } ?: false
-        }
+        ): Boolean = packageInfo.requestedPermissions?.any { permissionName == it } ?: false
     }
 }
 

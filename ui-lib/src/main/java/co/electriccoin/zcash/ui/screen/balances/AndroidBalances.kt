@@ -285,13 +285,14 @@ internal fun WrapBalances(
                         supportInfo = supportInfo?.toSupportString(SupportInfoType.entries.toSet())
                     )
                 val mailIntent =
-                    EmailUtil.newMailActivityIntent(
-                        context.getString(R.string.support_email_address),
-                        context.getString(R.string.app_name),
-                        fullMessage
-                    ).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    }
+                    EmailUtil
+                        .newMailActivityIntent(
+                            context.getString(R.string.support_email_address),
+                            context.getString(R.string.app_name),
+                            fullMessage
+                        ).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
                 runCatching {
                     context.startActivity(mailIntent)
                 }.onFailure {
@@ -313,14 +314,13 @@ internal fun WrapBalances(
 private fun updateTransparentBalanceState(
     currentShieldState: ShieldState,
     walletSnapshot: WalletSnapshot?
-): ShieldState {
-    return when {
+): ShieldState =
+    when {
         (walletSnapshot == null) -> currentShieldState
         (walletSnapshot.transparentBalance >= Zatoshi(DEFAULT_SHIELDING_THRESHOLD) && currentShieldState.isEnabled()) ->
             ShieldState.Available
         else -> currentShieldState
     }
-}
 
 private fun openPlayStoreAppSite(
     context: Context,

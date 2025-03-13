@@ -25,8 +25,7 @@ class ObserveProposalUseCase(
                     is KeystoneAccount -> keystoneProposalRepository.transactionProposal
                     is ZashiAccount -> zashiProposalRepository.transactionProposal
                 }
-            }
-            .filterNotNull()
+            }.filterNotNull()
 
     fun filterSendTransactions() =
         this()

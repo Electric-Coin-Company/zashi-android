@@ -29,7 +29,8 @@ interface MetadataEncryptor {
 
 class MetadataEncryptorImpl(
     private val metadataSerializer: MetadataSerializer,
-) : MetadataEncryptor, BaseSerializer() {
+) : BaseSerializer(),
+    MetadataEncryptor {
     private val version: Int = METADATA_ENCRYPTION_V1
     private val saltSize: Int = METADATA_SALT_SIZE
 
@@ -73,12 +74,12 @@ class MetadataEncryptorImpl(
 
         val ciphertext = inputStream.readBytes()
 
-        return key.deriveDecryptionKeys(salt)
+        return key
+            .deriveDecryptionKeys(salt)
             .asSequence()
             .mapNotNull {
                 decrypt(it, ciphertext)
-            }
-            .firstOrNull() ?: throw DecryptionException()
+            }.firstOrNull() ?: throw DecryptionException()
     }
 
     private fun decrypt(
@@ -101,9 +102,7 @@ class MetadataEncryptorImpl(
         metadataSerializer.serialize(outputStream, data)
     }
 
-    private fun deserialize(inputStream: ByteArrayInputStream): Metadata {
-        return metadataSerializer.deserialize(inputStream)
-    }
+    private fun deserialize(inputStream: ByteArrayInputStream): Metadata = metadataSerializer.deserialize(inputStream)
 }
 
 class DecryptionException : Exception()

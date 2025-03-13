@@ -193,9 +193,13 @@ sealed class SecretState {
 
     object NeedsWarning : SecretState()
 
-    class NeedsBackup(val persistableWallet: PersistableWallet) : SecretState()
+    class NeedsBackup(
+        val persistableWallet: PersistableWallet
+    ) : SecretState()
 
-    class Ready(val persistableWallet: PersistableWallet) : SecretState()
+    class Ready(
+        val persistableWallet: PersistableWallet
+    ) : SecretState()
 }
 
 /**
@@ -223,7 +227,9 @@ sealed class SynchronizerError {
             null
         }
 
-    class Critical(val error: Throwable?) : SynchronizerError() {
+    class Critical(
+        val error: Throwable?
+    ) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
         override fun getStackTrace(limit: Int?): String? =
@@ -234,7 +240,9 @@ sealed class SynchronizerError {
             }
     }
 
-    class Processor(val error: Throwable?) : SynchronizerError() {
+    class Processor(
+        val error: Throwable?
+    ) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
         override fun getStackTrace(limit: Int?): String? =
@@ -245,7 +253,9 @@ sealed class SynchronizerError {
             }
     }
 
-    class Submission(val error: Throwable?) : SynchronizerError() {
+    class Submission(
+        val error: Throwable?
+    ) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
         override fun getStackTrace(limit: Int?): String? =
@@ -256,7 +266,9 @@ sealed class SynchronizerError {
             }
     }
 
-    class Setup(val error: Throwable?) : SynchronizerError() {
+    class Setup(
+        val error: Throwable?
+    ) : SynchronizerError() {
         override fun getCauseMessage(): String? = error?.message
 
         override fun getStackTrace(limit: Int?): String? =
@@ -267,7 +279,10 @@ sealed class SynchronizerError {
             }
     }
 
-    class Chain(val x: BlockHeight, val y: BlockHeight) : SynchronizerError() {
+    class Chain(
+        val x: BlockHeight,
+        val y: BlockHeight
+    ) : SynchronizerError() {
         override fun getCauseMessage(): String = "$x, $y"
 
         override fun getStackTrace(limit: Int?): String? = null

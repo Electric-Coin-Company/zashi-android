@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 
-class WordList(initial: List<String> = emptyList()) {
+class WordList(
+    initial: List<String> = emptyList()
+) {
     private val mutableState: MutableStateFlow<ImmutableList<String>> = MutableStateFlow(initial.toPersistentList())
 
     val current: StateFlow<ImmutableList<String>> = mutableState

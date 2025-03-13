@@ -57,8 +57,8 @@ object EmailUtil {
         recipientAddress: String,
         messageSubject: String,
         messageBody: String
-    ): Intent {
-        return Intent(Intent.ACTION_SEND).apply {
+    ): Intent =
+        Intent(Intent.ACTION_SEND).apply {
             type = RFC2822_MIMETPYE
             putExtra(
                 Intent.EXTRA_EMAIL,
@@ -69,7 +69,6 @@ object EmailUtil {
             putExtra(Intent.EXTRA_SUBJECT, messageSubject)
             putExtra(Intent.EXTRA_TEXT, messageBody)
         }
-    }
 
     // This approach combines both adding data to Uri and Extras to ensure that most of the available e-mail client
     // apps can understand the output Intent. Tested with Gmail, Proton mail, Yahoo, and Seznam.cz.

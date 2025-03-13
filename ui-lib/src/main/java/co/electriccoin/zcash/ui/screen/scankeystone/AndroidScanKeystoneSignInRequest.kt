@@ -47,7 +47,7 @@ internal fun WrapScanKeystoneSignInRequest() {
             snackbarHostState = snackbarHostState,
             validationResult = validationResult,
             onBack = { navigationRouter.back() },
-            onScanned = {
+            onScan = {
                 viewModel.onScanned(it)
             },
             onOpenSettings = {
@@ -63,7 +63,7 @@ internal fun WrapScanKeystoneSignInRequest() {
                     }
                 }
             },
-            onScanStateChanged = {},
+            onScanStateChange = {},
             topAppBarSubTitleState = walletState,
             state = state,
         )

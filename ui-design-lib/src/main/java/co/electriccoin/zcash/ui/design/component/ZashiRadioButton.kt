@@ -60,8 +60,7 @@ fun RadioButton(
                     interactionSource = remember { MutableInteractionSource() },
                     onClick = state.onClick,
                     role = Role.Button,
-                )
-                .padding(horizontal = 20.dp)
+                ).padding(horizontal = 20.dp)
                 .then(
                     if (testTag != null) {
                         Modifier.testTag(testTag)

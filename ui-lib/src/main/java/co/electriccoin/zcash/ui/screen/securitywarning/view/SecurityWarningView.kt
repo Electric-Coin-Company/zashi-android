@@ -39,7 +39,7 @@ private fun SecurityWarningPreview() {
         SecurityWarning(
             versionInfo = VersionInfoFixture.new(),
             onBack = {},
-            onAcknowledged = {},
+            onAcknowledge = {},
             onConfirm = {},
         )
     }
@@ -52,7 +52,7 @@ private fun SecurityWarningDarkPreview() {
         SecurityWarning(
             versionInfo = VersionInfoFixture.new(),
             onBack = {},
-            onAcknowledged = {},
+            onAcknowledge = {},
             onConfirm = {},
         )
     }
@@ -62,7 +62,7 @@ private fun SecurityWarningDarkPreview() {
 fun SecurityWarning(
     versionInfo: VersionInfo,
     onBack: () -> Unit,
-    onAcknowledged: (Boolean) -> Unit,
+    onAcknowledge: (Boolean) -> Unit,
     onConfirm: () -> Unit,
 ) {
     BlankBgScaffold(
@@ -71,7 +71,7 @@ fun SecurityWarning(
     ) { paddingValues ->
         SecurityWarningContent(
             versionInfo = versionInfo,
-            onAcknowledged = onAcknowledged,
+            onAcknowledge = onAcknowledge,
             onConfirm = onConfirm,
             modifier =
                 Modifier
@@ -98,7 +98,7 @@ private fun SecurityWarningTopAppBar(onBack: () -> Unit) {
 @Composable
 private fun SecurityWarningContent(
     versionInfo: VersionInfo,
-    onAcknowledged: (Boolean) -> Unit,
+    onAcknowledge: (Boolean) -> Unit,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -125,7 +125,7 @@ private fun SecurityWarningContent(
                 checked = checkedState.value,
                 onCheckedChange = {
                     checkedState.value = it
-                    onAcknowledged(it)
+                    onAcknowledge(it)
                 },
                 text = stringResource(R.string.security_warning_acknowledge),
                 checkBoxTestTag = SecurityScreenTag.ACKNOWLEDGE_CHECKBOX_TAG

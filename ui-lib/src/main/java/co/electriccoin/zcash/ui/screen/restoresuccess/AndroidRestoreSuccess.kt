@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.screen.restoresuccess.view.RestoreSuccess
 import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
 
 @Composable
-fun WrapRestoreSuccess(onDone: () -> Unit) {
+fun WrapRestoreSuccess(onComplete: () -> Unit) {
     val viewModel = koinActivityViewModel<RestoreSuccessViewModel>()
 
     val state = viewModel.state.collectAsStateWithLifecycle().value
@@ -17,7 +17,7 @@ fun WrapRestoreSuccess(onDone: () -> Unit) {
             state.copy(
                 onPositiveClick = {
                     state.onPositiveClick()
-                    onDone()
+                    onComplete()
                 }
             )
     )

@@ -121,9 +121,7 @@ private class FirebaseCrashReporterImpl(
                 }
             }
 
-        suspend fun getInstance(context: Context): CrashReporter? {
-            return lazyWithArgument.getInstance(context)
-        }
+        suspend fun getInstance(context: Context): CrashReporter? = lazyWithArgument.getInstance(context)
     }
 }
 

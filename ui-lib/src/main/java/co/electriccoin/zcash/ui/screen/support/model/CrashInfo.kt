@@ -12,7 +12,11 @@ import java.io.File
 // TODO [#1301]: Localize feedback text content
 // TODO [#1301]: https://github.com/Electric-Coin-Company/zashi-android/issues/1301
 
-data class CrashInfo(val exceptionClassName: String, val isUncaught: Boolean, val timestamp: Instant) {
+data class CrashInfo(
+    val exceptionClassName: String,
+    val isUncaught: Boolean,
+    val timestamp: Instant
+) {
     fun toSupportString() =
         buildString {
             appendLine("Exception")

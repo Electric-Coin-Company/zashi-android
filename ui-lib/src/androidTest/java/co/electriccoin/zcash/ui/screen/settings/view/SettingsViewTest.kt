@@ -29,11 +29,12 @@ class SettingsViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getBackCount())
 
-        composeTestRule.onNodeWithContentDescription(
-            getStringResource(R.string.back_navigation_content_description)
-        ).also {
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithContentDescription(
+                getStringResource(R.string.back_navigation_content_description)
+            ).also {
+                it.performClick()
+            }
 
         assertEquals(1, testSetup.getBackCount())
     }
@@ -45,12 +46,13 @@ class SettingsViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getFeedbackCount())
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.settings_feedback),
-            ignoreCase = true
-        ).also {
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = getStringResource(R.string.settings_feedback),
+                ignoreCase = true
+            ).also {
+                it.performClick()
+            }
 
         assertEquals(1, testSetup.getFeedbackCount())
     }
@@ -62,12 +64,13 @@ class SettingsViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getAdvancedSettingsCount())
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.settings_advanced_settings),
-            ignoreCase = true
-        ).also {
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = getStringResource(R.string.settings_advanced_settings),
+                ignoreCase = true
+            ).also {
+                it.performClick()
+            }
 
         assertEquals(1, testSetup.getAdvancedSettingsCount())
     }
@@ -79,13 +82,14 @@ class SettingsViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getAboutCount())
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.settings_about_us),
-            ignoreCase = true
-        ).also {
-            it.performScrollTo()
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = getStringResource(R.string.settings_about_us),
+                ignoreCase = true
+            ).also {
+                it.performScrollTo()
+                it.performClick()
+            }
 
         assertEquals(1, testSetup.getAboutCount())
     }
@@ -145,11 +149,12 @@ class SettingsViewTest : UiTestPrerequisites() {
 
         composeTestRule.openTroubleshootingMenu()
 
-        composeTestRule.onNodeWithText(
-            getStringResource(R.string.settings_troubleshooting_enable_background_sync)
-        ).also {
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithText(
+                getStringResource(R.string.settings_troubleshooting_enable_background_sync)
+            ).also {
+                it.performClick()
+            }
 
         assertEquals(1, testSetup.getBackgroundSyncCount())
     }
@@ -168,11 +173,12 @@ class SettingsViewTest : UiTestPrerequisites() {
 
         composeTestRule.openTroubleshootingMenu()
 
-        composeTestRule.onNodeWithText(
-            getStringResource(R.string.settings_troubleshooting_enable_keep_screen_on)
-        ).also {
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithText(
+                getStringResource(R.string.settings_troubleshooting_enable_keep_screen_on)
+            ).also {
+                it.performClick()
+            }
 
         assertEquals(1, testSetup.getKeepScreenOnSyncCount())
     }
@@ -191,11 +197,12 @@ class SettingsViewTest : UiTestPrerequisites() {
 
         composeTestRule.openTroubleshootingMenu()
 
-        composeTestRule.onNodeWithText(
-            getStringResource(R.string.settings_troubleshooting_enable_analytics)
-        ).also {
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithText(
+                getStringResource(R.string.settings_troubleshooting_enable_analytics)
+            ).also {
+                it.performClick()
+            }
 
         assertEquals(1, testSetup.getAnalyticsCount())
     }

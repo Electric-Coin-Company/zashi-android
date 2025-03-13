@@ -28,7 +28,8 @@ class AccountViewTest : UiTestPrerequisites() {
     fun check_all_elementary_ui_elements_displayed() {
         newTestSetup()
 
-        composeTestRule.onNodeWithTag(CommonTag.TOP_APP_BAR)
+        composeTestRule
+            .onNodeWithTag(CommonTag.TOP_APP_BAR)
             .also {
                 it.assertIsDisplayed()
             }

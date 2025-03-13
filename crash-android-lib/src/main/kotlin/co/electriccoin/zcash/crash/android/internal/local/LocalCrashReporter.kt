@@ -13,7 +13,9 @@ import kotlinx.coroutines.launch
 /**
  * Registers an exception handler to write exceptions to disk.
  */
-internal class LocalCrashReporter(private val applicationContext: Context) : CrashReporter {
+internal class LocalCrashReporter(
+    private val applicationContext: Context
+) : CrashReporter {
     private val crashReportingScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     @AnyThread
@@ -41,8 +43,6 @@ internal class LocalCrashReporter(private val applicationContext: Context) : Cra
                 LocalCrashReporter(it.applicationContext)
             }
 
-        fun getInstance(context: Context): CrashReporter {
-            return lazyWithArgument.getInstance(context)
-        }
+        fun getInstance(context: Context): CrashReporter = lazyWithArgument.getInstance(context)
     }
 }

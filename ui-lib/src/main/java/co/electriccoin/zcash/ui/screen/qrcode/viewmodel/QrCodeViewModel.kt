@@ -47,29 +47,31 @@ class QrCodeViewModel(
     private val versionInfo by lazy { getVersionInfo() }
 
     internal val state =
-        observeSelectedWalletAccount.require().map { account ->
-            val walletAddress = account.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal))
+        observeSelectedWalletAccount
+            .require()
+            .map { account ->
+                val walletAddress = account.fromReceiveAddressType(ReceiveAddressType.fromOrdinal(addressTypeOrdinal))
 
-            if (walletAddress == null) {
-                QrCodeState.Loading
-            } else {
-                QrCodeState.Prepared(
-                    walletAddress = walletAddress,
-                    onAddressCopy = { address -> onAddressCopyClick(address) },
-                    onQrCodeShare = { onQrCodeShareClick(it, versionInfo) },
-                    onBack = ::onBack,
-                    qrCodeType =
-                        when (account) {
-                            is KeystoneAccount -> QrCodeType.KEYSTONE
-                            is ZashiAccount -> QrCodeType.ZASHI
-                        }
-                )
-            }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = QrCodeState.Loading
-        )
+                if (walletAddress == null) {
+                    QrCodeState.Loading
+                } else {
+                    QrCodeState.Prepared(
+                        walletAddress = walletAddress,
+                        onAddressCopy = { address -> onAddressCopyClick(address) },
+                        onQrCodeShare = { onQrCodeShareClick(it, versionInfo) },
+                        onBack = ::onBack,
+                        qrCodeType =
+                            when (account) {
+                                is KeystoneAccount -> QrCodeType.KEYSTONE
+                                is ZashiAccount -> QrCodeType.ZASHI
+                            }
+                    )
+                }
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = QrCodeState.Loading
+            )
 
     val shareResultCommand = MutableSharedFlow<Boolean>()
 
@@ -117,13 +119,14 @@ fun shareData(
         // Save the bitmap to a temporary file in the cache directory
         val bitmapFile =
             withContext(Dispatchers.IO) {
-                File.createTempFile(
-                    TEMP_FILE_NAME_PREFIX,
-                    TEMP_FILE_NAME_SUFFIX,
-                    cacheDir,
-                ).also {
-                    it.storeBitmap(qrImageBitmap)
-                }
+                File
+                    .createTempFile(
+                        TEMP_FILE_NAME_PREFIX,
+                        TEMP_FILE_NAME_SUFFIX,
+                        cacheDir,
+                    ).also {
+                        it.storeBitmap(qrImageBitmap)
+                    }
             }
 
         // Example of the expected temporary file path:

@@ -8,12 +8,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 sealed class ScreenBrightnessState {
-    fun getChange(): ScreenBrightnessState {
-        return when (this) {
+    fun getChange(): ScreenBrightnessState =
+        when (this) {
             NORMAL -> FULL
             FULL -> NORMAL
         }
-    }
 
     data object FULL : ScreenBrightnessState()
 

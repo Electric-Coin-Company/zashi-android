@@ -67,12 +67,13 @@ class ScanViewBasicTest : UiTestPrerequisites() {
 
         // Permission denied ui items (not visible):
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.scan_settings_button),
-            ignoreCase = true
-        ).also {
-            it.assertDoesNotExist()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = getStringResource(R.string.scan_settings_button),
+                ignoreCase = true
+            ).also {
+                it.assertDoesNotExist()
+            }
     }
 
     @Test

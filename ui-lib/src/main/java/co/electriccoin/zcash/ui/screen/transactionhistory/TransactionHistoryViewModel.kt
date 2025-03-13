@@ -44,19 +44,20 @@ class TransactionHistoryViewModel(
     private val restoreTimestampDataSource: RestoreTimestampDataSource
 ) : ViewModel() {
     val search =
-        transactionFilterRepository.fulltextFilter.map {
-            TextFieldState(stringRes(it.orEmpty()), onValueChange = ::onFulltextFilterChanged)
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue =
-                TextFieldState(
-                    stringRes(
-                        transactionFilterRepository.fulltextFilter.value.orEmpty()
-                    ),
-                    onValueChange = ::onFulltextFilterChanged
-                )
-        )
+        transactionFilterRepository.fulltextFilter
+            .map {
+                TextFieldState(stringRes(it.orEmpty()), onValueChange = ::onFulltextFilterChanged)
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue =
+                    TextFieldState(
+                        stringRes(
+                            transactionFilterRepository.fulltextFilter.value.orEmpty()
+                        ),
+                        onValueChange = ::onFulltextFilterChanged
+                    )
+            )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val state =
@@ -84,14 +85,15 @@ class TransactionHistoryViewModel(
                         restoreTimestamp = restoreTimestampDataSource.getOrCreate()
                     )
             }
-        }.flowOn(Dispatchers.Default).stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue =
-                createLoadingState(
-                    filtersSize = 0,
-                )
-        )
+        }.flowOn(Dispatchers.Default)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Lazily,
+                initialValue =
+                    createLoadingState(
+                        filtersSize = 0,
+                    )
+            )
 
     override fun onCleared() {
         resetTransactionFilters()
@@ -109,7 +111,9 @@ class TransactionHistoryViewModel(
             transactions
                 .groupBy {
                     val other =
-                        it.transaction.timestamp?.atZone(ZoneId.systemDefault())?.toLocalDate() ?: now
+                        it.transaction.timestamp
+                            ?.atZone(ZoneId.systemDefault())
+                            ?.toLocalDate() ?: now
                     when {
                         now == other ->
                             stringRes(R.string.transaction_history_today) to "today"
@@ -128,8 +132,7 @@ class TransactionHistoryViewModel(
                             stringRes(yearMonth) to yearMonth.toString()
                         }
                     }
-                }
-                .map { (entry, transactions) ->
+                }.map { (entry, transactions) ->
                     val (headerStringRes, headerId) = entry
                     listOf(
                         TransactionHistoryItem.Header(
@@ -147,8 +150,7 @@ class TransactionHistoryViewModel(
                                     )
                             )
                         }
-                }
-                .flatten()
+                }.flatten()
 
         return TransactionHistoryState.Data(
             onBack = ::onBack,

@@ -37,21 +37,19 @@ class MetadataKey(
         return "zashi-metadata-" + fileIdentifier.toHexString()
     }
 
-    fun deriveEncryptionKey(salt: ByteArray): ChaCha20Poly1305Key {
-        return deriveKey(
+    fun deriveEncryptionKey(salt: ByteArray): ChaCha20Poly1305Key =
+        deriveKey(
             salt = salt,
             bytes = bytes.first()
         )
-    }
 
-    fun deriveDecryptionKeys(salt: ByteArray): List<ChaCha20Poly1305Key> {
-        return bytes.map { secretBytes ->
+    fun deriveDecryptionKeys(salt: ByteArray): List<ChaCha20Poly1305Key> =
+        bytes.map { secretBytes ->
             deriveKey(
                 salt = salt,
                 bytes = secretBytes
             )
         }
-    }
 
     private fun deriveKey(
         salt: ByteArray,
@@ -78,13 +76,13 @@ class MetadataKey(
             selectedAccount: WalletAccount
         ): MetadataKey {
             val key =
-                DerivationTool.getInstance()
+                DerivationTool
+                    .getInstance()
                     .deriveAccountMetadataKey(
                         seed = seedPhrase.toByteArray(),
                         network = network,
                         accountIndex = zashiAccount.hdAccountIndex,
-                    )
-                    .derivePrivateUseMetadataKey(
+                    ).derivePrivateUseMetadataKey(
                         ufvk =
                             when (selectedAccount) {
                                 is KeystoneAccount -> selectedAccount.sdkAccount.ufvk

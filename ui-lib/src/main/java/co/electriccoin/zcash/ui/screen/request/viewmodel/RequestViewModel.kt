@@ -169,8 +169,8 @@ class RequestViewModel(
 
     val shareResultCommand = MutableSharedFlow<Boolean>()
 
-    private fun resolveExchangeRateValue(exchangeRateUsd: ExchangeRateState): FiatCurrencyConversion? {
-        return when (exchangeRateUsd) {
+    private fun resolveExchangeRateValue(exchangeRateUsd: ExchangeRateState): FiatCurrencyConversion? =
+        when (exchangeRateUsd) {
             is ExchangeRateState.Data -> {
                 if (exchangeRateUsd.currencyConversion == null) {
                     Twig.warn { "Currency conversion is currently not available" }
@@ -185,7 +185,6 @@ class RequestViewModel(
                 null
             }
         }
-    }
 
     private fun onAmount(
         conversion: FiatCurrencyConversion?,
@@ -210,11 +209,17 @@ class RequestViewModel(
                         // Deleting up to the last character
                         AmountState.Default(defaultAmount, request.value.amountState.currency)
                     } else {
-                        validateAmountState(conversion, request.value.amountState.amount.dropLast(1))
+                        validateAmountState(
+                            conversion,
+                            request.value.amountState.amount
+                                .dropLast(1)
+                        )
                     }
                 }
                 is OnAmount.Separator -> {
-                    if (request.value.amountState.amount.contains(onAmount.separator)) {
+                    if (request.value.amountState.amount
+                            .contains(onAmount.separator)
+                    ) {
                         // Separator already present
                         validateAmountState(conversion, request.value.amountState.amount)
                     } else {
@@ -237,7 +242,9 @@ class RequestViewModel(
     // Note that this regex aligns with the one from ZcashSDK (sdk-incubator-lib/src/main/res/values/strings-regex.xml)
     // It only adds check for 0-8 digits after the decimal separator at maximum
     @Suppress("MaxLineLength", "ktlint:standard:max-line-length")
-    private val allowedNumberFormatValidationRegex = "^([0-9]*([0-9]+([${getMonetarySeparators().grouping}]\$|[${getMonetarySeparators().grouping}][0-9]+))*([${getMonetarySeparators().decimal}]\$|[${getMonetarySeparators().decimal}][0-9]{0,8})?)?\$".toRegex()
+    private val allowedNumberFormatValidationRegex =
+        "^([0-9]*([0-9]+([${getMonetarySeparators().grouping}]\$|[${getMonetarySeparators().grouping}][0-9]+))*([${getMonetarySeparators().decimal}]\$|[${getMonetarySeparators().decimal}][0-9]{0,8})?)?\$"
+            .toRegex()
 
     private fun validateAmountState(
         conversion: FiatCurrencyConversion?,

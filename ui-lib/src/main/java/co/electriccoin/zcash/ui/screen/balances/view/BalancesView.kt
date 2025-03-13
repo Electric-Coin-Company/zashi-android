@@ -135,7 +135,7 @@ private fun ComposableBalancesShieldErrorDialogPreview() {
         BlankSurface {
             ShieldingErrorDialog(
                 state = ShieldState.Failed("Test Error Text", "Test Error Stacktrace"),
-                onDone = {},
+                onConfirm = {},
                 onReport = {}
             )
         }
@@ -187,7 +187,7 @@ fun Balances(
             if (showStatusDialog != null) {
                 StatusDialog(
                     statusAction = showStatusDialog,
-                    onDone = hideStatusDialog,
+                    onConfirm = hideStatusDialog,
                     onReport = { status ->
                         hideStatusDialog()
                         onContactSupport(status.fullStackTrace)
@@ -201,7 +201,7 @@ fun Balances(
                     is ShieldState.Failed -> {
                         ShieldingErrorDialog(
                             state = shieldState,
-                            onDone = { setShowErrorDialog(false) },
+                            onConfirm = { setShowErrorDialog(false) },
                             onReport = { state ->
                                 setShowErrorDialog(false)
                                 onContactSupport(state.stackTrace)
@@ -211,7 +211,7 @@ fun Balances(
 
                     ShieldState.FailedGrpc -> {
                         ShieldingErrorGrpcDialog(
-                            onDone = { setShowErrorDialog(false) }
+                            onComplete = { setShowErrorDialog(false) }
                         )
                     }
 
@@ -226,7 +226,7 @@ fun Balances(
 @Composable
 fun ShieldingErrorDialog(
     state: ShieldState.Failed,
-    onDone: () -> Unit,
+    onConfirm: () -> Unit,
     onReport: (ShieldState.Failed) -> Unit,
 ) {
     AppAlertDialog(
@@ -252,14 +252,14 @@ fun ShieldingErrorDialog(
             }
         },
         confirmButtonText = stringResource(id = R.string.balances_shielding_dialog_error_btn),
-        onConfirmButtonClick = onDone,
+        onConfirmButtonClick = onConfirm,
         dismissButtonText = stringResource(id = R.string.balances_shielding_dialog_report_btn),
         onDismissButtonClick = { onReport(state) },
     )
 }
 
 @Composable
-fun ShieldingErrorGrpcDialog(onDone: () -> Unit) {
+fun ShieldingErrorGrpcDialog(onComplete: () -> Unit) {
     AppAlertDialog(
         title = stringResource(id = R.string.balances_shielding_dialog_error_grpc_title),
         text = {
@@ -273,7 +273,7 @@ fun ShieldingErrorGrpcDialog(onDone: () -> Unit) {
             }
         },
         confirmButtonText = stringResource(id = R.string.balances_shielding_dialog_error_grpc_btn),
-        onConfirmButtonClick = onDone
+        onConfirmButtonClick = onComplete
     )
 }
 

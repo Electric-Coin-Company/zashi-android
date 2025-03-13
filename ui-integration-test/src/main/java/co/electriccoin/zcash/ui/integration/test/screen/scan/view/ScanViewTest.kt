@@ -101,14 +101,15 @@ class ScanViewTest : UiTestPrerequisites() {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNodeWithText(
-            getStringResourceWithArgs(
-                resId = R.string.scan_state_permission,
-                getStringResource(R.string.app_name)
-            )
-        ).also {
-            it.assertIsDisplayed()
-        }
+        composeTestRule
+            .onNodeWithText(
+                getStringResourceWithArgs(
+                    resId = R.string.scan_state_permission,
+                    getStringResource(R.string.app_name)
+                )
+            ).also {
+                it.assertIsDisplayed()
+            }
 
         composeTestRule.onNodeWithText(getStringResource(R.string.scan_settings_button), ignoreCase = true).also {
             it.assertIsDisplayed()

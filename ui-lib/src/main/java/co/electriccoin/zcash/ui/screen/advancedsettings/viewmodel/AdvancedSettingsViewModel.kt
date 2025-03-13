@@ -27,11 +27,11 @@ class AdvancedSettingsViewModel(
     private val navigateToTaxExport: NavigateToTaxExportUseCase,
 ) : ViewModel() {
     val state: StateFlow<AdvancedSettingsState> =
-        getWalletRestoringState.observe()
+        getWalletRestoringState
+            .observe()
             .map { walletState ->
                 createState(walletState)
-            }
-            .stateIn(
+            }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = createState(getWalletRestoringState.observe().value)

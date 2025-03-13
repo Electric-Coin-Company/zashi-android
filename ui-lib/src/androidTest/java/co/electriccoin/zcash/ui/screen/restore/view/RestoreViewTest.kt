@@ -61,17 +61,19 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.assertTextContains("ab")
         }
 
-        composeTestRule.onNode(
-            matcher = hasText("abandon", substring = true) and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)
-        ).also {
-            it.assertExists()
-        }
+        composeTestRule
+            .onNode(
+                matcher = hasText("abandon", substring = true) and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)
+            ).also {
+                it.assertExists()
+            }
 
-        composeTestRule.onNode(
-            matcher = hasText("able", substring = true) and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)
-        ).also {
-            it.assertExists()
-        }
+        composeTestRule
+            .onNode(
+                matcher = hasText("able", substring = true) and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)
+            ).also {
+                it.assertExists()
+            }
     }
 
     @Test
@@ -83,11 +85,12 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.performTextInput("ab")
         }
 
-        composeTestRule.onNode(
-            matcher = hasText("abandon", substring = true) and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)
-        ).also {
-            it.performClick()
-        }
+        composeTestRule
+            .onNode(
+                matcher = hasText("abandon", substring = true) and hasTestTag(RestoreTag.AUTOCOMPLETE_ITEM)
+            ).also {
+                it.performClick()
+            }
 
         composeTestRule.onNodeWithTag(RestoreTag.AUTOCOMPLETE_LAYOUT).also {
             it.assertDoesNotExist()
@@ -119,7 +122,8 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNode(matcher = hasText(text = "abandon", substring = true))
+        composeTestRule
+            .onNode(matcher = hasText(text = "abandon", substring = true))
             .also {
                 it.assertExists()
             }
@@ -130,12 +134,13 @@ class RestoreViewTest : UiTestPrerequisites() {
     fun seed_invalid_phrase_does_not_progress() {
         newTestSetup(initialWordsList = generateSequence { "abandon" }.take(SeedPhrase.SEED_PHRASE_SIZE).toList())
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.restore_seed_button_next),
-            ignoreCase = true
-        ).also {
-            it.assertIsNotEnabled()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = getStringResource(R.string.restore_seed_button_next),
+                ignoreCase = true
+            ).also {
+                it.assertIsNotEnabled()
+            }
     }
 
     @Test
@@ -146,12 +151,13 @@ class RestoreViewTest : UiTestPrerequisites() {
 
         newTestSetup(initialWordsList = SeedPhraseFixture.new().split)
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.restore_seed_button_next),
-            ignoreCase = true
-        ).also {
-            it.assertExists()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = getStringResource(R.string.restore_seed_button_next),
+                ignoreCase = true
+            ).also {
+                it.assertExists()
+            }
     }
 
     @Test
@@ -159,23 +165,25 @@ class RestoreViewTest : UiTestPrerequisites() {
     fun seed_clear() {
         newTestSetup(initialWordsList = listOf("abandon"))
 
-        composeTestRule.onNode(
-            matcher = hasText(text = "abandon", substring = true),
-            useUnmergedTree = true
-        ).also {
-            it.assertExists()
-        }
+        composeTestRule
+            .onNode(
+                matcher = hasText(text = "abandon", substring = true),
+                useUnmergedTree = true
+            ).also {
+                it.assertExists()
+            }
 
         composeTestRule.onNodeWithText(getStringResource(R.string.restore_button_clear)).also {
             it.performClick()
         }
 
-        composeTestRule.onNode(
-            matcher = hasText("abandon", substring = true) and hasTestTag(CommonTag.CHIP),
-            useUnmergedTree = true
-        ).also {
-            it.assertDoesNotExist()
-        }
+        composeTestRule
+            .onNode(
+                matcher = hasText("abandon", substring = true) and hasTestTag(CommonTag.CHIP),
+                useUnmergedTree = true
+            ).also {
+                it.assertDoesNotExist()
+            }
     }
 
     @Test
@@ -187,14 +195,15 @@ class RestoreViewTest : UiTestPrerequisites() {
                 initialWordsList = SeedPhraseFixture.new().split
             )
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.restore_birthday_button_restore),
-            ignoreCase = true
-        ).also {
-            it.performScrollTo()
-            it.assertIsEnabled()
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = getStringResource(R.string.restore_birthday_button_restore),
+                ignoreCase = true
+            ).also {
+                it.performScrollTo()
+                it.assertIsEnabled()
+                it.performClick()
+            }
 
         assertEquals(testSetup.getRestoreHeight(), null)
         assertEquals(1, testSetup.getOnFinishedCount())
@@ -210,16 +219,20 @@ class RestoreViewTest : UiTestPrerequisites() {
             )
 
         composeTestRule.onNodeWithTag(RestoreTag.BIRTHDAY_TEXT_FIELD).also {
-            it.performTextInput(ZcashNetwork.Mainnet.saplingActivationHeight.value.toString())
+            it.performTextInput(
+                ZcashNetwork.Mainnet.saplingActivationHeight.value
+                    .toString()
+            )
         }
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.restore_birthday_button_restore),
-            ignoreCase = true
-        ).also {
-            it.assertIsEnabled()
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = getStringResource(R.string.restore_birthday_button_restore),
+                ignoreCase = true
+            ).also {
+                it.assertIsEnabled()
+                it.performClick()
+            }
 
         assertEquals(testSetup.getRestoreHeight(), ZcashNetwork.Mainnet.saplingActivationHeight)
         assertEquals(1, testSetup.getOnFinishedCount())
@@ -234,24 +247,26 @@ class RestoreViewTest : UiTestPrerequisites() {
                 initialWordsList = SeedPhraseFixture.new().split
             )
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.restore_birthday_button_restore),
-            ignoreCase = true
-        ).also {
-            it.assertIsEnabled()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = getStringResource(R.string.restore_birthday_button_restore),
+                ignoreCase = true
+            ).also {
+                it.assertIsEnabled()
+            }
 
         composeTestRule.onNodeWithTag(RestoreTag.BIRTHDAY_TEXT_FIELD).also {
             it.performTextInput((ZcashNetwork.Mainnet.saplingActivationHeight.value - 1L).toString())
         }
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.restore_birthday_button_restore),
-            ignoreCase = true
-        ).also {
-            it.assertIsNotEnabled()
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = getStringResource(R.string.restore_birthday_button_restore),
+                ignoreCase = true
+            ).also {
+                it.assertIsNotEnabled()
+                it.performClick()
+            }
 
         assertNull(testSetup.getRestoreHeight())
         assertEquals(0, testSetup.getOnFinishedCount())
@@ -270,13 +285,14 @@ class RestoreViewTest : UiTestPrerequisites() {
             it.performTextInput("1.2")
         }
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.restore_birthday_button_restore),
-            ignoreCase = true
-        ).also {
-            it.assertIsNotEnabled()
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = getStringResource(R.string.restore_birthday_button_restore),
+                ignoreCase = true
+            ).also {
+                it.assertIsNotEnabled()
+                it.performClick()
+            }
 
         assertNull(testSetup.getRestoreHeight())
         assertEquals(0, testSetup.getOnFinishedCount())
@@ -293,12 +309,13 @@ class RestoreViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnFinishedCount())
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.restore_birthday_button_restore),
-            ignoreCase = true
-        ).also {
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = getStringResource(R.string.restore_birthday_button_restore),
+                ignoreCase = true
+            ).also {
+                it.performClick()
+            }
 
         assertEquals(1, testSetup.getOnFinishedCount())
     }
@@ -310,11 +327,12 @@ class RestoreViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithContentDescription(
-            getStringResource(R.string.back_navigation_content_description)
-        ).also {
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithContentDescription(
+                getStringResource(R.string.back_navigation_content_description)
+            ).also {
+                it.performClick()
+            }
 
         assertEquals(1, testSetup.getOnBackCount())
     }
@@ -330,11 +348,12 @@ class RestoreViewTest : UiTestPrerequisites() {
 
         assertEquals(0, testSetup.getOnBackCount())
 
-        composeTestRule.onNodeWithContentDescription(
-            getStringResource(R.string.back_navigation_content_description)
-        ).also {
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithContentDescription(
+                getStringResource(R.string.back_navigation_content_description)
+            ).also {
+                it.performClick()
+            }
 
         // There appears to be a bug introduced in Compose 1.4.0 which makes this necessary
         composeTestRule.mainClock.autoAdvance = false
@@ -404,7 +423,7 @@ class RestoreViewTest : UiTestPrerequisites() {
                             onBackCount.incrementAndGet()
                         },
                         paste = { "" },
-                        onFinished = {
+                        onFinish = {
                             onFinishedCount.incrementAndGet()
                         }
                     )

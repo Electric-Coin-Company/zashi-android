@@ -22,7 +22,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
-class RestoreViewModel(application: Application, savedStateHandle: SavedStateHandle) : AndroidViewModel(application) {
+class RestoreViewModel(
+    application: Application,
+    savedStateHandle: SavedStateHandle
+) : AndroidViewModel(application) {
     val restoreState: RestoreState =
         run {
             val initialValue =
@@ -107,5 +110,7 @@ class RestoreViewModel(application: Application, savedStateHandle: SavedStateHan
 sealed class CompleteWordSetState {
     object Loading : CompleteWordSetState()
 
-    data class Loaded(val list: ImmutableSet<String>) : CompleteWordSetState()
+    data class Loaded(
+        val list: ImmutableSet<String>
+    ) : CompleteWordSetState()
 }

@@ -75,7 +75,7 @@ fun Home(
     )
 
     if (isShowingRestoreSuccess) {
-        WrapRestoreSuccess(onDone = setShowingRestoreSuccess)
+        WrapRestoreSuccess(onComplete = setShowingRestoreSuccess)
     }
 
     if (isKeepScreenOnWhileSyncing == true &&
@@ -170,8 +170,7 @@ private fun HomeContent(
                                 .padding(
                                     horizontal = ZcashTheme.dimens.spacingXtiny,
                                     vertical = ZcashTheme.dimens.spacingDefault
-                                )
-                                .testTag(item.testTag)
+                                ).testTag(item.testTag)
                     )
                 }
             }

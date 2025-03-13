@@ -66,8 +66,7 @@ class SignKeystoneTransactionViewModel(
                 } else {
                     null
                 }
-            }
-            .stateIn(
+            }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = null

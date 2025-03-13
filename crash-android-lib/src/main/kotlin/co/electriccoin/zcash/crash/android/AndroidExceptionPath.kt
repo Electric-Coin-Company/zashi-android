@@ -10,7 +10,8 @@ import java.io.File
 @Suppress("ReturnCount")
 suspend fun ExceptionPath.getExceptionDirectory(context: Context): File? {
     val exceptionDirectory =
-        context.getExternalFilesDirSuspend(null)
+        context
+            .getExternalFilesDirSuspend(null)
             ?.let { File(File(it, ExceptionPath.LOG_DIRECTORY_NAME), ExceptionPath.EXCEPTION_DIRECTORY_NAME) }
 
     if (null == exceptionDirectory) {

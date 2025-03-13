@@ -39,12 +39,11 @@ class MetadataProviderImpl(
     override fun readMetadataFromFile(
         file: File,
         addressBookKey: MetadataKey
-    ): Metadata {
-        return file.inputStream().use { stream ->
+    ): Metadata =
+        file.inputStream().use { stream ->
             metadataEncryptor.decrypt(
                 key = addressBookKey,
                 inputStream = stream
             )
         }
-    }
 }

@@ -26,4 +26,6 @@ class ParseKeystoneSignInRequestUseCase(
         }
 }
 
-class InvalidKeystoneSignInQRException(cause: Throwable) : Exception(cause)
+class InvalidKeystoneSignInQRException(
+    cause: Throwable
+) : Exception(cause)

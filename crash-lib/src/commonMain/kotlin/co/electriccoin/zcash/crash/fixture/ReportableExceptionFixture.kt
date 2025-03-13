@@ -2,7 +2,6 @@ package co.electriccoin.zcash.crash.fixture
 
 import co.electriccoin.zcash.crash.ReportableException
 import kotlinx.datetime.Instant
-import kotlinx.datetime.toInstant
 
 object ReportableExceptionFixture {
     private val EXCEPTION = RuntimeException("I am exceptional")
@@ -12,7 +11,7 @@ object ReportableExceptionFixture {
     const val IS_UNCAUGHT = true
 
     // No milliseconds, because those can cause some tests to fail due to rounding
-    val TIMESTAMP = "2022-04-15T11:28:54Z".toInstant()
+    val TIMESTAMP = Instant.parse("2022-04-15T11:28:54Z")
 
     fun new(
         className: String = CLASS,

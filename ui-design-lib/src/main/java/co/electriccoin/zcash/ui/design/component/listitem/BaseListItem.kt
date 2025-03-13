@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun BaseListItem(
     leading: @Composable ((Modifier) -> Unit)?,
-    content: @Composable (Modifier) -> Unit,
     trailing: @Composable ((Modifier) -> Unit)?,
     onClick: (() -> Unit)?,
     contentPadding: PaddingValues,
@@ -36,6 +35,7 @@ fun BaseListItem(
     shape: Shape = RoundedCornerShape(16.dp),
     border: BorderStroke? = null,
     color: Color = Color.Transparent,
+    content: @Composable (Modifier) -> Unit,
 ) {
     Surface(
         modifier = modifier,

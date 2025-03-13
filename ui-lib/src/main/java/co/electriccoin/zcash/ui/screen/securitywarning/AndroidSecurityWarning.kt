@@ -23,7 +23,7 @@ internal fun WrapSecurityWarning(
     SecurityWarning(
         versionInfo = VersionInfo.new(activity.applicationContext),
         onBack = onBack,
-        onAcknowledged = {
+        onAcknowledge = {
             // Needed for UI testing only
         },
         onConfirm = onConfirm

@@ -169,8 +169,8 @@ private fun BottomBar(
     }
 }
 
-fun getHeaderIconState(info: TransactionDetailInfoState): TransactionDetailIconHeaderState {
-    return TransactionDetailIconHeaderState(
+fun getHeaderIconState(info: TransactionDetailInfoState): TransactionDetailIconHeaderState =
+    TransactionDetailIconHeaderState(
         when (info) {
             is ReceiveShieldedState ->
                 listOf(
@@ -204,7 +204,6 @@ fun getHeaderIconState(info: TransactionDetailInfoState): TransactionDetailIconH
                 )
         }
     )
-}
 
 @Composable
 private fun TransactionDetailTopAppBar(
