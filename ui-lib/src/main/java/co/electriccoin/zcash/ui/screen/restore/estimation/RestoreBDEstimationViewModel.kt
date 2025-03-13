@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.restore.date
+package co.electriccoin.zcash.ui.screen.restore.estimation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +9,6 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.restore.RestoreSeedDialogState
-import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +18,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
-class RestoreBDDateViewModel(
+class RestoreBDEstimationViewModel(
     private val navigationRouter: NavigationRouter
 ) : ViewModel() {
     private val isDialogVisible = MutableStateFlow(false)
@@ -37,17 +36,19 @@ class RestoreBDDateViewModel(
                 initialValue = null
             )
 
-    val state: StateFlow<RestoreBDDateState> = MutableStateFlow(createState()).asStateFlow()
+    val state: StateFlow<RestoreBDEstimationState> = MutableStateFlow(createState()).asStateFlow()
 
     private fun createState() =
-        RestoreBDDateState(
-            next = ButtonState(stringRes(R.string.restore_bd_height_btn), onClick = ::onEstimateClick),
+        RestoreBDEstimationState(
             dialogButton = IconButtonState(icon = R.drawable.ic_info, onClick = ::onInfoButtonClick),
             onBack = ::onBack,
+            text = stringRes("123456"),
+            copy = ButtonState(stringRes(R.string.restore_bd_estimation_copy), icon = R.drawable.ic_copy) {},
+            restore = ButtonState(stringRes(R.string.restore_bd_estimation_restore), onClick = ::onRestoreClick),
         )
 
-    private fun onEstimateClick() {
-        navigationRouter.forward(RestoreBDEstimation)
+    private fun onRestoreClick() {
+        // do nothing
     }
 
     private fun onBack() {

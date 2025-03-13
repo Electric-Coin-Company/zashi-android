@@ -32,4 +32,9 @@
     <string name="restore_bd_date_note">If you’re not sure, choose an earlier date.</string>
     <string name="restore_bd_date_next">Next</string>
 
+    <string name="restore_bd_estimation_subtitle">Estimated Block Height</string>
+    <string name="restore_bd_estimation_message">Zashi will scan and recover all transactions made after the following block number.</string>
+    <string name="restore_bd_estimation_copy">Copy</string>
+    <string name="restore_bd_estimation_restore">Restore</string>
+
 </resources>

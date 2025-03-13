@@ -31,6 +31,8 @@ import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
 import co.electriccoin.zcash.ui.screen.restore.date.AndroidRestoreBDDate
 import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDate
+import co.electriccoin.zcash.ui.screen.restore.estimation.AndroidRestoreBDEstimation
+import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimation
 import co.electriccoin.zcash.ui.screen.restore.height.AndroidRestoreBDHeight
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeight
 import co.electriccoin.zcash.ui.screen.restore.seed.AndroidRestoreSeed
@@ -105,6 +107,9 @@ fun MainActivity.RestoreNavigation() {
         }
         composable<RestoreBDDate> {
             AndroidRestoreBDDate()
+        }
+        composable<RestoreBDEstimation> {
+            AndroidRestoreBDEstimation()
         }
     }
 }

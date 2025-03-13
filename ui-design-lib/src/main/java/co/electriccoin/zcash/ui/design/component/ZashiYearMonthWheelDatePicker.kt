@@ -78,9 +78,9 @@ fun ZashiYearMonthWheelDatePicker(
     Box(modifier = modifier) {
         Column(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .align(Alignment.Center),
+                Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
         ) {
             ZashiHorizontalDivider(color = ZashiColors.Surfaces.bgQuaternary, thickness = .5.dp)
             VerticalSpacer(31.dp)
@@ -189,15 +189,15 @@ private fun WheelLazyList(
     }
     Box(
         modifier =
-        modifier
-            .height(height)
-            .fillMaxWidth(),
+            modifier
+                .height(height)
+                .fillMaxWidth(),
     ) {
         LazyColumn(
             modifier =
-            Modifier
-                .height(height)
-                .fillMaxWidth(),
+                Modifier
+                    .height(height)
+                    .fillMaxWidth(),
             state = state,
         ) {
             items(if (isInfiniteScroll) Int.MAX_VALUE else count) { index ->
@@ -224,15 +224,15 @@ private fun WheelLazyList(
 
                 Box(
                     modifier =
-                    Modifier
-                        .height(height / rowCount)
-                        .fillMaxWidth()
-                        .graphicsLayer {
-                            this.alpha = alpha
-                            this.scaleX = scale
-                            this.scaleY = scale
-                            this.translationY = translationY
-                        },
+                        Modifier
+                            .height(height / rowCount)
+                            .fillMaxWidth()
+                            .graphicsLayer {
+                                this.alpha = alpha
+                                this.scaleX = scale
+                                this.scaleY = scale
+                                this.translationY = translationY
+                            },
                     contentAlignment = Alignment.Center,
                 ) {
                     if (isInfiniteScroll) {
