@@ -110,6 +110,7 @@ class ScreenshotTest : UiTestPrerequisites() {
         onNodeWithTag(destinationTag).also {
             it.assertExists()
             it.performClick()
+            waitForIdle()
         }
     }
 
