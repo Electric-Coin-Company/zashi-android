@@ -11,8 +11,9 @@ import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletStateInformationUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -30,7 +31,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ZashiTopAppBarViewModel(
-    observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
+    getWalletAccountUseCase: GetWalletAccountsUseCase,
+    getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
     getWalletStateInformation: GetWalletStateInformationUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val navigationRouter: NavigationRouter,
@@ -39,7 +41,7 @@ class ZashiTopAppBarViewModel(
 
     val state =
         combine(
-            observeSelectedWalletAccount.require(),
+            getSelectedWalletAccount.observe().filterNotNull(),
             isHideBalances,
             getWalletStateInformation.observe()
         ) { currentAccount, isHideBalances, walletState ->
@@ -47,11 +49,16 @@ class ZashiTopAppBarViewModel(
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
+            initialValue =
+                createState(
+                    currentAccount = getWalletAccountUseCase.observe().value?.firstOrNull { it.isSelected },
+                    isHideBalances = isHideBalances.value,
+                    topAppBarSubTitleState = getWalletStateInformation.observe().value
+                )
         )
 
     private fun createState(
-        currentAccount: WalletAccount,
+        currentAccount: WalletAccount?,
         isHideBalances: Boolean?,
         topAppBarSubTitleState: TopAppBarSubTitleState
     ) = ZashiMainTopAppBarState(
@@ -61,6 +68,7 @@ class ZashiTopAppBarViewModel(
                     when (currentAccount) {
                         is KeystoneAccount -> ZashiMainTopAppBarState.AccountType.KEYSTONE
                         is ZashiAccount -> ZashiMainTopAppBarState.AccountType.ZASHI
+                        else -> ZashiMainTopAppBarState.AccountType.ZASHI
                     },
                 onAccountTypeClick = ::onAccountTypeClicked,
             ),

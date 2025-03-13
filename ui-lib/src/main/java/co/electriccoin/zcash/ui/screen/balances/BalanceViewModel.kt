@@ -2,8 +2,10 @@ package co.electriccoin.zcash.ui.screen.balances
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
+import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,30 +24,41 @@ class BalanceViewModel(
             accountDataSource.selectedAccount.filterNotNull(),
             exchangeRateRepository.state,
         ) { account, exchangeRateUsd ->
-            when {
-                (
-                    account.spendableBalance.value == 0L &&
-                        account.totalBalance.value > 0L &&
-                        (account.hasChangePending || account.hasValuePending)
-                ) -> {
-                    BalanceState.Loading(
-                        totalBalance = account.totalBalance,
-                        spendableBalance = account.spendableBalance,
-                        exchangeRate = exchangeRateUsd,
-                    )
-                }
-
-                else -> {
-                    BalanceState.Available(
-                        totalBalance = account.totalBalance,
-                        spendableBalance = account.spendableBalance,
-                        exchangeRate = exchangeRateUsd,
-                    )
-                }
-            }
+            createState(account, exchangeRateUsd)
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            BalanceState.None(ExchangeRateState.OptedOut)
+            createState(
+                account = accountDataSource.allAccounts.value?.firstOrNull { it.isSelected },
+                exchangeRateUsd = exchangeRateRepository.state.value
+            )
         )
+
+    private fun createState(
+        account: WalletAccount?,
+        exchangeRateUsd: ExchangeRateState
+    ): BalanceState {
+        return when {
+            (
+                account != null &&
+                    account.spendableBalance.value == 0L &&
+                    account.totalBalance.value > 0L &&
+                    (account.hasChangePending || account.hasValuePending)
+            ) -> {
+                BalanceState.Loading(
+                    totalBalance = account.totalBalance,
+                    spendableBalance = account.spendableBalance,
+                    exchangeRate = exchangeRateUsd,
+                )
+            }
+
+            else -> {
+                BalanceState.Available(
+                    totalBalance = account?.totalBalance ?: Zatoshi(0),
+                    spendableBalance = account?.spendableBalance ?: Zatoshi(0),
+                    exchangeRate = exchangeRateUsd,
+                )
+            }
+        }
+    }
 }

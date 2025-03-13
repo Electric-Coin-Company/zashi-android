@@ -15,11 +15,11 @@ import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
+import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 @Suppress("TooManyFunctions")
 class SettingsViewModel(
     observeConfiguration: ObserveConfigurationUseCase,
-    observeWalletAccounts: ObserveWalletAccountsUseCase,
+    getWalletAccounts: GetWalletAccountsUseCase,
     isFlexaAvailable: IsFlexaAvailableUseCase,
     isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
@@ -101,7 +101,7 @@ class SettingsViewModel(
     val state: StateFlow<SettingsState> =
         combine(
             troubleshootingState,
-            observeWalletAccounts(),
+            getWalletAccounts.observe(),
             isFlexaAvailable.observe(),
             isCoinbaseAvailable.observe(),
         ) { troubleshootingState, accounts, isFlexaAvailable, isCoinbaseAvailable ->
@@ -117,11 +117,11 @@ class SettingsViewModel(
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue =
                 createState(
-                    selectedAccount = observeWalletAccounts().value?.firstOrNull { it.isSelected },
+                    selectedAccount = getWalletAccounts.observe().value?.firstOrNull { it.isSelected },
                     troubleshootingState = null,
                     isFlexaAvailable = isFlexaAvailable.observe().value == true,
                     isCoinbaseAvailable = isCoinbaseAvailable.observe().value == true,
-                    isKeystoneAvailable = observeWalletAccounts().value?.none { it is KeystoneAccount } == true
+                    isKeystoneAvailable = getWalletAccounts.observe().value?.none { it is KeystoneAccount } == true
                 )
         )
 
