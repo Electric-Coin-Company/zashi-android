@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_tab_account">Счёт</string>
+    <string name="home_tab_send">Отправить</string>
+    <string name="home_tab_receive">Получить</string>
+    <string name="home_tab_balances">Балансы</string>
+</resources>

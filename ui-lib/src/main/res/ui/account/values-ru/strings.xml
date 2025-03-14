@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="account_history_empty">Нет истории транзакций</string>
+    <string name="account_history_item_sent">Отправлено</string>
+    <string name="account_history_item_shielded_funds">Защищённые средства</string>
+    <string name="account_history_item_shielding_funds">Защита средств…</string>
+    <string name="account_history_item_shielding_failed">Защита средств не удалась…</string>
+    <string name="account_history_item_received">Получено</string>
+    <string name="account_history_item_sending">Отправление…</string>
+    <string name="account_history_item_receiving">Получение…</string>
+    <string name="account_history_item_receive_failed">Получение не удалось</string>
+    <string name="account_history_item_send_failed">Отправка не удалась</string>
+    <string name="account_history_item_shielded">Защищённая транзакция</string>
+    <string name="account_history_item_sent_prefix">-</string>
+    <string name="account_history_item_received_prefix">+</string>
+    <string name="account_history_item_tap_to_copy">Нажмите чтобы скопировать</string>
+    <string name="account_history_id_clipboard_tag">ID транзакции</string>
+    <string name="account_history_address_clipboard_tag">Адрес транзакции</string>
+    <string name="account_history_item_save_address">Сохранить адрес</string>
+    <plurals name="account_history_item_message">
+        <item quantity="one">Сообщение</item>
+        <item quantity="few">Сообщения</item>
+        <item quantity="many">Сообщений</item>
+        <item quantity="other">Сообщений</item>
+    </plurals>
+    <string name="account_history_item_collapse_transaction">Свернуть транзакцию</string>
+    <string name="account_history_item_transaction_id">ID транзакции</string>
+    <string name="account_history_item_transaction_fee">Комиссия транзакции</string>
+    <string name="account_history_item_transaction_fee_typical">Типичная комиссия &lt; <xliff:g id="fee_amount" example="0.001">%1$s</xliff:g></string>
+    <string name="account_history_memo_clipboard_tag">Сообщение транзакции</string>
+</resources>
