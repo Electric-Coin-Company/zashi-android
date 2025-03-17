@@ -23,6 +23,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
@@ -53,7 +56,11 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 import java.util.Locale
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun RestoreSeedView(
@@ -147,7 +154,7 @@ private fun BottomBar(
         Column(
             modifier = modifier
         ) {
-            val suggestions = getFilteredSuggestions(suggestionsState, handle)
+            val suggestions by getFilteredSuggestions(suggestionsState, handle)
 
             if (suggestions.isEmpty()) {
                 Warn()
@@ -214,21 +221,29 @@ private fun Warn(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .padding(ZcashTheme.dimens.spacingSmall),
             textAlign = TextAlign.Center,
-            text = stringResource(id = R.string.restore_seed_warning_suggestions)
+            text = stringResource(R.string.restore_seed_warning_suggestions)
         )
     }
 }
 
+@Composable
 private fun getFilteredSuggestions(
     suggestionsState: RestoreSeedSuggestionsState,
     handle: SeedTextFieldHandle,
-): List<String> {
-    val trimmed = handle.selectedText?.lowercase(Locale.US)?.trim().orEmpty()
-    val autocomplete = suggestionsState.suggestions.filter { it.startsWith(trimmed) }
-    return when {
-        trimmed.isBlank() -> suggestionsState.suggestions
-        suggestionsState.suggestions.contains(trimmed) && autocomplete.size == 1 -> suggestionsState.suggestions
-        else -> autocomplete
+): State<List<String>> = produceState(
+    initialValue = suggestionsState.suggestions,
+    key1 = suggestionsState.suggestions,
+    key2 = handle.selectedText,
+) {
+    withContext(Dispatchers.Default) {
+        delay(150.milliseconds)
+        val trimmed = handle.selectedText?.lowercase(Locale.US)?.trim().orEmpty()
+        val autocomplete = suggestionsState.suggestions.filter { it.startsWith(trimmed) }
+        value = when {
+            trimmed.isBlank() -> suggestionsState.suggestions
+            suggestionsState.suggestions.contains(trimmed) && autocomplete.size == 1 -> suggestionsState.suggestions
+            else -> autocomplete
+        }
     }
 }
 
