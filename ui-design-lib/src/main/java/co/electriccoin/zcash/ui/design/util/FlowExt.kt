@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.util
+package co.electriccoin.zcash.ui.design.util
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

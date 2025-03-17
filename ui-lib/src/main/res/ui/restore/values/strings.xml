@@ -37,4 +37,6 @@
     <string name="restore_bd_estimation_copy">Copy</string>
     <string name="restore_bd_estimation_restore">Restore</string>
 
+    <string name="restore_seed_warning_suggestions">This word is not in the seed phrase dictionary.  Please select the correct one from the suggestions.</string>
+
 </resources>

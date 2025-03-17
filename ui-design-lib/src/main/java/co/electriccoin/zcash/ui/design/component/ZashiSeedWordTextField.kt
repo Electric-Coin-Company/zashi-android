@@ -22,7 +22,6 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
@@ -46,7 +45,7 @@ fun ZashiSeedWordTextField(
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
         state =
             TextFieldState(
-                value = state.value,
+                value = stringRes(state.value),
                 onValueChange = state.onValueChange,
             ),
         textStyle = ZashiTypography.textMd,
@@ -78,7 +77,7 @@ fun ZashiSeedWordTextField(
 
 @Immutable
 data class SeedWordTextFieldState(
-    val value: StringResource,
+    val value: String,
     val isError: Boolean,
     // val isFocused: Boolean,
     // val onFocusChange: (Boolean) -> Unit,
@@ -94,7 +93,7 @@ private fun Preview() =
                 prefix = "12",
                 state =
                     SeedWordTextFieldState(
-                        value = stringRes("asd"),
+                        value = "asd",
                         isError = false,
                         onValueChange = {},
                     )

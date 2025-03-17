@@ -414,7 +414,10 @@ object ZashiTextFieldDefaults {
         get() = RoundedCornerShape(8.dp)
 
     val innerModifier: Modifier
-        get() = Modifier.defaultMinSize(minWidth = TextFieldDefaults.MinWidth).fillMaxWidth()
+        get() =
+            Modifier
+                .defaultMinSize(minWidth = TextFieldDefaults.MinWidth)
+                .fillMaxWidth()
 
     @Suppress("LongParameterList")
     @Composable

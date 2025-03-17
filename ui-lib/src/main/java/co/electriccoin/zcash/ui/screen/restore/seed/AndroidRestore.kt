@@ -14,8 +14,12 @@ import org.koin.androidx.compose.koinViewModel
 fun AndroidRestoreSeed() {
     val vm = koinViewModel<RestoreSeedViewModel>()
     val state by vm.state.collectAsStateWithLifecycle()
-    val dialogState by vm.dialogState.collectAsStateWithLifecycle()
-    state?.let { RestoreSeedView(it) }
+    val suggestionsState = vm.suggestionsState.collectAsStateWithLifecycle().value
+    val dialogState = vm.dialogState.collectAsStateWithLifecycle().value
+    if (state != null && suggestionsState != null) {
+        state?.let { RestoreSeedView(it, suggestionsState) }
+    }
+
     BackHandler { state?.onBack?.invoke() }
     RestoreSeedDialog(dialogState)
 }

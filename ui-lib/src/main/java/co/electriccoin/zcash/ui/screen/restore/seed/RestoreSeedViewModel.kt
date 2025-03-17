@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.restore.seed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
@@ -12,13 +13,17 @@ import co.electriccoin.zcash.ui.design.component.SeedWordTextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.restore.RestoreSeedDialogState
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeight
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withContext
+import java.util.Locale
 
 class RestoreSeedViewModel(
     private val navigationRouter: NavigationRouter
@@ -28,7 +33,7 @@ class RestoreSeedViewModel(
         MutableStateFlow(
             (0..23).map { index ->
                 SeedWordTextFieldState(
-                    value = stringRes(""),
+                    value = "",
                     onValueChange = { onValueChange(index, it) },
                     isError = false
                 )
@@ -61,24 +66,24 @@ class RestoreSeedViewModel(
                 initialValue = null
             )
 
-    // /**
-    //  * The complete word list that the user can choose from; useful for autocomplete
-    //  */
-    // val completeWordList =
-    //     // This is a hack to prevent disk IO on the main thread
-    //     flow<CompleteWordSetState> {
-    //         // Using IO context because of https://github.com/Electric-Coin-Company/kotlin-bip39/issues/13
-    //         val completeWordList =
-    //             withContext(Dispatchers.IO) {
-    //                 Mnemonics.getCachedWords(Locale.ENGLISH.language)
-    //             }
-    //
-    //         emit(CompleteWordSetState.Loaded(completeWordList.toPersistentSet()))
-    //     }.stateIn(
-    //         viewModelScope,
-    //         SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-    //         CompleteWordSetState.Loading
-    //     )
+    /**
+     * The complete word list that the user can choose from; useful for autocomplete
+     */
+    val suggestionsState =
+        // This is a hack to prevent disk IO on the main thread
+        flow {
+            // Using IO context because of https://github.com/Electric-Coin-Company/kotlin-bip39/issues/13
+            val completeWordList =
+                withContext(Dispatchers.IO) {
+                    Mnemonics.getCachedWords(Locale.ENGLISH.language)
+                }
+
+            emit(RestoreSeedSuggestionsState(isVisible = true, suggestions = completeWordList))
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            null
+        )
 
     private fun createState(words: List<SeedWordTextFieldState>) =
         RestoreSeedState(
@@ -110,7 +115,7 @@ class RestoreSeedViewModel(
     ) {
         seedWords.update {
             val newSeedWords = it.toMutableList()
-            newSeedWords[index] = newSeedWords[index].copy(value = stringRes(value))
+            newSeedWords[index] = newSeedWords[index].copy(value = value)
             newSeedWords.toList()
         }
     }
