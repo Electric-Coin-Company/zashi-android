@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 ### Details about the release
-<!-- Describe anything any details related to this app release. -->
+<!-- Describe any details related to this app release. -->
 
 ### Release steps checklist
 This is a brief checklist to ensure all the necessary pre-release and post-release steps have been done:
