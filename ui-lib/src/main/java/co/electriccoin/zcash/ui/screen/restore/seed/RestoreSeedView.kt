@@ -25,7 +25,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
@@ -65,7 +69,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun RestoreSeedView(
     state: RestoreSeedState,
-    suggestionsState: RestoreSeedSuggestionsState
+    suggestionsState: RestoreSeedSuggestionsState?
 ) {
     val handle = rememberSeedTextFieldHandle()
 
@@ -146,24 +150,33 @@ private fun AppBar(state: RestoreSeedState) {
 @Composable
 private fun BottomBar(
     state: RestoreSeedState,
-    suggestionsState: RestoreSeedSuggestionsState,
+    suggestionsState: RestoreSeedSuggestionsState?,
     handle: SeedTextFieldHandle,
     modifier: Modifier = Modifier,
 ) {
-    if (suggestionsState.isVisible && handle.selectedIndex >= 0) {
+    var previousIndex by remember { mutableIntStateOf(handle.selectedIndex) }
+    var previousText by remember { mutableStateOf(handle.selectedText) }
+    if (suggestionsState != null && suggestionsState.isVisible && handle.selectedIndex >= 0) {
         Column(
             modifier = modifier
         ) {
-            val suggestions by getFilteredSuggestions(suggestionsState, handle)
+            val suggestions = getFilteredSuggestions(suggestionsState, handle)
 
             if (suggestions.isEmpty()) {
                 Warn()
             } else {
-                LaunchedEffect(suggestions) {
-                    handle.observeSelectedTextChanged().collect {
-                        if (suggestions.contains(handle.selectedText)) {
-                            handle.requestNextFocus()
-                        }
+                LaunchedEffect(handle.selectedIndex, handle.selectedText) {
+                    if (previousIndex == handle.selectedIndex &&
+                        previousText != handle.selectedText &&
+                        suggestions.contains(handle.selectedText) &&
+                        suggestions.size == 1
+                    ) {
+                        previousIndex = handle.selectedIndex
+                        previousText = null
+                        handle.requestNextFocus()
+                    } else {
+                        previousIndex = handle.selectedIndex
+                        previousText = handle.selectedText
                     }
                 }
 
@@ -226,24 +239,16 @@ private fun Warn(modifier: Modifier = Modifier) {
     }
 }
 
-@Composable
 private fun getFilteredSuggestions(
     suggestionsState: RestoreSeedSuggestionsState,
     handle: SeedTextFieldHandle,
-): State<List<String>> = produceState(
-    initialValue = suggestionsState.suggestions,
-    key1 = suggestionsState.suggestions,
-    key2 = handle.selectedText,
-) {
-    withContext(Dispatchers.Default) {
-        delay(150.milliseconds)
-        val trimmed = handle.selectedText?.lowercase(Locale.US)?.trim().orEmpty()
-        val autocomplete = suggestionsState.suggestions.filter { it.startsWith(trimmed) }
-        value = when {
-            trimmed.isBlank() -> suggestionsState.suggestions
-            suggestionsState.suggestions.contains(trimmed) && autocomplete.size == 1 -> suggestionsState.suggestions
-            else -> autocomplete
-        }
+): List<String> {
+    val trimmed = handle.selectedText?.lowercase(Locale.US)?.trim().orEmpty()
+    val autocomplete = suggestionsState.suggestions.filter { it.startsWith(trimmed) }
+    return when {
+        trimmed.isBlank() -> suggestionsState.suggestions
+        suggestionsState.suggestions.contains(trimmed) && autocomplete.size == 1 -> autocomplete
+        else -> autocomplete
     }
 }
 

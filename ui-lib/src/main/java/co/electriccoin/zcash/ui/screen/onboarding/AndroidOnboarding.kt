@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import cash.z.ecc.android.sdk.fixture.WalletFixture
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.SeedPhrase
@@ -21,7 +22,6 @@ import co.electriccoin.zcash.ui.NavigatorImpl
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.OnboardingState
-import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
@@ -47,7 +47,6 @@ fun MainActivity.RestoreNavigation() {
     val navController = LocalNavController.current
     val flexaViewModel = koinViewModel<FlexaViewModel>()
     val navigator: Navigator = remember { NavigatorImpl(this@RestoreNavigation, navController, flexaViewModel) }
-    val versionInfo = VersionInfo.new(activity.applicationContext)
 
     val onCreateWallet = {
         walletViewModel.persistOnboardingState(OnboardingState.NEEDS_WARN)
@@ -69,15 +68,6 @@ fun MainActivity.RestoreNavigation() {
         }
     }
 
-    val onFixtureWallet: (String) -> Unit = { seed ->
-        persistExistingWalletWithSeedPhrase(
-            activity.applicationContext,
-            walletViewModel,
-            SeedPhrase.new(seed),
-            birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(activity.applicationContext))
-        )
-    }
-
     LaunchedEffect(Unit) {
         navigationRouter.observePipeline().collect {
             navigator.executeCommand(it)
@@ -93,17 +83,15 @@ fun MainActivity.RestoreNavigation() {
     ) {
         composable<Onboarding> {
             Onboarding(
-                isDebugMenuEnabled = versionInfo.isDebuggable && !versionInfo.isRunningUnderTestService,
                 onImportWallet = onImportWallet,
-                onCreateWallet = onCreateWallet,
-                onFixtureWallet = onFixtureWallet
+                onCreateWallet = onCreateWallet
             )
         }
         composable<RestoreSeed> {
             AndroidRestoreSeed()
         }
         composable<RestoreBDHeight> {
-            AndroidRestoreBDHeight()
+            AndroidRestoreBDHeight(it.toRoute())
         }
         composable<RestoreBDDate> {
             AndroidRestoreBDDate()

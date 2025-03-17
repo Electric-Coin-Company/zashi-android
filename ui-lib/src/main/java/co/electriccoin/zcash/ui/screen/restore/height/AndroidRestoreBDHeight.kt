@@ -8,11 +8,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.screen.restore.RestoreSeedDialog
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AndroidRestoreBDHeight() {
-    val vm = koinViewModel<RestoreBDHeightViewModel>()
+fun AndroidRestoreBDHeight(args: RestoreBDHeight) {
+    val vm = koinViewModel<RestoreBDHeightViewModel> { parametersOf(args) }
     val state by vm.state.collectAsStateWithLifecycle()
     val dialogState by vm.dialogState.collectAsStateWithLifecycle()
     RestoreBDHeightView(state)
@@ -25,4 +26,4 @@ fun AndroidRestoreBDHeight() {
 }
 
 @Serializable
-data object RestoreBDHeight
+data class RestoreBDHeight(val seed: String)

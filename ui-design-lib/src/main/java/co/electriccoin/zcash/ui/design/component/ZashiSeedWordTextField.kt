@@ -47,6 +47,7 @@ fun ZashiSeedWordTextField(
             TextFieldState(
                 value = stringRes(state.value),
                 onValueChange = state.onValueChange,
+                error = stringRes("").takeIf { state.isError }
             ),
         textStyle = ZashiTypography.textMd,
         prefix = {
@@ -71,7 +72,7 @@ fun ZashiSeedWordTextField(
                 containerColor = ZashiColors.Surfaces.bgSecondary,
                 focusedContainerColor = ZashiColors.Surfaces.bgPrimary,
                 focusedBorderColor = ZashiColors.Accordion.focusStroke
-            )
+            ),
     )
 }
 
@@ -79,8 +80,6 @@ fun ZashiSeedWordTextField(
 data class SeedWordTextFieldState(
     val value: String,
     val isError: Boolean,
-    // val isFocused: Boolean,
-    // val onFocusChange: (Boolean) -> Unit,
     val onValueChange: (String) -> Unit
 )
 

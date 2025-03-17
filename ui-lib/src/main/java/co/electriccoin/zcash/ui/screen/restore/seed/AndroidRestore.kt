@@ -16,7 +16,7 @@ fun AndroidRestoreSeed() {
     val state by vm.state.collectAsStateWithLifecycle()
     val suggestionsState = vm.suggestionsState.collectAsStateWithLifecycle().value
     val dialogState = vm.dialogState.collectAsStateWithLifecycle().value
-    if (state != null && suggestionsState != null) {
+    if (state != null) {
         state?.let { RestoreSeedView(it, suggestionsState) }
     }
 

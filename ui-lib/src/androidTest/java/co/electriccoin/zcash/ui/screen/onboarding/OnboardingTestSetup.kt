@@ -28,10 +28,8 @@ class OnboardingTestSetup(
         ZcashTheme {
             Onboarding(
                 // Debug only UI state does not need to be tested
-                isDebugMenuEnabled = false,
                 onImportWallet = { onImportWalletCallbackCount.incrementAndGet() },
-                onCreateWallet = { onCreateWalletCallbackCount.incrementAndGet() },
-                onFixtureWallet = {}
+                onCreateWallet = { onCreateWalletCallbackCount.incrementAndGet() }
             )
         }
     }

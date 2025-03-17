@@ -3,9 +3,12 @@ package co.electriccoin.zcash.ui.screen.restore.seed
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.bip39.Mnemonics
+import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.usecase.ValidateSeedUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.SeedTextFieldState
@@ -14,20 +17,34 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.restore.RestoreSeedDialogState
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeight
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
 class RestoreSeedViewModel(
-    private val navigationRouter: NavigationRouter
+    private val navigationRouter: NavigationRouter,
+    private val validateSeed: ValidateSeedUseCase
 ) : ViewModel() {
+
+    private val suggestions = flow {
+        val result = withContext(Dispatchers.IO) { Mnemonics.getCachedWords(Locale.ENGLISH.language) }
+        emit(result)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = null
+    )
+
     @Suppress("MagicNumber")
     private val seedWords =
         MutableStateFlow(
@@ -38,6 +55,34 @@ class RestoreSeedViewModel(
                     isError = false
                 )
             }
+        )
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val seedValidations = combine(seedWords, suggestions) { seedWords, suggestions ->
+        seedWords to suggestions.orEmpty()
+    }.mapLatest { (seedWords, suggestions) ->
+        withContext(Dispatchers.Default) {
+            seedWords.map { field ->
+                val trimmed = field.value.lowercase(Locale.US).trim()
+                val autocomplete = suggestions.filter { it.startsWith(trimmed) }
+                val validSuggestions = when {
+                    trimmed.isBlank() -> suggestions
+                    suggestions.contains(trimmed) && autocomplete.size == 1 -> suggestions
+                    else -> autocomplete
+                }
+                validSuggestions.isNotEmpty()
+            }
+        }
+    }
+
+    private val validSeed = seedWords
+        .map { fields ->
+            validateSeed(fields.map { it.value })
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
         )
 
     private val isDialogVisible = MutableStateFlow(false)
@@ -56,46 +101,52 @@ class RestoreSeedViewModel(
             )
 
     val state: StateFlow<RestoreSeedState?> =
-        seedWords
-            .map { words ->
-                createState(words)
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = null
-            )
+        combine(seedWords, seedValidations, validSeed) { words, seedValidations, validation ->
+            createState(words, seedValidations, validation)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
+        )
 
     /**
      * The complete word list that the user can choose from; useful for autocomplete
      */
-    val suggestionsState =
-        // This is a hack to prevent disk IO on the main thread
-        flow {
-            // Using IO context because of https://github.com/Electric-Coin-Company/kotlin-bip39/issues/13
-            val completeWordList =
-                withContext(Dispatchers.IO) {
-                    Mnemonics.getCachedWords(Locale.ENGLISH.language)
-                }
-
-            emit(RestoreSeedSuggestionsState(isVisible = true, suggestions = completeWordList))
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val suggestionsState = combine(validSeed, suggestions) { seed, suggestions ->
+        seed to suggestions
+    }.mapLatest { (seed, suggestions) ->
+        if (seed == null && suggestions != null) {
+            RestoreSeedSuggestionsState(isVisible = true, suggestions = suggestions)
+        } else {
             null
-        )
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+        initialValue = null
+    )
 
-    private fun createState(words: List<SeedWordTextFieldState>) =
-        RestoreSeedState(
-            seed = SeedTextFieldState(values = words),
-            onBack = ::onBack,
-            dialogButton = IconButtonState(icon = R.drawable.ic_info, onClick = ::onInfoButtonClick),
-            nextButton =
-                ButtonState(
-                    stringRes(R.string.restore_button),
-                    onClick = ::onNextClicked
-                )
-        )
+    private fun createState(
+        words: List<SeedWordTextFieldState>,
+        seedValidations: List<Boolean>,
+        seedPhrase: SeedPhrase?
+    ) = RestoreSeedState(
+        seed = SeedTextFieldState(
+            values = words
+                .mapIndexed { index, word ->
+                    word.copy(isError = !seedValidations[index])
+                }
+        ),
+        onBack = ::onBack,
+        dialogButton = IconButtonState(icon = R.drawable.ic_info, onClick = ::onInfoButtonClick),
+        nextButton =
+            ButtonState(
+                stringRes(R.string.restore_button),
+                onClick = ::onNextClicked,
+                isEnabled = seedPhrase != null
+            )
+    )
 
     private fun onBack() {
         navigationRouter.back()
@@ -106,16 +157,37 @@ class RestoreSeedViewModel(
     }
 
     private fun onNextClicked() {
-        navigationRouter.forward(RestoreBDHeight)
+        val seed = validSeed.value ?: return
+        navigationRouter.forward(RestoreBDHeight(seed.joinToString()))
     }
 
-    private fun onValueChange(
-        index: Int,
-        value: String
-    ) {
+    private fun onValueChange(index: Int, value: String) {
+        if (BuildConfig.DEBUG) {
+            val seed = validateSeed(value.split(" "))
+            if (seed != null) {
+                prefillSeed(seed)
+            } else {
+                updateSeedWord(index, value)
+            }
+        } else {
+            updateSeedWord(index, value)
+        }
+    }
+
+    private fun updateSeedWord(index: Int, value: String) {
         seedWords.update {
             val newSeedWords = it.toMutableList()
-            newSeedWords[index] = newSeedWords[index].copy(value = value)
+            newSeedWords[index] = newSeedWords[index].copy(value = value.trim())
+            newSeedWords.toList()
+        }
+    }
+
+    private fun prefillSeed(seed: SeedPhrase) {
+        seedWords.update {
+            val newSeedWords = it.toMutableList()
+            seed.split.forEachIndexed { index, word ->
+                newSeedWords[index] = newSeedWords[index].copy(value = word)
+            }
             newSeedWords.toList()
         }
     }

@@ -18,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -33,13 +32,9 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreenSizes
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.combineToFlow
-import co.electriccoin.zcash.ui.design.util.getValue
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -96,11 +91,18 @@ fun ZashiSeedTextField(
                         .weight(1f)
                         .focusRequester(focusRequester)
                         .onKeyEvent { event ->
-                            if (event.key == Key.Backspace && wordState.value.isEmpty()) {
-                                handle.requestPreviousFocus()
-                                true
-                            } else {
-                                false
+                            when {
+                                event.key == Key.Spacebar -> {
+                                    handle.requestNextFocus()
+                                    true
+                                }
+                                event.key == Key.Backspace && wordState.value.isEmpty() -> {
+                                    handle.requestPreviousFocus()
+                                    true
+                                }
+                                else -> {
+                                    false
+                                }
                             }
                         },
                 prefix = (index + 1).toString(),
@@ -109,7 +111,6 @@ fun ZashiSeedTextField(
                         onValueChange = {
                             wordState.onValueChange(it)
                             if (index == handle.selectedIndex) {
-                                handle.onSelectedTextChanged()
                                 handle.selectedText = it
                             }
                         }
@@ -176,11 +177,7 @@ data class SeedTextFieldState(
 )
 
 @Stable
-class SeedTextFieldHandle(
-    private val scope: CoroutineScope
-) {
-    private val onSelectedTextChanged = MutableSharedFlow<Unit>()
-
+class SeedTextFieldHandle {
     var selectedText: String? by mutableStateOf(null)
     var selectedIndex by mutableIntStateOf(-1)
 
@@ -200,20 +197,10 @@ class SeedTextFieldHandle(
             selectedIndex = -1
         }
     }
-
-    fun onSelectedTextChanged() =
-        scope.launch {
-            onSelectedTextChanged.emit(Unit)
-        }
-
-    fun observeSelectedTextChanged(): Flow<Unit> = onSelectedTextChanged.asSharedFlow()
 }
 
 @Composable
-fun rememberSeedTextFieldHandle(): SeedTextFieldHandle {
-    val scope = rememberCoroutineScope()
-    return remember { SeedTextFieldHandle(scope) }
-}
+fun rememberSeedTextFieldHandle(): SeedTextFieldHandle = remember { SeedTextFieldHandle() }
 
 @PreviewScreenSizes
 @Composable
