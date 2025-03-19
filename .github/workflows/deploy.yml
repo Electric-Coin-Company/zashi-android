@@ -186,7 +186,7 @@ jobs:
         timeout-minutes: 1
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Download release artifact
-        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806
+        uses: actions/download-artifact@b14cf4c92620c250e1c074ab0a5800e37df86765
         with:
           name: Binaries
       - name: Unzip artifacts
