@@ -32,8 +32,7 @@ fun SwitchWithLabel(
                     indication = null,
                     role = Role.Switch,
                     onClick = { onStateChange(!state) }
-                )
-                .fillMaxWidth()
+                ).fillMaxWidth()
     ) {
         val (text, spacer, switchButton) = createRefs()
         Body(

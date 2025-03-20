@@ -222,7 +222,9 @@ internal fun WrapHome(
  * Enum of the Home screen sub-screens
  */
 @Suppress("MagicNumber")
-enum class HomeScreenIndex(val pageIndex: Int) {
+enum class HomeScreenIndex(
+    val pageIndex: Int
+) {
     ACCOUNT(0),
     SEND(1),
     RECEIVE(2),

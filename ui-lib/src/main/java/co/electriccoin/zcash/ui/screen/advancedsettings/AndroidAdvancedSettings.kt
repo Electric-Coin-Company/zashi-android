@@ -26,13 +26,14 @@ internal fun WrapAdvancedSettings(
         originalState.copy(
             deleteButton = originalState.deleteButton.copy(onClick = goDeleteWallet),
             items =
-                originalState.items.mapIndexed { index, item ->
-                    when (index) {
-                        0 -> item.copy(onClick = goSeedRecovery)
-                        1 -> item.copy(onClick = goExportPrivateData)
-                        else -> item
-                    }
-                }.toImmutableList()
+                originalState.items
+                    .mapIndexed { index, item ->
+                        when (index) {
+                            0 -> item.copy(onClick = goSeedRecovery)
+                            1 -> item.copy(onClick = goExportPrivateData)
+                            else -> item
+                        }
+                    }.toImmutableList()
         )
 
     BackHandler {

@@ -12,10 +12,9 @@ class GetProposalUseCase(
     private val zashiProposalRepository: ZashiProposalRepository,
     private val accountDataSource: AccountDataSource,
 ) {
-    suspend operator fun invoke(): TransactionProposal {
-        return when (accountDataSource.getSelectedAccount()) {
+    suspend operator fun invoke(): TransactionProposal =
+        when (accountDataSource.getSelectedAccount()) {
             is KeystoneAccount -> keystoneProposalRepository.getTransactionProposal()
             is ZashiAccount -> zashiProposalRepository.getTransactionProposal()
         }
-    }
 }

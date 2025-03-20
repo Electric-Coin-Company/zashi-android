@@ -7,7 +7,9 @@ sealed class SendStage {
 
     data object Proposing : SendStage()
 
-    data class SendFailure(val error: String) : SendStage()
+    data class SendFailure(
+        val error: String
+    ) : SendStage()
 
     companion object {
         private const val TYPE_FORM = "form" // $NON-NLS

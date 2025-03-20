@@ -23,8 +23,8 @@ class AddressBookSerializer : BaseSerializer() {
         }
     }
 
-    fun deserializeAddressBook(inputStream: InputStream): AddressBook {
-        return AddressBook(
+    fun deserializeAddressBook(inputStream: InputStream): AddressBook =
+        AddressBook(
             version = inputStream.readInt(),
             lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
             contacts =
@@ -38,5 +38,4 @@ class AddressBookSerializer : BaseSerializer() {
                     }
                 }
         )
-    }
 }

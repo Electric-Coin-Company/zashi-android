@@ -43,67 +43,68 @@ internal class TransactionFiltersViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val state: StateFlow<TransactionFiltersState?> =
-        selectedFilters.mapLatest { current ->
-            TransactionFiltersState(
-                filters =
-                    TransactionFilter.entries.map {
-                        when (it) {
-                            SENT ->
-                                TransactionFilterState(
-                                    text = stringRes(R.string.transaction_filters_sent),
-                                    isSelected = current.contains(SENT),
-                                    onClick = { onTransactionFilterClicked(it) }
-                                )
-                            RECEIVED ->
-                                TransactionFilterState(
-                                    text = stringRes(R.string.transaction_filters_received),
-                                    isSelected = current.contains(RECEIVED),
-                                    onClick = { onTransactionFilterClicked(it) }
-                                )
-                            MEMOS ->
-                                TransactionFilterState(
-                                    text = stringRes(R.string.transaction_filters_memos),
-                                    isSelected = current.contains(MEMOS),
-                                    onClick = { onTransactionFilterClicked(it) }
-                                )
-                            UNREAD ->
-                                TransactionFilterState(
-                                    text = stringRes(R.string.transaction_filters_unread),
-                                    isSelected = current.contains(UNREAD),
-                                    onClick = { onTransactionFilterClicked(it) }
-                                )
-                            BOOKMARKED ->
-                                TransactionFilterState(
-                                    text = stringRes(R.string.transaction_filters_bookmarked),
-                                    isSelected = current.contains(BOOKMARKED),
-                                    onClick = { onTransactionFilterClicked(it) }
-                                )
-                            NOTES ->
-                                TransactionFilterState(
-                                    text = stringRes(R.string.transaction_filters_notes),
-                                    isSelected = current.contains(NOTES),
-                                    onClick = { onTransactionFilterClicked(it) }
-                                )
-                        }
-                    },
-                onBack = ::onBack,
-                onBottomSheetHidden = ::onBottomSheetHidden,
-                primaryButton =
-                    ButtonState(
-                        text = stringRes(R.string.transaction_filters_btn_apply),
-                        onClick = ::onApplyTransactionFiltersClick,
-                    ),
-                secondaryButton =
-                    ButtonState(
-                        text = stringRes(R.string.transaction_filters_btn_reset),
-                        onClick = ::onResetTransactionFiltersClick,
-                    ),
+        selectedFilters
+            .mapLatest { current ->
+                TransactionFiltersState(
+                    filters =
+                        TransactionFilter.entries.map {
+                            when (it) {
+                                SENT ->
+                                    TransactionFilterState(
+                                        text = stringRes(R.string.transaction_filters_sent),
+                                        isSelected = current.contains(SENT),
+                                        onClick = { onTransactionFilterClicked(it) }
+                                    )
+                                RECEIVED ->
+                                    TransactionFilterState(
+                                        text = stringRes(R.string.transaction_filters_received),
+                                        isSelected = current.contains(RECEIVED),
+                                        onClick = { onTransactionFilterClicked(it) }
+                                    )
+                                MEMOS ->
+                                    TransactionFilterState(
+                                        text = stringRes(R.string.transaction_filters_memos),
+                                        isSelected = current.contains(MEMOS),
+                                        onClick = { onTransactionFilterClicked(it) }
+                                    )
+                                UNREAD ->
+                                    TransactionFilterState(
+                                        text = stringRes(R.string.transaction_filters_unread),
+                                        isSelected = current.contains(UNREAD),
+                                        onClick = { onTransactionFilterClicked(it) }
+                                    )
+                                BOOKMARKED ->
+                                    TransactionFilterState(
+                                        text = stringRes(R.string.transaction_filters_bookmarked),
+                                        isSelected = current.contains(BOOKMARKED),
+                                        onClick = { onTransactionFilterClicked(it) }
+                                    )
+                                NOTES ->
+                                    TransactionFilterState(
+                                        text = stringRes(R.string.transaction_filters_notes),
+                                        isSelected = current.contains(NOTES),
+                                        onClick = { onTransactionFilterClicked(it) }
+                                    )
+                            }
+                        },
+                    onBack = ::onBack,
+                    onBottomSheetHidden = ::onBottomSheetHidden,
+                    primaryButton =
+                        ButtonState(
+                            text = stringRes(R.string.transaction_filters_btn_apply),
+                            onClick = ::onApplyTransactionFiltersClick,
+                        ),
+                    secondaryButton =
+                        ButtonState(
+                            text = stringRes(R.string.transaction_filters_btn_reset),
+                            onClick = ::onResetTransactionFiltersClick,
+                        ),
+                )
+            }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                null
             )
-        }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            null
-        )
 
     private fun onTransactionFilterClicked(filter: TransactionFilter) {
         selectedFilters.update {

@@ -20,15 +20,13 @@ interface AddressBookStorageProvider {
 class AddressBookStorageProviderImpl(
     private val context: Context
 ) : AddressBookStorageProvider {
-    override fun getStorageFile(addressBookKey: AddressBookKey): File? {
-        return File(getOrCreateAddressBookDir(), addressBookKey.fileIdentifier())
+    override fun getStorageFile(addressBookKey: AddressBookKey): File? =
+        File(getOrCreateAddressBookDir(), addressBookKey.fileIdentifier())
             .takeIf { it.exists() && it.isFile }
-    }
 
-    override fun getLegacyUnencryptedStorageFile(): File? {
-        return File(context.noBackupFilesDir, LEGACY_UNENCRYPTED_ADDRESS_BOOK_FILE_NAME)
+    override fun getLegacyUnencryptedStorageFile(): File? =
+        File(context.noBackupFilesDir, LEGACY_UNENCRYPTED_ADDRESS_BOOK_FILE_NAME)
             .takeIf { it.exists() && it.isFile }
-    }
 
     override fun getOrCreateStorageFile(addressBookKey: AddressBookKey): File {
         val file = File(getOrCreateAddressBookDir(), addressBookKey.fileIdentifier())

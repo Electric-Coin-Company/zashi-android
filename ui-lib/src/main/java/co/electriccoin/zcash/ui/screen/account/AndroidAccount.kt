@@ -123,13 +123,14 @@ internal fun WrapAccount(
                         supportInfo = supportInfo?.toSupportString(SupportInfoType.entries.toSet())
                     )
                 val mailIntent =
-                    EmailUtil.newMailActivityIntent(
-                        context.getString(R.string.support_email_address),
-                        context.getString(R.string.app_name),
-                        fullMessage
-                    ).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    }
+                    EmailUtil
+                        .newMailActivityIntent(
+                            context.getString(R.string.support_email_address),
+                            context.getString(R.string.app_name),
+                            fullMessage
+                        ).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
                 runCatching {
                     context.startActivity(mailIntent)
                 }.onFailure {

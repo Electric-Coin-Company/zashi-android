@@ -66,38 +66,40 @@ class TransactionDetailViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val state =
-        transaction.filterNotNull().mapLatest { transaction ->
-            TransactionDetailState(
-                onBack = ::onBack,
-                header = createTransactionHeaderState(transaction),
-                info = createTransactionInfoState(transaction),
-                primaryButton = createPrimaryButtonState(transaction),
-                secondaryButton =
-                    ButtonState(
-                        text =
-                            if (transaction.metadata?.note != null) {
-                                stringRes(R.string.transaction_detail_edit_note)
-                            } else {
-                                stringRes(R.string.transaction_detail_add_a_note)
-                            },
-                        onClick = ::onAddOrEditNoteClick
-                    ),
-                bookmarkButton =
-                    IconButtonState(
-                        icon =
-                            if (transaction.metadata?.isBookmarked == true) {
-                                R.drawable.ic_transaction_detail_bookmark
-                            } else {
-                                R.drawable.ic_transaction_detail_no_bookmark
-                            },
-                        onClick = ::onBookmarkClick
-                    )
+        transaction
+            .filterNotNull()
+            .mapLatest { transaction ->
+                TransactionDetailState(
+                    onBack = ::onBack,
+                    header = createTransactionHeaderState(transaction),
+                    info = createTransactionInfoState(transaction),
+                    primaryButton = createPrimaryButtonState(transaction),
+                    secondaryButton =
+                        ButtonState(
+                            text =
+                                if (transaction.metadata?.note != null) {
+                                    stringRes(R.string.transaction_detail_edit_note)
+                                } else {
+                                    stringRes(R.string.transaction_detail_add_a_note)
+                                },
+                            onClick = ::onAddOrEditNoteClick
+                        ),
+                    bookmarkButton =
+                        IconButtonState(
+                            icon =
+                                if (transaction.metadata?.isBookmarked == true) {
+                                    R.drawable.ic_transaction_detail_bookmark
+                                } else {
+                                    R.drawable.ic_transaction_detail_no_bookmark
+                                },
+                            onClick = ::onBookmarkClick
+                        )
+                )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
             )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
 
     init {
         viewModelScope.launch {
@@ -114,8 +116,8 @@ class TransactionDetailViewModel(
         navigationRouter.forward(TransactionNote(transactionDetail.transactionId))
     }
 
-    private fun createTransactionInfoState(transaction: DetailedTransactionData): TransactionDetailInfoState {
-        return when (transaction.transaction) {
+    private fun createTransactionInfoState(transaction: DetailedTransactionData): TransactionDetailInfoState =
+        when (transaction.transaction) {
             is SendTransaction -> {
                 if (transaction.recipientAddress is WalletAddress.Transparent) {
                     SendTransparentState(
@@ -155,7 +157,8 @@ class TransactionDetailViewModel(
                         completedTimestamp = createTimestampStringRes(transaction),
                         memo =
                             TransactionDetailMemosState(
-                                transaction.memos.orEmpty()
+                                transaction.memos
+                                    .orEmpty()
                                     .map { memo ->
                                         TransactionDetailMemoState(
                                             content = stringRes(memo),
@@ -195,7 +198,8 @@ class TransactionDetailViewModel(
                         completedTimestamp = createTimestampStringRes(transaction),
                         memo =
                             TransactionDetailMemosState(
-                                transaction.memos.orEmpty()
+                                transaction.memos
+                                    .orEmpty()
                                     .map { memo ->
                                         TransactionDetailMemoState(
                                             content = stringRes(memo),
@@ -224,7 +228,6 @@ class TransactionDetailViewModel(
                 )
             }
         }
-    }
 
     private fun createFeeStringRes(data: DetailedTransactionData): StringResource {
         val feePaid =

@@ -5,7 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import co.electriccoin.zcash.ui.design.component.ScreenBrightness
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class ScreenBrightnessViewModel(application: Application) : AndroidViewModel(application) {
+class ScreenBrightnessViewModel(
+    application: Application
+) : AndroidViewModel(application) {
     private val screenBrightness: MutableStateFlow<ScreenBrightness> = MutableStateFlow(ScreenBrightness)
 
     val screenBrightnessState = screenBrightness.value.referenceSwitch

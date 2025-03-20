@@ -6,7 +6,9 @@ import kotlinx.datetime.Instant
 // TODO [#1301]: Localize support text content
 // TODO [#1301]: https://github.com/Electric-Coin-Company/zashi-android/issues/1301
 
-data class ConfigInfo(val configurationUpdatedAt: Instant?) {
+data class ConfigInfo(
+    val configurationUpdatedAt: Instant?
+) {
     fun toSupportString() =
         buildString {
             append("Configuration: $configurationUpdatedAt")

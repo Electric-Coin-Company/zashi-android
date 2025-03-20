@@ -25,15 +25,15 @@ class GetCurrentTransactionsUseCase(
                 } else {
                     transactions
                         .map {
-                            metadataRepository.observeTransactionMetadataByTxId(it.id.txIdString())
+                            metadataRepository
+                                .observeTransactionMetadataByTxId(it.id.txIdString())
                                 .mapLatest { metadata ->
                                     ListTransactionData(
                                         transaction = it,
                                         metadata = metadata
                                     )
                                 }
-                        }
-                        .combineToFlow()
+                        }.combineToFlow()
                 }
             }
 }

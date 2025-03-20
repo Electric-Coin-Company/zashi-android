@@ -70,7 +70,7 @@ internal fun WrapScanValidator(args: ScanNavigationArgs) {
             snackbarHostState = snackbarHostState,
             validationResult = state,
             onBack = { navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE) },
-            onScanned = {
+            onScan = {
                 viewModel.onScanned(it)
             },
             onScanError = {
@@ -89,7 +89,7 @@ internal fun WrapScanValidator(args: ScanNavigationArgs) {
                     }
                 }
             },
-            onScanStateChanged = {},
+            onScanStateChange = {},
             topAppBarSubTitleState = walletState,
         )
     }

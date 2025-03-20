@@ -34,7 +34,9 @@ class RestoreViewSecuredScreenTest : UiTestPrerequisites() {
             assertEquals(1, testSetup.getSecureScreenCount())
         }
 
-    private class TestSetup(composeTestRule: ComposeContentTestRule) {
+    private class TestSetup(
+        composeTestRule: ComposeContentTestRule
+    ) {
         private val screenSecurity = ScreenSecurity()
 
         fun getSecureScreenCount() = screenSecurity.referenceCount.value
@@ -52,7 +54,7 @@ class RestoreViewSecuredScreenTest : UiTestPrerequisites() {
                             setRestoreHeight = {},
                             onBack = { },
                             paste = { "" },
-                            onFinished = { }
+                            onFinish = { }
                         )
                     }
                 }

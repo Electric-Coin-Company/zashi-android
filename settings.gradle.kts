@@ -60,6 +60,7 @@ pluginManagement {
         id("com.github.ben-manes.versions") version (extra["GRADLE_VERSIONS_PLUGIN_VERSION"].toString()) apply false
         id("com.osacky.fulladle") version (extra["FULLADLE_VERSION"].toString()) apply false
         id("org.jetbrains.kotlinx.kover") version (extra["KOVER_VERSION"].toString()) apply false
+        id("org.jetbrains.kotlin.plugin.compose") version (kotlinVersion) apply (false)
         id("wtf.emulator.gradle") version (extra["EMULATOR_WTF_GRADLE_PLUGIN_VERSION"].toString()) apply false
         kotlin("android") version (kotlinVersion) apply false
         kotlin("jvm") version (kotlinVersion) apply false

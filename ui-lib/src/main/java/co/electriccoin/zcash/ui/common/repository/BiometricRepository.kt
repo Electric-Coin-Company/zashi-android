@@ -32,11 +32,17 @@ data class BiometricRequest(
 sealed interface BiometricResult {
     val requestCode: String
 
-    data class Success(override val requestCode: String) : BiometricResult
+    data class Success(
+        override val requestCode: String
+    ) : BiometricResult
 
-    data class Failure(override val requestCode: String) : BiometricResult
+    data class Failure(
+        override val requestCode: String
+    ) : BiometricResult
 
-    data class Cancelled(override val requestCode: String) : BiometricResult
+    data class Cancelled(
+        override val requestCode: String
+    ) : BiometricResult
 }
 
 class BiometricsFailureException : Exception()

@@ -121,7 +121,7 @@ private fun PercentDecimal.toCheckedProgress(status: Synchronizer.Status): Strin
 @Composable
 fun StatusDialog(
     statusAction: StatusAction.Detailed,
-    onDone: () -> Unit,
+    onConfirm: () -> Unit,
     onReport: (StatusAction.Error) -> Unit,
 ) {
     AppAlertDialog(
@@ -137,7 +137,7 @@ fun StatusDialog(
             }
         },
         confirmButtonText = stringResource(id = R.string.balances_status_dialog_ok_button),
-        onConfirmButtonClick = onDone,
+        onConfirmButtonClick = onConfirm,
         // Add the report button only for the StatusAction.Error type and non-null full stacktrace value
         dismissButtonText =
             if (statusAction.isReportable()) {

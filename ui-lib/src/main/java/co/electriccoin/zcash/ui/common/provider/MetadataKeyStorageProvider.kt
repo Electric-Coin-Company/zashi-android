@@ -25,12 +25,11 @@ class MetadataKeyStorageProviderImpl(
 ) : MetadataKeyStorageProvider {
     private val default = MetadataKeyPreferenceDefault()
 
-    override suspend fun get(account: WalletAccount): MetadataKey? {
-        return default.getValue(
+    override suspend fun get(account: WalletAccount): MetadataKey? =
+        default.getValue(
             walletAccount = account,
             preferenceProvider = encryptedPreferenceProvider(),
         )
-    }
 
     override suspend fun store(
         key: MetadataKey,
@@ -51,11 +50,11 @@ private class MetadataKeyPreferenceDefault {
     suspend fun getValue(
         walletAccount: WalletAccount,
         preferenceProvider: PreferenceProvider,
-    ): MetadataKey? {
-        return preferenceProvider.getStringSet(
-            key = getKey(walletAccount)
-        )?.decode()
-    }
+    ): MetadataKey? =
+        preferenceProvider
+            .getStringSet(
+                key = getKey(walletAccount)
+            )?.decode()
 
     suspend fun putValue(
         newValue: MetadataKey?,
@@ -73,20 +72,19 @@ private class MetadataKeyPreferenceDefault {
         PreferenceKey("metadata_key_${walletAccount.sdkAccount.accountUuid.value.toHexString()}")
 
     @OptIn(ExperimentalEncodingApi::class)
-    private fun MetadataKey?.encode(): Set<String>? {
-        return this
+    private fun MetadataKey?.encode(): Set<String>? =
+        this
             ?.bytes
             ?.map {
                 Base64.encode(it.toByteArray(secretKeyAccess))
-            }
-            ?.toSet()
-    }
+            }?.toSet()
 
     @OptIn(ExperimentalEncodingApi::class)
     private fun Set<String>?.decode() =
         if (this != null) {
             MetadataKey(
-                this.toList()
+                this
+                    .toList()
                     .map {
                         SecretBytes.copyFrom(Base64.decode(it), secretKeyAccess)
                     }

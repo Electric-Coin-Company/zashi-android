@@ -19,34 +19,35 @@ class OnboardingViewTest : UiTestPrerequisites() {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    private fun newTestSetup(): OnboardingTestSetup {
-        return OnboardingTestSetup(composeTestRule).apply {
+    private fun newTestSetup(): OnboardingTestSetup =
+        OnboardingTestSetup(composeTestRule).apply {
             setDefaultContent()
         }
-    }
 
     @Test
     @MediumTest
     fun layout() {
         newTestSetup()
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.onboarding_create_new_wallet),
-            ignoreCase = true
-        ).also {
-            it.assertExists()
-            it.assertIsEnabled()
-            it.assertHasClickAction()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = getStringResource(R.string.onboarding_create_new_wallet),
+                ignoreCase = true
+            ).also {
+                it.assertExists()
+                it.assertIsEnabled()
+                it.assertHasClickAction()
+            }
 
-        composeTestRule.onNodeWithText(
-            text = getStringResource(R.string.onboarding_import_existing_wallet),
-            ignoreCase = true
-        ).also {
-            it.assertExists()
-            it.assertIsEnabled()
-            it.assertHasClickAction()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = getStringResource(R.string.onboarding_import_existing_wallet),
+                ignoreCase = true
+            ).also {
+                it.assertExists()
+                it.assertIsEnabled()
+                it.assertHasClickAction()
+            }
     }
 
     @Test

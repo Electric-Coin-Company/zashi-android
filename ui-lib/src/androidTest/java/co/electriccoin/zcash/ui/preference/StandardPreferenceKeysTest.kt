@@ -13,7 +13,8 @@ class StandardPreferenceKeysTest {
     fun unique_keys() {
         val fieldValueSet = mutableSetOf<String>()
 
-        StandardPreferenceKeys::class.memberProperties
+        StandardPreferenceKeys::class
+            .memberProperties
             .map { it.getter.call(StandardPreferenceKeys) }
             .map { it as PreferenceDefault<*> }
             .map { it.key }

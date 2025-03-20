@@ -23,6 +23,5 @@ class SupportViewModel(
     val supportInfo: StateFlow<SupportInfo?> =
         flow<SupportInfo?> {
             emit(SupportInfo.new(application, androidConfigurationProvider))
-        }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT, Duration.ZERO), null)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT, Duration.ZERO), null)
 }

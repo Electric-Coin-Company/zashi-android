@@ -29,9 +29,7 @@ class SelectedAccountUUIDProviderImpl(
             emitAll(default.observe(encryptedPreferenceProvider()))
         }
 
-    override suspend fun getUUID(): AccountUuid? {
-        return default.getValue(encryptedPreferenceProvider())
-    }
+    override suspend fun getUUID(): AccountUuid? = default.getValue(encryptedPreferenceProvider())
 
     override suspend fun setUUID(uuid: AccountUuid) {
         default.putValue(encryptedPreferenceProvider(), uuid)

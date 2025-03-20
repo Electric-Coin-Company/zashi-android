@@ -55,8 +55,8 @@ class SelectKeystoneAccountViewModel(
     private suspend fun createState(
         selection: ZcashAccount?,
         isCreatingAccount: Boolean
-    ): SelectKeystoneAccountState {
-        return SelectKeystoneAccountState(
+    ): SelectKeystoneAccountState =
+        SelectKeystoneAccountState(
             onBackClick = ::onBackClick,
             title = stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_title),
             subtitle = stringRes(co.electriccoin.zcash.ui.R.string.select_keystone_account_subtitle),
@@ -83,7 +83,6 @@ class SelectKeystoneAccountViewModel(
                     onClick = ::onForgetDeviceClick,
                 ),
         )
-    }
 
     private suspend fun createCheckboxState(
         account: ZcashAccount,

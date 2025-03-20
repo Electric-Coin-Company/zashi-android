@@ -45,8 +45,8 @@ import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNote
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.screen.whatsnew.viewmodel.WhatsNewViewModel
-import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val viewModelModule =

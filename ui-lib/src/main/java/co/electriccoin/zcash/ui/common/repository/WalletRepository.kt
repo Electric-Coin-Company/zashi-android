@@ -192,12 +192,10 @@ class WalletRepositoryImpl(
                                     FastestServersState(servers = it.servers, isLoading = false)
                             }
                         } ?: emptyFlow()
-                }
-                .onEach {
+                }.onEach {
                     previousFastestServerState = it
                     send(it)
-                }
-                .launchIn(this)
+                }.launchIn(this)
         }.stateIn(
             scope = scope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -213,19 +211,17 @@ class WalletRepositoryImpl(
     override val currentWalletSnapshot: StateFlow<WalletSnapshot?> =
         combine(synchronizer, currentAccount) { synchronizer, currentAccount ->
             synchronizer to currentAccount
-        }
-            .flatMapLatest { (synchronizer, currentAccount) ->
-                if (synchronizer == null || currentAccount == null) {
-                    flowOf(null)
-                } else {
-                    toWalletSnapshot(synchronizer, currentAccount)
-                }
+        }.flatMapLatest { (synchronizer, currentAccount) ->
+            if (synchronizer == null || currentAccount == null) {
+                flowOf(null)
+            } else {
+                toWalletSnapshot(synchronizer, currentAccount)
             }
-            .stateIn(
-                scope = scope,
-                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = null
-            )
+        }.stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
+        )
 
     /**
      * A flow of the wallet block synchronization state.
@@ -234,7 +230,8 @@ class WalletRepositoryImpl(
         flow {
             emitAll(
                 StandardPreferenceKeys.WALLET_RESTORING_STATE
-                    .observe(standardPreferenceProvider()).map { persistedNumber ->
+                    .observe(standardPreferenceProvider())
+                    .map { persistedNumber ->
                         WalletRestoringState.fromNumber(persistedNumber)
                     }
             )
@@ -316,14 +313,12 @@ class WalletRepositoryImpl(
         }
     }
 
-    override suspend fun getSelectedServer(): LightWalletEndpoint {
-        return persistableWallet
+    override suspend fun getSelectedServer(): LightWalletEndpoint =
+        persistableWallet
             .map {
                 it?.endpoint
-            }
-            .filterNotNull()
+            }.filterNotNull()
             .first()
-    }
 
     override suspend fun getAllServers(): List<LightWalletEndpoint> {
         val defaultServers = getDefaultServers()

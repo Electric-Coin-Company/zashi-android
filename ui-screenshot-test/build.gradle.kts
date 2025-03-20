@@ -5,6 +5,7 @@ import model.NetworkDimension
 plugins {
     id("com.android.test")
     kotlin("android")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("secant.android-build-conventions")
     id("wtf.emulator.gradle")
     id("secant.emulator-wtf-conventions")

@@ -102,8 +102,12 @@ class UpdateContactViewModel(
         }
 
     private val updateButtonState =
-        combine(contactAddressState, contactNameState, isUpdatingContact, contact) { address, name,
-                                                                                     isUpdatingContact, contact ->
+        combine(contactAddressState, contactNameState, isUpdatingContact, contact) {
+            address,
+            name,
+            isUpdatingContact,
+            contact
+            ->
             ButtonState(
                 text = stringRes(R.string.update_contact_primary_btn),
                 isEnabled =

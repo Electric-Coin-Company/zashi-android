@@ -225,13 +225,11 @@ private fun Emoji(
                     width = 2.5.dp,
                     color = if (isSelected) ZashiColors.Text.textPrimary else Color.Transparent,
                     shape = RoundedCornerShape(ZashiDimensions.Radius.radiusXl)
-                )
-                .padding(4.5.dp)
+                ).padding(4.5.dp)
                 .background(
                     color = ZashiColors.Surfaces.bgSecondary,
                     shape = RoundedCornerShape(8.dp)
-                )
-                .clip(RoundedCornerShape(8.dp))
+                ).clip(RoundedCornerShape(8.dp))
                 .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {

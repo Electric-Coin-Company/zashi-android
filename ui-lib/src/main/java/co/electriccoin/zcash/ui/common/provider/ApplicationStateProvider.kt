@@ -20,9 +20,7 @@ class ApplicationStateProviderImpl : ApplicationStateProvider {
 
     override val state = _state.asStateFlow()
 
-    override suspend fun getApplicationState(): Lifecycle.Event? {
-        return _state.last()
-    }
+    override suspend fun getApplicationState(): Lifecycle.Event? = _state.last()
 
     override fun setApplicationState(newState: Lifecycle.Event) {
         _state.update { newState }

@@ -26,7 +26,11 @@ class QrCodeAnalyzerImpl(
     override fun analyze(image: ImageProxy) {
         image.use {
             if (image.format in supportedImageFormats) {
-                val bytes = image.planes.first().buffer.toByteArray()
+                val bytes =
+                    image.planes
+                        .first()
+                        .buffer
+                        .toByteArray()
 
                 Twig.verbose {
                     "Scan result: " +
@@ -89,14 +93,15 @@ class QrCodeAnalyzerImpl(
 
                 runCatching {
                     val result =
-                        MultiFormatReader().apply {
-                            setHints(
-                                mapOf(
-                                    DecodeHintType.POSSIBLE_FORMATS to arrayListOf(BarcodeFormat.QR_CODE),
-                                    DecodeHintType.ALSO_INVERTED to true
+                        MultiFormatReader()
+                            .apply {
+                                setHints(
+                                    mapOf(
+                                        DecodeHintType.POSSIBLE_FORMATS to arrayListOf(BarcodeFormat.QR_CODE),
+                                        DecodeHintType.ALSO_INVERTED to true
+                                    )
                                 )
-                            )
-                        }.decodeWithState(binaryBmp)
+                            }.decodeWithState(binaryBmp)
 
                     onQrCodeScanned(result.text)
                 }.onFailure {

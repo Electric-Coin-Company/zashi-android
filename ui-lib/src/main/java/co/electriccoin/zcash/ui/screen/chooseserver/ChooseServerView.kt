@@ -183,7 +183,10 @@ private fun ErrorDialog(dialogState: ServerDialogState) {
                         }
                     }
                 },
-                confirmButtonText = dialogState.state.confirmButtonState?.text?.getValue(),
+                confirmButtonText =
+                    dialogState.state.confirmButtonState
+                        ?.text
+                        ?.getValue(),
                 onConfirmButtonClick = dialogState.state.confirmButtonState?.onClick
             )
         }

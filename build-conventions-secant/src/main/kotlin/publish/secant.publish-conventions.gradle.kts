@@ -237,9 +237,6 @@ abstract class PublishToGooglePlay @Inject constructor(
         val gradleVersionName = project.property("ZCASH_VERSION_NAME").toString()
         val versionName = "$gradleVersionName (${bundle.versionCode.toLong()}): Automated Internal Testing Release"
 
-        // In-app update priority of the release. Can take values in the range [0, 5], with 5 the highest priority.
-        val inAppUpdatePriority = project.property("ZCASH_IN_APP_UPDATE_PRIORITY").toString().toInt()
-
         val releaseNotes: List<LocalizedText> = getReleaseNotesFor(
             gradleVersionName = gradleVersionName,
             languageTags = listOf(
@@ -259,7 +256,6 @@ abstract class PublishToGooglePlay @Inject constructor(
                 track,
                 Track().setReleases(
                     listOf(TrackRelease()
-                        .setInAppUpdatePriority(inAppUpdatePriority)
                         .setReleaseNotes(releaseNotes)
                         .setName(versionName)
                         .setVersionCodes(bundleVersionCodes)
