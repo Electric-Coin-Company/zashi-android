@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.integrations.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -64,24 +65,7 @@ fun Integrations(
                     .verticalScroll(rememberScrollState())
                     .scaffoldScrollPadding(paddingValues),
         ) {
-            state.items.forEachIndexed { index, item ->
-                ZashiListItem(
-                    state = item,
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    leading = {
-                        ZashiListItemDefaults.LeadingItem(
-                            modifier = Modifier.size(40.dp),
-                            icon = item.icon,
-                            contentDescription = item.title.getValue()
-                        )
-                    },
-                )
-                if (index != state.items.lastIndex) {
-                    ZashiHorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 4.dp)
-                    )
-                }
-            }
+            IntegrationItems(state)
 
             state.disabledInfo?.let {
                 Spacer(modifier = Modifier.height(28.dp))
@@ -110,6 +94,32 @@ fun Integrations(
                     style = ZashiTypography.textMd
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun IntegrationItems(
+    state: IntegrationsState,
+    contentPadding: PaddingValues = ZashiListItemDefaults.contentPadding
+) {
+    state.items.forEachIndexed { index, item ->
+        ZashiListItem(
+            state = item,
+            modifier = Modifier.padding(horizontal = 4.dp),
+            leading = {
+                ZashiListItemDefaults.LeadingItem(
+                    modifier = Modifier.size(40.dp),
+                    icon = item.icon,
+                    contentDescription = item.title.getValue()
+                )
+            },
+            contentPadding = contentPadding
+        )
+        if (index != state.items.lastIndex) {
+            ZashiHorizontalDivider(
+                modifier = Modifier.padding(horizontal = 4.dp)
+            )
         }
     }
 }
@@ -187,7 +197,8 @@ private fun IntegrationSettings() =
                                 icon = R.drawable.ic_integrations_keystone,
                                 onClick = {}
                             ),
-                        )
+                        ),
+                    onBottomSheetHidden = {}
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )

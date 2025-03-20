@@ -35,7 +35,7 @@ import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationUIState
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
-import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
+import co.electriccoin.zcash.ui.common.viewmodel.OldHomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.configuration.RemoteConfig
@@ -67,7 +67,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : FragmentActivity() {
-    private val homeViewModel by viewModel<HomeViewModel>()
+    private val oldHomeViewModel by viewModel<OldHomeViewModel>()
 
     val walletViewModel by viewModel<WalletViewModel>()
 
@@ -132,7 +132,7 @@ class MainActivity : FragmentActivity() {
             }
 
             // Note this condition needs to be kept in sync with the condition in MainContent()
-            homeViewModel.configurationFlow.value == null || SecretState.Loading == walletViewModel.secretState.value
+            oldHomeViewModel.configurationFlow.value == null || SecretState.Loading == walletViewModel.secretState.value
         }
     }
 
@@ -143,7 +143,7 @@ class MainActivity : FragmentActivity() {
         enableEdgeToEdge()
         setContentCompat {
             Override(configurationOverrideFlow) {
-                val isHideBalances by homeViewModel.isHideBalances.collectAsStateWithLifecycle()
+                val isHideBalances by oldHomeViewModel.isHideBalances.collectAsStateWithLifecycle()
                 ZcashTheme(
                     balancesAvailable = isHideBalances == false
                 ) {
@@ -235,7 +235,7 @@ class MainActivity : FragmentActivity() {
 
     @Composable
     private fun MainContent() {
-        val configuration = homeViewModel.configurationFlow.collectAsStateWithLifecycle().value
+        val configuration = oldHomeViewModel.configurationFlow.collectAsStateWithLifecycle().value
         val secretState = walletViewModel.secretState.collectAsStateWithLifecycle().value
 
         // Note this condition needs to be kept in sync with the condition in setupSplashScreen()
@@ -295,7 +295,7 @@ class MainActivity : FragmentActivity() {
         val isEnableBackgroundSyncFlow =
             run {
                 val isSecretReadyFlow = walletViewModel.secretState.map { it is SecretState.Ready }
-                val isBackgroundSyncEnabledFlow = homeViewModel.isBackgroundSyncEnabled.filterNotNull()
+                val isBackgroundSyncEnabledFlow = oldHomeViewModel.isBackgroundSyncEnabled.filterNotNull()
 
                 isSecretReadyFlow.combine(isBackgroundSyncEnabledFlow) { isSecretReady, isBackgroundSyncEnabled ->
                     isSecretReady && isBackgroundSyncEnabled
