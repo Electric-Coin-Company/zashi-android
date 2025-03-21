@@ -2,8 +2,8 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.common.repository.ConfigurationRepository
 
-class ObserveConfigurationUseCase(
+class GetConfigurationUseCase(
     private val configurationRepository: ConfigurationRepository
 ) {
-    operator fun invoke() = configurationRepository.configurationFlow
+    fun observe() = configurationRepository.configurationFlow
 }

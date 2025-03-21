@@ -107,6 +107,7 @@ interface WalletRepository {
 
 class WalletRepositoryImpl(
     accountDataSource: AccountDataSource,
+    configurationRepository: ConfigurationRepository,
     private val persistableWalletProvider: PersistableWalletProvider,
     private val synchronizerProvider: SynchronizerProvider,
     private val application: Application,
@@ -140,17 +141,21 @@ class WalletRepositoryImpl(
     override val allAccounts: StateFlow<List<WalletAccount>?> = accountDataSource.allAccounts
 
     override val secretState: StateFlow<SecretState> =
-        onboardingState.map { onboardingState: OnboardingState ->
-            when (onboardingState) {
-                OnboardingState.NONE -> SecretState.None
-                OnboardingState.NEEDS_WARN -> SecretState.NeedsWarning
-                OnboardingState.NEEDS_BACKUP -> SecretState.NeedsBackup
-                OnboardingState.READY -> SecretState.Ready
+        combine(configurationRepository.configurationFlow, onboardingState) { config, onboardingState ->
+            if (config == null) {
+                SecretState.LOADING
+            } else {
+                when (onboardingState) {
+                    OnboardingState.NEEDS_WARN,
+                    OnboardingState.NEEDS_BACKUP,
+                    OnboardingState.NONE -> SecretState.NONE
+                    OnboardingState.READY -> SecretState.READY
+                }
             }
         }.stateIn(
             scope = scope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = SecretState.Loading
+            initialValue = SecretState.LOADING
         )
 
     @OptIn(ExperimentalCoroutinesApi::class)

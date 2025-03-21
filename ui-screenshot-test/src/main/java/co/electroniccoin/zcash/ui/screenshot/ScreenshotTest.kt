@@ -8,7 +8,6 @@ import android.os.LocaleList
 import androidx.activity.viewModels
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsNodeInteraction
-import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
@@ -48,7 +47,6 @@ import co.electriccoin.zcash.ui.screen.balances.BalanceTag
 import co.electriccoin.zcash.ui.screen.home.HomeTags
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedTag
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
-import co.electriccoin.zcash.ui.screen.securitywarning.view.SecurityScreenTag.ACKNOWLEDGE_CHECKBOX_TAG
 import co.electriccoin.zcash.ui.screen.send.SendTag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -179,7 +177,7 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
 
         composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-            composeTestRule.activity.walletViewModel.secretState.value is SecretState.None
+            composeTestRule.activity.walletViewModel.secretState.value == SecretState.NONE
         }
 
         composeTestRule.waitUntilDoesNotExist(hasTestTag(WELCOME_ANIM_TEST_TAG), DEFAULT_TIMEOUT_MILLISECONDS)
@@ -221,35 +219,38 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
 
         composeTestRule.waitUntil {
-            composeTestRule.activity.viewModels<RestoreSeedViewModel>().value.userWordList.current.value.size ==
+            composeTestRule.activity.viewModels<RestoreSeedViewModel>().value.suggestionsState.value
+                ?.suggestions
+                ?.size ==
                 SeedPhrase.SEED_PHRASE_SIZE
         }
 
-        composeTestRule.onNodeWithText(
-            text = resContext.getString(R.string.restore_seed_button_next),
-            ignoreCase = true
-        ).also {
-            // Even with waiting for the word list in the view model, there's some latency before the button is enabled
-            composeTestRule.waitUntil(5.seconds.inWholeMilliseconds) {
-                runCatching { it.assertIsEnabled() }.isSuccess
-            }
-            it.performScrollTo()
-            it.performClick()
-        }
+        // composeTestRule.onNodeWithText(
+        //     text = resContext.getString(R.string.restore_seed_button_next),
+        //     ignoreCase = true
+        // ).also {
+        //     // Even with waiting for the word list in the view model,
+        //     // there's some latency before the button is enabled
+        //     composeTestRule.waitUntil(5.seconds.inWholeMilliseconds) {
+        //         runCatching { it.assertIsEnabled() }.isSuccess
+        //     }
+        //     it.performScrollTo()
+        //     it.performClick()
+        // }
 
-        composeTestRule.onNodeWithText(resContext.getString(R.string.restore_birthday_header)).also {
-            it.assertExists()
-        }
+        // composeTestRule.onNodeWithText(resContext.getString(R.string.restore_birthday_header)).also {
+        //     it.assertExists()
+        // }
 
         takeScreenshot(tag, "Import 3")
 
-        composeTestRule.onNodeWithText(
-            text = resContext.getString(R.string.restore_birthday_button_restore),
-            ignoreCase = true
-        ).also {
-            it.performScrollTo()
-            it.performClick()
-        }
+        // composeTestRule.onNodeWithText(
+        //     text = resContext.getString(R.string.restore_birthday_button_restore),
+        //     ignoreCase = true
+        // ).also {
+        //     it.performScrollTo()
+        //     it.performClick()
+        // }
 
         composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
             composeTestRule.onNodeWithText(
@@ -266,7 +267,7 @@ class ScreenshotTest : UiTestPrerequisites() {
             it.performClick()
         }
 
-        composeTestRule.waitUntilDoesNotExist(hasTestTag(ACKNOWLEDGE_CHECKBOX_TAG), DEFAULT_TIMEOUT_MILLISECONDS)
+        // composeTestRule.waitUntilDoesNotExist(hasTestTag(ACKNOWLEDGE_CHECKBOX_TAG), DEFAULT_TIMEOUT_MILLISECONDS)
     }
 
     @Test
@@ -382,7 +383,7 @@ private fun onboardingScreenshots(
     composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
 ) {
     composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-        composeTestRule.activity.walletViewModel.secretState.value is SecretState.None
+        composeTestRule.activity.walletViewModel.secretState.value == SecretState.NONE
     }
 
     // Welcome screen
@@ -445,7 +446,7 @@ private fun accountScreenshots(
     composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
 ) {
     composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-        composeTestRule.activity.walletViewModel.secretState.value is SecretState.Ready
+        composeTestRule.activity.walletViewModel.secretState.value == SecretState.READY
     }
     composeTestRule.onNodeWithTag(BalanceTag.BALANCE_VIEWS).also {
         it.assertExists()

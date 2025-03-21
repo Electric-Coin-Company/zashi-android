@@ -35,15 +35,15 @@ class RestoreSeedViewModel(
     private val navigationRouter: NavigationRouter,
     private val validateSeed: ValidateSeedUseCase
 ) : ViewModel() {
-
-    private val suggestions = flow {
-        val result = withContext(Dispatchers.IO) { Mnemonics.getCachedWords(Locale.ENGLISH.language) }
-        emit(result)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        initialValue = null
-    )
+    private val suggestions =
+        flow {
+            val result = withContext(Dispatchers.IO) { Mnemonics.getCachedWords(Locale.ENGLISH.language) }
+            emit(result)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = null
+        )
 
     @Suppress("MagicNumber")
     private val seedWords =
@@ -58,32 +58,35 @@ class RestoreSeedViewModel(
         )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val seedValidations = combine(seedWords, suggestions) { seedWords, suggestions ->
-        seedWords to suggestions.orEmpty()
-    }.mapLatest { (seedWords, suggestions) ->
-        withContext(Dispatchers.Default) {
-            seedWords.map { field ->
-                val trimmed = field.value.lowercase(Locale.US).trim()
-                val autocomplete = suggestions.filter { it.startsWith(trimmed) }
-                val validSuggestions = when {
-                    trimmed.isBlank() -> suggestions
-                    suggestions.contains(trimmed) && autocomplete.size == 1 -> suggestions
-                    else -> autocomplete
+    private val seedValidations =
+        combine(seedWords, suggestions) { seedWords, suggestions ->
+            seedWords to suggestions.orEmpty()
+        }.mapLatest { (seedWords, suggestions) ->
+            withContext(Dispatchers.Default) {
+                seedWords.map { field ->
+                    val trimmed = field.value.lowercase(Locale.US).trim()
+                    val autocomplete = suggestions.filter { it.startsWith(trimmed) }
+                    val validSuggestions =
+                        when {
+                            trimmed.isBlank() -> suggestions
+                            suggestions.contains(trimmed) && autocomplete.size == 1 -> suggestions
+                            else -> autocomplete
+                        }
+                    validSuggestions.isNotEmpty()
                 }
-                validSuggestions.isNotEmpty()
             }
         }
-    }
 
-    private val validSeed = seedWords
-        .map { fields ->
-            validateSeed(fields.map { it.value })
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
+    private val validSeed =
+        seedWords
+            .map { fields ->
+                validateSeed(fields.map { it.value })
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
+            )
 
     private val isDialogVisible = MutableStateFlow(false)
 
@@ -113,31 +116,34 @@ class RestoreSeedViewModel(
      * The complete word list that the user can choose from; useful for autocomplete
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    val suggestionsState = combine(validSeed, suggestions) { seed, suggestions ->
-        seed to suggestions
-    }.mapLatest { (seed, suggestions) ->
-        if (seed == null && suggestions != null) {
-            RestoreSeedSuggestionsState(isVisible = true, suggestions = suggestions)
-        } else {
-            null
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-        initialValue = null
-    )
+    val suggestionsState =
+        combine(validSeed, suggestions) { seed, suggestions ->
+            seed to suggestions
+        }.mapLatest { (seed, suggestions) ->
+            if (seed == null && suggestions != null) {
+                RestoreSeedSuggestionsState(isVisible = true, suggestions = suggestions)
+            } else {
+                null
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
+        )
 
     private fun createState(
         words: List<SeedWordTextFieldState>,
         seedValidations: List<Boolean>,
         seedPhrase: SeedPhrase?
     ) = RestoreSeedState(
-        seed = SeedTextFieldState(
-            values = words
-                .mapIndexed { index, word ->
-                    word.copy(isError = !seedValidations[index])
-                }
-        ),
+        seed =
+            SeedTextFieldState(
+                values =
+                    words
+                        .mapIndexed { index, word ->
+                            word.copy(isError = !seedValidations[index])
+                        }
+            ),
         onBack = ::onBack,
         dialogButton = IconButtonState(icon = R.drawable.ic_info, onClick = ::onInfoButtonClick),
         nextButton =
@@ -161,7 +167,10 @@ class RestoreSeedViewModel(
         navigationRouter.forward(RestoreBDHeight(seed.joinToString()))
     }
 
-    private fun onValueChange(index: Int, value: String) {
+    private fun onValueChange(
+        index: Int,
+        value: String
+    ) {
         if (BuildConfig.DEBUG) {
             val seed = validateSeed(value.split(" "))
             if (seed != null) {
@@ -174,7 +183,10 @@ class RestoreSeedViewModel(
         }
     }
 
-    private fun updateSeedWord(index: Int, value: String) {
+    private fun updateSeedWord(
+        index: Int,
+        value: String
+    ) {
         seedWords.update {
             val newSeedWords = it.toMutableList()
             newSeedWords[index] = newSeedWords[index].copy(value = value.trim())

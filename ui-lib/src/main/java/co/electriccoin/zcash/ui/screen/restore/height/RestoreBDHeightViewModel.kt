@@ -60,22 +60,27 @@ class RestoreBDHeightViewModel(
             )
 
     private fun createState(blockHeight: String): RestoreBDHeightState {
-        val isHigherThanSaplingActivationHeight = blockHeight.toLongOrNull()
-            ?.let { it >= ZcashNetwork.fromResources(context).saplingActivationHeight.value } ?: false
+        val isHigherThanSaplingActivationHeight =
+            blockHeight.toLongOrNull()
+                ?.let { it >= ZcashNetwork.fromResources(context).saplingActivationHeight.value } ?: false
         val isValid = blockHeight.isEmpty() || isHigherThanSaplingActivationHeight
 
         return RestoreBDHeightState(
             onBack = ::onBack,
             dialogButton = IconButtonState(icon = R.drawable.ic_info, onClick = ::onInfoButtonClick),
-            restore = ButtonState(
-                stringRes(R.string.restore_bd_restore_btn), onClick = ::onRestoreClick, isEnabled = isValid
-            ),
+            restore =
+                ButtonState(
+                    stringRes(R.string.restore_bd_restore_btn),
+                    onClick = ::onRestoreClick,
+                    isEnabled = isValid
+                ),
             estimate = ButtonState(stringRes(R.string.restore_bd_height_btn), onClick = ::onEstimateClick),
-            blockHeight = TextFieldState(
-                value = stringRes(blockHeight),
-                onValueChange = ::onValueChanged,
-                error = stringRes("").takeIf { !isValid }
-            )
+            blockHeight =
+                TextFieldState(
+                    value = stringRes(blockHeight),
+                    onValueChange = ::onValueChanged,
+                    error = stringRes("").takeIf { !isValid }
+                )
         )
     }
 

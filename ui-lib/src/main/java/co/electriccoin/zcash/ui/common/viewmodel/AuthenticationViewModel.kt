@@ -100,9 +100,7 @@ class AuthenticationViewModel(
             when {
                 (!required || versionInfo.isRunningUnderTestService) -> AuthenticationUIState.NotRequired
                 (state == AuthenticationUIState.Initial) -> {
-                    if (secretState == SecretState.None ||
-                        secretState == SecretState.NeedsWarning
-                    ) {
+                    if (secretState == SecretState.NONE) {
                         appAccessAuthentication.value = AuthenticationUIState.NotRequired
                         AuthenticationUIState.NotRequired
                     } else {

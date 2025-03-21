@@ -22,6 +22,7 @@ import co.electriccoin.zcash.ui.NavigatorImpl
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.OnboardingState
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
@@ -41,32 +42,12 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 @Composable
-fun MainActivity.RestoreNavigation() {
+fun MainActivity.OnboardingNavigation() {
     val activity = LocalActivity.current
     val navigationRouter = koinInject<NavigationRouter>()
     val navController = LocalNavController.current
     val flexaViewModel = koinViewModel<FlexaViewModel>()
-    val navigator: Navigator = remember { NavigatorImpl(this@RestoreNavigation, navController, flexaViewModel) }
-
-    val onCreateWallet = {
-        walletViewModel.persistOnboardingState(OnboardingState.NEEDS_WARN)
-    }
-    val onImportWallet = {
-        // In the case of the app currently being messed with by the robo test runner on
-        // Firebase Test Lab or Google Play pre-launch report, we want to skip creating
-        // a new or restoring an existing wallet screens by persisting an existing wallet
-        // with a mock seed.
-        if (FirebaseTestLabUtil.isFirebaseTestLab(activity.applicationContext)) {
-            persistExistingWalletWithSeedPhrase(
-                activity.applicationContext,
-                walletViewModel,
-                SeedPhrase.new(WalletFixture.Alice.seedPhrase),
-                birthday = WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(activity.applicationContext))
-            )
-        } else {
-            navigationRouter.forward(RestoreSeed)
-        }
-    }
+    val navigator: Navigator = remember { NavigatorImpl(this@OnboardingNavigation, navController, flexaViewModel) }
 
     LaunchedEffect(Unit) {
         navigationRouter.observePipeline().collect {
@@ -83,8 +64,39 @@ fun MainActivity.RestoreNavigation() {
     ) {
         composable<Onboarding> {
             Onboarding(
-                onImportWallet = onImportWallet,
-                onCreateWallet = onCreateWallet
+                onImportWallet = {
+                    // In the case of the app currently being messed with by the robo test runner on
+                    // Firebase Test Lab or Google Play pre-launch report, we want to skip creating
+                    // a new or restoring an existing wallet screens by persisting an existing wallet
+                    // with a mock seed.
+                    if (FirebaseTestLabUtil.isFirebaseTestLab(activity.applicationContext)) {
+                        persistExistingWalletWithSeedPhrase(
+                            activity.applicationContext,
+                            walletViewModel,
+                            SeedPhrase.new(WalletFixture.Alice.seedPhrase),
+                            WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(activity.applicationContext))
+                        )
+                    } else {
+                        navigationRouter.forward(RestoreSeed)
+                    }
+                },
+                onCreateWallet = {
+                    if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
+                        persistExistingWalletWithSeedPhrase(
+                            applicationContext,
+                            walletViewModel,
+                            SeedPhrase.new(WalletFixture.Alice.seedPhrase),
+                            WalletFixture.Alice.getBirthday(
+                                ZcashNetwork.fromResources(
+                                    applicationContext
+                                )
+                            )
+                        )
+                    } else {
+                        walletViewModel.persistOnboardingState(OnboardingState.READY)
+                        walletViewModel.persistNewWalletAndRestoringState(WalletRestoringState.INITIATING)
+                    }
+                }
             )
         }
         composable<RestoreSeed> {

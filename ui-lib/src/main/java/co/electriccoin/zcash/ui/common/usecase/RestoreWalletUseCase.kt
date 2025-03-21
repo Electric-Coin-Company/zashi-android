@@ -11,7 +11,10 @@ class RestoreWalletUseCase(
     private val walletRepository: WalletRepository,
     private val context: Context,
 ) {
-    operator fun invoke(seedPhrase: SeedPhrase, birthday: BlockHeight?) {
+    operator fun invoke(
+        seedPhrase: SeedPhrase,
+        birthday: BlockHeight?
+    ) {
         walletRepository.persistExistingWalletWithSeedPhrase(
             network = ZcashNetwork.fromResources(context),
             seedPhrase = seedPhrase,

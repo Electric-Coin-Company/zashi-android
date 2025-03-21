@@ -15,11 +15,11 @@ import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
+import co.electriccoin.zcash.ui.common.usecase.GetConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 
 @Suppress("TooManyFunctions")
 class SettingsViewModel(
-    observeConfiguration: ObserveConfigurationUseCase,
+    getConfiguration: GetConfigurationUseCase,
     getWalletAccounts: GetWalletAccountsUseCase,
     isFlexaAvailable: IsFlexaAvailableUseCase,
     isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
@@ -62,7 +62,7 @@ class SettingsViewModel(
     @Suppress("ComplexCondition")
     private val troubleshootingState =
         combine(
-            observeConfiguration(),
+            getConfiguration.observe(),
             isAnalyticsEnabled,
             isBackgroundSyncEnabled,
             isKeepScreenOnWhileSyncingEnabled,

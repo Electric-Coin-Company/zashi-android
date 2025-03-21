@@ -2,11 +2,10 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.sdk.model.SeedPhrase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.util.Locale
 
 class ValidateSeedUseCase {
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
     operator fun invoke(words: List<String>): SeedPhrase? {
         return try {
             val seed = words.joinToString(" ") { it.trim() }.trim()
