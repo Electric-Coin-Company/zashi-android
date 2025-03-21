@@ -13,8 +13,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 
@@ -66,7 +68,9 @@ fun LabeledCheckBox(
     text: String,
     modifier: Modifier = Modifier,
     checked: Boolean = false,
-    checkBoxTestTag: String? = null
+    checkBoxTestTag: String? = null,
+    color: Color = ZcashTheme.colors.textPrimary,
+    style: TextStyle = ZcashTheme.extendedTypography.checkboxText
 ) {
     val (checkedState, setCheckedState) = rememberSaveable { mutableStateOf(checked) }
 
@@ -114,8 +118,8 @@ fun LabeledCheckBox(
         )
         Text(
             text = AnnotatedString(text),
-            color = ZcashTheme.colors.textPrimary,
-            style = ZcashTheme.extendedTypography.checkboxText
+            color = color,
+            style = style
         )
     }
 }

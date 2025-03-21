@@ -1,16 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="restore_button_clear">Clear Seed</string>
+    <string name="restore_title">Restore</string>
+    <string name="restore_subtitle">Seed Recovery Phrase</string>
+    <string name="restore_message">Please type in your 24-word secret recovery phrase in the correct order.</string>
+    <string name="restore_button">Next</string>
 
-    <string name="restore_title">Enter secret recovery phrase</string>
-    <string name="restore_seed_instructions">Enter your 24-word seed phrase to restore the associated wallet.</string>
-    <string name="restore_seed_hint">privacy dignity freedom …</string>
-    <string name="restore_seed_button_next">Next</string>
+    <string name="restore_dialog_title">Need to know more?</string>
+    <string name="restore_dialog_message_1_bold_part">The Secret Recovery Phrase</string>
+    <string name="restore_dialog_message_1">is a unique set of 24 words, appearing in a
+        precise order. It can be used to gain full control of your funds from any device via any Zcash wallet app.
+        Think of it as the master key to your wallet. It is stored in Zashi’s Advanced Settings.</string>
+    <string name="restore_dialog_message_2_bold_part">The Wallet Birthday Height</string>
+    <string name="restore_dialog_message_2">is the block height (block # in the
+        blockchain) at which your wallet was created. If you ever lose access to your Zashi app and need to recover
+        your funds, providing the block height along with your recovery phrase can significantly speed up the process.
+    </string>
+    <string name="restore_dialog_button">Got it!</string>
+
+    <string name="restore_bd_height_btn">Estimate my block height</string>
+    <string name="restore_bd_restore_btn">Restore</string>
+
+    <string name="restore_bd_subtitle">Wallet Birthday Height</string>
+    <string name="restore_bd_message">Entering your Wallet Birthday Height helps speed up the restore process.</string>
+    <string name="restore_bd_text_field_title">Block Height</string>
+    <string name="restore_bd_text_field_hint">Enter number</string>
+    <string name="restore_bd_text_field_note">Wallet Birthday Height is the point in time when your wallet was created.</string>
+
+    <string name="restore_bd_date_subtitle">First Wallet Transaction</string>
+    <string name="restore_bd_date_message">Entering the block height at which your wallet was created reduces the
+        number of blocks that need to be scanned to recover your wallet.</string>
+    <string name="restore_bd_date_note">If you’re not sure, choose an earlier date.</string>
+    <string name="restore_bd_date_next">Next</string>
+
+    <string name="restore_bd_estimation_subtitle">Estimated Block Height</string>
+    <string name="restore_bd_estimation_message">Zashi will scan and recover all transactions made after the following block number.</string>
+    <string name="restore_bd_estimation_copy">Copy</string>
+    <string name="restore_bd_estimation_restore">Restore</string>
 
     <string name="restore_seed_warning_suggestions">This word is not in the seed phrase dictionary.  Please select the correct one from the suggestions.</string>
-    <string name="restore_seed_warning_no_suggestions">This word is not in the seed phrase dictionary.</string>
 
-    <string name="restore_birthday_header">Wallet birthday height</string>
-    <string name="restore_birthday_sub_header">(optional)</string>
-    <string name="restore_birthday_button_restore">Restore</string>
 </resources>

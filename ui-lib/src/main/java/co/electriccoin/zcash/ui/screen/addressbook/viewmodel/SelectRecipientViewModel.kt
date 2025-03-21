@@ -9,9 +9,9 @@ import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiContactListItemState
 import co.electriccoin.zcash.ui.design.util.ImageResource
@@ -31,12 +31,12 @@ import kotlinx.coroutines.launch
 
 class SelectRecipientViewModel(
     observeAddressBookContacts: ObserveAddressBookContactsUseCase,
-    observeWalletAccountsUseCase: ObserveWalletAccountsUseCase,
+    getWalletAccountsUseCase: GetWalletAccountsUseCase,
     private val observeContactPicked: ObserveContactPickedUseCase,
     private val navigationRouter: NavigationRouter
 ) : ViewModel() {
     val state =
-        combine(observeAddressBookContacts(), observeWalletAccountsUseCase()) { contacts, accounts ->
+        combine(observeAddressBookContacts(), getWalletAccountsUseCase.observe()) { contacts, accounts ->
             if (accounts != null && accounts.size > 1) {
                 createStateWithAccounts(contacts, accounts)
             } else {

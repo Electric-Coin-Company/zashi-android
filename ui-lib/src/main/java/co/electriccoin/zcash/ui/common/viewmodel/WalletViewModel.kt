@@ -161,16 +161,10 @@ class WalletViewModel(
 /**
  * Represents the state of the wallet secret.
  */
-sealed class SecretState {
-    object Loading : SecretState()
-
-    object None : SecretState()
-
-    object NeedsWarning : SecretState()
-
-    class NeedsBackup(val persistableWallet: PersistableWallet) : SecretState()
-
-    class Ready(val persistableWallet: PersistableWallet) : SecretState()
+enum class SecretState {
+    LOADING,
+    NONE,
+    READY
 }
 
 /**
