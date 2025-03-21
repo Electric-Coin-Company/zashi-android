@@ -4,23 +4,19 @@
     <string name="exchange_rate_info_subtitle_1">La función de conversión de moneda de Zashi no compromete su dirección IP.</string>
     <string name="exchange_rate_info_title_2">Actualización de tasas</string>
     <string name="exchange_rate_info_subtitle_2">La tasa se actualiza automáticamente y también se puede actualizar manualmente.</string>
-
     <string name="exchange_rate_unavailable_title">Tasa de cambio no disponible</string>
     <string name="exchange_rate_unavailable_subtitle">Lo intentamos, pero no pudimos actualizar la tasa de cambio para usted. Verifique su conexión, reinicie la aplicación e intentaremos de nuevo.</string>
     <string name="exchange_rate_opt_in_title">Nueva Función</string>
     <string name="exchange_rate_opt_in_subtitle">Conversión de Moneda</string>
     <string name="exchange_rate_opt_in_primary_btn">Revisar</string>
-
     <string name="exchange_rate_opt_in_enable">Habilitar</string>
     <string name="exchange_rate_opt_in_save">Guardar cambios</string>
     <string name="exchange_rate_opt_in_skip">Omitir por ahora</string>
     <string name="exchange_rate_opt_in_note">Nota para los más conscientes de la privacidad: Debido a que obtenemos la tasa de conversión de los intercambios, un intercambio podría ver que la tasa de cambio fue consultada antes de que ocurriera una transacción.</string>
-
     <string name="exchange_rate_opt_in_option_title">Habilitar</string>
     <string name="exchange_rate_opt_in_option_subtitle">Mostrar la conversión de moneda.</string>
     <string name="exchange_rate_opt_out_option_title">Deshabilitar</string>
     <string name="exchange_rate_opt_out_option_subtitle">No mostrar la conversión de moneda.</string>
     <string name="exchange_rate_opt_in_description">Muestra tu saldo y los montos de pago en USD.\nPuedes gestionar esta función en Configuración Avanzada.</string>
     <string name="exchange_rate_opt_in_description_settings">Muestra tu saldo y los montos de pago en USD.\nLa función de conversión de moneda de Zashi protege tu dirección IP en todo momento.</string>
-
 </resources>
