@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="connect_keystone_title">Conectar Billetera de Hardware</string>
-    <string name="connect_keystone_subtitle">"Escanea el código QR de tu dispositivo para conectarte."</string>
+    <string name="connect_keystone_subtitle">Escanea el código QR de tu dispositivo para conectarte.</string>
     <string name="connect_keystone_subtitle_clickable">Ver tutorial de Keystone</string>
     <string name="connect_keystone_item_1">Desbloquea tu Keystone</string>
     <string name="connect_keystone_item_2">Toca el ícono del menú</string>
