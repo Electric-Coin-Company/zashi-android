@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="receive_title">Получить</string>
+    <string name="receive_copy">Копировать</string>
+    <string name="receive_request">Запросить</string>
+    <string name="receive_header">Получить Zcash</string>
+    <string name="receive_prioritize_shielded">Предпочитать использовать ваш скрытый адрес для максимальной приватности.</string>
+    <string name="receive_wallet_address_shielded">Скрытый адрес Zashi</string>
+    <string name="receive_wallet_address_sapling">Адрес саплинга Zashi</string>
+    <string name="receive_wallet_address_transparent">Прозрачный адрес Zashi</string>
+    <string name="receive_qr_code">QR-код</string>
+    <string name="receive_clipboard_tag">Адрес кошелька Zcash</string>
+    <string name="receive_wallet_address_shielded_keystone">Скрытый адрес Keystone</string>
+    <string name="receive_wallet_address_sapling_keystone">Сапплинг Адрес Keystone</string>
+    <string name="receive_wallet_address_transparent_keystone">Прозрачный адрес Keystone</string>
+</resources>

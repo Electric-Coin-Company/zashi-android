@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="payment_request_requested_by">Запрошено от</string>
+    <string name="payment_request_memo">Для:</string>
+    <string name="payment_request_fee">Комиссия</string>
+    <string name="payment_request_total">Всего</string>
+    <string name="payment_request_dialog_error_title">Транзакция не удалась</string>
+    <string name="payment_request_dialog_error_text">Произошла ошибка и попытка отправить денежные средства не удалась. Попробуйте ещё раз, пожалуйста.</string>
+    <string name="payment_request_dialog_error_grpc_title">Ошибка соединения</string>
+    <string name="payment_request_dialog_error_grpc_text">Заши столкнулся с некоторыми проблемами подключения при подаче транзакции в сеть. В течение следующих нескольких минут будет повторена попытка.</string>
+    <string name="payment_request_send_failed_report_unable_open_email">Не удалось запустить приложение электронной почты.</string>
+    <string name="payment_request_btn_show_address">Показать</string>
+    <string name="payment_request_btn_hide_address">Скрыть</string>
+    <string name="payment_request_btn_save_contact">Сохранить</string>
+    <string name="payment_request_send_btn">Отправить</string>
+    <string name="payment_request_dialog_error_ok_btn">OK</string>
+    <string name="payment_request_dialog_error_report_btn">Отчёт</string>
+    <string name="payment_request_title">Запрос на оплату</string>
+    <string name="payment_request_close_content_description">Закрыть</string>
+    <string name="payment_request_dialog_error_grpc_btn">OK</string>
+</resources>

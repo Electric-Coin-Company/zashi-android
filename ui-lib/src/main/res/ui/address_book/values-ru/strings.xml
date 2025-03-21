@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="address_book_title">Адресная книга</string>
+    <string name="address_book_add">Добавить новый контакт</string>
+    <string name="address_book_version">Версия <xliff:g example="1" id="version">%s</xliff:g></string>
+    <string name="address_book_scan_btn">Сканировать QR-код</string>
+    <string name="address_book_empty">Ваша адресная книга пустая</string>
+    <string name="address_book_manual_btn">Ручной ввод</string>
+    <string name="address_book_multiple_wallets_title">Ваши кошельки</string>
+    <string name="address_book_multiple_wallets_contacts_title">Контакты адресной книги</string>
+    <string name="address_book_select_recipient_title">Выбрать получателя</string>
+</resources>

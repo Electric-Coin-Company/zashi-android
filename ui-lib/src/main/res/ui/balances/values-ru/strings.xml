@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="balances_shielded_spendable">Защищённый zec (расходуемый)</string>
+    <string name="balances_pending_transactions">Незавершённые транзакции</string>
+    <string name="balances_transparent_balance">Прозрачный баланс</string>
+    <string name="balances_status_syncing_amount_suffix" formatted="true"><xliff:g id="amount_prefix" example="123$">%1$s</xliff:g> на данный момент</string>
+    <string name="balances_status_synced">Синхронизированно</string>
+    <string name="balances_status_update">Пожалуйста обновите <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> с помощью Google Play</string>
+    <string name="balances_status_error_simple">Возникла ошибка в <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> при синхронизации, попытаюсь разрешить проблему…</string>
+    <string name="balances_status_restoring_text">Процесс восстановления может занять несколько часов на устройствах с низким питанием, и даже на мощных устройствах может занять больше часа.</string>
+    <string name="balances_shielding_successful">Защита успешно проведена</string>
+    <string name="balances_status_dialog_stopped">Синхронизация остановлена. Она скоро возобновится.</string>
+    <string name="balances_status_dialog_report_button">Отчёт</string>
+    <string name="balances_shielding_dialog_error_text">Попытка защитить прозрачные средства провалилась. Попробуйте ещё раз, пожалуйста.</string>
+    <string name="balances_shielding_dialog_report_btn">Отчёт</string>
+    <string name="balances_shielding_dialog_error_grpc_text">Zashi столкнулся с некоторыми проблемами с подключением
+        при отправке скрытой транзакции в сеть. Он повторит попытку в течение следующих нескольких минут.</string>
+    <string name="balances_transparent_balance_help" formatted="true"><xliff:g id="app_name" example="Zashi">%1$s
+    </xliff:g> использует последнее обновление сети и не поддерживает отправку прозрачных (незащищённых) <xliff:g
+        id="currency" example="ZEC">%2$s</xliff:g>. Используйте кнопку Защитить и консолидировать чтобы скрыть свои средства которые добавят к вашему доступному балансу и сделают ваш <xliff:g id="currency" example="ZEC">%2$s</xliff:g> доступным для траты.</string>
+    <string name="balances_transparent_balance_help_close">Мне понятно!</string>
+    <string name="balances_status_error_dialog_connection">Отключено. Проверьте ваше подключение к Интернету.</string>
+    <string name="balances_shielding_dialog_error_text_below_threshold">Текущий прозрачный баланс равен нулю или ниже допустимого предела защиты.</string>
+    <string name="balances_transparent_balance_fee">(Типичная комиссия &lt; <xliff:g id="fee_amount" example="0.001">%1$s</xliff:g>)</string>
+    <string name="balances_status_error_dialog_title">Ошибка</string>
+    <string name="balances_status_dialog_ok_button">OK</string>
+    <string name="balances_shielding_dialog_error_btn">OK</string>
+    <string name="balances_shielding_dialog_error_grpc_btn">OK</string>
+    <string name="balances_title">Балансы</string>
+    <string name="balances_shielding_dialog_error_title">Транзакция не удалась</string>
+    <string name="balances_shielding_dialog_error_grpc_title">Ошибка соединения</string>
+    <string name="balances_change_pending">Ожидается изменение</string>
+    <string name="balances_transparent_help_content_description">Показать помощь</string>
+    <string name="balances_transparent_balance_shield">Скрытие и консолидация средств</string>
+    <string name="balances_status_syncing" formatted="true">Синхронизация…</string>
+    <string name="balances_status_syncing_percentage" formatted="true"><xliff:g id="synced_percent" example="50.25"> %1$s</xliff:g>%%</string>
+    <string name="balances_status_error_dialog_cause" formatted="true">Ошибка: <xliff:g id="error_cause" example="Block scanning problem">%1$s</xliff:g>\n\nСтектрейс: <xliff:g id="error_stacktrace" example="java.lang.IllegalStateException: Unsupported wallet state         at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:104)         Caused by: java.lang.RuntimeException: Failure from Rust backend">%2$s</xliff:g></string>
+    <string name="balances_status_error_dialog_cause_unknown">Причина неизвестна. Если проблема не устранена, свяжитесь с нашей службой поддержки.</string>
+    <string name="balances_status_error_dialog_stacktrace_unknown">Неизвестный стектрейс.</string>
+</resources>

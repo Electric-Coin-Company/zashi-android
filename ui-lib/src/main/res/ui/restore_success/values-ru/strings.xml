@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="restore_success_title">Держите Zashi открытым!</string>
+    <string name="restore_success_subtitle">Ваш кошелёк был успешно восстановлен и теперь синхронизируется</string>
+    <string name="restore_success_description">Чтобы предотвратить прерывание, не отключайте экран, подключите устройство к источнику питания и держите его в безопасном месте.</string>
+    <string name="restoring_initial_dialog_checkbox">Не выключайте экран во время восстановления.</string>
+    <string name="restore_success_note_part_1">Примечание:</string>
+    <string name="restore_success_note_part_2">Во время начальной синхронизации ваши средства не могут быть отправлены или потрачены. В зависимости от возраста вашего кошелька, может занять несколько часов чтобы полностью синхронизироваться.</string>
+    <string name="restore_success_button">Мне понятно!</string>
+</resources>

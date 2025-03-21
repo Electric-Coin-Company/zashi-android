@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="exchange_rate_opt_in_subtitle">Обмен валют</string>
+    <string name="exchange_rate_opt_out_option_title">Отключить</string>
+    <string name="exchange_rate_info_subtitle_1">Функциональность конвертации валюты Zashi не компрометирует ваш IP-адрес.</string>
+    <string name="exchange_rate_unavailable_title">Обменный курс недоступен</string>
+    <string name="exchange_rate_unavailable_subtitle">Мы пытались, но не смогли обновить обменный курс для вас. Проверьте соединение, перезапустите приложение и попробуйте снова.</string>
+    <string name="exchange_rate_info_title_1">Защита IP-адреса</string>
+    <string name="exchange_rate_info_title_2">Частота обновления</string>
+    <string name="exchange_rate_info_subtitle_2">Курс валют обновляется автоматически и также может быть обновлён вручную.</string>
+    <string name="exchange_rate_opt_in_title">Новая возможность</string>
+    <string name="exchange_rate_opt_in_primary_btn">Проверить</string>
+    <string name="exchange_rate_opt_in_enable">Включить</string>
+    <string name="exchange_rate_opt_in_save">Сохранить изменения</string>
+    <string name="exchange_rate_opt_in_skip">Пока пропустить</string>
+    <string name="exchange_rate_opt_in_option_title">Включить</string>
+    <string name="exchange_rate_opt_in_option_subtitle">Показать мне обмен валют.</string>
+    <string name="exchange_rate_opt_out_option_subtitle">Не показывать обмен валюты.</string>
+    <string name="exchange_rate_opt_in_description">Отображать ваш баланс и суммы оплаты в долларах США.\nВы можете настроить эту возможность в дополнительных настройках.</string>
+</resources>

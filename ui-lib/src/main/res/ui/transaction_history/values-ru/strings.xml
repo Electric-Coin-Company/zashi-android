@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="transaction_history_search">Поиск</string>
+    <string name="transaction_history_sent">Отправлено</string>
+    <string name="transaction_history_sending">Отправление…</string>
+    <string name="transaction_history_received">Получено</string>
+    <string name="transaction_history_shielded">Скрытые</string>
+    <string name="transaction_history_shielding">Скрытие…</string>
+    <string name="transaction_history_shielding_failed">Скрытие не удалось</string>
+    <string name="transaction_history_receiving_failed">Получение не удалось</string>
+    <string name="transaction_history_minus" formatted="true">- <xliff:g example="0.2" id="amount">%s</xliff:g> ZEC</string>
+    <string name="transaction_history_today">Сегодня</string>
+    <string name="transaction_history_yesterday">Вчера</string>
+    <string name="transaction_history_previous_7_days">Предыдущие 7 дней</string>
+    <string name="transaction_history_previous_30_days">Предыдущие 30 дней</string>
+    <string name="transaction_history_screen_title">Транзакции</string>
+    <string name="transaction_history_send_transaction">Приобрести ZEC</string>
+    <string name="transaction_history_widget_title">Транзакции</string>
+    <string name="transaction_history_widget_header_button">Смотреть все</string>
+    <string name="transaction_history_widget_send_transaction">Отправить транзакцию</string>
+    <string name="transaction_history_widget_empty_subtitle">Сделай первый шаг…</string>
+    <string name="transaction_history_sending_failed">Отправка не удалась</string>
+    <string name="transaction_history_receiving">Получение…</string>
+    <string name="transaction_history_plus" formatted="true"><xliff:g example="1.2345" id="amount">%s</xliff:g> ZEC</string>
+    <string name="transaction_history_days_ago" formatted="true"><xliff:g example="$" id="days">%s</xliff:g> дней назад</string>
+    <string name="transaction_history_widget_empty_title">Здесь пока еще ничего нет.</string>
+</resources>

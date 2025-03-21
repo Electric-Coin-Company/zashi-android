@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="transaction_filters_title">Фильтры</string>
+    <string name="transaction_filters_sent">Отправлено</string>
+    <string name="transaction_filters_received">Получено</string>
+    <string name="transaction_filters_memos">Заметки</string>
+    <string name="transaction_filters_unread">Непрочитано</string>
+    <string name="transaction_filters_bookmarked">В закладках</string>
+    <string name="transaction_filters_notes">Примечания</string>
+    <string name="transaction_filters_btn_reset">Сброс</string>
+    <string name="transaction_filters_btn_apply">Применить</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="security_warning_header">Предупреждение о безопасности:</string>
+    <string name="security_warning_confirm">Подтвердить</string>
+    <string name="security_warning_text" formatted="true">Zashi <xliff:g example="0.2.0" id="version_name">%1$s
+    </xliff:g> это защищённый кошелёк Zcash, созданный зеткешерами для зеткешеров. Заши был разработан для вашей
+        личной жизни и безопасности. Устанавливая и используя Zashi, вы соглашаетесь делиться отчётами о сбоях
+        приложения с компанией Electric Coin Co. (разработчик кошелька), что поможет нам улучшить пользовательский опыт Zashi.*\n\nПожалуйста, прочтите и согласитесь ниже, чтобы продолжить.</string>
+    <string name="security_warning_text_footnote_part_1">*Примечание:</string>
+    <string name="security_warning_text_footnote_part_2">" Отчеты о сбоях приложения могут содержать информацию о времени сбоя и событиях, однако они не содержат сведений о расходах или ваших ключей."</string>
+    <string name="security_warning_acknowledge">Я согласен</string>
+</resources>

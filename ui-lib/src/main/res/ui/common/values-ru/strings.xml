@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back_navigation">Назад</string>
+    <string name="back_navigation_content_description">Назад</string>
+    <string name="close_navigation_content_description">Закрыть</string>
+    <string name="empty_char">-</string>
+    <string name="unable_to_open_email">Не удалось запустить приложение электронной почты.</string>
+    <string name="disconnected_label">[Отключено…]</string>
+    <string name="disconnected_label_new">Отключено…</string>
+    <string name="server_disconnected_dialog_ignore_btn">Игнорировать</string>
+    <string name="fiat_currency_conversion_rate_unavailable">Недоступно</string>
+    <string name="zcash_logo_content_description">Логотип Zcash</string>
+    <string name="settings_menu_content_description">Открыть настройки</string>
+    <string name="balance_widget_available">Доступный баланс:</string>
+    <string name="hide_balances_content_description">Скрыть балансы</string>
+    <string name="restoring_wallet_label">[Восстановление вашего кошелька…]</string>
+    <string name="restoring_wallet_label_new">Восстановление вашего кошелька…</string>
+    <string name="unable_to_open_play_store">Не удалось запустить приложение Google Play Store…</string>
+    <string name="server_disconnected_dialog_title">Предупреждение</string>
+    <string name="server_disconnected_dialog_message">Текущий сервер испытывает трудности. Проверьте подключение устройства и/или перейдите в Расширенные настройки чтобы выбрать другой сервер.</string>
+    <string name="server_disconnected_dialog_switch_btn">Поменять сервер</string>
+    <string name="general_etc">…</string>
+</resources>

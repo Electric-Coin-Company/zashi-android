@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="settings_integrations">Интеграции</string>
+    <string name="settings_integrations_subtitle_disabled">Переключитесь с Keystone на Zashi для использования интеграций.</string>
+    <string name="settings_about_us">О нас</string>
+    <string name="settings_feedback">Отправить нам отзыв</string>
+    <string name="settings_version">Версия <xliff:g example="1" id="version">%s</xliff:g></string>
+    <string name="settings_address_book">Адресная книга</string>
+    <string name="settings_whats_new">Новые возможности</string>
+    <string name="settings_troubleshooting_menu_content_description">Дополнительные настройки</string>
+    <string name="settings_troubleshooting_rescan">Пересканировать блокчейн</string>
+    <string name="settings_troubleshooting_enable_background_sync">Фоновая синхронизация</string>
+    <string name="settings_troubleshooting_enable_keep_screen_on">Не выключайте экран во время синхронизации</string>
+    <string name="settings_troubleshooting_enable_analytics">Отправить отчёт от сбое</string>
+    <string name="settings_title">Настройки</string>
+    <string name="settings_advanced_settings">Продвинутые настройки</string>
+</resources>

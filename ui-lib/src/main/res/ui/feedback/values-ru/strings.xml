@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="support_confirmation_explanation">Заши собирается открыть приложение электронной почты с предварительно заполненным сообщением.\n\nНе забудьте нажать кнопку отправить в вашем приложении электронной почты.</string>
+    <string name="support_information">Пожалуйста, сообщите нам о любых ваших проблемах или возможностях которые вы хотите увидеть в будущем.</string>
+    <string name="support_header">Поддержка</string>
+    <string name="support_experience_title">Как вам Zashi?</string>
+    <string name="support_help_title">Чем мы можем вам помочь?</string>
+    <string name="support_hint">Я хотел бы спросить о…</string>
+    <string name="support_confirmation_dialog_title">Открыть приложение электронной почты</string>
+    <string name="support_email_part_2">Чем мы можем вам помочь?\n%s</string>
+    <string name="support_email_part_1">Как вам опыт Zashi в целом?\n<xliff:g id="emoji_encoding" example="😍">%1$s</xliff:g> <xliff:g id="emoji_order" example="5">%2$s</xliff:g>/5</string>
+    <string name="support_title">Отправить нам отзыв</string>
+    <string name="support_send">Отправить</string>
+    <string name="support_confirmation_dialog_ok">Ладно</string>
+    <string name="support_confirmation_dialog_cancel">Отмена</string>
+</resources>

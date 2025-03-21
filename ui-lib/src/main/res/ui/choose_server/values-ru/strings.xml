@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="choose_server_title">Сервер</string>
+    <string name="choose_server_default_label">По умолчанию: <xliff:g id="server" example="example.com:123">%1$s</xliff:g></string>
+    <string name="choose_server_custom">пользовательский</string>
+    <string name="choose_server_custom_delimiter">:</string>
+    <string name="choose_server_full_server_name"><xliff:g id="hostname" example="example.com">%1$s</xliff:g>: <xliff:g id="port" example="508">%2$d</xliff:g></string>
+    <string name="choose_server_full_server_name_text_field"><xliff:g id="hostname" example="example.com">%1$s</xliff:g>:<xliff:g id="port" example="508">%2$d</xliff:g></string>
+    <string name="choose_server_textfield_hint">&lt;имя хоста&gt;:&lt;порт&gt;</string>
+    <string name="choose_server_save">Сохранить</string>
+    <string name="choose_server_validation_dialog_error_btn">OK</string>
+    <string name="choose_server_save_success_dialog_btn">OK</string>
+    <string name="choose_server_refresh">Обновить</string>
+    <string name="choose_server_save_success_dialog_title">Сервер сохранён</string>
+    <string name="choose_server_save_success_dialog_text">Выбранный адрес сервера был успешно сохранён.</string>
+    <string name="choose_server_save_default">По умолчанию</string>
+    <string name="choose_server_loading_title">Выполнение проверки сервера</string>
+    <string name="choose_server_loading_subtitle">Это может занять некоторое время…</string>
+    <string name="choose_server_fastest_servers">Самые быстрые серверы</string>
+    <string name="choose_server_other_servers">Другие серверы</string>
+    <string name="choose_server_active">Активный</string>
+    <string name="choose_server_default">По умолчанию</string>
+    <string name="choose_server_validation_dialog_error_title">Недействительный адрес сервера</string>
+    <string name="choose_server_validation_dialog_error_text">Ошибка: Попытка переключения адреса не удалась. Проверьте правильность имени хоста и порта и их форматирование как &lt;hostname&gt;:&lt;port&gt;.</string>
+</resources>

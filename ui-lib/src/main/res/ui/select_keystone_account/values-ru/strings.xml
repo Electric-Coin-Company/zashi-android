@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="select_keystone_account_default">Кошелёк Keystone</string>
+    <string name="select_keystone_account_positive">Разблокировать</string>
+    <string name="select_keystone_account_negative">Забыть это устройство</string>
+    <string name="select_keystone_account_title">Подтверждение счёта для доступа</string>
+    <string name="select_keystone_account_subtitle">Для продолжения выберите кошелёк который вы хотите подключить.
+        Подключившись к аппаратному кошельку, вы сможете безопасно подписывать транзакции.</string>
+</resources>

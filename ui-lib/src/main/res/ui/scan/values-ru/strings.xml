@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_state_failed">Инициализация камеры не удалась. Попробуйте ещё раз, пожалуйста.</string>
+    <string name="scan_address_validation_failed">Этот QR-код не является действительным адресом Zcash.</string>
+    <string name="scan_torch_content_description">Переключить подсветку камеры</string>
+    <string name="gallery_content_description">Галерея</string>
+    <string name="scan_state_permission">Камера не разрешена. Перейдите к системным настройкам Zashi и включите её.</string>
+    <string name="scan_preview_content_description">Камера</string>
+    <string name="scan_cancel_button">Отмена</string>
+    <string name="scan_settings_button">Открыть настройки</string>
+    <string name="scan_settings_open_failed">Не удается запустить приложение Настройки.</string>
+</resources>

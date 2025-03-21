@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_header">Zcash (%s) кошелёк сделанный для приватных платежей</string>
+    <string name="onboarding_create_new_wallet">Создать новый кошелёк</string>
+    <string name="onboarding_import_existing_wallet">Восстановление существующего кошелька</string>
+</resources>
