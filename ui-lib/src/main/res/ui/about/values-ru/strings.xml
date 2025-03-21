@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="about_title">О приложении</string>
+    <string name="about_subtitle">Знакомство с Zashi</string>
+    <string name="about_version_format" formatted="true">Версия Zashi <xliff:g example="1" id="version">%s</xliff:g></string>
+    <string name="about_debug_menu_app_name">Название приложения: <xliff:g example="Zashi" id="app_name">%1$s</xliff:g></string>
+    <string name="about_debug_menu_build">Сборка: <xliff:g example="635dac0eb9ddc2bc6da5177f0dd495d8b76af4dc" id="git_commit_hash">%1$s</xliff:g></string>
+    <string name="about_unable_to_web_browser">Не могу найти приложение обозревателя.</string>
+    <string name="about_button_privacy_policy">Политика конфиденциальности</string>
+    <string name="about_description">Отправляйте по получайте ZEC через Zashi\nZashi это защищённый кошелёк с минимальным дизайном, самохранением, только для ZEC, который хранит историю транзакций и баланс средств в тайне.\n\nСоздан самими авторами Zcash для зеткешников. Будучи разработаным и поддерживаемым компанией Electric Coin Co., изобретателями Zcash, Zashi имеет встроенный механизм обратной связи с пользователями, позволяющий быстрее наращивать возможности.</string>
+</resources>

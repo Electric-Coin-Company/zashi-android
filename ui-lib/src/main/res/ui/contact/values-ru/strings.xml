@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="contact_name_label">Имя контакта</string>
+    <string name="contact_name_hint">Введите имя контакта…</string>
+    <string name="contact_address_label">Адрес кошелька</string>
+    <string name="contact_address_hint">Введите адрес кошелька…</string>
+    <string name="contact_name_error_not_unique">Это имя уже используется. Пожалуйста, выберите другое имя.</string>
+    <string name="contact_name_error_too_long">Это имя контакта превышает предел 32-х символов. Пожалуйста, сократите имя.</string>
+    <string name="contact_address_error_not_unique">Этот адрес уже есть в вашей адресной книге.</string>
+    <string name="contact_address_error_invalid">Недействительный адрес,</string>
+</resources>
