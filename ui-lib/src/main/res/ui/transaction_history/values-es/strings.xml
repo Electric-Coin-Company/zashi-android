@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="transaction_history_plus" formatted="true">
-        <xliff:g example="1.2345" id="amount">%s</xliff:g> ZEC
-    </string>
-    <string name="transaction_history_minus" formatted="true">
-        - <xliff:g example="0.2" id="amount">%s</xliff:g> ZEC
-    </string>
+    <string name="transaction_history_plus" formatted="true"><xliff:g example="1.2345" id="amount">%s</xliff:g> ZEC</string>
+    <string name="transaction_history_minus" formatted="true">- <xliff:g example="0.2" id="amount">%s</xliff:g> ZEC</string>
     <string name="transaction_history_today">Hoy</string>
     <string name="transaction_history_yesterday">Ayer</string>
     <string name="transaction_history_previous_7_days">Últimos 7 días</string>
