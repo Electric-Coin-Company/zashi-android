@@ -21,11 +21,14 @@ import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import co.electriccoin.zcash.ui.screen.send.Send
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
@@ -35,6 +38,9 @@ class HomeViewModel(
     private val isRestoreSuccessDialogVisible: IsRestoreSuccessDialogVisibleUseCase,
     private val navigateToCoinbase: NavigateToCoinbaseUseCase
 ) : ViewModel() {
+
+    private val isMessageVisible = MutableStateFlow(true)
+
     private val isRestoreDialogVisible: Flow<Boolean?> =
         isRestoreSuccessDialogVisible.observe()
             .stateIn(
@@ -57,53 +63,57 @@ class HomeViewModel(
             )
 
     val state: StateFlow<HomeState?> =
-        getSelectedWalletAccountUseCase.observe()
-            .map { selectedAccount ->
-                HomeState(
-                    firstButton =
-                        BigIconButtonState(
-                            text = stringRes("Receive"),
-                            icon = R.drawable.ic_home_receive,
-                            onClick = ::onReceiveButtonClick,
-                        ),
-                    secondButton =
-                        BigIconButtonState(
-                            text = stringRes("Send"),
-                            icon = R.drawable.ic_home_send,
-                            onClick = ::onSendButtonClick,
-                        ),
-                    thirdButton =
-                        BigIconButtonState(
-                            text = stringRes("Scan"),
-                            icon = R.drawable.ic_home_scan,
-                            onClick = ::onScanButtonClick,
-                        ),
-                    fourthButton =
-                        when {
-                            getVersionInfoProvider().distributionDimension == DistributionDimension.FOSS ->
-                                BigIconButtonState(
-                                    text = stringRes("Request"),
-                                    icon = R.drawable.ic_home_request,
-                                    onClick = ::onRequestClick,
-                                )
+        combine(getSelectedWalletAccountUseCase.observe(), isMessageVisible) { selectedAccount, isMessageVisible ->
+            HomeState(
+                firstButton =
+                    BigIconButtonState(
+                        text = stringRes("Receive"),
+                        icon = R.drawable.ic_home_receive,
+                        onClick = ::onReceiveButtonClick,
+                    ),
+                secondButton =
+                    BigIconButtonState(
+                        text = stringRes("Send"),
+                        icon = R.drawable.ic_home_send,
+                        onClick = ::onSendButtonClick,
+                    ),
+                thirdButton =
+                    BigIconButtonState(
+                        text = stringRes("Scan"),
+                        icon = R.drawable.ic_home_scan,
+                        onClick = ::onScanButtonClick,
+                    ),
+                fourthButton =
+                    when {
+                        getVersionInfoProvider().distributionDimension == DistributionDimension.FOSS ->
+                            BigIconButtonState(
+                                text = stringRes("Request"),
+                                icon = R.drawable.ic_home_request,
+                                onClick = ::onRequestClick,
+                            )
 
-                            selectedAccount is KeystoneAccount ->
-                                BigIconButtonState(
-                                    text = stringRes("Buy"),
-                                    icon = R.drawable.ic_home_buy,
-                                    onClick = ::onBuyClick,
-                                )
+                        selectedAccount is KeystoneAccount ->
+                            BigIconButtonState(
+                                text = stringRes("Buy"),
+                                icon = R.drawable.ic_home_buy,
+                                onClick = ::onBuyClick,
+                            )
 
-                            else ->
-                                BigIconButtonState(
-                                    text = stringRes("More"),
-                                    icon = R.drawable.ic_home_more,
-                                    onClick = ::onMoreButtonClick,
-                                )
-                        },
-                )
-            }
-            .stateIn(
+                        else ->
+                            BigIconButtonState(
+                                text = stringRes("More"),
+                                icon = R.drawable.ic_home_more,
+                                onClick = ::onMoreButtonClick,
+                            )
+                    },
+                message = HomeMessageState(
+                    text = "Test string",
+                    onClick = {
+                        this@HomeViewModel.isMessageVisible.update { !it }
+                    }
+                ).takeIf { isMessageVisible }
+            )
+        }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = null

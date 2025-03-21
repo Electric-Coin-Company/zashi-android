@@ -7,6 +7,12 @@ data class HomeState(
     val secondButton: BigIconButtonState,
     val thirdButton: BigIconButtonState,
     val fourthButton: BigIconButtonState,
+    val message: HomeMessageState?
+)
+
+data class HomeMessageState(
+    val text: String,
+    val onClick: () -> Unit
 )
 
 data class HomeRestoreDialogState(
