@@ -24,7 +24,6 @@ This is a brief checklist to ensure all the necessary pre-release and post-relea
    - [ ] Update the build version name **ZCASH_VERSION_NAME** in [gradle.properties](../../gradle.properties) (if required)
    - [ ] Check if the latest [**Zcash SDK**](https://repo.maven.apache.org/maven2/cash/z/ecc/android/zcash-android-sdk/) with the updated checkpoints is used
    - [ ] Check if the latest [**Bip39**](https://repo.maven.apache.org/maven2/cash/z/ecc/android/kotlin-bip39/) is used
-   - [ ] Check if the latest app dependencies are used, use `./gradlew dependencyUpdate`
 
 #### 2. Alternative deployment targets:
 
