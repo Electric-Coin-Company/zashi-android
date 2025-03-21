@@ -9,11 +9,9 @@
     <string name="settings_version">Versión <xliff:g example="1" id="version">%s</xliff:g></string>
     <string name="settings_address_book">Libreta de Direcciones</string>
     <string name="settings_whats_new">Novedades</string>
-
     <string name="settings_troubleshooting_menu_content_description">Configuración adicional</string>
     <string name="settings_troubleshooting_rescan">Volver a escanear la blockchain</string>
     <string name="settings_troubleshooting_enable_background_sync">Sincronización en segundo plano</string>
     <string name="settings_troubleshooting_enable_keep_screen_on">Mantener la pantalla encendida durante la sincronización</string>
     <string name="settings_troubleshooting_enable_analytics">Reportar fallos</string>
-
 </resources>
