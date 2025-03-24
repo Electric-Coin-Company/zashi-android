@@ -9,15 +9,16 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.test.filters.MediumTest
 import cash.z.ecc.android.sdk.ext.collectWith
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
+import cash.z.ecc.android.sdk.fixture.WalletFixture
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.Zatoshi
+import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.fixture.ZecRequestFixture
 import cash.z.ecc.sdk.fixture.ZecSendFixture
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.fixture.SendArgumentsWrapperFixture
 import co.electriccoin.zcash.ui.screen.send.SendTag
 import co.electriccoin.zcash.ui.screen.send.SendViewTestSetup
 import co.electriccoin.zcash.ui.screen.send.assertOnForm
@@ -379,7 +380,7 @@ class SendViewTest : UiTestPrerequisites() {
         composeTestRule.onNodeWithText(getStringResource(R.string.send_address_hint)).also {
             it.assertTextEquals(
                 getStringResource(R.string.send_address_hint),
-                SendArgumentsWrapperFixture.RECIPIENT_ADDRESS.address,
+                WalletFixture.Alice.getAddresses(ZcashNetwork.Testnet).unified,
                 includeEditableText = true
             )
         }

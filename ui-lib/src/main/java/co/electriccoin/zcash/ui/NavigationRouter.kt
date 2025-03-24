@@ -7,21 +7,37 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlin.reflect.KClass
 
 interface NavigationRouter {
-    fun forward(route: Any)
+    /**
+     * Add [routes] to backstack.
+     */
+    fun forward(vararg routes: Any)
 
-    fun replace(route: Any)
+    /**
+     * Replace current screen by the first route and add the rest of [routes] to backstack.
+     */
+    fun replace(vararg routes: Any)
 
-    fun replaceAll(route: Any)
+    /**
+     * Pop all screens except for the root and add [routes] to backstack.
+     */
+    fun replaceAll(vararg routes: Any)
 
-    fun newRoot(route: Any)
-
+    /**
+     * Pop last screen from backstack.
+     */
     fun back()
 
+    fun backTo(route: KClass<*>)
+
+    /**
+     * Pop all screens from backstack except for the root.
+     */
     fun backToRoot()
 
-    fun observe(): Flow<NavigationCommand>
+    fun observePipeline(): Flow<NavigationCommand>
 }
 
 class NavigationRouterImpl : NavigationRouter {
@@ -29,27 +45,21 @@ class NavigationRouterImpl : NavigationRouter {
 
     private val channel = Channel<NavigationCommand>()
 
-    override fun forward(route: Any) {
+    override fun forward(vararg routes: Any) {
         scope.launch {
-            channel.send(NavigationCommand.Forward(route))
+            channel.send(NavigationCommand.Forward(routes.toList()))
         }
     }
 
-    override fun replace(route: Any) {
+    override fun replace(vararg routes: Any) {
         scope.launch {
-            channel.send(NavigationCommand.Replace(route))
+            channel.send(NavigationCommand.Replace(routes.toList()))
         }
     }
 
-    override fun replaceAll(route: Any) {
+    override fun replaceAll(vararg routes: Any) {
         scope.launch {
-            channel.send(NavigationCommand.ReplaceAll(route))
-        }
-    }
-
-    override fun newRoot(route: Any) {
-        scope.launch {
-            channel.send(NavigationCommand.NewRoot(route))
+            channel.send(NavigationCommand.ReplaceAll(routes.toList()))
         }
     }
 
@@ -59,25 +69,31 @@ class NavigationRouterImpl : NavigationRouter {
         }
     }
 
+    override fun backTo(route: KClass<*>) {
+        scope.launch {
+            channel.send(NavigationCommand.BackTo(route))
+        }
+    }
+
     override fun backToRoot() {
         scope.launch {
             channel.send(NavigationCommand.BackToRoot)
         }
     }
 
-    override fun observe() = channel.receiveAsFlow()
+    override fun observePipeline() = channel.receiveAsFlow()
 }
 
 sealed interface NavigationCommand {
-    data class Forward(val route: Any) : NavigationCommand
+    data class Forward(val routes: List<Any>) : NavigationCommand
 
-    data class Replace(val route: Any) : NavigationCommand
+    data class Replace(val routes: List<Any>) : NavigationCommand
 
-    data class ReplaceAll(val route: Any) : NavigationCommand
-
-    data class NewRoot(val route: Any) : NavigationCommand
+    data class ReplaceAll(val routes: List<Any>) : NavigationCommand
 
     data object Back : NavigationCommand
+
+    data class BackTo(val route: KClass<*>) : NavigationCommand
 
     data object BackToRoot : NavigationCommand
 }

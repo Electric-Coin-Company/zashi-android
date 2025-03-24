@@ -6,7 +6,6 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.usecase.CreateProposalUseCase
-import co.electriccoin.zcash.ui.common.usecase.CreateZip321ProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
@@ -34,7 +33,6 @@ class SendViewModel(
     private val observeContactByAddress: ObserveContactByAddressUseCase,
     private val observeContactPicked: ObserveContactPickedUseCase,
     private val createProposal: CreateProposalUseCase,
-    private val createKeystoneZip321TransactionProposal: CreateZip321ProposalUseCase,
     private val observeWalletAccounts: ObserveWalletAccountsUseCase,
     private val navigateToAddressBook: NavigateToAddressBookUseCase
 ) : ViewModel() {
@@ -137,19 +135,6 @@ class SendViewModel(
     ) = viewModelScope.launch {
         try {
             createProposal(newZecSend)
-        } catch (e: Exception) {
-            setSendStage(SendStage.SendFailure(e.cause?.message ?: e.message ?: ""))
-            Twig.error(e) { "Error creating proposal" }
-        }
-    }
-
-    @Suppress("TooGenericExceptionCaught")
-    fun onCreateZecSend321Click(
-        zip321Uri: String,
-        setSendStage: (SendStage) -> Unit,
-    ) = viewModelScope.launch {
-        try {
-            createKeystoneZip321TransactionProposal(zip321Uri)
         } catch (e: Exception) {
             setSendStage(SendStage.SendFailure(e.cause?.message ?: e.message ?: ""))
             Twig.error(e) { "Error creating proposal" }

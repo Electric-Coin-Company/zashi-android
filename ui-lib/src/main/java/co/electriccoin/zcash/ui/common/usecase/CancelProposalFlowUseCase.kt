@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.common.usecase
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
+import co.electriccoin.zcash.ui.screen.send.Send
 
 class CancelProposalFlowUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
@@ -16,6 +17,6 @@ class CancelProposalFlowUseCase(
         if (clearSendForm) {
             observeClearSend.requestClear()
         }
-        navigationRouter.backToRoot()
+        navigationRouter.backTo(Send::class)
     }
 }

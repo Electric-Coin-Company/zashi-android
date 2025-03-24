@@ -4,7 +4,8 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 
 data class ReceiveState(
     val items: List<ReceiveAddressState>?,
-    val isLoading: Boolean
+    val isLoading: Boolean,
+    val onBack: () -> Unit
 )
 
 data class ReceiveAddressState(
