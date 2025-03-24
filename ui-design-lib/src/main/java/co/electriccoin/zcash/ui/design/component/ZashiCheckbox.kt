@@ -21,7 +21,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
@@ -40,6 +42,9 @@ fun ZashiCheckbox(
     isChecked: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    style: TextStyle = ZashiTypography.textSm,
+    fontWeight: FontWeight = FontWeight.Medium,
+    color: Color = ZashiColors.Text.textPrimary,
 ) {
     ZashiCheckbox(
         state =
@@ -49,6 +54,9 @@ fun ZashiCheckbox(
                 onClick = onClick,
             ),
         modifier = modifier,
+        style = style,
+        fontWeight = fontWeight,
+        color = color,
     )
 }
 
@@ -56,6 +64,9 @@ fun ZashiCheckbox(
 fun ZashiCheckbox(
     state: CheckboxState,
     modifier: Modifier = Modifier,
+    style: TextStyle = ZashiTypography.textSm,
+    fontWeight: FontWeight = FontWeight.Medium,
+    color: Color = ZashiColors.Text.textPrimary,
 ) {
     Row(
         modifier =
@@ -70,9 +81,9 @@ fun ZashiCheckbox(
 
         Text(
             text = state.text.getValue(),
-            style = ZashiTypography.textSm,
-            fontWeight = FontWeight.Medium,
-            color = ZashiColors.Text.textPrimary,
+            style = style,
+            fontWeight = fontWeight,
+            color = color,
         )
     }
 }

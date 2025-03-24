@@ -3,10 +3,8 @@ package co.electriccoin.zcash.ui.common.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.configuration.model.map.Configuration
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
-import co.electriccoin.zcash.ui.common.usecase.ObserveConfigurationUseCase
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +14,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 
 class OldHomeViewModel(
-    observeConfiguration: ObserveConfigurationUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
 ) : ViewModel() {
     /**
@@ -29,8 +26,6 @@ class OldHomeViewModel(
      * A flow of the wallet balances visibility.
      */
     val isHideBalances: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_HIDE_BALANCES)
-
-    val configurationFlow: StateFlow<Configuration?> = observeConfiguration()
 
     private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> =
         flow<Boolean?> {
