@@ -45,6 +45,7 @@ import kotlinx.coroutines.launch
 fun ZashiSeedTextField(
     state: SeedTextFieldState,
     modifier: Modifier = Modifier,
+    wordModifier: (index: Int) -> Modifier = { Modifier },
     handle: SeedTextFieldHandle = rememberSeedTextFieldHandle(),
 ) {
     val interactions = remember { state.values.map { MutableInteractionSource() } }
@@ -105,6 +106,7 @@ fun ZashiSeedTextField(
                                 }
                             }
                         },
+                innerModifier = wordModifier(index),
                 prefix = (index + 1).toString(),
                 state =
                     wordState.copy(

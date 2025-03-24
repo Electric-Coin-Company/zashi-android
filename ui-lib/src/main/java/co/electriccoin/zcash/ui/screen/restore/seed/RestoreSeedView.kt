@@ -108,7 +108,8 @@ private fun Content(
         Spacer(Modifier.height(20.dp))
         ZashiSeedTextField(
             state = state.seed,
-            handle = handle
+            handle = handle,
+            wordModifier = { Modifier.testTag(RestoreSeedTag.SEED_WORD_TEXT_FIELD) }
         )
         Spacer(Modifier.weight(1f))
         Spacer(Modifier.height(24.dp))

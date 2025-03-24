@@ -29,13 +29,14 @@ fun ZashiSeedWordTextField(
     prefix: String,
     state: SeedWordTextFieldState,
     modifier: Modifier = Modifier,
+    innerModifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     ZashiTextField(
         modifier = modifier,
-        innerModifier = Modifier,
+        innerModifier = innerModifier,
         shape = RoundedCornerShape(12.dp),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,

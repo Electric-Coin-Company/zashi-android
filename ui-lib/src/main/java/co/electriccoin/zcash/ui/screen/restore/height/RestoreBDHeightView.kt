@@ -132,7 +132,10 @@ private fun Content(
 
         ZashiButton(
             state.restore,
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .testTag(RestoreBDHeightTags.RESTORE_BTN),
         )
     }
 }
