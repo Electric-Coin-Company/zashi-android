@@ -35,7 +35,7 @@ fun ZashiTopAppbar(
         },
         regularActions = {
             if (state?.balanceVisibilityButton != null && showHideBalances) {
-                Crossfade(state.balanceVisibilityButton, label = "") {
+                Crossfade(state.balanceVisibilityButton, label = "BalanceVisibility") {
                     ZashiIconButton(it, modifier = Modifier.size(40.dp))
                 }
             }

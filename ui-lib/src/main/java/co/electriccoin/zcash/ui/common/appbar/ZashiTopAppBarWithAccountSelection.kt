@@ -49,7 +49,7 @@ fun ZashiTopAppBarWithAccountSelection(
             windowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
             hamburgerMenuActions = {
                 if (showHideBalances) {
-                    Crossfade(state.balanceVisibilityButton, label = "") {
+                    Crossfade(state.balanceVisibilityButton, label = "BalanceVisibility") {
                         ZashiIconButton(it, modifier = Modifier.size(40.dp))
                     }
                     Spacer(Modifier.width(4.dp))

@@ -32,18 +32,20 @@ fun ZashiBigIconButton(
 ) {
     Surface(
         modifier =
-            modifier
-                .clickable(
-                    indication = ripple(),
-                    interactionSource = remember { MutableInteractionSource() },
-                    onClick = state.onClick,
-                    role = Role.Button,
-                ),
+        modifier,
         shape = RoundedCornerShape(16.dp),
         color = ZashiColors.Surfaces.bgSecondary
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier =
+                Modifier
+                    .clickable(
+                        indication = ripple(),
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = state.onClick,
+                        role = Role.Button,
+                    )
+                    .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
