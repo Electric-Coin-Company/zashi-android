@@ -6,6 +6,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [1.5 (921)] - 2025-03-25
+
 ### Added
 - Support for `zcashtestnetFossRelease` has been added to the app resources package
 
