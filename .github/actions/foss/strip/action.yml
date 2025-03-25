@@ -24,6 +24,10 @@ runs:
         find . -type f -name "buildscript-gradle.lockfile" -exec sed -i -e '/com.vdurmont/d' {} +
         find . -type f -name "gradle.lockfile" -exec sed -i -e '/org.json:json/d' {} +
         find . -type f -name "buildscript-gradle.lockfile" -exec sed -i -e '/org.json:json/d' {} +
+        find . -type f -name "gradle.lockfile" -exec sed -i -e '/io.sweers.autotransient/d' {} +
+        find . -type f -name "gradle.lockfile" -exec sed -i -e '/com.ryanharter.auto.value/d' {} +
+        find . -type f -name "buildscript-gradle.lockfile" -exec sed -i -e '/io.sweers.autotransient/d' {} +
+        find . -type f -name "buildscript-gradle.lockfile" -exec sed -i -e '/com.ryanharter.auto.value/d' {} +
         sed -i -e '/include("ui-screenshot-test")/d' settings.gradle.kts
         sed -i -e '/com.google.gms/d' -e '/com.google.android.gms/d' -e '/com.google.firebase/d' -e '/crashlyticsVersion/d' build.gradle.kts
         sed -i -e '/libs.google.services/d' -e '/libs.firebase/d' build.gradle.kts
