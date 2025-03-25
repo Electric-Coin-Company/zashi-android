@@ -1,5 +1,6 @@
-package co.electriccoin.zcash.ui.screen.restore
+package co.electriccoin.zcash.ui.screen.restore.info
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +28,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ZashiButton
-import co.electriccoin.zcash.ui.design.component.ZashiInScreenModalBottomSheet
+import co.electriccoin.zcash.ui.design.component.ZashiModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -36,21 +37,25 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-internal fun RestoreSeedDialog(
-    state: RestoreSeedDialogState?,
+internal fun SeedInfoView(
+    onDismissRequest: () -> Unit,
+    state: SeedInfoState,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
 ) {
-    ZashiInScreenModalBottomSheet(
-        state = state,
+    ZashiModalBottomSheet(
         sheetState = sheetState,
         content = {
-            Content(it)
+            BackHandler {
+                state.onBack()
+            }
+            Content(state)
         },
+        onDismissRequest = onDismissRequest
     )
 }
 
 @Composable
-private fun Content(state: RestoreSeedDialogState) {
+private fun Content(state: SeedInfoState) {
     Column(
         modifier = Modifier.padding(horizontal = 24.dp)
     ) {
@@ -119,13 +124,14 @@ private fun Info(text: AnnotatedString) {
 @Composable
 private fun Preview() =
     ZcashTheme {
-        RestoreSeedDialog(
+        SeedInfoView(
             sheetState =
                 rememberModalBottomSheetState(
                     skipPartiallyExpanded = true,
                     skipHiddenState = true,
                     initialValue = SheetValue.Expanded,
                 ),
-            state = RestoreSeedDialogState { },
+            state = SeedInfoState { },
+            onDismissRequest = {}
         )
     }

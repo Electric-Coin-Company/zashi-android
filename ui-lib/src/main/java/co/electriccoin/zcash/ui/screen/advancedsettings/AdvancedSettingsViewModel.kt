@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel
+package co.electriccoin.zcash.ui.screen.advancedsettings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,11 +8,11 @@ import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSeedRecoveryUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.advancedsettings.model.AdvancedSettingsState
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +25,7 @@ class AdvancedSettingsViewModel(
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     private val navigationRouter: NavigationRouter,
     private val navigateToTaxExport: NavigateToTaxExportUseCase,
+    private val navigateToSeedRecovery: NavigateToSeedRecoveryUseCase
 ) : ViewModel() {
     val state: StateFlow<AdvancedSettingsState> =
         getWalletRestoringState.observe()
@@ -45,7 +46,7 @@ class AdvancedSettingsViewModel(
                     ZashiListItemState(
                         title = stringRes(R.string.advanced_settings_recovery),
                         icon = R.drawable.ic_advanced_settings_recovery,
-                        onClick = {}
+                        onClick = ::onSeedRecoveryClick
                     ),
                     ZashiListItemState(
                         title = stringRes(R.string.advanced_settings_export),
@@ -92,5 +93,10 @@ class AdvancedSettingsViewModel(
     private fun onTaxExportClick() =
         viewModelScope.launch {
             navigateToTaxExport()
+        }
+
+    private fun onSeedRecoveryClick() =
+        viewModelScope.launch {
+            navigateToSeedRecovery()
         }
 }

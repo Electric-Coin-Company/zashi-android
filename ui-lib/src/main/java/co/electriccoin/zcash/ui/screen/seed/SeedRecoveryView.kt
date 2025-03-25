@@ -1,23 +1,14 @@
-package co.electriccoin.zcash.ui.screen.seed.view
+package co.electriccoin.zcash.ui.screen.seed
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Arrangement.spacedBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowColumn
-import androidx.compose.foundation.layout.FlowColumnOverflow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -29,11 +20,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalConfiguration
@@ -42,10 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEachIndexed
-import co.electriccoin.zcash.spackle.AndroidApiVersion
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.SecureScreen
 import co.electriccoin.zcash.ui.common.compose.ZashiTooltip
@@ -54,9 +41,15 @@ import co.electriccoin.zcash.ui.common.compose.drawCaretWithPath
 import co.electriccoin.zcash.ui.common.compose.shouldSecureScreen
 import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.IconButtonState
+import co.electriccoin.zcash.ui.design.component.SeedTextState
+import co.electriccoin.zcash.ui.design.component.VerticalSpacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiIconButton
+import co.electriccoin.zcash.ui.design.component.ZashiSeedText
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.blurCompat
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreenSizes
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -65,15 +58,12 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.seed.model.SeedSecretState
-import co.electriccoin.zcash.ui.screen.seed.model.SeedSecretStateTooltip
-import co.electriccoin.zcash.ui.screen.seed.model.SeedState
 import kotlinx.coroutines.launch
 
 @Composable
-fun SeedView(
+fun SeedRecoveryView(
     topAppBarSubTitleState: TopAppBarSubTitleState,
-    state: SeedState,
+    state: SeedRecoveryState,
 ) {
     if (shouldSecureScreen) {
         SecureScreen()
@@ -96,7 +86,7 @@ fun SeedView(
 
 @Composable
 private fun SeedRecoveryTopAppBar(
-    state: SeedState,
+    state: SeedRecoveryState,
     subTitleState: TopAppBarSubTitleState,
     modifier: Modifier = Modifier,
 ) {
@@ -113,13 +103,17 @@ private fun SeedRecoveryTopAppBar(
             if (state.onBack != null) {
                 ZashiTopAppBarBackNavigation(onBack = state.onBack)
             }
+        },
+        regularActions = {
+            ZashiIconButton(state.info)
+            Spacer(Modifier.width(20.dp))
         }
     )
 }
 
 @Composable
 private fun SeedRecoveryMainContent(
-    state: SeedState,
+    state: SeedRecoveryState,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -135,7 +129,7 @@ private fun SeedRecoveryMainContent(
             style = ZashiTypography.header6
         )
 
-        Spacer(Modifier.height(ZashiDimensions.Spacing.spacingMd))
+        VerticalSpacer(8.dp)
 
         Text(
             text = stringResource(R.string.seed_recovery_description),
@@ -143,36 +137,15 @@ private fun SeedRecoveryMainContent(
             style = ZashiTypography.textSm
         )
 
-        Spacer(Modifier.height(ZashiDimensions.Spacing.spacing4xl))
+        VerticalSpacer(20.dp)
 
-        SeedSecret(modifier = Modifier.fillMaxWidth(), state = state.seed)
+        ZashiSeedText(modifier = Modifier.fillMaxWidth(), state = state.seed)
 
-        Spacer(Modifier.height(ZashiDimensions.Spacing.spacing3xl))
+        VerticalSpacer(24.dp)
 
-        SeedSecret(modifier = Modifier.fillMaxWidth(), state = state.birthday)
+        BDSecret(modifier = Modifier.fillMaxWidth(), state = state.birthday)
 
-        Spacer(Modifier.weight(1f))
-
-        Spacer(Modifier.height(ZashiDimensions.Spacing.spacing3xl))
-
-        Row {
-            Image(
-                painterResource(R.drawable.ic_warning),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(ZashiColors.Utility.WarningYellow.utilityOrange500)
-            )
-
-            Spacer(Modifier.width(ZashiDimensions.Spacing.spacingLg))
-
-            Text(
-                text = stringResource(R.string.seed_recovery_warning),
-                color = ZashiColors.Utility.WarningYellow.utilityOrange500,
-                style = ZashiTypography.textXs,
-                fontWeight = FontWeight.Medium
-            )
-        }
-
-        Spacer(Modifier.height(ZashiDimensions.Spacing.spacing3xl))
+        VerticalSpacer(1f)
 
         ZashiButton(
             state = state.button,
@@ -183,9 +156,9 @@ private fun SeedRecoveryMainContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SeedSecret(
+private fun BDSecret(
     state: SeedSecretState,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val tooltipState = rememberTooltipState(isPersistent = true)
     val scope = rememberCoroutineScope()
@@ -260,20 +233,19 @@ private fun SeedSecret(
                 }
             }
         }
-
         SecretContent(state = state)
     }
 }
 
 @Composable
 private fun SecretContent(state: SeedSecretState) {
-    val blur = animateDpAsState(if (state.isRevealed) 0.dp else 14.dp, label = "")
+    val blur by animateDpAsState(if (state.isRevealed) 0.dp else 14.dp, label = "")
     Surface(
         modifier =
             Modifier
                 .fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
-        color = ZashiColors.Inputs.Default.bg
+        color = ZashiColors.Inputs.Filled.bg
     ) {
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -281,124 +253,20 @@ private fun SecretContent(state: SeedSecretState) {
         ) {
             Box(
                 modifier =
-                    Modifier then
-                        if (state.onClick != null) {
-                            Modifier.clickable(onClick = state.onClick)
-                        } else {
-                            Modifier
-                        } then
-                        Modifier
-                            .blurCompat(blur.value, 14.dp)
-                            .padding(vertical = 18.dp)
+                    Modifier
+                        .blurCompat(blur, 14.dp)
+                        .padding(vertical = 10.dp)
             ) {
-                if (state.mode == SeedSecretState.Mode.SEED) {
-                    SecretSeedContent(state)
-                } else {
-                    SecretBirthdayContent(state)
-                }
-            }
-
-            AnimatedVisibility(
-                modifier = Modifier.fillMaxWidth(),
-                visible =
-                    state.isRevealPhraseVisible &&
-                        state.isRevealed.not() &&
-                        state.mode == SeedSecretState.Mode.SEED,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                Column(
+                Text(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 18.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_reveal),
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(ZashiColors.Text.textPrimary)
-                    )
-
-                    Spacer(Modifier.height(ZashiDimensions.Spacing.spacingMd))
-
-                    Text(
-                        text = stringResource(R.string.seed_recovery_reveal),
-                        style = ZashiTypography.textLg,
-                        fontWeight = FontWeight.SemiBold,
-                        color = ZashiColors.Text.textPrimary
-                    )
-                }
-            }
-        }
-    }
-}
-
-private fun Modifier.blurCompat(
-    radius: Dp,
-    max: Dp
-): Modifier {
-    return if (AndroidApiVersion.isAtLeastS) {
-        this.blur(radius)
-    } else {
-        val progression = 1 - (radius.value / max.value)
-        this
-            .alpha(progression)
-    }
-}
-
-@Composable
-private fun SecretBirthdayContent(
-    state: SeedSecretState,
-    modifier: Modifier = Modifier
-) {
-    Text(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-        textAlign = TextAlign.Start,
-        text = state.text.getValue(),
-        style = ZashiTypography.textMd,
-        fontWeight = FontWeight.Medium,
-        color = ZashiColors.Inputs.Filled.text
-    )
-}
-
-@Composable
-@OptIn(ExperimentalLayoutApi::class)
-private fun SecretSeedContent(state: SeedSecretState) {
-    FlowColumn(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(end = 8.dp),
-        maxItemsInEachColumn = 8,
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalArrangement = spacedBy(6.dp),
-        maxLines = 8,
-        overflow = FlowColumnOverflow.Visible,
-    ) {
-        state.text.getValue().split(" ").fastForEachIndexed { i, s ->
-            Row {
-                Text(
-                    modifier = Modifier.width(18.dp),
-                    textAlign = TextAlign.End,
-                    text = "${i + 1}",
-                    style = ZashiTypography.textSm,
-                    fontWeight = FontWeight.Normal,
-                    color = ZashiColors.Text.textPrimary,
-                    maxLines = 1
-                )
-
-                Spacer(modifier = Modifier.width(ZashiDimensions.Spacing.spacingLg))
-
-                Text(
-                    text = s,
-                    style = ZashiTypography.textSm,
-                    fontWeight = FontWeight.Normal,
-                    color = ZashiColors.Text.textPrimary,
-                    maxLines = 1
+                            .padding(horizontal = 12.dp),
+                    textAlign = TextAlign.Start,
+                    text = state.text.getValue(),
+                    style = ZashiTypography.textMd,
+                    fontWeight = FontWeight.Medium,
+                    color = ZashiColors.Inputs.Filled.text
                 )
             }
         }
@@ -409,36 +277,32 @@ private fun SecretSeedContent(state: SeedSecretState) {
 @PreviewScreenSizes
 private fun RevealedPreview() =
     ZcashTheme {
-        SeedView(
+        SeedRecoveryView(
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             state =
-                SeedState(
+                SeedRecoveryState(
                     seed =
-                        SeedSecretState(
-                            title = stringRes("Seed"),
-                            text =
-                                stringRes(
-                                    (1..24).joinToString(" ") { "trala" } + "longer_tralala"
-                                ),
-                            tooltip = null,
-                            isRevealed = true,
-                            mode = SeedSecretState.Mode.SEED,
-                            isRevealPhraseVisible = true
-                        ) {},
+                        SeedTextState(
+                            seed = (1..24).joinToString(" ") { "trala" } + "longer_tralala",
+                            isRevealed = true
+                        ),
                     birthday =
                         SeedSecretState(
                             title = stringRes("Birthday"),
                             text = stringRes(value = "asdads"),
-                            tooltip = SeedSecretStateTooltip(title = stringRes(""), message = stringRes("")),
                             isRevealed = true,
-                            mode = SeedSecretState.Mode.BIRTHDAY,
-                            isRevealPhraseVisible = false
+                            tooltip = SeedSecretStateTooltip(title = stringRes(""), message = stringRes("")),
                         ) {},
                     button =
                         ButtonState(
                             text = stringRes("Text"),
                             icon = R.drawable.ic_seed_show,
                             onClick = {},
+                        ),
+                    info =
+                        IconButtonState(
+                            onClick = {},
+                            icon = R.drawable.ic_info
                         ),
                     onBack = {}
                 )
@@ -449,33 +313,32 @@ private fun RevealedPreview() =
 @PreviewScreenSizes
 private fun HiddenPreview() =
     ZcashTheme {
-        SeedView(
+        SeedRecoveryView(
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
             state =
-                SeedState(
+                SeedRecoveryState(
                     seed =
-                        SeedSecretState(
-                            title = stringRes("Seed"),
-                            text = stringRes((1..24).joinToString(" ") { "trala" }),
-                            tooltip = null,
-                            isRevealed = false,
-                            mode = SeedSecretState.Mode.SEED,
-                            isRevealPhraseVisible = true
-                        ) {},
+                        SeedTextState(
+                            seed = (1..24).joinToString(" ") { "trala" } + "longer_tralala",
+                            isRevealed = true
+                        ),
                     birthday =
                         SeedSecretState(
                             title = stringRes("Birthday"),
                             text = stringRes(value = "asdads"),
-                            tooltip = SeedSecretStateTooltip(title = stringRes(""), message = stringRes("")),
                             isRevealed = false,
-                            mode = SeedSecretState.Mode.BIRTHDAY,
-                            isRevealPhraseVisible = false
+                            tooltip = SeedSecretStateTooltip(title = stringRes(""), message = stringRes("")),
                         ) {},
                     button =
                         ButtonState(
                             text = stringRes("Text"),
                             icon = R.drawable.ic_seed_show,
                             onClick = {},
+                        ),
+                    info =
+                        IconButtonState(
+                            onClick = {},
+                            icon = R.drawable.ic_info
                         ),
                     onBack = {}
                 )

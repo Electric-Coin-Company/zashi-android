@@ -47,6 +47,7 @@ import co.electriccoin.zcash.ui.screen.balances.BalanceTag
 import co.electriccoin.zcash.ui.screen.home.HomeTags
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightTags
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedTag
+import co.electriccoin.zcash.ui.screen.seed.SeedRecovery
 import co.electriccoin.zcash.ui.screen.send.SendTag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -94,6 +95,13 @@ class ScreenshotTest : UiTestPrerequisites() {
     val composeTestRule = createAndroidComposeRule(MainActivity::class.java)
 
     private fun navigateTo(route: String) =
+        runBlocking {
+            withContext(Dispatchers.Main) {
+                composeTestRule.activity.navControllerForTesting.navigate(route)
+            }
+        }
+
+    private fun navigateTo(route: Any) =
         runBlocking {
             withContext(Dispatchers.Main) {
                 composeTestRule.activity.navControllerForTesting.navigate(route)
@@ -365,7 +373,7 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         // These are the Settings screen items
         // We could manually click on each one, which is a better integration test but a worse screenshot test
-        navigateTo(NavigationTargets.SEED_RECOVERY)
+        navigateTo(SeedRecovery)
         seedScreenshots(resContext, tag, composeTestRule)
 
         navigateTo(NavigationTargets.SUPPORT)

@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.advancedsettings.view
+package co.electriccoin.zcash.ui.screen.advancedsettings
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -40,8 +40,6 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsTag
-import co.electriccoin.zcash.ui.screen.advancedsettings.model.AdvancedSettingsState
 import kotlinx.collections.immutable.persistentListOf
 
 // TODO [#1271]: Add AdvancedSettingsView Tests

@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.advancedsettings.model
+package co.electriccoin.zcash.ui.screen.advancedsettings
 
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState

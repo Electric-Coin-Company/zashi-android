@@ -6,8 +6,10 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.toRoute
 import cash.z.ecc.android.sdk.fixture.WalletFixture
 import cash.z.ecc.android.sdk.model.BlockHeight
@@ -36,6 +38,8 @@ import co.electriccoin.zcash.ui.screen.restore.estimation.AndroidRestoreBDEstima
 import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimation
 import co.electriccoin.zcash.ui.screen.restore.height.AndroidRestoreBDHeight
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeight
+import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
+import co.electriccoin.zcash.ui.screen.restore.info.RestoreSeedInfo
 import co.electriccoin.zcash.ui.screen.restore.seed.AndroidRestoreSeed
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeed
 import org.koin.androidx.compose.koinViewModel
@@ -110,6 +114,15 @@ fun MainActivity.OnboardingNavigation() {
         }
         composable<RestoreBDEstimation> {
             AndroidRestoreBDEstimation()
+        }
+        dialog<RestoreSeedInfo>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false,
+                )
+        ) {
+            AndroidSeedInfo()
         }
     }
 }

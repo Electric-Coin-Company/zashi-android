@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="seed_recovery_title">Frase de Recuperación</string>
-    <string name="seed_recovery_header">Asegura tu Billetera Zashi</string>
-    <string name="seed_recovery_description">Las siguientes 24 palabras son las claves de acceso a tus fondos y la única forma de recuperarlos si pierdes acceso o cambias de dispositivo.</string>
+    <string name="seed_recovery_header">Secret Recovery Phrase</string>
+    <string name="seed_recovery_description">These words are the only way to recover your funds! Make sure to save them in the correct order.</string>
     <string name="seed_recovery_reveal_button">Mostrar detalles de seguridad</string>
     <string name="seed_recovery_hide_button">Ocultar detalles de seguridad</string>
     <string name="seed_recovery_next_button">Siguiente</string>
-    <string name="seed_recovery_phrase_title">Frase de Recuperación</string>
     <string name="seed_recovery_bday_title">Altura de Cumpleaños de la Billetera</string>
     <string name="seed_recovery_bday_tooltip_title">Altura de Cumpleaños de la Billetera</string>
     <string name="seed_recovery_bday_tooltip_message">La Altura de Cumpleaños de la Billetera determina la altura (cadena) de nacimiento de tu billetera y facilita un proceso de restauración más rápido. Guarda este número junto con tu frase de recuperación en un lugar seguro.</string>
-    <string name="seed_recovery_warning">¡Protege tu ZEC almacenando esta frase en un lugar confiable y nunca la compartas con nadie!</string>
-    <string name="seed_recovery_reveal">Mostrar frase de recuperación</string>
 </resources>

@@ -7,8 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.screen.advancedsettings.view.AdvancedSettings
-import co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel.AdvancedSettingsViewModel
 import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
 
@@ -16,7 +14,6 @@ import org.koin.androidx.compose.koinViewModel
 internal fun WrapAdvancedSettings(
     goDeleteWallet: () -> Unit,
     goExportPrivateData: () -> Unit,
-    goSeedRecovery: () -> Unit,
 ) {
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
     val viewModel = koinViewModel<AdvancedSettingsViewModel>()
@@ -28,7 +25,6 @@ internal fun WrapAdvancedSettings(
             items =
                 originalState.items.mapIndexed { index, item ->
                     when (index) {
-                        0 -> item.copy(onClick = goSeedRecovery)
                         1 -> item.copy(onClick = goExportPrivateData)
                         else -> item
                     }

@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.SelectRecipientViewModel
-import co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel.AdvancedSettingsViewModel
+import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsViewModel
 import co.electriccoin.zcash.ui.screen.balances.BalanceViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
@@ -29,8 +29,7 @@ import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
-import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
-import co.electriccoin.zcash.ui.screen.seed.viewmodel.SeedViewModel
+import co.electriccoin.zcash.ui.screen.seed.SeedRecoveryViewModel
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel.SelectKeystoneAccountViewModel
 import co.electriccoin.zcash.ui.screen.send.SendViewModel
@@ -107,13 +106,7 @@ val viewModelModule =
         }
         viewModelOf(::FlexaViewModel)
         viewModelOf(::SendViewModel)
-        viewModel { (args: SeedNavigationArgs) ->
-            SeedViewModel(
-                observePersistableWallet = get(),
-                args = args,
-                walletRepository = get(),
-            )
-        }
+        viewModelOf(::SeedRecoveryViewModel)
         viewModelOf(::FeedbackViewModel)
         viewModelOf(::SignKeystoneTransactionViewModel)
         viewModelOf(::AccountListViewModel)

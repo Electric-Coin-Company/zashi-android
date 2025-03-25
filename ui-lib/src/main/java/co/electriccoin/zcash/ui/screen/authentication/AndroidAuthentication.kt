@@ -20,7 +20,6 @@ import kotlin.time.Duration.Companion.milliseconds
 private const val APP_ACCESS_TRIGGER_DELAY = 0
 private const val DELETE_WALLET_TRIGGER_DELAY = 0
 private const val EXPORT_PRIVATE_DATA_TRIGGER_DELAY = 0
-private const val SEED_RECOVERY_TRIGGER_DELAY = 0
 private const val SEND_FUNDS_DELAY = 0
 internal const val RETRY_TRIGGER_DELAY = 0
 
@@ -77,16 +76,6 @@ private fun WrapAuthenticationUseCases(
             WrapDeleteWalletAuth(
                 activity = activity,
                 goDeleteWallet = onSuccess,
-                goSupport = goSupport ?: {},
-                onCancel = onCancel,
-                onFailed = onFailed
-            )
-        }
-        AuthenticationUseCase.SeedRecovery -> {
-            Twig.debug { "Seed Recovery Authentication" }
-            WrapSeedRecoveryAuth(
-                activity = activity,
-                goSeedRecovery = onSuccess,
                 goSupport = goSupport ?: {},
                 onCancel = onCancel,
                 onFailed = onFailed
@@ -252,79 +241,6 @@ private fun WrapAppExportPrivateDataAuth(
 }
 
 @Composable
-private fun WrapSeedRecoveryAuth(
-    activity: MainActivity,
-    goSupport: () -> Unit,
-    goSeedRecovery: () -> Unit,
-    onCancel: () -> Unit,
-    onFailed: () -> Unit,
-) {
-    val authenticationViewModel = koinActivityViewModel<AuthenticationViewModel>()
-
-    val authenticationResult =
-        authenticationViewModel.authenticationResult
-            .collectAsStateWithLifecycle(initialValue = AuthenticationResult.None).value
-
-    when (authenticationResult) {
-        AuthenticationResult.None -> {
-            Twig.info { "Authentication result: initiating" }
-            // Initial state
-        }
-        AuthenticationResult.Success -> {
-            Twig.info { "Authentication result: successful" }
-            authenticationViewModel.resetAuthenticationResult()
-            goSeedRecovery()
-        }
-        AuthenticationResult.Canceled -> {
-            Twig.info { "Authentication result: canceled" }
-            authenticationViewModel.resetAuthenticationResult()
-            onCancel()
-        }
-        AuthenticationResult.Failed -> {
-            Twig.warn { "Authentication result: failed" }
-            authenticationViewModel.resetAuthenticationResult()
-            onFailed()
-            Toast.makeText(activity, stringResource(id = R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
-                .show()
-        }
-        is AuthenticationResult.Error -> {
-            Twig.error {
-                "Authentication result: error: ${authenticationResult.errorCode}: ${authenticationResult.errorMessage}"
-            }
-            AuthenticationErrorDialog(
-                onDismiss = {
-                    // Reset authentication states
-                    authenticationViewModel.resetAuthenticationResult()
-                    onCancel()
-                },
-                onRetry = {
-                    authenticationViewModel.resetAuthenticationResult()
-                    authenticationViewModel.authenticate(
-                        activity = activity,
-                        initialAuthSystemWindowDelay = RETRY_TRIGGER_DELAY.milliseconds,
-                        useCase = AuthenticationUseCase.SeedRecovery
-                    )
-                },
-                onSupport = {
-                    authenticationViewModel.resetAuthenticationResult()
-                    goSupport()
-                },
-                reason = authenticationResult
-            )
-        }
-    }
-
-    // Starting authentication
-    LaunchedEffect(key1 = true) {
-        authenticationViewModel.authenticate(
-            activity = activity,
-            initialAuthSystemWindowDelay = SEED_RECOVERY_TRIGGER_DELAY.milliseconds,
-            useCase = AuthenticationUseCase.SeedRecovery
-        )
-    }
-}
-
-@Composable
 @Suppress("LongMethod")
 private fun WrapSendFundsAuth(
     activity: MainActivity,
@@ -471,8 +387,6 @@ private fun WrapAppAccessAuth(
 
 sealed class AuthenticationUseCase {
     data object AppAccess : AuthenticationUseCase()
-
-    data object SeedRecovery : AuthenticationUseCase()
 
     data object DeleteWallet : AuthenticationUseCase()
 

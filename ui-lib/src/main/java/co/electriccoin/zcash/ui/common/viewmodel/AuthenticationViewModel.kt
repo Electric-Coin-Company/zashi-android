@@ -144,12 +144,6 @@ class AuthenticationViewModel(
     val isDeleteWalletAuthenticationRequired: StateFlow<Boolean?> =
         booleanStateFlow(StandardPreferenceKeys.IS_DELETE_WALLET_AUTHENTICATION)
 
-    val isSeedAuthenticationRequired: StateFlow<Boolean?> =
-        booleanStateFlow(StandardPreferenceKeys.IS_SEED_AUTHENTICATION)
-
-    val isSendFundsAuthenticationRequired: StateFlow<Boolean?> =
-        booleanStateFlow(StandardPreferenceKeys.IS_SEND_FUNDS_AUTHENTICATION)
-
     /**
      * Authentication framework result
      */
@@ -316,9 +310,6 @@ class AuthenticationViewModel(
 
                                     AuthenticationUseCase.ExportPrivateData ->
                                         R.string.authentication_use_case_export_data
-
-                                    AuthenticationUseCase.SeedRecovery ->
-                                        R.string.authentication_use_case_seed_recovery
 
                                     AuthenticationUseCase.SendFunds ->
                                         R.string.authentication_use_case_send_funds
