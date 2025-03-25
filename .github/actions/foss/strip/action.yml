@@ -1,0 +1,33 @@
+name: 'Strip Non-FOSS Components'
+description: "This process grep out all non-FOSS aligned code fragments"
+runs:
+  using: "composite"
+  steps:
+    - name: Stripping
+      shell: bash
+      run: |
+        rm app/src/debug/google-services.json
+        rm app/src/release/google-services.json
+        rm -rf build-conventions-secant/build/
+        rm -rf build-conventions-secant/.gradle/
+        rm -rf buildSrc/build/
+        rm -rf buildSrc/.gradle/
+        rm -rf ui-screenshot-test
+        rm -rf .gradle
+        rm -rf build-conventions-secant/src/main/kotlin/secant.emulator-wtf-conventions.gradle.kts
+        sed -i '/\/\/ start wtf maven/,/\/\/ end wtf maven/d' settings.gradle.kts
+        find . -type f -name "build.gradle.kts" -exec sed -i -e '/wtf.emulator.gradle/d' {} +
+        find . -type f -name "build.gradle.kts" -exec sed -i -e '/secant.emulator-wtf-conventions/d' {} +
+        find . -type f -name "gradle.lockfile" -exec sed -i -e '/wtf.emulator/d' {} +
+        find . -type f -name "buildscript-gradle.lockfile" -exec sed -i -e '/wtf.emulator/d' {} +
+        find . -type f -name "gradle.lockfile" -exec sed -i -e '/com.vdurmont/d' {} +
+        find . -type f -name "buildscript-gradle.lockfile" -exec sed -i -e '/com.vdurmont/d' {} +
+        find . -type f -name "gradle.lockfile" -exec sed -i -e '/org.json:json/d' {} +
+        find . -type f -name "buildscript-gradle.lockfile" -exec sed -i -e '/org.json:json/d' {} +
+        sed -i -e '/include("ui-screenshot-test")/d' settings.gradle.kts
+        sed -i -e '/com.google.gms/d' -e '/com.google.android.gms/d' -e '/com.google.firebase/d' -e '/crashlyticsVersion/d' build.gradle.kts
+        sed -i -e '/libs.google.services/d' -e '/libs.firebase/d' build.gradle.kts
+        sed -i -e '/com.google.gms/d' -e '/com.google.android.gms/d' -e '/com.google.firebase/d' buildscript-gradle.lockfile
+        sed -i -e '/libs.google.services/d' -e '/libs.firebase/d' buildscript-gradle.lockfile
+        sed -i -e '/com.google.gms.google-services/d' -e '/com.google.firebase.crashlytics/d' */build.gradle.kts
+        ./gradlew clean
