@@ -9,6 +9,9 @@ gen/
 local.properties
 *.iml
 *.hprof
+*.apk
+*.aab
+*.keystore
 
 # IDE-specific files
 .idea/AndroidProjectSystem.xml
