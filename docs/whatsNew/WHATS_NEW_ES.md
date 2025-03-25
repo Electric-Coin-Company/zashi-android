@@ -5,12 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this application adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 Supported section titles:
-- Agregado, Cambiado, Arreglado, Removido
+- Añadido, Cambiado, Corregido, Removido
 
 **Please be aware that this changelog primarily focuses on user-related modifications, emphasizing changes that can
 directly impact users rather than highlighting other key architectural updates.**
 
 ## [Unreleased]
+
+## [1.5 (921)] - 2025-03-26
+
+### Añadido:
+- Zashi ahora puede ayudarte a recuperar fondos desde billeteras completamente transparentes como Ledger. Recomendamos importar la frase de recuperación de tu billetera hardware transparente en una billetera Keystone y luego emparejarla con Zashi usando la integración con Keystone.
+
+### Corregido:
+- Solucionamos un problema de larga data con el árbol de compromisos de notas que afectaba a un pequeño número de usuarios. Ahora Zashi permite gastar fondos que estaban atascados.
 
 ## [1.4 (876)] - 2025-03-04
 
