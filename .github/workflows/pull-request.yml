@@ -555,6 +555,19 @@ jobs:
         run: |
           ./gradlew :app:assembleZcashmainnetStoreDebug :app:assembleZcashtestnetStoreDebug :app:bundleZcashmainnetStoreRelease :app:bundleZcashtestnetStoreRelease :app:packageZcashmainnetStoreReleaseUniversalApk
 
+      - name: Collect Artifacts
+        timeout-minutes: 1
+        env:
+          ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
+          BINARIES_ZIP_PATH: ${{ format('{0}/artifacts/binaries.zip', env.home) }}
+          MAPPINGS_ZIP_PATH: ${{ format('{0}/artifacts/mappings.zip', env.home) }}
+          COMPOSE_METRICS_ZIP_PATH: ${{ format('{0}/artifacts/compose_metrics.zip', env.home) }}
+        run: |
+          mkdir ${ARTIFACTS_DIR_PATH}
+          zip -r ${BINARIES_ZIP_PATH} . -i app/build/outputs/apk/\*/\*/\*.apk app/build/outputs/apk_from_bundle/\*/\*.apk app/build/outputs/bundle/\*/\*.aab
+          zip -r ${MAPPINGS_ZIP_PATH} . -i *app/build/outputs/mapping/\*/\*/mapping.txt
+          zip -r ${COMPOSE_METRICS_ZIP_PATH} . -i \*/build/compose-metrics/\* \*/build/compose-reports/\*
+
       - name: Strip non-FOSS libraries
         timeout-minutes: 10
         uses: ./.github/actions/foss/strip
@@ -572,18 +585,6 @@ jobs:
         run: |
           ./gradlew :app:assembleZcashmainnetFossRelease
 
-      - name: Collect Artifacts
-        timeout-minutes: 1
-        env:
-          ARTIFACTS_DIR_PATH: ${{ format('{0}/artifacts', env.home) }}
-          BINARIES_ZIP_PATH: ${{ format('{0}/artifacts/binaries.zip', env.home) }}
-          MAPPINGS_ZIP_PATH: ${{ format('{0}/artifacts/mappings.zip', env.home) }}
-          COMPOSE_METRICS_ZIP_PATH: ${{ format('{0}/artifacts/compose_metrics.zip', env.home) }}
-        run: |
-          mkdir ${ARTIFACTS_DIR_PATH}
-          zip -r ${BINARIES_ZIP_PATH} . -i app/build/outputs/apk/\*/\*/\*.apk app/build/outputs/apk_from_bundle/\*/\*.apk app/build/outputs/bundle/\*/\*.aab
-          zip -r ${MAPPINGS_ZIP_PATH} . -i *app/build/outputs/mapping/\*/\*/mapping.txt
-          zip -r ${COMPOSE_METRICS_ZIP_PATH} . -i \*/build/compose-metrics/\* \*/build/compose-reports/\*
       - name: Upload Artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         timeout-minutes: 2
