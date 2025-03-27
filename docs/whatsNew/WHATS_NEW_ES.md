@@ -12,7 +12,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-## [1.5 (921)] - 2025-03-26
+## [1.5 (923)] - 2025-03-27
 
 ### Añadido:
 - Zashi ahora puede ayudarte a recuperar fondos desde billeteras completamente transparentes como Ledger. Recomendamos importar la frase de recuperación de tu billetera hardware transparente en una billetera Keystone y luego emparejarla con Zashi usando la integración con Keystone.

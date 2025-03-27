@@ -12,7 +12,7 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-## [1.5 (921)] - 2025-03-26
+## [1.5 (923)] - 2025-03-27
 
 ### Added:
 - Transparent Funds Rescue - Zashi can now help you recover funds from fully transparent wallets like Ledger. We recommend importing your transparent hardware wallet recovery phrase into a Keystone hardware wallet and then pairing it with Zashi using the Keystone integration.
