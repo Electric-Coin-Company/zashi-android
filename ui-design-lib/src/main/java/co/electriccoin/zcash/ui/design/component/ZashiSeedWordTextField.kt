@@ -30,6 +30,14 @@ fun ZashiSeedWordTextField(
     state: SeedWordTextFieldState,
     modifier: Modifier = Modifier,
     innerModifier: Modifier = Modifier,
+    handle: ZashiTextFieldHandle =
+        rememberZashiTextFieldHandle(
+            TextFieldState(
+                value = stringRes(state.value),
+                onValueChange = state.onValueChange,
+                error = stringRes("").takeIf { state.isError }
+            )
+        ),
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -42,6 +50,7 @@ fun ZashiSeedWordTextField(
         keyboardActions = keyboardActions,
         singleLine = true,
         maxLines = 1,
+        handle = handle,
         interactionSource = interactionSource,
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
         state =

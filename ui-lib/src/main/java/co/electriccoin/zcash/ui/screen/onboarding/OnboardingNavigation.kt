@@ -6,6 +6,7 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -50,8 +51,21 @@ fun MainActivity.OnboardingNavigation() {
     val activity = LocalActivity.current
     val navigationRouter = koinInject<NavigationRouter>()
     val navController = LocalNavController.current
+    val focusManager = LocalFocusManager.current
     val flexaViewModel = koinViewModel<FlexaViewModel>()
-    val navigator: Navigator = remember { NavigatorImpl(this@OnboardingNavigation, navController, flexaViewModel) }
+    val navigator: Navigator =
+        remember(
+            navController,
+            flexaViewModel,
+            focusManager
+        ) {
+            NavigatorImpl(
+                activity = this@OnboardingNavigation,
+                navController = navController,
+                flexaViewModel = flexaViewModel,
+                focusManager = focusManager
+            )
+        }
 
     LaunchedEffect(Unit) {
         navigationRouter.observePipeline().collect {

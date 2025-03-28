@@ -9,6 +9,10 @@ class SendTransactionAgainUseCase(
 ) {
     operator fun invoke(value: DetailedTransactionData) {
         prefillSendUseCase.request(value)
-        navigationRouter.forward(Send())
+        navigationRouter.forward(
+            Send(
+                isScanZip321Enabled = false
+            )
+        )
     }
 }

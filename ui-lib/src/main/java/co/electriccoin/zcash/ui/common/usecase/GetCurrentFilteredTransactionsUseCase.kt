@@ -232,23 +232,23 @@ class GetCurrentFilteredTransactionsUseCase(
         } else {
             val transactionMetadata = transaction.transactionMetadata
 
-            hasMemo && (transactionMetadata == null || transactionMetadata.isRead.not())
+            hasMemo && transactionMetadata.isRead.not()
         }
     }
 
     private fun isBookmark(transaction: FilterTransactionData): Boolean {
-        return transaction.transactionMetadata?.isBookmarked ?: false
+        return transaction.transactionMetadata.isBookmarked
     }
 
     private fun hasNotes(transaction: FilterTransactionData): Boolean {
-        return transaction.transactionMetadata?.note != null
+        return transaction.transactionMetadata.note != null
     }
 
     private fun hasNotesWithFulltext(
         transaction: FilterTransactionData,
         fulltextFilter: String
     ): Boolean {
-        return transaction.transactionMetadata?.note
+        return transaction.transactionMetadata.note
             ?.contains(
                 fulltextFilter,
                 ignoreCase = true
@@ -288,7 +288,7 @@ private data class FilterTransactionData(
     val transaction: Transaction,
     val contact: AddressBookContact?,
     val recipientAddress: String?,
-    val transactionMetadata: TransactionMetadata?
+    val transactionMetadata: TransactionMetadata
 )
 
 private const val MIN_TEXT_FILTER_LENGTH = 3

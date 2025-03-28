@@ -7,4 +7,5 @@ import kotlinx.serialization.Serializable
 data class Send(
     val recipientAddress: String? = null,
     val recipientAddressType: AddressType? = null,
+    val isScanZip321Enabled: Boolean = true
 )

@@ -256,7 +256,6 @@ private fun IntegrationsDisabledPreview() {
                             ZashiListItemState(
                                 title = stringRes(R.string.settings_integrations),
                                 icon = R.drawable.ic_settings_integrations_disabled,
-                                subtitle = stringRes(R.string.settings_integrations_subtitle_disabled),
                                 onClick = { },
                                 isEnabled = false,
                                 titleIcons =

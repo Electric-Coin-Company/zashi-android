@@ -16,11 +16,14 @@ import co.electriccoin.zcash.ui.common.usecase.DeleteTransactionNoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ExportTaxUseCase
 import co.electriccoin.zcash.ui.common.usecase.FlipTransactionBookmarkUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetCoinbaseStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetFlexaStatusUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetKeystoneStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetMetadataUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetProposalUseCase
@@ -182,4 +185,7 @@ val useCaseModule =
         factoryOf(::ValidateSeedUseCase)
         factoryOf(::RestoreWalletUseCase)
         factoryOf(::NavigateToSeedRecoveryUseCase)
+        factoryOf(::GetKeystoneStatusUseCase)
+        factoryOf(::GetCoinbaseStatusUseCase)
+        factoryOf(::GetFlexaStatusUseCase)
     }

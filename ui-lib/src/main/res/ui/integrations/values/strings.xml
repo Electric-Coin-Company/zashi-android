@@ -10,5 +10,6 @@
     <string name="integrations_flexa_biometric_message">Authenticate yourself to pay with Flexa</string>
     <string name="integrations_keystone">Connect Keystone Device</string>
     <string name="integrations_keystone_subtitle">Pair your Keystone hardware wallet with Zashi to sign transactions.</string>
+    <string name="integrations_disabled_info_flexa">Switch from Keystone to Zashi to use Flexa.</string>
     <string name="integrations_dialog_more_options">More options</string>
 </resources>

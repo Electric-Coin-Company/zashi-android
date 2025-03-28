@@ -8,7 +8,7 @@ data class RestoreSeedState(
     val seed: SeedTextFieldState,
     val onBack: () -> Unit,
     val dialogButton: IconButtonState,
-    val nextButton: ButtonState
+    val nextButton: ButtonState?
 )
 
 data class RestoreSeedSuggestionsState(

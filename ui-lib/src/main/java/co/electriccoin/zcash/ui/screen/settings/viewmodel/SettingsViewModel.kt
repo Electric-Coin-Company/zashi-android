@@ -11,16 +11,14 @@ import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.KeystoneAccount
-import co.electriccoin.zcash.ui.common.model.WalletAccount
-import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
+import co.electriccoin.zcash.ui.common.usecase.GetCoinbaseStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetConfigurationUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
-import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
-import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetFlexaStatusUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetKeystoneStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
+import co.electriccoin.zcash.ui.common.usecase.Status
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -43,14 +41,14 @@ import kotlinx.coroutines.launch
 @Suppress("TooManyFunctions")
 class SettingsViewModel(
     getConfiguration: GetConfigurationUseCase,
-    getWalletAccounts: GetWalletAccountsUseCase,
-    isFlexaAvailable: IsFlexaAvailableUseCase,
-    isCoinbaseAvailable: IsCoinbaseAvailableUseCase,
+    getCoinbaseStatus: GetCoinbaseStatusUseCase,
+    getFlexaStatus: GetFlexaStatusUseCase,
+    getKeystoneStatus: GetKeystoneStatusUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getVersionInfo: GetVersionInfoProvider,
     private val rescanBlockchain: RescanBlockchainUseCase,
     private val navigationRouter: NavigationRouter,
-    private val navigateToAddressBook: NavigateToAddressBookUseCase
+    private val navigateToAddressBook: NavigateToAddressBookUseCase,
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
@@ -98,39 +96,30 @@ class SettingsViewModel(
             }
         }
 
-    val state: StateFlow<SettingsState> =
+    val state: StateFlow<SettingsState?> =
         combine(
             troubleshootingState,
-            getWalletAccounts.observe(),
-            isFlexaAvailable.observe(),
-            isCoinbaseAvailable.observe(),
-        ) { troubleshootingState, accounts, isFlexaAvailable, isCoinbaseAvailable ->
+            getCoinbaseStatus.observe(),
+            getFlexaStatus.observe(),
+            getKeystoneStatus.observe(),
+        ) { troubleshootingState, coinbaseStatus, flexaStatus, keystoneStatus ->
             createState(
-                selectedAccount = accounts?.firstOrNull { it.isSelected },
                 troubleshootingState = troubleshootingState,
-                isFlexaAvailable = isFlexaAvailable == true,
-                isCoinbaseAvailable = isCoinbaseAvailable == true,
-                isKeystoneAvailable = accounts?.none { it is KeystoneAccount } == true
+                flexaStatus = flexaStatus,
+                coinbaseStatus = coinbaseStatus,
+                keystoneStatus = keystoneStatus,
             )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue =
-                createState(
-                    selectedAccount = getWalletAccounts.observe().value?.firstOrNull { it.isSelected },
-                    troubleshootingState = null,
-                    isFlexaAvailable = isFlexaAvailable.observe().value == true,
-                    isCoinbaseAvailable = isCoinbaseAvailable.observe().value == true,
-                    isKeystoneAvailable = getWalletAccounts.observe().value?.none { it is KeystoneAccount } == true
-                )
+            initialValue = null
         )
 
     private fun createState(
-        selectedAccount: WalletAccount?,
         troubleshootingState: SettingsTroubleshootingState?,
-        isFlexaAvailable: Boolean,
-        isCoinbaseAvailable: Boolean,
-        isKeystoneAvailable: Boolean
+        flexaStatus: Status,
+        coinbaseStatus: Status,
+        keystoneStatus: Status
     ) = SettingsState(
         debugMenu = troubleshootingState,
         onBack = ::onBack,
@@ -143,34 +132,31 @@ class SettingsViewModel(
                 ),
                 ZashiListItemState(
                     title = stringRes(R.string.settings_integrations),
-                    icon =
-                        when (selectedAccount) {
-                            is KeystoneAccount -> R.drawable.ic_settings_integrations_disabled
-                            is ZashiAccount -> R.drawable.ic_settings_integrations
-                            null -> R.drawable.ic_settings_integrations
-                        },
+                    icon = R.drawable.ic_settings_integrations,
                     onClick = ::onIntegrationsClick,
-                    isEnabled = selectedAccount is ZashiAccount,
-                    subtitle =
-                        stringRes(R.string.settings_integrations_subtitle_disabled).takeIf {
-                            selectedAccount !is ZashiAccount
-                        },
                     titleIcons =
                         listOfNotNull(
-                            when (selectedAccount) {
-                                is KeystoneAccount -> R.drawable.ic_integrations_coinbase_disabled
-                                is ZashiAccount -> R.drawable.ic_integrations_coinbase
-                                null -> R.drawable.ic_integrations_coinbase
-                            }.takeIf { isCoinbaseAvailable },
-                            when (selectedAccount) {
-                                is KeystoneAccount -> R.drawable.ic_integrations_flexa_disabled
-                                is ZashiAccount -> R.drawable.ic_integrations_flexa
-                                null -> R.drawable.ic_integrations_flexa
-                            }.takeIf { isFlexaAvailable },
-                            R.drawable.ic_integrations_keystone
-                                .takeIf { isKeystoneAvailable }
+                            when (coinbaseStatus) {
+                                Status.ENABLED -> R.drawable.ic_integrations_coinbase
+                                Status.DISABLED -> R.drawable.ic_integrations_coinbase_disabled
+                                Status.UNAVAILABLE -> null
+                            },
+                            when (flexaStatus) {
+                                Status.ENABLED -> R.drawable.ic_integrations_flexa
+                                Status.DISABLED -> R.drawable.ic_integrations_flexa_disabled
+                                Status.UNAVAILABLE -> null
+                            },
+                            when (keystoneStatus) {
+                                Status.ENABLED -> R.drawable.ic_integrations_keystone
+                                Status.DISABLED -> null
+                                Status.UNAVAILABLE -> null
+                            }
                         ).toImmutableList()
-                ).takeIf { isFlexaAvailable || isCoinbaseAvailable || isKeystoneAvailable },
+                ).takeIf {
+                    coinbaseStatus != Status.UNAVAILABLE ||
+                        flexaStatus != Status.UNAVAILABLE ||
+                        keystoneStatus != Status.UNAVAILABLE
+                },
                 ZashiListItemState(
                     title = stringRes(R.string.settings_advanced_settings),
                     icon = R.drawable.ic_advanced_settings,

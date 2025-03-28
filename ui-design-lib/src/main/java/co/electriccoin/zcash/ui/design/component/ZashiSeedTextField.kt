@@ -14,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -48,31 +48,35 @@ fun ZashiSeedTextField(
     wordModifier: (index: Int) -> Modifier = { Modifier },
     handle: SeedTextFieldHandle = rememberSeedTextFieldHandle(),
 ) {
-    val interactions = remember { state.values.map { MutableInteractionSource() } }
-    val focusRequesters = remember { state.values.map { FocusRequester() } }
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(state.values.map { it.value }) {
+        val newValues = state.values.map { it.value }
+        handle.internalState =
+            handle.internalState.copy(
+                texts = newValues,
+                selectedText =
+                    if (handle.internalState.selectedIndex <= -1) {
+                        null
+                    } else {
+                        newValues[handle.internalState.selectedIndex]
+                    }
+            )
+    }
 
     LaunchedEffect(handle.selectedIndex) {
         if (handle.selectedIndex >= 0) {
-            focusRequesters[handle.selectedIndex].requestFocus()
+            handle.focusRequesters[handle.selectedIndex].requestFocus()
         } else {
             focusManager.clearFocus(true)
         }
     }
 
-    LaunchedEffect(handle.selectedIndex, state.values) {
-        if (handle.selectedIndex >= 0) {
-            handle.selectedText = state.values[handle.selectedIndex].value
-        } else {
-            handle.selectedText = null
-        }
-    }
-
-    LaunchedEffect(interactions) {
-        interactions
+    LaunchedEffect(Unit) {
+        handle.interactions
             .observeSelectedIndex()
             .collect { index ->
-                handle.selectedIndex = index
+                handle.setSelectedIndex(index)
             }
     }
 
@@ -84,8 +88,13 @@ fun ZashiSeedTextField(
         overflow = FlowRowOverflow.Visible,
     ) {
         state.values.forEachIndexed { index, wordState ->
-            val focusRequester = remember { focusRequesters[index] }
-            val interaction = remember { interactions[index] }
+            val focusRequester = remember { handle.focusRequesters[index] }
+            val interaction = remember { handle.interactions[index] }
+            val textFieldHandle = remember { handle.textFieldHandles[index] }
+            val previousHandle =
+                remember {
+                    if (index > 0) handle.textFieldHandles[index - 1] else null
+                }
             ZashiSeedWordTextField(
                 modifier =
                     Modifier
@@ -97,26 +106,22 @@ fun ZashiSeedTextField(
                                     handle.requestNextFocus()
                                     true
                                 }
+
                                 event.key == Key.Backspace && wordState.value.isEmpty() -> {
+                                    previousHandle?.moveCursorToEnd()
                                     handle.requestPreviousFocus()
                                     true
                                 }
+
                                 else -> {
                                     false
                                 }
                             }
                         },
+                handle = textFieldHandle,
                 innerModifier = wordModifier(index),
                 prefix = (index + 1).toString(),
-                state =
-                    wordState.copy(
-                        onValueChange = {
-                            wordState.onValueChange(it)
-                            if (index == handle.selectedIndex) {
-                                handle.selectedText = it
-                            }
-                        }
-                    ),
+                state = wordState,
                 keyboardActions =
                     KeyboardActions(
                         onDone = {
@@ -128,7 +133,8 @@ fun ZashiSeedTextField(
                     ),
                 keyboardOptions =
                     KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
+                        keyboardType = KeyboardType.Password,
+                        autoCorrectEnabled = false,
                         imeAction = if (index == state.values.lastIndex) ImeAction.Done else ImeAction.Next
                     ),
                 interactionSource = interaction
@@ -178,31 +184,88 @@ data class SeedTextFieldState(
     val values: List<SeedWordTextFieldState>,
 )
 
+@Suppress("MagicNumber")
 @Stable
-class SeedTextFieldHandle {
-    var selectedText: String? by mutableStateOf(null)
-    var selectedIndex by mutableIntStateOf(-1)
+class SeedTextFieldHandle(seedTextFieldState: SeedTextFieldState, selectedIndex: Int) {
+    internal val textFieldHandles = seedTextFieldState.values.map { ZashiTextFieldHandle(it.value) }
+
+    internal val interactions = List(24) { MutableInteractionSource() }
+
+    internal val focusRequesters = List(24) { FocusRequester() }
+
+    internal var internalState by mutableStateOf(
+        SeedTextFieldInternalState(
+            selectedIndex = selectedIndex,
+            selectedText = null,
+            texts = seedTextFieldState.values.map { it.value }
+        )
+    )
+
+    val selectedText: String? by derivedStateOf { internalState.selectedText }
+
+    val selectedIndex by derivedStateOf { internalState.selectedIndex }
 
     @Suppress("MagicNumber")
     fun requestNextFocus() {
-        if (selectedIndex == 23) {
-            selectedIndex = -1
-        } else {
-            selectedIndex += 1
-        }
+        internalState =
+            if (internalState.selectedIndex == 23) {
+                internalState.copy(
+                    selectedIndex = -1,
+                    selectedText = null,
+                )
+            } else {
+                internalState.copy(
+                    selectedIndex = internalState.selectedIndex + 1,
+                    selectedText = internalState.texts[internalState.selectedIndex + 1],
+                )
+            }
     }
 
     fun requestPreviousFocus() {
-        if (selectedIndex >= 0) {
-            selectedIndex -= 1
-        } else {
-            selectedIndex = -1
-        }
+        internalState =
+            if (internalState.selectedIndex >= 1) {
+                internalState.copy(
+                    selectedIndex = internalState.selectedIndex - 1,
+                    selectedText = internalState.texts[internalState.selectedIndex - 1]
+                )
+            } else {
+                internalState.copy(
+                    selectedIndex = -1,
+                    selectedText = null,
+                )
+            }
+    }
+
+    fun setSelectedIndex(index: Int) {
+        internalState =
+            internalState.copy(
+                selectedIndex = index,
+                selectedText = if (index <= -1) null else internalState.texts[index]
+            )
     }
 }
 
+internal data class SeedTextFieldInternalState(
+    val selectedIndex: Int,
+    val selectedText: String?,
+    val texts: List<String>
+)
+
+@Suppress("MagicNumber")
 @Composable
-fun rememberSeedTextFieldHandle(): SeedTextFieldHandle = remember { SeedTextFieldHandle() }
+fun rememberSeedTextFieldHandle(
+    seedTextFieldState: SeedTextFieldState =
+        SeedTextFieldState(
+            List(24) {
+                SeedWordTextFieldState(
+                    value = "",
+                    onValueChange = {},
+                    isError = false
+                )
+            }
+        ),
+    selectedIndex: Int = -1
+): SeedTextFieldHandle = remember { SeedTextFieldHandle(seedTextFieldState, selectedIndex) }
 
 @PreviewScreenSizes
 @Composable

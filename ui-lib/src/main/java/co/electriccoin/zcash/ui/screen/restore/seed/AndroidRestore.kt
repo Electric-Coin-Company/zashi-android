@@ -12,7 +12,7 @@ fun AndroidRestoreSeed() {
     val vm = koinViewModel<RestoreSeedViewModel>()
     val state by vm.state.collectAsStateWithLifecycle()
     val suggestionsState = vm.suggestionsState.collectAsStateWithLifecycle().value
-    if (state != null) {
+    if (state != null && suggestionsState != null) {
         state?.let { RestoreSeedView(it, suggestionsState) }
     }
 

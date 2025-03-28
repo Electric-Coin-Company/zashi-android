@@ -105,11 +105,10 @@ class RestoreSeedViewModel(
         combine(validSeed, suggestions) { seed, suggestions ->
             seed to suggestions
         }.mapLatest { (seed, suggestions) ->
-            if (seed == null && suggestions != null) {
-                RestoreSeedSuggestionsState(isVisible = true, suggestions = suggestions)
-            } else {
-                null
-            }
+            RestoreSeedSuggestionsState(
+                isVisible = seed == null && suggestions != null,
+                suggestions = suggestions.orEmpty()
+            )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -133,10 +132,9 @@ class RestoreSeedViewModel(
         dialogButton = IconButtonState(icon = R.drawable.ic_info, onClick = ::onInfoButtonClick),
         nextButton =
             ButtonState(
-                stringRes(R.string.restore_button),
+                text = stringRes(R.string.restore_button),
                 onClick = ::onNextClicked,
-                isEnabled = seedPhrase != null
-            )
+            ).takeIf { seedPhrase != null }
     )
 
     private fun onBack() {

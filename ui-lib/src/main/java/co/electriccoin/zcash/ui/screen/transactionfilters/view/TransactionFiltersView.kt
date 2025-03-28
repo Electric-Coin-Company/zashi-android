@@ -97,6 +97,16 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
                                     onClick = filter.onClick,
                                     text = filter.text,
                                 ),
+                            modifier =
+                                Modifier
+                                    // Customize the chip size change animation
+                                    .animateContentSize(
+                                        animationSpec =
+                                            spring(
+                                                dampingRatio = 0.85f,
+                                                stiffness = 200f
+                                            )
+                                    ),
                             shape = CircleShape,
                             border =
                                 BorderStroke(1.dp, ZashiColors.Btns.Secondary.btnSecondaryBorder)
@@ -113,18 +123,7 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
                                 } else {
                                     PaddingValues(horizontal = 16.dp, vertical = 10.dp)
                                 },
-                            endIconSpacer = 10.dp,
-                            hasRippleEffect = false,
-                            modifier =
-                                Modifier
-                                    // Customize the chip size change animation
-                                    .animateContentSize(
-                                        animationSpec =
-                                            spring(
-                                                dampingRatio = 0.85f,
-                                                stiffness = 200f
-                                            )
-                                    )
+                            endIconSpacer = 10.dp
                         )
                     }
                 }

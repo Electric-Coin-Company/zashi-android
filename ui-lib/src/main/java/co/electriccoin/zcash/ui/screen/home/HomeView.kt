@@ -1,9 +1,5 @@
 package co.electriccoin.zcash.ui.screen.home
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarWithAccountSelection
-import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ZashiBigIconButton
@@ -34,7 +29,6 @@ import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.balances.BalanceState
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidget
-import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeOptIn
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetState
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetStateFixture
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.createTransactionHistoryWidgets
@@ -96,22 +90,22 @@ private fun Content(
                         Modifier
                             .weight(1f)
                             .testTag(HomeTags.RECEIVE),
-                    state = state.receiveButton,
+                    state = state.firstButton,
                 )
                 ZashiBigIconButton(
                     modifier =
                         Modifier
                             .weight(1f)
                             .testTag(HomeTags.SEND),
-                    state = state.sendButton,
+                    state = state.secondButton,
                 )
                 ZashiBigIconButton(
                     modifier = Modifier.weight(1f),
-                    state = state.scanButton,
+                    state = state.thirdButton,
                 )
                 ZashiBigIconButton(
                     modifier = Modifier.weight(1f),
-                    state = state.moreButton,
+                    state = state.fourthButton,
                 )
             }
 
@@ -128,23 +122,6 @@ private fun Content(
                 )
             }
         }
-
-        AnimatedVisibility(
-            visible = balanceState.exchangeRate is ExchangeRateState.OptIn,
-            enter = EnterTransition.None,
-            exit = fadeOut() + slideOutVertically(),
-        ) {
-            Column {
-                Spacer(modifier = Modifier.height(66.dp + paddingValues.calculateTopPadding()))
-                StyledExchangeOptIn(
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                    state =
-                        (balanceState.exchangeRate as? ExchangeRateState.OptIn) ?: ExchangeRateState.OptIn(
-                            onDismissClick = {},
-                        )
-                )
-            }
-        }
     }
 }
 
@@ -158,25 +135,25 @@ private fun Preview() =
             transactionWidgetState = TransactionHistoryWidgetStateFixture.new(),
             state =
                 HomeState(
-                    receiveButton =
+                    firstButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
                             icon = R.drawable.ic_warning,
                             onClick = {}
                         ),
-                    sendButton =
+                    secondButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
                             icon = R.drawable.ic_warning,
                             onClick = {}
                         ),
-                    scanButton =
+                    thirdButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
                             icon = R.drawable.ic_warning,
                             onClick = {}
                         ),
-                    moreButton =
+                    fourthButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
                             icon = R.drawable.ic_warning,

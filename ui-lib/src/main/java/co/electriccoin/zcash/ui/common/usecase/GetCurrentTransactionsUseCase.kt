@@ -40,5 +40,5 @@ class GetCurrentTransactionsUseCase(
 
 data class ListTransactionData(
     val transaction: Transaction,
-    val metadata: TransactionMetadata?
+    val metadata: TransactionMetadata
 )

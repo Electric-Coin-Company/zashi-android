@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.integrations.view
+package co.electriccoin.zcash.ui.screen.integrations
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -44,7 +44,6 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.integrations.model.IntegrationsState
 import co.electriccoin.zcash.ui.screen.settings.SettingsTag
 import kotlinx.collections.immutable.persistentListOf
 

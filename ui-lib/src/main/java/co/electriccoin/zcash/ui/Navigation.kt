@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -121,6 +122,7 @@ import org.koin.compose.koinInject
 @Suppress("LongMethod", "CyclomaticComplexMethod")
 internal fun MainActivity.Navigation() {
     val navController = LocalNavController.current
+    val focusManager = LocalFocusManager.current
     val flexaViewModel = koinViewModel<FlexaViewModel>()
     val navigationRouter = koinInject<NavigationRouter>()
 
@@ -130,7 +132,19 @@ internal fun MainActivity.Navigation() {
     val (deleteWalletAuthentication, setDeleteWalletAuthentication) =
         rememberSaveable { mutableStateOf(false) }
 
-    val navigator: Navigator = remember { NavigatorImpl(this@Navigation, navController, flexaViewModel) }
+    val navigator: Navigator =
+        remember(
+            navController,
+            flexaViewModel,
+            focusManager
+        ) {
+            NavigatorImpl(
+                activity = this@Navigation,
+                navController = navController,
+                flexaViewModel = flexaViewModel,
+                focusManager = focusManager
+            )
+        }
 
     LaunchedEffect(Unit) {
         navigationRouter.observePipeline().collect {
@@ -252,21 +266,8 @@ internal fun MainActivity.Navigation() {
         ) {
             AndroidAccountList()
         }
-        composable(
-            route = Scan.ROUTE,
-            arguments =
-                listOf(
-                    navArgument(Scan.KEY) {
-                        type = NavType.EnumType(Scan::class.java)
-                        defaultValue = Scan.SEND
-                    }
-                )
-        ) { backStackEntry ->
-            val mode =
-                backStackEntry.arguments
-                    ?.getSerializableCompat<Scan>(Scan.KEY) ?: Scan.SEND
-
-            WrapScanValidator(args = mode)
+        composable<Scan> {
+            WrapScanValidator(it.toRoute())
         }
         composable(EXPORT_PRIVATE_DATA) {
             WrapExportPrivateData(

@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.integrations.model
+package co.electriccoin.zcash.ui.screen.integrations
 
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.StringResource

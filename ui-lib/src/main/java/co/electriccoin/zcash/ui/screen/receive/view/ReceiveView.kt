@@ -196,9 +196,21 @@ private fun AddressPanel(
                         .fillMaxWidth()
                         .padding(top = ZcashTheme.dimens.spacingDefault)
             ) {
+                val containerColor =
+                    if (state.isShielded) {
+                        ZashiColors.Utility.Purple.utilityPurple100
+                    } else {
+                        ZashiColors.Surfaces.bgTertiary
+                    }
+                val contentColor =
+                    if (state.isShielded) {
+                        ZashiColors.Utility.Purple.utilityPurple800
+                    } else {
+                        ZashiColors.Text.textPrimary
+                    }
                 ReceiveIconButton(
-                    containerColor = ZashiColors.Utility.Purple.utilityPurple100,
-                    contentColor = ZashiColors.Utility.Purple.utilityPurple800,
+                    containerColor = containerColor,
+                    contentColor = contentColor,
                     iconPainter = painterResource(id = R.drawable.ic_copy_shielded),
                     onClick = state.onCopyClicked,
                     text = stringResource(id = R.string.receive_copy),
@@ -208,8 +220,8 @@ private fun AddressPanel(
                 Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
 
                 ReceiveIconButton(
-                    containerColor = ZashiColors.Utility.Purple.utilityPurple100,
-                    contentColor = ZashiColors.Utility.Purple.utilityPurple800,
+                    containerColor = containerColor,
+                    contentColor = contentColor,
                     iconPainter = painterResource(id = R.drawable.ic_qr_code_shielded),
                     onClick = state.onQrClicked,
                     text = stringResource(id = R.string.receive_qr_code),
@@ -219,8 +231,8 @@ private fun AddressPanel(
                 Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
 
                 ReceiveIconButton(
-                    containerColor = ZashiColors.Utility.Purple.utilityPurple100,
-                    contentColor = ZashiColors.Utility.Purple.utilityPurple800,
+                    containerColor = containerColor,
+                    contentColor = contentColor,
                     iconPainter = painterResource(id = R.drawable.ic_request_shielded),
                     onClick = state.onRequestClicked,
                     text = stringResource(id = R.string.receive_request),

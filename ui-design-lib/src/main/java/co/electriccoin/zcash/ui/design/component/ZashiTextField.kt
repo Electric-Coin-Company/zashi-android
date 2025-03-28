@@ -23,17 +23,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -41,6 +48,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
@@ -53,6 +61,15 @@ fun ZashiTextField(
     innerModifier: Modifier = ZashiTextFieldDefaults.innerModifier,
     error: String? = null,
     isEnabled: Boolean = true,
+    handle: ZashiTextFieldHandle =
+        rememberZashiTextFieldHandle(
+            TextFieldState(
+                value = stringRes(value),
+                error = error?.let { stringRes(it) },
+                isEnabled = isEnabled,
+                onValueChange = onValueChange,
+            )
+        ),
     readOnly: Boolean = false,
     textStyle: TextStyle = ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium),
     label: @Composable (() -> Unit)? = null,
@@ -99,7 +116,8 @@ fun ZashiTextField(
         interactionSource = interactionSource,
         shape = shape,
         colors = colors,
-        innerModifier = innerModifier
+        innerModifier = innerModifier,
+        handle = handle,
     )
 }
 
@@ -109,6 +127,7 @@ fun ZashiTextField(
     state: TextFieldState,
     modifier: Modifier = Modifier,
     innerModifier: Modifier = ZashiTextFieldDefaults.innerModifier,
+    handle: ZashiTextFieldHandle = rememberZashiTextFieldHandle(state),
     readOnly: Boolean = false,
     textStyle: TextStyle = ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium),
     label: @Composable (() -> Unit)? = null,
@@ -157,7 +176,8 @@ fun ZashiTextField(
         shape = shape,
         colors = colors,
         contentPadding = contentPadding,
-        innerModifier = innerModifier
+        innerModifier = innerModifier,
+        handle = handle
     )
 }
 
@@ -168,6 +188,24 @@ fun ZashiTextFieldPlaceholder(res: StringResource) {
         style = ZashiTypography.textMd,
         color = ZashiColors.Inputs.Default.text
     )
+}
+
+@Stable
+class ZashiTextFieldHandle(text: String) {
+    var textFieldValueState by mutableStateOf(TextFieldValue(text = text))
+
+    fun moveCursorToEnd() {
+        textFieldValueState =
+            textFieldValueState.copy(
+                selection = TextRange(textFieldValueState.text.length),
+            )
+    }
+}
+
+@Composable
+fun rememberZashiTextFieldHandle(state: TextFieldState): ZashiTextFieldHandle {
+    val context = LocalContext.current
+    return remember { ZashiTextFieldHandle(state.value.getString(context)) }
 }
 
 @Suppress("LongParameterList", "LongMethod")
@@ -194,11 +232,30 @@ private fun TextFieldInternal(
     shape: Shape,
     colors: ZashiTextFieldColors,
     contentPadding: PaddingValues,
+    handle: ZashiTextFieldHandle,
     modifier: Modifier = Modifier,
     innerModifier: Modifier = Modifier,
 ) {
-    val isFocused by interactionSource.collectIsFocusedAsState()
+    val context = LocalContext.current
+    val value = remember(state.value) { state.value.getString(context) }
+    // Holds the latest internal TextFieldValue state. We need to keep it to have the correct value
+    // of the composition.
+    val textFieldValueState = handle.textFieldValueState
+    // Holds the latest TextFieldValue that BasicTextField was recomposed with. We couldn't simply
+    // pass `TextFieldValue(text = value)` to the CoreTextField because we need to preserve the
+    // composition.
+    val textFieldValue = textFieldValueState.copy(text = value, selection = textFieldValueState.selection)
 
+    SideEffect {
+        if (textFieldValue.text != textFieldValueState.text ||
+            textFieldValue.selection != textFieldValueState.selection ||
+            textFieldValue.composition != textFieldValueState.composition
+        ) {
+            handle.textFieldValueState = textFieldValue
+        }
+    }
+
+    val isFocused by interactionSource.collectIsFocusedAsState()
     val borderColor by colors.borderColor(state, isFocused)
     val androidColors = colors.toTextFieldColors()
     // If color is not provided via the text style, use content color as a default
@@ -208,12 +265,14 @@ private fun TextFieldInternal(
         }
     val mergedTextStyle = textStyle.merge(TextStyle(color = textColor))
 
+    var lastTextValue by remember(value) { mutableStateOf(value) }
+
     CompositionLocalProvider(LocalTextSelectionColors provides androidColors.selectionColors) {
         Column(
             modifier = modifier,
         ) {
             BasicTextField(
-                value = state.value.getValue(),
+                value = textFieldValue,
                 modifier =
                     innerModifier then
                         if (borderColor == Color.Unspecified) {
@@ -225,7 +284,16 @@ private fun TextFieldInternal(
                                 shape = shape
                             )
                         },
-                onValueChange = state.onValueChange,
+                onValueChange = { newTextFieldValueState ->
+                    handle.textFieldValueState = newTextFieldValueState
+
+                    val stringChangedSinceLastInvocation = lastTextValue != newTextFieldValueState.text
+                    lastTextValue = newTextFieldValueState.text
+
+                    if (stringChangedSinceLastInvocation) {
+                        state.onValueChange(newTextFieldValueState.text)
+                    }
+                },
                 enabled = state.isEnabled,
                 readOnly = readOnly,
                 textStyle = mergedTextStyle,
@@ -237,38 +305,37 @@ private fun TextFieldInternal(
                 singleLine = singleLine,
                 maxLines = maxLines,
                 minLines = minLines,
-                decorationBox = @Composable { innerTextField ->
-                    // places leading icon, text field with label and placeholder, trailing icon
-                    TextFieldDefaults.DecorationBox(
-                        value = state.value.getValue(),
-                        visualTransformation = visualTransformation,
-                        innerTextField = {
-                            DecorationBox(prefix = prefix, suffix = suffix, content = innerTextField)
+            ) { innerTextField: @Composable () -> Unit ->
+                // places leading icon, text field with label and placeholder, trailing icon
+                TextFieldDefaults.DecorationBox(
+                    value = state.value.getValue(),
+                    visualTransformation = visualTransformation,
+                    innerTextField = {
+                        DecorationBox(prefix = prefix, suffix = suffix, content = innerTextField)
+                    },
+                    placeholder =
+                        if (placeholder != null) {
+                            {
+                                DecorationBox(prefix, suffix, placeholder)
+                            }
+                        } else {
+                            null
                         },
-                        placeholder =
-                            if (placeholder != null) {
-                                {
-                                    DecorationBox(prefix, suffix, placeholder)
-                                }
-                            } else {
-                                null
-                            },
-                        label = label,
-                        leadingIcon = leadingIcon,
-                        trailingIcon = trailingIcon,
-                        prefix = prefix,
-                        suffix = suffix,
-                        supportingText = supportingText,
-                        shape = shape,
-                        singleLine = singleLine,
-                        enabled = state.isEnabled,
-                        isError = state.isError,
-                        interactionSource = interactionSource,
-                        colors = androidColors,
-                        contentPadding = contentPadding
-                    )
-                }
-            )
+                    label = label,
+                    leadingIcon = leadingIcon,
+                    trailingIcon = trailingIcon,
+                    prefix = prefix,
+                    suffix = suffix,
+                    supportingText = supportingText,
+                    shape = shape,
+                    singleLine = singleLine,
+                    enabled = state.isEnabled,
+                    isError = state.isError,
+                    interactionSource = interactionSource,
+                    colors = androidColors,
+                    contentPadding = contentPadding
+                )
+            }
 
             if (state.error != null && state.error.getValue().isNotEmpty()) {
                 Spacer(modifier = Modifier.height(6.dp))

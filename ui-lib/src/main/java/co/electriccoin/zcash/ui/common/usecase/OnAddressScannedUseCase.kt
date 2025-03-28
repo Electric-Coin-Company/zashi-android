@@ -4,6 +4,7 @@ import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.scan.Scan
+import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import co.electriccoin.zcash.ui.screen.send.Send
 
 class OnAddressScannedUseCase(
@@ -13,21 +14,21 @@ class OnAddressScannedUseCase(
     operator fun invoke(
         address: String,
         addressType: AddressType,
-        scanFlow: Scan
+        scanArgs: Scan
     ) {
         require(addressType is AddressType.Valid)
 
-        when (scanFlow) {
-            Scan.SEND -> {
+        when (scanArgs.flow) {
+            ScanFlow.SEND -> {
                 prefillSend.request(PrefillSendData.FromAddressScan(address = address))
                 navigationRouter.back()
             }
 
-            Scan.ADDRESS_BOOK -> {
+            ScanFlow.ADDRESS_BOOK -> {
                 navigationRouter.replace(AddContactArgs(address))
             }
 
-            Scan.HOMEPAGE -> {
+            ScanFlow.HOMEPAGE -> {
                 navigationRouter.replace(
                     Send(
                         address,

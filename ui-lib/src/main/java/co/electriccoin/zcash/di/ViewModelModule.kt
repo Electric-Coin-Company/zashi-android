@@ -15,7 +15,7 @@ import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.home.HomeViewModel
-import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewModel
+import co.electriccoin.zcash.ui.screen.integrations.IntegrationsViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
 import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
@@ -92,18 +92,7 @@ val viewModelModule =
         }
         viewModelOf(::ScanKeystoneSignInRequestViewModel)
         viewModelOf(::ScanKeystonePCZTViewModel)
-        viewModel { (isDialog: Boolean) ->
-            IntegrationsViewModel(
-                isDialog = isDialog,
-                getZcashCurrency = get(),
-                isFlexaAvailableUseCase = get(),
-                isCoinbaseAvailable = get(),
-                observeWalletAccounts = get(),
-                navigationRouter = get(),
-                navigateToCoinbase = get(),
-                getWalletRestoringState = get()
-            )
-        }
+        viewModelOf(::IntegrationsViewModel)
         viewModelOf(::FlexaViewModel)
         viewModelOf(::SendViewModel)
         viewModelOf(::SeedRecoveryViewModel)

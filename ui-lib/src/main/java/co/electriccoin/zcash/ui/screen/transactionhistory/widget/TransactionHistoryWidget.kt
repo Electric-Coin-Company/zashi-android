@@ -101,7 +101,7 @@ private fun LazyListScope.transactionHistoryEmptyWidget(state: TransactionHistor
                         ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(Modifier.height(90.dp))
+                Spacer(Modifier.height(72.dp))
                 Image(
                     painter = painterResource(R.drawable.ic_transaction_widget_empty),
                     contentDescription = null,

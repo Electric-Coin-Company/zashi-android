@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui
 
 import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.focus.FocusManager
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.serialization.generateHashCode
@@ -21,8 +22,10 @@ class NavigatorImpl(
     private val activity: ComponentActivity,
     private val navController: NavHostController,
     private val flexaViewModel: FlexaViewModel,
+    private val focusManager: FocusManager,
 ) : Navigator {
     override fun executeCommand(command: NavigationCommand) {
+        focusManager.clearFocus(true)
         when (command) {
             is NavigationCommand.Forward -> forward(command)
             is NavigationCommand.Replace -> replace(command)

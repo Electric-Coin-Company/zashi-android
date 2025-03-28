@@ -3,8 +3,8 @@
 package co.electriccoin.zcash.ui.screen.restore.seed
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement.spacedBy
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +23,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -63,9 +64,9 @@ import java.util.Locale
 @Composable
 fun RestoreSeedView(
     state: RestoreSeedState,
-    suggestionsState: RestoreSeedSuggestionsState?
+    suggestionsState: RestoreSeedSuggestionsState
 ) {
-    val handle = rememberSeedTextFieldHandle()
+    val handle = rememberSeedTextFieldHandle(state.seed)
 
     BlankBgScaffold(
         topBar = { AppBar(state) },
@@ -112,11 +113,13 @@ private fun Content(
             wordModifier = { Modifier.testTag(RestoreSeedTag.SEED_WORD_TEXT_FIELD) }
         )
         Spacer(Modifier.weight(1f))
-        Spacer(Modifier.height(24.dp))
-        ZashiButton(
-            state.nextButton,
-            modifier = Modifier.fillMaxWidth(),
-        )
+        state.nextButton?.let {
+            Spacer(Modifier.height(24.dp))
+            ZashiButton(
+                state = state.nextButton,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
     }
 }
 
@@ -146,36 +149,48 @@ private fun AppBar(state: RestoreSeedState) {
 @Composable
 private fun BottomBar(
     state: RestoreSeedState,
-    suggestionsState: RestoreSeedSuggestionsState?,
+    suggestionsState: RestoreSeedSuggestionsState,
     handle: SeedTextFieldHandle,
     modifier: Modifier = Modifier,
 ) {
+    val suggestions by remember(suggestionsState, handle) {
+        derivedStateOf { getFilteredSuggestions(suggestionsState, handle) }
+    }
     var previousIndex by remember { mutableIntStateOf(handle.selectedIndex) }
     var previousText by remember { mutableStateOf(handle.selectedText) }
-    if (suggestionsState != null && suggestionsState.isVisible && handle.selectedIndex >= 0) {
-        Column(
-            modifier = modifier
+    LaunchedEffect(handle.selectedIndex, handle.selectedText) {
+        if (
+            previousIndex == handle.selectedIndex &&
+            previousText != handle.selectedText &&
+            suggestions.contains(handle.selectedText) && suggestions.size == 1
         ) {
-            val suggestions = getFilteredSuggestions(suggestionsState, handle)
-
-            if (suggestions.isEmpty()) {
-                Warn()
-            } else {
-                LaunchedEffect(handle.selectedIndex, handle.selectedText) {
-                    if (previousIndex == handle.selectedIndex &&
-                        previousText != handle.selectedText &&
-                        suggestions.contains(handle.selectedText) &&
-                        suggestions.size == 1
-                    ) {
-                        previousIndex = handle.selectedIndex
-                        previousText = null
-                        handle.requestNextFocus()
-                    } else {
-                        previousIndex = handle.selectedIndex
-                        previousText = handle.selectedText
+            val nextIndex =
+                state.seed.values
+                    .withIndex()
+                    .indexOfFirst { (index, field) ->
+                        index >= handle.selectedIndex && (field.value.isBlank() || field.isError)
                     }
-                }
 
+            handle.setSelectedIndex(nextIndex)
+        }
+        previousIndex = handle.selectedIndex
+        previousText = handle.selectedText
+    }
+
+    if (suggestionsState.isVisible &&
+        handle.selectedIndex >= 0 &&
+        !handle.selectedText.isNullOrEmpty() &&
+        !(suggestions.size == 1 && suggestions.contains(handle.selectedText))
+    ) {
+        if (suggestions.isEmpty()) {
+            Warn(
+                modifier = modifier
+            )
+        } else {
+            Surface(
+                Modifier.padding(top = 8.dp),
+                color = ZashiColors.Surfaces.bgPrimary
+            ) {
                 LazyRow(
                     modifier =
                         Modifier
@@ -192,7 +207,6 @@ private fun BottomBar(
                                     onClick = {
                                         if (handle.selectedIndex >= 0) {
                                             state.seed.values[handle.selectedIndex].onValueChange(it)
-                                            handle.requestNextFocus()
                                         }
                                     }
                                 ),
@@ -207,31 +221,29 @@ private fun BottomBar(
 
 @Composable
 private fun Warn(modifier: Modifier = Modifier) {
-    Surface(
-        shape = RoundedCornerShape(size = ZcashTheme.dimens.tinyRippleEffectCorner),
-        modifier =
-            modifier.then(
-                Modifier.border(
-                    border =
-                        BorderStroke(
-                            width = ZcashTheme.dimens.chipStroke,
-                            color = ZcashTheme.colors.layoutStrokeSecondary
-                        ),
-                    shape = RoundedCornerShape(size = ZcashTheme.dimens.tinyRippleEffectCorner),
-                )
-            ),
-        color = ZcashTheme.colors.primaryColor,
-        shadowElevation = ZcashTheme.dimens.chipShadowElevation
+    Box(
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 4.dp)
     ) {
-        Text(
-            color = ZcashTheme.colors.textPrimary,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(ZcashTheme.dimens.spacingSmall),
-            textAlign = TextAlign.Center,
-            text = stringResource(R.string.restore_seed_warning_suggestions)
-        )
+        Surface(
+            shape = RoundedCornerShape(size = ZcashTheme.dimens.tinyRippleEffectCorner),
+            color = ZcashTheme.colors.primaryColor,
+            border =
+                BorderStroke(
+                    width = ZcashTheme.dimens.chipStroke,
+                    color = ZcashTheme.colors.layoutStrokeSecondary
+                ),
+            shadowElevation = ZcashTheme.dimens.chipShadowElevation
+        ) {
+            Text(
+                color = ZcashTheme.colors.textPrimary,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(ZcashTheme.dimens.spacingSmall),
+                textAlign = TextAlign.Center,
+                text = stringResource(R.string.restore_seed_warning_suggestions)
+            )
+        }
     }
 }
 
