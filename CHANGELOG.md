@@ -6,12 +6,15 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [1.5 (923)] - 2025-03-27
+
 ### Added
 - Support for `zcashtestnetFossRelease` has been added to the app resources package
 
 ### Changed
 - All internal dependencies have been updated
 - Bip39 v1.0.9
+- Zcash SDK v2.2.10-SNAPSHOT
 
 ### Fixed
 - We fixed the `zcashtestnetStoreDebug` app build variant file provider, so the export private data and export tax 
