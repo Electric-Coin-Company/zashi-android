@@ -6,6 +6,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Changed
+- Flexa v1.0.12
+
 ## [1.5 (923)] - 2025-03-27
 
 ### Added
