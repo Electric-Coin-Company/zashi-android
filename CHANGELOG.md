@@ -6,8 +6,13 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [1.5.1 (925)] - 2025-03-31
+
 ### Changed
 - Flexa v1.0.12
+
+### Fixed
+- The Flexa issue of voucher signing timeouts has been fixed. 
 
 ## [1.5 (923)] - 2025-03-27
 
