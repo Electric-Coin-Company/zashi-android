@@ -137,7 +137,6 @@ private fun Preview() =
             state =
                 TransactionNoteState(
                     onBack = {},
-                    onBottomSheetHidden = {},
                     title = stringRes("Title"),
                     note = TextFieldState(stringRes("")) {},
                     noteCharacters =

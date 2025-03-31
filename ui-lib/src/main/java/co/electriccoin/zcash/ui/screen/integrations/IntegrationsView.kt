@@ -197,7 +197,6 @@ private fun IntegrationSettings() =
                                 onClick = {}
                             ),
                         ),
-                    onBottomSheetHidden = {}
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )

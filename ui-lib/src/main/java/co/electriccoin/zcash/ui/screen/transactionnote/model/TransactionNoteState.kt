@@ -7,7 +7,6 @@ import co.electriccoin.zcash.ui.design.util.StyledStringResource
 
 data class TransactionNoteState(
     val onBack: () -> Unit,
-    val onBottomSheetHidden: () -> Unit,
     val title: StringResource,
     val note: TextFieldState,
     val noteCharacters: StyledStringResource,

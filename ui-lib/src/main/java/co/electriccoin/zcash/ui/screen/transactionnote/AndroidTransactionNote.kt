@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetValue.Expanded
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -12,6 +13,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.electriccoin.zcash.ui.design.LocalSheetStateManager
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
 import co.electriccoin.zcash.ui.screen.transactionnote.view.TransactionNoteView
 import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNoteViewModel
@@ -26,7 +28,13 @@ fun AndroidTransactionNote(transactionNote: TransactionNote) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
+    val sheetManager = LocalSheetStateManager.current
+    DisposableEffect(sheetState) {
+        sheetManager.onSheetOpened(sheetState)
+        onDispose {
+            sheetManager.onSheetDisposed(sheetState)
+        }
+    }
     val parent = LocalView.current.parent
 
     SideEffect {
@@ -49,13 +57,6 @@ fun AndroidTransactionNote(transactionNote: TransactionNote) {
             if (it == Expanded) {
                 this.cancel()
             }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.hideBottomSheetRequest.collect {
-            sheetState.hide()
-            state.onBottomSheetHidden()
         }
     }
 

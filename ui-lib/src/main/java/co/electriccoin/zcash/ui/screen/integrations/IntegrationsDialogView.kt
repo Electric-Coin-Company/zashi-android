@@ -132,7 +132,6 @@ private fun IntegrationSettings() =
                                 onClick = {}
                             ),
                         ),
-                    onBottomSheetHidden = {}
                 ),
         )
     }

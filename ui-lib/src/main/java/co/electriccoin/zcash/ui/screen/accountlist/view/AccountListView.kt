@@ -270,7 +270,6 @@ private fun Preview() =
                             )
                         ),
                     isLoading = false,
-                    onBottomSheetHidden = {},
                     onBack = {},
                     addWalletButton = ButtonState(stringRes("Connect Hardware Wallet"))
                 ),
@@ -315,7 +314,6 @@ private fun HardwareWalletAddedPreview() =
                             ),
                         ),
                     isLoading = false,
-                    onBottomSheetHidden = {},
                     onBack = {},
                     addWalletButton = null
                 ),

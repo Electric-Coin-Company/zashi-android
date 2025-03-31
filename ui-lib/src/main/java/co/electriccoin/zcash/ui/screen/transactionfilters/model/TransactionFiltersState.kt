@@ -6,7 +6,6 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 data class TransactionFiltersState(
     val filters: List<TransactionFilterState>,
     val onBack: () -> Unit,
-    val onBottomSheetHidden: () -> Unit,
     val primaryButton: ButtonState,
     val secondaryButton: ButtonState
 )

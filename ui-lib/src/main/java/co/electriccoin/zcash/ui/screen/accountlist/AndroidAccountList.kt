@@ -4,12 +4,14 @@ import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.electriccoin.zcash.ui.design.LocalSheetStateManager
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
 import co.electriccoin.zcash.ui.screen.accountlist.view.AccountListView
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
@@ -22,6 +24,13 @@ fun AndroidAccountList() {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetManager = LocalSheetStateManager.current
+    DisposableEffect(sheetState) {
+        sheetManager.onSheetOpened(sheetState)
+        onDispose {
+            sheetManager.onSheetDisposed(sheetState)
+        }
+    }
 
     val parent = LocalView.current.parent
 
@@ -41,13 +50,6 @@ fun AndroidAccountList() {
 
         LaunchedEffect(Unit) {
             sheetState.show()
-        }
-
-        LaunchedEffect(Unit) {
-            viewModel.hideBottomSheetRequest.collect {
-                sheetState.hide()
-                state?.onBottomSheetHidden?.invoke()
-            }
         }
 
         BackHandler {

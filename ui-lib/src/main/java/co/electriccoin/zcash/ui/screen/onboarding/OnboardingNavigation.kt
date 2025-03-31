@@ -6,7 +6,6 @@ import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,6 +26,8 @@ import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.design.LocalKeyboardManager
+import co.electriccoin.zcash.ui.design.LocalSheetStateManager
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
@@ -51,19 +52,23 @@ fun MainActivity.OnboardingNavigation() {
     val activity = LocalActivity.current
     val navigationRouter = koinInject<NavigationRouter>()
     val navController = LocalNavController.current
-    val focusManager = LocalFocusManager.current
+    val keyboardManager = LocalKeyboardManager.current
     val flexaViewModel = koinViewModel<FlexaViewModel>()
+    val sheetStateManager = LocalSheetStateManager.current
+
     val navigator: Navigator =
         remember(
             navController,
             flexaViewModel,
-            focusManager
+            keyboardManager,
+            sheetStateManager
         ) {
             NavigatorImpl(
                 activity = this@OnboardingNavigation,
                 navController = navController,
                 flexaViewModel = flexaViewModel,
-                focusManager = focusManager
+                keyboardManager = keyboardManager,
+                sheetStateManager = sheetStateManager
             )
         }
 

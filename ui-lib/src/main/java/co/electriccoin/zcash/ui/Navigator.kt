@@ -2,10 +2,11 @@ package co.electriccoin.zcash.ui
 
 import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.focus.FocusManager
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.serialization.generateHashCode
+import co.electriccoin.zcash.ui.design.KeyboardManager
+import co.electriccoin.zcash.ui.design.SheetStateManager
 import co.electriccoin.zcash.ui.screen.ExternalUrl
 import co.electriccoin.zcash.ui.screen.about.util.WebBrowserUtil
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
@@ -15,17 +16,19 @@ import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.serializer
 
 interface Navigator {
-    fun executeCommand(command: NavigationCommand)
+    suspend fun executeCommand(command: NavigationCommand)
 }
 
 class NavigatorImpl(
     private val activity: ComponentActivity,
     private val navController: NavHostController,
     private val flexaViewModel: FlexaViewModel,
-    private val focusManager: FocusManager,
+    private val keyboardManager: KeyboardManager,
+    private val sheetStateManager: SheetStateManager,
 ) : Navigator {
-    override fun executeCommand(command: NavigationCommand) {
-        focusManager.clearFocus(true)
+    override suspend fun executeCommand(command: NavigationCommand) {
+        keyboardManager.close()
+        sheetStateManager.hide()
         when (command) {
             is NavigationCommand.Forward -> forward(command)
             is NavigationCommand.Replace -> replace(command)

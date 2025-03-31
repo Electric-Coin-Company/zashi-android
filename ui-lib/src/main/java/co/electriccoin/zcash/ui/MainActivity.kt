@@ -118,7 +118,6 @@ class MainActivity : FragmentActivity() {
                 }
             }
 
-            // Note this condition needs to be kept in sync with the condition in MainContent()
             SecretState.LOADING == walletViewModel.secretState.value
         }
     }

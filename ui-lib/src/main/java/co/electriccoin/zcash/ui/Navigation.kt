@@ -6,7 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +38,8 @@ import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.provider.isInForeground
+import co.electriccoin.zcash.ui.design.LocalKeyboardManager
+import co.electriccoin.zcash.ui.design.LocalSheetStateManager
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
@@ -122,9 +123,10 @@ import org.koin.compose.koinInject
 @Suppress("LongMethod", "CyclomaticComplexMethod")
 internal fun MainActivity.Navigation() {
     val navController = LocalNavController.current
-    val focusManager = LocalFocusManager.current
+    val keyboardManager = LocalKeyboardManager.current
     val flexaViewModel = koinViewModel<FlexaViewModel>()
     val navigationRouter = koinInject<NavigationRouter>()
+    val sheetStateManager = LocalSheetStateManager.current
 
     // Helper properties for triggering the system security UI from callbacks
     val (exportPrivateDataAuthentication, setExportPrivateDataAuthentication) =
@@ -136,13 +138,15 @@ internal fun MainActivity.Navigation() {
         remember(
             navController,
             flexaViewModel,
-            focusManager
+            keyboardManager,
+            sheetStateManager
         ) {
             NavigatorImpl(
                 activity = this@Navigation,
                 navController = navController,
                 flexaViewModel = flexaViewModel,
-                focusManager = focusManager
+                keyboardManager = keyboardManager,
+                sheetStateManager = sheetStateManager
             )
         }
 

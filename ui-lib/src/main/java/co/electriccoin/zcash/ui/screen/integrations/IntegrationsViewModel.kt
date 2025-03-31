@@ -25,11 +25,9 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import co.electriccoin.zcash.ui.screen.flexa.Flexa
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -45,10 +43,6 @@ class IntegrationsViewModel(
     private val navigationRouter: NavigationRouter,
     private val navigateToCoinbase: NavigateToCoinbaseUseCase,
 ) : ViewModel() {
-    val hideBottomSheetRequest = MutableSharedFlow<Unit>()
-
-    private val bottomSheetHiddenResponse = MutableSharedFlow<Unit>()
-
     private val isRestoring = getWalletRestoringState.observe().map { it == WalletRestoringState.RESTORING }
 
     val state =
@@ -123,43 +117,25 @@ class IntegrationsViewModel(
                     onClick = ::onConnectKeystoneClick
                 ).takeIf { keystoneStatus != UNAVAILABLE },
             ).toImmutableList(),
-        onBottomSheetHidden = ::onBottomSheetHidden
     )
 
     private fun onBack() = navigationRouter.back()
 
-    private suspend fun hideBottomSheet() {
-        if (isDialog) {
-            hideBottomSheetRequest.emit(Unit)
-            bottomSheetHiddenResponse.first()
-        }
-    }
-
-    private fun onBottomSheetHidden() =
-        viewModelScope.launch {
-            bottomSheetHiddenResponse.emit(Unit)
-        }
-
     private fun onBuyWithCoinbaseClicked() =
         viewModelScope.launch {
-            hideBottomSheet()
             navigateToCoinbase(isDialog)
         }
 
     private fun onConnectKeystoneClick() =
         viewModelScope.launch {
-            hideBottomSheet()
             navigationRouter.replace(ConnectKeystone)
         }
 
-    private fun onFlexaClicked() =
-        viewModelScope.launch {
-            if (isDialog) {
-                hideBottomSheet()
-                navigationRouter.replace(Flexa)
-            } else {
-                hideBottomSheet()
-                navigationRouter.forward(Flexa)
-            }
+    private fun onFlexaClicked() {
+        if (isDialog) {
+            navigationRouter.replace(Flexa)
+        } else {
+            navigationRouter.forward(Flexa)
         }
+    }
 }
