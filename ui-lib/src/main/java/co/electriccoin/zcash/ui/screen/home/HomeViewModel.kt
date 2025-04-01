@@ -79,19 +79,19 @@ class HomeViewModel(
     ) = HomeState(
         firstButton =
             BigIconButtonState(
-                text = stringRes("Receive"),
+                text = stringRes(R.string.home_button_receive),
                 icon = R.drawable.ic_home_receive,
                 onClick = ::onReceiveButtonClick,
             ),
         secondButton =
             BigIconButtonState(
-                text = stringRes("Send"),
+                text = stringRes(R.string.home_button_send),
                 icon = R.drawable.ic_home_send,
                 onClick = ::onSendButtonClick,
             ),
         thirdButton =
             BigIconButtonState(
-                text = stringRes("Scan"),
+                text = stringRes(R.string.home_button_scan),
                 icon = R.drawable.ic_home_scan,
                 onClick = ::onScanButtonClick,
             ),
@@ -99,21 +99,21 @@ class HomeViewModel(
             when {
                 getVersionInfoProvider().distributionDimension == DistributionDimension.FOSS ->
                     BigIconButtonState(
-                        text = stringRes("Request"),
+                        text = stringRes(R.string.home_button_request),
                         icon = R.drawable.ic_home_request,
                         onClick = ::onRequestClick,
                     )
 
                 selectedAccount is KeystoneAccount ->
                     BigIconButtonState(
-                        text = stringRes("Buy"),
+                        text = stringRes(R.string.home_button_buy),
                         icon = R.drawable.ic_home_buy,
                         onClick = ::onBuyClick,
                     )
 
                 else ->
                     BigIconButtonState(
-                        text = stringRes("More"),
+                        text = stringRes(R.string.home_button_more),
                         icon = R.drawable.ic_home_more,
                         onClick = ::onMoreButtonClick,
                     )

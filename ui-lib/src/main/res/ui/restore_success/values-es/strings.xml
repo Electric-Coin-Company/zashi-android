@@ -7,4 +7,6 @@
     <string name="restore_success_note_part_1">Nota:</string>
     <string name="restore_success_note_part_2">Your funds cannot be spent with Zashi until your wallet is fully restored.</string>
     <string name="restore_success_button">¡Entendido!</string>
+    <string name="restore_success_bullet_1">Keep the Zashi app open on an active phone screen.</string>
+    <string name="restore_success_bullet_2">To prevent your phone screen from going dark, turn off power-saving mode and keep your phone plugged in.</string>
 </resources>
