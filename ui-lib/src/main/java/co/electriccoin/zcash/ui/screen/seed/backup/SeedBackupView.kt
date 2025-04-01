@@ -157,10 +157,11 @@ private fun Content(
         VerticalSpacer(24.dp)
 
         ZashiButton(
-            state = ButtonState(
-                text = stringRes(stringResource(R.string.wallet_backup_btn)),
-                onClick = state.onNextClick
-            ),
+            state =
+                ButtonState(
+                    text = stringRes(stringResource(R.string.wallet_backup_btn)),
+                    onClick = state.onNextClick
+                ),
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -202,10 +203,11 @@ private fun Preview() =
     ZcashTheme {
         SeedBackupView(
             appBarState = TopAppBarSubTitleState.None,
-            state = SeedBackupState(
-                onBack = {},
-                onNextClick = {},
-                onInfoClick = {}
-            )
+            state =
+                SeedBackupState(
+                    onBack = {},
+                    onNextClick = {},
+                    onInfoClick = {}
+                )
         )
     }

@@ -40,7 +40,6 @@ class HomeViewModel(
     private val isRestoreSuccessDialogVisible: IsRestoreSuccessDialogVisibleUseCase,
     private val navigateToCoinbase: NavigateToCoinbaseUseCase
 ) : ViewModel() {
-
     private val isMessageVisible = MutableStateFlow(true)
 
     private val isRestoreDialogVisible: Flow<Boolean?> =

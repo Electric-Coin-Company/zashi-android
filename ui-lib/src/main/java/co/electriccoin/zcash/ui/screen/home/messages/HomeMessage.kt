@@ -35,6 +35,7 @@ import androidx.compose.ui.zIndex
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import kotlinx.coroutines.delay
 
+@Suppress("MagicNumber")
 @Composable
 fun HomeMessage(state: HomeMessageState?) {
     val cutoutHeight = 16.dp
@@ -46,36 +47,41 @@ fun HomeMessage(state: HomeMessageState?) {
     )
 
     Box(
-        modifier = Modifier
-            .background(Color.Gray)
+        modifier =
+            Modifier
+                .background(Color.Gray)
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(cutoutHeight)
-                .zIndex(2f)
-                .bottomOnlyShadow(
-                    elevation = 2.dp,
-                    shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp),
-                    backgroundColor = ZashiColors.Surfaces.bgPrimary
-                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(cutoutHeight)
+                    .zIndex(2f)
+                    .bottomOnlyShadow(
+                        elevation = 2.dp,
+                        shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp),
+                        backgroundColor = ZashiColors.Surfaces.bgPrimary
+                    ),
         )
 
         AnimatedVisibility(
-            modifier = Modifier
-                .fillMaxWidth()
-                .zIndex(0f),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .zIndex(0f),
             visible = isVisible,
             enter = expandIn(animationSpec = tween(350)),
             exit = shrinkOut(animationSpec = tween(350))
         ) {
             when (normalizedState) {
-                is WalletBackupMessageState -> WalletBackupMessage(
-                    state = normalizedState as WalletBackupMessageState,
-                    contentPadding = PaddingValues(
-                        vertical = cutoutHeight
+                is WalletBackupMessageState ->
+                    WalletBackupMessage(
+                        state = normalizedState as WalletBackupMessageState,
+                        contentPadding =
+                            PaddingValues(
+                                vertical = cutoutHeight
+                            )
                     )
-                )
 
                 null -> {
                     // do nothing
@@ -84,16 +90,17 @@ fun HomeMessage(state: HomeMessageState?) {
         }
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(cutoutHeight)
-                .zIndex(1f)
-                .align(Alignment.BottomCenter)
-                .topOnlyShadow(
-                    elevation = 2.dp,
-                    shape = RoundedCornerShape(topStart = bottomCornerSize, topEnd = bottomCornerSize),
-                    backgroundColor = ZashiColors.Surfaces.bgPrimary
-                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(cutoutHeight)
+                    .zIndex(1f)
+                    .align(Alignment.BottomCenter)
+                    .topOnlyShadow(
+                        elevation = 2.dp,
+                        shape = RoundedCornerShape(topStart = bottomCornerSize, topEnd = bottomCornerSize),
+                        backgroundColor = ZashiColors.Surfaces.bgPrimary
+                    ),
         )
     }
 
@@ -116,25 +123,26 @@ private fun Modifier.bottomOnlyShadow(
     clip: Boolean = elevation > 0.dp,
     ambientColor: Color = DefaultShadowColor,
     spotColor: Color = DefaultShadowColor,
-): Modifier = this
-    .drawWithCache {
-        //  bottom shadow offset in Px based on elevation
-        val bottomOffsetPx = elevation.toPx()
-        // Adjust the size to extend the bottom by the bottom shadow offset
-        val adjustedSize = Size(size.width, size.height + bottomOffsetPx)
-        val outline = shape.createOutline(adjustedSize, layoutDirection, this)
-        val path = Path().apply { addOutline(outline) }
-        onDrawWithContent {
-            clipPath(path, ClipOp.Intersect) {
-                this@onDrawWithContent.drawContent()
+): Modifier =
+    this
+        .drawWithCache {
+            //  bottom shadow offset in Px based on elevation
+            val bottomOffsetPx = elevation.toPx()
+            // Adjust the size to extend the bottom by the bottom shadow offset
+            val adjustedSize = Size(size.width, size.height + bottomOffsetPx)
+            val outline = shape.createOutline(adjustedSize, layoutDirection, this)
+            val path = Path().apply { addOutline(outline) }
+            onDrawWithContent {
+                clipPath(path, ClipOp.Intersect) {
+                    this@onDrawWithContent.drawContent()
+                }
             }
         }
-    }
-    .shadow(elevation, shape, clip, ambientColor, spotColor)
-    .background(
-        backgroundColor,
-        shape
-    )
+        .shadow(elevation, shape, clip, ambientColor, spotColor)
+        .background(
+            backgroundColor,
+            shape
+        )
 
 private fun Modifier.topOnlyShadow(
     elevation: Dp,
@@ -143,20 +151,21 @@ private fun Modifier.topOnlyShadow(
     clip: Boolean = elevation > 0.dp,
     ambientColor: Color = DefaultShadowColor,
     spotColor: Color = DefaultShadowColor,
-): Modifier = this
-    .drawWithCache {
-        // Adjust the size to extend the bottom by the bottom shadow offset
-        val adjustedSize = Size(size.width, size.height)
-        val outline = shape.createOutline(adjustedSize, layoutDirection, this)
-        val path = Path().apply { addOutline(outline) }
-        onDrawWithContent {
-            clipPath(path, ClipOp.Intersect) {
-                this@onDrawWithContent.drawContent()
+): Modifier =
+    this
+        .drawWithCache {
+            // Adjust the size to extend the bottom by the bottom shadow offset
+            val adjustedSize = Size(size.width, size.height)
+            val outline = shape.createOutline(adjustedSize, layoutDirection, this)
+            val path = Path().apply { addOutline(outline) }
+            onDrawWithContent {
+                clipPath(path, ClipOp.Intersect) {
+                    this@onDrawWithContent.drawContent()
+                }
             }
         }
-    }
-    .shadow(elevation, shape, clip, ambientColor, spotColor)
-    .background(
-        backgroundColor,
-        shape
-    )
+        .shadow(elevation, shape, clip, ambientColor, spotColor)
+        .background(
+            backgroundColor,
+            shape
+        )

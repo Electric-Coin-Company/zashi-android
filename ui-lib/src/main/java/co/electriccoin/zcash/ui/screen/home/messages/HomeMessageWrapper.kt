@@ -25,10 +25,11 @@ fun HomeMessageWrapper(
             modifier = Modifier.padding(contentPadding)
         ) {
             Row(
-                modifier = Modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = 14.dp
-                ),
+                modifier =
+                    Modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 14.dp
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
                 content = content
             )

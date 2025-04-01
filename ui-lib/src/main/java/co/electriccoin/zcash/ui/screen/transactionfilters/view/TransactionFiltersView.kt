@@ -35,8 +35,9 @@ import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiChipButton
 import co.electriccoin.zcash.ui.design.component.ZashiChipButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
-import co.electriccoin.zcash.ui.design.component.ZashiModalBottomSheet
+import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
+import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -47,16 +48,15 @@ import co.electriccoin.zcash.ui.screen.transactionfilters.model.TransactionFilte
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun TransactionFiltersView(
-    onDismissRequest: () -> Unit,
-    sheetState: SheetState,
-    state: TransactionFiltersState?
+    state: TransactionFiltersState?,
+    sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
-    ZashiModalBottomSheet(
+    ZashiScreenModalBottomSheet(
+        state = state,
         sheetState = sheetState,
         content = {
             BottomSheetContent(state)
         },
-        onDismissRequest = onDismissRequest
     )
 }
 
@@ -168,7 +168,6 @@ private fun Preview() =
     ZcashTheme {
         TransactionFiltersView(
             state = TransactionFiltersStateFixture.new(),
-            onDismissRequest = {},
             sheetState =
                 rememberModalBottomSheetState(
                     skipHiddenState = true,

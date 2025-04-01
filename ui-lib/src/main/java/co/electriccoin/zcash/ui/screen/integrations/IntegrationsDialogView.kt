@@ -25,9 +25,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.HorizontalSpacer
-import co.electriccoin.zcash.ui.design.component.ZashiModalBottomSheet
+import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
+import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -38,16 +39,15 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun IntegrationsDialogView(
-    onDismissRequest: () -> Unit,
-    sheetState: SheetState,
-    state: IntegrationsState
+    state: IntegrationsState,
+    sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
-    ZashiModalBottomSheet(
+    ZashiScreenModalBottomSheet(
+        state = state,
         sheetState = sheetState,
         content = {
             BottomSheetContent(state)
         },
-        onDismissRequest = onDismissRequest
     )
 }
 
@@ -99,7 +99,6 @@ fun BottomSheetContent(state: IntegrationsState) {
 private fun IntegrationSettings() =
     ZcashTheme {
         IntegrationsDialogView(
-            onDismissRequest = {},
             sheetState =
                 rememberModalBottomSheetState(
                     skipHiddenState = true,

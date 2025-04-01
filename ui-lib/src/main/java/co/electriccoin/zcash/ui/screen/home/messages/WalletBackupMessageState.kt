@@ -25,7 +25,10 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
-fun WalletBackupMessage(state: WalletBackupMessageState, contentPadding: PaddingValues) {
+fun WalletBackupMessage(
+    state: WalletBackupMessageState,
+    contentPadding: PaddingValues
+) {
     HomeMessageWrapper(
         color = ZashiColors.Utility.Espresso.utilityEspresso100,
         contentPadding = contentPadding,
@@ -54,10 +57,11 @@ fun WalletBackupMessage(state: WalletBackupMessageState, contentPadding: Padding
         }
         ZashiButton(
             modifier = Modifier.height(36.dp),
-            state = ButtonState(
-                onClick = state.onClick,
-                text = stringRes("Start")
-            )
+            state =
+                ButtonState(
+                    onClick = state.onClick,
+                    text = stringRes("Start")
+                )
         )
     }
 }
@@ -69,13 +73,15 @@ data class WalletBackupMessageState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        WalletBackupMessage(
-            state = WalletBackupMessageState(
-                onClick = {}
-            ),
-            contentPadding = PaddingValues()
-        )
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            WalletBackupMessage(
+                state =
+                    WalletBackupMessageState(
+                        onClick = {}
+                    ),
+                contentPadding = PaddingValues()
+            )
+        }
     }
-}

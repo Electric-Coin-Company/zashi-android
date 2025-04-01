@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.restore.info
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,8 +27,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ZashiButton
-import co.electriccoin.zcash.ui.design.component.ZashiModalBottomSheet
+import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
+import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -38,19 +38,15 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun SeedInfoView(
-    onDismissRequest: () -> Unit,
     state: SeedInfoState,
-    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+    sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
-    ZashiModalBottomSheet(
+    ZashiScreenModalBottomSheet(
+        state = state,
         sheetState = sheetState,
         content = {
-            BackHandler {
-                state.onBack()
-            }
             Content(state)
         },
-        onDismissRequest = onDismissRequest
     )
 }
 
@@ -132,6 +128,5 @@ private fun Preview() =
                     initialValue = SheetValue.Expanded,
                 ),
             state = SeedInfoState { },
-            onDismissRequest = {}
         )
     }

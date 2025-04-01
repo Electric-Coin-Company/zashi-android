@@ -90,7 +90,7 @@ fun rememberModalBottomSheetState(
 
 @Composable
 @ExperimentalMaterial3Api
-private fun rememberSheetState(
+fun rememberSheetState(
     skipPartiallyExpanded: Boolean,
     confirmValueChange: (SheetValue) -> Boolean,
     initialValue: SheetValue,

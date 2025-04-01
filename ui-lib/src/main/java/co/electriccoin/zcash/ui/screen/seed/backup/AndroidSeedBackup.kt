@@ -18,13 +18,14 @@ fun AndroidSeedBackup() {
     val viewModel = koinActivityViewModel<WalletViewModel>()
     val appBarState by viewModel.walletStateInformation.collectAsStateWithLifecycle()
     val navigationRouter = koinInject<NavigationRouter>()
-    val state = remember {
-        SeedBackupState(
-            onBack = { navigationRouter.back() },
-            onNextClick = { navigationRouter.replace(SeedRecovery) },
-            onInfoClick = { navigationRouter.forward(SeedInfo) }
-        )
-    }
+    val state =
+        remember {
+            SeedBackupState(
+                onBack = { navigationRouter.back() },
+                onNextClick = { navigationRouter.replace(SeedRecovery) },
+                onInfoClick = { navigationRouter.forward(SeedInfo) }
+            )
+        }
 
     BackHandler {
         state.onBack()
