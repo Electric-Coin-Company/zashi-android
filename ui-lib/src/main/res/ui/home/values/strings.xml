@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_message_backup_required_title">Wallet Backup Required</string>
+    <string name="home_message_backup_required_subtitle">Prevent potential loss of funds</string>
+</resources>

@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.window.DialogWindowProvider
@@ -21,7 +22,6 @@ import org.koin.compose.koinInject
 fun AndroidSeedInfo() {
     val parent = LocalView.current.parent
     val navigationRouter = koinInject<NavigationRouter>()
-    val scope = rememberCoroutineScope()
 
     SideEffect {
         (parent as? DialogWindowProvider)?.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
@@ -40,21 +40,8 @@ fun AndroidSeedInfo() {
 
     SeedInfoView(
         sheetState = sheetState,
-        state =
-            SeedInfoState(
-                onBack = {
-                    scope.launch {
-                        // sheetState.hide()
-                        navigationRouter.back()
-                    }
-                }
-            ),
-        onDismissRequest = {
-            scope.launch {
-                // sheetState.hide()
-                navigationRouter.back()
-            }
-        }
+        state = remember { SeedInfoState(onBack = { navigationRouter.back() }) },
+        onDismissRequest = { navigationRouter.back() }
     )
 
     LaunchedEffect(Unit) {
