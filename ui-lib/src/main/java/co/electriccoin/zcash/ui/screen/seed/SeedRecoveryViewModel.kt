@@ -10,7 +10,7 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.SeedTextState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.restore.info.RestoreSeedInfo
+import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -76,7 +76,7 @@ class SeedRecoveryViewModel(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
     private fun onInfoClick() {
-        navigationRouter.forward(RestoreSeedInfo)
+        navigationRouter.forward(SeedInfo)
     }
 
     private fun onBack() {

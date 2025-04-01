@@ -15,7 +15,7 @@ import co.electriccoin.zcash.ui.design.component.SeedTextFieldState
 import co.electriccoin.zcash.ui.design.component.SeedWordTextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeight
-import co.electriccoin.zcash.ui.screen.restore.info.RestoreSeedInfo
+import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -142,7 +142,7 @@ class RestoreSeedViewModel(
     }
 
     private fun onInfoButtonClick() {
-        navigationRouter.forward(RestoreSeedInfo)
+        navigationRouter.forward(SeedInfo)
     }
 
     private fun onNextClicked() {

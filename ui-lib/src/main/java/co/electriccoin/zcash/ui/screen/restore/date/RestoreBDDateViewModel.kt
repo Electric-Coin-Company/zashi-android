@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimation
-import co.electriccoin.zcash.ui.screen.restore.info.RestoreSeedInfo
+import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,6 +33,6 @@ class RestoreBDDateViewModel(
     }
 
     private fun onInfoButtonClick() {
-        navigationRouter.forward(RestoreSeedInfo)
+        navigationRouter.forward(SeedInfo)
     }
 }

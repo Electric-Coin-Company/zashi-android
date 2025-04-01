@@ -41,7 +41,7 @@ import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimation
 import co.electriccoin.zcash.ui.screen.restore.height.AndroidRestoreBDHeight
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeight
 import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
-import co.electriccoin.zcash.ui.screen.restore.info.RestoreSeedInfo
+import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.restore.seed.AndroidRestoreSeed
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeed
 import org.koin.androidx.compose.koinViewModel
@@ -134,7 +134,7 @@ fun MainActivity.OnboardingNavigation() {
         composable<RestoreBDEstimation> {
             AndroidRestoreBDEstimation()
         }
-        dialog<RestoreSeedInfo>(
+        dialog<SeedInfo>(
             dialogProperties =
                 DialogProperties(
                     dismissOnBackPress = false,

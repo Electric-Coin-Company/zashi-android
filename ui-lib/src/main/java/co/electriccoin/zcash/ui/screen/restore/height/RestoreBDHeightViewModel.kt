@@ -16,7 +16,7 @@ import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDate
-import co.electriccoin.zcash.ui.screen.restore.info.RestoreSeedInfo
+import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -85,7 +85,7 @@ class RestoreBDHeightViewModel(
     }
 
     private fun onInfoButtonClick() {
-        navigationRouter.forward(RestoreSeedInfo)
+        navigationRouter.forward(SeedInfo)
     }
 
     private fun onValueChanged(string: String) {

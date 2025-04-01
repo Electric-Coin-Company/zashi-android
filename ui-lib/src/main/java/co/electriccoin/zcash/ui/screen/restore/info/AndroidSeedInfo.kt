@@ -63,4 +63,4 @@ fun AndroidSeedInfo() {
 }
 
 @Serializable
-object RestoreSeedInfo
+object SeedInfo

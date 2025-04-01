@@ -78,7 +78,7 @@ import co.electriccoin.zcash.ui.screen.receive.Receive
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
-import co.electriccoin.zcash.ui.screen.restore.info.RestoreSeedInfo
+import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
 import co.electriccoin.zcash.ui.screen.scan.Scan
@@ -89,6 +89,8 @@ import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystonePCZTRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystoneSignInRequest
 import co.electriccoin.zcash.ui.screen.seed.AndroidSeedRecovery
 import co.electriccoin.zcash.ui.screen.seed.SeedRecovery
+import co.electriccoin.zcash.ui.screen.seed.backup.AndroidSeedBackup
+import co.electriccoin.zcash.ui.screen.seed.backup.SeedBackup
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.AndroidSelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.send.Send
@@ -387,7 +389,7 @@ internal fun MainActivity.Navigation() {
         composable<Send> {
             WrapSend(it.toRoute())
         }
-        dialog<RestoreSeedInfo>(
+        dialog<SeedInfo>(
             dialogProperties =
                 DialogProperties(
                     dismissOnBackPress = false,
@@ -395,6 +397,9 @@ internal fun MainActivity.Navigation() {
                 )
         ) {
             AndroidSeedInfo()
+        }
+        composable<SeedBackup> {
+            AndroidSeedBackup()
         }
     }
 }
