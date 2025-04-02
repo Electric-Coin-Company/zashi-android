@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -39,7 +38,7 @@ interface MetadataRepository {
 
     suspend fun markTxMemoAsRead(txId: String)
 
-    fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata?>
+    fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata>
 }
 
 class MetadataRepositoryImpl(
@@ -160,9 +159,9 @@ class MetadataRepositoryImpl(
         }
     }
 
-    override fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata?> =
+    override fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata> =
         metadata
-            .map<Metadata?, TransactionMetadata?> { metadata ->
+            .map { metadata ->
                 val accountMetadata = metadata?.accountMetadata
 
                 TransactionMetadata(
@@ -171,7 +170,6 @@ class MetadataRepositoryImpl(
                     note = accountMetadata?.annotations?.find { it.txId == txId }?.content,
                 )
             }.distinctUntilChanged()
-            .onStart { emit(null) }
 
     private suspend fun getMetadataKey(selectedAccount: WalletAccount): MetadataKey {
         val key = metadataKeyStorageProvider.get(selectedAccount)

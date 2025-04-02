@@ -1,14 +1,14 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import co.electriccoin.zcash.ui.common.repository.WalletRepository
+import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 class ObserveSelectedEndpointUseCase(
-    private val walletRepository: WalletRepository
+    private val persistableWalletProvider: PersistableWalletProvider
 ) {
     operator fun invoke() =
-        walletRepository.persistableWallet
+        persistableWalletProvider.persistableWallet
             .map {
                 it?.endpoint
             }.distinctUntilChanged()

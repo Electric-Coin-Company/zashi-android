@@ -31,16 +31,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.appbar.ZashiMainTopAppBarState
+import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppbar
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
-import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBar
-import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState
@@ -49,7 +50,7 @@ import co.electriccoin.zcash.ui.screen.receive.model.ReceiveState
 @Composable
 internal fun ReceiveView(
     state: ReceiveState,
-    zashiMainTopAppBarState: ZashiMainTopAppBarState?,
+    appBarState: ZashiMainTopAppBarState?,
 ) {
     when {
         state.items.isNullOrEmpty() && state.isLoading -> {
@@ -59,15 +60,20 @@ internal fun ReceiveView(
         else -> {
             BlankBgScaffold(
                 topBar = {
-                    ZashiMainTopAppBar(state = zashiMainTopAppBarState, showHideBalances = false)
+                    ZashiTopAppbar(
+                        title = null,
+                        state = appBarState,
+                        showHideBalances = false,
+                        onBack = state.onBack
+                    )
                 },
             ) { paddingValues ->
                 ReceiveContents(
                     items = state.items.orEmpty(),
                     modifier =
-                        Modifier.padding(
+                        Modifier.scaffoldScrollPadding(
+                            paddingValues = paddingValues,
                             top = paddingValues.calculateTopPadding()
-                            // We intentionally do not set the rest paddings, those are set by the underlying composable
                         ),
                 )
             }
@@ -189,9 +195,21 @@ private fun AddressPanel(
                         .fillMaxWidth()
                         .padding(top = ZcashTheme.dimens.spacingDefault)
             ) {
+                val containerColor =
+                    if (state.isShielded) {
+                        ZashiColors.Utility.Purple.utilityPurple100
+                    } else {
+                        ZashiColors.Surfaces.bgTertiary
+                    }
+                val contentColor =
+                    if (state.isShielded) {
+                        ZashiColors.Utility.Purple.utilityPurple800
+                    } else {
+                        ZashiColors.Text.textPrimary
+                    }
                 ReceiveIconButton(
-                    containerColor = ZashiColors.Utility.Purple.utilityPurple100,
-                    contentColor = ZashiColors.Utility.Purple.utilityPurple800,
+                    containerColor = containerColor,
+                    contentColor = contentColor,
                     iconPainter = painterResource(id = R.drawable.ic_copy_shielded),
                     onClick = state.onCopyClicked,
                     text = stringResource(id = R.string.receive_copy),
@@ -201,8 +219,8 @@ private fun AddressPanel(
                 Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
 
                 ReceiveIconButton(
-                    containerColor = ZashiColors.Utility.Purple.utilityPurple100,
-                    contentColor = ZashiColors.Utility.Purple.utilityPurple800,
+                    containerColor = containerColor,
+                    contentColor = contentColor,
                     iconPainter = painterResource(id = R.drawable.ic_qr_code_shielded),
                     onClick = state.onQrClicked,
                     text = stringResource(id = R.string.receive_qr_code),
@@ -212,8 +230,8 @@ private fun AddressPanel(
                 Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
 
                 ReceiveIconButton(
-                    containerColor = ZashiColors.Utility.Purple.utilityPurple100,
-                    contentColor = ZashiColors.Utility.Purple.utilityPurple800,
+                    containerColor = containerColor,
+                    contentColor = contentColor,
                     iconPainter = painterResource(id = R.drawable.ic_request_shielded),
                     onClick = state.onRequestClicked,
                     text = stringResource(id = R.string.receive_request),
@@ -265,8 +283,13 @@ private fun ReceiveIconButton(
 private fun LoadingPreview() =
     ZcashTheme(forceDarkMode = true) {
         ReceiveView(
-            state = ReceiveState(items = null, isLoading = true),
-            zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
+            state =
+                ReceiveState(
+                    items = null,
+                    isLoading = true,
+                    onBack = {}
+                ),
+            appBarState = ZashiMainTopAppBarStateFixture.new()
         )
     }
 
@@ -302,8 +325,9 @@ private fun ZashiPreview() =
                                 onClick = {}
                             )
                         ),
-                    isLoading = false
+                    isLoading = false,
+                    onBack = {}
                 ),
-            zashiMainTopAppBarState = ZashiMainTopAppBarStateFixture.new()
+            appBarState = ZashiMainTopAppBarStateFixture.new()
         )
     }

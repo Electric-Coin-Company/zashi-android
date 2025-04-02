@@ -55,14 +55,12 @@ object TransactionFiltersStateFixture {
 
     fun new(
         onBack: () -> Unit = {},
-        onBottomSheetHidden: () -> Unit = {},
         filters: List<TransactionFilterState> = FILTERS,
         primaryButtonState: ButtonState = PRIMARY_BUTTON_STATE,
         secondaryButtonState: ButtonState = SECONDARY_BUTTON_STATE
     ) = TransactionFiltersState(
         filters = filters,
         onBack = onBack,
-        onBottomSheetHidden = onBottomSheetHidden,
         primaryButton = primaryButtonState,
         secondaryButton = secondaryButtonState
     )

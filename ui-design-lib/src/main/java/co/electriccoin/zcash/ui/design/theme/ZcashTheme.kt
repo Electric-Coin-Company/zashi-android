@@ -9,6 +9,10 @@ import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.RippleDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import co.electriccoin.zcash.ui.design.LocalKeyboardManager
+import co.electriccoin.zcash.ui.design.LocalSheetStateManager
+import co.electriccoin.zcash.ui.design.rememberKeyboardManager
+import co.electriccoin.zcash.ui.design.rememberSheetStateManager
 import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.DarkZashiColorsInternal
 import co.electriccoin.zcash.ui.design.theme.colors.LightZashiColorsInternal
@@ -49,7 +53,9 @@ fun ZcashTheme(
         LocalZashiColors provides zashiColors,
         LocalZashiTypography provides ZashiTypographyInternal,
         LocalRippleConfiguration provides MaterialRippleConfig,
-        LocalBalancesAvailable provides balancesAvailable
+        LocalBalancesAvailable provides balancesAvailable,
+        LocalKeyboardManager provides rememberKeyboardManager(),
+        LocalSheetStateManager provides rememberSheetStateManager()
     ) {
         ProvideDimens {
             MaterialTheme(
