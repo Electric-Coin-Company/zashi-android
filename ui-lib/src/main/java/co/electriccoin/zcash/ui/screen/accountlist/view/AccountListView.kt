@@ -33,13 +33,14 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
-import co.electriccoin.zcash.ui.design.component.ZashiModalBottomSheet
+import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.listitem.BaseListItem
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemColors
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDefaults
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDesignType
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
+import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -54,16 +55,15 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun AccountListView(
-    onDismissRequest: () -> Unit,
-    sheetState: SheetState,
-    state: AccountListState
+    state: AccountListState,
+    sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
-    ZashiModalBottomSheet(
+    ZashiScreenModalBottomSheet(
+        state = state,
         sheetState = sheetState,
         content = {
             BottomSheetContent(state)
         },
-        onDismissRequest = onDismissRequest
     )
 }
 
@@ -111,7 +111,10 @@ private fun BottomSheetContent(state: AccountListState) {
             Spacer(modifier = Modifier.height(32.dp))
             ZashiButton(
                 state = state.addWalletButton,
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
                 colors =
                     ZashiButtonDefaults.secondaryColors(
                         borderColor = ZashiColors.Btns.Secondary.btnSecondaryBorder
@@ -270,11 +273,9 @@ private fun Preview() =
                             )
                         ),
                     isLoading = false,
-                    onBottomSheetHidden = {},
                     onBack = {},
                     addWalletButton = ButtonState(stringRes("Connect Hardware Wallet"))
                 ),
-            onDismissRequest = {},
             sheetState =
                 rememberModalBottomSheetState(
                     skipHiddenState = true,
@@ -315,11 +316,9 @@ private fun HardwareWalletAddedPreview() =
                             ),
                         ),
                     isLoading = false,
-                    onBottomSheetHidden = {},
                     onBack = {},
                     addWalletButton = null
                 ),
-            onDismissRequest = {},
             sheetState =
                 rememberModalBottomSheetState(
                     skipHiddenState = true,

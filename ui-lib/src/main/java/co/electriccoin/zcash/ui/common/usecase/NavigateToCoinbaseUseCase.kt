@@ -10,7 +10,7 @@ class NavigateToCoinbaseUseCase(
     private val navigationRouter: NavigationRouter
 ) {
     suspend operator fun invoke(replaceCurrentScreen: Boolean) {
-        val transparent = accountDataSource.getZashiAccount().transparent
+        val transparent = accountDataSource.getSelectedAccount().transparent
         val url = getUrl(transparent.address.address)
         if (replaceCurrentScreen) {
             navigationRouter.replace(ExternalUrl(url))

@@ -218,7 +218,7 @@ private fun QrCodeBottomBar(
 
         ZashiButton(
             text = stringResource(id = R.string.qr_code_copy_btn),
-            icon = R.drawable.ic_copy,
+            icon = R.drawable.ic_qr_copy,
             onClick = { state.onAddressCopy(state.walletAddress.address) },
             colors = ZashiButtonDefaults.secondaryColors(),
             modifier =

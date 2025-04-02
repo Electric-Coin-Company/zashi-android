@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,22 +22,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
-import cash.z.ecc.android.sdk.fixture.WalletFixture
-import cash.z.ecc.android.sdk.model.SeedPhrase
-import cash.z.ecc.android.sdk.model.ZcashNetwork
-import cash.z.ecc.sdk.type.fromResources
-import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BindCompLocalProvider
 import co.electriccoin.zcash.ui.common.extension.setContentCompat
-import co.electriccoin.zcash.ui.common.model.OnboardingState
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationUIState
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.OldHomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.Override
@@ -48,11 +39,7 @@ import co.electriccoin.zcash.ui.screen.authentication.RETRY_TRIGGER_DELAY
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.authentication.view.AnimationConstants
 import co.electriccoin.zcash.ui.screen.authentication.view.WelcomeAnimationAutostart
-import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
-import co.electriccoin.zcash.ui.screen.onboarding.persistExistingWalletWithSeedPhrase
-import co.electriccoin.zcash.ui.screen.securitywarning.WrapSecurityWarning
-import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
-import co.electriccoin.zcash.ui.screen.seed.WrapSeed
+import co.electriccoin.zcash.ui.screen.onboarding.OnboardingNavigation
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.work.WorkIds
 import kotlinx.coroutines.delay
@@ -131,8 +118,7 @@ class MainActivity : FragmentActivity() {
                 }
             }
 
-            // Note this condition needs to be kept in sync with the condition in MainContent()
-            oldHomeViewModel.configurationFlow.value == null || SecretState.Loading == walletViewModel.secretState.value
+            SecretState.LOADING == walletViewModel.secretState.value
         }
     }
 
@@ -235,58 +221,20 @@ class MainActivity : FragmentActivity() {
 
     @Composable
     private fun MainContent() {
-        val configuration = oldHomeViewModel.configurationFlow.collectAsStateWithLifecycle().value
-        val secretState = walletViewModel.secretState.collectAsStateWithLifecycle().value
+        val secretState by walletViewModel.secretState.collectAsStateWithLifecycle()
 
-        // Note this condition needs to be kept in sync with the condition in setupSplashScreen()
-        if (null == configuration || secretState == SecretState.Loading) {
-            // For now, keep displaying splash screen using condition above.
-            // In the future, we might consider displaying something different here.
-        } else {
-            // Note that the deeply nested child views will probably receive arguments derived from
-            // the configuration.  The CompositionLocalProvider is helpful for passing the configuration
-            // to the "platform" layer, which is where the arguments will be derived from.
-            CompositionLocalProvider(RemoteConfig provides configuration) {
-                when (secretState) {
-                    SecretState.None -> {
-                        WrapOnboarding()
-                    }
+        when (secretState) {
+            SecretState.NONE -> {
+                OnboardingNavigation()
+            }
 
-                    is SecretState.NeedsWarning -> {
-                        WrapSecurityWarning(
-                            onBack = { walletViewModel.persistOnboardingState(OnboardingState.NONE) },
-                            onConfirm = {
-                                walletViewModel.persistOnboardingState(OnboardingState.NEEDS_BACKUP)
+            SecretState.READY -> {
+                Navigation()
+            }
 
-                                if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
-                                    persistExistingWalletWithSeedPhrase(
-                                        applicationContext,
-                                        walletViewModel,
-                                        SeedPhrase.new(WalletFixture.Alice.seedPhrase),
-                                        WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
-                                    )
-                                } else {
-                                    walletViewModel.persistNewWalletAndRestoringState(WalletRestoringState.INITIATING)
-                                }
-                            }
-                        )
-                    }
-
-                    is SecretState.NeedsBackup -> {
-                        WrapSeed(
-                            args = SeedNavigationArgs.NEW_WALLET,
-                            goBackOverride = null
-                        )
-                    }
-
-                    is SecretState.Ready -> {
-                        Navigation()
-                    }
-
-                    else -> {
-                        error("Unhandled secret state: $secretState")
-                    }
-                }
+            SecretState.LOADING -> {
+                // For now, keep displaying splash screen using condition above.
+                // In the future, we might consider displaying something different here.
             }
         }
     }
@@ -294,7 +242,7 @@ class MainActivity : FragmentActivity() {
     private fun monitorForBackgroundSync() {
         val isEnableBackgroundSyncFlow =
             run {
-                val isSecretReadyFlow = walletViewModel.secretState.map { it is SecretState.Ready }
+                val isSecretReadyFlow = walletViewModel.secretState.map { it == SecretState.READY }
                 val isBackgroundSyncEnabledFlow = oldHomeViewModel.isBackgroundSyncEnabled.filterNotNull()
 
                 isSecretReadyFlow.combine(isBackgroundSyncEnabledFlow) { isSecretReady, isBackgroundSyncEnabled ->

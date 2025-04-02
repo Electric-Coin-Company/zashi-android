@@ -31,7 +31,6 @@ import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.NOT_ENOUGH_SPACE
 import co.electriccoin.zcash.ui.NavigationTargets.QR_CODE
 import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
-import co.electriccoin.zcash.ui.NavigationTargets.SEED_RECOVERY
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS_EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
@@ -39,6 +38,8 @@ import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.provider.isInForeground
+import co.electriccoin.zcash.ui.design.LocalKeyboardManager
+import co.electriccoin.zcash.ui.design.LocalSheetStateManager
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
@@ -76,6 +77,8 @@ import co.electriccoin.zcash.ui.screen.receive.AndroidReceive
 import co.electriccoin.zcash.ui.screen.receive.Receive
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
+import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
+import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
 import co.electriccoin.zcash.ui.screen.scan.Scan
@@ -84,8 +87,10 @@ import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneSignInRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystonePCZTRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystoneSignInRequest
-import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
-import co.electriccoin.zcash.ui.screen.seed.WrapSeed
+import co.electriccoin.zcash.ui.screen.seed.AndroidSeedRecovery
+import co.electriccoin.zcash.ui.screen.seed.SeedRecovery
+import co.electriccoin.zcash.ui.screen.seed.backup.AndroidSeedBackup
+import co.electriccoin.zcash.ui.screen.seed.backup.SeedBackup
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.AndroidSelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.send.Send
@@ -120,18 +125,32 @@ import org.koin.compose.koinInject
 @Suppress("LongMethod", "CyclomaticComplexMethod")
 internal fun MainActivity.Navigation() {
     val navController = LocalNavController.current
+    val keyboardManager = LocalKeyboardManager.current
     val flexaViewModel = koinViewModel<FlexaViewModel>()
     val navigationRouter = koinInject<NavigationRouter>()
+    val sheetStateManager = LocalSheetStateManager.current
 
     // Helper properties for triggering the system security UI from callbacks
     val (exportPrivateDataAuthentication, setExportPrivateDataAuthentication) =
         rememberSaveable { mutableStateOf(false) }
-    val (seedRecoveryAuthentication, setSeedRecoveryAuthentication) =
-        rememberSaveable { mutableStateOf(false) }
     val (deleteWalletAuthentication, setDeleteWalletAuthentication) =
         rememberSaveable { mutableStateOf(false) }
 
-    val navigator: Navigator = remember { NavigatorImpl(this@Navigation, navController, flexaViewModel) }
+    val navigator: Navigator =
+        remember(
+            navController,
+            flexaViewModel,
+            keyboardManager,
+            sheetStateManager
+        ) {
+            NavigatorImpl(
+                activity = this@Navigation,
+                navController = navController,
+                flexaViewModel = flexaViewModel,
+                keyboardManager = keyboardManager,
+                sheetStateManager = sheetStateManager
+            )
+        }
 
     LaunchedEffect(Unit) {
         navigationRouter.observePipeline().collect {
@@ -163,14 +182,6 @@ internal fun MainActivity.Navigation() {
                         unProtectedDestination = EXPORT_PRIVATE_DATA
                     )
                 },
-                goSeedRecovery = {
-                    navController.checkProtectedDestination(
-                        scope = lifecycleScope,
-                        propertyToCheck = authenticationViewModel.isSeedAuthenticationRequired,
-                        setCheckedProperty = setSeedRecoveryAuthentication,
-                        unProtectedDestination = SEED_RECOVERY
-                    )
-                },
                 goDeleteWallet = {
                     navController.checkProtectedDestination(
                         scope = lifecycleScope,
@@ -199,27 +210,13 @@ internal fun MainActivity.Navigation() {
                         setCheckedProperty = setExportPrivateDataAuthentication
                     )
                 }
-
-                seedRecoveryAuthentication -> {
-                    ShowSystemAuthentication(
-                        navHostController = navController,
-                        protectedDestination = SEED_RECOVERY,
-                        protectedUseCase = AuthenticationUseCase.SeedRecovery,
-                        setCheckedProperty = setSeedRecoveryAuthentication
-                    )
-                }
             }
         }
         composable(CHOOSE_SERVER) {
             WrapChooseServer()
         }
-        composable(SEED_RECOVERY) {
-            WrapSeed(
-                args = SeedNavigationArgs.RECOVERY,
-                goBackOverride = {
-                    setSeedRecoveryAuthentication(false)
-                }
-            )
+        composable<SeedRecovery> {
+            AndroidSeedRecovery()
         }
         composable(SUPPORT) {
             // Pop back stack won't be right if we deep link into support
@@ -275,21 +272,8 @@ internal fun MainActivity.Navigation() {
         ) {
             AndroidAccountList()
         }
-        composable(
-            route = Scan.ROUTE,
-            arguments =
-                listOf(
-                    navArgument(Scan.KEY) {
-                        type = NavType.EnumType(Scan::class.java)
-                        defaultValue = Scan.SEND
-                    }
-                )
-        ) { backStackEntry ->
-            val mode =
-                backStackEntry.arguments
-                    ?.getSerializableCompat<Scan>(Scan.KEY) ?: Scan.SEND
-
-            WrapScanValidator(args = mode)
+        composable<Scan> {
+            WrapScanValidator(it.toRoute())
         }
         composable(EXPORT_PRIVATE_DATA) {
             WrapExportPrivateData(
@@ -404,6 +388,18 @@ internal fun MainActivity.Navigation() {
         }
         composable<Send> {
             WrapSend(it.toRoute())
+        }
+        dialog<SeedInfo>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false,
+                )
+        ) {
+            AndroidSeedInfo()
+        }
+        composable<SeedBackup> {
+            AndroidSeedBackup()
         }
     }
 }
@@ -530,7 +526,6 @@ object NavigationTargets {
     const val NOT_ENOUGH_SPACE = "not_enough_space"
     const val QR_CODE = "qr_code"
     const val REQUEST = "request"
-    const val SEED_RECOVERY = "seed_recovery"
     const val SETTINGS = "settings"
     const val SETTINGS_EXCHANGE_RATE_OPT_IN = "settings_exchange_rate_opt_in"
     const val SUPPORT = "support"

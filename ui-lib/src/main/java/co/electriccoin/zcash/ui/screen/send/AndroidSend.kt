@@ -34,6 +34,7 @@ import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.balances.BalanceState
 import co.electriccoin.zcash.ui.screen.balances.BalanceViewModel
 import co.electriccoin.zcash.ui.screen.scan.Scan
+import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
@@ -72,7 +73,14 @@ internal fun WrapSend(args: Send) {
     WrapSend(
         balanceState = balanceState,
         exchangeRateState = exchangeRateState,
-        goToQrScanner = { navigationRouter.forward(Scan(Scan.SEND)) },
+        goToQrScanner = {
+            navigationRouter.forward(
+                Scan(
+                    ScanFlow.SEND,
+                    isScanZip321Enabled = args.isScanZip321Enabled
+                )
+            )
+        },
         goBack = { navigationRouter.back() },
         hasCameraFeature = hasCameraFeature,
         monetarySeparators = monetarySeparators,
@@ -241,6 +249,7 @@ internal fun WrapSend(
                     )
                     setMemoState(MemoState.new(it.memos?.firstOrNull().orEmpty()))
                 }
+
                 is PrefillSendData.FromAddressScan -> {
                     val type = synchronizer?.validateAddress(it.address)
                     setSendStage(SendStage.Form)

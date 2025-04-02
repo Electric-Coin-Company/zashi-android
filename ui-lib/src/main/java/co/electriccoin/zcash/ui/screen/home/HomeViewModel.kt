@@ -4,28 +4,44 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.DistributionDimension
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
+import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.home.messages.WalletBackupMessageState
 import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
 import co.electriccoin.zcash.ui.screen.receive.Receive
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.scan.Scan
+import co.electriccoin.zcash.ui.screen.scan.ScanFlow
+import co.electriccoin.zcash.ui.screen.seed.backup.SeedBackup
 import co.electriccoin.zcash.ui.screen.send.Send
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
+    getVersionInfoProvider: GetVersionInfoProvider,
+    getSelectedWalletAccountUseCase: GetSelectedWalletAccountUseCase,
     private val navigationRouter: NavigationRouter,
-    private val isRestoreSuccessDialogVisible: IsRestoreSuccessDialogVisibleUseCase
+    private val isRestoreSuccessDialogVisible: IsRestoreSuccessDialogVisibleUseCase,
+    private val navigateToCoinbase: NavigateToCoinbaseUseCase
 ) : ViewModel() {
+    private val isMessageVisible = MutableStateFlow(true)
+
     private val isRestoreDialogVisible: Flow<Boolean?> =
         isRestoreSuccessDialogVisible.observe()
             .stateIn(
@@ -48,36 +64,72 @@ class HomeViewModel(
             )
 
     val state: StateFlow<HomeState?> =
-        MutableStateFlow(
-            HomeState(
-                receiveButton =
+        combine(getSelectedWalletAccountUseCase.observe(), isMessageVisible) { selectedAccount, isMessageVisible ->
+            createState(getVersionInfoProvider, selectedAccount, isMessageVisible)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
+        )
+
+    private fun createState(
+        getVersionInfoProvider: GetVersionInfoProvider,
+        selectedAccount: WalletAccount?,
+        isMessageVisible: Boolean
+    ) = HomeState(
+        firstButton =
+            BigIconButtonState(
+                text = stringRes(R.string.home_button_receive),
+                icon = R.drawable.ic_home_receive,
+                onClick = ::onReceiveButtonClick,
+            ),
+        secondButton =
+            BigIconButtonState(
+                text = stringRes(R.string.home_button_send),
+                icon = R.drawable.ic_home_send,
+                onClick = ::onSendButtonClick,
+            ),
+        thirdButton =
+            BigIconButtonState(
+                text = stringRes(R.string.home_button_scan),
+                icon = R.drawable.ic_home_scan,
+                onClick = ::onScanButtonClick,
+            ),
+        fourthButton =
+            when {
+                getVersionInfoProvider().distributionDimension == DistributionDimension.FOSS ->
                     BigIconButtonState(
-                        text = stringRes("Receive"),
-                        icon = R.drawable.ic_home_receive,
-                        onClick = ::onReceiveButtonClick,
-                    ),
-                sendButton =
+                        text = stringRes(R.string.home_button_request),
+                        icon = R.drawable.ic_home_request,
+                        onClick = ::onRequestClick,
+                    )
+
+                selectedAccount is KeystoneAccount ->
                     BigIconButtonState(
-                        text = stringRes("Send"),
-                        icon = R.drawable.ic_home_send,
-                        onClick = ::onSendButtonClick,
-                    ),
-                scanButton =
+                        text = stringRes(R.string.home_button_buy),
+                        icon = R.drawable.ic_home_buy,
+                        onClick = ::onBuyClick,
+                    )
+
+                else ->
                     BigIconButtonState(
-                        text = stringRes("Scan"),
-                        icon = R.drawable.ic_home_scan,
-                        onClick = ::onScanButtonClick,
-                    ),
-                moreButton =
-                    BigIconButtonState(
-                        text = stringRes("More"),
+                        text = stringRes(R.string.home_button_more),
                         icon = R.drawable.ic_home_more,
                         onClick = ::onMoreButtonClick,
-                    ),
-            )
-        ).asStateFlow()
+                    )
+            },
+        message = createWalletBackupMessageState().takeIf { isMessageVisible }
+    )
 
-    fun onRestoreDialogSeenClick() =
+    private fun createWalletBackupMessageState(): WalletBackupMessageState {
+        return WalletBackupMessageState(
+            onClick = {
+                navigationRouter.forward(SeedBackup)
+            }
+        )
+    }
+
+    private fun onRestoreDialogSeenClick() =
         viewModelScope.launch {
             isRestoreSuccessDialogVisible.setSeen()
         }
@@ -95,6 +147,15 @@ class HomeViewModel(
     }
 
     private fun onScanButtonClick() {
-        navigationRouter.forward(Scan(Scan.HOMEPAGE))
+        navigationRouter.forward(Scan(ScanFlow.HOMEPAGE))
+    }
+
+    private fun onBuyClick() =
+        viewModelScope.launch {
+            navigateToCoinbase(replaceCurrentScreen = false)
+        }
+
+    private fun onRequestClick() {
+        navigationRouter.forward("${NavigationTargets.REQUEST}/${ReceiveAddressType.Unified.ordinal}")
     }
 }

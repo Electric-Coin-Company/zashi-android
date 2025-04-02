@@ -1,9 +1,5 @@
 package co.electriccoin.zcash.ui.screen.home
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarWithAccountSelection
-import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ZashiBigIconButton
@@ -34,7 +29,7 @@ import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.balances.BalanceState
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidget
-import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeOptIn
+import co.electriccoin.zcash.ui.screen.home.messages.HomeMessage
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetState
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetStateFixture
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.createTransactionHistoryWidgets
@@ -74,7 +69,6 @@ private fun Content(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
-
             BalanceWidget(
                 modifier =
                     Modifier
@@ -84,39 +78,10 @@ private fun Content(
                         ),
                 balanceState = balanceState,
             )
-
             Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-
-            Row(
-                modifier = Modifier.scaffoldPadding(paddingValues, top = 0.dp, bottom = 0.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                ZashiBigIconButton(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .testTag(HomeTags.RECEIVE),
-                    state = state.receiveButton,
-                )
-                ZashiBigIconButton(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .testTag(HomeTags.SEND),
-                    state = state.sendButton,
-                )
-                ZashiBigIconButton(
-                    modifier = Modifier.weight(1f),
-                    state = state.scanButton,
-                )
-                ZashiBigIconButton(
-                    modifier = Modifier.weight(1f),
-                    state = state.moreButton,
-                )
-            }
-
-            Spacer(Modifier.height(32.dp))
-
+            NavButtons(paddingValues, state)
+            Spacer(Modifier.height(16.dp))
+            HomeMessage(state.message)
             LazyColumn(
                 modifier =
                     Modifier
@@ -128,29 +93,46 @@ private fun Content(
                 )
             }
         }
+    }
+}
 
-        AnimatedVisibility(
-            visible = balanceState.exchangeRate is ExchangeRateState.OptIn,
-            enter = EnterTransition.None,
-            exit = fadeOut() + slideOutVertically(),
-        ) {
-            Column {
-                Spacer(modifier = Modifier.height(66.dp + paddingValues.calculateTopPadding()))
-                StyledExchangeOptIn(
-                    modifier = Modifier.padding(horizontal = 24.dp),
-                    state =
-                        (balanceState.exchangeRate as? ExchangeRateState.OptIn) ?: ExchangeRateState.OptIn(
-                            onDismissClick = {},
-                        )
-                )
-            }
-        }
+@Composable
+private fun NavButtons(
+    paddingValues: PaddingValues,
+    state: HomeState
+) {
+    Row(
+        modifier = Modifier.scaffoldPadding(paddingValues, top = 0.dp, bottom = 0.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        ZashiBigIconButton(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .testTag(HomeTags.RECEIVE),
+            state = state.firstButton,
+        )
+        ZashiBigIconButton(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .testTag(HomeTags.SEND),
+            state = state.secondButton,
+        )
+        ZashiBigIconButton(
+            modifier = Modifier.weight(1f),
+            state = state.thirdButton,
+        )
+        ZashiBigIconButton(
+            modifier = Modifier.weight(1f),
+            state = state.fourthButton,
+        )
     }
 }
 
 @PreviewScreens
 @Composable
-private fun Preview() =
+private fun Preview() {
     ZcashTheme {
         HomeView(
             appBarState = ZashiMainTopAppBarStateFixture.new(),
@@ -158,30 +140,32 @@ private fun Preview() =
             transactionWidgetState = TransactionHistoryWidgetStateFixture.new(),
             state =
                 HomeState(
-                    receiveButton =
+                    firstButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
                             icon = R.drawable.ic_warning,
                             onClick = {}
                         ),
-                    sendButton =
+                    secondButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
                             icon = R.drawable.ic_warning,
                             onClick = {}
                         ),
-                    scanButton =
+                    thirdButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
                             icon = R.drawable.ic_warning,
                             onClick = {}
                         ),
-                    moreButton =
+                    fourthButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
                             icon = R.drawable.ic_warning,
                             onClick = {}
                         ),
+                    message = null
                 )
         )
     }
+}

@@ -19,7 +19,7 @@ class MergingConfigurationProvider(
 
     override fun getConfigurationFlow(): Flow<Configuration> {
         return if (configurationProviders.isEmpty()) {
-            flowOf(MergingConfiguration(persistentListOf<Configuration>()))
+            flowOf(MergingConfiguration(persistentListOf()))
         } else {
             combine(configurationProviders.map { it.getConfigurationFlow() }) { configurations ->
                 MergingConfiguration(configurations.toList().toPersistentList())

@@ -35,8 +35,9 @@ import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiChipButton
 import co.electriccoin.zcash.ui.design.component.ZashiChipButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
-import co.electriccoin.zcash.ui.design.component.ZashiModalBottomSheet
+import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
+import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -47,16 +48,15 @@ import co.electriccoin.zcash.ui.screen.transactionfilters.model.TransactionFilte
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun TransactionFiltersView(
-    onDismissRequest: () -> Unit,
-    sheetState: SheetState,
-    state: TransactionFiltersState?
+    state: TransactionFiltersState?,
+    sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
-    ZashiModalBottomSheet(
+    ZashiScreenModalBottomSheet(
+        state = state,
         sheetState = sheetState,
         content = {
             BottomSheetContent(state)
         },
-        onDismissRequest = onDismissRequest
     )
 }
 
@@ -97,6 +97,16 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
                                     onClick = filter.onClick,
                                     text = filter.text,
                                 ),
+                            modifier =
+                                Modifier
+                                    // Customize the chip size change animation
+                                    .animateContentSize(
+                                        animationSpec =
+                                            spring(
+                                                dampingRatio = 0.85f,
+                                                stiffness = 200f
+                                            )
+                                    ),
                             shape = CircleShape,
                             border =
                                 BorderStroke(1.dp, ZashiColors.Btns.Secondary.btnSecondaryBorder)
@@ -113,18 +123,7 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
                                 } else {
                                     PaddingValues(horizontal = 16.dp, vertical = 10.dp)
                                 },
-                            endIconSpacer = 10.dp,
-                            hasRippleEffect = false,
-                            modifier =
-                                Modifier
-                                    // Customize the chip size change animation
-                                    .animateContentSize(
-                                        animationSpec =
-                                            spring(
-                                                dampingRatio = 0.85f,
-                                                stiffness = 200f
-                                            )
-                                    )
+                            endIconSpacer = 10.dp
                         )
                     }
                 }
@@ -169,7 +168,6 @@ private fun Preview() =
     ZcashTheme {
         TransactionFiltersView(
             state = TransactionFiltersStateFixture.new(),
-            onDismissRequest = {},
             sheetState =
                 rememberModalBottomSheetState(
                     skipHiddenState = true,

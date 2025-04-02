@@ -15,9 +15,9 @@ import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase.Z
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
 import co.electriccoin.zcash.ui.screen.scan.Scan
-import co.electriccoin.zcash.ui.screen.scan.Scan.ADDRESS_BOOK
-import co.electriccoin.zcash.ui.screen.scan.Scan.HOMEPAGE
-import co.electriccoin.zcash.ui.screen.scan.Scan.SEND
+import co.electriccoin.zcash.ui.screen.scan.ScanFlow.ADDRESS_BOOK
+import co.electriccoin.zcash.ui.screen.scan.ScanFlow.HOMEPAGE
+import co.electriccoin.zcash.ui.screen.scan.ScanFlow.SEND
 import co.electriccoin.zcash.ui.screen.send.Send
 
 class OnZip321ScannedUseCase(
@@ -29,20 +29,27 @@ class OnZip321ScannedUseCase(
 ) {
     suspend operator fun invoke(
         zip321: Zip321ParseUriValidation.Valid,
-        scanFlow: Scan
+        scanArgs: Scan
     ) {
-        if (scanFlow == ADDRESS_BOOK) {
-            navigationRouter.replace(AddContactArgs(zip321.payment.payments[0].recipientAddress.value))
-        } else {
-            createProposal(zip321, scanFlow)
+        when (scanArgs.flow) {
+            ADDRESS_BOOK -> addressBookFlow(zip321)
+            SEND ->
+                if (scanArgs.isScanZip321Enabled) {
+                    sendFlow(zip321)
+                } else {
+                    sendFlowWithDisabledZip321(zip321)
+                }
+
+            HOMEPAGE -> homepageFlow(zip321)
         }
     }
 
+    private fun addressBookFlow(zip321: Zip321ParseUriValidation.Valid) {
+        navigationRouter.replace(AddContactArgs(zip321.payment.payments[0].recipientAddress.value))
+    }
+
     @Suppress("TooGenericExceptionCaught")
-    private suspend fun createProposal(
-        zip321: Zip321ParseUriValidation.Valid,
-        scanFlow: Scan
-    ) {
+    private suspend fun homepageFlow(zip321: Zip321ParseUriValidation.Valid) {
         try {
             val proposal =
                 when (accountDataSource.getSelectedAccount()) {
@@ -57,35 +64,63 @@ class OnZip321ScannedUseCase(
                     }
                 }
 
-            if (scanFlow == HOMEPAGE) {
-                navigationRouter
-                    .replace(
-                        Send(
-                            recipientAddress = proposal.destination.address,
-                            recipientAddressType =
-                                when (proposal.destination) {
-                                    is WalletAddress.Sapling -> SAPLING
-                                    is WalletAddress.Tex -> TEX
-                                    is WalletAddress.Transparent -> TRANSPARENT
-                                    is WalletAddress.Unified -> UNIFIED
-                                }
-                        ),
-                        ReviewTransaction
-                    )
-            } else if (scanFlow == SEND) {
-                prefillSend.request(
-                    PrefillSendData.All(
-                        amount = proposal.amount,
-                        address = proposal.destination.address,
-                        fee = proposal.proposal.totalFeeRequired(),
-                        memos = proposal.memo.value.takeIf { it.isNotEmpty() }?.let { listOf(it) }
-                    )
+            navigationRouter
+                .replace(
+                    Send(
+                        recipientAddress = proposal.destination.address,
+                        recipientAddressType =
+                            when (proposal.destination) {
+                                is WalletAddress.Sapling -> SAPLING
+                                is WalletAddress.Tex -> TEX
+                                is WalletAddress.Transparent -> TRANSPARENT
+                                is WalletAddress.Unified -> UNIFIED
+                            }
+                    ),
+                    ReviewTransaction
                 )
-                navigationRouter.forward(ReviewTransaction)
-            }
         } catch (e: Exception) {
             keystoneProposalRepository.clear()
             throw e
         }
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    private suspend fun sendFlow(zip321: Zip321ParseUriValidation.Valid) {
+        try {
+            val proposal =
+                when (accountDataSource.getSelectedAccount()) {
+                    is KeystoneAccount -> {
+                        val result = keystoneProposalRepository.createZip321Proposal(zip321.zip321Uri)
+                        keystoneProposalRepository.createPCZTFromProposal()
+                        result
+                    }
+
+                    is ZashiAccount -> {
+                        zashiProposalRepository.createZip321Proposal(zip321.zip321Uri)
+                    }
+                }
+
+            prefillSend.request(
+                PrefillSendData.All(
+                    amount = proposal.amount,
+                    address = proposal.destination.address,
+                    fee = proposal.proposal.totalFeeRequired(),
+                    memos = proposal.memo.value.takeIf { it.isNotEmpty() }?.let { listOf(it) }
+                )
+            )
+            navigationRouter.forward(ReviewTransaction)
+        } catch (e: Exception) {
+            keystoneProposalRepository.clear()
+            throw e
+        }
+    }
+
+    private fun sendFlowWithDisabledZip321(zip321: Zip321ParseUriValidation.Valid) {
+        prefillSend.request(
+            PrefillSendData.FromAddressScan(
+                address = zip321.payment.payments[0].recipientAddress.value
+            )
+        )
+        navigationRouter.back()
     }
 }

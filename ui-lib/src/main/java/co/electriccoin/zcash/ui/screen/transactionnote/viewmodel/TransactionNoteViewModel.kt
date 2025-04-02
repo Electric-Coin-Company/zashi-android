@@ -15,13 +15,11 @@ import co.electriccoin.zcash.ui.design.util.StyledStringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
 import co.electriccoin.zcash.ui.screen.transactionnote.model.TransactionNoteState
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,10 +31,6 @@ internal class TransactionNoteViewModel(
     private val createOrUpdateTransactionNote: CreateOrUpdateTransactionNoteUseCase,
     private val deleteTransactionNote: DeleteTransactionNoteUseCase
 ) : ViewModel() {
-    val hideBottomSheetRequest = MutableSharedFlow<Unit>()
-
-    private val bottomSheetHiddenResponse = MutableSharedFlow<Unit>()
-
     private val noteText = MutableStateFlow("")
     private val foundNote = MutableStateFlow<String?>(null)
 
@@ -54,12 +48,9 @@ internal class TransactionNoteViewModel(
         foundNote: String?
     ): TransactionNoteState {
         val noteTextNormalized = noteText.trim()
-
         val isNoteTextTooLong = noteText.length > MAX_NOTE_LENGTH
-
         return TransactionNoteState(
             onBack = ::onBack,
-            onBottomSheetHidden = ::onBottomSheetHidden,
             title =
                 if (foundNote == null) {
                     stringRes(R.string.transaction_note_add_note_title)
@@ -107,37 +98,19 @@ internal class TransactionNoteViewModel(
 
     private fun onAddOrUpdateNoteClick() =
         viewModelScope.launch {
-            createOrUpdateTransactionNote(txId = transactionNote.txId, note = noteText.value) {
-                hideBottomSheet()
-            }
+            createOrUpdateTransactionNote(txId = transactionNote.txId, note = noteText.value)
         }
 
     private fun onDeleteNoteClick() =
         viewModelScope.launch {
-            deleteTransactionNote(transactionNote.txId) {
-                hideBottomSheet()
-            }
+            deleteTransactionNote(transactionNote.txId)
         }
 
     private fun onNoteTextChanged(newValue: String) {
         noteText.update { newValue }
     }
 
-    private suspend fun hideBottomSheet() {
-        hideBottomSheetRequest.emit(Unit)
-        bottomSheetHiddenResponse.first()
-    }
-
-    private fun onBottomSheetHidden() =
-        viewModelScope.launch {
-            bottomSheetHiddenResponse.emit(Unit)
-        }
-
-    private fun onBack() =
-        viewModelScope.launch {
-            hideBottomSheet()
-            navigationRouter.back()
-        }
+    private fun onBack() = navigationRouter.back()
 }
 
 private const val MAX_NOTE_LENGTH = 90

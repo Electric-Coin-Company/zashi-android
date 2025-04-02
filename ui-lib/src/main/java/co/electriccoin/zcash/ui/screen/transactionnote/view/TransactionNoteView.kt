@@ -22,9 +22,10 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
-import co.electriccoin.zcash.ui.design.component.ZashiModalBottomSheet
+import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
+import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -38,16 +39,15 @@ import co.electriccoin.zcash.ui.screen.transactionnote.model.TransactionNoteStat
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun TransactionNoteView(
-    onDismissRequest: () -> Unit,
-    sheetState: SheetState,
     state: TransactionNoteState,
+    sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
-    ZashiModalBottomSheet(
+    ZashiScreenModalBottomSheet(
+        state = state,
         sheetState = sheetState,
         content = {
             BottomSheetContent(state)
         },
-        onDismissRequest = onDismissRequest
     )
 }
 
@@ -137,7 +137,6 @@ private fun Preview() =
             state =
                 TransactionNoteState(
                     onBack = {},
-                    onBottomSheetHidden = {},
                     title = stringRes("Title"),
                     note = TextFieldState(stringRes("")) {},
                     noteCharacters =
@@ -148,7 +147,6 @@ private fun Preview() =
                     secondaryButton = null,
                     negative = ButtonState(stringRes("Delete note")),
                 ),
-            onDismissRequest = {},
             sheetState =
                 rememberModalBottomSheetState(
                     skipHiddenState = true,

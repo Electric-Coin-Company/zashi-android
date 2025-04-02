@@ -25,8 +25,8 @@ import cash.z.ecc.sdk.fixture.SeedPhraseFixture
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.CommonTag
-import co.electriccoin.zcash.ui.screen.restore.RestoreTag
 import co.electriccoin.zcash.ui.screen.restore.model.RestoreStage
+import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedTag
 import co.electriccoin.zcash.ui.test.getAppContext
 import co.electriccoin.zcash.ui.test.getStringResource
 import org.junit.Assert.assertEquals
@@ -55,7 +55,7 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
 
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.SEED_WORD_TEXT_FIELD).also {
             it.assertIsFocused()
         }
 
@@ -81,7 +81,7 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
             SeedPhraseFixture.SEED_PHRASE + " " + SeedPhraseFixture.SEED_PHRASE
         )
 
-        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.SEED_WORD_TEXT_FIELD).also {
             it.performKeyInput {
                 withKeyDown(Key.CtrlLeft) {
                     pressKey(Key.V)
@@ -94,11 +94,11 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
 
         assertEquals(SeedPhrase.SEED_PHRASE_SIZE, testSetup.getUserInputWords().size)
 
-        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.SEED_WORD_TEXT_FIELD).also {
             it.assertDoesNotExist()
         }
 
-        composeTestRule.onNodeWithTag(RestoreTag.AUTOCOMPLETE_LAYOUT).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.AUTOCOMPLETE_LAYOUT).also {
             it.assertDoesNotExist()
         }
 
@@ -116,7 +116,7 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
         composeTestRule.waitForIdle()
 
         // Insert uncompleted seed words
-        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.SEED_WORD_TEXT_FIELD).also {
             it.performTextInput("test")
         }
 
@@ -139,7 +139,7 @@ class RestoreViewAndroidTest : UiTestPrerequisites() {
         composeTestRule.waitForIdle()
 
         // Insert complete seed words
-        composeTestRule.onNodeWithTag(RestoreTag.SEED_WORD_TEXT_FIELD).also {
+        composeTestRule.onNodeWithTag(RestoreSeedTag.SEED_WORD_TEXT_FIELD).also {
             it.performTextInput(SeedPhraseFixture.SEED_PHRASE)
         }
 
