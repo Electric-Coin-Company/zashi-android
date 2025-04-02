@@ -415,7 +415,11 @@ private fun MainActivity.NavigationHome(navController: NavHostController) {
 
     val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle()
 
-    val sdkStatus = walletViewModel.currentWalletSnapshot.collectAsStateWithLifecycle().value?.status
+    val sdkStatus =
+        walletViewModel.currentWalletSnapshot
+            .collectAsStateWithLifecycle()
+            .value
+            ?.status
 
     val currentAppState = applicationStateProvider.state.collectAsStateWithLifecycle().value
 
@@ -459,7 +463,7 @@ private fun MainActivity.ShowSystemAuthentication(
         onCancel = {
             setCheckedProperty(false)
         },
-        onFailed = {
+        onFail = {
             // No action needed
         },
         useCase = protectedUseCase

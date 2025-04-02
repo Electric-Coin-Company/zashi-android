@@ -44,8 +44,7 @@ fun ZashiBigIconButton(
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = state.onClick,
                         role = Role.Button,
-                    )
-                    .padding(16.dp),
+                    ).padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(

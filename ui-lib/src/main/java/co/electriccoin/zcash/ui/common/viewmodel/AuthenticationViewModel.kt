@@ -290,13 +290,13 @@ class AuthenticationViewModel(
             )
 
         promptInfo =
-            BiometricPrompt.PromptInfo.Builder()
+            BiometricPrompt.PromptInfo
+                .Builder()
                 .setTitle(
                     getApplication<Application>().applicationContext.run {
                         getString(R.string.authentication_system_ui_title, getString(R.string.app_name))
                     }
-                )
-                .setSubtitle(
+                ).setSubtitle(
                     getApplication<Application>().applicationContext.run {
                         getString(
                             R.string.authentication_system_ui_subtitle,
@@ -317,8 +317,7 @@ class AuthenticationViewModel(
                             )
                         )
                     }
-                )
-                .setConfirmationRequired(false)
+                ).setConfirmationRequired(false)
                 .setAllowedAuthenticators(allowedAuthenticators)
                 .build()
 
@@ -331,8 +330,8 @@ class AuthenticationViewModel(
         }
     }
 
-    private fun getBiometricAuthenticationSupport(allowedAuthenticators: Int): BiometricSupportResult {
-        return when (biometricManager.canAuthenticate(allowedAuthenticators)) {
+    private fun getBiometricAuthenticationSupport(allowedAuthenticators: Int): BiometricSupportResult =
+        when (biometricManager.canAuthenticate(allowedAuthenticators)) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
                 Twig.debug { "Auth canAuthenticate BIOMETRIC_SUCCESS: App can authenticate using biometrics." }
                 BiometricSupportResult.Success
@@ -395,7 +394,6 @@ class AuthenticationViewModel(
                 BiometricSupportResult.StatusUnexpected
             }
         }
-    }
 
     private fun booleanStateFlow(default: BooleanPreferenceDefault): StateFlow<Boolean?> =
         flow<Boolean?> {
@@ -422,7 +420,10 @@ sealed class AuthenticationResult {
 
     data object Success : AuthenticationResult()
 
-    data class Error(val errorCode: Int, val errorMessage: String) : AuthenticationResult()
+    data class Error(
+        val errorCode: Int,
+        val errorMessage: String
+    ) : AuthenticationResult()
 
     data object Canceled : AuthenticationResult()
 

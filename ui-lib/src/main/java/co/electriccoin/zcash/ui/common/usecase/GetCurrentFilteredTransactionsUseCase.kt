@@ -58,16 +58,17 @@ class GetCurrentFilteredTransactionsUseCase(
                             val recipient = transactionRepository.getRecipients(transaction)
 
                             if (recipient == null) {
-                                metadataRepository.observeTransactionMetadataByTxId(
-                                    transaction.id.txIdString()
-                                ).map {
-                                    FilterTransactionData(
-                                        transaction = transaction,
-                                        contact = null,
-                                        recipientAddress = null,
-                                        transactionMetadata = it
-                                    )
-                                }
+                                metadataRepository
+                                    .observeTransactionMetadataByTxId(
+                                        transaction.id.txIdString()
+                                    ).map {
+                                        FilterTransactionData(
+                                            transaction = transaction,
+                                            contact = null,
+                                            recipientAddress = null,
+                                            transactionMetadata = it
+                                        )
+                                    }
                             } else {
                                 combine(
                                     addressBookRepository.observeContactByAddress(recipient),
@@ -86,8 +87,7 @@ class GetCurrentFilteredTransactionsUseCase(
                         }
 
                 enhancedTransactions?.combineToFlow() ?: flowOf(null)
-            }
-            .shareIn(
+            }.shareIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(5.seconds, 5.seconds),
                 replay = 1
@@ -125,8 +125,7 @@ class GetCurrentFilteredTransactionsUseCase(
                         }
                     )
                 }
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val result =
@@ -140,15 +139,13 @@ class GetCurrentFilteredTransactionsUseCase(
                                 transactions
                                     ?.filter { transaction ->
                                         filterBySentReceived(filters, transaction)
-                                    }
-                                    ?.filter { transaction ->
+                                    }?.filter { transaction ->
                                         filterByGeneralFilters(
                                             filters = filters,
                                             transaction = transaction,
                                             restoreTimestamp = restoreTimestampDataSource.getOrCreate()
                                         )
-                                    }
-                                    ?.map { transaction ->
+                                    }?.map { transaction ->
                                         ListTransactionData(
                                             transaction = transaction.transaction,
                                             metadata = transaction.transactionMetadata
@@ -157,8 +154,7 @@ class GetCurrentFilteredTransactionsUseCase(
                             }
                     )
                 }
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 
     fun observe() = result
 
@@ -199,8 +195,8 @@ class GetCurrentFilteredTransactionsUseCase(
     private fun filterBySentReceived(
         filters: List<TransactionFilter>,
         transaction: FilterTransactionData
-    ): Boolean {
-        return if (filters.contains(TransactionFilter.SENT) || filters.contains(TransactionFilter.RECEIVED)) {
+    ): Boolean =
+        if (filters.contains(TransactionFilter.SENT) || filters.contains(TransactionFilter.RECEIVED)) {
             when {
                 filters.contains(TransactionFilter.SENT) &&
                     transaction.transaction is SendTransaction -> true
@@ -214,14 +210,15 @@ class GetCurrentFilteredTransactionsUseCase(
         } else {
             true
         }
-    }
 
     private fun isUnread(
         transaction: FilterTransactionData,
         restoreTimestamp: Instant,
     ): Boolean {
         val transactionDate =
-            transaction.transaction.timestamp?.atZone(ZoneId.systemDefault())?.toLocalDate()
+            transaction.transaction.timestamp
+                ?.atZone(ZoneId.systemDefault())
+                ?.toLocalDate()
                 ?: LocalDate.now()
 
         val hasMemo = transaction.transaction.memoCount > 0
@@ -236,25 +233,20 @@ class GetCurrentFilteredTransactionsUseCase(
         }
     }
 
-    private fun isBookmark(transaction: FilterTransactionData): Boolean {
-        return transaction.transactionMetadata.isBookmarked
-    }
+    private fun isBookmark(transaction: FilterTransactionData): Boolean = transaction.transactionMetadata.isBookmarked
 
-    private fun hasNotes(transaction: FilterTransactionData): Boolean {
-        return transaction.transactionMetadata.note != null
-    }
+    private fun hasNotes(transaction: FilterTransactionData): Boolean = transaction.transactionMetadata.note != null
 
     private fun hasNotesWithFulltext(
         transaction: FilterTransactionData,
         fulltextFilter: String
-    ): Boolean {
-        return transaction.transactionMetadata.note
+    ): Boolean =
+        transaction.transactionMetadata.note
             ?.contains(
                 fulltextFilter,
                 ignoreCase = true
             )
             ?: false
-    }
 
     private fun hasAmountWithFulltext(
         transaction: FilterTransactionData,
@@ -267,16 +259,12 @@ class GetCurrentFilteredTransactionsUseCase(
     private fun hasAddressWithFulltext(
         transaction: FilterTransactionData,
         fulltextFilter: String
-    ): Boolean {
-        return transaction.recipientAddress?.contains(fulltextFilter, ignoreCase = true) ?: false
-    }
+    ): Boolean = transaction.recipientAddress?.contains(fulltextFilter, ignoreCase = true) ?: false
 
     private fun hasContactInAddressBookWithFulltext(
         transaction: FilterTransactionData,
         fulltextFilter: String
-    ): Boolean {
-        return transaction.contact?.name?.contains(fulltextFilter, ignoreCase = true) ?: false
-    }
+    ): Boolean = transaction.contact?.name?.contains(fulltextFilter, ignoreCase = true) ?: false
 
     private fun hasMemoInFilteredIds(
         memoTxIds: List<TransactionId>?,

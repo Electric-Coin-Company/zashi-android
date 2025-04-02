@@ -106,8 +106,7 @@ class AccountDataSourceImpl(
                                 )
                             }
                         }
-                    }
-                    ?.flatMapLatest { accountsWithAddresses ->
+                    }?.flatMapLatest { accountsWithAddresses ->
                         if (accountsWithAddresses == null) {
                             flowOf(null)
                         } else {
@@ -132,8 +131,7 @@ class AccountDataSourceImpl(
                                 }
                             }
                         }
-                    }
-                    ?.retryWhen { _, attempt ->
+                    }?.retryWhen { _, attempt ->
                         emit(null)
                         delay(attempt.coerceAtMost(RETRY_DELAY).seconds)
                         true
@@ -189,8 +187,7 @@ class AccountDataSourceImpl(
                                         accounts.size == 1,
                             )
                     }
-                }
-                ?.sortedDescending()
+                }?.sortedDescending()
         }.flowOn(Dispatchers.IO)
             .stateIn(
                 scope = scope,
@@ -202,15 +199,13 @@ class AccountDataSourceImpl(
         allAccounts
             .map { account ->
                 account?.firstOrNull { it.isSelected }
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 
     override val zashiAccount: Flow<ZashiAccount?> =
         allAccounts
             .map { account ->
                 account?.filterIsInstance<ZashiAccount>()?.firstOrNull()
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 
     override suspend fun getAllAccounts() =
         withContext(Dispatchers.IO) {
@@ -250,7 +245,8 @@ class AccountDataSourceImpl(
         index: Long
     ): Account =
         withContext(Dispatchers.IO) {
-            synchronizerProvider.getSynchronizer()
+            synchronizerProvider
+                .getSynchronizer()
                 .importAccountByUfvk(
                     AccountImportSetup(
                         accountName = context.getString(R.string.keystone_wallet_name),

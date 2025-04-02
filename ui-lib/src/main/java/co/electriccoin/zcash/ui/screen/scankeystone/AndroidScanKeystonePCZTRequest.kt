@@ -47,7 +47,7 @@ internal fun WrapScanKeystonePCZTRequest() {
             snackbarHostState = snackbarHostState,
             validationResult = validationState,
             onBack = { navigationRouter.back() },
-            onScanned = {
+            onScan = {
                 viewModel.onScanned(it)
             },
             onOpenSettings = {
@@ -63,7 +63,7 @@ internal fun WrapScanKeystonePCZTRequest() {
                     }
                 }
             },
-            onScanStateChanged = {},
+            onScanStateChange = {},
             topAppBarSubTitleState = walletState,
             state = state,
         )

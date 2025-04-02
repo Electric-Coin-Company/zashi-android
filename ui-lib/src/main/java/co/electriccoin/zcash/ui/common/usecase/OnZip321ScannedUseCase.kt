@@ -45,7 +45,12 @@ class OnZip321ScannedUseCase(
     }
 
     private fun addressBookFlow(zip321: Zip321ParseUriValidation.Valid) {
-        navigationRouter.replace(AddContactArgs(zip321.payment.payments[0].recipientAddress.value))
+        navigationRouter.replace(
+            AddContactArgs(
+                zip321.payment.payments[0]
+                    .recipientAddress.value
+            )
+        )
     }
 
     @Suppress("TooGenericExceptionCaught")
@@ -105,7 +110,10 @@ class OnZip321ScannedUseCase(
                     amount = proposal.amount,
                     address = proposal.destination.address,
                     fee = proposal.proposal.totalFeeRequired(),
-                    memos = proposal.memo.value.takeIf { it.isNotEmpty() }?.let { listOf(it) }
+                    memos =
+                        proposal.memo.value
+                            .takeIf { it.isNotEmpty() }
+                            ?.let { listOf(it) }
                 )
             )
             navigationRouter.forward(ReviewTransaction)
@@ -118,7 +126,9 @@ class OnZip321ScannedUseCase(
     private fun sendFlowWithDisabledZip321(zip321: Zip321ParseUriValidation.Valid) {
         prefillSend.request(
             PrefillSendData.FromAddressScan(
-                address = zip321.payment.payments[0].recipientAddress.value
+                address =
+                    zip321.payment.payments[0]
+                        .recipientAddress.value
             )
         )
         navigationRouter.back()

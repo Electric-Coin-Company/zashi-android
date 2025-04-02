@@ -13,32 +13,35 @@ import kotlinx.datetime.Instant
 class MergingConfigurationProvider(
     private val configurationProviders: PersistentList<ConfigurationProvider>
 ) : ConfigurationProvider {
-    override fun peekConfiguration(): Configuration {
-        return MergingConfiguration(configurationProviders.map { it.peekConfiguration() }.toPersistentList())
-    }
+    override fun peekConfiguration(): Configuration =
+        MergingConfiguration(
+            configurationProviders
+                .map {
+                    it.peekConfiguration()
+                }.toPersistentList()
+        )
 
-    override fun getConfigurationFlow(): Flow<Configuration> {
-        return if (configurationProviders.isEmpty()) {
+    override fun getConfigurationFlow(): Flow<Configuration> =
+        if (configurationProviders.isEmpty()) {
             flowOf(MergingConfiguration(persistentListOf()))
         } else {
             combine(configurationProviders.map { it.getConfigurationFlow() }) { configurations ->
                 MergingConfiguration(configurations.toList().toPersistentList())
             }
         }
-    }
 
     override fun hintToRefresh() {
         configurationProviders.forEach { it.hintToRefresh() }
     }
 }
 
-private data class MergingConfiguration(private val configurations: PersistentList<Configuration>) : Configuration {
+private data class MergingConfiguration(
+    private val configurations: PersistentList<Configuration>
+) : Configuration {
     override val updatedAt: Instant?
         get() = configurations.mapNotNull { it.updatedAt }.maxOrNull()
 
-    override fun hasKey(key: ConfigKey): Boolean {
-        return null != configurations.firstWithKey(key)
-    }
+    override fun hasKey(key: ConfigKey): Boolean = null != configurations.firstWithKey(key)
 
     // TODO [#1373]: Catch and log Configuration Key Coercion Failures
     // TODO [#1373]: https://github.com/Electric-Coin-Company/zashi-android/issues/1373

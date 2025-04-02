@@ -58,25 +58,26 @@ class SelectRecipientViewModel(
         val accountItems =
             listOf(
                 AddressBookItem.Title(stringRes(R.string.address_book_multiple_wallets_title)),
-                *accounts.map { account ->
-                    AddressBookItem.Contact(
-                        ZashiContactListItemState(
-                            icon =
-                                imageRes(
-                                    when (account) {
-                                        is KeystoneAccount ->
-                                            co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
-                                        is ZashiAccount ->
-                                            co.electriccoin.zcash.ui.design.R.drawable.ic_item_zashi
-                                    }
-                                ),
-                            isShielded = false,
-                            name = account.name,
-                            address = stringRes("${account.unified.address.address.take(ADDRESS_MAX_LENGTH)}..."),
-                            onClick = { onWalletAccountClick(account) }
+                *accounts
+                    .map { account ->
+                        AddressBookItem.Contact(
+                            ZashiContactListItemState(
+                                icon =
+                                    imageRes(
+                                        when (account) {
+                                            is KeystoneAccount ->
+                                                co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
+                                            is ZashiAccount ->
+                                                co.electriccoin.zcash.ui.design.R.drawable.ic_item_zashi
+                                        }
+                                    ),
+                                isShielded = false,
+                                name = account.name,
+                                address = stringRes("${account.unified.address.address.take(ADDRESS_MAX_LENGTH)}..."),
+                                onClick = { onWalletAccountClick(account) }
+                            )
                         )
-                    )
-                }.toTypedArray()
+                    }.toTypedArray()
             )
 
         val addressBookItems =
@@ -85,17 +86,18 @@ class SelectRecipientViewModel(
             } else {
                 listOf(
                     AddressBookItem.Title(stringRes(R.string.address_book_multiple_wallets_contacts_title)),
-                    *contacts.map { contact ->
-                        AddressBookItem.Contact(
-                            ZashiContactListItemState(
-                                icon = getContactInitials(contact),
-                                isShielded = false,
-                                name = stringRes(contact.name),
-                                address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
-                                onClick = { onContactClick(contact) }
+                    *contacts
+                        .map { contact ->
+                            AddressBookItem.Contact(
+                                ZashiContactListItemState(
+                                    icon = getContactInitials(contact),
+                                    isShielded = false,
+                                    name = stringRes(contact.name),
+                                    address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
+                                    onClick = { onContactClick(contact) }
+                                )
                             )
-                        )
-                    }.toTypedArray()
+                        }.toTypedArray()
                 )
             }
 
@@ -117,21 +119,22 @@ class SelectRecipientViewModel(
         )
     }
 
-    private fun createStateWithoutAccounts(contacts: List<AddressBookContact>?): AddressBookState {
-        return AddressBookState(
+    private fun createStateWithoutAccounts(contacts: List<AddressBookContact>?): AddressBookState =
+        AddressBookState(
             isLoading = contacts == null,
             items =
-                contacts?.map { contact ->
-                    AddressBookItem.Contact(
-                        ZashiContactListItemState(
-                            icon = getContactInitials(contact),
-                            isShielded = false,
-                            name = stringRes(contact.name),
-                            address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
-                            onClick = { onContactClick(contact) }
+                contacts
+                    ?.map { contact ->
+                        AddressBookItem.Contact(
+                            ZashiContactListItemState(
+                                icon = getContactInitials(contact),
+                                isShielded = false,
+                                name = stringRes(contact.name),
+                                address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
+                                onClick = { onContactClick(contact) }
+                            )
                         )
-                    )
-                }.orEmpty(),
+                    }.orEmpty(),
             onBack = ::onBack,
             manualButton =
                 ButtonState(
@@ -145,7 +148,6 @@ class SelectRecipientViewModel(
                 ),
             title = stringRes(R.string.address_book_select_recipient_title)
         )
-    }
 
     private fun onWalletAccountClick(account: WalletAccount) =
         viewModelScope.launch {
@@ -153,17 +155,15 @@ class SelectRecipientViewModel(
             navigationRouter.back()
         }
 
-    private fun getContactInitials(contact: AddressBookContact): ImageResource {
-        return imageRes(
+    private fun getContactInitials(contact: AddressBookContact): ImageResource =
+        imageRes(
             contact.name
                 .split(" ")
                 .mapNotNull { part ->
                     part.takeIf { it.isNotEmpty() }?.first()?.toString()
-                }
-                .take(2)
+                }.take(2)
                 .joinToString(separator = "")
         )
-    }
 
     private fun onBack() = navigationRouter.back()
 

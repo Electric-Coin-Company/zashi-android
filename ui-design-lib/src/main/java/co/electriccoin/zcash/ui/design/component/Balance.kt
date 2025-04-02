@@ -117,17 +117,18 @@ private fun splitBalance(balanceStringParts: ZecAmountTriple): Pair<String, Stri
     Twig.debug { "Balance parts before calculation: $balanceStringParts" }
 
     val cutPosition =
-        balanceStringParts.main.indexOf(
-            startIndex = 0,
-            char = MonetarySeparators.current(Locale.getDefault()).decimal,
-            ignoreCase = true
-        ).let { separatorPosition ->
-            if (separatorPosition + CUT_POSITION_OFFSET < balanceStringParts.main.length) {
-                separatorPosition + CUT_POSITION_OFFSET
-            } else {
-                balanceStringParts.main.length
+        balanceStringParts.main
+            .indexOf(
+                startIndex = 0,
+                char = MonetarySeparators.current(Locale.getDefault()).decimal,
+                ignoreCase = true
+            ).let { separatorPosition ->
+                if (separatorPosition + CUT_POSITION_OFFSET < balanceStringParts.main.length) {
+                    separatorPosition + CUT_POSITION_OFFSET
+                } else {
+                    balanceStringParts.main.length
+                }
             }
-        }
 
     val firstPart =
         buildString {
@@ -158,7 +159,10 @@ data class ZecAmountTriple(
 )
 
 @Immutable
-data class BalanceTextStyle(val mostSignificantPart: TextStyle, val leastSignificantPart: TextStyle)
+data class BalanceTextStyle(
+    val mostSignificantPart: TextStyle,
+    val leastSignificantPart: TextStyle
+)
 
 object StyledBalanceDefaults {
     @Stable

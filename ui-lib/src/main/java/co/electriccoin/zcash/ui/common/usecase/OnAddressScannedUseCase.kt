@@ -37,7 +37,7 @@ class OnAddressScannedUseCase(
                             AddressType.Tex -> cash.z.ecc.sdk.model.AddressType.TEX
                             AddressType.Transparent -> cash.z.ecc.sdk.model.AddressType.TRANSPARENT
                             AddressType.Unified -> cash.z.ecc.sdk.model.AddressType.UNIFIED
-                            is AddressType.Invalid -> cash.z.ecc.sdk.model.AddressType.UNIFIED
+                            else -> cash.z.ecc.sdk.model.AddressType.UNIFIED
                         }
                     )
                 )

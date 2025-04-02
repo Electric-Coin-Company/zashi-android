@@ -46,6 +46,7 @@ class ReceiveViewTestSetup(
                                         )
                                     ),
                                 isLoading = false,
+                                onBack = {}
                             ),
                         appBarState =
                             ZashiMainTopAppBarStateFixture.new(

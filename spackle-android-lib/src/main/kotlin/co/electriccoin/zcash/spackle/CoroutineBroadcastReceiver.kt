@@ -10,7 +10,9 @@ import kotlinx.coroutines.launch
  * @param broadcastReceiverScope Scope for performing asynchronous work in the broadcast receiver.
  * It is not recommended to cancel this scope.
  */
-abstract class CoroutineBroadcastReceiver(private val broadcastReceiverScope: CoroutineScope) : BroadcastReceiver() {
+abstract class CoroutineBroadcastReceiver(
+    private val broadcastReceiverScope: CoroutineScope
+) : BroadcastReceiver() {
     final override fun onReceive(
         context: Context,
         intent: Intent

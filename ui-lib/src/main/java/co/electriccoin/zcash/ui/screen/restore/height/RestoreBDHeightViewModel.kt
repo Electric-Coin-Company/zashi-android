@@ -37,8 +37,7 @@ class RestoreBDHeightViewModel(
         blockHeightText
             .map { text ->
                 createState(text)
-            }
-            .stateIn(
+            }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = createState(blockHeightText.value)
@@ -46,7 +45,8 @@ class RestoreBDHeightViewModel(
 
     private fun createState(blockHeight: String): RestoreBDHeightState {
         val isHigherThanSaplingActivationHeight =
-            blockHeight.toLongOrNull()
+            blockHeight
+                .toLongOrNull()
                 ?.let { it >= ZcashNetwork.fromResources(context).saplingActivationHeight.value } ?: false
         val isValid = blockHeight.isEmpty() || isHigherThanSaplingActivationHeight
 

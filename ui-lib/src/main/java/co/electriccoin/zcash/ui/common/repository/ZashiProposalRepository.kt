@@ -65,14 +65,13 @@ class ZashiProposalRepositoryImpl(
         }
     }
 
-    override suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal {
-        return createProposalInternal {
+    override suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal =
+        createProposalInternal {
             proposalDataSource.createZip321Proposal(
                 account = accountDataSource.getSelectedAccount(),
                 zip321Uri = zip321Uri
             )
         }
-    }
 
     override suspend fun createShieldProposal() {
         createProposalInternal {

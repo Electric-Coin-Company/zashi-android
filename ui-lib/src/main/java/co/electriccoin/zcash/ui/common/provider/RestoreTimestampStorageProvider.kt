@@ -19,9 +19,7 @@ class RestoreTimestampStorageProviderImpl(
 ) : RestoreTimestampStorageProvider {
     private val default = RestoreTimestampPreferenceDefault()
 
-    override suspend fun get(): Instant? {
-        return default.getValue(encryptedPreferenceProvider())
-    }
+    override suspend fun get(): Instant? = default.getValue(encryptedPreferenceProvider())
 
     override suspend fun store(key: Instant) {
         default.putValue(encryptedPreferenceProvider(), key)

@@ -44,15 +44,15 @@ import kotlin.math.pow
 @Suppress("MagicNumber")
 @Composable
 fun ZashiYearMonthWheelDatePicker(
+    onSelectionChange: (YearMonth) -> Unit,
     modifier: Modifier = Modifier,
     verticallyVisibleItems: Int = 3,
     startYear: Year = Year.of(2016),
     endYear: Year = Year.now(),
-    selectedYear: YearMonth = YearMonth.now(),
-    onSelectionChanged: (YearMonth) -> Unit,
+    selectionYear: YearMonth = YearMonth.now(),
 ) {
-    val latestOnSelectionChanged by rememberUpdatedState(onSelectionChanged)
-    var selectedDate by remember { mutableStateOf(selectedYear) }
+    val latestOnSelectionChanged by rememberUpdatedState(onSelectionChange)
+    var selectedDate by remember { mutableStateOf(selectionYear) }
     val months =
         listOf(
             Month.JANUARY,
@@ -131,7 +131,7 @@ fun ZashiYearMonthWheelDatePicker(
     }
 }
 
-@Suppress("MagicNumber")
+@Suppress("MagicNumber", "ContentSlotReused")
 @Composable
 private fun WheelLazyList(
     itemCount: Int,
@@ -139,8 +139,8 @@ private fun WheelLazyList(
     itemVerticalOffset: Int,
     onFocusItem: (Int) -> Unit,
     isInfiniteScroll: Boolean,
-    itemContent: @Composable LazyItemScope.(index: Int) -> Unit,
     modifier: Modifier = Modifier,
+    itemContent: @Composable LazyItemScope.(index: Int) -> Unit,
 ) {
     val latestOnFocusItem by rememberUpdatedState(onFocusItem)
     val coroutineScope = rememberCoroutineScope()
@@ -256,14 +256,10 @@ private fun calculateCoefficient(
 }
 
 @Suppress("MagicNumber")
-private fun calculateScale(coefficient: Float): Float {
-    return coefficient.coerceAtLeast(.6f)
-}
+private fun calculateScale(coefficient: Float): Float = coefficient.coerceAtLeast(.6f)
 
 @Suppress("MagicNumber")
-private fun calculateAlpha(coefficient: Float): Float {
-    return coefficient.pow(1.1f)
-}
+private fun calculateAlpha(coefficient: Float): Float = coefficient.pow(1.1f)
 
 @Suppress("MagicNumber")
 private fun calculateTranslationY(

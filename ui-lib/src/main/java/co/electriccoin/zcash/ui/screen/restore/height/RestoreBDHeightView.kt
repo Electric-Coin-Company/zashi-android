@@ -163,13 +163,9 @@ private class ThousandSeparatorTransformation : VisualTransformation {
 
         val numberOffsetTranslator =
             object : OffsetMapping {
-                override fun originalToTransformed(offset: Int): Int {
-                    return outputText.length
-                }
+                override fun originalToTransformed(offset: Int): Int = outputText.length
 
-                override fun transformedToOriginal(offset: Int): Int {
-                    return text.length
-                }
+                override fun transformedToOriginal(offset: Int): Int = text.length
             }
 
         return TransformedText(

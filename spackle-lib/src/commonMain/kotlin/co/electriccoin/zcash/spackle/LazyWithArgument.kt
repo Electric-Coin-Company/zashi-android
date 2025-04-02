@@ -5,7 +5,9 @@ package co.electriccoin.zcash.spackle
  *
  * This class is thread-safe.
  */
-class LazyWithArgument<in Input, out Output>(private val deferredCreator: ((Input) -> Output)) {
+class LazyWithArgument<in Input, out Output>(
+    private val deferredCreator: ((Input) -> Output)
+) {
     @Volatile
     private var singletonInstance: Output? = null
 

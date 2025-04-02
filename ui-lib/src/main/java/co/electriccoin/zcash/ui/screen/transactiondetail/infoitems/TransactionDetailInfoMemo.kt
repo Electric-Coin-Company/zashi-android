@@ -162,8 +162,7 @@ private fun TransactionDetailInfoMemo(
                                 interactionSource = remember { MutableInteractionSource() },
                                 onClick = state.bottomButton.onClick,
                                 role = Role.Button,
-                            )
-                            .padding(12.dp),
+                            ).padding(12.dp),
                     verticalAlignment = CenterVertically
                 ) {
                     SelectionContainer {

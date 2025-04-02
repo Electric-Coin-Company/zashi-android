@@ -82,7 +82,9 @@ fun ZashiSeedWordTextContent(
 }
 
 @Immutable
-data class SeedWordTextState(val text: String)
+data class SeedWordTextState(
+    val text: String
+)
 
 @Composable
 @PreviewScreens

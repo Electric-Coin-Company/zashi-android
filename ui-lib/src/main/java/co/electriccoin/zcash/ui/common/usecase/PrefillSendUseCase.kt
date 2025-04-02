@@ -41,5 +41,7 @@ sealed interface PrefillSendData {
         val memos: List<String>?,
     ) : PrefillSendData
 
-    data class FromAddressScan(val address: String) : PrefillSendData
+    data class FromAddressScan(
+        val address: String
+    ) : PrefillSendData
 }

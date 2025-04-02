@@ -5,3 +5,4 @@ ktlint_standard_trailing-comma-on-call-site = disabled
 ktlint_standard_trailing-comma-on-declaration-site = disabled
 # When using Compose, suppress the `function-naming` rule in favor of PascalCase naming convention
 ktlint_function_naming_ignore_when_annotated_with=Composable
+ktlint_standard_function-signature=disabled

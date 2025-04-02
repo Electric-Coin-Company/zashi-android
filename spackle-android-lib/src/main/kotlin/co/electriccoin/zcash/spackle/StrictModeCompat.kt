@@ -13,40 +13,44 @@ object StrictModeCompat {
         StrictMode.enableDefaults()
 
         StrictMode.setThreadPolicy(
-            StrictMode.ThreadPolicy.Builder().apply {
-                detectAll()
-                if (isCrashOnViolation) {
-                    penaltyDeath()
-                } else {
-                    penaltyLog()
-                }
-            }.build()
+            StrictMode.ThreadPolicy
+                .Builder()
+                .apply {
+                    detectAll()
+                    if (isCrashOnViolation) {
+                        penaltyDeath()
+                    } else {
+                        penaltyLog()
+                    }
+                }.build()
         )
 
         // Don't enable missing network tags, because those are noisy.
         StrictMode.setVmPolicy(
-            StrictMode.VmPolicy.Builder().apply {
-                if (AndroidApiVersion.isAtLeastS) {
-                    detectUnsafeIntentLaunch()
-                }
-                detectActivityLeaks()
-                detectCleartextNetwork()
-                detectContentUriWithoutPermission()
-                detectFileUriExposure()
-                detectLeakedClosableObjects()
-                detectLeakedRegistrationObjects()
-                detectLeakedSqlLiteObjects()
-                if (AndroidApiVersion.isAtLeastP) {
-                    // Disable because this is mostly flagging Android X and Play Services
-                    // builder.detectNonSdkApiUsage();
-                }
+            StrictMode.VmPolicy
+                .Builder()
+                .apply {
+                    if (AndroidApiVersion.isAtLeastS) {
+                        detectUnsafeIntentLaunch()
+                    }
+                    detectActivityLeaks()
+                    detectCleartextNetwork()
+                    detectContentUriWithoutPermission()
+                    detectFileUriExposure()
+                    detectLeakedClosableObjects()
+                    detectLeakedRegistrationObjects()
+                    detectLeakedSqlLiteObjects()
+                    if (AndroidApiVersion.isAtLeastP) {
+                        // Disable because this is mostly flagging Android X and Play Services
+                        // builder.detectNonSdkApiUsage();
+                    }
 
-                if (isCrashOnViolation) {
-                    penaltyDeath()
-                } else {
-                    penaltyLog()
-                }
-            }.build()
+                    if (isCrashOnViolation) {
+                        penaltyDeath()
+                    } else {
+                        penaltyLog()
+                    }
+                }.build()
         )
     }
 }

@@ -28,7 +28,9 @@ interface SynchronizerProvider {
     suspend fun getSdkSynchronizer() = getSynchronizer() as SdkSynchronizer
 }
 
-class SynchronizerProviderImpl(walletCoordinator: WalletCoordinator) : SynchronizerProvider {
+class SynchronizerProviderImpl(
+    walletCoordinator: WalletCoordinator
+) : SynchronizerProvider {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -48,8 +50,7 @@ class SynchronizerProviderImpl(walletCoordinator: WalletCoordinator) : Synchroni
                         emit(synchronizer)
                     }
                 }
-            }
-            .flowOn(Dispatchers.IO)
+            }.flowOn(Dispatchers.IO)
             .stateIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),

@@ -147,8 +147,7 @@ private fun List<MutableInteractionSource>.observeSelectedIndex() =
     this
         .map { interaction ->
             interaction.isFocused()
-        }
-        .combineToFlow()
+        }.combineToFlow()
         .map {
             it.indexOfFirst { isFocused -> isFocused }
         }
@@ -186,7 +185,10 @@ data class SeedTextFieldState(
 
 @Suppress("MagicNumber")
 @Stable
-class SeedTextFieldHandle(seedTextFieldState: SeedTextFieldState, selectedIndex: Int) {
+class SeedTextFieldHandle(
+    seedTextFieldState: SeedTextFieldState,
+    selectedIndex: Int
+) {
     internal val textFieldHandles = seedTextFieldState.values.map { ZashiTextFieldHandle(it.value) }
 
     internal val interactions = List(24) { MutableInteractionSource() }

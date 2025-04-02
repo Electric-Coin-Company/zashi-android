@@ -175,7 +175,8 @@ private fun BottomBar(
         if (
             previousIndex == handle.selectedIndex &&
             previousText != handle.selectedText &&
-            suggestions.contains(handle.selectedText) && suggestions.size == 1
+            suggestions.contains(handle.selectedText) &&
+            suggestions.size == 1
         ) {
             val nextIndex =
                 state.seed.values
@@ -264,7 +265,11 @@ private fun getFilteredSuggestions(
     suggestionsState: RestoreSeedSuggestionsState,
     handle: SeedTextFieldHandle,
 ): List<String> {
-    val trimmed = handle.selectedText?.lowercase(Locale.US)?.trim().orEmpty()
+    val trimmed =
+        handle.selectedText
+            ?.lowercase(Locale.US)
+            ?.trim()
+            .orEmpty()
     val autocomplete = suggestionsState.suggestions.filter { it.startsWith(trimmed) }
     return when {
         trimmed.isBlank() -> suggestionsState.suggestions

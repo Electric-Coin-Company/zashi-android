@@ -108,12 +108,13 @@ private fun WhatsNewSection(state: WhatsNewSectionState) {
     val bulletRestLine = with(LocalDensity.current) { bulletStringWidth.toSp() }
     val bulletParagraphStyle = ParagraphStyle(textIndent = TextIndent(restLine = bulletRestLine))
     val bulletStyle =
-        state.content.getValue().split("\n-")
+        state.content
+            .getValue()
+            .split("\n-")
             .filter { it.isNotBlank() }
             .map {
                 it.replace("\n-", "").trim()
-            }
-            .let { text ->
+            }.let { text ->
                 buildAnnotatedString {
                     text.forEach {
                         withStyle(style = bulletParagraphStyle) {

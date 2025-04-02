@@ -84,8 +84,9 @@ private fun Content(
         Spacer(Modifier.height(24.dp))
 
         ZashiYearMonthWheelDatePicker(
-            modifier = Modifier.fillMaxWidth()
-        ) {}
+            onSelectionChange = {},
+            modifier = Modifier.fillMaxWidth(),
+        )
 
         Spacer(Modifier.height(24.dp))
 

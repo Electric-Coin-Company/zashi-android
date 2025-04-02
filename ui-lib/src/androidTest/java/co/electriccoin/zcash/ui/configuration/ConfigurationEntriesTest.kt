@@ -13,7 +13,8 @@ class ConfigurationEntriesTest {
     fun keys_unique() {
         val fieldValueSet = mutableSetOf<String>()
 
-        ConfigurationEntries::class.memberProperties
+        ConfigurationEntries::class
+            .memberProperties
             .map { it.getter.call(ConfigurationEntries) }
             .map { it as DefaultEntry<*> }
             .map { it.key }

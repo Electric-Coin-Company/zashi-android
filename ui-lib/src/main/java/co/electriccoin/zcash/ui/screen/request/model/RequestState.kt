@@ -11,7 +11,9 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 internal sealed class RequestState {
     data object Loading : RequestState()
 
-    sealed class Prepared(open val onBack: () -> Unit) : RequestState()
+    sealed class Prepared(
+        open val onBack: () -> Unit
+    ) : RequestState()
 
     data class Amount(
         val request: Request,

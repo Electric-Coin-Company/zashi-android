@@ -15,7 +15,9 @@ data class AddressBookState(
 )
 
 sealed interface AddressBookItem : Itemizable {
-    data class Title(val title: StringResource) : AddressBookItem {
+    data class Title(
+        val title: StringResource
+    ) : AddressBookItem {
         override val contentType = "Title"
         override val key = Empty.contentType
     }

@@ -52,12 +52,12 @@ class ScanViewTestSetup(
         Scan(
             snackbarHostState = SnackbarHostState(),
             onBack = {},
-            onScanned = {},
+            onScan = {},
             onScanError = {},
             onOpenSettings = {
                 onOpenSettingsCount.incrementAndGet()
             },
-            onScanStateChanged = {
+            onScanStateChange = {
                 scanState.set(it)
             },
             topAppBarSubTitleState = TopAppBarSubTitleState.None,

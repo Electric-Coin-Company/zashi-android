@@ -43,7 +43,8 @@ class HomeViewModel(
     private val isMessageVisible = MutableStateFlow(true)
 
     private val isRestoreDialogVisible: Flow<Boolean?> =
-        isRestoreSuccessDialogVisible.observe()
+        isRestoreSuccessDialogVisible
+            .observe()
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -56,8 +57,7 @@ class HomeViewModel(
                 HomeRestoreDialogState(
                     onClick = ::onRestoreDialogSeenClick
                 ).takeIf { isVisible == true }
-            }
-            .stateIn(
+            }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = null
@@ -121,13 +121,12 @@ class HomeViewModel(
         message = createWalletBackupMessageState().takeIf { isMessageVisible }
     )
 
-    private fun createWalletBackupMessageState(): WalletBackupMessageState {
-        return WalletBackupMessageState(
+    private fun createWalletBackupMessageState(): WalletBackupMessageState =
+        WalletBackupMessageState(
             onClick = {
                 navigationRouter.forward(SeedBackup)
             }
         )
-    }
 
     private fun onRestoreDialogSeenClick() =
         viewModelScope.launch {

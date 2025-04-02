@@ -9,12 +9,11 @@ import co.electriccoin.zcash.spackle.AndroidApiVersion
 fun Modifier.blurCompat(
     radius: Dp,
     max: Dp
-): Modifier {
-    return if (AndroidApiVersion.isAtLeastS) {
+): Modifier =
+    if (AndroidApiVersion.isAtLeastS) {
         this.blur(radius)
     } else {
         val progression = 1 - (radius.value / max.value)
         this
             .alpha(progression)
     }
-}

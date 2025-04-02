@@ -32,59 +32,66 @@ class AccountListViewModel(
 ) : ViewModel() {
     @Suppress("SpreadOperator")
     val state =
-        getWalletAccounts.observe().map { accounts ->
-            val items =
-                listOfNotNull(
-                    *accounts.orEmpty()
-                        .map<WalletAccount, AccountListItem> { account ->
-                            AccountListItem.Account(
-                                ZashiAccountListItemState(
-                                    title = account.name,
+        getWalletAccounts
+            .observe()
+            .map { accounts ->
+                val items =
+                    listOfNotNull(
+                        *accounts
+                            .orEmpty()
+                            .map<WalletAccount, AccountListItem> { account ->
+                                AccountListItem.Account(
+                                    ZashiAccountListItemState(
+                                        title = account.name,
+                                        subtitle =
+                                            stringRes(
+                                                "${account.unified.address.address.take(ADDRESS_MAX_LENGTH)}...",
+                                            ),
+                                        icon =
+                                            when (account) {
+                                                is KeystoneAccount -> R.drawable.ic_item_keystone
+                                                is ZashiAccount -> R.drawable.ic_item_zashi
+                                            },
+                                        isSelected = account.isSelected,
+                                        onClick = { onAccountClicked(account) }
+                                    )
+                                )
+                            }.toTypedArray(),
+                        AccountListItem
+                            .Other(
+                                ZashiListItemState(
+                                    title =
+                                        stringRes(
+                                            co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_title,
+                                        ),
                                     subtitle =
                                         stringRes(
-                                            "${account.unified.address.address.take(ADDRESS_MAX_LENGTH)}...",
+                                            co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_subtitle,
                                         ),
-                                    icon =
-                                        when (account) {
-                                            is KeystoneAccount -> R.drawable.ic_item_keystone
-                                            is ZashiAccount -> R.drawable.ic_item_zashi
-                                        },
-                                    isSelected = account.isSelected,
-                                    onClick = { onAccountClicked(account) }
+                                    onClick = ::onShowKeystonePromoClicked
                                 )
-                            )
-                        }.toTypedArray(),
-                    AccountListItem.Other(
-                        ZashiListItemState(
-                            title = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_title),
-                            subtitle =
-                                stringRes(
-                                    co.electriccoin.zcash.ui.R.string.account_list_keystone_promo_subtitle,
-                                ),
-                            onClick = ::onShowKeystonePromoClicked
-                        )
-                    ).takeIf {
-                        accounts.orEmpty().none { it is KeystoneAccount }
-                    }
-                )
+                            ).takeIf {
+                                accounts.orEmpty().none { it is KeystoneAccount }
+                            }
+                    )
 
-            AccountListState(
-                items = items,
-                isLoading = accounts == null,
-                onBack = ::onBack,
-                addWalletButton =
-                    ButtonState(
-                        text = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_primary),
-                        onClick = ::onAddWalletButtonClicked
-                    ).takeIf {
-                        accounts.orEmpty().none { it is KeystoneAccount }
-                    }
+                AccountListState(
+                    items = items,
+                    isLoading = accounts == null,
+                    onBack = ::onBack,
+                    addWalletButton =
+                        ButtonState(
+                            text = stringRes(co.electriccoin.zcash.ui.R.string.account_list_keystone_primary),
+                            onClick = ::onAddWalletButtonClicked
+                        ).takeIf {
+                            accounts.orEmpty().none { it is KeystoneAccount }
+                        }
+                )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
             )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
 
     private fun onShowKeystonePromoClicked() =
         navigationRouter.replace(ExternalUrl("https://keyst.one/shop/products/keystone-3-pro?discount=Zashi"))

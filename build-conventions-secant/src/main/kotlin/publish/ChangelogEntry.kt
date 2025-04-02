@@ -47,7 +47,8 @@ data class ChangelogEntry(
         GsonBuilder()
             .serializeNulls()
             .create()
-            .toJson(this).replace("\"", "\\\"")
+            .toJson(this)
+            .replace("\"", "\\\"")
 }
 
 data class ChangelogEntrySection(

@@ -191,7 +191,9 @@ fun ZashiTextFieldPlaceholder(res: StringResource) {
 }
 
 @Stable
-class ZashiTextFieldHandle(text: String) {
+class ZashiTextFieldHandle(
+    text: String
+) {
     var textFieldValueState by mutableStateOf(TextFieldValue(text = text))
 
     fun moveCursorToEnd() {

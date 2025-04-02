@@ -17,6 +17,5 @@ class GetKeystoneStatusUseCase(
                 } else {
                     Status.UNAVAILABLE
                 }
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 }

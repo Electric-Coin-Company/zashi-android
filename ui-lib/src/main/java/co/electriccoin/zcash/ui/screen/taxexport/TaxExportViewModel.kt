@@ -24,11 +24,11 @@ class TaxExportViewModel(
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     val state: StateFlow<TaxExportState> =
-        getSelectedWalletAccount.observe()
+        getSelectedWalletAccount
+            .observe()
             .map {
                 createState(it)
-            }
-            .stateIn(
+            }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = createState(null)

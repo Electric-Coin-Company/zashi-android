@@ -14,7 +14,8 @@ object AndroidQrCodeImageGenerator : QrCodeImageGenerator {
     ): ImageBitmap {
         val colorArray = bitArray.toThemeColorArray(colors)
 
-        return Bitmap.createBitmap(colorArray, sizePixels, sizePixels, Bitmap.Config.ARGB_8888)
+        return Bitmap
+            .createBitmap(colorArray, sizePixels, sizePixels, Bitmap.Config.ARGB_8888)
             .asImageBitmap()
     }
 }

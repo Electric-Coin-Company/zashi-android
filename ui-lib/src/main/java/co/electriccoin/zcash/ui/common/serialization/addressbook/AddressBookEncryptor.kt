@@ -27,7 +27,8 @@ interface AddressBookEncryptor {
 
 class AddressBookEncryptorImpl(
     private val addressBookSerializer: AddressBookSerializer,
-) : AddressBookEncryptor, BaseSerializer() {
+) : BaseSerializer(),
+    AddressBookEncryptor {
     private val version: Int = ADDRESS_BOOK_ENCRYPTION_V1
     private val saltSize: Int = ADDRESS_BOOK_SALT_SIZE
 
@@ -85,7 +86,6 @@ class AddressBookEncryptorImpl(
         addressBookSerializer.serializeAddressBook(outputStream, data)
     }
 
-    private fun deserialize(inputStream: ByteArrayInputStream): AddressBook {
-        return addressBookSerializer.deserializeAddressBook(inputStream)
-    }
+    private fun deserialize(inputStream: ByteArrayInputStream): AddressBook =
+        addressBookSerializer.deserializeAddressBook(inputStream)
 }

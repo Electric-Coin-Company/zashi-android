@@ -55,23 +55,24 @@ class FeedbackViewModel(
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
     val dialogState =
-        isDialogShown.map { isShown ->
-            AlertDialogState(
-                title = stringRes(R.string.support_confirmation_dialog_title),
-                text = stringRes(R.string.support_confirmation_explanation),
-                confirmButtonState =
-                    ButtonState(
-                        text = stringRes(R.string.support_confirmation_dialog_ok),
-                        onClick = ::onConfirmSendFeedback
-                    ),
-                dismissButtonState =
-                    ButtonState(
-                        text = stringRes(R.string.support_confirmation_dialog_cancel),
-                        onClick = { isDialogShown.update { false } }
-                    ),
-                onDismissRequest = { isDialogShown.update { false } }
-            ).takeIf { isShown }
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
+        isDialogShown
+            .map { isShown ->
+                AlertDialogState(
+                    title = stringRes(R.string.support_confirmation_dialog_title),
+                    text = stringRes(R.string.support_confirmation_explanation),
+                    confirmButtonState =
+                        ButtonState(
+                            text = stringRes(R.string.support_confirmation_dialog_ok),
+                            onClick = ::onConfirmSendFeedback
+                        ),
+                    dismissButtonState =
+                        ButtonState(
+                            text = stringRes(R.string.support_confirmation_dialog_cancel),
+                            onClick = { isDialogShown.update { false } }
+                        ),
+                    onDismissRequest = { isDialogShown.update { false } }
+                ).takeIf { isShown }
+            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
     private fun onConfirmSendFeedback() =
         viewModelScope.launch {

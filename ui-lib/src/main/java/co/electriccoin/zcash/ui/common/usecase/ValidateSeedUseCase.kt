@@ -6,8 +6,8 @@ import java.util.Locale
 
 class ValidateSeedUseCase {
     @Suppress("TooGenericExceptionCaught", "SwallowedException")
-    operator fun invoke(words: List<String>): SeedPhrase? {
-        return try {
+    operator fun invoke(words: List<String>): SeedPhrase? =
+        try {
             val seed = words.joinToString(" ") { it.trim() }.trim()
             Mnemonics.MnemonicCode(seed, Locale.ENGLISH.language).validate()
             SeedPhrase(words)
@@ -20,5 +20,4 @@ class ValidateSeedUseCase {
         } catch (e: Exception) {
             null
         }
-    }
 }

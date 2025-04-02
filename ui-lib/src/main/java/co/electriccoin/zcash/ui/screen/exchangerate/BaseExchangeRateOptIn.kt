@@ -33,8 +33,8 @@ import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 @Composable
 internal fun BaseExchangeRateOptIn(
     onDismiss: () -> Unit,
-    content: @Composable ColumnScope.() -> Unit,
     footer: @Composable ColumnScope.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Scaffold { paddingValues ->
         Column(

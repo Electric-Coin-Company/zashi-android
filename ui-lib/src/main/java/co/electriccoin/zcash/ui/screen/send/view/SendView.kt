@@ -256,7 +256,7 @@ private fun SendMainContent(
     if (sendStage is SendStage.SendFailure) {
         SendFailure(
             reason = sendStage.error,
-            onDone = onBack
+            onConfirm = onBack
         )
     }
 }
@@ -870,7 +870,7 @@ private fun PreviewSendFailure() {
     ZcashTheme(forceDarkMode = false) {
         BlankSurface {
             SendFailure(
-                onDone = {},
+                onConfirm = {},
                 reason = "Insufficient balance"
             )
         }
@@ -879,7 +879,7 @@ private fun PreviewSendFailure() {
 
 @Composable
 private fun SendFailure(
-    onDone: () -> Unit,
+    onConfirm: () -> Unit,
     reason: String,
     modifier: Modifier = Modifier
 ) {
@@ -908,7 +908,7 @@ private fun SendFailure(
             }
         },
         confirmButtonText = stringResource(id = R.string.send_dialog_error_btn),
-        onConfirmButtonClick = onDone,
+        onConfirmButtonClick = onConfirm,
         modifier = modifier
     )
 }

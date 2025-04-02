@@ -138,6 +138,17 @@ private fun ZashiKeystonePromoListItem(item: AccountListItem.Other) {
 private fun ZashiKeystonePromoListItem(
     state: ZashiListItemState,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(24.dp),
+    colors: ZashiListItemColors =
+        ZashiListItemDefaults.primaryColors(
+            backgroundColor = ZashiColors.Surfaces.bgTertiary
+        ),
+    below: @Composable ColumnScope.(Modifier) -> Unit = {
+        Image(
+            painter = painterResource(co.electriccoin.zcash.ui.R.drawable.img_keystone_promo),
+            contentDescription = null
+        )
+    },
     content: @Composable (Modifier) -> Unit = {
         ZashiKeystonePromoListContent(
             modifier = it,
@@ -146,17 +157,6 @@ private fun ZashiKeystonePromoListItem(
             isEnabled = state.isEnabled
         )
     },
-    below: @Composable ColumnScope.(Modifier) -> Unit = {
-        Image(
-            painter = painterResource(co.electriccoin.zcash.ui.R.drawable.img_keystone_promo),
-            contentDescription = null
-        )
-    },
-    contentPadding: PaddingValues = PaddingValues(24.dp),
-    colors: ZashiListItemColors =
-        ZashiListItemDefaults.primaryColors(
-            backgroundColor = ZashiColors.Surfaces.bgTertiary
-        )
 ) {
     BaseListItem(
         modifier = modifier,

@@ -137,8 +137,7 @@ private fun Modifier.bottomOnlyShadow(
                     this@onDrawWithContent.drawContent()
                 }
             }
-        }
-        .shadow(elevation, shape, clip, ambientColor, spotColor)
+        }.shadow(elevation, shape, clip, ambientColor, spotColor)
         .background(
             backgroundColor,
             shape
@@ -163,8 +162,7 @@ private fun Modifier.topOnlyShadow(
                     this@onDrawWithContent.drawContent()
                 }
             }
-        }
-        .shadow(elevation, shape, clip, ambientColor, spotColor)
+        }.shadow(elevation, shape, clip, ambientColor, spotColor)
         .background(
             backgroundColor,
             shape

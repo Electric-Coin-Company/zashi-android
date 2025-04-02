@@ -28,11 +28,11 @@ class AdvancedSettingsViewModel(
     private val navigateToSeedRecovery: NavigateToSeedRecoveryUseCase
 ) : ViewModel() {
     val state: StateFlow<AdvancedSettingsState> =
-        getWalletRestoringState.observe()
+        getWalletRestoringState
+            .observe()
             .map { walletState ->
                 createState(walletState)
-            }
-            .stateIn(
+            }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = createState(getWalletRestoringState.observe().value)

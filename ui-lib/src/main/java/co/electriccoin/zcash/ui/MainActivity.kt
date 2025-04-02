@@ -205,7 +205,7 @@ class MainActivity : FragmentActivity() {
                     onCancel = {
                         authenticationViewModel.setAuthFailed()
                     },
-                    onFailed = {
+                    onFail = {
                         authenticationViewModel.setAuthFailed()
                     },
                     useCase = AuthenticationUseCase.AppAccess

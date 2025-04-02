@@ -17,11 +17,9 @@ jobs:
       - name: Checkout
         timeout-minutes: 1
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      # Gradle Wrapper validation can be flaky
-      # https://github.com/gradle/wrapper-validation-action/issues/40
       - name: Gradle Wrapper Validation
         timeout-minutes: 1
-        uses: gradle/wrapper-validation-action@f9c9c575b8b21b6485636a91ffecd10e558c62f6
+        uses: gradle/actions/wrapper-validation@v4
 
   check_secrets:
     environment: deployment
@@ -78,7 +76,7 @@ jobs:
           distribution: 'temurin'
           java-version: 17
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1
+        uses: gradle/actions/setup-gradle@v4
         timeout-minutes: 10
         with:
           gradle-home-cache-cleanup: true
@@ -140,36 +138,11 @@ jobs:
           mkdir artifacts/
           mv app/build/outputs/apk_from_bundle/*/* artifacts/          
 
-      - name: Strip non-Foss libraries
+      - name: Strip non-FOSS libraries
         timeout-minutes: 10
-        run: |
-          rm app/src/debug/google-services.json
-          rm app/src/release/google-services.json
-          rm -rf build-conventions-secant/build/
-          rm -rf build-conventions-secant/.gradle/
-          rm -rf buildSrc/build/
-          rm -rf buildSrc/.gradle/
-          rm -rf ui-screenshot-test
-          rm -rf .gradle
-          rm -rf build-conventions-secant/src/main/kotlin/secant.emulator-wtf-conventions.gradle.kts
-          sed -i '/\/\/ start wtf maven/,/\/\/ end wtf maven/d' settings.gradle.kts
-          find . -type f -name "build.gradle.kts" -exec sed -i -e '/wtf.emulator.gradle/d' {} +
-          find . -type f -name "build.gradle.kts" -exec sed -i -e '/secant.emulator-wtf-conventions/d' {} +
-          find . -type f -name "gradle.lockfile" -exec sed -i -e '/wtf.emulator/d' {} +
-          find . -type f -name "buildscript-gradle.lockfile" -exec sed -i -e '/wtf.emulator/d' {} +
-          find . -type f -name "gradle.lockfile" -exec sed -i -e '/com.vdurmont/d' {} +
-          find . -type f -name "buildscript-gradle.lockfile" -exec sed -i -e '/com.vdurmont/d' {} +
-          find . -type f -name "gradle.lockfile" -exec sed -i -e '/org.json:json/d' {} +
-          find . -type f -name "buildscript-gradle.lockfile" -exec sed -i -e '/org.json:json/d' {} +
-          sed -i -e '/include("ui-screenshot-test")/d' settings.gradle.kts
-          sed -i -e '/com.google.gms/d' -e '/com.google.android.gms/d' -e '/com.google.firebase/d' -e '/crashlyticsVersion/d' build.gradle.kts
-          sed -i -e '/libs.google.services/d' -e '/libs.firebase/d' build.gradle.kts
-          sed -i -e '/com.google.gms/d' -e '/com.google.android.gms/d' -e '/com.google.firebase/d' buildscript-gradle.lockfile
-          sed -i -e '/libs.google.services/d' -e '/libs.firebase/d' buildscript-gradle.lockfile
-          sed -i -e '/com.google.gms.google-services/d' -e '/com.google.firebase.crashlytics/d' */build.gradle.kts
-          ./gradlew clean
+        uses: ./.github/actions/foss/strip
 
-      - name: Build Foss APK
+      - name: Build FOSS APK
         timeout-minutes: 25
         env:
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ format('{0}/release.jks', env.home) }}
@@ -182,7 +155,7 @@ jobs:
         run: |        
           ./gradlew :app:assembleZcashmainnetFossRelease
 
-      - name: Prepare Foss artifacts
+      - name: Prepare FOSS artifacts
         timeout-minutes: 1
         run: |        
           mv app/build/outputs/apk/zcashmainnetFoss/release/app-zcashmainnet-foss-release.apk artifacts/

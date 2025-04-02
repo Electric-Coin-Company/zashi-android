@@ -145,8 +145,7 @@ private fun AddressPanel(
                         ZashiColors.Utility.Gray.utilityGray50
                     },
                     RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
-                )
-                .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
+                ).clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
                 .clickable(onClick = state.onClick)
                 .padding(all = ZcashTheme.dimens.spacingLarge)
     ) {
@@ -250,8 +249,8 @@ private fun ReceiveIconButton(
     contentColor: Color,
     iconPainter: Painter,
     text: String,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

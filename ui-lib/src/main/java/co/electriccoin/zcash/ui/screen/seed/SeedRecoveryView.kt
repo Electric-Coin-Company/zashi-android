@@ -178,8 +178,7 @@ private fun BDSecret(
                                     tooltipState.show()
                                 }
                             }
-                        }
-                        .padding(
+                        }.padding(
                             horizontal = ZashiDimensions.Spacing.spacingXs,
                             vertical = ZashiDimensions.Spacing.spacingSm
                         )

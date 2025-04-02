@@ -15,6 +15,4 @@ internal fun Memo.valueOrEmptyChar(): String {
     return valueOrEmptyChar(LocalContext.current)
 }
 
-internal fun Memo.valueOrEmptyChar(context: Context): String {
-    return value.ifEmpty { context.getString(R.string.empty_char) }
-}
+internal fun Memo.valueOrEmptyChar(context: Context): String = value.ifEmpty { context.getString(R.string.empty_char) }

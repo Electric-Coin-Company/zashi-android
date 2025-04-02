@@ -107,8 +107,7 @@ fun LabeledCheckBox(
                         top = ZcashTheme.dimens.spacingTiny,
                         bottom = ZcashTheme.dimens.spacingTiny,
                         end = ZcashTheme.dimens.spacingTiny
-                    )
-                    .then(
+                    ).then(
                         if (checkBoxTestTag != null) {
                             Modifier.testTag(checkBoxTestTag)
                         } else {

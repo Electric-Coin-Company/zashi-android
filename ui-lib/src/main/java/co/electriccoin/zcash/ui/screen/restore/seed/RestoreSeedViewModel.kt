@@ -81,8 +81,7 @@ class RestoreSeedViewModel(
         seedWords
             .map { fields ->
                 validateSeed(fields.map { it.value })
-            }
-            .stateIn(
+            }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = null

@@ -608,8 +608,7 @@ private fun MultipleFailureTransaction(
                                 .background(
                                     shape = RoundedCornerShape(ZashiDimensions.Radius.radiusIg),
                                     color = ZashiColors.Inputs.Default.bg
-                                )
-                                .padding(
+                                ).padding(
                                     horizontal = ZashiDimensions.Spacing.spacingLg,
                                     vertical = ZashiDimensions.Spacing.spacingMd
                                 )

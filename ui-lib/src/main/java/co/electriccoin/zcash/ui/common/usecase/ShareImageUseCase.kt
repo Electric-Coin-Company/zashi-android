@@ -51,13 +51,14 @@ class ShareImageUseCase(
             // Save the bitmap to a temporary file in the cache directory
             val bitmapFile =
                 withContext(Dispatchers.IO) {
-                    File.createTempFile(
-                        filePrefix,
-                        fileSuffix,
-                        cacheDir,
-                    ).also {
-                        it.storeBitmap(shareImageBitmap)
-                    }
+                    File
+                        .createTempFile(
+                            filePrefix,
+                            fileSuffix,
+                            cacheDir,
+                        ).also {
+                            it.storeBitmap(shareImageBitmap)
+                        }
                 }
 
             // Example of the expected temporary file path:

@@ -3,6 +3,7 @@
 package co.electroniccoin.zcash.ui.screenshot
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.LocaleList
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -23,8 +24,8 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.graphics.writeToTestStorage
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.captureToBitmap
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
-import androidx.test.espresso.screenshot.captureToBitmap
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
@@ -86,8 +87,11 @@ class ScreenshotTest : UiTestPrerequisites() {
             screenshotName: String
         ) {
             onView(isRoot())
-                .captureToBitmap()
-                .writeToTestStorage("$screenshotName - $tag")
+                .perform(
+                    captureToBitmap { bitmap: Bitmap ->
+                        bitmap.writeToTestStorage("$screenshotName - $tag")
+                    }
+                )
         }
     }
 
@@ -190,17 +194,18 @@ class ScreenshotTest : UiTestPrerequisites() {
 
         composeTestRule.waitUntilDoesNotExist(hasTestTag(WELCOME_ANIM_TEST_TAG), DEFAULT_TIMEOUT_MILLISECONDS)
 
-        composeTestRule.onNodeWithText(
-            text =
-                resContext.getString(
-                    R.string.onboarding_import_existing_wallet
-                ),
-            ignoreCase = true
-        ).also {
-            it.performScrollTo()
-            it.assertExists()
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text =
+                    resContext.getString(
+                        R.string.onboarding_import_existing_wallet
+                    ),
+                ignoreCase = true
+            ).also {
+                it.performScrollTo()
+                it.assertExists()
+                it.performClick()
+            }
 
         // To ensure that the new screen is available, or wait until it is
         composeTestRule.waitUntilAtLeastOneExists(
@@ -212,8 +217,7 @@ class ScreenshotTest : UiTestPrerequisites() {
             .onNodeWithText(
                 resContext.getString(R.string.restore_title),
                 ignoreCase = true
-            )
-            .assertExists()
+            ).assertExists()
 
         takeScreenshot(tag, "Import 1")
 
@@ -229,25 +233,25 @@ class ScreenshotTest : UiTestPrerequisites() {
             }
         }
 
-        composeTestRule.onNodeWithText(
-            text = resContext.getString(R.string.restore_button),
-            ignoreCase = true
-        ).also {
-            // Even with waiting for the word list in the view model,
-            // there's some latency before the button is enabled
-            composeTestRule.waitUntil(5.seconds.inWholeMilliseconds) {
-                runCatching { it.assertIsEnabled() }.isSuccess
+        composeTestRule
+            .onNodeWithText(
+                text = resContext.getString(R.string.restore_button),
+                ignoreCase = true
+            ).also {
+                // Even with waiting for the word list in the view model,
+                // there's some latency before the button is enabled
+                composeTestRule.waitUntil(5.seconds.inWholeMilliseconds) {
+                    runCatching { it.assertIsEnabled() }.isSuccess
+                }
+                it.performScrollTo()
+                it.performClick()
             }
-            it.performScrollTo()
-            it.performClick()
-        }
 
         composeTestRule
             .onNodeWithText(
                 resContext.getString(R.string.restore_bd_subtitle),
                 ignoreCase = true
-            )
-            .also {
+            ).also {
                 it.assertExists()
             }
 
@@ -264,19 +268,21 @@ class ScreenshotTest : UiTestPrerequisites() {
         }
 
         composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
-            composeTestRule.onNodeWithText(
-                text = resContext.getString(R.string.restore_success_button),
-                ignoreCase = true
-            ).exists()
+            composeTestRule
+                .onNodeWithText(
+                    text = resContext.getString(R.string.restore_success_button),
+                    ignoreCase = true
+                ).exists()
         }
 
-        composeTestRule.onNodeWithText(
-            text = resContext.getString(R.string.restore_success_button),
-            ignoreCase = true
-        ).also {
-            it.performScrollTo()
-            it.performClick()
-        }
+        composeTestRule
+            .onNodeWithText(
+                text = resContext.getString(R.string.restore_success_button),
+                ignoreCase = true
+            ).also {
+                it.performScrollTo()
+                it.performClick()
+            }
 
         // composeTestRule.waitUntilDoesNotExist(hasTestTag(ACKNOWLEDGE_CHECKBOX_TAG), DEFAULT_TIMEOUT_MILLISECONDS)
     }
@@ -398,23 +404,25 @@ private fun onboardingScreenshots(
     }
 
     // Welcome screen
-    composeTestRule.onNodeWithText(
-        resContext.getString(R.string.onboarding_header, ZcashCurrency.getLocalizedName(resContext)),
-        useUnmergedTree = true
-    ).also {
-        it.assertExists()
-        ScreenshotTest.takeScreenshot(tag, "Onboarding 1")
-    }
+    composeTestRule
+        .onNodeWithText(
+            resContext.getString(R.string.onboarding_header, ZcashCurrency.getLocalizedName(resContext)),
+            useUnmergedTree = true
+        ).also {
+            it.assertExists()
+            ScreenshotTest.takeScreenshot(tag, "Onboarding 1")
+        }
 
     composeTestRule.waitUntilDoesNotExist(hasTestTag(WELCOME_ANIM_TEST_TAG), DEFAULT_TIMEOUT_MILLISECONDS)
 
-    composeTestRule.onNodeWithText(
-        text = resContext.getString(R.string.onboarding_create_new_wallet),
-        ignoreCase = true,
-        useUnmergedTree = true
-    ).also {
-        it.performClick()
-    }
+    composeTestRule
+        .onNodeWithText(
+            text = resContext.getString(R.string.onboarding_create_new_wallet),
+            ignoreCase = true,
+            useUnmergedTree = true
+        ).also {
+            it.performClick()
+        }
 }
 
 private fun accountScreenshots(
@@ -435,11 +443,12 @@ private fun settingsScreenshots(
     tag: String,
     composeTestRule: ComposeTestRule
 ) {
-    composeTestRule.onNode(
-        hasText(resContext.getString(R.string.settings_feedback), ignoreCase = true)
-    ).also {
-        it.assertExists()
-    }
+    composeTestRule
+        .onNode(
+            hasText(resContext.getString(R.string.settings_feedback), ignoreCase = true)
+        ).also {
+            it.assertExists()
+        }
 
     ScreenshotTest.takeScreenshot(tag, "Settings 1")
 }
@@ -458,14 +467,15 @@ private fun receiveZecScreenshots(
         15.seconds.inWholeMilliseconds
     )
 
-    composeTestRule.onNode(
-        hasText(
-            text = resContext.getString(R.string.receive_header),
-            ignoreCase = true
-        )
-    ).also {
-        it.assertExists()
-    }
+    composeTestRule
+        .onNode(
+            hasText(
+                text = resContext.getString(R.string.receive_header),
+                ignoreCase = true
+            )
+        ).also {
+            it.assertExists()
+        }
 
     ScreenshotTest.takeScreenshot(tag, "Receive 1")
 }
@@ -485,25 +495,27 @@ private fun sendZecScreenshots(
         15.seconds.inWholeMilliseconds
     )
 
-    composeTestRule.onNode(
-        hasText(
-            resContext.getString(R.string.send_create),
-            ignoreCase = true
-        )
-    ).also {
-        it.assertExists()
-    }
+    composeTestRule
+        .onNode(
+            hasText(
+                resContext.getString(R.string.send_create),
+                ignoreCase = true
+            )
+        ).also {
+            it.assertExists()
+        }
 
     // Screenshot: Empty form
     ScreenshotTest.takeScreenshot(tag, "Send 1")
 
-    composeTestRule.onNode(
-        hasTestTag(SendTag.SEND_AMOUNT_FIELD)
-    ).also {
-        val separators = MonetarySeparators.current()
+    composeTestRule
+        .onNode(
+            hasTestTag(SendTag.SEND_AMOUNT_FIELD)
+        ).also {
+            val separators = MonetarySeparators.current()
 
-        it.performTextInput("0${separators.decimal}123")
-    }
+            it.performTextInput("0${separators.decimal}123")
+        }
 
     composeTestRule.onNodeWithText(resContext.getString(R.string.send_address_hint)).also {
         it.performTextInput(WalletAddressFixture.UNIFIED_ADDRESS_STRING)
@@ -552,11 +564,12 @@ private fun aboutScreenshots(
     tag: String,
     composeTestRule: ComposeTestRule
 ) {
-    composeTestRule.onNode(
-        hasText(resContext.getString(R.string.about_title).uppercase())
-    ).also {
-        it.assertExists()
-    }
+    composeTestRule
+        .onNode(
+            hasText(resContext.getString(R.string.about_title).uppercase())
+        ).also {
+            it.assertExists()
+        }
 
     ScreenshotTest.takeScreenshot(tag, "About 1")
 }
@@ -574,11 +587,10 @@ private fun seedScreenshots(
 }
 
 @Suppress("SwallowedException", "TooGenericExceptionCaught")
-private fun SemanticsNodeInteraction.exists(): Boolean {
-    return try {
+private fun SemanticsNodeInteraction.exists(): Boolean =
+    try {
         this.assertExists()
         true
     } catch (e: Throwable) {
         false
     }
-}

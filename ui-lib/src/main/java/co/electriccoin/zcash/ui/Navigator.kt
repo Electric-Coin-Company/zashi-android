@@ -171,11 +171,11 @@ class NavigatorImpl(
     }
 
     private fun createFlexaFlow(flexaViewModel: FlexaViewModel) {
-        Flexa.buildSpend()
+        Flexa
+            .buildSpend()
             .onTransactionRequest { result ->
                 flexaViewModel.createTransaction(result)
-            }
-            .build()
+            }.build()
             .open(activity)
     }
 }

@@ -21,7 +21,8 @@ class ImageUriToQrCodeConverter {
     ): String? =
         withContext(Dispatchers.IO) {
             runCatching {
-                uri.toBitmap(context)
+                uri
+                    .toBitmap(context)
                     .toBinaryBitmap()
                     .toQRCode()
             }.onFailure {
@@ -30,7 +31,8 @@ class ImageUriToQrCodeConverter {
         }
 
     private fun Uri.toBitmap(context: Context): Bitmap =
-        context.contentResolver.openInputStream(this)
+        context.contentResolver
+            .openInputStream(this)
             .use {
                 BitmapFactory.decodeStream(it)
             }
@@ -54,6 +56,6 @@ class ImageUriToQrCodeConverter {
                         DecodeHintType.ALSO_INVERTED to true
                     )
                 )
-            }
-            .decodeWithState(this@toQRCode).text
+            }.decodeWithState(this@toQRCode)
+            .text
 }

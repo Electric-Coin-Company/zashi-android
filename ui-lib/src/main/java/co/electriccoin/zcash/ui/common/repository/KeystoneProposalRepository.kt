@@ -65,7 +65,9 @@ class ParsePCZTException : Exception()
 sealed interface SubmitProposalState {
     data object Submitting : SubmitProposalState
 
-    data class Result(val submitResult: SubmitResult) : SubmitProposalState
+    data class Result(
+        val submitResult: SubmitResult
+    ) : SubmitProposalState
 }
 
 @Suppress("TooManyFunctions")
@@ -98,14 +100,13 @@ class KeystoneProposalRepositoryImpl(
         }
     }
 
-    override suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal {
-        return createProposalInternal {
+    override suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal =
+        createProposalInternal {
             proposalDataSource.createZip321Proposal(
                 account = accountDataSource.getSelectedAccount(),
                 zip321Uri = zip321Uri
             )
         }
-    }
 
     override suspend fun createShieldProposal() {
         createProposalInternal {

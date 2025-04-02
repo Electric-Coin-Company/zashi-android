@@ -60,29 +60,29 @@ class ExchangeRateRepositoryImpl(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val exchangeRateUsdInternal =
-        isExchangeRateUsdOptedIn.flatMapLatest { optedIn ->
-            if (optedIn == true) {
-                synchronizerProvider
-                    .synchronizer
-                    .filterNotNull()
-                    .flatMapLatest { synchronizer ->
-                        synchronizer.exchangeRateUsd
-                    }
-            } else {
-                flowOf(ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null))
-            }
-        }.stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(USD_EXCHANGE_REFRESH_LOCK_THRESHOLD),
-            initialValue = ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null)
-        )
+        isExchangeRateUsdOptedIn
+            .flatMapLatest { optedIn ->
+                if (optedIn == true) {
+                    synchronizerProvider
+                        .synchronizer
+                        .filterNotNull()
+                        .flatMapLatest { synchronizer ->
+                            synchronizer.exchangeRateUsd
+                        }
+                } else {
+                    flowOf(ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null))
+                }
+            }.stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(USD_EXCHANGE_REFRESH_LOCK_THRESHOLD),
+                initialValue = ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null)
+            )
 
     private val usdExchangeRateTimestamp =
         exchangeRateUsdInternal
             .map {
                 it.currencyConversion?.timestamp
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 
     private val refreshExchangeRateUsdLock =
         RefreshLock(
@@ -112,8 +112,7 @@ class ExchangeRateRepositoryImpl(
                 .onEach {
                     Twig.info { "[USD] $it" }
                     send(it)
-                }
-                .launchIn(this)
+                }.launchIn(this)
 
             awaitClose {
                 // do nothing

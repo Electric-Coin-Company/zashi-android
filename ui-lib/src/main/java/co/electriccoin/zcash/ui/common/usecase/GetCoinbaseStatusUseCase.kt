@@ -26,6 +26,5 @@ class GetCoinbaseStatusUseCase(
                 } else {
                     flowOf(Status.UNAVAILABLE)
                 }
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 }

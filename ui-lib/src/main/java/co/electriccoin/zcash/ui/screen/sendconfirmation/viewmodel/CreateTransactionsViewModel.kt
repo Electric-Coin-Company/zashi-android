@@ -22,13 +22,14 @@ class CreateTransactionsViewModel : ViewModel() {
         val submitResults = mutableListOf<TransactionSubmitResult>()
 
         return runCatching {
-            synchronizer.createProposedTransactions(
-                proposal = proposal,
-                usk = spendingKey
-            ).collect { submitResult ->
-                Twig.info { "Transaction submit result: $submitResult" }
-                submitResults.add(submitResult)
-            }
+            synchronizer
+                .createProposedTransactions(
+                    proposal = proposal,
+                    usk = spendingKey
+                ).collect { submitResult ->
+                    Twig.info { "Transaction submit result: $submitResult" }
+                    submitResults.add(submitResult)
+                }
             if (submitResults.find { it is TransactionSubmitResult.Failure } != null) {
                 if (submitResults.size == 1) {
                     // The first transaction submission failed - user might just be able to re-submit the transaction

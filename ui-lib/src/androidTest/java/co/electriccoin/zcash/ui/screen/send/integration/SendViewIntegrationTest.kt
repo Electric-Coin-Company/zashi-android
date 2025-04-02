@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.filters.MediumTest
 import cash.z.ecc.sdk.fixture.ZecSendFixture
+import co.electriccoin.zcash.ui.screen.send.Send
 import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.send.assertOnForm
 import co.electriccoin.zcash.ui.screen.send.clickCreateAndSend
@@ -33,9 +34,7 @@ class SendViewIntegrationTest {
 
         restorationTester.setContent {
             WrapSend(
-                args = null,
-                goToQrScanner = {},
-                goBack = {},
+                args = Send(),
             )
         }
 

@@ -37,8 +37,8 @@ class BalanceViewModel(
     private fun createState(
         account: WalletAccount?,
         exchangeRateUsd: ExchangeRateState
-    ): BalanceState {
-        return when {
+    ): BalanceState =
+        when {
             (
                 account != null &&
                     account.spendableBalance.value == 0L &&
@@ -60,5 +60,4 @@ class BalanceViewModel(
                 )
             }
         }
-    }
 }

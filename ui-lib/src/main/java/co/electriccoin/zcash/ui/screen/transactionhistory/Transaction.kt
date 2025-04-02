@@ -66,8 +66,7 @@ fun Transaction(
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = state.onClick,
                         role = Role.Button,
-                    )
-                    .padding(contentPadding),
+                    ).padding(contentPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box {

@@ -11,7 +11,9 @@ import kotlinx.datetime.Instant
  * mutate the configuration by mutating the original map. The mapping is stored in a val field
  * though, making the initial mapping thread-safe.
  */
-class MockConfiguration(private val configurationMapping: Map<String, String> = emptyMap()) : Configuration {
+class MockConfiguration(
+    private val configurationMapping: Map<String, String> = emptyMap()
+) : Configuration {
     override val updatedAt: Instant? = null
 
     @Throws(ConfigurationParseException::class)

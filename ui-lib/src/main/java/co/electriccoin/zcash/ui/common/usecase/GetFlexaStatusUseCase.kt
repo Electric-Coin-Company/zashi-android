@@ -31,8 +31,7 @@ class GetFlexaStatusUseCase(
                 } else {
                     flowOf(Status.UNAVAILABLE)
                 }
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 }
 
 enum class Status {

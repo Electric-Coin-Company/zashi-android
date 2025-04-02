@@ -62,7 +62,14 @@ class SeedRecoveryViewModel(
                 birthday =
                     SeedSecretState(
                         title = stringRes(R.string.seed_recovery_bday_title),
-                        text = stringRes(wallet?.birthday?.value?.toString().orEmpty()),
+                        text =
+                            stringRes(
+                                wallet
+                                    ?.birthday
+                                    ?.value
+                                    ?.toString()
+                                    .orEmpty()
+                            ),
                         isRevealed = isRevealed,
                         tooltip =
                             SeedSecretStateTooltip(

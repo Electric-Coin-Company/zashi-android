@@ -61,7 +61,9 @@ interface ProposalDataSource {
     suspend fun redactPcztForSigner(pczt: Pczt): Pczt
 }
 
-class TransactionProposalNotCreatedException(reason: Exception) : Exception(reason)
+class TransactionProposalNotCreatedException(
+    reason: Exception
+) : Exception(reason)
 
 @Suppress("TooManyFunctions")
 class ProposalDataSourceImpl(
@@ -151,7 +153,8 @@ class ProposalDataSourceImpl(
 
     override suspend fun addProofsToPczt(pczt: Pczt): Pczt =
         withContext(Dispatchers.IO) {
-            synchronizerProvider.getSynchronizer()
+            synchronizerProvider
+                .getSynchronizer()
                 .addProofsToPczt(pczt)
         }
 
@@ -179,7 +182,8 @@ class ProposalDataSourceImpl(
 
     override suspend fun redactPcztForSigner(pczt: Pczt): Pczt =
         withContext(Dispatchers.IO) {
-            synchronizerProvider.getSynchronizer()
+            synchronizerProvider
+                .getSynchronizer()
                 .redactPcztForSigner(pczt)
         }
 
@@ -233,13 +237,12 @@ class ProposalDataSourceImpl(
         }
 
     @Suppress("TooGenericExceptionCaught")
-    private inline fun <T : Any> getOrThrow(block: () -> T): T {
-        return try {
+    private inline fun <T : Any> getOrThrow(block: () -> T): T =
+        try {
             block()
         } catch (e: Exception) {
             throw TransactionProposalNotCreatedException(e)
         }
-    }
 
     private suspend fun AddressType.toWalletAddress(value: String) =
         when (this) {

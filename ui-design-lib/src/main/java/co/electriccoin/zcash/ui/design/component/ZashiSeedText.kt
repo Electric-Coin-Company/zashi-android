@@ -55,7 +55,13 @@ fun ZashiSeedText(
     Box(
         modifier = modifier.background(color, RoundedCornerShape(10.dp)),
     ) {
-        val rowItems = remember(state) { state.seed.split(" ").withIndex().chunked(3) }
+        val rowItems =
+            remember(state) {
+                state.seed
+                    .split(" ")
+                    .withIndex()
+                    .chunked(3)
+            }
 
         Column(
             modifier = Modifier.fillMaxWidth(),

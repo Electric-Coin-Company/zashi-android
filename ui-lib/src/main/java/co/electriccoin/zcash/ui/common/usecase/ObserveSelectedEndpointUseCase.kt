@@ -11,6 +11,5 @@ class ObserveSelectedEndpointUseCase(
         persistableWalletProvider.persistableWallet
             .map {
                 it?.endpoint
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 }

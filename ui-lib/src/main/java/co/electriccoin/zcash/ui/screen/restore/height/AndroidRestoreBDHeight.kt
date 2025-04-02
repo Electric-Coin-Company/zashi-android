@@ -19,4 +19,6 @@ fun AndroidRestoreBDHeight(args: RestoreBDHeight) {
 }
 
 @Serializable
-data class RestoreBDHeight(val seed: String)
+data class RestoreBDHeight(
+    val seed: String
+)
