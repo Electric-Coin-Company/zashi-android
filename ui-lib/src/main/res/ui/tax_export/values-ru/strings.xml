@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="tax_export_title">Экспорт данных</string>
+    <string name="tax_export_subtitle">Файл по налогу на экспорт</string>
+    <string name="tax_export_export_button">Скачать</string>
+    <string name="tax_export_message">Загрузите <xliff:g example="Zashi" id="account_name">%s</xliff:g> история транзакций за предыдущий календарный год в формате CSV.</string>
+</resources>

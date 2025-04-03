@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_keystone_title">Подключить аппаратный кошелёк</string>
+    <string name="connect_keystone_item_title">Инструкции:</string>
+    <string name="connect_keystone_subtitle">"Отсканируйте QR-код вашего устройства для подключения. "</string>
+    <string name="connect_keystone_subtitle_clickable">Посмотреть инструкцию по Keystone</string>
+    <string name="connect_keystone_item_1">Разблокируйте ваш Keystone</string>
+    <string name="connect_keystone_item_2">Нажмите на значок меню</string>
+    <string name="connect_keystone_item_3">Нажмите кнопку Подключить програмный кошелёк</string>
+    <string name="connect_keystone_item_4">Выберите приложение Zashi и отсканируйте QR код</string>
+    <string name="connect_keystone_positive">Готово к сканированию</string>
+</resources>

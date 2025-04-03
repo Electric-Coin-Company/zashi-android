@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="transaction_detail_info_transaction_completed">Завершено</string>
+    <string name="transaction_detail_info_transaction_fee">Комиссия</string>
+    <string name="transaction_detail_info_address">Адрес</string>
+    <string name="transaction_detail_info_message">Сообщение</string>
+    <string name="transaction_detail_sent">Отправлено</string>
+    <string name="transaction_detail_sending">Отправление</string>
+    <string name="transaction_detail_send_failed">Отправка не удалась</string>
+    <string name="transaction_detail_received">Получено</string>
+    <string name="transaction_detail_shielding">Скрытие</string>
+    <string name="transaction_detail_add_a_note">Добавить примечание</string>
+    <string name="transaction_detail_receive_failed">Получение не удалось</string>
+    <string name="transaction_detail_shielded">Скрытые</string>
+    <string name="transaction_detail_shielding_failed">Не удалось скрыть</string>
+    <string name="transaction_detail_edit_note">Редактировать примечания</string>
+    <string name="transaction_detail_info_note">Примечание</string>
+    <string name="transaction_detail_fee">%s ZEC</string>
+    <string name="transaction_detail_fee_minimal">&lt; 0.001 ZEC</string>
+    <string name="transaction_detail_memo_view_less">Свернуть</string>
+    <string name="transaction_detail_memo_view_more">Подробнее</string>
+    <string name="transaction_detail_memo_empty">Нет сообщения</string>
+    <string name="transaction_detail_info_transaction_details">Побробности транзакции</string>
+    <string name="transaction_detail_info_transaction_id">ID транзакции</string>
+    <string name="transaction_detail_info_sent_to">Отправлено для</string>
+    <string name="transaction_detail_pending">В ожидании…</string>
+    <string name="transaction_detail_save_address">Сохранить адрес</string>
+    <string name="transaction_detail_send_again">Отправить ещё раз</string>
+    <string name="transaction_detail_receiving">Получение</string>
+</resources>

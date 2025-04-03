@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="advanced_settings_title">Расширенные настройки</string>
+    <string name="advanced_settings_recovery">Фраза для восстановления Zashi</string>
+    <string name="advanced_settings_export">Экспорт личных данных</string>
+    <string name="advanced_settings_choose_server">Выберите сервер</string>
+    <string name="advanced_settings_currency_conversion">Конвертация валют</string>
+    <string name="advanced_settings_info">Вас попросят подтвердить это на следующем экране</string>
+    <string name="advanced_settings_delete_button">Сбросить Zashi</string>
+    <string name="advanced_settings_tax">Экспортировать налоговый файл</string>
+</resources>

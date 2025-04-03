@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="qr_code_close_content_description">Закрыть</string>
+    <string name="qr_code_share_btn">Поделиться QR-кодом</string>
+    <string name="qr_code_clipboard_tag">Адрес кошелька Zcash</string>
+    <string name="qr_code_privacy_level_shielded">Максимальная приватность</string>
+    <string name="qr_code_privacy_level_transparent">Низкая приватность</string>
+    <string name="qr_code_data_unable_to_share">Не удалось найти приложение для показа QR-кода.</string>
+    <string name="qr_code_share_chooser_text">Здравствуйте, чтобы отправить мне платёж ZEC отсканируйте этот QR-код! Ссылка для скачивания: https://play.google.com/store/apps/details?id=co.electriccoin.zcash</string>
+    <string name="qr_code_wallet_address_shielded_keystone">Скрытый адрес Keystone</string>
+    <string name="qr_code_wallet_address_sapling_keystone">Саплинг адрес Keystone</string>
+    <string name="qr_code_wallet_address_transparent_keystone">Прозрачный адрес Keystone</string>
+    <string name="qr_code_unified_content_description">QR-код единого адреса</string>
+    <string name="qr_code_sapling_content_description">QR-код саплинг адреса</string>
+    <string name="qr_code_transparent_content_description">QR-код прозрачного адреса</string>
+    <string name="qr_code_copy_btn">Копировать адрес</string>
+    <string name="qr_code_wallet_address_shielded">Скрытый адрес Zcash</string>
+    <string name="qr_code_wallet_address_sapling">Саплинг адрес Zcash</string>
+    <string name="qr_code_wallet_address_transparent">Прозрачный адрес Zcash</string>
+    <string name="qr_code_share_chooser_title">Мой адрес Zashi ZEC</string>
+</resources>
