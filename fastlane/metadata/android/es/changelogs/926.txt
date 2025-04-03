@@ -1,0 +1,3 @@
+Corregido:
+- ¡Corrección de errores 1.5!
+- Solucionamos un problema de migración que afectaba a algunos usuarios de la versión 1.5 de la app.
