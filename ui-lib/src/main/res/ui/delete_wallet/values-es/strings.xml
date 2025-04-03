@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="delete_wallet_title">Restablecer Zashi</string>
-    <string name="delete_wallet_text_1">
-        ¡Restablecer tu app puede llevar a la pérdida total de acceso a tus fondos! ⚠️
-    </string>
-    <string name="delete_wallet_text_2">
-        Asegúrate de tener guardadas tanto tu frase secreta de recuperación como la altura de cumpleaños de tu billetera antes de continuar.\n\nRestablecer la app Zashi eliminará la base de datos de la aplicación y los datos en caché, además de desconectar todas las billeteras de hardware conectadas.\n\nUna vez que restablezcas Zashi, la única manera de acceder a tus fondos será mediante un proceso de restauración de la billetera que requiere tu Frase de Recuperación de Zashi y la Altura de Cumpleaños de tu Billetera.
-    </string>
+    <string name="delete_wallet_text_1">¡Restablecer tu app puede llevar a la pérdida total de acceso a tus fondos! ⚠️</string>
+    <string name="delete_wallet_text_2">Asegúrate de tener guardadas tanto tu frase secreta de recuperación como la altura de cumpleaños de tu billetera antes de continuar.\n\nRestablecer la app Zashi eliminará la base de datos de la aplicación y los datos en caché, además de desconectar todas las billeteras de hardware conectadas.\n\nUna vez que restablezcas Zashi, la única manera de acceder a tus fondos será mediante un proceso de restauración de la billetera que requiere tu Frase de Recuperación de Zashi y la Altura de Cumpleaños de tu Billetera.</string>
     <string name="delete_wallet_acknowledge">Entendido</string>
     <string name="delete_wallet_button">Restablecer Zashi</string>
     <string name="delete_wallet_failed">Error al eliminar la billetera. Inténtalo nuevamente, por favor.</string>
