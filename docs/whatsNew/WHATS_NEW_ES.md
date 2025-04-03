@@ -12,6 +12,12 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.5.2 (926)] - 2025-04-03
+
+### Corregido:
+- ¡Corrección de errores 1.5!
+- Solucionamos un problema de migración que afectaba a algunos usuarios de la versión 1.5 de la app.
+
 ## [1.5.1 (925)] - 2025-03-31
 
 ### Añadido:

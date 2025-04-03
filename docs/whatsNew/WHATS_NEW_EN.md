@@ -12,6 +12,12 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.5.2 (926)] - 2025-04-03
+
+### Fixed:
+- 1.5 Bug Fix release!
+- We fixed a migration issue impacting some users on 1.5 app version.
+
 ## [1.5.1 (925)] - 2025-03-31
 
 ### Added:
