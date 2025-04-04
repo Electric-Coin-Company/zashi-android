@@ -5,12 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
@@ -39,14 +36,14 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun IntegrationsDialogView(
-    state: IntegrationsState,
+    state: IntegrationsState?,
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
         content = {
-            BottomSheetContent(state)
+            BottomSheetContent(it)
         },
     )
 }
@@ -73,7 +70,7 @@ fun BottomSheetContent(state: IntegrationsState) {
         ) {
             Image(
                 modifier = Modifier,
-                painter = painterResource(R.drawable.ic_info),
+                painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(ZashiColors.Text.textTertiary)
             )
@@ -86,10 +83,6 @@ fun BottomSheetContent(state: IntegrationsState) {
                 color = ZashiColors.Text.textTertiary
             )
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
     }
 }
 

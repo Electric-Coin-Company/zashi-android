@@ -97,7 +97,7 @@ private fun Content(
             horizontalArrangement = Arrangement.Center
         ) {
             Image(
-                painterResource(R.drawable.ic_info),
+                painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
                 contentDescription = "",
                 colorFilter = ColorFilter.tint(color = ZashiColors.Utility.Indigo.utilityIndigo700)
             )

@@ -26,13 +26,11 @@ import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
-import co.electriccoin.zcash.ui.NavigationTargets.EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.NOT_ENOUGH_SPACE
 import co.electriccoin.zcash.ui.NavigationTargets.QR_CODE
 import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
-import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS_EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
@@ -62,12 +60,26 @@ import co.electriccoin.zcash.ui.screen.contact.WrapUpdateContact
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
 import co.electriccoin.zcash.ui.screen.disconnected.WrapDisconnected
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.AndroidExchangeRateOptIn
-import co.electriccoin.zcash.ui.screen.exchangerate.settings.AndroidSettingsExchangeRateOptIn
+import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptIn
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.AndroidExchangeRateSettings
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettings
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.home.AndroidHome
+import co.electriccoin.zcash.ui.screen.home.AndroidSeedBackupInfo
+import co.electriccoin.zcash.ui.screen.home.AndroidWalletDisconnectedInfo
+import co.electriccoin.zcash.ui.screen.home.AndroidWalletRestoringInfo
+import co.electriccoin.zcash.ui.screen.home.AndroidWalletSyncingInfo
+import co.electriccoin.zcash.ui.screen.home.AndroidWalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.Home
+import co.electriccoin.zcash.ui.screen.home.SeedBackupInfo
+import co.electriccoin.zcash.ui.screen.home.WalletDisconnectedInfo
+import co.electriccoin.zcash.ui.screen.home.WalletRestoringInfo
+import co.electriccoin.zcash.ui.screen.home.WalletSyncingInfo
+import co.electriccoin.zcash.ui.screen.home.WalletUpdatingInfo
+import co.electriccoin.zcash.ui.screen.home.balance.AndroidTransparentBalanceInfo
+import co.electriccoin.zcash.ui.screen.home.balance.TransparentBalanceInfo
 import co.electriccoin.zcash.ui.screen.integrations.AndroidDialogIntegrations
 import co.electriccoin.zcash.ui.screen.integrations.AndroidIntegrations
 import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
@@ -248,11 +260,11 @@ internal fun MainActivity.Navigation() {
         dialog<DialogIntegrations> {
             AndroidDialogIntegrations()
         }
-        composable(EXCHANGE_RATE_OPT_IN) {
+        composable<ExchangeRateOptIn> {
             AndroidExchangeRateOptIn()
         }
-        composable(SETTINGS_EXCHANGE_RATE_OPT_IN) {
-            AndroidSettingsExchangeRateOptIn()
+        composable<ExchangeRateSettings> {
+            AndroidExchangeRateSettings()
         }
         composable<ScanKeystoneSignInRequest> {
             WrapScanKeystoneSignInRequest()
@@ -399,7 +411,61 @@ internal fun MainActivity.Navigation() {
             AndroidSeedInfo()
         }
         composable<SeedBackup> {
-            AndroidSeedBackup()
+            AndroidSeedBackup(it.toRoute())
+        }
+        dialog<SeedBackupInfo>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) {
+            AndroidSeedBackupInfo()
+        }
+        dialog<TransparentBalanceInfo>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) {
+            AndroidTransparentBalanceInfo()
+        }
+        dialog<WalletDisconnectedInfo>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) {
+            AndroidWalletDisconnectedInfo()
+        }
+        dialog<WalletRestoringInfo>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) {
+            AndroidWalletRestoringInfo()
+        }
+        dialog<WalletSyncingInfo>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) {
+            AndroidWalletSyncingInfo()
+        }
+        dialog<WalletUpdatingInfo>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) {
+            AndroidWalletUpdatingInfo()
         }
     }
 }
@@ -524,14 +590,12 @@ object NavigationTargets {
     const val ABOUT = "about"
     const val ADVANCED_SETTINGS = "advanced_settings"
     const val DELETE_WALLET = "delete_wallet"
-    const val EXCHANGE_RATE_OPT_IN = "exchange_rate_opt_in"
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val CHOOSE_SERVER = "choose_server"
     const val NOT_ENOUGH_SPACE = "not_enough_space"
     const val QR_CODE = "qr_code"
     const val REQUEST = "request"
     const val SETTINGS = "settings"
-    const val SETTINGS_EXCHANGE_RATE_OPT_IN = "settings_exchange_rate_opt_in"
     const val SUPPORT = "support"
     const val WHATS_NEW = "whats_new"
 }

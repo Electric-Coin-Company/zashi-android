@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
@@ -15,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarWithAccountSelection
@@ -30,6 +33,7 @@ import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.balances.BalanceState
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidget
 import co.electriccoin.zcash.ui.screen.home.messages.HomeMessage
+import co.electriccoin.zcash.ui.screen.home.messages.WalletErrorMessageState
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetState
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetStateFixture
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.createTransactionHistoryWidgets
@@ -78,10 +82,21 @@ private fun Content(
                         ),
                 balanceState = balanceState,
             )
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingLarge))
-            NavButtons(paddingValues, state)
-            Spacer(Modifier.height(16.dp))
-            HomeMessage(state.message)
+            NavButtons(
+                modifier =
+                    Modifier
+                        .zIndex(1f)
+                        .offset(y = 8.dp),
+                paddingValues = paddingValues,
+                state = state
+            )
+            Spacer(Modifier.height(2.dp))
+            HomeMessage(
+                modifier =
+                    Modifier
+                        .zIndex(0f),
+                state = state.message
+            )
             LazyColumn(
                 modifier =
                     Modifier
@@ -96,19 +111,22 @@ private fun Content(
     }
 }
 
+@Suppress("MagicNumber")
 @Composable
 private fun NavButtons(
     paddingValues: PaddingValues,
-    state: HomeState
+    state: HomeState,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier.scaffoldPadding(paddingValues, top = 0.dp, bottom = 0.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = modifier.scaffoldPadding(paddingValues, top = 0.dp, bottom = 0.dp),
+        horizontalArrangement = Arrangement.spacedBy(9.dp)
     ) {
         ZashiBigIconButton(
             modifier =
                 Modifier
                     .weight(1f)
+                    .aspectRatio(1.06f)
                     .testTag(HomeTags.RECEIVE),
             state = state.firstButton,
         )
@@ -116,15 +134,22 @@ private fun NavButtons(
             modifier =
                 Modifier
                     .weight(1f)
+                    .aspectRatio(1.06f)
                     .testTag(HomeTags.SEND),
             state = state.secondButton,
         )
         ZashiBigIconButton(
-            modifier = Modifier.weight(1f),
+            modifier =
+                Modifier
+                    .aspectRatio(1.06f)
+                    .weight(1f),
             state = state.thirdButton,
         )
         ZashiBigIconButton(
-            modifier = Modifier.weight(1f),
+            modifier =
+                Modifier
+                    .aspectRatio(1.06f)
+                    .weight(1f),
             state = state.fourthButton,
         )
     }
@@ -164,7 +189,7 @@ private fun Preview() {
                             icon = R.drawable.ic_warning,
                             onClick = {}
                         ),
-                    message = null
+                    message = WalletErrorMessageState(onClick = {})
                 )
         )
     }

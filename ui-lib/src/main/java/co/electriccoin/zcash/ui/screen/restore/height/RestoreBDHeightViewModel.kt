@@ -52,7 +52,11 @@ class RestoreBDHeightViewModel(
 
         return RestoreBDHeightState(
             onBack = ::onBack,
-            dialogButton = IconButtonState(icon = R.drawable.ic_info, onClick = ::onInfoButtonClick),
+            dialogButton =
+                IconButtonState(
+                    icon = co.electriccoin.zcash.ui.design.R.drawable.ic_info,
+                    onClick = ::onInfoButtonClick,
+                ),
             restore =
                 ButtonState(
                     stringRes(R.string.restore_bd_restore_btn),

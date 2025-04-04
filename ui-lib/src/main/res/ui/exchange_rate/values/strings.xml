@@ -15,7 +15,7 @@
 
     <string name="exchange_rate_opt_in_enable">Enable</string>
     <string name="exchange_rate_opt_in_save">Save changes</string>
-    <string name="exchange_rate_opt_in_skip">Skip for now</string>
+    <string name="exchange_rate_opt_in_skip">Skip</string>
     <string name="exchange_rate_opt_in_note">Note for the super privacy-conscious: Because we pull the conversion rate
         from exchanges, an exchange might be able to see that the exchange rate was queried before a transaction occurred.</string>
 

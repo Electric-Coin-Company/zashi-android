@@ -25,6 +25,7 @@ import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
+import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.VerticalSpacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
@@ -94,7 +95,7 @@ private fun Content(
             colors = ZashiButtonDefaults.tertiaryColors()
         )
         VerticalSpacer(24.dp)
-        VerticalSpacer(1f)
+        Spacer(1f)
         ZashiButton(
             state = state.restore,
             modifier = Modifier.fillMaxWidth(),

@@ -13,6 +13,7 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptIn
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -88,7 +89,7 @@ class AdvancedSettingsViewModel(
 
     private fun onChooseServerClick() = navigationRouter.forward(NavigationTargets.CHOOSE_SERVER)
 
-    private fun onCurrencyConversionClick() = navigationRouter.forward(NavigationTargets.SETTINGS_EXCHANGE_RATE_OPT_IN)
+    private fun onCurrencyConversionClick() = navigationRouter.forward(ExchangeRateOptIn)
 
     private fun onTaxExportClick() =
         viewModelScope.launch {

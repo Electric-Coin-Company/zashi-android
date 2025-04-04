@@ -13,7 +13,7 @@
 
     <string name="exchange_rate_opt_in_enable">Habilitar</string>
     <string name="exchange_rate_opt_in_save">Guardar cambios</string>
-    <string name="exchange_rate_opt_in_skip">Omitir por ahora</string>
+    <string name="exchange_rate_opt_in_skip">Skip</string>
     <string name="exchange_rate_opt_in_note">Nota para los más conscientes de la privacidad: Debido a que obtenemos la tasa de conversión de los intercambios, un intercambio podría ver que la tasa de cambio fue consultada antes de que ocurriera una transacción.</string>
 
     <string name="exchange_rate_opt_in_option_title">Habilitar</string>

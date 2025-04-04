@@ -37,7 +37,7 @@ import co.electriccoin.zcash.ui.screen.exchangerate.BaseExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exchangerate.SecondaryCard
 
 @Composable
-fun SettingsExchangeRateOptIn(
+fun ExchangeRateSettings(
     isOptedIn: Boolean,
     onDismiss: () -> Unit,
     onSaveClick: (Boolean) -> Unit
@@ -187,6 +187,6 @@ private val Unchecked: Int
 private fun SettingsExchangeRateOptInPreview() =
     ZcashTheme {
         BlankSurface {
-            SettingsExchangeRateOptIn(isOptedIn = true, onDismiss = {}, onSaveClick = {})
+            ExchangeRateSettings(isOptedIn = true, onDismiss = {}, onSaveClick = {})
         }
     }

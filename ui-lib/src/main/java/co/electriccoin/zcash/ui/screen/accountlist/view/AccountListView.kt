@@ -7,12 +7,9 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,14 +52,14 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun AccountListView(
-    state: AccountListState,
+    state: AccountListState?,
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
         content = {
-            BottomSheetContent(state)
+            BottomSheetContent(it)
         },
     )
 }
@@ -121,8 +118,6 @@ private fun BottomSheetContent(state: AccountListState) {
                     )
             )
         }
-        Spacer(modifier = Modifier.height(24.dp))
-        Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
     }
 }
 

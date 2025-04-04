@@ -18,6 +18,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -31,6 +32,7 @@ import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColorsInternal
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
@@ -42,7 +44,7 @@ fun ZashiButton(
     style: TextStyle = ZashiButtonDefaults.style,
     shape: Shape = ZashiButtonDefaults.shape,
     contentPadding: PaddingValues = ZashiButtonDefaults.contentPadding,
-    colors: ZashiButtonColors = ZashiButtonDefaults.primaryColors(),
+    colors: ZashiButtonColors = LocalZashiButtonColors.current ?: ZashiButtonDefaults.primaryColors(),
     content: @Composable RowScope.(ZashiButtonScope) -> Unit = ZashiButtonDefaults.content
 ) {
     ZashiButton(
@@ -74,7 +76,7 @@ fun ZashiButton(
     style: TextStyle = ZashiButtonDefaults.style,
     shape: Shape = ZashiButtonDefaults.shape,
     contentPadding: PaddingValues = ZashiButtonDefaults.contentPadding,
-    colors: ZashiButtonColors = ZashiButtonDefaults.primaryColors(),
+    colors: ZashiButtonColors = LocalZashiButtonColors.current ?: ZashiButtonDefaults.primaryColors(),
     content: @Composable RowScope.(ZashiButtonScope) -> Unit = ZashiButtonDefaults.content
 ) {
     val scope =
@@ -180,10 +182,11 @@ object ZashiButtonDefaults {
 
     @Composable
     fun primaryColors(
-        containerColor: Color = ZashiColors.Btns.Primary.btnPrimaryBg,
-        contentColor: Color = ZashiColors.Btns.Primary.btnPrimaryFg,
-        disabledContainerColor: Color = ZashiColors.Btns.Primary.btnPrimaryBgDisabled,
-        disabledContentColor: Color = ZashiColors.Btns.Primary.btnBoldFgDisabled,
+        source: ZashiColorsInternal = ZashiColors,
+        containerColor: Color = source.Btns.Primary.btnPrimaryBg,
+        contentColor: Color = source.Btns.Primary.btnPrimaryFg,
+        disabledContainerColor: Color = source.Btns.Primary.btnPrimaryBgDisabled,
+        disabledContentColor: Color = source.Btns.Primary.btnBoldFgDisabled,
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
@@ -195,11 +198,12 @@ object ZashiButtonDefaults {
 
     @Composable
     fun secondaryColors(
-        containerColor: Color = ZashiColors.Btns.Secondary.btnSecondaryBg,
-        contentColor: Color = ZashiColors.Btns.Secondary.btnSecondaryFg,
+        source: ZashiColorsInternal = ZashiColors,
+        containerColor: Color = source.Btns.Secondary.btnSecondaryBg,
+        contentColor: Color = source.Btns.Secondary.btnSecondaryFg,
         borderColor: Color = Color.Unspecified,
-        disabledContainerColor: Color = ZashiColors.Btns.Secondary.btnSecondaryBgDisabled,
-        disabledContentColor: Color = ZashiColors.Btns.Secondary.btnSecondaryFg,
+        disabledContainerColor: Color = source.Btns.Secondary.btnSecondaryBgDisabled,
+        disabledContentColor: Color = source.Btns.Secondary.btnSecondaryFg,
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
@@ -211,10 +215,11 @@ object ZashiButtonDefaults {
 
     @Composable
     fun tertiaryColors(
-        containerColor: Color = ZashiColors.Btns.Tertiary.btnTertiaryBg,
-        contentColor: Color = ZashiColors.Btns.Tertiary.btnTertiaryFg,
-        disabledContainerColor: Color = ZashiColors.Btns.Tertiary.btnTertiaryBgDisabled,
-        disabledContentColor: Color = ZashiColors.Btns.Tertiary.btnTertiaryFgDisabled,
+        source: ZashiColorsInternal = ZashiColors,
+        containerColor: Color = source.Btns.Tertiary.btnTertiaryBg,
+        contentColor: Color = source.Btns.Tertiary.btnTertiaryFg,
+        disabledContainerColor: Color = source.Btns.Tertiary.btnTertiaryBgDisabled,
+        disabledContentColor: Color = source.Btns.Tertiary.btnTertiaryFgDisabled,
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
@@ -226,11 +231,12 @@ object ZashiButtonDefaults {
 
     @Composable
     fun destructive1Colors(
-        containerColor: Color = ZashiColors.Btns.Destructive1.btnDestroy1Bg,
-        contentColor: Color = ZashiColors.Btns.Destructive1.btnDestroy1Fg,
-        borderColor: Color = ZashiColors.Btns.Destructive1.btnDestroy1Border,
-        disabledContainerColor: Color = ZashiColors.Btns.Destructive1.btnDestroy1BgDisabled,
-        disabledContentColor: Color = ZashiColors.Btns.Destructive1.btnDestroy1FgDisabled,
+        source: ZashiColorsInternal = ZashiColors,
+        containerColor: Color = source.Btns.Destructive1.btnDestroy1Bg,
+        contentColor: Color = source.Btns.Destructive1.btnDestroy1Fg,
+        borderColor: Color = source.Btns.Destructive1.btnDestroy1Border,
+        disabledContainerColor: Color = source.Btns.Destructive1.btnDestroy1BgDisabled,
+        disabledContentColor: Color = source.Btns.Destructive1.btnDestroy1FgDisabled,
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
@@ -242,11 +248,12 @@ object ZashiButtonDefaults {
 
     @Composable
     fun destructive2Colors(
-        containerColor: Color = ZashiColors.Btns.Destructive2.btnDestroy2Bg,
-        contentColor: Color = ZashiColors.Btns.Destructive2.btnDestroy2Fg,
+        source: ZashiColorsInternal = ZashiColors,
+        containerColor: Color = source.Btns.Destructive2.btnDestroy2Bg,
+        contentColor: Color = source.Btns.Destructive2.btnDestroy2Fg,
         borderColor: Color = Color.Unspecified,
-        disabledContainerColor: Color = ZashiColors.Btns.Destructive2.btnDestroy2BgDisabled,
-        disabledContentColor: Color = ZashiColors.Btns.Destructive2.btnDestroy2FgDisabled,
+        disabledContainerColor: Color = source.Btns.Destructive2.btnDestroy2BgDisabled,
+        disabledContentColor: Color = source.Btns.Destructive2.btnDestroy2FgDisabled,
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,
@@ -285,6 +292,12 @@ private fun ZashiButtonColors.toButtonColors() =
         disabledContainerColor = disabledContainerColor,
         disabledContentColor = disabledContentColor,
     )
+
+@Suppress("CompositionLocalAllowlist")
+val LocalZashiButtonColors =
+    compositionLocalOf<ZashiButtonColors?> {
+        null
+    }
 
 @PreviewScreens
 @Composable

@@ -8,20 +8,27 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.screen.home.SeedBackupInfo
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.seed.SeedRecovery
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 
 @Composable
-fun AndroidSeedBackup() {
+fun AndroidSeedBackup(args: SeedBackup) {
     val viewModel = koinActivityViewModel<WalletViewModel>()
     val appBarState by viewModel.walletStateInformation.collectAsStateWithLifecycle()
     val navigationRouter = koinInject<NavigationRouter>()
     val state =
         remember {
             SeedBackupState(
-                onBack = { navigationRouter.back() },
+                onBack = {
+                    if (args.isOpenedFromSeedBackupInfo) {
+                        navigationRouter.replace(SeedBackupInfo)
+                    } else {
+                        navigationRouter.back()
+                    }
+                },
                 onNextClick = { navigationRouter.replace(SeedRecovery) },
                 onInfoClick = { navigationRouter.forward(SeedInfo) }
             )
@@ -38,4 +45,6 @@ fun AndroidSeedBackup() {
 }
 
 @Serializable
-object SeedBackup
+data class SeedBackup(
+    val isOpenedFromSeedBackupInfo: Boolean
+)
