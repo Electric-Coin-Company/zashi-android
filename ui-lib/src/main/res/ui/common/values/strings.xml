@@ -27,4 +27,7 @@
     <string name="server_disconnected_dialog_ignore_btn">Ignore</string>
 
     <string name="general_etc">…</string>
+
+    <string name="general_ok">OK</string>
+    <string name="general_remind_me_later">Remind me later</string>
 </resources>

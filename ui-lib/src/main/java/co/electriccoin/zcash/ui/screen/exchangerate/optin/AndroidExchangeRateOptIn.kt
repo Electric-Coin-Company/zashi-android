@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import kotlinx.serialization.Serializable
 
 @Composable
 fun AndroidExchangeRateOptIn() {
@@ -16,7 +17,11 @@ fun AndroidExchangeRateOptIn() {
     }
 
     ExchangeRateOptIn(
-        onEnabledClick = { walletViewModel.optInExchangeRateUsd(true) },
-        onDismiss = { walletViewModel.dismissOptInExchangeRateUsd() }
+        onEnableClick = { walletViewModel.optInExchangeRateUsd(true) },
+        onDismiss = { walletViewModel.dismissOptInExchangeRateUsd() },
+        onSkipClick = { walletViewModel.onSkipClick() }
     )
 }
+
+@Serializable
+object ExchangeRateOptIn

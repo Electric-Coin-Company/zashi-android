@@ -28,7 +28,8 @@ val LightZashiColorsInternal =
                 textError = ErrorRed.`500`,
                 textLink = HyperBlue.`500`,
                 textLight = Gray.`25`,
-                textLightSupport = Gray.`200`
+                textLightSupport = Gray.`200`,
+                textOpposite = Base.Bone
             ),
         Btns =
             Btns(
@@ -543,7 +544,8 @@ val LightZashiColorsInternal =
                         utilityPurple50 = Purple.`50`,
                         utilityPurple100 = Purple.`100`,
                         utilityPurple400 = Purple.`400`,
-                        utilityPurple300 = Purple.`300`
+                        utilityPurple300 = Purple.`300`,
+                        utilityPurple900 = Purple.`900`
                     ),
                 Espresso =
                     UtilityEspresso(
@@ -556,7 +558,8 @@ val LightZashiColorsInternal =
                         utilityEspresso400 = Espresso.`400`,
                         utilityEspresso300 = Espresso.`300`,
                         utilityEspresso900 = Espresso.`900`,
-                        utilityEspresso800 = Espresso.`800`
+                        utilityEspresso800 = Espresso.`800`,
+                        utilityEspresso950 = Espresso.`950`
                     )
             ),
         Transparent =

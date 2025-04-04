@@ -1,74 +1,72 @@
 package co.electriccoin.zcash.ui.screen.home.messages
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.HorizontalSpacer
-import co.electriccoin.zcash.ui.design.component.VerticalSpacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
-import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.stringRes
 
+@Suppress("ModifierNaming")
 @Composable
 fun WalletBackupMessage(
     state: WalletBackupMessageState,
-    contentPadding: PaddingValues
+    contentPadding: PaddingValues,
+    innerModifier: Modifier = Modifier,
 ) {
     HomeMessageWrapper(
-        color = ZashiColors.Utility.Espresso.utilityEspresso100,
+        innerModifier = innerModifier,
         contentPadding = contentPadding,
-    ) {
-        Image(
-            painter = painterResource(R.drawable.ic_warning_triangle),
-            contentDescription = null
-        )
-        HorizontalSpacer(16.dp)
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
+        onClick = state.onClick,
+        start = {
+            Image(
+                modifier = Modifier.align(Alignment.Top),
+                painter = painterResource(R.drawable.ic_warning_triangle),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(LocalContentColor.current)
+            )
+        },
+        title = {
             Text(
                 stringResource(R.string.home_message_backup_required_title),
-                style = ZashiTypography.textSm,
-                fontWeight = FontWeight.Medium,
-                color = ZashiColors.Utility.Espresso.utilityEspresso900
             )
-            VerticalSpacer(2.dp)
+        },
+        subtitle = {
             Text(
                 text = stringResource(R.string.home_message_backup_required_subtitle),
-                style = ZashiTypography.textXs,
-                fontWeight = FontWeight.Medium,
-                color = ZashiColors.Utility.Espresso.utilityEspresso700
+            )
+        },
+        end = {
+            ZashiButton(
+                modifier = Modifier.height(36.dp),
+                state =
+                    ButtonState(
+                        onClick = state.onButtonClick,
+                        text = stringRes(R.string.home_message_backup_required_button)
+                    )
             )
         }
-        ZashiButton(
-            modifier = Modifier.height(36.dp),
-            state =
-                ButtonState(
-                    onClick = state.onClick,
-                    text = stringRes("Start")
-                )
-        )
-    }
+    )
 }
 
 @Immutable
 data class WalletBackupMessageState(
     val onClick: () -> Unit,
+    val onButtonClick: () -> Unit,
 ) : HomeMessageState
 
 @PreviewScreens
@@ -79,7 +77,8 @@ private fun Preview() =
             WalletBackupMessage(
                 state =
                     WalletBackupMessageState(
-                        onClick = {}
+                        onClick = {},
+                        onButtonClick = {}
                     ),
                 contentPadding = PaddingValues()
             )

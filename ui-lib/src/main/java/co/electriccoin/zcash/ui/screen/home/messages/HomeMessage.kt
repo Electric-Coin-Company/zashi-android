@@ -1,6 +1,8 @@
 package co.electriccoin.zcash.ui.screen.home.messages
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
@@ -34,53 +36,122 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import kotlinx.coroutines.delay
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
-@Suppress("MagicNumber")
+@Suppress("MagicNumber", "CyclomaticComplexMethod")
 @Composable
-fun HomeMessage(state: HomeMessageState?) {
-    val cutoutHeight = 16.dp
+fun HomeMessage(
+    state: HomeMessageState?,
+    modifier: Modifier = Modifier
+) {
     var normalizedState: HomeMessageState? by remember { mutableStateOf(state) }
     var isVisible by remember { mutableStateOf(state != null) }
     val bottomCornerSize by animateDpAsState(
-        if (isVisible) cutoutHeight else 0.dp,
-        animationSpec = tween(350)
+        targetValue = if (isVisible) BOTTOM_CUTOUT_HEIGHT_DP.dp else 0.dp,
+        animationSpec = animationSpec()
+    )
+    val bottomHeight by animateDpAsState(
+        targetValue = if (isVisible) BOTTOM_CUTOUT_HEIGHT_DP.dp else TOP_CUTOUT_HEIGHT_DP.dp,
+        animationSpec =
+            animationSpec(
+                delay = if (isVisible) null else 250.milliseconds
+            )
     )
 
     Box(
-        modifier =
-            Modifier
-                .background(Color.Gray)
+        modifier = modifier
     ) {
         Box(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(cutoutHeight)
+                    .height(TOP_CUTOUT_HEIGHT_DP.dp)
                     .zIndex(2f)
                     .bottomOnlyShadow(
                         elevation = 2.dp,
-                        shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp),
+                        shape =
+                            RoundedCornerShape(
+                                bottomStart = TOP_CUTOUT_HEIGHT_DP.dp,
+                                bottomEnd = TOP_CUTOUT_HEIGHT_DP.dp
+                            ),
                         backgroundColor = ZashiColors.Surfaces.bgPrimary
                     ),
         )
-
         AnimatedVisibility(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .zIndex(0f),
             visible = isVisible,
-            enter = expandIn(animationSpec = tween(350)),
-            exit = shrinkOut(animationSpec = tween(350))
+            enter =
+                expandIn(
+                    animationSpec = animationSpec(),
+                    expandFrom = Alignment.TopEnd
+                ),
+            exit =
+                shrinkOut(
+                    animationSpec = animationSpec(),
+                    shrinkTowards = Alignment.TopEnd
+                )
         ) {
+            val contentPadding = PaddingValues(top = TOP_CUTOUT_HEIGHT_DP.dp, bottom = BOTTOM_CUTOUT_HEIGHT_DP.dp)
+            val innerModifier = Modifier
             when (normalizedState) {
                 is WalletBackupMessageState ->
                     WalletBackupMessage(
+                        innerModifier = innerModifier,
                         state = normalizedState as WalletBackupMessageState,
-                        contentPadding =
-                            PaddingValues(
-                                vertical = cutoutHeight
-                            )
+                        contentPadding = contentPadding
+                    )
+
+                is EnableCurrencyConversionMessageState ->
+                    EnableCurrencyConversionMessage(
+                        innerModifier = innerModifier,
+                        state = normalizedState as EnableCurrencyConversionMessageState,
+                        contentPadding = contentPadding
+                    )
+
+                is TransparentBalanceDetectedMessageState ->
+                    TransparentBalanceDetectedMessage(
+                        innerModifier = innerModifier,
+                        state = normalizedState as TransparentBalanceDetectedMessageState,
+                        contentPadding = contentPadding
+                    )
+
+                is WalletDisconnectedMessageState ->
+                    WalletDisconnectedMessage(
+                        innerModifier = innerModifier,
+                        state = normalizedState as WalletDisconnectedMessageState,
+                        contentPadding = contentPadding
+                    )
+
+                is WalletRestoringMessageState ->
+                    WalletRestoringMessage(
+                        innerModifier = innerModifier,
+                        state = normalizedState as WalletRestoringMessageState,
+                        contentPadding = contentPadding
+                    )
+
+                is WalletSyncingMessageState ->
+                    WalletSyncingMessage(
+                        innerModifier = innerModifier,
+                        state = normalizedState as WalletSyncingMessageState,
+                        contentPadding = contentPadding
+                    )
+
+                is WalletUpdatingMessageState ->
+                    WalletUpdatingMessage(
+                        innerModifier = innerModifier,
+                        state = normalizedState as WalletUpdatingMessageState,
+                        contentPadding = contentPadding
+                    )
+
+                is WalletErrorMessageState ->
+                    WalletErrorMessage(
+                        innerModifier = innerModifier,
+                        state = normalizedState as WalletErrorMessageState,
+                        contentPadding = contentPadding
                     )
 
                 null -> {
@@ -93,7 +164,7 @@ fun HomeMessage(state: HomeMessageState?) {
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(cutoutHeight)
+                    .height(bottomHeight)
                     .zIndex(1f)
                     .align(Alignment.BottomCenter)
                     .topOnlyShadow(
@@ -105,16 +176,50 @@ fun HomeMessage(state: HomeMessageState?) {
     }
 
     LaunchedEffect(state) {
-        if (state != null) {
-            normalizedState = state
-            isVisible = true
-        } else {
-            isVisible = false
-            delay(350)
-            normalizedState = null
+        when {
+            normalizedState == null -> {
+                normalizedState = state
+                isVisible = state != null
+            }
+
+            state == null -> {
+                isVisible = false
+                delay(ANIMATION_DURATION_MS.milliseconds)
+                normalizedState = null
+            }
+
+            normalizedState!!::class == state::class -> {
+                normalizedState = state
+                isVisible = true
+            }
+
+            else -> {
+                isVisible = false
+                delay(ANIMATION_DURATION_BETWEEN_MESSAGES_MS.milliseconds)
+                normalizedState = state
+                isVisible = true
+            }
         }
     }
 }
+
+sealed interface HomeMessageState
+
+@Suppress("MagicNumber")
+@Composable
+private fun <T> animationSpec(delay: Duration? = null): TweenSpec<T> {
+    val delayMs = delay?.inWholeMilliseconds?.toInt() ?: 0
+    return tween(
+        durationMillis = ANIMATION_DURATION_MS - delayMs,
+        easing = CubicBezierEasing(0.6f, 0.1f, 0.3f, 0.9f),
+        delayMillis = delayMs
+    )
+}
+
+private const val ANIMATION_DURATION_MS = 850
+private const val ANIMATION_DURATION_BETWEEN_MESSAGES_MS = 1000
+private const val TOP_CUTOUT_HEIGHT_DP = 32
+private const val BOTTOM_CUTOUT_HEIGHT_DP = 24
 
 private fun Modifier.bottomOnlyShadow(
     elevation: Dp,

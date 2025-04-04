@@ -15,6 +15,7 @@ import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.home.HomeViewModel
+import co.electriccoin.zcash.ui.screen.home.balance.TransparentBalanceInfoViewModel
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
 import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
@@ -142,4 +143,5 @@ val viewModelModule =
         viewModelOf(::RestoreBDHeightViewModel)
         viewModelOf(::RestoreBDDateViewModel)
         viewModelOf(::RestoreBDEstimationViewModel)
+        viewModelOf(::TransparentBalanceInfoViewModel)
     }

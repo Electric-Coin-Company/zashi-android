@@ -6,12 +6,12 @@ import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.NullableBooleanPreferenceDefault
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.NavigationTargets.EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.common.wallet.RefreshLock
 import co.electriccoin.zcash.ui.common.wallet.StaleLock
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
+import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -204,7 +204,7 @@ class ExchangeRateRepositoryImpl(
         setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN, false)
     }
 
-    private fun showOptInExchangeRateUsd() = navigationRouter.forward(EXCHANGE_RATE_OPT_IN)
+    private fun showOptInExchangeRateUsd() = navigationRouter.forward(ExchangeRateOptIn)
 
     private fun nullableBooleanStateFlow(default: NullableBooleanPreferenceDefault): StateFlow<Boolean?> =
         flow {

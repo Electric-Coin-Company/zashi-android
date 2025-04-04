@@ -4,12 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
@@ -39,14 +36,14 @@ import co.electriccoin.zcash.ui.screen.transactionnote.model.TransactionNoteStat
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun TransactionNoteView(
-    state: TransactionNoteState,
+    state: TransactionNoteState?,
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
         content = {
-            BottomSheetContent(state)
+            BottomSheetContent(it)
         },
     )
 }
@@ -121,10 +118,6 @@ private fun BottomSheetContent(state: TransactionNoteState) {
                 )
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
     }
 }
 

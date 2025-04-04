@@ -13,6 +13,7 @@ import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -50,6 +51,7 @@ class WalletViewModel(
     private val resetSharedPrefsData: ResetSharedPrefsDataUseCase,
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : AndroidViewModel(application) {
     val synchronizer = walletRepository.synchronizer
 
@@ -68,7 +70,11 @@ class WalletViewModel(
     }
 
     fun dismissOptInExchangeRateUsd() {
-        exchangeRateRepository.dismissOptInExchangeRateUsd()
+        navigationRouter.back()
+    }
+
+    fun onSkipClick() {
+        navigationRouter.back()
     }
 
     fun persistNewWalletAndRestoringState(state: WalletRestoringState) {
