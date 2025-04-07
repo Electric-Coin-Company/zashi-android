@@ -6,6 +6,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Changed
+- The Security Warning screen has been removed from onboarding of the FOSS app build type
+
 ## [1.5.2 (926)] - 2025-04-03
 
 ### Changed
