@@ -15,6 +15,7 @@ import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
@@ -34,7 +35,14 @@ internal fun WrapOnboarding() {
 
     if (!onboardingViewModel.isImporting.collectAsStateWithLifecycle().value) {
         val onCreateWallet = {
-            walletViewModel.persistOnboardingState(OnboardingState.NEEDS_WARN)
+            walletViewModel.persistOnboardingState(
+                if (onboardingViewModel.isSecurityScreenAllowed) {
+                    OnboardingState.NEEDS_WARN
+                } else {
+                    walletViewModel.persistNewWalletAndRestoringState(WalletRestoringState.INITIATING)
+                    OnboardingState.NEEDS_BACKUP
+                }
+            )
         }
         val onImportWallet = {
             // In the case of the app currently being messed with by the robo test runner on
