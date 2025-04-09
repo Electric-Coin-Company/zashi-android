@@ -12,6 +12,14 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [1.5.2 (929)] - 2025-04-09
+
+### Corregido
+- ¡Corrección de errores 1.5!
+- Solucionamos un problema de migración que afectaba a algunos usuarios de la versión 1.5 de la app.
+- También eliminamos la pantalla de Advertencia de Seguridad redundante que informaba incorrectamente al usuario 
+  sobre informes de fallas no incluidos en la versión Zashi Android FOSS.
+
 ## [1.5.2 (926)] - 2025-04-03
 
 ### Corregido:
