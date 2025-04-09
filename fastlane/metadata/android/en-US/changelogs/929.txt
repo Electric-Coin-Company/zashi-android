@@ -1,0 +1,5 @@
+Fixed:
+- 1.5 Bug Fix release!
+- We fixed a migration issue impacting some users on 1.5 app version.
+- We also removed the redundant Security Warning screen which was incorrectly informing the user about crash reporting
+not included in Zashi Android FOSS version.
