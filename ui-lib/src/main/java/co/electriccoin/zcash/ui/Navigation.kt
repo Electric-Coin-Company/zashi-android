@@ -67,19 +67,19 @@ import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.home.AndroidHome
-import co.electriccoin.zcash.ui.screen.home.AndroidSeedBackupInfo
-import co.electriccoin.zcash.ui.screen.home.AndroidWalletDisconnectedInfo
-import co.electriccoin.zcash.ui.screen.home.AndroidWalletRestoringInfo
-import co.electriccoin.zcash.ui.screen.home.AndroidWalletSyncingInfo
-import co.electriccoin.zcash.ui.screen.home.AndroidWalletUpdatingInfo
+import co.electriccoin.zcash.ui.screen.home.backup.AndroidWalletBackupInfo
+import co.electriccoin.zcash.ui.screen.home.disconnected.AndroidWalletDisconnectedInfo
+import co.electriccoin.zcash.ui.screen.home.restoring.AndroidWalletRestoringInfo
+import co.electriccoin.zcash.ui.screen.home.syncing.AndroidWalletSyncingInfo
+import co.electriccoin.zcash.ui.screen.home.updating.AndroidWalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.Home
-import co.electriccoin.zcash.ui.screen.home.SeedBackupInfo
-import co.electriccoin.zcash.ui.screen.home.WalletDisconnectedInfo
-import co.electriccoin.zcash.ui.screen.home.WalletRestoringInfo
-import co.electriccoin.zcash.ui.screen.home.WalletSyncingInfo
-import co.electriccoin.zcash.ui.screen.home.WalletUpdatingInfo
-import co.electriccoin.zcash.ui.screen.home.balance.AndroidTransparentBalanceInfo
-import co.electriccoin.zcash.ui.screen.home.balance.TransparentBalanceInfo
+import co.electriccoin.zcash.ui.screen.home.backup.SeedBackupInfo
+import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedInfo
+import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfo
+import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
+import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
+import co.electriccoin.zcash.ui.screen.home.transparentbalance.AndroidTransparentBalanceInfo
+import co.electriccoin.zcash.ui.screen.home.transparentbalance.TransparentBalanceInfo
 import co.electriccoin.zcash.ui.screen.integrations.AndroidDialogIntegrations
 import co.electriccoin.zcash.ui.screen.integrations.AndroidIntegrations
 import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
@@ -99,10 +99,10 @@ import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneSignInRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystonePCZTRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystoneSignInRequest
-import co.electriccoin.zcash.ui.screen.seed.AndroidSeedRecovery
-import co.electriccoin.zcash.ui.screen.seed.SeedRecovery
-import co.electriccoin.zcash.ui.screen.seed.backup.AndroidSeedBackup
-import co.electriccoin.zcash.ui.screen.seed.backup.SeedBackup
+import co.electriccoin.zcash.ui.screen.walletbackup.AndroidWalletBackup
+import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackup
+import co.electriccoin.zcash.ui.screen.home.backup.AndroidWalletBackupDetail
+import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetail
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.AndroidSelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.send.Send
@@ -227,8 +227,8 @@ internal fun MainActivity.Navigation() {
         composable(CHOOSE_SERVER) {
             WrapChooseServer()
         }
-        composable<SeedRecovery> {
-            AndroidSeedRecovery()
+        composable<WalletBackup> {
+            AndroidWalletBackup(it.toRoute())
         }
         composable(SUPPORT) {
             // Pop back stack won't be right if we deep link into support
@@ -410,8 +410,8 @@ internal fun MainActivity.Navigation() {
         ) {
             AndroidSeedInfo()
         }
-        composable<SeedBackup> {
-            AndroidSeedBackup(it.toRoute())
+        composable<WalletBackupDetail> {
+            AndroidWalletBackupDetail(it.toRoute())
         }
         dialog<SeedBackupInfo>(
             dialogProperties =
@@ -420,7 +420,7 @@ internal fun MainActivity.Navigation() {
                     dismissOnClickOutside = false
                 )
         ) {
-            AndroidSeedBackupInfo()
+            AndroidWalletBackupInfo()
         }
         dialog<TransparentBalanceInfo>(
             dialogProperties =

@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -47,13 +46,11 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 fun AdvancedSettings(
     state: AdvancedSettingsState,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     BlankBgScaffold(
         topBar = {
             AdvancedSettingsTopAppBar(
                 onBack = state.onBack,
-                subTitleState = topAppBarSubTitleState,
             )
         }
     ) { paddingValues ->
@@ -114,17 +111,10 @@ private fun Info() {
 
 @Composable
 private fun AdvancedSettingsTopAppBar(
-    onBack: () -> Unit,
-    subTitleState: TopAppBarSubTitleState
+    onBack: () -> Unit
 ) {
     ZashiSmallTopAppBar(
         title = stringResource(id = R.string.advanced_settings_title),
-        subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         modifier = Modifier.testTag(AdvancedSettingsTag.ADVANCED_SETTINGS_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -170,6 +160,5 @@ private fun AdvancedSettingsPreview() =
                             onClick = {}
                         )
                 ),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }

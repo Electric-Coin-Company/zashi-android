@@ -27,7 +27,6 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.toJavaLocale
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
@@ -54,7 +53,6 @@ private fun RequestLoadingPreview() =
         RequestView(
             state = RequestState.Loading,
             snackbarHostState = SnackbarHostState(),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 
@@ -85,7 +83,6 @@ private fun RequestPreview() =
                     monetarySeparators = MonetarySeparators.current(Locale.getDefault().toJavaLocale())
                 ),
             snackbarHostState = SnackbarHostState(),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 
@@ -93,7 +90,6 @@ private fun RequestPreview() =
 internal fun RequestView(
     state: RequestState,
     snackbarHostState: SnackbarHostState,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     when (state) {
         RequestState.Loading -> {
@@ -104,7 +100,6 @@ internal fun RequestView(
                 topBar = {
                     RequestTopAppBar(
                         onBack = state.onBack,
-                        subTitleState = topAppBarSubTitleState,
                     )
                 },
                 snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -128,15 +123,8 @@ internal fun RequestView(
 @Composable
 private fun RequestTopAppBar(
     onBack: () -> Unit,
-    subTitleState: TopAppBarSubTitleState,
 ) {
     ZashiSmallTopAppBar(
-        subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         title = stringResource(id = R.string.request_title),
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)

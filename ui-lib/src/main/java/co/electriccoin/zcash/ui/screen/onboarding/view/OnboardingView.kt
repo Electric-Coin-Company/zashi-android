@@ -159,18 +159,18 @@ private fun OnboardingMainContent(
         )
 
         ZashiButton(
-            onClick = onCreateWallet,
-            text = stringResource(R.string.onboarding_create_new_wallet),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.onboarding_import_existing_wallet),
+            onClick = onImportWallet,
+            colors = ZashiButtonDefaults.tertiaryColors()
         )
 
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
 
         ZashiButton(
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(R.string.onboarding_import_existing_wallet),
-            onClick = onImportWallet,
-            colors = ZashiButtonDefaults.tertiaryColors()
+            onClick = onCreateWallet,
+            text = stringResource(R.string.onboarding_create_new_wallet),
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }

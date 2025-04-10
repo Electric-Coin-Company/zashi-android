@@ -25,6 +25,7 @@ import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.PrefillSendData
 import co.electriccoin.zcash.ui.common.usecase.PrefillSendUseCase
@@ -54,9 +55,11 @@ internal fun WrapSend(args: Send) {
 
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
-    val balanceViewModel = koinActivityViewModel<BalanceViewModel>()
+    val balanceViewModel = koinViewModel<BalanceViewModel>()
 
     val accountDataSource = koinInject<AccountDataSource>()
+
+    val exchangeRateRepository = koinInject<ExchangeRateRepository>()
 
     val hasCameraFeature = activity.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
 
@@ -68,7 +71,7 @@ internal fun WrapSend(args: Send) {
 
     val balanceState = balanceViewModel.state.collectAsStateWithLifecycle().value
 
-    val exchangeRateState = walletViewModel.exchangeRateUsd.collectAsStateWithLifecycle().value
+    val exchangeRateState = exchangeRateRepository.state.collectAsStateWithLifecycle().value
 
     WrapSend(
         balanceState = balanceState,

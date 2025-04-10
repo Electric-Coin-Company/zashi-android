@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.screen.home
 
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
-import co.electriccoin.zcash.ui.screen.home.messages.HomeMessageState
 
 data class HomeState(
     val firstButton: BigIconButtonState,
@@ -11,6 +10,6 @@ data class HomeState(
     val message: HomeMessageState?
 )
 
-data class HomeRestoreDialogState(
+data class HomeRestoreSuccessDialogState(
     val onClick: () -> Unit
 )

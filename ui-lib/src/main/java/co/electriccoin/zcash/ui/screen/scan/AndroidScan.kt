@@ -30,7 +30,6 @@ internal fun WrapScanValidator(args: Scan) {
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
     val viewModel = koinViewModel<ScanViewModel> { parametersOf(args) }
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
-    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
     val state by viewModel.state.collectAsStateWithLifecycle()
     val navigationRouter = koinInject<NavigationRouter>()
 
@@ -46,7 +45,6 @@ internal fun WrapScanValidator(args: Scan) {
     } else {
         Scan(
             snackbarHostState = snackbarHostState,
-            validationResult = state,
             onBack = { navigationRouter.back() },
             onScan = {
                 viewModel.onScanned(it)
@@ -68,7 +66,7 @@ internal fun WrapScanValidator(args: Scan) {
                 }
             },
             onScanStateChange = {},
-            topAppBarSubTitleState = walletState,
+            validationResult = state,
         )
     }
 }

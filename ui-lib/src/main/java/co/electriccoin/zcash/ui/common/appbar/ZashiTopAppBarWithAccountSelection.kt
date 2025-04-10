@@ -15,14 +15,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.common.appbar.ZashiMainTopAppBarState.AccountType
 import co.electriccoin.zcash.ui.design.R
@@ -32,10 +30,6 @@ import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
-import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.StringResource
-import co.electriccoin.zcash.ui.design.util.getValue
-import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
 fun ZashiTopAppBarWithAccountSelection(
@@ -61,16 +55,6 @@ fun ZashiTopAppBarWithAccountSelection(
                 AccountSwitch(state.accountSwitchState)
             },
         )
-
-        if (state.subtitle != null) {
-            Text(
-                modifier = Modifier.align(Alignment.BottomCenter),
-                text = state.subtitle.getValue().uppercase(),
-                style = ZashiTypography.textXs,
-                fontWeight = FontWeight.Normal,
-                color = ZashiColors.Text.textQuaternary
-            )
-        }
     }
 }
 
@@ -128,13 +112,9 @@ private fun AccountSwitch(state: AccountSwitchState) {
 data class ZashiMainTopAppBarState(
     val accountSwitchState: AccountSwitchState,
     val balanceVisibilityButton: IconButtonState,
-    val settingsButton: IconButtonState,
-    val subtitle: StringResource?
+    val settingsButton: IconButtonState
 ) {
-    enum class AccountType {
-        ZASHI,
-        KEYSTONE
-    }
+    enum class AccountType { ZASHI, KEYSTONE }
 }
 
 data class AccountSwitchState(
@@ -155,8 +135,7 @@ private fun ZashiMainTopAppBarPreview() =
                             onAccountTypeClick = {}
                         ),
                     balanceVisibilityButton = IconButtonState(R.drawable.ic_app_bar_balances_hide) {},
-                    settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {},
-                    subtitle = null
+                    settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {}
                 )
         )
     }
@@ -174,8 +153,7 @@ private fun KeystoneMainTopAppBarPreview() =
                             onAccountTypeClick = {},
                         ),
                     balanceVisibilityButton = IconButtonState(R.drawable.ic_app_bar_balances_hide) {},
-                    settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {},
-                    subtitle = null
+                    settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {}
                 )
         )
     }
@@ -193,8 +171,7 @@ private fun MainTopAppBarWithSubtitlePreview() =
                             onAccountTypeClick = {},
                         ),
                     balanceVisibilityButton = IconButtonState(R.drawable.ic_app_bar_balances_hide) {},
-                    settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {},
-                    subtitle = stringRes("Subtitle")
+                    settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {}
                 )
         )
     }

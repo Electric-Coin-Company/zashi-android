@@ -12,10 +12,14 @@ import co.electriccoin.zcash.ui.screen.balances.BalanceViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
+import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInViewModel
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsViewModel
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.home.HomeViewModel
-import co.electriccoin.zcash.ui.screen.home.balance.TransparentBalanceInfoViewModel
+import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetailViewModel
+import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupInfoViewModel
+import co.electriccoin.zcash.ui.screen.home.transparentbalance.TransparentBalanceInfoViewModel
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
 import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
@@ -24,13 +28,13 @@ import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateViewModel
 import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationViewModel
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightViewModel
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
-import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
+import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
 import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
-import co.electriccoin.zcash.ui.screen.seed.SeedRecoveryViewModel
+import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackupViewModel
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel.SelectKeystoneAccountViewModel
 import co.electriccoin.zcash.ui.screen.send.SendViewModel
@@ -96,7 +100,7 @@ val viewModelModule =
         viewModelOf(::IntegrationsViewModel)
         viewModelOf(::FlexaViewModel)
         viewModelOf(::SendViewModel)
-        viewModelOf(::SeedRecoveryViewModel)
+        viewModelOf(::WalletBackupViewModel)
         viewModelOf(::FeedbackViewModel)
         viewModelOf(::SignKeystoneTransactionViewModel)
         viewModelOf(::AccountListViewModel)
@@ -144,4 +148,8 @@ val viewModelModule =
         viewModelOf(::RestoreBDDateViewModel)
         viewModelOf(::RestoreBDEstimationViewModel)
         viewModelOf(::TransparentBalanceInfoViewModel)
+        viewModelOf(::WalletBackupInfoViewModel)
+        viewModelOf(::ExchangeRateOptInViewModel)
+        viewModelOf(::ExchangeRateSettingsViewModel)
+        viewModelOf(::WalletBackupDetailViewModel)
     }

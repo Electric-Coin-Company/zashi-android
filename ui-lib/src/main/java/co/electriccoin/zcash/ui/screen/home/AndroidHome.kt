@@ -11,13 +11,14 @@ import co.electriccoin.zcash.ui.screen.balances.BalanceViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.WrapRestoreSuccess
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetViewModel
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 internal fun AndroidHome() {
     val topAppBarViewModel = koinActivityViewModel<ZashiTopAppBarViewModel>()
-    val balanceViewModel = koinActivityViewModel<BalanceViewModel>()
-    val homeViewModel = koinActivityViewModel<HomeViewModel>()
-    val transactionHistoryWidgetViewModel = koinActivityViewModel<TransactionHistoryWidgetViewModel>()
+    val balanceViewModel = koinViewModel<BalanceViewModel>()
+    val homeViewModel = koinViewModel<HomeViewModel>()
+    val transactionHistoryWidgetViewModel = koinViewModel<TransactionHistoryWidgetViewModel>()
     val restoreDialogState by homeViewModel.restoreDialogState.collectAsStateWithLifecycle()
     val appBarState by topAppBarViewModel.state.collectAsStateWithLifecycle()
     val balanceState by balanceViewModel.state.collectAsStateWithLifecycle()

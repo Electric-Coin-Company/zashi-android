@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.design.component
 
-import androidx.annotation.IntRange
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -36,8 +35,8 @@ fun ZashiCircularProgressIndicator(
 }
 
 @Composable
-fun ZashiCircularProgressIndicator(
-    @IntRange(from = 0, to = 100) progressPercent: Int,
+fun ZashiCircularProgressIndicatorByPercent(
+    progressPercent: Float,
     modifier: Modifier = Modifier,
     colors: ZashiCircularProgressIndicatorColors =
         LocalZashiCircularProgressIndicatorColors.current

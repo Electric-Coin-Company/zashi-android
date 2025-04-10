@@ -5,8 +5,6 @@ package co.electriccoin.zcash.ui.screen.advancedsettings
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.di.koinActivityViewModel
-import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
 
@@ -15,9 +13,7 @@ internal fun WrapAdvancedSettings(
     goDeleteWallet: () -> Unit,
     goExportPrivateData: () -> Unit,
 ) {
-    val walletViewModel = koinActivityViewModel<WalletViewModel>()
     val viewModel = koinViewModel<AdvancedSettingsViewModel>()
-    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
     val originalState = viewModel.state.collectAsStateWithLifecycle().value
     val state =
         originalState.copy(
@@ -38,6 +34,5 @@ internal fun WrapAdvancedSettings(
 
     AdvancedSettings(
         state = state,
-        topAppBarSubTitleState = walletState,
     )
 }

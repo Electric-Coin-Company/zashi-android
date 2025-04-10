@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.integration.test.screen.scan.view
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.integration.test.common.getPermissionNegativeButtonUiObject
 import co.electriccoin.zcash.ui.integration.test.common.getPermissionPositiveButtonUiObject
@@ -60,7 +59,6 @@ class ScanViewTestSetup(
             onScanStateChange = {
                 scanState.set(it)
             },
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
             validationResult = ScanValidationState.VALID
         )
     }

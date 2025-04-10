@@ -20,7 +20,6 @@ import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.model.FastestServersState
 import co.electriccoin.zcash.ui.common.model.OnboardingState
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
@@ -80,11 +79,6 @@ interface WalletRepository {
      * A flow of the wallet block synchronization state.
      */
     val walletRestoringState: StateFlow<WalletRestoringState>
-
-    /**
-     * A flow of the wallet current state information that should be displayed in screens top app bar.
-     */
-    val walletStateInformation: StateFlow<TopAppBarSubTitleState>
 
     fun persistWallet(persistableWallet: PersistableWallet)
 
@@ -227,29 +221,6 @@ class WalletRepositoryImpl(
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = WalletRestoringState.NONE
         )
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val walletStateInformation: StateFlow<TopAppBarSubTitleState> =
-        synchronizer
-            .filterNotNull()
-            .flatMapLatest { synchronizer ->
-                combine(
-                    synchronizer.status,
-                    walletRestoringState
-                ) { status: Synchronizer.Status?, walletRestoringState: WalletRestoringState ->
-                    if (Synchronizer.Status.DISCONNECTED == status) {
-                        TopAppBarSubTitleState.Disconnected
-                    } else if (WalletRestoringState.RESTORING == walletRestoringState) {
-                        TopAppBarSubTitleState.Restoring
-                    } else {
-                        TopAppBarSubTitleState.None
-                    }
-                }
-            }.stateIn(
-                scope = scope,
-                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = TopAppBarSubTitleState.None
-            )
 
     /**
      * Persists a wallet asynchronously.  Clients observe [secretState] to see the side effects.

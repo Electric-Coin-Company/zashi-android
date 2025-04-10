@@ -19,7 +19,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiCheckbox
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
@@ -38,13 +37,11 @@ fun ExportPrivateData(
     onBack: () -> Unit,
     onAgree: (Boolean) -> Unit,
     onConfirm: () -> Unit,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     Scaffold(
         topBar = {
             ExportPrivateDataTopAppBar(
                 onBack = onBack,
-                subTitleState = topAppBarSubTitleState,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -63,17 +60,10 @@ fun ExportPrivateData(
 
 @Composable
 private fun ExportPrivateDataTopAppBar(
-    onBack: () -> Unit,
-    subTitleState: TopAppBarSubTitleState
+    onBack: () -> Unit
 ) {
     ZashiSmallTopAppBar(
         title = stringResource(R.string.export_data_title),
-        subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
         },
@@ -137,6 +127,5 @@ private fun ExportPrivateDataPreview() =
             onBack = {},
             onAgree = {},
             onConfirm = {},
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }

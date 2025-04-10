@@ -4,6 +4,7 @@
     <string name="seed_recovery_header">Secret Recovery Phrase</string>
     <string name="seed_recovery_description">These words are the only way to recover your funds! Make sure to save them in the correct order.</string>
     <string name="seed_recovery_reveal_button">Reveal security details</string>
+    <string name="seed_recovery_saved_button">I\'ve saved it!</string>
     <string name="seed_recovery_hide_button">Hide security details</string>
     <string name="seed_recovery_next_button">Next</string>
     <string name="seed_recovery_bday_title">Wallet Birthday Height</string>

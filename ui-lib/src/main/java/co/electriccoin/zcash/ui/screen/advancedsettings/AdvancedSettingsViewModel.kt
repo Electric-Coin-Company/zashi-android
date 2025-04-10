@@ -8,12 +8,12 @@ import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToSeedRecoveryUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToWalletBackupUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptIn
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettings
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -26,7 +26,7 @@ class AdvancedSettingsViewModel(
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     private val navigationRouter: NavigationRouter,
     private val navigateToTaxExport: NavigateToTaxExportUseCase,
-    private val navigateToSeedRecovery: NavigateToSeedRecoveryUseCase
+    private val navigateToSeedRecovery: NavigateToWalletBackupUseCase
 ) : ViewModel() {
     val state: StateFlow<AdvancedSettingsState> =
         getWalletRestoringState
@@ -89,7 +89,7 @@ class AdvancedSettingsViewModel(
 
     private fun onChooseServerClick() = navigationRouter.forward(NavigationTargets.CHOOSE_SERVER)
 
-    private fun onCurrencyConversionClick() = navigationRouter.forward(ExchangeRateOptIn)
+    private fun onCurrencyConversionClick() = navigationRouter.forward(ExchangeRateSettings)
 
     private fun onTaxExportClick() =
         viewModelScope.launch {
@@ -98,6 +98,6 @@ class AdvancedSettingsViewModel(
 
     private fun onSeedRecoveryClick() =
         viewModelScope.launch {
-            navigateToSeedRecovery()
+            navigateToSeedRecovery(isOpenedFromSeedBackupInfo = false)
         }
 }
