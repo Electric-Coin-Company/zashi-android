@@ -15,29 +15,30 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.HomeMessageData
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
+import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.home.backup.SeedBackupInfo
-import co.electriccoin.zcash.ui.screen.home.currency.EnableCurrencyConversionMessageState
-import co.electriccoin.zcash.ui.screen.home.transparentbalance.TransparentBalanceMessageState
+import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetail
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupMessageState
+import co.electriccoin.zcash.ui.screen.home.currency.EnableCurrencyConversionMessageState
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedInfo
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedMessageState
 import co.electriccoin.zcash.ui.screen.home.error.WalletErrorMessageState
-import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringMessageState
-import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
-import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfo
+import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringMessageState
+import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfo
+import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsMessageState
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
-import co.electriccoin.zcash.ui.screen.home.transparentbalance.TransparentBalanceInfo
+import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
+import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
 import co.electriccoin.zcash.ui.screen.receive.Receive
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
-import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetail
 import co.electriccoin.zcash.ui.screen.send.Send
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -55,6 +56,7 @@ class HomeViewModel(
     private val navigationRouter: NavigationRouter,
     private val isRestoreSuccessDialogVisible: IsRestoreSuccessDialogVisibleUseCase,
     private val navigateToCoinbase: NavigateToCoinbaseUseCase,
+    private val shieldFunds: ShieldFundsUseCase
 ) : ViewModel() {
 
     private val messageState = getHomeMessage
@@ -177,10 +179,13 @@ class HomeViewModel(
             onClick = ::onWalletSyncingMessageClick
         )
 
-        is HomeMessageData.TransparentBalance -> TransparentBalanceMessageState(
-            subtitle = stringRes(zatoshi = it.zatoshi),
-            onClick = ::onTransparentBalanceMessageClick,
-            onButtonClick = ::onTransparentBalanceMessageButtonClick,
+        is HomeMessageData.ShieldFunds -> ShieldFundsMessageState(
+            subtitle = stringRes(
+                R.string.home_message_transparent_balance_subtitle,
+                stringRes(it.zatoshi)
+            ),
+            onClick = ::onShieldFundsMessageClick,
+            onButtonClick = ::onShieldFundsMessageButtonClick,
         )
 
         HomeMessageData.Updating -> WalletUpdatingMessageState(
@@ -190,73 +195,40 @@ class HomeViewModel(
         null -> null
     }
 
-    private fun onRestoreDialogSeenClick() =
-        viewModelScope.launch {
-            isRestoreSuccessDialogVisible.setSeen()
-        }
+    private fun onRestoreDialogSeenClick() = viewModelScope.launch { isRestoreSuccessDialogVisible.setSeen() }
 
-    private fun onMoreButtonClick() {
-        navigationRouter.forward(DialogIntegrations)
-    }
+    private fun onMoreButtonClick() = navigationRouter.forward(DialogIntegrations)
 
-    private fun onSendButtonClick() {
-        navigationRouter.forward(Send())
-    }
+    private fun onSendButtonClick() = navigationRouter.forward(Send())
 
-    private fun onReceiveButtonClick() {
-        navigationRouter.forward(Receive)
-    }
+    private fun onReceiveButtonClick() = navigationRouter.forward(Receive)
 
-    private fun onScanButtonClick() {
-        navigationRouter.forward(Scan(ScanFlow.HOMEPAGE))
-    }
+    private fun onScanButtonClick() = navigationRouter.forward(Scan(ScanFlow.HOMEPAGE))
 
-    private fun onBuyClick() =
-        viewModelScope.launch {
-            navigateToCoinbase(replaceCurrentScreen = false)
-        }
+    private fun onBuyClick() = viewModelScope.launch { navigateToCoinbase(replaceCurrentScreen = false) }
 
-    private fun onRequestClick() {
+    private fun onRequestClick() =
         navigationRouter.forward("${NavigationTargets.REQUEST}/${ReceiveAddressType.Unified.ordinal}")
-    }
 
-    private fun onWalletUpdatingMessageClick() {
-        navigationRouter.forward(WalletUpdatingInfo)
-    }
+    private fun onWalletUpdatingMessageClick() = navigationRouter.forward(WalletUpdatingInfo)
 
-    private fun onWalletSyncingMessageClick() {
-        navigationRouter.forward(WalletSyncingInfo)
-    }
+    private fun onWalletSyncingMessageClick() = navigationRouter.forward(WalletSyncingInfo)
 
-    private fun onWalletRestoringMessageClick() {
-        navigationRouter.forward(WalletRestoringInfo)
-    }
+    private fun onWalletRestoringMessageClick() = navigationRouter.forward(WalletRestoringInfo)
 
-    private fun onEnableCurrencyConversionClick() {
-        navigationRouter.forward(ExchangeRateOptIn)
-    }
+    private fun onEnableCurrencyConversionClick() = navigationRouter.forward(ExchangeRateOptIn)
 
-    private fun onWalletDisconnectedMessageClick() {
-        navigationRouter.forward(WalletDisconnectedInfo)
-    }
+    private fun onWalletDisconnectedMessageClick() = navigationRouter.forward(WalletDisconnectedInfo)
 
-    private fun onWalletBackupMessageClick() {
-        navigationRouter.forward(SeedBackupInfo)
-    }
+    private fun onWalletBackupMessageClick() = navigationRouter.forward(SeedBackupInfo)
 
-    private fun onWalletBackupMessageButtonClick() {
-        navigationRouter.forward(WalletBackupDetail(false))
-    }
+    private fun onWalletBackupMessageButtonClick() = navigationRouter.forward(WalletBackupDetail(false))
 
-    private fun onTransparentBalanceMessageClick() {
-        navigationRouter.forward(TransparentBalanceInfo)
-    }
+    private fun onShieldFundsMessageClick() = navigationRouter.forward(ShieldFundsInfo)
 
-    private fun onTransparentBalanceMessageButtonClick(): Nothing {
-        TODO()
-    }
+    private fun onShieldFundsMessageButtonClick() = shieldFunds(navigateBackAfterSuccess = false)
 
-    private fun onWalletErrorMessageClick(homeMessageData: HomeMessageData.Error): Nothing {
+    private fun onWalletErrorMessageClick(homeMessageData: HomeMessageData.Error) {
         // statusText =
         //     context.getString(
         //         R.string.balances_status_error_simple,

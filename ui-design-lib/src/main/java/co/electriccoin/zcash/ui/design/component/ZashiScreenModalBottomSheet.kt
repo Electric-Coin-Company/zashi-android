@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.design.component
 
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
@@ -27,7 +28,7 @@ import co.electriccoin.zcash.ui.design.LocalSheetStateManager
 fun <T : ModalBottomSheetState> ZashiScreenModalBottomSheet(
     state: T?,
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
-    content: @Composable (state: T) -> Unit = {},
+    content: @Composable ColumnScope.(state: T) -> Unit = {},
 ) {
     val parent = LocalView.current.parent
     SideEffect {

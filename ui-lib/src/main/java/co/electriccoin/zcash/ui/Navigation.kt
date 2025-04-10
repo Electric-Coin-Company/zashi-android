@@ -78,8 +78,8 @@ import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedInfo
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfo
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
-import co.electriccoin.zcash.ui.screen.home.transparentbalance.AndroidTransparentBalanceInfo
-import co.electriccoin.zcash.ui.screen.home.transparentbalance.TransparentBalanceInfo
+import co.electriccoin.zcash.ui.screen.home.shieldfunds.AndroidShieldFundsInfo
+import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfo
 import co.electriccoin.zcash.ui.screen.integrations.AndroidDialogIntegrations
 import co.electriccoin.zcash.ui.screen.integrations.AndroidIntegrations
 import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
@@ -422,14 +422,14 @@ internal fun MainActivity.Navigation() {
         ) {
             AndroidWalletBackupInfo()
         }
-        dialog<TransparentBalanceInfo>(
+        dialog<ShieldFundsInfo>(
             dialogProperties =
                 DialogProperties(
                     dismissOnBackPress = false,
                     dismissOnClickOutside = false
                 )
         ) {
-            AndroidTransparentBalanceInfo()
+            AndroidShieldFundsInfo()
         }
         dialog<WalletDisconnectedInfo>(
             dialogProperties =

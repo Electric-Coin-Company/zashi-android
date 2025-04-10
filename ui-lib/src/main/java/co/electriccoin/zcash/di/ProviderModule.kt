@@ -18,6 +18,8 @@ import co.electriccoin.zcash.ui.common.provider.ShieldFundsRemindMeTimestampStor
 import co.electriccoin.zcash.ui.common.provider.ShieldFundsRemindMeTimestampStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProviderImpl
+import co.electriccoin.zcash.ui.common.provider.WalletBackupConsentStorageProvider
+import co.electriccoin.zcash.ui.common.provider.WalletBackupConsentStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.WalletBackupFlagStorageProvider
 import co.electriccoin.zcash.ui.common.provider.WalletBackupFlagStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.WalletBackupRemindMeCountStorageProvider
@@ -49,4 +51,5 @@ val providerModule =
         factoryOf(::WalletBackupRemindMeTimestampStorageProviderImpl) bind
             WalletBackupRemindMeTimestampStorageProvider::class
         factoryOf(::WalletBackupFlagStorageProviderImpl) bind WalletBackupFlagStorageProvider::class
+        factoryOf(::WalletBackupConsentStorageProviderImpl) bind WalletBackupConsentStorageProvider::class
     }

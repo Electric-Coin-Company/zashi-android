@@ -203,7 +203,7 @@ object ZashiButtonDefaults {
         contentColor: Color = source.Btns.Secondary.btnSecondaryFg,
         borderColor: Color = Color.Unspecified,
         disabledContainerColor: Color = source.Btns.Secondary.btnSecondaryBgDisabled,
-        disabledContentColor: Color = source.Btns.Secondary.btnSecondaryFg,
+        disabledContentColor: Color = source.Btns.Secondary.btnSecondaryFgDisabled,
     ) = ZashiButtonColors(
         containerColor = containerColor,
         contentColor = contentColor,

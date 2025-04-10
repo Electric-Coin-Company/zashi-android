@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.home.transparentbalance
+package co.electriccoin.zcash.ui.screen.home.shieldfunds
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -9,11 +9,11 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AndroidTransparentBalanceInfo() {
-    val vm = koinViewModel<TransparentBalanceInfoViewModel>()
+fun AndroidShieldFundsInfo() {
+    val vm = koinViewModel<ShieldFundsInfoViewModel>()
     val state by vm.state.collectAsStateWithLifecycle()
-    state?.let { TransparentBalanceInfoView(it) }
+    ShieldFundsInfoView(state)
 }
 
 @Serializable
-object TransparentBalanceInfo
+object ShieldFundsInfo

@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -15,10 +17,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.CheckboxState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiBulletText
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
+import co.electriccoin.zcash.ui.design.component.ZashiCheckbox
 import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -38,9 +42,11 @@ fun WalletBackupInfoView(
         state = state
     ) {
         Column(
-            modifier =
-                Modifier
-                    .padding(horizontal = 24.dp)
+            modifier = Modifier
+                .weight(1f, false)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp)
+
         ) {
             Image(
                 painter = painterResource(R.drawable.ic_info_backup),
@@ -84,6 +90,12 @@ fun WalletBackupInfoView(
                 style = ZashiTypography.textMd
             )
             Spacer(32.dp)
+            it.checkboxState?.let { checkbox ->
+                ZashiCheckbox(
+                    state = checkbox
+                )
+                Spacer(12.dp)
+            }
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 state = it.secondaryButton,
@@ -108,11 +120,17 @@ private fun Preview() =
                 onBack = {},
                 secondaryButton = ButtonState(
                     text = stringRes(R.string.general_remind_me_later),
-                    onClick = {}
+                    onClick = {},
+                    isEnabled = false
                 ),
                 primaryButton = ButtonState(
                     text = stringRes(R.string.general_ok),
                     onClick = {}
+                ),
+                checkboxState = CheckboxState(
+                    isChecked = false,
+                    onClick = {},
+                    text = stringRes(R.string.home_info_backup_checkbox)
                 )
             )
         )

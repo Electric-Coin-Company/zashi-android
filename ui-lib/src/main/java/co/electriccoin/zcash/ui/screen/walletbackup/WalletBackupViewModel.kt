@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.datasource.WalletBackupAvailability
+import co.electriccoin.zcash.ui.common.datasource.WalletBackupDataSource
 import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.OnUserSavedWalletBackupUseCase
 import co.electriccoin.zcash.ui.common.usecase.RemindWalletBackupLaterUseCase
@@ -17,18 +19,33 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class WalletBackupViewModel(
-    private val args: WalletBackup,
+    walletBackupDataSource: WalletBackupDataSource,
     observePersistableWallet: ObservePersistableWalletUseCase,
+    private val args: WalletBackup,
     private val navigationRouter: NavigationRouter,
     private val onUserSavedWalletBackup: OnUserSavedWalletBackupUseCase,
-    private val remindWalletBackupLater: RemindWalletBackupLaterUseCase
+    private val remindWalletBackupLater: RemindWalletBackupLaterUseCase,
 ) : ViewModel() {
+
+    private val lockoutDuration = walletBackupDataSource
+        .observe()
+        .filterIsInstance<WalletBackupAvailability.Available>()
+        .take(1)
+        .map { it.lockoutDuration }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = null
+        )
+
     private val isRevealed = MutableStateFlow(false)
 
     private val isRemindMeLaterButtonVisible = isRevealed
@@ -42,11 +59,16 @@ class WalletBackupViewModel(
         combine(
             isRevealed,
             isRemindMeLaterButtonVisible,
-            observableWallet
-        ) { isRevealed, isRemindMeLaterButtonVisible, wallet ->
+            observableWallet,
+            lockoutDuration
+        ) { isRevealed, isRemindMeLaterButtonVisible, wallet, lockoutDuration ->
             WalletBackupState(
                 secondaryButton = ButtonState(
-                    text = stringRes(R.string.general_remind_me_later),
+                    text = if (lockoutDuration != null) {
+                        stringRes(R.string.general_remind_me_in, stringRes(lockoutDuration.res))
+                    } else {
+                        stringRes(R.string.general_remind_me_later)
+                    },
                     onClick = ::onRemindMeLaterClick
                 ).takeIf { isRemindMeLaterButtonVisible },
                 primaryButton =
@@ -105,10 +127,7 @@ class WalletBackupViewModel(
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
-    private fun onRemindMeLaterClick() =
-        viewModelScope.launch {
-            remindWalletBackupLater()
-        }
+    private fun onRemindMeLaterClick() = viewModelScope.launch { remindWalletBackupLater(persistConsent = false) }
 
     private fun onWalletBackupSavedClick() =
         viewModelScope.launch {

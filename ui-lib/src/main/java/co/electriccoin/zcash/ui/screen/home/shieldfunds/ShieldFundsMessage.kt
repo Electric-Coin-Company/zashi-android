@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.home.transparentbalance
+package co.electriccoin.zcash.ui.screen.home.shieldfunds
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,9 +26,9 @@ import co.electriccoin.zcash.ui.screen.home.HomeMessageWrapper
 
 @Suppress("ModifierNaming")
 @Composable
-fun TransparentBalanceMessage(
+fun ShieldFundsMessage(
     contentPadding: PaddingValues,
-    state: TransparentBalanceMessageState,
+    state: ShieldFundsMessageState,
     innerModifier: Modifier = Modifier,
 ) {
     HomeMessageWrapper(
@@ -65,7 +65,7 @@ fun TransparentBalanceMessage(
     )
 }
 
-class TransparentBalanceMessageState(
+class ShieldFundsMessageState(
     val subtitle: StringResource,
     val onClick: () -> Unit,
     val onButtonClick: () -> Unit,
@@ -76,9 +76,9 @@ class TransparentBalanceMessageState(
 private fun Preview() =
     ZcashTheme {
         BlankSurface {
-            TransparentBalanceMessage(
+            ShieldFundsMessage(
                 state =
-                    TransparentBalanceMessageState(
+                    ShieldFundsMessageState(
                         subtitle =
                             stringRes(
                                 R.string.home_message_transparent_balance_subtitle,

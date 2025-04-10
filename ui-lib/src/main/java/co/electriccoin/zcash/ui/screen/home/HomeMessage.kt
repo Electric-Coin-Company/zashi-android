@@ -47,8 +47,8 @@ import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringMessage
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringMessageState
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessage
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
-import co.electriccoin.zcash.ui.screen.home.transparentbalance.TransparentBalanceMessage
-import co.electriccoin.zcash.ui.screen.home.transparentbalance.TransparentBalanceMessageState
+import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsMessage
+import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsMessageState
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessage
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import kotlinx.coroutines.delay
@@ -69,10 +69,11 @@ fun HomeMessage(
     )
     val bottomHeight by animateDpAsState(
         targetValue = if (isVisible) BOTTOM_CUTOUT_HEIGHT_DP.dp else TOP_CUTOUT_HEIGHT_DP.dp,
-        animationSpec =
-            animationSpec(
-                delay = if (isVisible) null else 250.milliseconds
-            )
+        animationSpec = animationSpec(delay = if (isVisible) null else 250.milliseconds)
+    )
+    val elevation by animateDpAsState(
+        targetValue = if (isVisible) 2.dp else 0.dp,
+        animationSpec = elevationAnimationSpec(delay = if (isVisible) 450.milliseconds else null)
     )
 
     Box(
@@ -85,7 +86,7 @@ fun HomeMessage(
                     .height(TOP_CUTOUT_HEIGHT_DP.dp)
                     .zIndex(2f)
                     .bottomOnlyShadow(
-                        elevation = 2.dp,
+                        elevation = elevation,
                         shape =
                             RoundedCornerShape(
                                 bottomStart = TOP_CUTOUT_HEIGHT_DP.dp,
@@ -128,10 +129,10 @@ fun HomeMessage(
                         contentPadding = contentPadding
                     )
 
-                is TransparentBalanceMessageState ->
-                    TransparentBalanceMessage(
+                is ShieldFundsMessageState ->
+                    ShieldFundsMessage(
                         innerModifier = innerModifier,
-                        state = normalizedState as TransparentBalanceMessageState,
+                        state = normalizedState as ShieldFundsMessageState,
                         contentPadding = contentPadding
                     )
 
@@ -184,7 +185,7 @@ fun HomeMessage(
                     .zIndex(1f)
                     .align(Alignment.BottomCenter)
                     .topOnlyShadow(
-                        elevation = 2.dp,
+                        elevation = elevation,
                         shape = RoundedCornerShape(topStart = bottomCornerSize, topEnd = bottomCornerSize),
                         backgroundColor = ZashiColors.Surfaces.bgPrimary
                     ),
@@ -232,7 +233,17 @@ private fun <T> animationSpec(delay: Duration? = null): TweenSpec<T> {
     )
 }
 
+private fun <T> elevationAnimationSpec(delay: Duration? = null): TweenSpec<T> {
+    val delayMs = delay?.inWholeMilliseconds?.toInt() ?: 0
+    return tween(
+        durationMillis = ELEVATION_ANIMATION_DURATION_MS - delayMs,
+        easing = CubicBezierEasing(0.6f, 0.1f, 0.3f, 0.9f),
+        delayMillis = delayMs
+    )
+}
+
 private const val ANIMATION_DURATION_MS = 850
+private const val ELEVATION_ANIMATION_DURATION_MS = 650
 private const val ANIMATION_DURATION_BETWEEN_MESSAGES_MS = 1000
 private const val TOP_CUTOUT_HEIGHT_DP = 32
 private const val BOTTOM_CUTOUT_HEIGHT_DP = 24

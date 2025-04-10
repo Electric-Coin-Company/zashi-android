@@ -1,5 +1,7 @@
 package co.electriccoin.zcash.ui.common.datasource
 
+import androidx.annotation.StringRes
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.WalletBackupFlagStorageProvider
 import co.electriccoin.zcash.ui.common.provider.WalletBackupRemindMeCountStorageProvider
 import co.electriccoin.zcash.ui.common.provider.WalletBackupRemindMeTimestampStorageProvider
@@ -38,21 +40,21 @@ class WalletBackupDataSourceImpl(
     }.flatMapLatest { (isBackedUp, count, timestamp) ->
         when {
             isBackedUp -> flowOf(WalletBackupAvailability.Unavailable)
-            timestamp == null -> flowOf(WalletBackupAvailability.Available(WalletBackupLockoutDuration.ONE_DAY))
+            timestamp == null -> flowOf(WalletBackupAvailability.Available(WalletBackupLockoutDuration.TWO_DAYS))
             count == 1 -> calculateNext(
                 lastTimestamp = timestamp,
-                lastLockoutDuration = WalletBackupLockoutDuration.ONE_DAY,
-                nextLockoutDuration = WalletBackupLockoutDuration.TWO_DAYS
+                lastLockoutDuration = WalletBackupLockoutDuration.TWO_DAYS,
+                nextLockoutDuration = WalletBackupLockoutDuration.TWO_WEEKS
             )
 
             else -> calculateNext(
                 lastTimestamp = timestamp,
                 lastLockoutDuration = if (count == 2) {
-                    WalletBackupLockoutDuration.TWO_DAYS
+                    WalletBackupLockoutDuration.TWO_WEEKS
                 } else {
-                    WalletBackupLockoutDuration.THREE_DAYS
+                    WalletBackupLockoutDuration.ONE_MONTH
                 },
-                nextLockoutDuration = WalletBackupLockoutDuration.THREE_DAYS
+                nextLockoutDuration = WalletBackupLockoutDuration.ONE_MONTH
             )
         }
     }
@@ -93,8 +95,8 @@ sealed interface WalletBackupAvailability {
     data object Unavailable : WalletBackupAvailability
 }
 
-enum class WalletBackupLockoutDuration(val duration: Duration) {
-    ONE_DAY(10.seconds),
-    TWO_DAYS(20.seconds),
-    THREE_DAYS(30.seconds)
+enum class WalletBackupLockoutDuration(val duration: Duration, @StringRes val res: Int) {
+    TWO_DAYS(10.seconds, R.string.general_remind_me_in_two_days),
+    TWO_WEEKS(20.seconds, R.string.general_remind_me_in_two_weeks),
+    ONE_MONTH(30.seconds, R.string.general_remind_me_in_two_months),
 }

@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.home.transparentbalance
+package co.electriccoin.zcash.ui.screen.home.shieldfunds
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -34,8 +34,8 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransparentBalanceInfoView(
-    state: TransparentBalanceInfoState?,
+fun ShieldFundsInfoView(
+    state: ShieldFundsInfoState?,
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
     ZashiScreenModalBottomSheet(
@@ -47,7 +47,7 @@ fun TransparentBalanceInfoView(
 }
 
 @Composable
-private fun Content(state: TransparentBalanceInfoState) {
+private fun Content(state: ShieldFundsInfoState) {
     Column(
         modifier =
             Modifier
@@ -132,9 +132,9 @@ private fun Content(state: TransparentBalanceInfoState) {
 @Composable
 private fun Preview() =
     ZcashTheme {
-        TransparentBalanceInfoView(
+        ShieldFundsInfoView(
             state =
-                TransparentBalanceInfoState(
+                ShieldFundsInfoState(
                     onBack = {},
                     primaryButton =
                         ButtonState(

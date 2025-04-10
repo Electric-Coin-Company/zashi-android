@@ -19,7 +19,7 @@ import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.home.HomeViewModel
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetailViewModel
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupInfoViewModel
-import co.electriccoin.zcash.ui.screen.home.transparentbalance.TransparentBalanceInfoViewModel
+import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoViewModel
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
 import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
@@ -38,7 +38,6 @@ import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackupViewModel
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel.SelectKeystoneAccountViewModel
 import co.electriccoin.zcash.ui.screen.send.SendViewModel
-import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
@@ -69,7 +68,6 @@ val viewModelModule =
         viewModelOf(::SettingsViewModel)
         viewModelOf(::AdvancedSettingsViewModel)
         viewModelOf(::SupportViewModel)
-        viewModelOf(::CreateTransactionsViewModel)
         viewModelOf(::RestoreSuccessViewModel)
         viewModelOf(::WhatsNewViewModel)
         viewModelOf(::ChooseServerViewModel)
@@ -147,7 +145,7 @@ val viewModelModule =
         viewModelOf(::RestoreBDHeightViewModel)
         viewModelOf(::RestoreBDDateViewModel)
         viewModelOf(::RestoreBDEstimationViewModel)
-        viewModelOf(::TransparentBalanceInfoViewModel)
+        viewModelOf(::ShieldFundsInfoViewModel)
         viewModelOf(::WalletBackupInfoViewModel)
         viewModelOf(::ExchangeRateOptInViewModel)
         viewModelOf(::ExchangeRateSettingsViewModel)
