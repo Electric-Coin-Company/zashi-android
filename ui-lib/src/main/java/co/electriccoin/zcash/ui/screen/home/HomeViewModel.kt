@@ -12,7 +12,7 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
-import co.electriccoin.zcash.ui.common.usecase.HomeMessageData
+import co.electriccoin.zcash.ui.common.repository.HomeMessageData
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
@@ -246,6 +246,6 @@ class HomeViewModel(
         //             ),
         //         fullStackTrace = walletSnapshot.synchronizerError.getStackTrace(limit = null)
         //     )
-        TODO()
+        // TODO()
     }
 }

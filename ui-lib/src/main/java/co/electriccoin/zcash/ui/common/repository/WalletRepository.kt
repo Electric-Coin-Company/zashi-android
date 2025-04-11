@@ -4,7 +4,6 @@ import android.app.Application
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletInitMode
-import cash.z.ecc.android.sdk.block.processor.CompactBlockProcessor
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.FastestServersResult
 import cash.z.ecc.android.sdk.model.PercentDecimal
@@ -23,7 +22,6 @@ import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
-import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
@@ -143,6 +141,7 @@ class WalletRepositoryImpl(
                     OnboardingState.NEEDS_WARN,
                     OnboardingState.NEEDS_BACKUP,
                     OnboardingState.NONE -> SecretState.NONE
+
                     OnboardingState.READY -> SecretState.READY
                 }
             }
@@ -190,13 +189,11 @@ class WalletRepositoryImpl(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val currentWalletSnapshot: StateFlow<WalletSnapshot?> =
-        combine(synchronizer, currentAccount) { synchronizer, currentAccount ->
-            synchronizer to currentAccount
-        }.flatMapLatest { (synchronizer, currentAccount) ->
-            if (synchronizer == null || currentAccount == null) {
+        synchronizer.flatMapLatest { synchronizer ->
+            if (synchronizer == null) {
                 flowOf(null)
             } else {
-                toWalletSnapshot(synchronizer, currentAccount)
+                toWalletSnapshot(synchronizer)
             }
         }.stateIn(
             scope = scope,
@@ -355,29 +352,14 @@ private fun Synchronizer.toCommonError(): Flow<SynchronizerError?> =
 
 // No good way around needing magic numbers for the indices
 @Suppress("MagicNumber")
-private fun toWalletSnapshot(
-    synchronizer: Synchronizer,
-    account: WalletAccount
-) = combine(
-    // 0
-    synchronizer.status,
-    // 1
-    synchronizer.processorInfo,
-    // 2
-    synchronizer.progress,
-    // 3
-    synchronizer.toCommonError()
+private fun toWalletSnapshot(synchronizer: Synchronizer) = combine(
+    synchronizer.status, // 0
+    synchronizer.progress, // 1
+    synchronizer.toCommonError() // 2
 ) { flows ->
-    val progressPercentDecimal = (flows[2] as PercentDecimal)
-
     WalletSnapshot(
-        isZashi = account is ZashiAccount,
         status = flows[0] as Synchronizer.Status,
-        processorInfo = flows[1] as CompactBlockProcessor.ProcessorInfo,
-        orchardBalance = account.unified.balance,
-        saplingBalance = account.sapling?.balance,
-        transparentBalance = account.transparent.balance,
-        progress = progressPercentDecimal,
-        synchronizerError = flows[3] as SynchronizerError?
+        progress = flows[1] as PercentDecimal,
+        synchronizerError = flows[2] as SynchronizerError?
     )
 }
