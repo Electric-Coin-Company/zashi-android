@@ -1,0 +1,5 @@
+Corregido:
+- ¡Corrección de errores 1.5!
+- Solucionamos un problema de migración que afectaba a algunos usuarios de la versión 1.5 de la app.
+- También eliminamos la pantalla de Advertencia de Seguridad redundante que informaba incorrectamente al usuario sobre
+informes de fallas no incluidos en la versión Zashi Android FOSS.
