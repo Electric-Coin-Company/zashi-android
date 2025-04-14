@@ -6,7 +6,7 @@
     <string name="request_memo_btn">Request</string>
     <string name="request_qr_share_btn">Share QR Code</string>
     <string name="request_qr_close_btn">Close</string>
-    <string name="request_privacy_level_shielded">Maximum Privacy</string>
+    <string name="request_privacy_level_shielded">Shielded Privacy</string>
     <string name="request_privacy_level_transparent">Low Privacy</string>
 
     <string name="request_amount_empty">0</string>
