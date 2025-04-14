@@ -56,7 +56,8 @@ data class Text(
     val textError: Color,
     val textLink: Color,
     val textLight: Color,
-    val textLightSupport: Color
+    val textLightSupport: Color,
+    val textOpposite: Color
 )
 
 @Immutable
@@ -647,7 +648,8 @@ data class UtilityPurple(
     val utilityPurple50: Color,
     val utilityPurple100: Color,
     val utilityPurple400: Color,
-    val utilityPurple300: Color
+    val utilityPurple300: Color,
+    val utilityPurple900: Color
 )
 
 @Immutable
@@ -661,6 +663,7 @@ data class UtilityEspresso(
     val utilityEspresso400: Color,
     val utilityEspresso300: Color,
     val utilityEspresso900: Color,
+    val utilityEspresso950: Color,
     val utilityEspresso800: Color
 )
 

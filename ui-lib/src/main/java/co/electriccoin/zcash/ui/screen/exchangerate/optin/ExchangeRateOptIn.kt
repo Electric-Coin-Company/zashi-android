@@ -30,7 +30,8 @@ import co.electriccoin.zcash.ui.screen.exchangerate.BaseExchangeRateOptIn
 
 @Composable
 fun ExchangeRateOptIn(
-    onEnabledClick: () -> Unit,
+    onEnableClick: () -> Unit,
+    onSkipClick: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     BaseExchangeRateOptIn(
@@ -58,15 +59,9 @@ fun ExchangeRateOptIn(
             )
         },
         footer = {
-            ZashiButton(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(R.string.exchange_rate_opt_in_enable),
-                onClick = onEnabledClick,
-                colors = ZashiButtonDefaults.primaryColors()
-            )
             ZashiTextButton(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = onDismiss,
+                onClick = onSkipClick,
             ) {
                 Text(
                     text = stringResource(R.string.exchange_rate_opt_in_skip),
@@ -74,6 +69,12 @@ fun ExchangeRateOptIn(
                     fontWeight = FontWeight.SemiBold
                 )
             }
+            ZashiButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.exchange_rate_opt_in_enable),
+                onClick = onEnableClick,
+                colors = ZashiButtonDefaults.primaryColors()
+            )
         }
     )
 }
@@ -117,6 +118,6 @@ private fun InfoItem(
 private fun CurrencyConversionOptInPreview() =
     ZcashTheme {
         BlankSurface {
-            ExchangeRateOptIn(onEnabledClick = {}, onDismiss = {})
+            ExchangeRateOptIn(onEnableClick = {}, onDismiss = {}, onSkipClick = {})
         }
     }

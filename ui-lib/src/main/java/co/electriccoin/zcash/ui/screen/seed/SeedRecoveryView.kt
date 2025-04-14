@@ -43,6 +43,7 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.SeedTextState
+import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.VerticalSpacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
@@ -145,7 +146,7 @@ private fun SeedRecoveryMainContent(
 
         BDSecret(modifier = Modifier.fillMaxWidth(), state = state.birthday)
 
-        VerticalSpacer(1f)
+        Spacer(1f)
 
         ZashiButton(
             state = state.button,
@@ -301,7 +302,7 @@ private fun RevealedPreview() =
                     info =
                         IconButtonState(
                             onClick = {},
-                            icon = R.drawable.ic_info
+                            icon = co.electriccoin.zcash.ui.design.R.drawable.ic_info
                         ),
                     onBack = {}
                 )
@@ -337,7 +338,7 @@ private fun HiddenPreview() =
                     info =
                         IconButtonState(
                             onClick = {},
-                            icon = R.drawable.ic_info
+                            icon = co.electriccoin.zcash.ui.design.R.drawable.ic_info
                         ),
                     onBack = {}
                 )

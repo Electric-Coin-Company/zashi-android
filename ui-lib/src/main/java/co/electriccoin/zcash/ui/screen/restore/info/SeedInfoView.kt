@@ -4,13 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
@@ -38,14 +35,14 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun SeedInfoView(
-    state: SeedInfoState,
+    state: SeedInfoState?,
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
         content = {
-            Content(state)
+            Content(it)
         },
     )
 }
@@ -92,9 +89,6 @@ private fun Content(state: SeedInfoState) {
             text = stringResource(R.string.restore_dialog_button),
             onClick = state.onBack
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
-        Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
     }
 }
 
@@ -102,7 +96,7 @@ private fun Content(state: SeedInfoState) {
 private fun Info(text: AnnotatedString) {
     Row {
         Image(
-            painterResource(R.drawable.ic_info),
+            painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
             contentDescription = ""
         )
         Spacer(Modifier.width(8.dp))

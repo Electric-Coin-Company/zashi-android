@@ -18,7 +18,11 @@ class RestoreBDEstimationViewModel(
 
     private fun createState() =
         RestoreBDEstimationState(
-            dialogButton = IconButtonState(icon = R.drawable.ic_info, onClick = ::onInfoButtonClick),
+            dialogButton =
+                IconButtonState(
+                    icon = co.electriccoin.zcash.ui.design.R.drawable.ic_info,
+                    onClick = ::onInfoButtonClick,
+                ),
             onBack = ::onBack,
             text = stringRes("123456"),
             copy = ButtonState(stringRes(R.string.restore_bd_estimation_copy), icon = R.drawable.ic_copy) {},

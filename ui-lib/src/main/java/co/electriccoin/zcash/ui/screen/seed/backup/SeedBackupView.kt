@@ -24,6 +24,7 @@ import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.HorizontalSpacer
 import co.electriccoin.zcash.ui.design.component.IconButtonState
+import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.VerticalSpacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
@@ -136,12 +137,12 @@ private fun Content(
 
         VerticalSpacer(20.dp)
 
-        VerticalSpacer(1f)
+        Spacer(1f)
 
         Row {
             HorizontalSpacer(20.dp)
             Image(
-                painter = painterResource(R.drawable.ic_info),
+                painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(ZashiColors.Utility.WarningYellow.utilityOrange700)
             )
