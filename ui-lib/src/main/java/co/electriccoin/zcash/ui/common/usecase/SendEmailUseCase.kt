@@ -5,6 +5,7 @@ import android.content.Intent
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SubmitResult
+import co.electriccoin.zcash.ui.common.viewmodel.SynchronizerError
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType
@@ -28,11 +29,47 @@ class SendEmailUseCase(
                 ).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
-
-        context.startActivity(intent)
+        runCatching { context.startActivity(intent) }
     }
 
-    suspend operator fun invoke(submitResult: SubmitResult) {
+    suspend operator fun invoke(exception: Exception) {
+        val fullMessage =
+            EmailUtil.formatMessage(
+                body = exception.stackTraceToString(),
+                supportInfo = getSupport().toSupportString(SupportInfoType.entries.toSet())
+            )
+        val mailIntent =
+            EmailUtil
+                .newMailActivityIntent(
+                    recipientAddress = context.getString(R.string.support_email_address),
+                    messageSubject = context.getString(R.string.app_name),
+                    messageBody = fullMessage
+                ).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+        runCatching { context.startActivity(mailIntent) }
+    }
+
+
+    suspend operator fun invoke(synchronizerError: SynchronizerError) {
+        val fullMessage =
+            EmailUtil.formatMessage(
+                body = synchronizerError.getStackTrace(null),
+                supportInfo = getSupport().toSupportString(SupportInfoType.entries.toSet())
+            )
+        val mailIntent =
+            EmailUtil
+                .newMailActivityIntent(
+                    recipientAddress = context.getString(R.string.support_email_address),
+                    messageSubject = context.getString(R.string.app_name),
+                    messageBody = fullMessage
+                ).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+        runCatching { context.startActivity(mailIntent) }
+    }
+
+    suspend operator fun invoke(submitResult: SubmitResult.Failure) {
         val fullMessage =
             when (submitResult) {
                 is SubmitResult.SimpleTrxFailure -> {
@@ -41,15 +78,13 @@ class SendEmailUseCase(
                         supportInfo = submitResult.toErrorStacktrace()
                     )
                 }
+
                 is SubmitResult.MultipleTrxFailure -> {
                     EmailUtil.formatMessage(
                         prefix = context.getString(R.string.send_confirmation_multiple_report_text),
                         supportInfo = getSupport().toSupportString(SupportInfoType.entries.toSet()),
                         suffix = submitResult.results.toSupportString(context)
                     )
-                }
-                else -> {
-                    ""
                 }
             }
 

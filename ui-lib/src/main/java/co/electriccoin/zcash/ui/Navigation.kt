@@ -60,6 +60,10 @@ import co.electriccoin.zcash.ui.screen.contact.WrapAddContact
 import co.electriccoin.zcash.ui.screen.contact.WrapUpdateContact
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
 import co.electriccoin.zcash.ui.screen.disconnected.WrapDisconnected
+import co.electriccoin.zcash.ui.screen.error.AndroidErrorBottomSheet
+import co.electriccoin.zcash.ui.screen.error.AndroidErrorDialog
+import co.electriccoin.zcash.ui.screen.error.ErrorBottomSheet
+import co.electriccoin.zcash.ui.screen.error.ErrorDialog
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.AndroidExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.AndroidExchangeRateSettings
@@ -470,6 +474,24 @@ internal fun MainActivity.Navigation() {
                 )
         ) {
             AndroidWalletUpdatingInfo()
+        }
+        dialog<ErrorDialog>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) {
+            AndroidErrorDialog()
+        }
+        dialog<ErrorBottomSheet>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) {
+            AndroidErrorBottomSheet()
         }
     }
 }

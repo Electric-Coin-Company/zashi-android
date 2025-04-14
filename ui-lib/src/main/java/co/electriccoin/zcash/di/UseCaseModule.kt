@@ -44,6 +44,7 @@ import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseC
 import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToWalletBackupUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
@@ -190,4 +191,5 @@ val useCaseModule =
         factoryOf(::RemindWalletBackupLaterUseCase)
         factoryOf(::RemindShieldFundsLaterUseCase)
         singleOf(::ShieldFundsUseCase)
+        singleOf(::NavigateToErrorUseCase)
     }

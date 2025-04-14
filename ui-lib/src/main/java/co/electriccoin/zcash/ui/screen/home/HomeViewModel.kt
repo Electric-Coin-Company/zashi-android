@@ -10,11 +10,13 @@ import co.electriccoin.zcash.ui.common.model.DistributionDimension
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
+import co.electriccoin.zcash.ui.common.repository.HomeMessageData
+import co.electriccoin.zcash.ui.common.usecase.ErrorArgs
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
-import co.electriccoin.zcash.ui.common.repository.HomeMessageData
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -56,7 +58,8 @@ class HomeViewModel(
     private val navigationRouter: NavigationRouter,
     private val isRestoreSuccessDialogVisible: IsRestoreSuccessDialogVisibleUseCase,
     private val navigateToCoinbase: NavigateToCoinbaseUseCase,
-    private val shieldFunds: ShieldFundsUseCase
+    private val shieldFunds: ShieldFundsUseCase,
+    private val navigateToError: NavigateToErrorUseCase
 ) : ViewModel() {
 
     private val messageState = getHomeMessage
@@ -228,24 +231,6 @@ class HomeViewModel(
 
     private fun onShieldFundsMessageButtonClick() = shieldFunds(navigateBackAfterSuccess = false)
 
-    private fun onWalletErrorMessageClick(homeMessageData: HomeMessageData.Error) {
-        // statusText =
-        //     context.getString(
-        //         R.string.balances_status_error_simple,
-        //         context.getString(R.string.app_name)
-        //     )
-        // statusAction =
-        //     StatusAction.Error(
-        //         details =
-        //             context.getString(
-        //                 R.string.balances_status_error_dialog_cause,
-        //                 walletSnapshot.synchronizerError.getCauseMessage()
-        //                     ?: context.getString(R.string.balances_status_error_dialog_cause_unknown),
-        //                 walletSnapshot.synchronizerError.getStackTrace(limit = STACKTRACE_LIMIT)
-        //                     ?: context.getString(R.string.balances_status_error_dialog_stacktrace_unknown)
-        //             ),
-        //         fullStackTrace = walletSnapshot.synchronizerError.getStackTrace(limit = null)
-        //     )
-        // TODO()
-    }
+    private fun onWalletErrorMessageClick(homeMessageData: HomeMessageData.Error) =
+        navigateToError(ErrorArgs.SyncError(homeMessageData.synchronizerError))
 }

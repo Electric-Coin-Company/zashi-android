@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.screen.balances.BalanceViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
+import co.electriccoin.zcash.ui.screen.error.ErrorViewModel
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInViewModel
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsViewModel
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
@@ -150,4 +151,5 @@ val viewModelModule =
         viewModelOf(::ExchangeRateOptInViewModel)
         viewModelOf(::ExchangeRateSettingsViewModel)
         viewModelOf(::WalletBackupDetailViewModel)
+        viewModelOf(::ErrorViewModel)
     }

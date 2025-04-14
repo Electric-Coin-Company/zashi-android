@@ -49,6 +49,7 @@ android {
                     "src/main/res/ui/connect_keystone",
                     "src/main/res/ui/delete_wallet",
                     "src/main/res/ui/export_data",
+                    "src/main/res/ui/error",
                     "src/main/res/ui/home",
                     "src/main/res/ui/choose_server",
                     "src/main/res/ui/integrations",

@@ -20,7 +20,8 @@ class ShieldFundsUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
     private val zashiProposalRepository: ZashiProposalRepository,
     private val navigationRouter: NavigationRouter,
-    private val accountDataSource: AccountDataSource
+    private val accountDataSource: AccountDataSource,
+    private val navigateToError: NavigateToErrorUseCase,
 ) {
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
@@ -30,6 +31,7 @@ class ShieldFundsUseCase(
                 is KeystoneAccount -> {
                     createKeystoneShieldProposal()
                 }
+
                 is ZashiAccount -> {
                     if (navigateBackAfterSuccess) {
                         navigationRouter.back()
@@ -49,31 +51,11 @@ class ShieldFundsUseCase(
                 .first()
                 .submitResult
 
-            when (result) {
-                is SubmitResult.Success -> {
-                    // do nothing
-                    // TODO messages
-                }
-
-                is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc -> {
-                    // showShieldingError(ShieldState.FailedGrpc)
-                    // TODO messages
-                }
-
-                is SubmitResult.SimpleTrxFailure -> {
-                    // showShieldingError(
-                    //     ShieldState.Failed(
-                    //         error = result.toErrorMessage(),
-                    //         stackTrace = result.toErrorStacktrace()
-                    //     )
-                    // )
-                    // TODO messages
-                }
-
-                is SubmitResult.MultipleTrxFailure -> {
-                    // do nothing
-                }
+            if (result is SubmitResult.Failure) {
+                navigateToError(ErrorArgs.ShieldingError(result))
             }
+        } catch (e: Exception) {
+            navigateToError(ErrorArgs.ShieldingGeneralError(e))
         } finally {
             zashiProposalRepository.clear()
         }
@@ -86,16 +68,7 @@ class ShieldFundsUseCase(
             navigationRouter.forward(SignKeystoneTransaction)
         } catch (e: Exception) {
             keystoneProposalRepository.clear()
-            // TODO messages
-            // showShieldingError(
-            //     ShieldState.Failed(
-            //         error =
-            //             context.getString(
-            //                 R.string.balances_shielding_dialog_error_text_below_threshold
-            //             ),
-            //         stackTrace = ""
-            //     )
-            // )
+            navigateToError(ErrorArgs.ShieldingGeneralError(e))
         }
     }
 }
