@@ -79,7 +79,7 @@ private fun Content(
                             start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
                             end = ZcashTheme.dimens.screenHorizontalSpacingRegular,
                         ),
-                balanceState = balanceState,
+                state = balanceState,
             )
             NavButtons(
                 modifier =

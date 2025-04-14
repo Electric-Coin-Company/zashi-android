@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.design.component
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
@@ -100,7 +99,6 @@ fun StyledBalance(
     val resultModifier =
         Modifier
             .basicMarquee()
-            .animateContentSize()
             .then(modifier)
 
     Text(

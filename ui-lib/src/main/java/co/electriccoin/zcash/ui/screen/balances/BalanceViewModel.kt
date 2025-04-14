@@ -34,30 +34,11 @@ class BalanceViewModel(
             )
         )
 
-    private fun createState(
-        account: WalletAccount?,
-        exchangeRateUsd: ExchangeRateState
-    ): BalanceState =
-        when {
-            (
-                account != null &&
-                    account.spendableBalance.value == 0L &&
-                    account.totalBalance.value > 0L &&
-                    (account.hasChangePending || account.hasValuePending)
-            ) -> {
-                BalanceState.Loading(
-                    totalBalance = account.totalBalance,
-                    spendableBalance = account.spendableBalance,
-                    exchangeRate = exchangeRateUsd,
-                )
-            }
-
-            else -> {
-                BalanceState.Available(
-                    totalBalance = account?.totalBalance ?: Zatoshi(0),
-                    spendableBalance = account?.spendableBalance ?: Zatoshi(0),
-                    exchangeRate = exchangeRateUsd,
-                )
-            }
-        }
+    private fun createState(account: WalletAccount?, exchangeRateUsd: ExchangeRateState): BalanceState {
+        return BalanceState(
+            totalBalance = account?.totalBalance ?: Zatoshi(0),
+            exchangeRate = exchangeRateUsd,
+            button = null
+        )
+    }
 }

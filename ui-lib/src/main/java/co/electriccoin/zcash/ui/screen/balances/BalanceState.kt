@@ -1,29 +1,22 @@
 package co.electriccoin.zcash.ui.screen.balances
 
+import androidx.annotation.DrawableRes
+import androidx.compose.runtime.Immutable
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
+import co.electriccoin.zcash.ui.design.util.StringResource
 
-sealed interface BalanceState {
-    val totalBalance: Zatoshi
-    val spendableBalance: Zatoshi
-    val exchangeRate: ExchangeRateState
+@Immutable
+data class BalanceState(
+    val totalBalance: Zatoshi,
+    val button: BalanceButtonState?,
+    val exchangeRate: ExchangeRateState?,
+)
 
-    data class None(
-        override val exchangeRate: ExchangeRateState
-    ) : BalanceState {
-        override val totalBalance: Zatoshi = Zatoshi(0L)
-        override val spendableBalance: Zatoshi = Zatoshi(0L)
-    }
-
-    data class Loading(
-        override val totalBalance: Zatoshi,
-        override val spendableBalance: Zatoshi,
-        override val exchangeRate: ExchangeRateState,
-    ) : BalanceState
-
-    data class Available(
-        override val totalBalance: Zatoshi,
-        override val spendableBalance: Zatoshi,
-        override val exchangeRate: ExchangeRateState,
-    ) : BalanceState
-}
+@Immutable
+data class BalanceButtonState(
+    @DrawableRes val icon: Int,
+    val text: StringResource,
+    val amount: Zatoshi?,
+    val onClick: () -> Unit
+)

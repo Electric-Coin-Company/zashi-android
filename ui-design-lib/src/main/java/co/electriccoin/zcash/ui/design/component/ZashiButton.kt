@@ -285,7 +285,7 @@ data class ButtonState(
 )
 
 @Composable
-private fun ZashiButtonColors.toButtonColors() =
+fun ZashiButtonColors.toButtonColors() =
     ButtonDefaults.buttonColors(
         containerColor = containerColor,
         contentColor = contentColor,

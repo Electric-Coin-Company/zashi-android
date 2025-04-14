@@ -298,7 +298,7 @@ private fun SendForm(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         BalanceWidget(
-            balanceState = balanceState
+            state = balanceState
         )
 
         Spacer(modifier = Modifier.height(24.dp))

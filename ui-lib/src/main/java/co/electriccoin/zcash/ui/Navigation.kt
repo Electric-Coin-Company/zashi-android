@@ -51,6 +51,8 @@ import co.electriccoin.zcash.ui.screen.addressbook.WrapAddressBook
 import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
+import co.electriccoin.zcash.ui.screen.balances.action.AndroidBalanceAction
+import co.electriccoin.zcash.ui.screen.balances.action.BalanceAction
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
 import co.electriccoin.zcash.ui.screen.connectkeystone.AndroidConnectKeystone
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
@@ -492,6 +494,15 @@ internal fun MainActivity.Navigation() {
                 )
         ) {
             AndroidErrorBottomSheet()
+        }
+        dialog<BalanceAction>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) {
+            AndroidBalanceAction()
         }
     }
 }
