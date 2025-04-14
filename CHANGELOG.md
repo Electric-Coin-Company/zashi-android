@@ -6,6 +6,22 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [1.5.2 (929)] - 2025-04-09
+
+### Changed
+- The Security Warning screen has been removed from onboarding of the FOSS app build type
+
+## [1.5.2 (926)] - 2025-04-03
+
+### Changed
+- Adopted Zcash SDK v2.2.11
+
+### Fixed
+- Database migration bugs in SDK's `zcash_client_sqlite 0.16.0` and `0.16.1` have
+  been fixed by updating to `zcash_client_sqlite 0.16.2`. These caused a few
+  wallets to stop working after the Zcash SDK v2.2.9 upgrade due to failed database
+  migrations.
+
 ## [1.5.1 (925)] - 2025-03-31
 
 ### Changed
