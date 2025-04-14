@@ -13,11 +13,11 @@ import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
-import co.electriccoin.zcash.ui.common.repository.BalanceRepository
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
@@ -42,7 +42,6 @@ import kotlinx.coroutines.launch
 @Suppress("LongParameterList", "TooManyFunctions")
 class WalletViewModel(
     application: Application,
-    balanceRepository: BalanceRepository,
     private val walletCoordinator: WalletCoordinator,
     private val walletRepository: WalletRepository,
     private val exchangeRateRepository: ExchangeRateRepository,
@@ -52,10 +51,9 @@ class WalletViewModel(
     private val resetSharedPrefsData: ResetSharedPrefsDataUseCase,
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : AndroidViewModel(application) {
     val synchronizer = walletRepository.synchronizer
-
-    val walletRestoringState = walletRepository.walletRestoringState
 
     val walletStateInformation = walletRepository.walletStateInformation
 
@@ -67,18 +65,16 @@ class WalletViewModel(
 
     val exchangeRateUsd = exchangeRateRepository.state
 
-    val balanceState = balanceRepository.state
-
-    fun refreshExchangeRateUsd() {
-        exchangeRateRepository.refreshExchangeRateUsd()
-    }
-
     fun optInExchangeRateUsd(optIn: Boolean) {
         exchangeRateRepository.optInExchangeRateUsd(optIn)
     }
 
     fun dismissOptInExchangeRateUsd() {
-        exchangeRateRepository.dismissOptInExchangeRateUsd()
+        navigationRouter.back()
+    }
+
+    fun onSkipClick() {
+        navigationRouter.back()
     }
 
     fun persistNewWalletAndRestoringState(state: WalletRestoringState) {
@@ -109,21 +105,6 @@ class WalletViewModel(
      */
     fun persistOnboardingState(onboardingState: OnboardingState) {
         walletRepository.persistOnboardingState(onboardingState)
-    }
-
-    /**
-     * Asynchronously notes that the wallet has completed the initial wallet restoring block synchronization run.
-     *
-     * Note that in the current SDK implementation, we don't have any information about the block synchronization
-     * state from the SDK, and thus, we need to note the wallet restoring state here on the client side.
-     */
-    fun persistWalletRestoringState(walletRestoringState: WalletRestoringState) {
-        viewModelScope.launch {
-            StandardPreferenceKeys.WALLET_RESTORING_STATE.putValue(
-                standardPreferenceProvider(),
-                walletRestoringState.toNumber()
-            )
-        }
     }
 
     fun persistExistingWalletWithSeedPhrase(
@@ -186,20 +167,10 @@ class WalletViewModel(
 /**
  * Represents the state of the wallet secret.
  */
-sealed class SecretState {
-    object Loading : SecretState()
-
-    object None : SecretState()
-
-    object NeedsWarning : SecretState()
-
-    class NeedsBackup(
-        val persistableWallet: PersistableWallet
-    ) : SecretState()
-
-    class Ready(
-        val persistableWallet: PersistableWallet
-    ) : SecretState()
+enum class SecretState {
+    LOADING,
+    NONE,
+    READY
 }
 
 /**

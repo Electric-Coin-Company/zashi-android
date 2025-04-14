@@ -24,6 +24,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreenSizes
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 
@@ -86,15 +87,7 @@ private fun Content(
         Spacer(Modifier.height(12.dp))
 
         Text(
-            text =
-                stringResource(
-                    R.string.tax_export_message,
-                    if (state.isZashiAccount) {
-                        stringResource(R.string.zashi_wallet_name)
-                    } else {
-                        stringResource(R.string.keystone_wallet_name)
-                    }
-                ),
+            text = state.text.getValue(),
             style = ZashiTypography.textSm,
             color = ZashiColors.Text.textPrimary
         )
@@ -121,7 +114,11 @@ private fun ExportPrivateDataPreview() =
                             text = stringRes(R.string.tax_export_export_button),
                             onClick = {}
                         ),
-                    isZashiAccount = true,
+                    text =
+                        stringRes(
+                            R.string.tax_export_message,
+                            stringResource(R.string.zashi_wallet_name)
+                        )
                 ),
             topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )

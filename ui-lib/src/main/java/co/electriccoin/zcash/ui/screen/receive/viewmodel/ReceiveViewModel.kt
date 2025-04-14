@@ -55,12 +55,18 @@ class ReceiveViewModel(
                             onClick = { onAddressClick(1) }
                         ),
                     ),
-                isLoading = false
+                isLoading = false,
+                onBack = ::onBack
             )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = ReceiveState(items = null, isLoading = true)
+            initialValue =
+                ReceiveState(
+                    items = null,
+                    isLoading = true,
+                    onBack = ::onBack
+                )
         )
 
     init {
@@ -70,6 +76,8 @@ class ReceiveViewModel(
             }
         }
     }
+
+    private fun onBack() = navigationRouter.back()
 
     private fun createAddressState(
         account: WalletAccount,
@@ -96,6 +104,7 @@ class ReceiveViewModel(
                     } else {
                         stringRes(R.string.receive_wallet_address_transparent_keystone)
                     }
+
                 is ZashiAccount ->
                     if (type == ReceiveAddressType.Unified) {
                         stringRes(R.string.receive_wallet_address_shielded)

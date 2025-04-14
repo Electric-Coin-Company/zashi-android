@@ -9,11 +9,9 @@ class CreateOrUpdateTransactionNoteUseCase(
 ) {
     suspend operator fun invoke(
         txId: String,
-        note: String,
-        closeBottomSheet: suspend () -> Unit
+        note: String
     ) {
         metadataRepository.createOrUpdateTxNote(txId, note.trim())
-        closeBottomSheet()
         navigationRouter.back()
     }
 }

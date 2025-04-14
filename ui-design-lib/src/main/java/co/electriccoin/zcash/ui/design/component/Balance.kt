@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
@@ -62,7 +61,6 @@ private fun HiddenStyledBalancePreview() =
  * @param textColor Optional color to modify the default font color from [textStyle]
  * @param modifier Modifier to modify the Text UI element as needed
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongParameterList")
 @Composable
 fun StyledBalance(

@@ -57,27 +57,25 @@ import cash.z.ecc.sdk.fixture.ZatoshiFixture
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.compose.BalanceState
-import co.electriccoin.zcash.ui.common.compose.BalanceWidget
-import co.electriccoin.zcash.ui.common.model.WalletSnapshot
-import co.electriccoin.zcash.ui.common.model.canSpend
-import co.electriccoin.zcash.ui.common.model.spendableBalance
+import co.electriccoin.zcash.ui.common.appbar.ZashiMainTopAppBarState
+import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppbar
+import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ZashiButton
-import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBar
-import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
-import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
+import co.electriccoin.zcash.ui.screen.balances.BalanceState
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidget
 import co.electriccoin.zcash.ui.screen.send.SendTag
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
@@ -92,11 +90,11 @@ import java.util.Locale
 private fun PreviewSendForm() {
     ZcashTheme(forceDarkMode = false) {
         Send(
+            balanceState = BalanceStateFixture.new(),
             sendStage = SendStage.Form,
             onCreateZecSend = {},
             onBack = {},
             onQrScannerOpen = {},
-            goBalances = {},
             hasCameraFeature = true,
             recipientAddressState = RecipientAddressState("invalid_address", AddressType.Invalid()),
             onRecipientAddressChange = {},
@@ -109,9 +107,7 @@ private fun PreviewSendForm() {
                 ),
             setMemoState = {},
             memoState = MemoState.new("Test message "),
-            walletSnapshot = WalletSnapshotFixture.new(),
-            balanceState = BalanceStateFixture.new(),
-            isHideBalances = false,
+            selectedAccount = null,
             exchangeRateState = ExchangeRateState.OptedOut,
             sendAddressBookState =
                 SendAddressBookState(
@@ -129,11 +125,11 @@ private fun PreviewSendForm() {
 private fun SendFormTransparentAddressPreview() {
     ZcashTheme(forceDarkMode = false) {
         Send(
+            balanceState = BalanceStateFixture.new(),
             sendStage = SendStage.Form,
             onCreateZecSend = {},
             onBack = {},
             onQrScannerOpen = {},
-            goBalances = {},
             hasCameraFeature = true,
             recipientAddressState =
                 RecipientAddressState(
@@ -150,9 +146,7 @@ private fun SendFormTransparentAddressPreview() {
                 ),
             setMemoState = {},
             memoState = MemoState.new("Test message"),
-            walletSnapshot = WalletSnapshotFixture.new(),
-            balanceState = BalanceStateFixture.new(),
-            isHideBalances = false,
+            selectedAccount = null,
             exchangeRateState = ExchangeRateState.OptedOut,
             sendAddressBookState =
                 SendAddressBookState(
@@ -171,12 +165,10 @@ private fun SendFormTransparentAddressPreview() {
 @Composable
 fun Send(
     balanceState: BalanceState,
-    isHideBalances: Boolean,
     sendStage: SendStage,
     onCreateZecSend: (ZecSend) -> Unit,
     onBack: () -> Unit,
     onQrScannerOpen: () -> Unit,
-    goBalances: () -> Unit,
     hasCameraFeature: Boolean,
     recipientAddressState: RecipientAddressState,
     onRecipientAddressChange: (String) -> Unit,
@@ -184,40 +176,39 @@ fun Send(
     amountState: AmountState,
     setMemoState: (MemoState) -> Unit,
     memoState: MemoState,
-    walletSnapshot: WalletSnapshot,
+    selectedAccount: WalletAccount?,
     exchangeRateState: ExchangeRateState,
     sendAddressBookState: SendAddressBookState,
     zashiMainTopAppBarState: ZashiMainTopAppBarState?,
 ) {
+    if (selectedAccount == null) {
+        return
+    }
+
     BlankBgScaffold(topBar = {
-        ZashiMainTopAppBar(zashiMainTopAppBarState)
+        ZashiTopAppbar(
+            title = null,
+            state = zashiMainTopAppBarState,
+            onBack = onBack
+        )
     }) { paddingValues ->
         SendMainContent(
             balanceState = balanceState,
-            isHideBalances = isHideBalances,
-            walletSnapshot = walletSnapshot,
+            selectedAccount = selectedAccount,
+            exchangeRateState = exchangeRateState,
             onBack = onBack,
-            sendStage = sendStage,
             onCreateZecSend = onCreateZecSend,
+            sendStage = sendStage,
+            onQrScannerOpen = onQrScannerOpen,
             recipientAddressState = recipientAddressState,
             onRecipientAddressChange = onRecipientAddressChange,
+            hasCameraFeature = hasCameraFeature,
             amountState = amountState,
             setAmountState = setAmountState,
             memoState = memoState,
             setMemoState = setMemoState,
-            onQrScannerOpen = onQrScannerOpen,
-            goBalances = goBalances,
-            hasCameraFeature = hasCameraFeature,
-            modifier =
-                Modifier
-                    .padding(
-                        top = paddingValues.calculateTopPadding() + ZashiDimensions.Spacing.spacingLg,
-                        bottom = ZashiDimensions.Spacing.spacing4xl,
-                        start = ZashiDimensions.Spacing.spacing3xl,
-                        end = ZashiDimensions.Spacing.spacing3xl
-                    ),
-            exchangeRateState = exchangeRateState,
-            sendState = sendAddressBookState
+            sendState = sendAddressBookState,
+            modifier = Modifier.scaffoldPadding(paddingValues)
         )
     }
 }
@@ -226,11 +217,9 @@ fun Send(
 @Composable
 private fun SendMainContent(
     balanceState: BalanceState,
-    isHideBalances: Boolean,
-    walletSnapshot: WalletSnapshot,
+    selectedAccount: WalletAccount,
     exchangeRateState: ExchangeRateState,
     onBack: () -> Unit,
-    goBalances: () -> Unit,
     onCreateZecSend: (ZecSend) -> Unit,
     sendStage: SendStage,
     onQrScannerOpen: () -> Unit,
@@ -249,9 +238,9 @@ private fun SendMainContent(
 
     SendForm(
         balanceState = balanceState,
-        isHideBalances = isHideBalances,
-        walletSnapshot = walletSnapshot,
+        selectedAccount = selectedAccount,
         recipientAddressState = recipientAddressState,
+        exchangeRateState = exchangeRateState,
         onRecipientAddressChange = onRecipientAddressChange,
         amountState = amountState,
         setAmountState = setAmountState,
@@ -259,11 +248,9 @@ private fun SendMainContent(
         setMemoState = setMemoState,
         onCreateZecSend = onCreateZecSend,
         onQrScannerOpen = onQrScannerOpen,
-        goBalances = goBalances,
         hasCameraFeature = hasCameraFeature,
-        modifier = modifier,
-        exchangeRateState = exchangeRateState,
-        sendState = sendState
+        sendState = sendState,
+        modifier = modifier
     )
 
     if (sendStage is SendStage.SendFailure) {
@@ -284,8 +271,7 @@ private fun SendMainContent(
 @Composable
 private fun SendForm(
     balanceState: BalanceState,
-    isHideBalances: Boolean,
-    walletSnapshot: WalletSnapshot,
+    selectedAccount: WalletAccount,
     recipientAddressState: RecipientAddressState,
     exchangeRateState: ExchangeRateState,
     onRecipientAddressChange: (String) -> Unit,
@@ -295,7 +281,6 @@ private fun SendForm(
     setMemoState: (MemoState) -> Unit,
     onCreateZecSend: (ZecSend) -> Unit,
     onQrScannerOpen: () -> Unit,
-    goBalances: () -> Unit,
     hasCameraFeature: Boolean,
     sendState: SendAddressBookState,
     modifier: Modifier = Modifier,
@@ -313,10 +298,7 @@ private fun SendForm(
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
         BalanceWidget(
-            balanceState = balanceState,
-            isHideBalances = isHideBalances,
-            isReferenceToBalances = true,
-            onReferenceClick = goBalances
+            balanceState = balanceState
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -364,7 +346,7 @@ private fun SendForm(
                 } ?: false,
             monetarySeparators = monetarySeparators,
             setAmountState = setAmountState,
-            walletSnapshot = walletSnapshot,
+            selectedAccount = selectedAccount,
             exchangeRateState = exchangeRateState
         )
 
@@ -388,7 +370,7 @@ private fun SendForm(
             memoState = memoState,
             onCreateZecSend = onCreateZecSend,
             recipientAddressState = recipientAddressState,
-            walletSnapshot = walletSnapshot,
+            selectedAccount = selectedAccount,
         )
     }
 }
@@ -400,7 +382,7 @@ fun SendButton(
     memoState: MemoState,
     onCreateZecSend: (ZecSend) -> Unit,
     recipientAddressState: RecipientAddressState,
-    walletSnapshot: WalletSnapshot,
+    selectedAccount: WalletAccount,
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -411,7 +393,7 @@ fun SendButton(
             recipientAddressState.address.isNotEmpty() &&
             amountState is AmountState.Valid &&
             amountState.value.isNotBlank() &&
-            walletSnapshot.canSpend(amountState.zatoshi) &&
+            selectedAccount.canSpend(amountState.zatoshi) &&
             // A valid memo is necessary only for non-transparent recipient
             (recipientAddressState.type == AddressType.Transparent || memoState is MemoState.Correct)
 
@@ -602,7 +584,7 @@ fun SendFormAmountTextField(
     monetarySeparators: MonetarySeparators,
     exchangeRateState: ExchangeRateState,
     setAmountState: (AmountState) -> Unit,
-    walletSnapshot: WalletSnapshot,
+    selectedAccount: WalletAccount,
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -621,7 +603,7 @@ fun SendFormAmountTextField(
             }
 
             is AmountState.Valid -> {
-                if (walletSnapshot.spendableBalance() < amountState.zatoshi) {
+                if (selectedAccount.spendableBalance < amountState.zatoshi) {
                     stringResource(id = R.string.send_amount_insufficient_balance)
                 } else {
                     null

@@ -8,32 +8,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.screen.seed.view.SeedView
-import co.electriccoin.zcash.ui.screen.seed.viewmodel.SeedViewModel
+import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun WrapSeed(
-    args: SeedNavigationArgs,
-    goBackOverride: (() -> Unit)?
-) {
+internal fun AndroidSeedRecovery() {
     val navController = LocalNavController.current
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
     val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
-    val viewModel = koinViewModel<SeedViewModel> { parametersOf(args) }
+    val viewModel = koinViewModel<SeedRecoveryViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
-
-    val normalizedState =
-        state?.copy(
-            onBack =
-                state?.onBack?.let {
-                    {
-                        goBackOverride?.invoke()
-                        it.invoke()
-                    }
-                }
-        )
 
     LaunchedEffect(Unit) {
         viewModel.navigateBack.collect {
@@ -42,18 +26,16 @@ internal fun WrapSeed(
     }
 
     BackHandler {
-        normalizedState?.onBack?.invoke()
+        state?.onBack?.invoke()
     }
 
-    normalizedState?.let {
-        SeedView(
-            state = normalizedState,
+    state?.let {
+        SeedRecoveryView(
+            state = it,
             topAppBarSubTitleState = walletState,
         )
     }
 }
 
-enum class SeedNavigationArgs {
-    NEW_WALLET,
-    RECOVERY
-}
+@Serializable
+object SeedRecovery

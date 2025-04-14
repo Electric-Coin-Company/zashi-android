@@ -3,4 +3,5 @@
     <string name="hide_balance_placeholder">-----</string>
     <string name="back_navigation_content_description">Atrás</string>
     <string name="triple_dots">…</string>
+    <string name="seed_recovery_reveal">Mostrar frase de recuperación</string>
 </resources>

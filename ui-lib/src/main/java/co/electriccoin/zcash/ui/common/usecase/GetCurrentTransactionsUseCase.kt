@@ -4,7 +4,7 @@ import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
-import co.electriccoin.zcash.ui.util.combineToFlow
+import co.electriccoin.zcash.ui.design.util.combineToFlow
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -40,5 +40,5 @@ class GetCurrentTransactionsUseCase(
 
 data class ListTransactionData(
     val transaction: Transaction,
-    val metadata: TransactionMetadata?
+    val metadata: TransactionMetadata
 )

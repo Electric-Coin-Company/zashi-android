@@ -8,12 +8,8 @@ class ApplyTransactionFiltersUseCase(
     private val transactionFilterRepository: TransactionFilterRepository,
     private val navigationRouter: NavigationRouter,
 ) {
-    suspend operator fun invoke(
-        filters: List<TransactionFilter>,
-        hideBottomSheet: suspend () -> Unit
-    ) {
+    operator fun invoke(filters: List<TransactionFilter>) {
         transactionFilterRepository.apply(filters)
-        hideBottomSheet()
         navigationRouter.back()
     }
 }

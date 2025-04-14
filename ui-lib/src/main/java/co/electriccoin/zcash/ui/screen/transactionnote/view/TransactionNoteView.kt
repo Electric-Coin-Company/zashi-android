@@ -4,12 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
@@ -22,9 +19,10 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
-import co.electriccoin.zcash.ui.design.component.ZashiModalBottomSheet
+import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
+import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -38,16 +36,15 @@ import co.electriccoin.zcash.ui.screen.transactionnote.model.TransactionNoteStat
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun TransactionNoteView(
-    onDismissRequest: () -> Unit,
-    sheetState: SheetState,
-    state: TransactionNoteState,
+    state: TransactionNoteState?,
+    sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
-    ZashiModalBottomSheet(
+    ZashiScreenModalBottomSheet(
+        state = state,
         sheetState = sheetState,
         content = {
-            BottomSheetContent(state)
+            BottomSheetContent(it)
         },
-        onDismissRequest = onDismissRequest
     )
 }
 
@@ -121,10 +118,6 @@ private fun BottomSheetContent(state: TransactionNoteState) {
                 )
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
     }
 }
 
@@ -137,7 +130,6 @@ private fun Preview() =
             state =
                 TransactionNoteState(
                     onBack = {},
-                    onBottomSheetHidden = {},
                     title = stringRes("Title"),
                     note = TextFieldState(stringRes("")) {},
                     noteCharacters =
@@ -148,7 +140,6 @@ private fun Preview() =
                     secondaryButton = null,
                     negative = ButtonState(stringRes("Delete note")),
                 ),
-            onDismissRequest = {},
             sheetState =
                 rememberModalBottomSheetState(
                     skipHiddenState = true,

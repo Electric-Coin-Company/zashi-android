@@ -6,11 +6,12 @@ import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.NullableBooleanPreferenceDefault
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.NavigationTargets.EXCHANGE_RATE_OPT_IN
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.common.wallet.RefreshLock
 import co.electriccoin.zcash.ui.common.wallet.StaleLock
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
+import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,7 +25,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 interface ExchangeRateRepository {
     val isExchangeRateUsdOptedIn: StateFlow<Boolean?>
@@ -48,7 +49,7 @@ interface ExchangeRateRepository {
 }
 
 class ExchangeRateRepositoryImpl(
-    private val walletRepository: WalletRepository,
+    private val synchronizerProvider: SynchronizerProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val navigationRouter: NavigationRouter,
 ) : ExchangeRateRepository {
@@ -62,7 +63,8 @@ class ExchangeRateRepositoryImpl(
         isExchangeRateUsdOptedIn
             .flatMapLatest { optedIn ->
                 if (optedIn == true) {
-                    walletRepository.synchronizer
+                    synchronizerProvider
+                        .synchronizer
                         .filterNotNull()
                         .flatMapLatest { synchronizer ->
                             synchronizer.exchangeRateUsd
@@ -105,46 +107,7 @@ class ExchangeRateRepositoryImpl(
                 staleExchangeRateUsdLock.state,
                 refreshExchangeRateUsdLock.state,
             ) { isOptedIn, exchangeRate, isStale, isRefreshEnabled ->
-                lastExchangeRateUsdValue =
-                    when (isOptedIn) {
-                        true ->
-                            when (val lastValue = lastExchangeRateUsdValue) {
-                                is ExchangeRateState.Data ->
-                                    lastValue.copy(
-                                        isLoading = exchangeRate.isLoading,
-                                        isStale = isStale,
-                                        isRefreshEnabled = isRefreshEnabled,
-                                        currencyConversion = exchangeRate.currencyConversion,
-                                    )
-
-                                ExchangeRateState.OptedOut ->
-                                    ExchangeRateState.Data(
-                                        isLoading = exchangeRate.isLoading,
-                                        isStale = isStale,
-                                        isRefreshEnabled = isRefreshEnabled,
-                                        currencyConversion = exchangeRate.currencyConversion,
-                                        onRefresh = ::refreshExchangeRateUsd
-                                    )
-
-                                is ExchangeRateState.OptIn ->
-                                    ExchangeRateState.Data(
-                                        isLoading = exchangeRate.isLoading,
-                                        isStale = isStale,
-                                        isRefreshEnabled = isRefreshEnabled,
-                                        currencyConversion = exchangeRate.currencyConversion,
-                                        onRefresh = ::refreshExchangeRateUsd
-                                    )
-                            }
-
-                        false -> ExchangeRateState.OptedOut
-                        null ->
-                            ExchangeRateState.OptIn(
-                                onDismissClick = ::dismissWidgetOptInExchangeRateUsd,
-                                onPrimaryClick = ::showOptInExchangeRateUsd
-                            )
-                    }
-
-                lastExchangeRateUsdValue
+                createState(isOptedIn, exchangeRate, isStale, isRefreshEnabled)
             }.distinctUntilChanged()
                 .onEach {
                     Twig.info { "[USD] $it" }
@@ -156,9 +119,63 @@ class ExchangeRateRepositoryImpl(
             }
         }.stateIn(
             scope = scope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = ExchangeRateState.OptedOut
+            started = SharingStarted.WhileSubscribed(5.seconds, 5.seconds),
+            initialValue =
+                createState(
+                    isOptedIn = isExchangeRateUsdOptedIn.value,
+                    exchangeRate = exchangeRateUsdInternal.value,
+                    isStale = false,
+                    isRefreshEnabled = false
+                )
         )
+
+    private fun createState(
+        isOptedIn: Boolean?,
+        exchangeRate: ObserveFiatCurrencyResult,
+        isStale: Boolean,
+        isRefreshEnabled: Boolean
+    ): ExchangeRateState {
+        lastExchangeRateUsdValue =
+            when (isOptedIn) {
+                true ->
+                    when (val lastValue = lastExchangeRateUsdValue) {
+                        is ExchangeRateState.Data ->
+                            lastValue.copy(
+                                isLoading = exchangeRate.isLoading,
+                                isStale = isStale,
+                                isRefreshEnabled = isRefreshEnabled,
+                                currencyConversion = exchangeRate.currencyConversion,
+                            )
+
+                        ExchangeRateState.OptedOut ->
+                            ExchangeRateState.Data(
+                                isLoading = exchangeRate.isLoading,
+                                isStale = isStale,
+                                isRefreshEnabled = isRefreshEnabled,
+                                currencyConversion = exchangeRate.currencyConversion,
+                                onRefresh = ::refreshExchangeRateUsd
+                            )
+
+                        is ExchangeRateState.OptIn ->
+                            ExchangeRateState.Data(
+                                isLoading = exchangeRate.isLoading,
+                                isStale = isStale,
+                                isRefreshEnabled = isRefreshEnabled,
+                                currencyConversion = exchangeRate.currencyConversion,
+                                onRefresh = ::refreshExchangeRateUsd
+                            )
+                    }
+
+                false -> ExchangeRateState.OptedOut
+                null ->
+                    ExchangeRateState.OptIn(
+                        onDismissClick = ::dismissWidgetOptInExchangeRateUsd,
+                        onPrimaryClick = ::showOptInExchangeRateUsd
+                    )
+            }
+
+        return lastExchangeRateUsdValue
+    }
 
     override fun refreshExchangeRateUsd() {
         refreshExchangeRateUsdInternal()
@@ -166,7 +183,7 @@ class ExchangeRateRepositoryImpl(
 
     private fun refreshExchangeRateUsdInternal() =
         scope.launch {
-            val synchronizer = walletRepository.synchronizer.filterNotNull().first()
+            val synchronizer = synchronizerProvider.getSynchronizer()
             val value = state.value
             if (value is ExchangeRateState.Data && value.isRefreshEnabled && !value.isLoading) {
                 synchronizer.refreshExchangeRateUsd()
@@ -187,7 +204,7 @@ class ExchangeRateRepositoryImpl(
         setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN, false)
     }
 
-    private fun showOptInExchangeRateUsd() = navigationRouter.forward(EXCHANGE_RATE_OPT_IN)
+    private fun showOptInExchangeRateUsd() = navigationRouter.forward(ExchangeRateOptIn)
 
     private fun nullableBooleanStateFlow(default: NullableBooleanPreferenceDefault): StateFlow<Boolean?> =
         flow {
