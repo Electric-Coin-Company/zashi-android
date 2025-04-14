@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.error
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,8 +11,10 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -48,6 +51,11 @@ fun BottomSheetContent(state: ErrorState, modifier: Modifier = Modifier) {
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp)
     ) {
+        Image(
+            painter = painterResource(R.drawable.ic_error_warning),
+            contentDescription = null
+        )
+        Spacer(12.dp)
         Text(
             text = state.title.getValue(),
             color = ZashiColors.Text.textPrimary,
