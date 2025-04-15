@@ -43,6 +43,8 @@ import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedMessa
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedMessageState
 import co.electriccoin.zcash.ui.screen.home.error.WalletErrorMessage
 import co.electriccoin.zcash.ui.screen.home.error.WalletErrorMessageState
+import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportMessage
+import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportMessageState
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringMessage
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringMessageState
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessage
@@ -170,6 +172,14 @@ fun HomeMessage(
                         state = normalizedState as WalletErrorMessageState,
                         contentPadding = contentPadding
                     )
+
+                is CrashReportMessageState -> {
+                    CrashReportMessage(
+                        innerModifier = innerModifier,
+                        state = normalizedState as CrashReportMessageState,
+                        contentPadding = contentPadding
+                    )
+                }
 
                 null -> {
                     // do nothing

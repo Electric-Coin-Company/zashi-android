@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import android.util.Log
 import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.MessageAvailabilityDataSource
@@ -25,7 +24,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlin.time.Duration.Companion.seconds
 
 class GetHomeMessageUseCase(

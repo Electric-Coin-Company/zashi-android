@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.home.backup
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +26,7 @@ import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.VerticalSpacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
+import co.electriccoin.zcash.ui.design.component.ZashiInfoRow
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -91,53 +91,46 @@ private fun Content(
             color = ZashiColors.Text.textPrimary,
             style = ZashiTypography.header6
         )
-
-        VerticalSpacer(10.dp)
-
+        Spacer(10.dp)
         Text(
             text = stringResource(R.string.wallet_backup_message),
             color = ZashiColors.Text.textPrimary,
             style = ZashiTypography.textSm
         )
-
-        VerticalSpacer(24.dp)
-
-        Item(
+        Spacer(24.dp)
+        ZashiInfoRow(
             icon = R.drawable.ic_wallet_backup_1,
             title = stringResource(R.string.wallet_backup_item_1),
             subtitle = stringResource(R.string.wallet_backup_item_subtitle_1)
         )
-        VerticalSpacer(20.dp)
-        Item(
+        Spacer(20.dp)
+        ZashiInfoRow(
             icon = R.drawable.ic_wallet_backup_2,
             title = stringResource(R.string.wallet_backup_item_2),
             subtitle = stringResource(R.string.wallet_backup_item_subtitle_2)
         )
-        VerticalSpacer(20.dp)
-        Item(
+        Spacer(20.dp)
+        ZashiInfoRow(
             icon = R.drawable.ic_wallet_backup_3,
             title = stringResource(R.string.wallet_backup_item_3),
             subtitle = stringResource(R.string.wallet_backup_item_subtitle_3)
         )
-        VerticalSpacer(20.dp)
-        Item(
+        Spacer(20.dp)
+        ZashiInfoRow(
             icon = R.drawable.ic_wallet_backup_4,
             title = stringResource(R.string.wallet_backup_item_4),
             subtitle = stringResource(R.string.wallet_backup_item_subtitle_4)
         )
-
-        VerticalSpacer(20.dp)
-
+        Spacer(20.dp)
         Spacer(1f)
-
         Row {
-            HorizontalSpacer(20.dp)
+            Spacer(20.dp)
             Image(
                 painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(ZashiColors.Utility.WarningYellow.utilityOrange700)
             )
-            HorizontalSpacer(12.dp)
+            Spacer(12.dp)
             Text(
                 text = stringResource(R.string.wallet_backup_info),
                 color = ZashiColors.Utility.WarningYellow.utilityOrange700,
@@ -145,9 +138,7 @@ private fun Content(
                 fontWeight = FontWeight.Medium
             )
         }
-
-        VerticalSpacer(24.dp)
-
+        Spacer(24.dp)
         ZashiButton(
             state =
                 ButtonState(
@@ -156,36 +147,6 @@ private fun Content(
                 ),
             modifier = Modifier.fillMaxWidth()
         )
-    }
-}
-
-@Composable
-private fun Item(
-    @DrawableRes icon: Int,
-    title: String,
-    subtitle: String,
-) {
-    Row {
-        Image(
-            painterResource(icon),
-            contentDescription = null
-        )
-        HorizontalSpacer(16.dp)
-        Column {
-            VerticalSpacer(2.dp)
-            Text(
-                text = title,
-                color = ZashiColors.Text.textPrimary,
-                style = ZashiTypography.textSm,
-                fontWeight = FontWeight.Medium
-            )
-            VerticalSpacer(4.dp)
-            Text(
-                text = subtitle,
-                color = ZashiColors.Text.textTertiary,
-                style = ZashiTypography.textSm
-            )
-        }
     }
 }
 

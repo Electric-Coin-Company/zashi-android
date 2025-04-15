@@ -110,6 +110,8 @@ import co.electriccoin.zcash.ui.screen.walletbackup.AndroidWalletBackup
 import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackup
 import co.electriccoin.zcash.ui.screen.home.backup.AndroidWalletBackupDetail
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetail
+import co.electriccoin.zcash.ui.screen.home.reporting.AndroidCrashReportOptIn
+import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptIn
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.AndroidSelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.send.Send
@@ -503,6 +505,9 @@ internal fun MainActivity.Navigation() {
                 )
         ) {
             AndroidBalanceAction()
+        }
+        composable<CrashReportOptIn> {
+            AndroidCrashReportOptIn()
         }
     }
 }

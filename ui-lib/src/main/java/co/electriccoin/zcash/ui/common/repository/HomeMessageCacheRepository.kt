@@ -63,14 +63,18 @@ sealed interface HomeMessageData {
     data object Updating : RuntimeMessage()
 
     data object Backup : Prioritized {
-        override val priority: Int = 3
+        override val priority: Int = 4
     }
 
     data class ShieldFunds(val zatoshi: Zatoshi) : Prioritized {
-        override val priority: Int = 2
+        override val priority: Int = 3
     }
 
     data object EnableCurrencyConversion : Prioritized {
+        override val priority: Int = 2
+    }
+
+    data object CrashReport : Prioritized {
         override val priority: Int = 1
     }
 }
@@ -79,7 +83,7 @@ sealed interface HomeMessageData {
  * Message which always is shown.
  */
 sealed class RuntimeMessage : HomeMessageData {
-    override val priority: Int = 4
+    override val priority: Int = 5
 }
 
 /**

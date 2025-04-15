@@ -28,6 +28,8 @@ import co.electriccoin.zcash.ui.screen.home.currency.EnableCurrencyConversionMes
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedInfo
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedMessageState
 import co.electriccoin.zcash.ui.screen.home.error.WalletErrorMessageState
+import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptIn
+import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportMessageState
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfo
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringMessageState
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfo
@@ -195,8 +197,14 @@ class HomeViewModel(
             onClick = ::onWalletUpdatingMessageClick
         )
 
+        HomeMessageData.CrashReport -> CrashReportMessageState(
+            onClick = ::onCrashReportMessageClick,
+            onButtonClick = ::onCrashReportMessageClick
+        )
         null -> null
     }
+
+    private fun onCrashReportMessageClick() = navigationRouter.forward(CrashReportOptIn)
 
     private fun onRestoreDialogSeenClick() = viewModelScope.launch { isRestoreSuccessDialogVisible.setSeen() }
 

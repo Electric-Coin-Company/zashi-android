@@ -27,13 +27,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.ZashiBaseSettingsOptIn
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.screen.exchangerate.BaseExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exchangerate.SecondaryCard
 
 @Composable
@@ -46,8 +46,11 @@ fun ExchangeRateSettingsView(state: ExchangeRateSettingsState) {
         }
     }
 
-    BaseExchangeRateOptIn(
+    ZashiBaseSettingsOptIn(
+        header = stringResource(id = R.string.exchange_rate_opt_in_subtitle),
+        image = R.drawable.exchange_rate,
         onDismiss = state.onDismiss,
+        info = stringResource(R.string.exchange_rate_opt_in_note),
         content = {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -82,7 +85,7 @@ fun ExchangeRateSettingsView(state: ExchangeRateSettingsState) {
                 enabled = !isButtonDisabled,
                 colors = ZashiButtonDefaults.primaryColors()
             )
-        }
+        },
     )
 }
 

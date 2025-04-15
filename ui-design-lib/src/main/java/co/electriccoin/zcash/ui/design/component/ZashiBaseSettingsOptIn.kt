@@ -1,15 +1,14 @@
-package co.electriccoin.zcash.ui.screen.exchangerate
+package co.electriccoin.zcash.ui.design.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -21,17 +20,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 
 @Suppress("LongMethod")
 @Composable
-internal fun BaseExchangeRateOptIn(
+fun ZashiBaseSettingsOptIn(
+    header: String,
+    @DrawableRes image: Int,
+    info: String?,
     onDismiss: () -> Unit,
     footer: @Composable ColumnScope.() -> Unit,
     content: @Composable ColumnScope.() -> Unit,
@@ -54,7 +55,7 @@ internal fun BaseExchangeRateOptIn(
                     )
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_exchange_rate_close),
+                    painter = painterResource(id = R.drawable.ic_settings_opt_int_close),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(ZashiColors.Btns.Tertiary.btnTertiaryFg)
                 )
@@ -68,31 +69,21 @@ internal fun BaseExchangeRateOptIn(
                         .weight(1f)
                         .verticalScroll(rememberScrollState())
             ) {
-                Image(painter = painterResource(R.drawable.exchange_rate), contentDescription = null)
+                Image(painter = painterResource(image), contentDescription = null)
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = stringResource(id = R.string.exchange_rate_opt_in_subtitle),
+                    text = header,
                     color = ZashiColors.Text.textPrimary,
                     style = ZashiTypography.header6,
                     fontWeight = FontWeight.SemiBold
                 )
                 content()
 
-                Spacer(modifier = Modifier.height(24.dp))
                 Spacer(modifier = Modifier.weight(1f))
 
-                Row {
-                    Image(
-                        painter = painterResource(R.drawable.ic_exchange_rate_info),
-                        contentDescription = null,
-                        colorFilter = ColorFilter.tint(ZashiColors.Text.textTertiary)
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = stringResource(R.string.exchange_rate_opt_in_note),
-                        color = ZashiColors.Text.textTertiary,
-                        style = ZashiTypography.textXs
-                    )
+                if (info != null) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    ZashiInfoText(info)
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))

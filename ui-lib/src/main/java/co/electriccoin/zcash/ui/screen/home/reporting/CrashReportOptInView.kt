@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.exchangerate.optin
+package co.electriccoin.zcash.ui.screen.home.reporting
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
-import co.electriccoin.zcash.ui.design.component.ZashiBaseSettingsOptIn
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiInfoRow
@@ -21,66 +20,66 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.component.ZashiBaseSettingsOptIn
 
 @Composable
-fun ExchangeRateOptInView(state: ExchangeRateOptInState) {
+fun CrashReportOptInView(state: CrashReportOptInState) {
     ZashiBaseSettingsOptIn(
-        header = stringResource(id = R.string.exchange_rate_opt_in_subtitle),
-        image = R.drawable.exchange_rate,
+        header = stringResource(R.string.crash_report_detail_title),
+        image = R.drawable.crash_report_detail,
         onDismiss = state.onBack,
         content = {
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = stringResource(R.string.exchange_rate_opt_in_description),
+                text = stringResource(R.string.crash_report_detail_subtitle),
                 color = ZashiColors.Text.textTertiary,
                 fontSize = 14.sp,
             )
             Spacer(modifier = Modifier.height(24.dp))
             ZashiInfoRow(
-                icon = R.drawable.ic_exchange_rate_info_1,
-                title = stringResource(R.string.exchange_rate_info_title_1),
-                subtitle = stringResource(R.string.exchange_rate_info_subtitle_1),
+                icon = R.drawable.ic_crash_report_1,
+                title = stringResource(R.string.crash_report_detail_item_title_1),
+                subtitle = stringResource(R.string.crash_report_detail_item_subtitle_1),
             )
             Spacer(modifier = Modifier.height(16.dp))
             ZashiInfoRow(
-                icon = R.drawable.ic_exchange_rate_info_2,
-                title = stringResource(R.string.exchange_rate_info_title_2),
-                subtitle = stringResource(R.string.exchange_rate_info_subtitle_2),
+                icon = R.drawable.ic_crash_report_2,
+                title = stringResource(R.string.crash_report_detail_item_title_2),
+                subtitle = stringResource(R.string.crash_report_detail_item_subtitle_2),
             )
         },
-        info = stringResource(R.string.exchange_rate_opt_in_note),
+        info = null,
         footer = {
             ZashiTextButton(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = state.onSkipClick,
+                onClick = state.onOptOutClick,
             ) {
                 Text(
-                    text = stringResource(R.string.exchange_rate_opt_in_skip),
+                    text = stringResource(R.string.crash_report_detail_opt_out),
                     style = ZashiTypography.textMd,
                     fontWeight = FontWeight.SemiBold
                 )
             }
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(R.string.exchange_rate_opt_in_enable),
-                onClick = state.onEnableClick,
+                text = stringResource(R.string.crash_report_detail_opt_in),
+                onClick = state.onOptInClick,
                 colors = ZashiButtonDefaults.primaryColors()
             )
         }
     )
 }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
-private fun CurrencyConversionOptInPreview() =
+private fun Preview() =
     ZcashTheme {
         BlankSurface {
-            ExchangeRateOptInView(
-                state = ExchangeRateOptInState(
-                    onEnableClick = {},
+            CrashReportOptInView(
+                state = CrashReportOptInState(
+                    onOptInClick = {},
                     onBack = {},
-                    onSkipClick = {},
+                    onOptOutClick = {},
                 )
             )
         }

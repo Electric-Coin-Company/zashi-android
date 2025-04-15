@@ -21,6 +21,7 @@ import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.home.HomeViewModel
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetailViewModel
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupInfoViewModel
+import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptInViewModel
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoViewModel
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
@@ -154,4 +155,5 @@ val viewModelModule =
         viewModelOf(::WalletBackupDetailViewModel)
         viewModelOf(::ErrorViewModel)
         viewModelOf(::BalanceActionViewModel)
+        viewModelOf(::CrashReportOptInViewModel)
     }
