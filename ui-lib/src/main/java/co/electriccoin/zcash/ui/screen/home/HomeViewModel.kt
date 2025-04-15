@@ -237,7 +237,7 @@ class HomeViewModel(
 
     private fun onShieldFundsMessageClick() = navigationRouter.forward(ShieldFundsInfo)
 
-    private fun onShieldFundsMessageButtonClick() = shieldFunds(navigateBackAfterSuccess = false)
+    private fun onShieldFundsMessageButtonClick() = shieldFunds(closeCurrentScreen = false)
 
     private fun onWalletErrorMessageClick(homeMessageData: HomeMessageData.Error) =
         navigateToError(ErrorArgs.SyncError(homeMessageData.synchronizerError))

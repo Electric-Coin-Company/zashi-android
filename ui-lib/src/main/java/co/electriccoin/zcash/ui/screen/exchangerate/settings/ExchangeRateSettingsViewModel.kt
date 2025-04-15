@@ -28,7 +28,7 @@ class ExchangeRateSettingsViewModel(
 
     private fun createState(it: ExchangeRateState) =
         ExchangeRateSettingsState(
-            isOptedIn = it is ExchangeRateState.OptIn,
+            isOptedIn = it is ExchangeRateState.Data,
             onSaveClick = ::onOptInExchangeRateUsdClick,
             onDismiss = ::onBack
         )

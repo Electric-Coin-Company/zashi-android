@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -66,6 +67,7 @@ fun StyledBalance(
     balanceParts: ZecAmountTriple,
     modifier: Modifier = Modifier,
     isHideBalances: Boolean = false,
+    showDust: Boolean = true,
     hiddenBalancePlaceholder: String = stringResource(id = R.string.hide_balance_placeholder),
     textColor: Color = Color.Unspecified,
     textStyle: BalanceTextStyle = StyledBalanceDefaults.textStyles(),
@@ -88,10 +90,12 @@ fun StyledBalance(
                 ) {
                     append(balanceSplit.first)
                 }
-                withStyle(
-                    style = textStyle.leastSignificantPart.toSpanStyle()
-                ) {
-                    append(balanceSplit.second)
+                if (showDust) {
+                    withStyle(
+                        style = textStyle.leastSignificantPart.toSpanStyle()
+                    ) {
+                        append(balanceSplit.second)
+                    }
                 }
             }
         }
@@ -101,12 +105,14 @@ fun StyledBalance(
             .basicMarquee()
             .then(modifier)
 
-    Text(
-        text = content,
-        color = textColor,
-        maxLines = 1,
-        modifier = resultModifier
-    )
+    SelectionContainer {
+        Text(
+            text = content,
+            color = textColor,
+            maxLines = 1,
+            modifier = resultModifier
+        )
+    }
 }
 
 private const val CUT_POSITION_OFFSET = 4

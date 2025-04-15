@@ -8,7 +8,7 @@ import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewMode
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.SelectRecipientViewModel
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsViewModel
-import co.electriccoin.zcash.ui.screen.balances.BalanceViewModel
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
 import co.electriccoin.zcash.ui.screen.balances.action.BalanceActionViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
@@ -143,7 +143,7 @@ val viewModelModule =
             )
         }
         viewModelOf(::TaxExportViewModel)
-        viewModelOf(::BalanceViewModel)
+        viewModelOf(::BalanceWidgetViewModel)
         viewModelOf(::HomeViewModel)
         viewModelOf(::RestoreBDHeightViewModel)
         viewModelOf(::RestoreBDDateViewModel)

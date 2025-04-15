@@ -29,11 +29,25 @@ sealed interface WalletAccount : Comparable<WalletAccount> {
     val totalShieldedBalance: Zatoshi
     val spendableBalance: Zatoshi
     val changePendingBalance: Zatoshi
-    val hasChangePending: Boolean
     val valuePendingBalance: Zatoshi
+
+    val pendingBalance: Zatoshi
+        get() = changePendingBalance + valuePendingBalance
+
+    val hasChangePending: Boolean
     val hasValuePending: Boolean
+    val isPending: Boolean
+        get() = pendingBalance > Zatoshi(0)
 
     fun canSpend(amount: Zatoshi): Boolean = spendableBalance >= amount
+
+    fun isProcessingZeroAvailableBalance(): Boolean {
+        if (totalShieldedBalance == Zatoshi(0) && transparent.balance > Zatoshi(0)) {
+            return false
+        }
+
+        return totalBalance != totalShieldedBalance && totalShieldedBalance == Zatoshi(0)
+    }
 }
 
 data class ZashiAccount(
@@ -55,10 +69,10 @@ data class ZashiAccount(
         get() = unified.balance.available + sapling.balance.available
     override val changePendingBalance: Zatoshi
         get() = unified.balance.changePending + sapling.balance.changePending
-    override val hasChangePending: Boolean
-        get() = changePendingBalance.value > 0L
     override val valuePendingBalance: Zatoshi
         get() = unified.balance.valuePending + sapling.balance.valuePending
+    override val hasChangePending: Boolean
+        get() = changePendingBalance.value > 0L
     override val hasValuePending: Boolean
         get() = valuePendingBalance.value > 0L
 
@@ -88,10 +102,10 @@ data class KeystoneAccount(
         get() = unified.balance.available
     override val changePendingBalance: Zatoshi
         get() = unified.balance.changePending
-    override val hasChangePending: Boolean
-        get() = changePendingBalance.value > 0L
     override val valuePendingBalance: Zatoshi
         get() = unified.balance.valuePending
+    override val hasChangePending: Boolean
+        get() = changePendingBalance.value > 0L
     override val hasValuePending: Boolean
         get() = valuePendingBalance.value > 0L
 
@@ -110,7 +124,10 @@ data class UnifiedInfo(
 data class TransparentInfo(
     val address: WalletAddress.Transparent,
     val balance: Zatoshi
-)
+) {
+    val isShieldingAvailable: Boolean
+        get() = balance > Zatoshi(100000L)
+}
 
 data class SaplingInfo(
     val address: WalletAddress.Sapling,

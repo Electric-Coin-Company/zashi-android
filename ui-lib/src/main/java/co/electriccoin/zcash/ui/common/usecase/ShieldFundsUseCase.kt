@@ -25,7 +25,7 @@ class ShieldFundsUseCase(
 ) {
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
-    operator fun invoke(navigateBackAfterSuccess: Boolean) {
+    operator fun invoke(closeCurrentScreen: Boolean) {
         scope.launch {
             when (accountDataSource.getSelectedAccount()) {
                 is KeystoneAccount -> {
@@ -33,7 +33,7 @@ class ShieldFundsUseCase(
                 }
 
                 is ZashiAccount -> {
-                    if (navigateBackAfterSuccess) {
+                    if (closeCurrentScreen) {
                         navigationRouter.back()
                     }
                     shieldZashiFunds()

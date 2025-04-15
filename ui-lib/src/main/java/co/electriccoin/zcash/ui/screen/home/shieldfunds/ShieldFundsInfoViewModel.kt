@@ -74,6 +74,6 @@ class ShieldFundsInfoViewModel(
 
     private fun onBack() = navigationRouter.back()
 
-    private fun onShieldClick() = shieldFunds(navigateBackAfterSuccess = true)
+    private fun onShieldClick() = shieldFunds(closeCurrentScreen = true)
 }
 

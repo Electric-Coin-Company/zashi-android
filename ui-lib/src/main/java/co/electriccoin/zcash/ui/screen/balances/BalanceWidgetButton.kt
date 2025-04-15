@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.balances
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,12 +32,12 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
-@Suppress("LongParameterList")
 @Composable
-fun BalanceButton(
+internal fun BalanceWidgetButton(
     state: BalanceButtonState,
     modifier: Modifier = Modifier,
 ) {
@@ -52,7 +54,7 @@ fun BalanceButton(
         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
         colors = colors.toButtonColors(),
         elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 2.dp,
+            defaultElevation = 1.dp,
             pressedElevation = 0.dp
         ),
         border = borderColor.takeIf { it != Color.Unspecified }?.let { BorderStroke(1.dp, it) },
@@ -98,11 +100,19 @@ fun BalanceButton(
     )
 }
 
+@Immutable
+data class BalanceButtonState(
+    @DrawableRes val icon: Int,
+    val text: StringResource,
+    val amount: Zatoshi?,
+    val onClick: () -> Unit
+)
+
 @PreviewScreens
 @Composable
 private fun Preview() = ZcashTheme {
     BlankSurface {
-        BalanceButton(
+        BalanceWidgetButton(
             state = BalanceButtonState(
                 icon = R.drawable.ic_help,
                 text = stringRes("text"),

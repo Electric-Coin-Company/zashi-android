@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import java.time.Instant
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.seconds
 
 interface WalletBackupDataSource {
@@ -96,7 +97,7 @@ sealed interface WalletBackupAvailability {
 }
 
 enum class WalletBackupLockoutDuration(val duration: Duration, @StringRes val res: Int) {
-    TWO_DAYS(10.seconds, R.string.general_remind_me_in_two_days),
-    TWO_WEEKS(20.seconds, R.string.general_remind_me_in_two_weeks),
-    ONE_MONTH(30.seconds, R.string.general_remind_me_in_two_months),
+    TWO_DAYS(2.days, R.string.general_remind_me_in_two_days),
+    TWO_WEEKS(14.days, R.string.general_remind_me_in_two_weeks),
+    ONE_MONTH(30.days, R.string.general_remind_me_in_two_months),
 }

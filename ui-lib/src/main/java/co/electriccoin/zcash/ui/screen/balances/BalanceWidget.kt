@@ -34,7 +34,7 @@ import co.electriccoin.zcash.ui.screen.balances.BalanceTag.BALANCE_VIEWS
 import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeBalance
 
 @Composable
-fun BalanceWidget(state: BalanceState, modifier: Modifier = Modifier) {
+fun BalanceWidget(state: BalanceWidgetState, modifier: Modifier = Modifier) {
     Column(
         modifier =
             Modifier
@@ -44,12 +44,13 @@ fun BalanceWidget(state: BalanceState, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         BalanceWidgetHeader(
-            parts = state.totalBalance.toZecStringFull().asZecAmountTriple()
+            parts = state.totalBalance.toZecStringFull().asZecAmountTriple(),
+            showDust = state.showDust
         )
 
         state.button?.let {
             Spacer(12.dp)
-            BalanceButton(it)
+            BalanceWidgetButton(it)
         }
 
         state.exchangeRate?.let {
@@ -57,9 +58,6 @@ fun BalanceWidget(state: BalanceState, modifier: Modifier = Modifier) {
                 Spacer(12.dp)
             }
             StyledExchangeBalance(state = it, zatoshi = state.totalBalance)
-            if (state.exchangeRate is ExchangeRateState.Data) {
-                Spacer(12.dp)
-            }
         }
     }
 }
@@ -69,6 +67,7 @@ fun BalanceWidgetHeader(
     parts: ZecAmountTriple,
     modifier: Modifier = Modifier,
     isHideBalances: Boolean = LocalBalancesAvailable.current.not(),
+    showDust: Boolean = true,
 ) {
     Row(
         modifier = modifier,
@@ -81,6 +80,7 @@ fun BalanceWidgetHeader(
         )
         Spacer(6.dp)
         StyledBalance(
+            showDust = showDust,
             balanceParts = parts,
             isHideBalances = isHideBalances,
             textStyle =
@@ -101,7 +101,7 @@ private fun BalanceWidgetPreview() {
         ) {
             BalanceWidget(
                 state =
-                    BalanceState(
+                    BalanceWidgetState(
                         totalBalance = Zatoshi(1234567891234567L),
                         button = BalanceButtonState(
                             icon = R.drawable.ic_help,
@@ -109,7 +109,8 @@ private fun BalanceWidgetPreview() {
                             amount = Zatoshi(1000),
                             onClick = {}
                         ),
-                        exchangeRate = ObserveFiatCurrencyResultFixture.new()
+                        exchangeRate = ObserveFiatCurrencyResultFixture.new(),
+                        showDust = true
                     ),
                 modifier = Modifier,
             )

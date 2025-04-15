@@ -29,7 +29,7 @@ class ShieldFundsRepositoryImpl(
                 account == null ->
                     flowOf(ShieldFundsData.Unavailable)
 
-                account.transparent.balance >= Zatoshi(DEFAULT_SHIELDING_THRESHOLD) ->
+                account.transparent.isShieldingAvailable ->
                     shieldFundsDataSource.observe(account.sdkAccount.accountUuid).map {
                         when (it) {
                             is ShieldFundsAvailability.Available -> ShieldFundsData.Available(
@@ -60,6 +60,3 @@ sealed interface ShieldFundsData {
 
     data object Unavailable : ShieldFundsData
 }
-
-private const val DEFAULT_SHIELDING_THRESHOLD = 100000L
-

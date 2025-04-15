@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.fixture
 
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
-import co.electriccoin.zcash.ui.screen.balances.BalanceState
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
 
 object BalanceStateFixture {
     private const val BALANCE_VALUE = 0L
@@ -12,9 +12,10 @@ object BalanceStateFixture {
     fun new(
         totalBalance: Zatoshi = TOTAL_BALANCE,
         exchangeRate: ExchangeRateState = ObserveFiatCurrencyResultFixture.new()
-    ) = BalanceState(
+    ) = BalanceWidgetState(
         totalBalance = totalBalance,
         exchangeRate = exchangeRate,
-        button = null
+        button = null,
+        showDust = true
     )
 }

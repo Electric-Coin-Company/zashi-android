@@ -32,8 +32,9 @@ import co.electriccoin.zcash.ui.common.usecase.PrefillSendUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
-import co.electriccoin.zcash.ui.screen.balances.BalanceState
-import co.electriccoin.zcash.ui.screen.balances.BalanceViewModel
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetArgs
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
 import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
@@ -45,6 +46,7 @@ import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 import java.util.Locale
 
 @Composable
@@ -55,7 +57,16 @@ internal fun WrapSend(args: Send) {
 
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
-    val balanceViewModel = koinViewModel<BalanceViewModel>()
+    val balanceWidgetViewModel =
+        koinViewModel<BalanceWidgetViewModel> {
+            parametersOf(
+                BalanceWidgetArgs(
+                    isBalanceButtonEnabled = true,
+                    isExchangeRateButtonEnabled = false,
+                    showDust = true
+                )
+            )
+        }
 
     val accountDataSource = koinInject<AccountDataSource>()
 
@@ -69,12 +80,12 @@ internal fun WrapSend(args: Send) {
 
     val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
 
-    val balanceState = balanceViewModel.state.collectAsStateWithLifecycle().value
+    val balanceState = balanceWidgetViewModel.state.collectAsStateWithLifecycle().value
 
     val exchangeRateState = exchangeRateRepository.state.collectAsStateWithLifecycle().value
 
     WrapSend(
-        balanceState = balanceState,
+        balanceWidgetState = balanceState,
         exchangeRateState = exchangeRateState,
         goToQrScanner = {
             navigationRouter.forward(
@@ -97,7 +108,7 @@ internal fun WrapSend(args: Send) {
 @VisibleForTesting
 @Composable
 internal fun WrapSend(
-    balanceState: BalanceState,
+    balanceWidgetState: BalanceWidgetState,
     exchangeRateState: ExchangeRateState,
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
@@ -286,7 +297,7 @@ internal fun WrapSend(
         CircularScreenProgressIndicator()
     } else {
         Send(
-            balanceState = balanceState,
+            balanceWidgetState = balanceWidgetState,
             sendStage = sendStage,
             onCreateZecSend = { newZecSend ->
                 viewModel.onCreateZecSendClick(
