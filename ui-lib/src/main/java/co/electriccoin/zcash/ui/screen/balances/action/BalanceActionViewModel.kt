@@ -37,7 +37,7 @@ class BalanceActionViewModel(
         if (account == null) return null
 
         return BalanceActionState(
-            title = stringRes("Spendable Balance"),
+            title = stringRes(R.string.balance_action_title),
             message = createMessage(account),
             positive = createPositiveButton(account),
             onBack = ::onBack,
@@ -48,50 +48,58 @@ class BalanceActionViewModel(
 
     private fun createMessage(account: WalletAccount): StringResource {
         val pending = when {
-            account.totalBalance == account.spendableBalance && !account.isPending ->
-                stringRes("All your funds are shielded and spendable.")
+            account.totalShieldedBalance == account.spendableShieldedBalance ->
+                stringRes(R.string.balance_action_all_shielded)
 
-            account.isPending || account.isProcessingZeroAvailableBalance() ->
-                stringRes("Pending transactions are getting mined and confirmed.")
+            account.totalShieldedBalance > account.spendableShieldedBalance ->
+                stringRes(R.string.balance_action_pending)
+
             else -> null
         }
 
-        val shielding =
-            stringRes("Shield your transparent ZEC to make it spendable and private. Shielding transparent funds will create a shielding in-wallet transaction, consolidating your transparent and shielded funds. (Typical fee: .001 ZEC)")
-                .takeIf { account.transparent.isShieldingAvailable }
+        val shielding = stringRes(R.string.balance_action_shield_message).takeIf { account.isShieldingAvailable }
 
         return if (pending != null && shielding != null) {
             pending + stringRes("\n\n") + shielding
         } else {
-            listOfNotNull(pending, shielding).reduceOrNull { acc, stringResource -> acc + stringResource } ?: stringRes(
-                ""
-            )
+            pending ?: shielding ?: stringRes("")
         }
     }
 
     private fun createPositiveButton(account: WalletAccount) = ButtonState(
-        text = if (account.transparent.isShieldingAvailable) stringRes("Dismiss") else stringRes("Ok"),
+        text = if (account.isShieldingAvailable) {
+            stringRes(R.string.general_dismiss)
+        } else {
+            stringRes(R.string.general_ok)
+        },
         onClick = ::onBack
     )
 
     private fun createInfoRows(account: WalletAccount) = listOfNotNull(
         BalanceActionRowState(
-            title = stringRes("Shielded ZEC (Spendable)"),
+            title = stringRes(R.string.balance_action_info_shielded),
             icon = imageRes(R.drawable.ic_balance_shield),
-            value = stringRes(R.string.general_zec, stringRes(account.spendableBalance))
+            value = stringRes(R.string.general_zec, stringRes(account.spendableShieldedBalance))
         ),
-        if (!account.isProcessingZeroAvailableBalance()) {
-            BalanceActionRowState(
-                title = stringRes("Pending"),
-                icon = loadingImageRes(),
-                value = stringRes(R.string.general_zec, stringRes(account.totalBalance))
-            )
-        } else {
-            BalanceActionRowState(
-                title = stringRes("Pending"),
-                icon = loadingImageRes(),
-                value = stringRes(R.string.general_zec, stringRes(account.pendingBalance))
-            ).takeIf { account.isPending }
+        when {
+            account.totalShieldedBalance > account.spendableShieldedBalance && account.isShieldedPending ->
+                BalanceActionRowState(
+                    title = stringRes(R.string.balance_action_info_pending),
+                    icon = loadingImageRes(),
+                    value = stringRes(R.string.general_zec, stringRes(account.pendingShieldedBalance))
+                )
+
+            account.totalShieldedBalance > account.spendableShieldedBalance ->
+                BalanceActionRowState(
+                    title = stringRes(R.string.balance_action_info_pending),
+                    icon = loadingImageRes(),
+                    value = stringRes(
+                        R.string.general_zec,
+                        stringRes(account.totalShieldedBalance - account.spendableShieldedBalance)
+                    )
+                )
+
+            else -> null
         },
     )
 
@@ -99,7 +107,7 @@ class BalanceActionViewModel(
         return BalanceShieldButtonState(
             amount = account.transparent.balance,
             onShieldClick = ::onShieldClick
-        ).takeIf { account.transparent.isShieldingAvailable }
+        ).takeIf { account.isShieldingAvailable }
     }
 
     private fun onBack() = navigationRouter.back()

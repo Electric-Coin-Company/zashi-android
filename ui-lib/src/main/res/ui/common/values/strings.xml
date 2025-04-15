@@ -35,6 +35,6 @@
     <string name="general_remind_me_in_two_days">two days</string>
     <string name="general_remind_me_in_two_weeks">two weeks</string>
     <string name="general_remind_me_in_two_months">two months</string>
-
     <string name="general_zec">%S ZEC</string>
+    <string name="general_dismiss">Dismiss</string>
 </resources>

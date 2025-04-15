@@ -29,7 +29,7 @@ class ShieldFundsRepositoryImpl(
                 account == null ->
                     flowOf(ShieldFundsData.Unavailable)
 
-                account.transparent.isShieldingAvailable ->
+                account.isShieldingAvailable ->
                     shieldFundsDataSource.observe(account.sdkAccount.accountUuid).map {
                         when (it) {
                             is ShieldFundsAvailability.Available -> ShieldFundsData.Available(

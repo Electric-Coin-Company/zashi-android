@@ -40,17 +40,15 @@ class BalanceWidgetViewModel(
             )
         )
 
-
-
-    private fun createState(account: WalletAccount?, exchangeRateUsd: ExchangeRateState): BalanceWidgetState {
-        return BalanceWidgetState(
+    private fun createState(account: WalletAccount?, exchangeRateUsd: ExchangeRateState) =
+        BalanceWidgetState(
             totalBalance = account?.totalBalance ?: Zatoshi(0),
             exchangeRate = if (args.isExchangeRateButtonEnabled) exchangeRateUsd else null,
             button = when {
                 !args.isBalanceButtonEnabled -> null
                 account == null -> null
-                account.totalBalance == account.spendableBalance -> null
-                account.isProcessingZeroAvailableBalance() && !account.isPending ->
+                account.totalBalance == account.spendableShieldedBalance -> null
+                account.totalBalance > account.spendableShieldedBalance && account.isShieldedPending ->
                     BalanceButtonState(
                         icon = R.drawable.ic_balances_expand,
                         text = stringRes(R.string.widget_balances_button_spendable),
@@ -58,10 +56,10 @@ class BalanceWidgetViewModel(
                         onClick = ::onBalanceButtonClick
                     )
 
-                account.totalBalance > account.spendableBalance -> BalanceButtonState(
+                account.totalBalance > account.spendableShieldedBalance -> BalanceButtonState(
                     icon = R.drawable.ic_balances_expand,
                     text = stringRes(R.string.widget_balances_button_spendable),
-                    amount = account.spendableBalance,
+                    amount = account.spendableShieldedBalance,
                     onClick = ::onBalanceButtonClick
                 )
 
@@ -69,7 +67,6 @@ class BalanceWidgetViewModel(
             },
             showDust = args.showDust
         )
-    }
 
     private fun onBalanceButtonClick() = navigationRouter.forward(BalanceAction)
 }

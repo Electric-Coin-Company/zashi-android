@@ -331,7 +331,7 @@ private fun SendForm(
                     recipientAddressState.type is AddressType.Valid &&
                         recipientAddressState.type !is AddressType.Transparent &&
                         recipientAddressState.type !is AddressType.Tex
-                )
+                    )
 
         SendFormAmountTextField(
             amountState = amountState,
@@ -430,10 +430,13 @@ fun SendButton(
 
                                         AddressType.Tex ->
                                             WalletAddress.Tex.new(recipientAddressState.address)
+
                                         AddressType.Transparent ->
                                             WalletAddress.Transparent.new(recipientAddressState.address)
+
                                         AddressType.Unified ->
                                             WalletAddress.Unified.new(recipientAddressState.address)
+
                                         null -> WalletAddress.Unified.new(recipientAddressState.address)
                                     }
                             )
@@ -604,7 +607,7 @@ fun SendFormAmountTextField(
             }
 
             is AmountState.Valid -> {
-                if (selectedAccount.spendableBalance < amountState.zatoshi) {
+                if (selectedAccount.spendableShieldedBalance < amountState.zatoshi) {
                     stringResource(id = R.string.send_amount_insufficient_balance)
                 } else {
                     null
@@ -630,7 +633,9 @@ fun SendFormAmountTextField(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        Row {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
             ZashiTextField(
                 singleLine = true,
                 maxLines = 1,
@@ -648,7 +653,9 @@ fun SendFormAmountTextField(
                     )
                 },
                 modifier = Modifier.weight(1f),
-                innerModifier = Modifier.testTag(SendTag.SEND_AMOUNT_FIELD),
+                innerModifier = ZashiTextFieldDefaults
+                    .innerModifier
+                    .testTag(SendTag.SEND_AMOUNT_FIELD),
                 error = amountError,
                 placeholder = {
                     Text(

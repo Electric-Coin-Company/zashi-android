@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
@@ -62,10 +63,12 @@ fun BottomSheetContent(state: BalanceActionState, modifier: Modifier = Modifier)
                 .padding(horizontal = 24.dp)
     ) {
         Text(
+            modifier = Modifier.fillMaxWidth(),
             text = state.title.getValue(),
             color = ZashiColors.Text.textPrimary,
             style = ZashiTypography.textXl,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center
         )
         Spacer(12.dp)
         Text(
@@ -80,8 +83,8 @@ fun BottomSheetContent(state: BalanceActionState, modifier: Modifier = Modifier)
             }
             BalanceActionRow(state)
         }
-        Spacer(32.dp)
         state.shieldButton?.let {
+            Spacer(32.dp)
             BalanceShieldButton(it)
         }
         Spacer(32.dp)

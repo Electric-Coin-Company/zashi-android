@@ -70,4 +70,10 @@
     <string name="home_message_crash_reporting_title">Help improve Zashi</string>
     <string name="home_message_crash_reporting_subtitle">Allow sharing crash reports</string>
     <string name="home_message_crash_reporting_button">Review</string>
+    <string name="balance_action_title">Spendable Balance</string>
+    <string name="balance_action_all_shielded">All your funds are shielded and spendable.</string>
+    <string name="balance_action_pending">Pending transactions are getting mined and confirmed.</string>
+    <string name="balance_action_shield_message">Shield your transparent ZEC to make it spendable and private. Shielding transparent funds will create a shielding in-wallet transaction, consolidating your transparent and shielded funds. (Typical fee: .001 ZEC)</string>
+    <string name="balance_action_info_shielded">Shielded ZEC (Spendable)</string>
+    <string name="balance_action_info_pending">Pending</string>
 </resources>
