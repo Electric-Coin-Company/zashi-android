@@ -74,6 +74,12 @@ class AdvancedSettingsViewModel(
                         icon =
                             R.drawable.ic_advanced_settings_currency_conversion,
                         onClick = ::onCurrencyConversionClick
+                    ),
+                    ZashiListItemState(
+                        title = stringRes(R.string.advanced_settings_crash_reporting),
+                        icon =
+                            R.drawable.ic_advanced_settings_crash_reporting,
+                        onClick = ::onCrashReportingClick
                     )
                 ).toImmutableList(),
             deleteButton =
@@ -88,6 +94,8 @@ class AdvancedSettingsViewModel(
     private fun onChooseServerClick() = navigationRouter.forward(NavigationTargets.CHOOSE_SERVER)
 
     private fun onCurrencyConversionClick() = navigationRouter.forward(NavigationTargets.SETTINGS_EXCHANGE_RATE_OPT_IN)
+
+    private fun onCrashReportingClick() = navigationRouter.forward(NavigationTargets.CRASH_REPORTING_OPT_IN)
 
     private fun onTaxExportClick() =
         viewModelScope.launch {
