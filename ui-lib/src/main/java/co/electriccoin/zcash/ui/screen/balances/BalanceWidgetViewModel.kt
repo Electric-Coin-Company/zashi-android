@@ -48,13 +48,30 @@ class BalanceWidgetViewModel(
                 !args.isBalanceButtonEnabled -> null
                 account == null -> null
                 account.totalBalance == account.spendableShieldedBalance -> null
-                account.totalBalance > account.spendableShieldedBalance && account.isShieldedPending ->
+                account.totalBalance > account.spendableShieldedBalance &&
+                    !account.isShieldedPending &&
+                    account.totalShieldedBalance > Zatoshi(0) &&
+                    account.spendableShieldedBalance == Zatoshi(0) &&
+                    account.totalTransparentBalance > Zatoshi(0) ->
                     BalanceButtonState(
                         icon = R.drawable.ic_balances_expand,
                         text = stringRes(R.string.widget_balances_button_spendable),
                         amount = null,
                         onClick = ::onBalanceButtonClick
                     )
+
+                account.totalBalance > account.spendableShieldedBalance &&
+                    account.isShieldedPending &&
+                    account.totalShieldedBalance > Zatoshi(0) &&
+                    account.spendableShieldedBalance == Zatoshi(0) &&
+                    account.totalTransparentBalance == Zatoshi(0) ->
+                    BalanceButtonState(
+                        icon = R.drawable.ic_balances_expand,
+                        text = stringRes(R.string.widget_balances_button_spendable),
+                        amount = null,
+                        onClick = ::onBalanceButtonClick
+                    )
+
 
                 account.totalBalance > account.spendableShieldedBalance -> BalanceButtonState(
                     icon = R.drawable.ic_balances_expand,
