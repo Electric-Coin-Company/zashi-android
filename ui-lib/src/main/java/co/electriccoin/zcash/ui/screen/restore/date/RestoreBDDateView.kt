@@ -42,6 +42,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
+import java.time.YearMonth
 
 @Composable
 fun RestoreBDDateView(state: RestoreBDDateState) {
@@ -84,7 +85,8 @@ private fun Content(
         Spacer(Modifier.height(24.dp))
 
         ZashiYearMonthWheelDatePicker(
-            onSelectionChange = {},
+            selection = state.selection,
+            onSelectionChange = state.onYearMonthChange,
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -150,8 +152,10 @@ private fun Preview() =
             state =
                 RestoreBDDateState(
                     next = ButtonState(stringRes("Estimate")) {},
-                    dialogButton = IconButtonState(R.drawable.ic_restore_dialog) {},
-                    onBack = {}
+                    dialogButton = IconButtonState(R.drawable.ic_help) {},
+                    onBack = {},
+                    onYearMonthChange = {},
+                    selection = YearMonth.now()
                 )
         )
     }

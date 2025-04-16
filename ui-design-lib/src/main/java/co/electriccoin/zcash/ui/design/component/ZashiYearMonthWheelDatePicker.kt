@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -39,40 +40,34 @@ import java.text.DateFormatSymbols
 import java.time.Month
 import java.time.Year
 import java.time.YearMonth
+import kotlin.math.absoluteValue
 import kotlin.math.pow
 
 @Suppress("MagicNumber")
 @Composable
 fun ZashiYearMonthWheelDatePicker(
+    selection: YearMonth,
     onSelectionChange: (YearMonth) -> Unit,
     modifier: Modifier = Modifier,
     verticallyVisibleItems: Int = 3,
-    startYear: Year = Year.of(2016),
-    endYear: Year = Year.now(),
-    selectionYear: YearMonth = YearMonth.now(),
+    startInclusive: YearMonth = YearMonth.of(2018, 10),
+    endInclusive: YearMonth = YearMonth.now(),
 ) {
     val latestOnSelectionChanged by rememberUpdatedState(onSelectionChange)
-    var selectedDate by remember { mutableStateOf(selectionYear) }
-    val months =
-        listOf(
-            Month.JANUARY,
-            Month.FEBRUARY,
-            Month.MARCH,
-            Month.APRIL,
-            Month.MAY,
-            Month.JUNE,
-            Month.JULY,
-            Month.AUGUST,
-            Month.SEPTEMBER,
-            Month.OCTOBER,
-            Month.NOVEMBER,
-            Month.DECEMBER
-        )
-    val years = (startYear.value..endYear.value).toList()
 
-    LaunchedEffect(selectedDate) {
-        Twig.debug { "Selection changed: $selectedDate" }
-        latestOnSelectionChanged(selectedDate)
+    var state by remember {
+        mutableStateOf(
+            InternalState(
+                selectedDate = selection,
+                months = getMonthsForYear(Year.of(selection.year), startInclusive, endInclusive),
+                years = (startInclusive.year..endInclusive.year).map { Year.of(it) }.toList()
+            )
+        )
+    }
+
+    LaunchedEffect(state.selectedDate) {
+        Twig.debug { "Selection changed: ${state.selectedDate}" }
+        latestOnSelectionChanged(state.selectedDate)
     }
 
     Box(modifier = modifier) {
@@ -92,14 +87,18 @@ fun ZashiYearMonthWheelDatePicker(
             Spacer(Modifier.weight(.5f))
             WheelLazyList(
                 modifier = Modifier.weight(1f),
-                selection = maxOf(months.indexOf(selectedDate.month), 0),
-                itemCount = months.size,
+                selection = state.selectedMonthIndex,
+                itemCount = state.months.size,
                 itemVerticalOffset = verticallyVisibleItems,
-                isInfiniteScroll = true,
-                onFocusItem = { selectedDate = selectedDate.withMonth(months[it].value) },
+                isInfiniteScroll = false,
+                onFocusItem = {
+                    state = state.copy(
+                        selectedDate = state.selectedDate.withMonth(state.months[it].value)
+                    )
+                },
                 itemContent = {
                     Text(
-                        text = DateFormatSymbols().months[months[it].value - 1],
+                        text = DateFormatSymbols().months[state.months[it].value - 1],
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillParentMaxWidth(),
                         style = ZashiTypography.header6,
@@ -110,14 +109,28 @@ fun ZashiYearMonthWheelDatePicker(
             )
             WheelLazyList(
                 modifier = Modifier.weight(.75f),
-                selection = years.indexOf(selectedDate.year),
-                itemCount = years.size,
+                selection = state.selectedYearIndex,
+                itemCount = state.years.size,
                 itemVerticalOffset = verticallyVisibleItems,
                 isInfiniteScroll = false,
-                onFocusItem = { selectedDate = selectedDate.withYear(years[it]) },
+                onFocusItem = {
+                    val year = state.years[it]
+                    val normalizedSelectedMonth = getSelectedMonthForYear(
+                        year = year,
+                        selectedMonth = state.selectedDate.month,
+                        startYearMonth = startInclusive,
+                        endYearMonth = endInclusive
+                    )
+                    val months = getMonthsForYear(year, startInclusive, endInclusive)
+                    val selectedDate = state.selectedDate.withYear(year.value).withMonth(normalizedSelectedMonth.value)
+                    state = state.copy(
+                        selectedDate = selectedDate,
+                        months = months
+                    )
+                },
                 itemContent = {
                     Text(
-                        text = years[it].toString(),
+                        text = state.years[it].toString(),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillParentMaxWidth(),
                         style = ZashiTypography.header6,
@@ -129,6 +142,79 @@ fun ZashiYearMonthWheelDatePicker(
             Spacer(Modifier.weight(.5f))
         }
     }
+}
+
+private fun getMonthsForYear(year: Year, startYearMonth: YearMonth, endYearMonth: YearMonth): List<Month> {
+    return when (year.value) {
+        startYearMonth.year -> {
+            (startYearMonth.month.value..Month.DECEMBER.value).map { index ->
+                Month.entries.first { it.value == index }
+            }
+        }
+
+        endYearMonth.year -> {
+            (Month.JANUARY.value..endYearMonth.month.value).map { index ->
+                Month.entries.first { it.value == index }
+            }
+        }
+
+        else -> {
+            listOf(
+                Month.JANUARY,
+                Month.FEBRUARY,
+                Month.MARCH,
+                Month.APRIL,
+                Month.MAY,
+                Month.JUNE,
+                Month.JULY,
+                Month.AUGUST,
+                Month.SEPTEMBER,
+                Month.OCTOBER,
+                Month.NOVEMBER,
+                Month.DECEMBER
+            )
+        }
+    }
+}
+
+private fun getSelectedMonthForYear(
+    year: Year,
+    selectedMonth: Month,
+    startYearMonth: YearMonth,
+    endYearMonth: YearMonth
+): Month {
+    return when (year.value) {
+        startYearMonth.year -> {
+            val months = (startYearMonth.month.value..Month.DECEMBER.value).map { index ->
+                Month.entries.first { it.value == index }
+            }
+            if (selectedMonth in months) selectedMonth else months.findClosest(selectedMonth)
+        }
+
+        endYearMonth.year -> {
+            val months = (Month.JANUARY.value..endYearMonth.month.value).map { index ->
+                Month.entries.first { it.value == index }
+            }
+            if (selectedMonth in months) selectedMonth else months.findClosest(selectedMonth)
+        }
+
+        else -> selectedMonth
+    }
+}
+
+private fun List<Month>.findClosest(target: Month): Month {
+    var closestNumber = this[0] // Initialize with the first element
+    var minDifference = (this[0].value - target.value).absoluteValue
+
+    for (number in this) {
+        val difference = (number.value - target.value).absoluteValue
+        if (difference < minDifference) {
+            minDifference = difference
+            closestNumber = number
+        }
+    }
+
+    return closestNumber
 }
 
 @Suppress("MagicNumber", "ContentSlotReused")
@@ -155,9 +241,7 @@ private fun WheelLazyList(
     val isScrollInProgress = state.isScrollInProgress
 
     LaunchedEffect(itemCount) {
-        coroutineScope.launch {
-            state.scrollToItem(startIndex)
-        }
+        state.scrollToItem(startIndex)
     }
 
     LaunchedEffect(key1 = isScrollInProgress) {
@@ -285,4 +369,14 @@ private fun calculateIndexToFocus(
         index++
     }
     return index
+}
+
+@Immutable
+private data class InternalState(
+    val selectedDate: YearMonth,
+    val months: List<Month>,
+    val years: List<Year>
+) {
+    val selectedYearIndex = years.map { it.value }.indexOf(selectedDate.year)
+    val selectedMonthIndex = maxOf(months.indexOf(selectedDate.month), 0)
 }

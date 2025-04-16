@@ -134,10 +134,10 @@ fun MainActivity.OnboardingNavigation() {
             AndroidRestoreBDHeight(it.toRoute())
         }
         composable<RestoreBDDate> {
-            AndroidRestoreBDDate()
+            AndroidRestoreBDDate(it.toRoute())
         }
         composable<RestoreBDEstimation> {
-            AndroidRestoreBDEstimation()
+            AndroidRestoreBDEstimation(it.toRoute())
         }
         dialog<SeedInfo>(
             dialogProperties =

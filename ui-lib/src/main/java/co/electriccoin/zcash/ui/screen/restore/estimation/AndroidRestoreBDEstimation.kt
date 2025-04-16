@@ -6,14 +6,18 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
-fun AndroidRestoreBDEstimation() {
-    val vm = koinViewModel<RestoreBDEstimationViewModel>()
+fun AndroidRestoreBDEstimation(args: RestoreBDEstimation) {
+    val vm = koinViewModel<RestoreBDEstimationViewModel> { parametersOf(args) }
     val state by vm.state.collectAsStateWithLifecycle()
     RestoreBDEstimationView(state)
     BackHandler { state.onBack() }
 }
 
 @Serializable
-data object RestoreBDEstimation
+data class RestoreBDEstimation(
+    val seed: String,
+    val blockHeight: Long
+)
