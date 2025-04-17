@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel.AdvancedSettin
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
+import co.electriccoin.zcash.ui.screen.crashreporting.viewmodel.CrashReportingViewModel
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
@@ -138,4 +139,5 @@ val viewModelModule =
             )
         }
         viewModelOf(::TaxExportViewModel)
+        viewModelOf(::CrashReportingViewModel)
     }

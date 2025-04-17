@@ -28,6 +28,7 @@ import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_ZIP_321_URI
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
+import co.electriccoin.zcash.ui.NavigationTargets.CRASH_REPORTING_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
 import co.electriccoin.zcash.ui.NavigationTargets.EXCHANGE_RATE_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
@@ -66,6 +67,7 @@ import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
 import co.electriccoin.zcash.ui.screen.contact.WrapAddContact
 import co.electriccoin.zcash.ui.screen.contact.WrapUpdateContact
+import co.electriccoin.zcash.ui.screen.crashreporting.AndroidCrashReportingOptIn
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
 import co.electriccoin.zcash.ui.screen.disconnected.WrapDisconnected
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.AndroidExchangeRateOptIn
@@ -295,6 +297,9 @@ internal fun MainActivity.Navigation() {
         }
         composable(SETTINGS_EXCHANGE_RATE_OPT_IN) {
             AndroidSettingsExchangeRateOptIn()
+        }
+        composable(CRASH_REPORTING_OPT_IN) {
+            AndroidCrashReportingOptIn()
         }
         composable<ScanKeystoneSignInRequest> {
             WrapScanKeystoneSignInRequest()
@@ -617,6 +622,7 @@ object NavigationTargets {
     const val SEED_RECOVERY = "seed_recovery"
     const val SETTINGS = "settings"
     const val SETTINGS_EXCHANGE_RATE_OPT_IN = "settings_exchange_rate_opt_in"
+    const val CRASH_REPORTING_OPT_IN = "crash_reporting_opt_in"
     const val SUPPORT = "support"
     const val WHATS_NEW = "whats_new"
 }

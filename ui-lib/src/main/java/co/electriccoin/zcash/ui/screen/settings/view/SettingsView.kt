@@ -144,14 +144,6 @@ private fun TroubleshootingMenu(state: SettingsTroubleshootingState) {
                 },
                 leadingIcon = { AddIcon(state.keepScreenOnDuringSync.isEnabled) }
             )
-            DropdownMenuItem(
-                text = { Text(stringResource(id = R.string.settings_troubleshooting_enable_analytics)) },
-                onClick = {
-                    state.analytics.onClick()
-                    expanded = false
-                },
-                leadingIcon = { AddIcon(state.analytics.isEnabled) }
-            )
             // isRescanEnabled means if this feature should be visible, not whether it is enabled as in the case of
             // the previous booleans
             if (state.rescan.isEnabled) {

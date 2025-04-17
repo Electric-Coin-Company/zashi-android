@@ -90,6 +90,7 @@ class ZcashApplication : CoroutineApplication() {
         if (GlobalCrashReporter.register(this, getAvailableCrashReporters())) {
             applicationScope.launch {
                 StandardPreferenceKeys.IS_ANALYTICS_ENABLED.observe(standardPreferenceProvider()).collect {
+                    Twig.debug { "Is crashlytics enabled: $it" }
                     if (it) {
                         GlobalCrashReporter.enable()
                     } else {
