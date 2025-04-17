@@ -9,9 +9,9 @@ sealed interface SubmitResult {
 
     data class MultipleTrxFailure(
         val results: List<TransactionSubmitResult>
-    ) : SubmitResult
+    ) : Failure
 
-    sealed interface SimpleTrxFailure : SubmitResult {
+    sealed interface SimpleTrxFailure : Failure {
         fun toErrorMessage(): String
 
         fun toErrorStacktrace(): String
@@ -45,4 +45,6 @@ sealed interface SubmitResult {
             override fun toErrorStacktrace(): String = error.stackTraceToString()
         }
     }
+
+    sealed interface Failure : SubmitResult
 }

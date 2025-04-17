@@ -46,7 +46,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.R.drawable
 import co.electriccoin.zcash.ui.design.component.AlertDialogState
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
@@ -78,7 +77,6 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 @Composable
 fun ChooseServerView(
     state: ChooseServerState?,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
     onBack: () -> Unit,
 ) {
     if (state == null) {
@@ -91,7 +89,6 @@ fun ChooseServerView(
         topBar = {
             ChooseServerTopAppBar(
                 onBack = onBack,
-                subTitleState = topAppBarSubTitleState,
             )
         },
         bottomBar = {
@@ -208,17 +205,10 @@ fun ChooseServerBottomBar(saveButtonState: ButtonState) {
 
 @Composable
 private fun ChooseServerTopAppBar(
-    onBack: () -> Unit,
-    subTitleState: TopAppBarSubTitleState
+    onBack: () -> Unit
 ) {
     ZashiSmallTopAppBar(
         title = stringResource(id = R.string.choose_server_title),
-        subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         modifier = Modifier.testTag(CHOOSE_SERVER_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -535,7 +525,6 @@ private fun ChooseServerPreview(
                 dialogState = dialogState
             ),
         onBack = {},
-        topAppBarSubTitleState = TopAppBarSubTitleState.None,
     )
 }
 

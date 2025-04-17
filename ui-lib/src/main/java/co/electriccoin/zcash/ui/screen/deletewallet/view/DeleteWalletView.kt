@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
@@ -43,7 +42,6 @@ private fun ExportPrivateDataPreview() =
             snackbarHostState = SnackbarHostState(),
             onBack = {},
             onConfirm = {},
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 
@@ -52,13 +50,11 @@ fun DeleteWallet(
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
     onConfirm: () -> Unit,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     Scaffold(
         topBar = {
             DeleteWalletDataTopAppBar(
                 onBack = onBack,
-                subTitleState = topAppBarSubTitleState,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -76,17 +72,10 @@ fun DeleteWallet(
 
 @Composable
 private fun DeleteWalletDataTopAppBar(
-    onBack: () -> Unit,
-    subTitleState: TopAppBarSubTitleState
+    onBack: () -> Unit
 ) {
     ZashiSmallTopAppBar(
         title = stringResource(R.string.delete_wallet_title),
-        subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         navigationAction = {
             ZashiTopAppBarBackNavigation(
                 onBack = onBack

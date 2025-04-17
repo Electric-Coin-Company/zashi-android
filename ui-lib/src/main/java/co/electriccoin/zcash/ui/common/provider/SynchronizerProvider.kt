@@ -53,7 +53,7 @@ class SynchronizerProviderImpl(
             }.flowOn(Dispatchers.IO)
             .stateIn(
                 scope = scope,
-                started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
+                started = SharingStarted.Lazily,
                 initialValue = null
             )
 

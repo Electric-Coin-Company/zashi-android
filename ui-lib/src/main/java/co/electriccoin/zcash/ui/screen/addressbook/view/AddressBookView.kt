@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
@@ -67,14 +66,12 @@ import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
 
 @Composable
 fun AddressBookView(
-    state: AddressBookState,
-    topAppBarSubTitleState: TopAppBarSubTitleState
+    state: AddressBookState
 ) {
     BlankBgScaffold(
         topBar = {
             AddressBookTopAppBar(
                 onBack = state.onBack,
-                subTitleState = topAppBarSubTitleState,
                 state = state
             )
         }
@@ -322,17 +319,10 @@ private fun AddContactButton(
 @Composable
 private fun AddressBookTopAppBar(
     onBack: () -> Unit,
-    subTitleState: TopAppBarSubTitleState,
     state: AddressBookState,
 ) {
     ZashiSmallTopAppBar(
         title = state.title.getValue(),
-        subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         modifier = Modifier.testTag(AddressBookTag.TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -382,7 +372,6 @@ private fun AddressBookDataPreview() {
                         ),
                     title = stringRes("Address book")
                 ),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 }
@@ -447,7 +436,6 @@ private fun SelectRecipientDataPreview() {
                         ),
                     title = stringRes("Select Recipient")
                 ),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 }
@@ -472,7 +460,6 @@ private fun LoadingPreview() {
                         ),
                     title = stringRes("Select Recipient")
                 ),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 }
@@ -497,7 +484,6 @@ private fun EmptyAddressBookPreview() {
                         ),
                     title = stringRes("Address Book")
                 ),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 }
@@ -535,7 +521,6 @@ private fun EmptySelectRecipientPreview() {
                         ),
                     title = stringRes("Select Recipient")
                 ),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 }

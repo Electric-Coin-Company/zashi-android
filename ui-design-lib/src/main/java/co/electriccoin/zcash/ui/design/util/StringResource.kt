@@ -57,7 +57,14 @@ sealed interface StringResource {
         val address: String,
         val abbreviated: Boolean
     ) : StringResource
+
+    operator fun plus(other: StringResource): StringResource = CompositeStringResource(listOf(this, other))
+
+    operator fun plus(other: String): StringResource = CompositeStringResource(listOf(this, stringRes(other)))
 }
+
+@Immutable
+private data class CompositeStringResource(val resources: List<StringResource>): StringResource
 
 @Stable
 fun stringRes(
@@ -109,18 +116,14 @@ fun StringResource.getValue(
     convertYearMonth: (YearMonth) -> String = StringResourceDefaults::convertYearMonth,
     convertAddress: (StringResource.ByAddress) -> String = StringResourceDefaults::convertAddress,
     convertTransactionId: (StringResource.ByTransactionId) -> String = StringResourceDefaults::convertTransactionId
-) = when (this) {
-    is StringResource.ByResource -> {
-        val context = LocalContext.current
-        context.getString(resource, *args.normalize(context).toTypedArray())
-    }
-    is StringResource.ByString -> value
-    is StringResource.ByZatoshi -> convertZatoshi(zatoshi)
-    is StringResource.ByDateTime -> convertDateTime(this)
-    is StringResource.ByYearMonth -> convertYearMonth(yearMonth)
-    is StringResource.ByAddress -> convertAddress(this)
-    is StringResource.ByTransactionId -> convertTransactionId(this)
-}
+): String = getString(
+    context = LocalContext.current,
+    convertZatoshi = convertZatoshi,
+    convertDateTime = convertDateTime,
+    convertYearMonth = convertYearMonth,
+    convertAddress = convertAddress,
+    convertTransactionId = convertTransactionId
+)
 
 @Suppress("SpreadOperator")
 fun StringResource.getString(
@@ -130,7 +133,7 @@ fun StringResource.getString(
     convertYearMonth: (YearMonth) -> String = StringResourceDefaults::convertYearMonth,
     convertAddress: (StringResource.ByAddress) -> String = StringResourceDefaults::convertAddress,
     convertTransactionId: (StringResource.ByTransactionId) -> String = StringResourceDefaults::convertTransactionId
-) = when (this) {
+): String = when (this) {
     is StringResource.ByResource -> context.getString(resource, *args.normalize(context).toTypedArray())
     is StringResource.ByString -> value
     is StringResource.ByZatoshi -> convertZatoshi(zatoshi)
@@ -138,6 +141,16 @@ fun StringResource.getString(
     is StringResource.ByYearMonth -> convertYearMonth(yearMonth)
     is StringResource.ByAddress -> convertAddress(this)
     is StringResource.ByTransactionId -> convertTransactionId(this)
+    is CompositeStringResource -> this.resources.joinToString(separator = "") {
+        it.getString(
+            context = context,
+            convertZatoshi = convertZatoshi,
+            convertDateTime = convertDateTime,
+            convertYearMonth = convertYearMonth,
+            convertAddress = convertAddress,
+            convertTransactionId = convertTransactionId,
+        )
+    }
 }
 
 private fun List<Any>.normalize(context: Context): List<Any> =

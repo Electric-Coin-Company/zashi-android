@@ -24,7 +24,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -37,13 +36,10 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.seconds
 
 interface AccountDataSource {
-    val onAccountChanged: Flow<Unit>
-
     val allAccounts: StateFlow<List<WalletAccount>?>
 
     val selectedAccount: Flow<WalletAccount?>
@@ -73,8 +69,6 @@ class AccountDataSourceImpl(
     private val context: Context,
 ) : AccountDataSource {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-
-    override val onAccountChanged = MutableSharedFlow<Unit>()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val internalAccounts: Flow<List<InternalAccountWithBalances>?> =
@@ -224,15 +218,7 @@ class AccountDataSourceImpl(
 
     override suspend fun selectAccount(account: Account) {
         withContext(Dispatchers.IO) {
-            val current = selectedAccountUUIDProvider.getUUID()
-
             selectedAccountUUIDProvider.setUUID(account.accountUuid)
-
-            scope.launch {
-                if (current != account.accountUuid) {
-                    onAccountChanged.emit(Unit)
-                }
-            }
         }
     }
 

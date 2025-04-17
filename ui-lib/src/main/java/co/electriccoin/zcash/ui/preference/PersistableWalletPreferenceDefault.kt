@@ -16,4 +16,8 @@ data class PersistableWalletPreferenceDefault(
         preferenceProvider: PreferenceProvider,
         newValue: PersistableWallet?
     ) = preferenceProvider.putString(key, newValue?.toJson()?.toString())
+
+    suspend fun remove(preferenceProvider: PreferenceProvider) {
+        preferenceProvider.remove(key)
+    }
 }

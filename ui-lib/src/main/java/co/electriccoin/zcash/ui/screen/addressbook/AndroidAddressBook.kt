@@ -6,8 +6,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.di.koinActivityViewModel
-import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.view.AddressBookView
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.SelectRecipientViewModel
@@ -23,9 +21,7 @@ internal fun WrapAddressBook(args: AddressBookArgs) {
 
 @Composable
 private fun WrapAddressBook() {
-    val walletViewModel = koinActivityViewModel<WalletViewModel>()
     val viewModel = koinViewModel<AddressBookViewModel>()
-    val walletState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     BackHandler {
@@ -34,15 +30,12 @@ private fun WrapAddressBook() {
 
     AddressBookView(
         state = state,
-        topAppBarSubTitleState = walletState,
     )
 }
 
 @Composable
 private fun WrapSelectRecipient() {
-    val walletViewModel = koinActivityViewModel<WalletViewModel>()
     val viewModel = koinViewModel<SelectRecipientViewModel>()
-    val walletState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     BackHandler {
@@ -51,7 +44,6 @@ private fun WrapSelectRecipient() {
 
     AddressBookView(
         state = state,
-        topAppBarSubTitleState = walletState,
     )
 }
 

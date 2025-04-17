@@ -140,6 +140,17 @@ class AndroidPreferenceProvider private constructor(
         }.flowOn(dispatcher)
             .map { getString(key) }
 
+    @SuppressLint("ApplySharedPref")
+    override suspend fun remove(key: PreferenceKey) {
+        withContext(dispatcher) {
+            val editor = sharedPreferences.edit()
+
+            editor.remove(key.key)
+
+            editor.commit()
+        }
+    }
+
     companion object {
         suspend fun newStandard(
             context: Context,

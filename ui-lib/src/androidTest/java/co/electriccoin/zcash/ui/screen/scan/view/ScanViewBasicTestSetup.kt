@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.scan.view
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
 import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
@@ -30,7 +29,7 @@ class ScanViewBasicTestSetup(
     @Suppress("TestFunctionName")
     fun DefaultContent() {
         Scan(
-            validationResult = ScanValidationState.VALID,
+            snackbarHostState = SnackbarHostState(),
             onBack = {
                 onBackCount.incrementAndGet()
             },
@@ -40,8 +39,7 @@ class ScanViewBasicTestSetup(
             onScanStateChange = {
                 scanState.set(it)
             },
-            snackbarHostState = SnackbarHostState(),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
+            validationResult = ScanValidationState.VALID,
         )
     }
 

@@ -32,7 +32,7 @@ fun ZashiInfoText(
             contentDescription = null,
             colorFilter = ColorFilter.tint(color)
         )
-        HorizontalSpacer(8.dp)
+        Spacer(8.dp)
         Text(
             modifier =
                 Modifier

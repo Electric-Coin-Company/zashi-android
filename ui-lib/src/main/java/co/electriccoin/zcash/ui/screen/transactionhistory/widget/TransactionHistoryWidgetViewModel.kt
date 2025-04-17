@@ -77,8 +77,7 @@ class TransactionHistoryWidgetViewModel(
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue =
-                TransactionHistoryWidgetState.Loading
+            initialValue = TransactionHistoryWidgetState.Loading
         )
 
     private fun onTransactionClick(transaction: Transaction) {

@@ -23,6 +23,7 @@ import co.electriccoin.zcash.ui.Navigator
 import co.electriccoin.zcash.ui.NavigatorImpl
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
+import co.electriccoin.zcash.ui.common.datasource.MessageAvailabilityDataSource
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -50,25 +51,29 @@ import org.koin.compose.koinInject
 @Composable
 fun MainActivity.OnboardingNavigation() {
     val activity = LocalActivity.current
-    val navigationRouter = koinInject<NavigationRouter>()
     val navController = LocalNavController.current
     val keyboardManager = LocalKeyboardManager.current
-    val flexaViewModel = koinViewModel<FlexaViewModel>()
     val sheetStateManager = LocalSheetStateManager.current
+    val navigationRouter = koinInject<NavigationRouter>()
+    val flexaViewModel = koinViewModel<FlexaViewModel>()
+    val messageAvailabilityDataSource = koinInject<MessageAvailabilityDataSource>()
+
 
     val navigator: Navigator =
         remember(
             navController,
             flexaViewModel,
             keyboardManager,
-            sheetStateManager
+            sheetStateManager,
+            messageAvailabilityDataSource
         ) {
             NavigatorImpl(
                 activity = this@OnboardingNavigation,
                 navController = navController,
                 flexaViewModel = flexaViewModel,
                 keyboardManager = keyboardManager,
-                sheetStateManager = sheetStateManager
+                sheetStateManager = sheetStateManager,
+                messageAvailabilityDataSource = messageAvailabilityDataSource
             )
         }
 
@@ -129,10 +134,10 @@ fun MainActivity.OnboardingNavigation() {
             AndroidRestoreBDHeight(it.toRoute())
         }
         composable<RestoreBDDate> {
-            AndroidRestoreBDDate()
+            AndroidRestoreBDDate(it.toRoute())
         }
         composable<RestoreBDEstimation> {
-            AndroidRestoreBDEstimation()
+            AndroidRestoreBDEstimation(it.toRoute())
         }
         dialog<SeedInfo>(
             dialogProperties =

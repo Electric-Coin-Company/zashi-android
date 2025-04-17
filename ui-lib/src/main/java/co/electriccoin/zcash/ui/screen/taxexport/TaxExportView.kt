@@ -15,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
@@ -29,15 +28,11 @@ import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
-fun TaxExportView(
-    state: TaxExportState,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
-) {
+fun TaxExportView(state: TaxExportState) {
     Scaffold(
         topBar = {
             TaxExportAppBar(
                 state = state,
-                subTitleState = topAppBarSubTitleState,
             )
         },
     ) { paddingValues ->
@@ -53,18 +48,9 @@ fun TaxExportView(
 }
 
 @Composable
-private fun TaxExportAppBar(
-    state: TaxExportState,
-    subTitleState: TopAppBarSubTitleState
-) {
+private fun TaxExportAppBar(state: TaxExportState) {
     ZashiSmallTopAppBar(
         title = stringResource(R.string.tax_export_title),
-        subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = state.onBack)
         },
@@ -120,6 +106,5 @@ private fun ExportPrivateDataPreview() =
                             stringResource(R.string.zashi_wallet_name)
                         )
                 ),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }

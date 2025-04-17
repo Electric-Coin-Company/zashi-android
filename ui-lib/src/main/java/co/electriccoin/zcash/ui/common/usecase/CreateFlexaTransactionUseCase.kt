@@ -13,6 +13,7 @@ import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
@@ -25,7 +26,7 @@ import com.flexa.spend.buildSpend
 class CreateFlexaTransactionUseCase(
     private val getSynchronizer: GetSynchronizerUseCase,
     private val getZashiAccount: GetZashiAccountUseCase,
-    private val getSpendingKey: GetZashiSpendingKeyUseCase,
+    private val zashiSpendingKeyDataSource: ZashiSpendingKeyDataSource,
     private val biometricRepository: BiometricRepository,
     private val context: Context,
 ) {
@@ -42,7 +43,10 @@ class CreateFlexaTransactionUseCase(
                 )
         }.onSuccess { proposal ->
             Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
-            val result = submitTransactions(proposal = proposal, spendingKey = getSpendingKey())
+            val result = submitTransactions(
+                proposal = proposal,
+                spendingKey = zashiSpendingKeyDataSource.getZashiSpendingKey()
+            )
             when (val output = result.first) {
                 is SubmitResult.Success -> {
                     Twig.debug { "Transaction successful $result" }

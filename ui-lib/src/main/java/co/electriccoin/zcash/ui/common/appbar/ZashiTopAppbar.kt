@@ -26,7 +26,6 @@ fun ZashiTopAppbar(
 ) {
     ZashiSmallTopAppBar(
         title = title?.getValue(),
-        subtitle = state?.subtitle?.getValue(),
         navigationAction = {
             ZashiTopAppBarBackNavigation(
                 onBack = onBack,

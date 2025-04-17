@@ -205,7 +205,7 @@ private fun Preview() =
             state =
                 RestoreBDHeightState(
                     onBack = {},
-                    dialogButton = IconButtonState(R.drawable.ic_restore_dialog) {},
+                    dialogButton = IconButtonState(R.drawable.ic_help) {},
                     blockHeight = TextFieldState(stringRes("")) {},
                     estimate = ButtonState(stringRes("Estimate")) {},
                     restore = ButtonState(stringRes("Restore")) {}

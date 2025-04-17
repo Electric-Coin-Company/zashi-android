@@ -14,7 +14,6 @@ import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
@@ -34,13 +33,10 @@ internal fun WrapExportPrivateData(
 
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
 
-    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
-
     WrapExportPrivateData(
         goBack = goBack,
         onShare = onConfirm,
         synchronizer = synchronizer,
-        topAppBarSubTitleState = walletState,
     )
 }
 
@@ -49,7 +45,6 @@ internal fun WrapExportPrivateData(
     goBack: () -> Unit,
     onShare: () -> Unit,
     synchronizer: Synchronizer?,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     val activity = LocalActivity.current
 
@@ -85,7 +80,6 @@ internal fun WrapExportPrivateData(
                     }
                 }
             },
-            topAppBarSubTitleState = topAppBarSubTitleState,
         )
     }
 }

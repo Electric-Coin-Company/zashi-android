@@ -133,7 +133,7 @@ private fun Preview() =
             state =
                 RestoreBDEstimationState(
                     restore = ButtonState(stringRes("Estimate")) {},
-                    dialogButton = IconButtonState(R.drawable.ic_restore_dialog) {},
+                    dialogButton = IconButtonState(R.drawable.ic_help) {},
                     onBack = {},
                     text = stringRes("123456"),
                     copy = ButtonState(stringRes("Copy"), icon = R.drawable.ic_copy) {}

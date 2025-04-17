@@ -15,10 +15,10 @@ import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
+import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
-import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
@@ -49,7 +49,7 @@ import kotlinx.coroutines.launch
 class RequestViewModel(
     private val addressTypeOrdinal: Int,
     private val application: Application,
-    walletViewModel: WalletViewModel,
+    exchangeRateRepository: ExchangeRateRepository,
     getZcashCurrency: GetZcashCurrencyProvider,
     getMonetarySeparators: GetMonetarySeparatorProvider,
     shareImageBitmap: ShareImageUseCase,
@@ -80,7 +80,7 @@ class RequestViewModel(
         combine(
             request,
             stage,
-            walletViewModel.exchangeRateUsd,
+            exchangeRateRepository.state,
             observeSelectedWalletAccount.require()
         ) { request, currentStage, exchangeRateUsd, account ->
             val walletAddress =

@@ -74,7 +74,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.TopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -111,7 +110,6 @@ fun ScanKeystoneView(
     onScan: (String) -> Unit,
     onOpenSettings: () -> Unit,
     onScanStateChange: (ScanScreenState) -> Unit,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
     validationResult: ScanValidationState,
     state: ScanKeystoneState,
 ) = ZcashTheme(forceDarkMode = true) {
@@ -179,7 +177,6 @@ fun ScanKeystoneView(
             ScanTopAppBar(
                 onBack = onBack,
                 showBack = scanState != ScanScreenState.Scanning,
-                subTitleState = topAppBarSubTitleState,
             )
         }
     }
@@ -272,16 +269,9 @@ fun ScanBottomItems(
 @Composable
 private fun ScanTopAppBar(
     onBack: () -> Unit,
-    showBack: Boolean,
-    subTitleState: TopAppBarSubTitleState
+    showBack: Boolean
 ) {
     SmallTopAppBar(
-        subTitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         navigationAction = {
             if (showBack) {
                 TopAppBarBackNavigation(
@@ -768,7 +758,6 @@ private fun ScanPreview() =
                 onScan = {},
                 onOpenSettings = {},
                 onScanStateChange = {},
-                topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 validationResult = ScanValidationState.INVALID,
                 state =
                     ScanKeystoneState(
@@ -793,7 +782,6 @@ private fun ScanProgressPreview() =
                 onScan = {},
                 onOpenSettings = {},
                 onScanStateChange = {},
-                topAppBarSubTitleState = TopAppBarSubTitleState.None,
                 validationResult = ScanValidationState.INVALID,
                 state =
                     ScanKeystoneState(

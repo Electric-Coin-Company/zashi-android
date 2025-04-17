@@ -26,7 +26,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ZashiCard
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
@@ -49,12 +48,11 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun Integrations(
-    state: IntegrationsState,
-    topAppBarSubTitleState: TopAppBarSubTitleState
+    state: IntegrationsState
 ) {
     BlankBgScaffold(
         topBar = {
-            IntegrationsTopAppBar(onBack = state.onBack, subTitleState = topAppBarSubTitleState)
+            IntegrationsTopAppBar(onBack = state.onBack)
         }
     ) { paddingValues ->
         Column(
@@ -148,17 +146,10 @@ private fun DisabledInfo(it: StringResource) {
 
 @Composable
 private fun IntegrationsTopAppBar(
-    onBack: () -> Unit,
-    subTitleState: TopAppBarSubTitleState
+    onBack: () -> Unit
 ) {
     ZashiSmallTopAppBar(
         title = stringResource(id = R.string.integrations_title),
-        subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         modifier = Modifier.testTag(SettingsTag.SETTINGS_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -198,6 +189,5 @@ private fun IntegrationSettings() =
                             ),
                         ),
                 ),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }

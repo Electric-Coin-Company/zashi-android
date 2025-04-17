@@ -145,7 +145,7 @@ internal object Indigo {
     val `950` = Color(0xFF1F235B)
 }
 
-object Purple {
+internal object Purple {
     val `25` = Color(0xFFFAFAFF)
     val `50` = Color(0xFFF4F3FF)
     val `100` = Color(0xFFEBE9FE)

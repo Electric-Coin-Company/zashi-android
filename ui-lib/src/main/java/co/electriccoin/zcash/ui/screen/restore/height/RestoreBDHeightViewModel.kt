@@ -54,7 +54,7 @@ class RestoreBDHeightViewModel(
             onBack = ::onBack,
             dialogButton =
                 IconButtonState(
-                    icon = co.electriccoin.zcash.ui.design.R.drawable.ic_info,
+                    icon = R.drawable.ic_help,
                     onClick = ::onInfoButtonClick,
                 ),
             restore =
@@ -74,7 +74,7 @@ class RestoreBDHeightViewModel(
     }
 
     private fun onEstimateClick() {
-        navigationRouter.forward(RestoreBDDate)
+        navigationRouter.forward(RestoreBDDate(seed = restoreBDHeight.seed))
     }
 
     private fun onRestoreClick() {

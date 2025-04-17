@@ -15,7 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
@@ -37,12 +36,11 @@ import co.electriccoin.zcash.ui.screen.contact.model.ContactState
 
 @Composable
 fun ContactView(
-    state: ContactState,
-    topAppBarSubTitleState: TopAppBarSubTitleState
+    state: ContactState
 ) {
     BlankBgScaffold(
         topBar = {
-            ContactTopAppBar(onBack = state.onBack, subTitleState = topAppBarSubTitleState, state = state)
+            ContactTopAppBar(onBack = state.onBack, state = state)
         }
     ) { paddingValues ->
         if (state.isLoading) {
@@ -129,17 +127,10 @@ private fun ContactViewInternal(
 @Composable
 private fun ContactTopAppBar(
     onBack: () -> Unit,
-    subTitleState: TopAppBarSubTitleState,
     state: ContactState
 ) {
     ZashiSmallTopAppBar(
         title = state.title.getValue(),
-        subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         modifier = Modifier.testTag(ContactTag.TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -169,7 +160,6 @@ private fun DataPreview() {
                             text = stringRes("Negative"),
                         )
                 ),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 }
@@ -195,7 +185,6 @@ private fun LoadingPreview() {
                             text = stringRes("Add New Contact"),
                         )
                 ),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 }

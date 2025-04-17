@@ -19,6 +19,7 @@ import co.electriccoin.zcash.spackle.StrictModeCompat
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.repository.FlexaRepository
+import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepository
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -31,6 +32,7 @@ class ZcashApplication : CoroutineApplication() {
     private val flexaRepository by inject<FlexaRepository>()
     private val applicationStateProvider: ApplicationStateProvider by inject()
     private val getAvailableCrashReporters: CrashReportersProvider by inject()
+    private val homeMessageCacheRepository: HomeMessageCacheRepository by inject()
 
     override fun onCreate() {
         super.onCreate()
@@ -68,6 +70,7 @@ class ZcashApplication : CoroutineApplication() {
         configureAnalytics()
 
         flexaRepository.init()
+        homeMessageCacheRepository.init()
     }
 
     private fun configureLogging() {

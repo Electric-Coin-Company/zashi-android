@@ -56,8 +56,7 @@ data class Text(
     val textError: Color,
     val textLink: Color,
     val textLight: Color,
-    val textLightSupport: Color,
-    val textOpposite: Color
+    val textLightSupport: Color
 )
 
 @Immutable

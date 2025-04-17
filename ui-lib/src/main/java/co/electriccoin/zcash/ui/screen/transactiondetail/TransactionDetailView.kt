@@ -14,12 +14,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiMainTopAppBarState
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.GradientBgScaffold
 import co.electriccoin.zcash.ui.design.component.IconButtonState
@@ -52,7 +50,6 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailI
 @Composable
 fun TransactionDetailView(
     state: TransactionDetailState,
-    appBarState: TopAppBarSubTitleState,
     mainAppBarState: ZashiMainTopAppBarState?,
 ) {
     GradientBgScaffold(
@@ -61,9 +58,8 @@ fun TransactionDetailView(
         topBar = {
             TransactionDetailTopAppBar(
                 onBack = state.onBack,
-                appBarState = appBarState,
-                mainAppBarState = mainAppBarState,
                 state = state,
+                mainAppBarState = mainAppBarState,
             )
         }
     ) { paddingValues ->
@@ -208,17 +204,10 @@ fun getHeaderIconState(info: TransactionDetailInfoState): TransactionDetailIconH
 @Composable
 private fun TransactionDetailTopAppBar(
     onBack: () -> Unit,
-    appBarState: TopAppBarSubTitleState,
     state: TransactionDetailState,
     mainAppBarState: ZashiMainTopAppBarState?,
 ) {
     ZashiSmallTopAppBar(
-        subtitle =
-            when (appBarState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
         },
@@ -243,7 +232,6 @@ private fun TransactionDetailTopAppBar(
 private fun SendShieldPreview() =
     ZcashTheme {
         TransactionDetailView(
-            appBarState = TopAppBarSubTitleState.None,
             state =
                 TransactionDetailState(
                     onBack = {},
@@ -266,7 +254,6 @@ private fun SendShieldPreview() =
 private fun SendTransparentPreview() =
     ZcashTheme {
         TransactionDetailView(
-            appBarState = TopAppBarSubTitleState.None,
             state =
                 TransactionDetailState(
                     onBack = {},
@@ -289,7 +276,6 @@ private fun SendTransparentPreview() =
 private fun ReceiveShieldPreview() =
     ZcashTheme {
         TransactionDetailView(
-            appBarState = TopAppBarSubTitleState.None,
             state =
                 TransactionDetailState(
                     onBack = {},
@@ -312,7 +298,6 @@ private fun ReceiveShieldPreview() =
 private fun ReceiveTransparentPreview() =
     ZcashTheme {
         TransactionDetailView(
-            appBarState = TopAppBarSubTitleState.None,
             state =
                 TransactionDetailState(
                     onBack = {},
@@ -335,7 +320,6 @@ private fun ReceiveTransparentPreview() =
 private fun ShieldingPreview() =
     ZcashTheme {
         TransactionDetailView(
-            appBarState = TopAppBarSubTitleState.None,
             state =
                 TransactionDetailState(
                     onBack = {},

@@ -11,7 +11,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.deletewallet.view.DeleteWallet
 import kotlinx.coroutines.launch
@@ -22,15 +21,11 @@ internal fun MainActivity.WrapDeleteWallet(
     onConfirm: () -> Unit,
 ) {
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
-
-    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
-
     WrapDeleteWallet(
         activity = this,
         goBack = goBack,
-        topAppBarSubTitleState = walletState,
-        walletViewModel = walletViewModel,
-        onConfirm = onConfirm
+        onConfirm = onConfirm,
+        walletViewModel = walletViewModel
     )
 }
 
@@ -39,7 +34,6 @@ internal fun WrapDeleteWallet(
     activity: Activity,
     goBack: () -> Unit,
     onConfirm: () -> Unit,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
     walletViewModel: WalletViewModel,
 ) {
     val scope = rememberCoroutineScope()
@@ -69,6 +63,5 @@ internal fun WrapDeleteWallet(
                 }
             )
         },
-        topAppBarSubTitleState = topAppBarSubTitleState,
     )
 }

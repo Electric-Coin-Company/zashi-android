@@ -6,14 +6,15 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
-fun AndroidRestoreBDDate() {
-    val vm = koinViewModel<RestoreBDDateViewModel>()
+fun AndroidRestoreBDDate(args: RestoreBDDate) {
+    val vm = koinViewModel<RestoreBDDateViewModel> { parametersOf(args) }
     val state by vm.state.collectAsStateWithLifecycle()
-    RestoreBDDateView(state)
-    BackHandler { state.onBack() }
+    BackHandler(enabled = state != null) { state?.onBack?.invoke() }
+    state?.let { RestoreBDDateView(it) }
 }
 
 @Serializable
-data object RestoreBDDate
+data class RestoreBDDate(val seed: String)

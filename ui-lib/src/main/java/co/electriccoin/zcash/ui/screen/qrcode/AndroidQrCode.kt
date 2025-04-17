@@ -8,9 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
 import co.electriccoin.zcash.ui.screen.qrcode.view.QrCodeView
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
@@ -20,10 +18,6 @@ import org.koin.core.parameter.parametersOf
 @Composable
 internal fun WrapQrCode(addressType: Int) {
     val context = LocalContext.current
-
-    val walletViewModel = koinActivityViewModel<WalletViewModel>()
-    val walletState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
-
     val qrCodeViewModel = koinViewModel<QrCodeViewModel> { parametersOf(addressType) }
     val qrCodeState by qrCodeViewModel.state.collectAsStateWithLifecycle()
 
@@ -48,7 +42,6 @@ internal fun WrapQrCode(addressType: Int) {
 
     QrCodeView(
         state = qrCodeState,
-        topAppBarSubTitleState = walletState,
         snackbarHostState = snackbarHostState
     )
 }

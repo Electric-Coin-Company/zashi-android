@@ -34,7 +34,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
@@ -56,13 +55,11 @@ import co.electriccoin.zcash.ui.screen.feedback.model.FeedbackState
 @Composable
 fun FeedbackView(
     state: FeedbackState,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     Scaffold(
         topBar = {
             SupportTopAppBar(
                 state = state,
-                subTitleState = topAppBarSubTitleState,
             )
         },
     ) { paddingValues ->
@@ -75,16 +72,9 @@ fun FeedbackView(
 
 @Composable
 private fun SupportTopAppBar(
-    state: FeedbackState,
-    subTitleState: TopAppBarSubTitleState
+    state: FeedbackState
 ) {
     ZashiSmallTopAppBar(
-        subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         title = stringResource(id = R.string.support_header),
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = state.onBack)
@@ -258,7 +248,6 @@ private fun Preview() =
                                 onSelected = {}
                             )
                     ),
-                topAppBarSubTitleState = TopAppBarSubTitleState.None,
             )
         }
     }

@@ -66,6 +66,10 @@ fun ZashiCheckboxListItem(
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.SemiBold,
                         )
+
+                    ImageResource.Loading -> {
+                        // do nothing
+                    }
                 }
             }
         },

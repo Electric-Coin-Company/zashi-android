@@ -22,6 +22,6 @@ data class NullableBooleanPreferenceDefault(
         preferenceProvider: PreferenceProvider,
         newValue: Boolean?
     ) {
-        preferenceProvider.putString(key, newValue.toString())
+        preferenceProvider.putString(key, newValue?.toString())
     }
 }
