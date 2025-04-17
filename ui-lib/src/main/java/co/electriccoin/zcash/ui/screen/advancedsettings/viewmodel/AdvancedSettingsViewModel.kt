@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
@@ -46,7 +47,7 @@ class AdvancedSettingsViewModel(
         AdvancedSettingsState(
             onBack = ::onBack,
             items =
-                listOfNotNull(
+                mutableStateListOf(
                     ZashiListItemState(
                         title = stringRes(R.string.advanced_settings_recovery),
                         icon = R.drawable.ic_advanced_settings_recovery,
@@ -80,14 +81,14 @@ class AdvancedSettingsViewModel(
                             R.drawable.ic_advanced_settings_currency_conversion,
                         onClick = ::onCurrencyConversionClick
                     ),
-                ).also {
+                ).apply {
                     if (versionInfo.distributionDimension == DistributionDimension.STORE) {
-                        ZashiListItemState(
+                        add(ZashiListItemState(
                             title = stringRes(R.string.advanced_settings_crash_reporting),
                             icon =
                                 R.drawable.ic_advanced_settings_crash_reporting,
                             onClick = ::onCrashReportingClick
-                        )
+                        ))
                     }
                 }.toImmutableList(),
             deleteButton =
