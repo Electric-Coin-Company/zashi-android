@@ -67,6 +67,7 @@ import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
 import co.electriccoin.zcash.ui.screen.contact.WrapAddContact
 import co.electriccoin.zcash.ui.screen.contact.WrapUpdateContact
+import co.electriccoin.zcash.ui.screen.crashreporting.AndroidCrashReportingOptIn
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
 import co.electriccoin.zcash.ui.screen.disconnected.WrapDisconnected
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.AndroidExchangeRateOptIn
@@ -298,7 +299,7 @@ internal fun MainActivity.Navigation() {
             AndroidSettingsExchangeRateOptIn()
         }
         composable(CRASH_REPORTING_OPT_IN) {
-            AndroidSettingsExchangeRateOptIn()
+            AndroidCrashReportingOptIn()
         }
         composable<ScanKeystoneSignInRequest> {
             WrapScanKeystoneSignInRequest()
