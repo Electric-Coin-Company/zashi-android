@@ -20,12 +20,6 @@
     <string name="disconnected_label_new">Disconnected…</string>
     <string name="unable_to_open_play_store">Unable to launch Google Play Store app…</string>
 
-    <string name="server_disconnected_dialog_title">Heads up</string>
-    <string name="server_disconnected_dialog_message">Your current server is experiencing difficulties. Check your
-        device connection, and/or navigate to Advanced Settings to choose a different server.</string>
-    <string name="server_disconnected_dialog_switch_btn">Switch Server</string>
-    <string name="server_disconnected_dialog_ignore_btn">Ignore</string>
-
     <string name="general_etc">…</string>
 
     <string name="general_ok">OK</string>

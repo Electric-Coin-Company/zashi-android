@@ -18,7 +18,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
-import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
@@ -35,8 +34,6 @@ import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.datasource.MessageAvailabilityDataSource
-import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
-import co.electriccoin.zcash.ui.common.provider.isInForeground
 import co.electriccoin.zcash.ui.design.LocalKeyboardManager
 import co.electriccoin.zcash.ui.design.LocalSheetStateManager
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
@@ -61,7 +58,6 @@ import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
 import co.electriccoin.zcash.ui.screen.contact.WrapAddContact
 import co.electriccoin.zcash.ui.screen.contact.WrapUpdateContact
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
-import co.electriccoin.zcash.ui.screen.disconnected.WrapDisconnected
 import co.electriccoin.zcash.ui.screen.error.AndroidErrorBottomSheet
 import co.electriccoin.zcash.ui.screen.error.AndroidErrorDialog
 import co.electriccoin.zcash.ui.screen.error.ErrorBottomSheet
@@ -74,19 +70,23 @@ import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.home.AndroidHome
-import co.electriccoin.zcash.ui.screen.home.backup.AndroidWalletBackupInfo
-import co.electriccoin.zcash.ui.screen.home.disconnected.AndroidWalletDisconnectedInfo
-import co.electriccoin.zcash.ui.screen.home.restoring.AndroidWalletRestoringInfo
-import co.electriccoin.zcash.ui.screen.home.syncing.AndroidWalletSyncingInfo
-import co.electriccoin.zcash.ui.screen.home.updating.AndroidWalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.Home
+import co.electriccoin.zcash.ui.screen.home.backup.AndroidWalletBackupDetail
+import co.electriccoin.zcash.ui.screen.home.backup.AndroidWalletBackupInfo
 import co.electriccoin.zcash.ui.screen.home.backup.SeedBackupInfo
+import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetail
+import co.electriccoin.zcash.ui.screen.home.disconnected.AndroidWalletDisconnectedInfo
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedInfo
+import co.electriccoin.zcash.ui.screen.home.reporting.AndroidCrashReportOptIn
+import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptIn
+import co.electriccoin.zcash.ui.screen.home.restoring.AndroidWalletRestoringInfo
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfo
-import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
-import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.AndroidShieldFundsInfo
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfo
+import co.electriccoin.zcash.ui.screen.home.syncing.AndroidWalletSyncingInfo
+import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
+import co.electriccoin.zcash.ui.screen.home.updating.AndroidWalletUpdatingInfo
+import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.integrations.AndroidDialogIntegrations
 import co.electriccoin.zcash.ui.screen.integrations.AndroidIntegrations
 import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
@@ -106,12 +106,6 @@ import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneSignInRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystonePCZTRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystoneSignInRequest
-import co.electriccoin.zcash.ui.screen.walletbackup.AndroidWalletBackup
-import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackup
-import co.electriccoin.zcash.ui.screen.home.backup.AndroidWalletBackupDetail
-import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetail
-import co.electriccoin.zcash.ui.screen.home.reporting.AndroidCrashReportOptIn
-import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptIn
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.AndroidSelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.send.Send
@@ -131,12 +125,13 @@ import co.electriccoin.zcash.ui.screen.transactionnote.AndroidTransactionNote
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
 import co.electriccoin.zcash.ui.screen.transactionprogress.AndroidTransactionProgress
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgress
+import co.electriccoin.zcash.ui.screen.walletbackup.AndroidWalletBackup
+import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackup
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
 import co.electriccoin.zcash.ui.screen.whatsnew.WrapWhatsNew
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -517,39 +512,11 @@ internal fun MainActivity.Navigation() {
  */
 @Composable
 private fun MainActivity.NavigationHome(navController: NavHostController) {
-    val applicationStateProvider: ApplicationStateProvider by inject()
-
     AndroidHome()
-
     val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle()
-
-    val sdkStatus =
-        walletViewModel.currentWalletSnapshot
-            .collectAsStateWithLifecycle()
-            .value
-            ?.status
-
-    val currentAppState = applicationStateProvider.state.collectAsStateWithLifecycle().value
-
     if (isEnoughSpace == false) {
         Twig.info { "Not enough free space" }
         navController.navigateJustOnce(NOT_ENOUGH_SPACE)
-    } else if (Synchronizer.Status.DISCONNECTED == sdkStatus) {
-        Twig.info { "Disconnected state received from Synchronizer" }
-
-        if (!currentAppState.isInForeground()) {
-            Twig.info { "Disconnected state received but omitted as the app is not in foreground" }
-            return
-        }
-
-        WrapDisconnected(
-            goChooseServer = {
-                navController.navigateJustOnce(CHOOSE_SERVER)
-            },
-            onIgnore = {
-                // Keep the current navigation location
-            }
-        )
     }
 }
 

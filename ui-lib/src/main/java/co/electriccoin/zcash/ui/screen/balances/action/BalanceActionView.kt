@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
@@ -118,16 +119,18 @@ private fun BalanceActionRow(state: BalanceActionRowState) {
             }
         }
         Spacer(8.dp)
-        Text(
-            text = state.value.getValue(),
-            color = if (state.icon is ImageResource.Loading) {
-                ZashiColors.Text.textTertiary
-            } else {
-                ZashiColors.Text.textPrimary
-            },
-            style = ZashiTypography.textSm,
-            fontWeight = FontWeight.Medium
-        )
+        SelectionContainer {
+            Text(
+                text = state.value.getValue(),
+                color = if (state.icon is ImageResource.Loading) {
+                    ZashiColors.Text.textTertiary
+                } else {
+                    ZashiColors.Text.textPrimary
+                },
+                style = ZashiTypography.textSm,
+                fontWeight = FontWeight.Medium
+            )
+        }
     }
 }
 
@@ -201,7 +204,7 @@ private fun Preview() = ZcashTheme {
                 ),
                 BalanceActionRowState(
                     title = stringRes("Row"),
-                    icon = imageRes(R.drawable.ic_home_buy),
+                    icon = imageRes(R.drawable.ic_balance_shield),
                     value = stringRes("Value")
                 )
             ),
