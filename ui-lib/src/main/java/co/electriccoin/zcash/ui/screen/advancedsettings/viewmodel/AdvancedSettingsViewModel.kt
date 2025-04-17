@@ -83,12 +83,14 @@ class AdvancedSettingsViewModel(
                     ),
                 ).apply {
                     if (versionInfo.distributionDimension == DistributionDimension.STORE) {
-                        add(ZashiListItemState(
-                            title = stringRes(R.string.advanced_settings_crash_reporting),
-                            icon =
-                                R.drawable.ic_advanced_settings_crash_reporting,
-                            onClick = ::onCrashReportingClick
-                        ))
+                        add(
+                            ZashiListItemState(
+                                title = stringRes(R.string.advanced_settings_crash_reporting),
+                                icon =
+                                    R.drawable.ic_advanced_settings_crash_reporting,
+                                onClick = ::onCrashReportingClick
+                            )
+                        )
                     }
                 }.toImmutableList(),
             deleteButton =
