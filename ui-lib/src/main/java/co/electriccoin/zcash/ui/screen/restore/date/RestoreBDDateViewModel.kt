@@ -18,12 +18,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.toKotlinInstant
 import java.time.YearMonth
 import java.time.ZoneId
@@ -34,7 +32,7 @@ class RestoreBDDateViewModel(
     private val context: Context,
 ) : ViewModel() {
 
-    private val selection = MutableStateFlow<YearMonth>(YearMonth.now())
+    private val selection = MutableStateFlow<YearMonth>(YearMonth.of(2018, 10))
 
     val state: StateFlow<RestoreBDDateState?> = selection
         .map {

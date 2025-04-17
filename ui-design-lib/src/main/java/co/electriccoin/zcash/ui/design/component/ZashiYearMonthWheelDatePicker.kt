@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.design.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,10 +8,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -33,6 +37,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
+import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import kotlinx.coroutines.launch
@@ -71,20 +77,31 @@ fun ZashiYearMonthWheelDatePicker(
     }
 
     Box(modifier = modifier) {
-        Column(
+        Row (
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .align(Alignment.Center),
         ) {
-            ZashiHorizontalDivider(color = ZashiColors.Surfaces.bgQuaternary, thickness = .5.dp)
-            VerticalSpacer(31.dp)
-            ZashiHorizontalDivider(color = ZashiColors.Surfaces.bgQuaternary, thickness = .5.dp)
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(34.dp)
+                    .padding(top = 1.dp)
+                    .background(ZashiColors.Surfaces.bgSecondary, RoundedCornerShape(6.dp))
+            )
+            Spacer(36.dp)
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(34.dp)
+                    .padding(top = 1.dp)
+                    .background(ZashiColors.Surfaces.bgSecondary, RoundedCornerShape(6.dp))
+            )
         }
         Row(
             horizontalArrangement = Arrangement.Center
         ) {
-            Spacer(Modifier.weight(.5f))
             WheelLazyList(
                 modifier = Modifier.weight(1f),
                 selection = state.selectedMonthIndex,
@@ -107,8 +124,9 @@ fun ZashiYearMonthWheelDatePicker(
                     )
                 }
             )
+            Spacer(36.dp)
             WheelLazyList(
-                modifier = Modifier.weight(.75f),
+                modifier = Modifier.weight(1f),
                 selection = state.selectedYearIndex,
                 itemCount = state.years.size,
                 itemVerticalOffset = verticallyVisibleItems,
@@ -139,7 +157,6 @@ fun ZashiYearMonthWheelDatePicker(
                     )
                 }
             )
-            Spacer(Modifier.weight(.5f))
         }
     }
 }
@@ -379,4 +396,15 @@ private data class InternalState(
 ) {
     val selectedYearIndex = years.map { it.value }.indexOf(selectedDate.year)
     val selectedMonthIndex = maxOf(months.indexOf(selectedDate.month), 0)
+}
+
+@PreviewScreens
+@Composable
+private fun Preview() = ZcashTheme {
+    BlankSurface {
+        ZashiYearMonthWheelDatePicker(
+            selection = YearMonth.now(),
+            onSelectionChange = {}
+        )
+    }
 }
