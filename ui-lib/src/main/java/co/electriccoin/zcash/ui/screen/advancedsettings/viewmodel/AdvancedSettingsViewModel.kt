@@ -6,7 +6,9 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.DistributionDimension
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -25,7 +27,10 @@ class AdvancedSettingsViewModel(
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     private val navigationRouter: NavigationRouter,
     private val navigateToTaxExport: NavigateToTaxExportUseCase,
+    private val getVersionInfo: GetVersionInfoProvider,
 ) : ViewModel() {
+    private val versionInfo by lazy { getVersionInfo() }
+
     val state: StateFlow<AdvancedSettingsState> =
         getWalletRestoringState
             .observe()
@@ -75,13 +80,16 @@ class AdvancedSettingsViewModel(
                             R.drawable.ic_advanced_settings_currency_conversion,
                         onClick = ::onCurrencyConversionClick
                     ),
-                    ZashiListItemState(
-                        title = stringRes(R.string.advanced_settings_crash_reporting),
-                        icon =
-                            R.drawable.ic_advanced_settings_crash_reporting,
-                        onClick = ::onCrashReportingClick
-                    )
-                ).toImmutableList(),
+                ).also {
+                    if (versionInfo.distributionDimension == DistributionDimension.STORE) {
+                        ZashiListItemState(
+                            title = stringRes(R.string.advanced_settings_crash_reporting),
+                            icon =
+                                R.drawable.ic_advanced_settings_crash_reporting,
+                            onClick = ::onCrashReportingClick
+                        )
+                    }
+                }.toImmutableList(),
             deleteButton =
                 ButtonState(
                     text = stringRes(R.string.advanced_settings_delete_button),
