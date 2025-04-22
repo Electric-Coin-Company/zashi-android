@@ -10,6 +10,7 @@ import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
+import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
@@ -20,6 +21,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetInMemoryDataUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetSharedPrefsDataUseCase
+import co.electriccoin.zcash.ui.preference.PersistableWalletPreferenceDefault
 import com.flexa.core.Flexa
 import com.flexa.identity.buildIdentity
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +47,8 @@ class WalletViewModel(
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
     private val walletRestoringStateProvider: WalletRestoringStateProvider,
+    private val persistableWalletPreferenceDefault: PersistableWalletPreferenceDefault,
+    private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
 ) : AndroidViewModel(application) {
     val synchronizer = walletRepository.synchronizer
 
@@ -90,6 +94,7 @@ class WalletViewModel(
             viewModelScope.launch {
                 val prefReset = resetSharedPrefsData()
                 resetInMemoryData()
+                persistableWalletPreferenceDefault.remove(encryptedPreferenceProvider())
                 trySend(prefReset)
             }
 

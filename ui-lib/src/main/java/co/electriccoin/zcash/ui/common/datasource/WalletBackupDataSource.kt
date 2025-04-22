@@ -17,7 +17,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
 interface WalletBackupDataSource {
-    fun observe(): Flow<WalletBackupAvailability>
+    fun observe(): Flow<WalletBackupData>
 
     suspend fun onUserSavedWalletBackup()
 
@@ -30,7 +30,7 @@ class WalletBackupDataSourceImpl(
     private val walletBackupRemindMeTimestampStorageProvider: WalletBackupRemindMeTimestampStorageProvider
 ) : WalletBackupDataSource {
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun observe(): Flow<WalletBackupAvailability> =
+    override fun observe(): Flow<WalletBackupData> =
         combine(
             walletBackupFlagStorageProvider.observe(),
             walletBackupRemindMeCountStorageProvider.observe(),
@@ -39,8 +39,8 @@ class WalletBackupDataSourceImpl(
             Triple(isBackedUp, count, timestamp)
         }.flatMapLatest { (isBackedUp, count, timestamp) ->
             when {
-                isBackedUp -> flowOf(WalletBackupAvailability.Unavailable)
-                timestamp == null -> flowOf(WalletBackupAvailability.Available(WalletBackupLockoutDuration.TWO_DAYS))
+                isBackedUp -> flowOf(WalletBackupData.Unavailable)
+                timestamp == null -> flowOf(WalletBackupData.Available(WalletBackupLockoutDuration.TWO_DAYS))
                 count == 1 ->
                     calculateNext(
                         lastTimestamp = timestamp,
@@ -77,28 +77,28 @@ class WalletBackupDataSourceImpl(
         lastTimestamp: Instant,
         lastLockoutDuration: WalletBackupLockoutDuration,
         nextLockoutDuration: WalletBackupLockoutDuration
-    ): Flow<WalletBackupAvailability> {
+    ): Flow<WalletBackupData> {
         val nextAvailableTimestamp = lastTimestamp.plusMillis(lastLockoutDuration.duration.inWholeMilliseconds)
         val now = Instant.now()
         return if (nextAvailableTimestamp > now) {
             flow {
                 val remaining = nextAvailableTimestamp.toEpochMilli() - now.toEpochMilli()
-                emit(WalletBackupAvailability.Unavailable)
+                emit(WalletBackupData.Unavailable)
                 delay(remaining)
-                emit(WalletBackupAvailability.Available(nextLockoutDuration))
+                emit(WalletBackupData.Available(nextLockoutDuration))
             }
         } else {
-            flowOf(WalletBackupAvailability.Available(nextLockoutDuration))
+            flowOf(WalletBackupData.Available(nextLockoutDuration))
         }
     }
 }
 
-sealed interface WalletBackupAvailability {
+sealed interface WalletBackupData {
     data class Available(
         val lockoutDuration: WalletBackupLockoutDuration
-    ) : WalletBackupAvailability
+    ) : WalletBackupData
 
-    data object Unavailable : WalletBackupAvailability
+    data object Unavailable : WalletBackupData
 }
 
 enum class WalletBackupLockoutDuration(

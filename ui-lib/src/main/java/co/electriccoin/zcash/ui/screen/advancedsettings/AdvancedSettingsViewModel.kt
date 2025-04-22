@@ -29,7 +29,7 @@ class AdvancedSettingsViewModel(
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     private val navigationRouter: NavigationRouter,
     private val navigateToTaxExport: NavigateToTaxExportUseCase,
-    private val navigateToSeedRecovery: NavigateToSeedRecoveryUseCase,
+    private val navigateToWalletBackup: NavigateToWalletBackupUseCase,
     private val getVersionInfo: GetVersionInfoProvider,
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
@@ -117,6 +117,6 @@ class AdvancedSettingsViewModel(
 
     private fun onSeedRecoveryClick() =
         viewModelScope.launch {
-            navigateToSeedRecovery(isOpenedFromSeedBackupInfo = false)
+            navigateToWalletBackup(isOpenedFromSeedBackupInfo = false)
         }
 }

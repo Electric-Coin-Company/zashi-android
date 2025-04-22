@@ -52,7 +52,8 @@ class BalanceWidgetViewModel(
                     account == null -> null
                     account.totalBalance == account.spendableShieldedBalance -> null
                     account.totalBalance > account.spendableShieldedBalance &&
-                        account.totalTransparentBalance > Zatoshi(0) && !account.isShieldingAvailable ->
+                        account.totalTransparentBalance > Zatoshi(0) &&
+                        !account.isShieldingAvailable ->
                         null
 
                     account.totalBalance > account.spendableShieldedBalance &&

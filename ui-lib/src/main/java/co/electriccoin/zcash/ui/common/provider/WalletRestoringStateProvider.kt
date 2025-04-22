@@ -2,10 +2,10 @@ package co.electriccoin.zcash.ui.common.provider
 
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.api.PreferenceProvider
+import co.electriccoin.zcash.preference.model.entry.IntegerPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.PreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
-import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 
 interface WalletRestoringStateProvider : StorageProvider<WalletRestoringState>
 
@@ -17,7 +17,7 @@ class WalletRestoringStateProviderImpl(
 }
 
 private class WalletRestoringStatePreferenceDefault : PreferenceDefault<WalletRestoringState> {
-    private val internal = StandardPreferenceKeys.WALLET_RESTORING_STATE
+    private val internal = WALLET_RESTORING_STATE
 
     override val key: PreferenceKey = internal.key
 
@@ -31,3 +31,13 @@ private class WalletRestoringStatePreferenceDefault : PreferenceDefault<WalletRe
         )
     }
 }
+
+/**
+ * State defining whether the current block synchronization run is in the restoring state or a subsequent
+ * synchronization state.
+ */
+private val WALLET_RESTORING_STATE =
+    IntegerPreferenceDefault(
+        PreferenceKey("wallet_restoring_state"),
+        WalletRestoringState.RESTORING.toNumber()
+    )

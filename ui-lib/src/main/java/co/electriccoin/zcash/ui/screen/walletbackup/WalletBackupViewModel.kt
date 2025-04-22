@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.datasource.WalletBackupAvailability
+import co.electriccoin.zcash.ui.common.datasource.WalletBackupData
 import co.electriccoin.zcash.ui.common.datasource.WalletBackupDataSource
 import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.OnUserSavedWalletBackupUseCase
@@ -37,7 +37,7 @@ class WalletBackupViewModel(
     private val lockoutDuration =
         walletBackupDataSource
             .observe()
-            .filterIsInstance<WalletBackupAvailability.Available>()
+            .filterIsInstance<WalletBackupData.Available>()
             .take(1)
             .map { it.lockoutDuration }
             .stateIn(

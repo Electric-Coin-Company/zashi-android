@@ -3,11 +3,13 @@ package co.electriccoin.zcash.ui.common.usecase
 import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.MessageAvailabilityDataSource
-import co.electriccoin.zcash.ui.common.datasource.WalletBackupAvailability
+import co.electriccoin.zcash.ui.common.datasource.WalletBackupData
 import co.electriccoin.zcash.ui.common.datasource.WalletBackupDataSource
 import co.electriccoin.zcash.ui.common.datasource.WalletSnapshotDataSource
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageData
@@ -17,15 +19,21 @@ import co.electriccoin.zcash.ui.common.repository.ShieldFundsData
 import co.electriccoin.zcash.ui.common.repository.ShieldFundsRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
@@ -35,20 +43,24 @@ class GetHomeMessageUseCase(
     shieldFundsRepository: ShieldFundsRepository,
     transactionRepository: TransactionRepository,
     walletSnapshotDataSource: WalletSnapshotDataSource,
+    crashReportingStorageProvider: CrashReportingStorageProvider,
+    synchronizerProvider: SynchronizerProvider,
     private val messageAvailabilityDataSource: MessageAvailabilityDataSource,
     private val cache: HomeMessageCacheRepository,
 ) {
+    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+
     private val backupFlow =
         combine(
             transactionRepository.zashiTransactions,
             walletBackupDataSource.observe()
         ) { transactions, backup ->
-            if (backup is WalletBackupAvailability.Available &&
+            if (backup is WalletBackupData.Available &&
                 transactions.orEmpty().any { it is ReceiveTransaction }
             ) {
                 backup
             } else {
-                WalletBackupAvailability.Unavailable
+                WalletBackupData.Unavailable
             }
         }.distinctUntilChanged()
 
@@ -59,10 +71,10 @@ class GetHomeMessageUseCase(
             launch {
                 walletSnapshotDataSource
                     .observe()
-                    .filterNotNull()
                     .collect { walletSnapshot ->
                         val result =
                             when {
+                                walletSnapshot == null -> null
                                 walletSnapshot.synchronizerError != null ->
                                     HomeMessageData.Error(walletSnapshot.synchronizerError)
 
@@ -112,31 +124,66 @@ class GetHomeMessageUseCase(
             }
         }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val isExchangeRateMessageVisible =
+        exchangeRateRepository.state
+            .flatMapLatest {
+                val isVisible = it == ExchangeRateState.OptIn
+
+                synchronizerProvider.synchronizer.map { synchronizer ->
+                    synchronizer != null && isVisible
+                }
+            }.distinctUntilChanged()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val isCrashReportMessageVisible =
+        crashReportingStorageProvider
+            .observe()
+            .flatMapLatest { isVisible ->
+                synchronizerProvider.synchronizer.map { synchronizer ->
+                    synchronizer != null && isVisible == null
+                }
+            }.distinctUntilChanged()
+
     @OptIn(FlowPreview::class)
     private val flow =
         combine(
             runtimeMessage,
             backupFlow,
-            exchangeRateRepository.state.map { it == ExchangeRateState.OptIn }.distinctUntilChanged(),
-            shieldFundsRepository.availability
-        ) { runtimeMessage, backup, isCCAvailable, shieldFunds ->
-            createMessage(runtimeMessage, backup, shieldFunds, isCCAvailable)
+            isExchangeRateMessageVisible,
+            shieldFundsRepository.availability,
+            isCrashReportMessageVisible
+        ) { runtimeMessage, backup, isCCAvailable, shieldFunds, isCrashReportingEnabled ->
+            createMessage(
+                runtimeMessage = runtimeMessage,
+                backup = backup,
+                shieldFunds = shieldFunds,
+                isCurrencyConversionEnabled = isCCAvailable,
+                isCrashReportingVisible = isCrashReportingEnabled
+            )
         }.distinctUntilChanged()
             .debounce(.5.seconds)
             .map { message -> prioritizeMessage(message) }
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.Eagerly,
+                initialValue = null
+            )
 
     fun observe(): Flow<HomeMessageData?> = flow
 
     private fun createMessage(
         runtimeMessage: RuntimeMessage?,
-        backup: WalletBackupAvailability,
+        backup: WalletBackupData,
         shieldFunds: ShieldFundsData,
-        isCCAvailable: Boolean
+        isCurrencyConversionEnabled: Boolean,
+        isCrashReportingVisible: Boolean
     ) = when {
         runtimeMessage != null -> runtimeMessage
-        backup is WalletBackupAvailability.Available -> HomeMessageData.Backup
+        backup is WalletBackupData.Available -> HomeMessageData.Backup
         shieldFunds is ShieldFundsData.Available -> HomeMessageData.ShieldFunds(shieldFunds.amount)
-        isCCAvailable -> HomeMessageData.EnableCurrencyConversion
+        isCurrencyConversionEnabled -> HomeMessageData.EnableCurrencyConversion
+        isCrashReportingVisible -> HomeMessageData.CrashReport
         else -> null
     }
 
