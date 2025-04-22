@@ -7,5 +7,4 @@ interface WalletBackupFlagStorageProvider : BooleanStorageProvider
 
 class WalletBackupFlagStorageProviderImpl(
     override val preferenceHolder: EncryptedPreferenceProvider
-) : BaseBooleanStorageProvider(key = PreferenceKey("wallet_backup_flag")),
-    WalletBackupFlagStorageProvider
+) : BaseBooleanStorageProvider(key = PreferenceKey("wallet_backup_flag")), WalletBackupFlagStorageProvider

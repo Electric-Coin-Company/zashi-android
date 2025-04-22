@@ -12,5 +12,7 @@ import co.electriccoin.zcash.ui.common.viewmodel.SynchronizerError
 data class WalletSnapshot(
     val status: Synchronizer.Status,
     val progress: PercentDecimal,
-    val synchronizerError: SynchronizerError?
+    val synchronizerError: SynchronizerError?,
+    val isSpendable: Boolean,
+    val restoringState: WalletRestoringState
 )

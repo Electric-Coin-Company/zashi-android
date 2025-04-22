@@ -26,30 +26,32 @@ import co.electriccoin.zcash.ui.common.provider.WalletBackupRemindMeCountStorage
 import co.electriccoin.zcash.ui.common.provider.WalletBackupRemindMeCountStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.WalletBackupRemindMeTimestampStorageProvider
 import co.electriccoin.zcash.ui.common.provider.WalletBackupRemindMeTimestampStorageProviderImpl
-import org.koin.core.module.dsl.factoryOf
+import co.electriccoin.zcash.ui.common.provider.WalletRestoringStateProvider
+import co.electriccoin.zcash.ui.common.provider.WalletRestoringStateProviderImpl
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val providerModule =
     module {
-        factoryOf(::GetDefaultServersProvider)
-        factoryOf(::GetVersionInfoProvider)
-        factoryOf(::GetZcashCurrencyProvider)
-        factoryOf(::GetMonetarySeparatorProvider)
-        factoryOf(::SelectedAccountUUIDProviderImpl) bind SelectedAccountUUIDProvider::class
+        singleOf(::GetDefaultServersProvider)
+        singleOf(::GetVersionInfoProvider)
+        singleOf(::GetZcashCurrencyProvider)
+        singleOf(::GetMonetarySeparatorProvider)
+        singleOf(::SelectedAccountUUIDProviderImpl) bind SelectedAccountUUIDProvider::class
         singleOf(::PersistableWalletProviderImpl) bind PersistableWalletProvider::class
         singleOf(::SynchronizerProviderImpl) bind SynchronizerProvider::class
         singleOf(::ApplicationStateProviderImpl) bind ApplicationStateProvider::class
-        factoryOf(::RestoreTimestampStorageProviderImpl) bind RestoreTimestampStorageProvider::class
-        factoryOf(::ShieldFundsRemindMeCountStorageProviderImpl) bind
+        singleOf(::RestoreTimestampStorageProviderImpl) bind RestoreTimestampStorageProvider::class
+        singleOf(::ShieldFundsRemindMeCountStorageProviderImpl) bind
             ShieldFundsRemindMeCountStorageProvider::class
-        factoryOf(::ShieldFundsRemindMeTimestampStorageProviderImpl) bind
+        singleOf(::ShieldFundsRemindMeTimestampStorageProviderImpl) bind
             ShieldFundsRemindMeTimestampStorageProvider::class
-        factoryOf(::WalletBackupRemindMeCountStorageProviderImpl) bind
+        singleOf(::WalletBackupRemindMeCountStorageProviderImpl) bind
             WalletBackupRemindMeCountStorageProvider::class
-        factoryOf(::WalletBackupRemindMeTimestampStorageProviderImpl) bind
+        singleOf(::WalletBackupRemindMeTimestampStorageProviderImpl) bind
             WalletBackupRemindMeTimestampStorageProvider::class
-        factoryOf(::WalletBackupFlagStorageProviderImpl) bind WalletBackupFlagStorageProvider::class
-        factoryOf(::WalletBackupConsentStorageProviderImpl) bind WalletBackupConsentStorageProvider::class
+        singleOf(::WalletBackupFlagStorageProviderImpl) bind WalletBackupFlagStorageProvider::class
+        singleOf(::WalletBackupConsentStorageProviderImpl) bind WalletBackupConsentStorageProvider::class
+        singleOf(::WalletRestoringStateProviderImpl) bind WalletRestoringStateProvider::class
     }

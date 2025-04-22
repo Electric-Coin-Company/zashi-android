@@ -12,6 +12,8 @@ import co.electriccoin.zcash.ui.common.datasource.ShieldFundsDataSource
 import co.electriccoin.zcash.ui.common.datasource.ShieldFundsDataSourceImpl
 import co.electriccoin.zcash.ui.common.datasource.WalletBackupDataSource
 import co.electriccoin.zcash.ui.common.datasource.WalletBackupDataSourceImpl
+import co.electriccoin.zcash.ui.common.datasource.WalletSnapshotDataSource
+import co.electriccoin.zcash.ui.common.datasource.WalletSnapshotDataSourceImpl
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSourceImpl
 import org.koin.core.module.dsl.singleOf
@@ -27,4 +29,5 @@ val dataSourceModule =
         singleOf(::WalletBackupDataSourceImpl) bind WalletBackupDataSource::class
         singleOf(::ShieldFundsDataSourceImpl) bind ShieldFundsDataSource::class
         singleOf(::MessageAvailabilityDataSourceImpl) bind MessageAvailabilityDataSource::class
+        singleOf(::WalletSnapshotDataSourceImpl) bind WalletSnapshotDataSource::class
     }

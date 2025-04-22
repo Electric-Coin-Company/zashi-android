@@ -17,6 +17,7 @@ import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
+import co.electriccoin.zcash.ui.common.datasource.WalletSnapshotDataSource
 import co.electriccoin.zcash.ui.common.model.FastestServersState
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletAccount
@@ -25,6 +26,7 @@ import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
+import co.electriccoin.zcash.ui.common.provider.WalletRestoringStateProvider
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.SynchronizerError
 import co.electriccoin.zcash.ui.preference.PersistableWalletPreferenceDefault
@@ -108,6 +110,8 @@ class WalletRepositoryImpl(
     private val persistableWalletPreference: PersistableWalletPreferenceDefault,
     private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
+    private val walletRestoringStateProvider: WalletRestoringStateProvider,
+    private val walletSnapshotDataSource: WalletSnapshotDataSource,
 ) : WalletRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -187,33 +191,14 @@ class WalletRepositoryImpl(
             initialValue = FastestServersState(servers = emptyList(), isLoading = true)
         )
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override val currentWalletSnapshot: StateFlow<WalletSnapshot?> =
-        synchronizer.flatMapLatest { synchronizer ->
-            if (synchronizer == null) {
-                flowOf(null)
-            } else {
-                toWalletSnapshot(synchronizer)
-            }
-        }.stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
+    override val currentWalletSnapshot: StateFlow<WalletSnapshot?> = walletSnapshotDataSource.observe()
 
     /**
      * A flow of the wallet block synchronization state.
      */
-    override val walletRestoringState: StateFlow<WalletRestoringState> =
-        flow {
-            emitAll(
-                StandardPreferenceKeys.WALLET_RESTORING_STATE
-                    .observe(standardPreferenceProvider())
-                    .map { persistedNumber ->
-                        WalletRestoringState.fromNumber(persistedNumber)
-                    }
-            )
-        }.stateIn(
+    override val walletRestoringState: StateFlow<WalletRestoringState> = walletRestoringStateProvider
+        .observe()
+        .stateIn(
             scope = scope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = WalletRestoringState.NONE
@@ -304,62 +289,10 @@ class WalletRepositoryImpl(
                         walletInitMode = WalletInitMode.RestoreWallet
                     )
                 persistWalletInternal(restoredWallet)
-                StandardPreferenceKeys.WALLET_RESTORING_STATE.putValue(
-                    standardPreferenceProvider(),
-                    WalletRestoringState.RESTORING.toNumber()
-                )
+                walletRestoringStateProvider.store(WalletRestoringState.RESTORING)
                 restoreTimestampDataSource.getOrCreate()
                 persistOnboardingStateInternal(OnboardingState.READY)
             }
         }
     }
-}
-
-private fun Synchronizer.toCommonError(): Flow<SynchronizerError?> =
-    callbackFlow {
-        // just for initial default value emit
-        trySend(null)
-
-        onCriticalErrorHandler = {
-            Twig.error { "WALLET - Error Critical: $it" }
-            trySend(SynchronizerError.Critical(it))
-            false
-        }
-        onProcessorErrorHandler = {
-            Twig.error { "WALLET - Error Processor: $it" }
-            trySend(SynchronizerError.Processor(it))
-            false
-        }
-        onSubmissionErrorHandler = {
-            Twig.error { "WALLET - Error Submission: $it" }
-            trySend(SynchronizerError.Submission(it))
-            false
-        }
-        onSetupErrorHandler = {
-            Twig.error { "WALLET - Error Setup: $it" }
-            trySend(SynchronizerError.Setup(it))
-            false
-        }
-        onChainErrorHandler = { x, y ->
-            Twig.error { "WALLET - Error Chain: $x, $y" }
-            trySend(SynchronizerError.Chain(x, y))
-        }
-
-        awaitClose {
-            // nothing to close here
-        }
-    }
-
-// No good way around needing magic numbers for the indices
-@Suppress("MagicNumber")
-private fun toWalletSnapshot(synchronizer: Synchronizer) = combine(
-    synchronizer.status, // 0
-    synchronizer.progress, // 1
-    synchronizer.toCommonError() // 2
-) { flows ->
-    WalletSnapshot(
-        status = flows[0] as Synchronizer.Status,
-        progress = flows[1] as PercentDecimal,
-        synchronizerError = flows[2] as SynchronizerError?
-    )
 }
