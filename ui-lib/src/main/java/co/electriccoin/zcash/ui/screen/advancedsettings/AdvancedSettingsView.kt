@@ -152,6 +152,11 @@ private fun AdvancedSettingsPreview() =
                                 title = stringRes(R.string.advanced_settings_currency_conversion),
                                 icon = R.drawable.ic_advanced_settings_currency_conversion,
                                 onClick = {}
+                            ),
+                            ZashiListItemState(
+                                title = stringRes(R.string.advanced_settings_crash_reporting),
+                                icon = R.drawable.ic_advanced_settings_crash_reporting,
+                                onClick = {}
                             )
                         ),
                     deleteButton =

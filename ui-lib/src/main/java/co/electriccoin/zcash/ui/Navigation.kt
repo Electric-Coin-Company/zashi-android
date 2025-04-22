@@ -24,6 +24,7 @@ import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
+import co.electriccoin.zcash.ui.NavigationTargets.CRASH_REPORTING_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
 import co.electriccoin.zcash.ui.NavigationTargets.NOT_ENOUGH_SPACE
@@ -57,6 +58,7 @@ import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
 import co.electriccoin.zcash.ui.screen.contact.WrapAddContact
 import co.electriccoin.zcash.ui.screen.contact.WrapUpdateContact
+import co.electriccoin.zcash.ui.screen.crashreporting.AndroidCrashReportingOptIn
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
 import co.electriccoin.zcash.ui.screen.error.AndroidErrorBottomSheet
 import co.electriccoin.zcash.ui.screen.error.AndroidErrorDialog
@@ -272,6 +274,9 @@ internal fun MainActivity.Navigation() {
         }
         composable<ExchangeRateSettings> {
             AndroidExchangeRateSettings()
+        }
+        composable(CRASH_REPORTING_OPT_IN) {
+            AndroidCrashReportingOptIn()
         }
         composable<ScanKeystoneSignInRequest> {
             WrapScanKeystoneSignInRequest()
@@ -607,6 +612,7 @@ object NavigationTargets {
     const val SETTINGS = "settings"
     const val SUPPORT = "support"
     const val WHATS_NEW = "whats_new"
+    const val CRASH_REPORTING_OPT_IN = "crash_reporting_opt_in"
 }
 
 object NavigationArgs {

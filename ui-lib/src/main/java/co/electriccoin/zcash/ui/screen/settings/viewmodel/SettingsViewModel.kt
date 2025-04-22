@@ -52,7 +52,6 @@ class SettingsViewModel(
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
-    private val isAnalyticsEnabled = booleanStateFlow(StandardPreferenceKeys.IS_ANALYTICS_ENABLED)
     private val isBackgroundSyncEnabled = booleanStateFlow(StandardPreferenceKeys.IS_BACKGROUND_SYNC_ENABLED)
     private val isKeepScreenOnWhileSyncingEnabled =
         booleanStateFlow(StandardPreferenceKeys.IS_KEEP_SCREEN_ON_DURING_SYNC)
@@ -61,12 +60,10 @@ class SettingsViewModel(
     private val troubleshootingState =
         combine(
             getConfiguration.observe(),
-            isAnalyticsEnabled,
             isBackgroundSyncEnabled,
             isKeepScreenOnWhileSyncingEnabled,
-        ) { configuration, isAnalyticsEnabled, isBackgroundSyncEnabled, isKeepScreenOnWhileSyncingEnabled ->
+        ) { configuration, isBackgroundSyncEnabled, isKeepScreenOnWhileSyncingEnabled ->
             if (configuration != null &&
-                isAnalyticsEnabled != null &&
                 isBackgroundSyncEnabled != null &&
                 isKeepScreenOnWhileSyncingEnabled != null &&
                 versionInfo.isDebuggable &&
@@ -81,10 +78,6 @@ class SettingsViewModel(
                         TroubleshootingItemState(
                             isKeepScreenOnWhileSyncingEnabled
                         ) { setKeepScreenOnWhileSyncing(isKeepScreenOnWhileSyncingEnabled.not()) },
-                    analytics =
-                        TroubleshootingItemState(
-                            isAnalyticsEnabled
-                        ) { setAnalyticsEnabled(isAnalyticsEnabled.not()) },
                     rescan =
                         TroubleshootingItemState(
                             ConfigurationEntries.IS_RESCAN_ENABLED.getValue(configuration),
@@ -180,10 +173,6 @@ class SettingsViewModel(
             ).toImmutableList(),
         version = stringRes(R.string.settings_version, versionInfo.versionName)
     )
-
-    private fun setAnalyticsEnabled(enabled: Boolean) {
-        setBooleanPreference(StandardPreferenceKeys.IS_ANALYTICS_ENABLED, enabled)
-    }
 
     private fun setBackgroundSyncEnabled(enabled: Boolean) {
         setBooleanPreference(StandardPreferenceKeys.IS_BACKGROUND_SYNC_ENABLED, enabled)

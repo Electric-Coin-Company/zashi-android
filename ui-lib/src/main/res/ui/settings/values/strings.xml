@@ -13,6 +13,4 @@
     <string name="settings_troubleshooting_rescan">Rescan blockchain</string>
     <string name="settings_troubleshooting_enable_background_sync">Background sync</string>
     <string name="settings_troubleshooting_enable_keep_screen_on">Keep screen on during sync</string>
-    <string name="settings_troubleshooting_enable_analytics">Report crashes</string>
-
 </resources>

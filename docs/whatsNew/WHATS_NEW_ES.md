@@ -12,6 +12,9 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+### Añadido
+- The new Crash Reporting Opt In/Out screen has been added
+
 ## [1.5.2 (929)] - 2025-04-09
 
 ### Corregido
