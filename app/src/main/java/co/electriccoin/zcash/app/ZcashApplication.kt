@@ -20,6 +20,7 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.repository.FlexaRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepository
+import co.electriccoin.zcash.ui.common.repository.WalletSnapshotRepository
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -33,6 +34,7 @@ class ZcashApplication : CoroutineApplication() {
     private val applicationStateProvider: ApplicationStateProvider by inject()
     private val getAvailableCrashReporters: CrashReportersProvider by inject()
     private val homeMessageCacheRepository: HomeMessageCacheRepository by inject()
+    private val walletSnapshotRepository: WalletSnapshotRepository by inject()
 
     override fun onCreate() {
         super.onCreate()
@@ -71,6 +73,7 @@ class ZcashApplication : CoroutineApplication() {
 
         flexaRepository.init()
         homeMessageCacheRepository.init()
+        walletSnapshotRepository.init()
     }
 
     private fun configureLogging() {

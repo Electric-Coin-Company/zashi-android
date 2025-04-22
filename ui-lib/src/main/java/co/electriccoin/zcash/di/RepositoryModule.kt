@@ -20,6 +20,8 @@ import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.common.repository.WalletRepositoryImpl
+import co.electriccoin.zcash.ui.common.repository.WalletSnapshotRepository
+import co.electriccoin.zcash.ui.common.repository.WalletSnapshotRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepositoryImpl
 import org.koin.core.module.dsl.singleOf
@@ -39,4 +41,5 @@ val repositoryModule =
         singleOf(::ZashiProposalRepositoryImpl) bind ZashiProposalRepository::class
         singleOf(::ShieldFundsRepositoryImpl) bind ShieldFundsRepository::class
         singleOf(::HomeMessageCacheRepositoryImpl) bind HomeMessageCacheRepository::class
+        singleOf(::WalletSnapshotRepositoryImpl) bind WalletSnapshotRepository::class
     }

@@ -14,10 +14,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 
 interface MessageAvailabilityDataSource {
-    val canShowMessage: Boolean
-    fun observe(): Flow<Boolean>
+    val canShowMessage: Flow<Boolean>
+    val canShowShieldMessage: Flow<Boolean>
     fun onMessageShown()
     fun onThirdPartyUiShown()
+    fun onShieldingInitiated()
 }
 
 class MessageAvailabilityDataSourceImpl(
@@ -30,12 +31,13 @@ class MessageAvailabilityDataSourceImpl(
         MessageAvailabilityData(
             isAppInForeground = true,
             isThirdPartyUiShown = false,
-            hasMessageBeenShown = false
+            hasMessageBeenShown = false,
+            canShowShieldMessage = true
         )
     )
 
-    override val canShowMessage: Boolean
-        get() = state.value.canShowMessage
+    override val canShowMessage: Flow<Boolean> = state.map { it.canShowMessage }.distinctUntilChanged()
+    override val canShowShieldMessage: Flow<Boolean> = state.map { it.canShowShieldMessage }.distinctUntilChanged()
 
     init {
         applicationStateProvider.state
@@ -45,7 +47,8 @@ class MessageAvailabilityDataSourceImpl(
                         it.copy(
                             isAppInForeground = true,
                             hasMessageBeenShown = if (it.isThirdPartyUiShown) it.hasMessageBeenShown else false,
-                            isThirdPartyUiShown = false
+                            isThirdPartyUiShown = false,
+                            canShowShieldMessage = if (it.canShowShieldMessage) true else !it.isThirdPartyUiShown
                         )
                     }
                 } else if (event == Lifecycle.Event.ON_STOP) {
@@ -59,8 +62,6 @@ class MessageAvailabilityDataSourceImpl(
             .launchIn(scope)
     }
 
-    override fun observe(): Flow<Boolean> = state.map { it.canShowMessage }.distinctUntilChanged()
-
     override fun onMessageShown() {
         state.update { it.copy(hasMessageBeenShown = true) }
     }
@@ -68,12 +69,17 @@ class MessageAvailabilityDataSourceImpl(
     override fun onThirdPartyUiShown() {
         state.update { it.copy(isThirdPartyUiShown = true) }
     }
+
+    override fun onShieldingInitiated() {
+        state.update { it.copy(canShowShieldMessage = false) }
+    }
 }
 
 private data class MessageAvailabilityData(
     val isAppInForeground: Boolean,
     val isThirdPartyUiShown: Boolean,
-    val hasMessageBeenShown: Boolean
+    val canShowShieldMessage: Boolean,
+    val hasMessageBeenShown: Boolean,
 ) {
     val canShowMessage = isAppInForeground && !hasMessageBeenShown
 }

@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
+import co.electriccoin.zcash.ui.common.datasource.MessageAvailabilityDataSource
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
@@ -22,11 +23,14 @@ class ShieldFundsUseCase(
     private val navigationRouter: NavigationRouter,
     private val accountDataSource: AccountDataSource,
     private val navigateToError: NavigateToErrorUseCase,
+    private val messageAvailabilityDataSource: MessageAvailabilityDataSource,
 ) {
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
     operator fun invoke(closeCurrentScreen: Boolean) {
         scope.launch {
+            messageAvailabilityDataSource.onShieldingInitiated()
+
             when (accountDataSource.getSelectedAccount()) {
                 is KeystoneAccount -> {
                     createKeystoneShieldProposal()

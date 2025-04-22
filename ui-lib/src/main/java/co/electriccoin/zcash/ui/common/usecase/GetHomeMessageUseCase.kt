@@ -50,9 +50,7 @@ class GetHomeMessageUseCase(
     }.distinctUntilChanged()
 
     private val runtimeMessage = channelFlow {
-
         var firstSyncing: WalletSnapshot? = null
-
         launch {
             walletSnapshotDataSource
                 .observe()

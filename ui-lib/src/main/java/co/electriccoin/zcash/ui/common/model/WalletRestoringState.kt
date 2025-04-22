@@ -13,8 +13,6 @@ enum class WalletRestoringState {
     RESTORING, // Existing wallet syncing
     SYNCING; // Follow-up syncing
 
-    fun isRunningRestoring() = this == NONE || this == RESTORING
-
     fun toNumber() = ordinal
 
     companion object {

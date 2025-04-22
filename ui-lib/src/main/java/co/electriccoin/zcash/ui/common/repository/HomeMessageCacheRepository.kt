@@ -36,7 +36,7 @@ class HomeMessageCacheRepositoryImpl(
 
     override fun init() {
         messageAvailabilityDataSource
-            .observe()
+            .canShowMessage
             .onEach { canShowMessage ->
                 if (canShowMessage) {
                     lastShownMessage = null

@@ -43,10 +43,10 @@ class SynchronizerProviderImpl(
                     } else {
                         emit(null)
                         // Waiting for the synchronizer to be ready, i.e. its database is set/migrated
-                        // synchronizer.status.first {
-                        //     Twig.info { "Current Synchronizer.Status: $it" }
-                        //     it != Synchronizer.Status.INITIALIZING
-                        // }
+                        synchronizer.status.first {
+                            Twig.info { "Current Synchronizer.Status: $it" }
+                            it != Synchronizer.Status.INITIALIZING
+                        }
                         emit(synchronizer)
                     }
                 }
