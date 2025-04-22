@@ -7,4 +7,5 @@ interface RestoreTimestampStorageProvider : TimestampStorageProvider
 
 class RestoreTimestampStorageProviderImpl(
     override val preferenceHolder: EncryptedPreferenceProvider
-) : BaseTimestampStorageProvider(PreferenceKey("restore_timestamp")), RestoreTimestampStorageProvider
+) : BaseTimestampStorageProvider(PreferenceKey("restore_timestamp")),
+    RestoreTimestampStorageProvider

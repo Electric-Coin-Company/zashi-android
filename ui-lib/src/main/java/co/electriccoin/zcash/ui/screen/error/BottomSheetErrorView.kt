@@ -85,18 +85,22 @@ fun BottomSheetContent(state: ErrorState, modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BottomSheetErrorView(
-        state = ErrorState(
-            title = stringRes("Error"),
-            message = stringRes("Something went wrong"),
-            positive = ButtonState(
-                text = stringRes("Positive")
-            ),
-            negative = ButtonState(
-                text = stringRes("Negative")
-            ),
-            onBack = {}
+private fun Preview() =
+    ZcashTheme {
+        BottomSheetErrorView(
+            state =
+                ErrorState(
+                    title = stringRes("Error"),
+                    message = stringRes("Something went wrong"),
+                    positive =
+                        ButtonState(
+                            text = stringRes("Positive")
+                        ),
+                    negative =
+                        ButtonState(
+                            text = stringRes("Negative")
+                        ),
+                    onBack = {}
+                )
         )
-    )
-}
+    }

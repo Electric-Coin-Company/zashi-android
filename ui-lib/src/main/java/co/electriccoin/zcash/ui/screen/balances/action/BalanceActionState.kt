@@ -15,7 +15,7 @@ data class BalanceActionState(
     val shieldButton: BalanceShieldButtonState?,
     val positive: ButtonState,
     override val onBack: () -> Unit,
-): ModalBottomSheetState
+) : ModalBottomSheetState
 
 @Immutable
 data class BalanceActionRowState(

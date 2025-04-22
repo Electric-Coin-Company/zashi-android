@@ -43,10 +43,11 @@ class CreateFlexaTransactionUseCase(
                 )
         }.onSuccess { proposal ->
             Twig.debug { "Transaction proposal successful: ${proposal.toPrettyString()}" }
-            val result = submitTransactions(
-                proposal = proposal,
-                spendingKey = zashiSpendingKeyDataSource.getZashiSpendingKey()
-            )
+            val result =
+                submitTransactions(
+                    proposal = proposal,
+                    spendingKey = zashiSpendingKeyDataSource.getZashiSpendingKey()
+                )
             when (val output = result.first) {
                 is SubmitResult.Success -> {
                     Twig.debug { "Transaction successful $result" }

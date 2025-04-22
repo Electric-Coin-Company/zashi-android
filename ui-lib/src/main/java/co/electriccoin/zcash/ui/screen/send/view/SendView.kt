@@ -75,8 +75,8 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
-import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidget
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
 import co.electriccoin.zcash.ui.screen.send.SendTag
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
@@ -331,7 +331,7 @@ private fun SendForm(
                     recipientAddressState.type is AddressType.Valid &&
                         recipientAddressState.type !is AddressType.Transparent &&
                         recipientAddressState.type !is AddressType.Tex
-                    )
+                )
 
         SendFormAmountTextField(
             amountState = amountState,
@@ -653,9 +653,10 @@ fun SendFormAmountTextField(
                     )
                 },
                 modifier = Modifier.weight(1f),
-                innerModifier = ZashiTextFieldDefaults
-                    .innerModifier
-                    .testTag(SendTag.SEND_AMOUNT_FIELD),
+                innerModifier =
+                    ZashiTextFieldDefaults
+                        .innerModifier
+                        .testTag(SendTag.SEND_AMOUNT_FIELD),
                 error = amountError,
                 placeholder = {
                     Text(

@@ -10,4 +10,4 @@ data class ErrorState(
     val positive: ButtonState,
     val negative: ButtonState,
     override val onBack: () -> Unit
-): ModalBottomSheetState
+) : ModalBottomSheetState

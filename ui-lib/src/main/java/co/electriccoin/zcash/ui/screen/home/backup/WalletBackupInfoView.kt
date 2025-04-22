@@ -42,11 +42,11 @@ fun WalletBackupInfoView(
         state = state
     ) {
         Column(
-            modifier = Modifier
-                .weight(1f, false)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
-
+            modifier =
+                Modifier
+                    .weight(1f, false)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 24.dp)
         ) {
             Image(
                 painter = painterResource(R.drawable.ic_info_backup),
@@ -118,20 +118,23 @@ private fun Preview() =
         WalletBackupInfoView(
             WalletBackupInfoState(
                 onBack = {},
-                secondaryButton = ButtonState(
-                    text = stringRes(R.string.general_remind_me_later),
-                    onClick = {},
-                    isEnabled = false
-                ),
-                primaryButton = ButtonState(
-                    text = stringRes(R.string.general_ok),
-                    onClick = {}
-                ),
-                checkboxState = CheckboxState(
-                    isChecked = false,
-                    onClick = {},
-                    text = stringRes(R.string.home_info_backup_checkbox)
-                )
+                secondaryButton =
+                    ButtonState(
+                        text = stringRes(R.string.general_remind_me_later),
+                        onClick = {},
+                        isEnabled = false
+                    ),
+                primaryButton =
+                    ButtonState(
+                        text = stringRes(R.string.general_ok),
+                        onClick = {}
+                    ),
+                checkboxState =
+                    CheckboxState(
+                        isChecked = false,
+                        onClick = {},
+                        text = stringRes(R.string.home_info_backup_checkbox)
+                    )
             )
         )
     }

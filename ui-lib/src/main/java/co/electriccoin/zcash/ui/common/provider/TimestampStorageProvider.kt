@@ -8,6 +8,7 @@ interface TimestampStorageProvider : NullableStorageProvider<Instant>
 
 abstract class BaseTimestampStorageProvider(
     key: PreferenceKey
-) : BaseNullableStorageProvider<Instant>(), TimestampStorageProvider {
+) : BaseNullableStorageProvider<Instant>(),
+    TimestampStorageProvider {
     override val default = TimestampPreferenceDefault(key)
 }

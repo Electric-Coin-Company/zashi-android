@@ -107,8 +107,7 @@ private fun Container(
                         0f to ZashiLightColors.Utility.Purple.utilityPurple500,
                         1f to ZashiLightColors.Utility.Purple.utilityPurple900,
                     )
-                )
-                .clickable(onClick = onClick)
+                ).clickable(onClick = onClick)
                 .padding(contentPadding),
     ) {
         Row(

@@ -53,16 +53,9 @@ sealed interface WalletAccount : Comparable<WalletAccount> {
     val isShieldedPending: Boolean
         get() = pendingShieldedBalance > Zatoshi(0)
 
+    @Suppress("MagicNumber")
     val isShieldingAvailable: Boolean
         get() = totalTransparentBalance > Zatoshi(100000L)
-
-    val isProcessingZeroSpendableBalance: Boolean
-        get() {
-            if (totalShieldedBalance == Zatoshi(0) && totalTransparentBalance > Zatoshi(0)) {
-                return false
-            }
-            return totalBalance > Zatoshi(0) && totalShieldedBalance == Zatoshi(0)
-        }
 
     fun canSpend(amount: Zatoshi): Boolean = spendableShieldedBalance >= amount
 }

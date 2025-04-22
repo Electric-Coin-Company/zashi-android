@@ -108,11 +108,12 @@ private fun BalanceActionRow(state: BalanceActionRowState) {
         )
         Spacer(1f)
         when (state.icon) {
-            is ImageResource.ByDrawable -> Image(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(state.icon.resource),
-                contentDescription = null
-            )
+            is ImageResource.ByDrawable ->
+                Image(
+                    modifier = Modifier.size(20.dp),
+                    painter = painterResource(state.icon.resource),
+                    contentDescription = null
+                )
             ImageResource.Loading -> LottieProgress(modifier = Modifier.size(20.dp))
             is ImageResource.DisplayString -> {
                 // do nothing
@@ -122,11 +123,12 @@ private fun BalanceActionRow(state: BalanceActionRowState) {
         SelectionContainer {
             Text(
                 text = state.value.getValue(),
-                color = if (state.icon is ImageResource.Loading) {
-                    ZashiColors.Text.textTertiary
-                } else {
-                    ZashiColors.Text.textPrimary
-                },
+                color =
+                    if (state.icon is ImageResource.Loading) {
+                        ZashiColors.Text.textTertiary
+                    } else {
+                        ZashiColors.Text.textPrimary
+                    },
                 style = ZashiTypography.textSm,
                 fontWeight = FontWeight.Medium
             )
@@ -176,9 +178,11 @@ private fun BalanceShieldButton(state: BalanceShieldButtonState) {
             }
             Spacer(1f)
             ZashiButton(
-                state = ButtonState(
-                    text = stringRes(R.string.balance_action_shield),
-                    onClick = state.onShieldClick)
+                state =
+                    ButtonState(
+                        text = stringRes(R.string.balance_action_shield),
+                        onClick = state.onShieldClick
+                    )
             )
         }
     }
@@ -187,31 +191,36 @@ private fun BalanceShieldButton(state: BalanceShieldButtonState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BalanceActionView(
-        state = BalanceActionState(
-            title = stringRes("Title"),
-            message = stringRes("Subtitle"),
-            positive = ButtonState(
-                text = stringRes("Positive")
-            ),
-            onBack = {},
-            rows = listOf(
-                BalanceActionRowState(
-                    title = stringRes("Row"),
-                    icon = loadingImageRes(),
-                    value = stringRes("Value")
-                ),
-                BalanceActionRowState(
-                    title = stringRes("Row"),
-                    icon = imageRes(R.drawable.ic_balance_shield),
-                    value = stringRes("Value")
+private fun Preview() =
+    ZcashTheme {
+        BalanceActionView(
+            state =
+                BalanceActionState(
+                    title = stringRes("Title"),
+                    message = stringRes("Subtitle"),
+                    positive =
+                        ButtonState(
+                            text = stringRes("Positive")
+                        ),
+                    onBack = {},
+                    rows =
+                        listOf(
+                            BalanceActionRowState(
+                                title = stringRes("Row"),
+                                icon = loadingImageRes(),
+                                value = stringRes("Value")
+                            ),
+                            BalanceActionRowState(
+                                title = stringRes("Row"),
+                                icon = imageRes(R.drawable.ic_balance_shield),
+                                value = stringRes("Value")
+                            )
+                        ),
+                    shieldButton =
+                        BalanceShieldButtonState(
+                            amount = Zatoshi(10000),
+                            onShieldClick = {}
+                        )
                 )
-            ),
-            shieldButton = BalanceShieldButtonState(
-                amount = Zatoshi(10000),
-                onShieldClick = {}
-            )
         )
-    )
-}
+    }

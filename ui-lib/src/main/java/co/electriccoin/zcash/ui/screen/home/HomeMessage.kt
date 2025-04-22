@@ -47,10 +47,10 @@ import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportMessage
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportMessageState
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringMessage
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringMessageState
-import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessage
-import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsMessage
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsMessageState
+import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessage
+import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessage
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import kotlinx.coroutines.delay
@@ -243,6 +243,7 @@ private fun <T> animationSpec(delay: Duration? = null): TweenSpec<T> {
     )
 }
 
+@Suppress("MagicNumber")
 private fun <T> elevationAnimationSpec(delay: Duration? = null): TweenSpec<T> {
     val delayMs = delay?.inWholeMilliseconds?.toInt() ?: 0
     return tween(

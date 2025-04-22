@@ -8,14 +8,18 @@ import androidx.compose.runtime.Stable
 sealed interface ImageResource {
     @Immutable
     @JvmInline
-    value class ByDrawable(@DrawableRes val resource: Int) : ImageResource
+    value class ByDrawable(
+        @DrawableRes val resource: Int
+    ) : ImageResource
 
     @JvmInline
     @Immutable
-    value class DisplayString(val value: String) : ImageResource
+    value class DisplayString(
+        val value: String
+    ) : ImageResource
 
     @Immutable
-    data object Loading: ImageResource
+    data object Loading : ImageResource
 }
 
 @Stable

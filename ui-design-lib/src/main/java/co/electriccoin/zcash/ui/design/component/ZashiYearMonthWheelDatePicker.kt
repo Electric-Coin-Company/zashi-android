@@ -1,15 +1,15 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -77,26 +77,28 @@ fun ZashiYearMonthWheelDatePicker(
     }
 
     Box(modifier = modifier) {
-        Row (
+        Row(
             modifier =
                 Modifier
                     .fillMaxWidth()
                     .align(Alignment.Center),
         ) {
             Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(34.dp)
-                    .padding(top = 1.dp)
-                    .background(ZashiColors.Surfaces.bgSecondary, RoundedCornerShape(6.dp))
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .height(34.dp)
+                        .padding(top = 1.dp)
+                        .background(ZashiColors.Surfaces.bgSecondary, RoundedCornerShape(6.dp))
             )
             Spacer(36.dp)
             Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(34.dp)
-                    .padding(top = 1.dp)
-                    .background(ZashiColors.Surfaces.bgSecondary, RoundedCornerShape(6.dp))
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .height(34.dp)
+                        .padding(top = 1.dp)
+                        .background(ZashiColors.Surfaces.bgSecondary, RoundedCornerShape(6.dp))
             )
         }
         Row(
@@ -109,9 +111,10 @@ fun ZashiYearMonthWheelDatePicker(
                 itemVerticalOffset = verticallyVisibleItems,
                 isInfiniteScroll = false,
                 onFocusItem = {
-                    state = state.copy(
-                        selectedDate = state.selectedDate.withMonth(state.months[it].value)
-                    )
+                    state =
+                        state.copy(
+                            selectedDate = state.selectedDate.withMonth(state.months[it].value)
+                        )
                 },
                 itemContent = {
                     Text(
@@ -133,18 +136,20 @@ fun ZashiYearMonthWheelDatePicker(
                 isInfiniteScroll = false,
                 onFocusItem = {
                     val year = state.years[it]
-                    val normalizedSelectedMonth = getSelectedMonthForYear(
-                        year = year,
-                        selectedMonth = state.selectedDate.month,
-                        startYearMonth = startInclusive,
-                        endYearMonth = endInclusive
-                    )
+                    val normalizedSelectedMonth =
+                        getSelectedMonthForYear(
+                            year = year,
+                            selectedMonth = state.selectedDate.month,
+                            startYearMonth = startInclusive,
+                            endYearMonth = endInclusive
+                        )
                     val months = getMonthsForYear(year, startInclusive, endInclusive)
                     val selectedDate = state.selectedDate.withYear(year.value).withMonth(normalizedSelectedMonth.value)
-                    state = state.copy(
-                        selectedDate = selectedDate,
-                        months = months
-                    )
+                    state =
+                        state.copy(
+                            selectedDate = selectedDate,
+                            months = months
+                        )
                 },
                 itemContent = {
                     Text(
@@ -161,8 +166,8 @@ fun ZashiYearMonthWheelDatePicker(
     }
 }
 
-private fun getMonthsForYear(year: Year, startYearMonth: YearMonth, endYearMonth: YearMonth): List<Month> {
-    return when (year.value) {
+private fun getMonthsForYear(year: Year, startYearMonth: YearMonth, endYearMonth: YearMonth): List<Month> =
+    when (year.value) {
         startYearMonth.year -> {
             (startYearMonth.month.value..Month.DECEMBER.value).map { index ->
                 Month.entries.first { it.value == index }
@@ -192,32 +197,32 @@ private fun getMonthsForYear(year: Year, startYearMonth: YearMonth, endYearMonth
             )
         }
     }
-}
 
 private fun getSelectedMonthForYear(
     year: Year,
     selectedMonth: Month,
     startYearMonth: YearMonth,
     endYearMonth: YearMonth
-): Month {
-    return when (year.value) {
+): Month =
+    when (year.value) {
         startYearMonth.year -> {
-            val months = (startYearMonth.month.value..Month.DECEMBER.value).map { index ->
-                Month.entries.first { it.value == index }
-            }
+            val months =
+                (startYearMonth.month.value..Month.DECEMBER.value).map { index ->
+                    Month.entries.first { it.value == index }
+                }
             if (selectedMonth in months) selectedMonth else months.findClosest(selectedMonth)
         }
 
         endYearMonth.year -> {
-            val months = (Month.JANUARY.value..endYearMonth.month.value).map { index ->
-                Month.entries.first { it.value == index }
-            }
+            val months =
+                (Month.JANUARY.value..endYearMonth.month.value).map { index ->
+                    Month.entries.first { it.value == index }
+                }
             if (selectedMonth in months) selectedMonth else months.findClosest(selectedMonth)
         }
 
         else -> selectedMonth
     }
-}
 
 private fun List<Month>.findClosest(target: Month): Month {
     var closestNumber = this[0] // Initialize with the first element
@@ -400,11 +405,12 @@ private data class InternalState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        ZashiYearMonthWheelDatePicker(
-            selection = YearMonth.now(),
-            onSelectionChange = {}
-        )
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiYearMonthWheelDatePicker(
+                selection = YearMonth.now(),
+                onSelectionChange = {}
+            )
+        }
     }
-}

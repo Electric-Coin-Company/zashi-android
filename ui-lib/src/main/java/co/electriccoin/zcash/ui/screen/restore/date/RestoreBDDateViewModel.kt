@@ -31,18 +31,18 @@ class RestoreBDDateViewModel(
     private val navigationRouter: NavigationRouter,
     private val context: Context,
 ) : ViewModel() {
-
+    @Suppress("MagicNumber")
     private val selection = MutableStateFlow<YearMonth>(YearMonth.of(2018, 10))
 
-    val state: StateFlow<RestoreBDDateState?> = selection
-        .map {
-            createState(it)
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
+    val state: StateFlow<RestoreBDDateState?> =
+        selection
+            .map {
+                createState(it)
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
+            )
 
     private fun createState(selection: YearMonth) =
         RestoreBDDateState(
@@ -59,16 +59,19 @@ class RestoreBDDateViewModel(
 
     private fun onEstimateClick() {
         viewModelScope.launch {
-            val instant = selection.value.atDay(1)
-                .atStartOfDay()
-                .atZone(ZoneId.systemDefault())
-                .toInstant()
-                .toKotlinInstant()
-            val bday = SdkSynchronizer.estimateBirthdayHeight(
-                context = context,
-                date = instant,
-                network = ZcashNetwork.fromResources(context)
-            )
+            val instant =
+                selection.value
+                    .atDay(1)
+                    .atStartOfDay()
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()
+                    .toKotlinInstant()
+            val bday =
+                SdkSynchronizer.estimateBirthdayHeight(
+                    context = context,
+                    date = instant,
+                    network = ZcashNetwork.fromResources(context)
+                )
             navigationRouter.forward(RestoreBDEstimation(seed = args.seed, blockHeight = bday.value))
         }
     }

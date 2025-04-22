@@ -33,96 +33,115 @@ class ErrorViewModel(
 
     private fun onBack() = navigationRouter.back()
 
-    private fun createState(args: ErrorArgs): ErrorState = when (args) {
-        is ErrorArgs.SyncError -> createSyncErrorState(args)
-        is ErrorArgs.ShieldingError -> createShieldingErrorState(args)
-        is ErrorArgs.General -> createGeneralErrorState(args)
-        is ErrorArgs.ShieldingGeneralError -> createGeneralShieldingErrorState(args)
-    }
-
-    private fun createSyncErrorState(args: ErrorArgs.SyncError) = ErrorState(
-        title = stringRes(R.string.error_sync_title),
-        message = stringRes(args.synchronizerError.getStackTrace(STACKTRACE_LIMIT).orEmpty()),
-        positive = ButtonState(
-            text = stringRes(R.string.general_ok),
-            onClick = { navigationRouter.back() }
-        ),
-        negative = ButtonState(
-            text = stringRes(R.string.general_report),
-            onClick = { sendReportClick(args) }
-        ),
-        onBack = ::onBack,
-    )
-
-    private fun createShieldingErrorState(args: ErrorArgs.ShieldingError) = ErrorState(
-        title = stringRes(R.string.error_shielding_title),
-        message = when (args.error) {
-            is SubmitResult.MultipleTrxFailure -> stringRes(R.string.error_shielding_message_grpc)
-            is SubmitResult.SimpleTrxFailure -> stringRes(
-                R.string.error_shielding_message,
-                stringRes(args.error.toErrorStacktrace())
-            )
-        },
-        positive = ButtonState(
-            text = stringRes(R.string.general_ok),
-            onClick = { navigationRouter.back() }
-        ),
-        negative = ButtonState(
-            text = stringRes(R.string.general_report),
-            onClick = { sendReportClick(args) }
-        ),
-        onBack = ::onBack,
-    )
-
-    private fun createGeneralErrorState(args: ErrorArgs.General) = ErrorState(
-        title = stringRes(R.string.error_general_title),
-        message = stringRes(R.string.error_general_message),
-        positive = ButtonState(
-            text = stringRes(R.string.general_ok),
-            onClick = { navigationRouter.back() }
-        ),
-        negative = ButtonState(
-            text = stringRes(R.string.general_report),
-            onClick = { sendReportClick(args.exception) }
-        ),
-        onBack = ::onBack,
-    )
-
-    private fun createGeneralShieldingErrorState(args: ErrorArgs.ShieldingGeneralError) = ErrorState(
-        title = stringRes(R.string.error_shielding_title),
-        message = stringRes(
-            R.string.error_shielding_message,
-            stringRes(args.exception.stackTraceToString().take(STACKTRACE_LIMIT))
-        ),
-        positive = ButtonState(
-            text = stringRes(R.string.general_ok),
-            onClick = { navigationRouter.back() }
-        ),
-        negative = ButtonState(
-            text = stringRes(R.string.general_report),
-            onClick = { sendReportClick(args.exception) }
-        ),
-        onBack = ::onBack,
-    )
-
-    private fun sendReportClick(args: ErrorArgs.ShieldingError) = viewModelScope.launch {
-        withContext(NonCancellable) {
-            navigationRouter.back()
-            sendEmailUseCase(args.error)
+    private fun createState(args: ErrorArgs): ErrorState =
+        when (args) {
+            is ErrorArgs.SyncError -> createSyncErrorState(args)
+            is ErrorArgs.ShieldingError -> createShieldingErrorState(args)
+            is ErrorArgs.General -> createGeneralErrorState(args)
+            is ErrorArgs.ShieldingGeneralError -> createGeneralShieldingErrorState(args)
         }
-    }
 
-    private fun sendReportClick(args: ErrorArgs.SyncError) = viewModelScope.launch {
-        withContext(NonCancellable) {
-            navigationRouter.back()
-            sendEmailUseCase(args.synchronizerError)
-        }
-    }
+    private fun createSyncErrorState(args: ErrorArgs.SyncError) =
+        ErrorState(
+            title = stringRes(R.string.error_sync_title),
+            message = stringRes(args.synchronizerError.getStackTrace(STACKTRACE_LIMIT).orEmpty()),
+            positive =
+                ButtonState(
+                    text = stringRes(R.string.general_ok),
+                    onClick = { navigationRouter.back() }
+                ),
+            negative =
+                ButtonState(
+                    text = stringRes(R.string.general_report),
+                    onClick = { sendReportClick(args) }
+                ),
+            onBack = ::onBack,
+        )
 
-    private fun sendReportClick(exception: Exception) = viewModelScope.launch {
-        withContext(NonCancellable) {
-            navigationRouter.back()
-            sendEmailUseCase(exception)
+    private fun createShieldingErrorState(args: ErrorArgs.ShieldingError) =
+        ErrorState(
+            title = stringRes(R.string.error_shielding_title),
+            message =
+                when (args.error) {
+                    is SubmitResult.MultipleTrxFailure -> stringRes(R.string.error_shielding_message_grpc)
+                    is SubmitResult.SimpleTrxFailure ->
+                        stringRes(
+                            R.string.error_shielding_message,
+                            stringRes(args.error.toErrorStacktrace())
+                        )
+                },
+            positive =
+                ButtonState(
+                    text = stringRes(R.string.general_ok),
+                    onClick = { navigationRouter.back() }
+                ),
+            negative =
+                ButtonState(
+                    text = stringRes(R.string.general_report),
+                    onClick = { sendReportClick(args) }
+                ),
+            onBack = ::onBack,
+        )
+
+    private fun createGeneralErrorState(args: ErrorArgs.General) =
+        ErrorState(
+            title = stringRes(R.string.error_general_title),
+            message = stringRes(R.string.error_general_message),
+            positive =
+                ButtonState(
+                    text = stringRes(R.string.general_ok),
+                    onClick = { navigationRouter.back() }
+                ),
+            negative =
+                ButtonState(
+                    text = stringRes(R.string.general_report),
+                    onClick = { sendReportClick(args.exception) }
+                ),
+            onBack = ::onBack,
+        )
+
+    private fun createGeneralShieldingErrorState(args: ErrorArgs.ShieldingGeneralError) =
+        ErrorState(
+            title = stringRes(R.string.error_shielding_title),
+            message =
+                stringRes(
+                    R.string.error_shielding_message,
+                    stringRes(args.exception.stackTraceToString().take(STACKTRACE_LIMIT))
+                ),
+            positive =
+                ButtonState(
+                    text = stringRes(R.string.general_ok),
+                    onClick = { navigationRouter.back() }
+                ),
+            negative =
+                ButtonState(
+                    text = stringRes(R.string.general_report),
+                    onClick = { sendReportClick(args.exception) }
+                ),
+            onBack = ::onBack,
+        )
+
+    private fun sendReportClick(args: ErrorArgs.ShieldingError) =
+        viewModelScope.launch {
+            withContext(NonCancellable) {
+                navigationRouter.back()
+                sendEmailUseCase(args.error)
+            }
         }
-    }
+
+    private fun sendReportClick(args: ErrorArgs.SyncError) =
+        viewModelScope.launch {
+            withContext(NonCancellable) {
+                navigationRouter.back()
+                sendEmailUseCase(args.synchronizerError)
+            }
+        }
+
+    private fun sendReportClick(exception: Exception) =
+        viewModelScope.launch {
+            withContext(NonCancellable) {
+                navigationRouter.back()
+                sendEmailUseCase(exception)
+            }
+        }
 }

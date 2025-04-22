@@ -154,7 +154,7 @@ class NavigatorImpl(
             }
         }
 
-        if (command.routes.lastOrNull() in listOf(ExternalUrl, co.electriccoin.zcash.ui.screen.flexa.Flexa) ) {
+        if (command.routes.lastOrNull() in listOf(ExternalUrl, co.electriccoin.zcash.ui.screen.flexa.Flexa)) {
             messageAvailabilityDataSource.onThirdPartyUiShown()
         }
     }

@@ -37,7 +37,6 @@ import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
-import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackupViewModel
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel.SelectKeystoneAccountViewModel
 import co.electriccoin.zcash.ui.screen.send.SendViewModel
@@ -54,6 +53,7 @@ import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHist
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
 import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNoteViewModel
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressViewModel
+import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackupViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.screen.whatsnew.viewmodel.WhatsNewViewModel
 import org.koin.core.module.dsl.viewModel

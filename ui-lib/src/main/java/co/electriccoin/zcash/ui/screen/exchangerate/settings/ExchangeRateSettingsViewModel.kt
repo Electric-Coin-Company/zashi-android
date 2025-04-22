@@ -15,16 +15,15 @@ class ExchangeRateSettingsViewModel(
     private val exchangeRateRepository: ExchangeRateRepository,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
-    
-    val state = exchangeRateRepository.state
-        .map {
-            createState(it)
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = createState(exchangeRateRepository.state.value)
-        )
+    val state =
+        exchangeRateRepository.state
+            .map {
+                createState(it)
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = createState(exchangeRateRepository.state.value)
+            )
 
     private fun createState(it: ExchangeRateState) =
         ExchangeRateSettingsState(

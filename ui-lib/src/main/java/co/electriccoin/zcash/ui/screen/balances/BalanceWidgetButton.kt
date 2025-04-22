@@ -41,10 +41,11 @@ internal fun BalanceWidgetButton(
     state: BalanceButtonState,
     modifier: Modifier = Modifier,
 ) {
-    val colors = ZashiButtonDefaults.secondaryColors(
-        containerColor = ZashiColors.Surfaces.bgPrimary,
-        borderColor = ZashiColors.Utility.Gray.utilityGray100
-    )
+    val colors =
+        ZashiButtonDefaults.secondaryColors(
+            containerColor = ZashiColors.Surfaces.bgPrimary,
+            borderColor = ZashiColors.Utility.Gray.utilityGray100
+        )
     val borderColor = colors.borderColor
 
     Button(
@@ -53,10 +54,11 @@ internal fun BalanceWidgetButton(
         shape = RoundedCornerShape(ZashiDimensions.Radius.radiusIg),
         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
         colors = colors.toButtonColors(),
-        elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 1.dp,
-            pressedElevation = 0.dp
-        ),
+        elevation =
+            ButtonDefaults.buttonElevation(
+                defaultElevation = 1.dp,
+                pressedElevation = 0.dp
+            ),
         border = borderColor.takeIf { it != Color.Unspecified }?.let { BorderStroke(1.dp, it) },
         content = {
             Row(
@@ -110,15 +112,17 @@ data class BalanceButtonState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        BalanceWidgetButton(
-            state = BalanceButtonState(
-                icon = R.drawable.ic_help,
-                text = stringRes("text"),
-                amount = Zatoshi(1000),
-                onClick = {}
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            BalanceWidgetButton(
+                state =
+                    BalanceButtonState(
+                        icon = R.drawable.ic_help,
+                        text = stringRes("text"),
+                        amount = Zatoshi(1000),
+                        onClick = {}
+                    )
             )
-        )
+        }
     }
-}

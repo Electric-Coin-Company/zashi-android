@@ -103,12 +103,13 @@ private fun BalanceWidgetPreview() {
                 state =
                     BalanceWidgetState(
                         totalBalance = Zatoshi(1234567891234567L),
-                        button = BalanceButtonState(
-                            icon = R.drawable.ic_help,
-                            text = stringRes("text"),
-                            amount = Zatoshi(1000),
-                            onClick = {}
-                        ),
+                        button =
+                            BalanceButtonState(
+                                icon = R.drawable.ic_help,
+                                text = stringRes("text"),
+                                amount = Zatoshi(1000),
+                                onClick = {}
+                            ),
                         exchangeRate = ObserveFiatCurrencyResultFixture.new(),
                         showDust = true
                     ),

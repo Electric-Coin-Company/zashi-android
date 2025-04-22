@@ -18,15 +18,16 @@ import org.koin.core.parameter.parametersOf
 @Composable
 internal fun AndroidHome() {
     val topAppBarViewModel = koinActivityViewModel<ZashiTopAppBarViewModel>()
-    val balanceWidgetViewModel = koinViewModel<BalanceWidgetViewModel> {
-        parametersOf(
-            BalanceWidgetArgs(
-                isBalanceButtonEnabled = false,
-                isExchangeRateButtonEnabled = true,
-                showDust = false,
+    val balanceWidgetViewModel =
+        koinViewModel<BalanceWidgetViewModel> {
+            parametersOf(
+                BalanceWidgetArgs(
+                    isBalanceButtonEnabled = false,
+                    isExchangeRateButtonEnabled = true,
+                    showDust = false,
+                )
             )
-        )
-    }
+        }
     val homeViewModel = koinViewModel<HomeViewModel>()
     val transactionHistoryWidgetViewModel = koinViewModel<TransactionHistoryWidgetViewModel>()
     val restoreDialogState by homeViewModel.restoreDialogState.collectAsStateWithLifecycle()

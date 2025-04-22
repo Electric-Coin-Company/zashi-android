@@ -28,7 +28,6 @@ interface HomeMessageCacheRepository {
 class HomeMessageCacheRepositoryImpl(
     private val messageAvailabilityDataSource: MessageAvailabilityDataSource
 ) : HomeMessageCacheRepository {
-
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     override var lastShownMessage: HomeMessageData? = null
@@ -42,8 +41,7 @@ class HomeMessageCacheRepositoryImpl(
                     lastShownMessage = null
                     lastMessage = null
                 }
-            }
-            .launchIn(scope)
+            }.launchIn(scope)
     }
 
     override fun reset() {
@@ -52,21 +50,33 @@ class HomeMessageCacheRepositoryImpl(
     }
 }
 
+@Suppress("MagicNumber")
 sealed interface HomeMessageData {
-
     val priority: Int
 
-    data class Error(val synchronizerError: SynchronizerError) : RuntimeMessage()
+    data class Error(
+        val synchronizerError: SynchronizerError
+    ) : RuntimeMessage()
+
     data object Disconnected : RuntimeMessage()
-    data class Restoring(val progress: Float) : RuntimeMessage()
-    data class Syncing(val progress: Float) : RuntimeMessage()
+
+    data class Restoring(
+        val progress: Float
+    ) : RuntimeMessage()
+
+    data class Syncing(
+        val progress: Float
+    ) : RuntimeMessage()
+
     data object Updating : RuntimeMessage()
 
     data object Backup : Prioritized {
         override val priority: Int = 4
     }
 
-    data class ShieldFunds(val zatoshi: Zatoshi) : Prioritized {
+    data class ShieldFunds(
+        val zatoshi: Zatoshi
+    ) : Prioritized {
         override val priority: Int = 3
     }
 
@@ -82,6 +92,7 @@ sealed interface HomeMessageData {
 /**
  * Message which always is shown.
  */
+@Suppress("MagicNumber")
 sealed class RuntimeMessage : HomeMessageData {
     override val priority: Int = 5
 }

@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.ZashiBaseSettingsOptIn
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiInfoRow
@@ -20,7 +21,6 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.component.ZashiBaseSettingsOptIn
 
 @Composable
 fun CrashReportOptInView(state: CrashReportOptInState) {
@@ -76,11 +76,12 @@ private fun Preview() =
     ZcashTheme {
         BlankSurface {
             CrashReportOptInView(
-                state = CrashReportOptInState(
-                    onOptInClick = {},
-                    onBack = {},
-                    onOptOutClick = {},
-                )
+                state =
+                    CrashReportOptInState(
+                        onOptInClick = {},
+                        onBack = {},
+                        onOptOutClick = {},
+                    )
             )
         }
     }

@@ -46,14 +46,16 @@ class ShieldFundsUseCase(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private suspend fun shieldZashiFunds() {
         try {
             zashiProposalRepository.createShieldProposal()
             zashiProposalRepository.submitTransaction()
-            val result = zashiProposalRepository.submitState
-                .filterIsInstance<SubmitProposalState.Result>()
-                .first()
-                .submitResult
+            val result =
+                zashiProposalRepository.submitState
+                    .filterIsInstance<SubmitProposalState.Result>()
+                    .first()
+                    .submitResult
 
             if (result is SubmitResult.Failure) {
                 navigateToError(ErrorArgs.ShieldingError(result))
@@ -65,6 +67,7 @@ class ShieldFundsUseCase(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private suspend fun createKeystoneShieldProposal() {
         try {
             keystoneProposalRepository.createShieldProposal()

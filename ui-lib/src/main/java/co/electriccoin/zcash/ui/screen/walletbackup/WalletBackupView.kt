@@ -291,11 +291,12 @@ private fun RevealedPreview() =
                             isRevealed = true,
                             tooltip = SeedSecretStateTooltip(title = stringRes(""), message = stringRes("")),
                         ) {},
-                    secondaryButton = ButtonState(
-                        text = stringRes("Text"),
-                        icon = R.drawable.ic_seed_show,
-                        onClick = {},
-                    ),
+                    secondaryButton =
+                        ButtonState(
+                            text = stringRes("Text"),
+                            icon = R.drawable.ic_seed_show,
+                            onClick = {},
+                        ),
                     primaryButton =
                         ButtonState(
                             text = stringRes("Text"),
@@ -331,11 +332,12 @@ private fun HiddenPreview() =
                             isRevealed = false,
                             tooltip = SeedSecretStateTooltip(title = stringRes(""), message = stringRes("")),
                         ) {},
-                    secondaryButton = ButtonState(
-                        text = stringRes("Text"),
-                        icon = R.drawable.ic_seed_show,
-                        onClick = {},
-                    ),
+                    secondaryButton =
+                        ButtonState(
+                            text = stringRes("Text"),
+                            icon = R.drawable.ic_seed_show,
+                            onClick = {},
+                        ),
                     primaryButton =
                         ButtonState(
                             text = stringRes("Text"),

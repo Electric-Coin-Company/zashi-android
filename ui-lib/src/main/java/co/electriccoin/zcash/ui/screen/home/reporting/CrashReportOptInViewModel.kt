@@ -9,14 +9,15 @@ import kotlinx.coroutines.flow.StateFlow
 class CrashReportOptInViewModel(
     private val exchangeRateRepository: ExchangeRateRepository,
     private val navigationRouter: NavigationRouter
-): ViewModel() {
-    val state: StateFlow<CrashReportOptInState> = MutableStateFlow(
-        CrashReportOptInState(
-            onBack = ::dismissOptInExchangeRateUsd,
-            onOptInClick = ::optInExchangeRateUsd,
-            onOptOutClick = ::onSkipClick
+) : ViewModel() {
+    val state: StateFlow<CrashReportOptInState> =
+        MutableStateFlow(
+            CrashReportOptInState(
+                onBack = ::dismissOptInExchangeRateUsd,
+                onOptInClick = ::optInExchangeRateUsd,
+                onOptOutClick = ::onSkipClick
+            )
         )
-    )
 
     private fun onSkipClick() {
         exchangeRateRepository.optInExchangeRateUsd(false)

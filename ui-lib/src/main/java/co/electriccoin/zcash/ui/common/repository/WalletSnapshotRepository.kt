@@ -23,7 +23,6 @@ class WalletSnapshotRepositoryImpl(
     private val synchronizerProvider: SynchronizerProvider,
     private val walletRestoringStateProvider: WalletRestoringStateProvider
 ) : WalletSnapshotRepository {
-
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -38,8 +37,7 @@ class WalletSnapshotRepositoryImpl(
                             status to restoringState
                         }
                     }
-                }
-                .collect { (status, restoringState) ->
+                }.collect { (status, restoringState) ->
                     // Once the wallet is fully synced and still in restoring state, persist the new state
                     if (status == Synchronizer.Status.SYNCED && restoringState in listOf(RESTORING, NONE)) {
                         walletRestoringStateProvider.store(WalletRestoringState.SYNCING)

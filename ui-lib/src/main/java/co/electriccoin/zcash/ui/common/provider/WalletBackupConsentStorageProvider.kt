@@ -7,4 +7,5 @@ interface WalletBackupConsentStorageProvider : BooleanStorageProvider
 
 class WalletBackupConsentStorageProviderImpl(
     override val preferenceHolder: EncryptedPreferenceProvider
-) : BaseBooleanStorageProvider(key = PreferenceKey("wallet_backup_consent")), WalletBackupConsentStorageProvider
+) : BaseBooleanStorageProvider(key = PreferenceKey("wallet_backup_consent")),
+    WalletBackupConsentStorageProvider

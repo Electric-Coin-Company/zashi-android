@@ -58,4 +58,3 @@ abstract class BaseNullableStorageProvider<T : Any> : NullableStorageProvider<T>
 
     private suspend fun getPreferenceProvider(): PreferenceProvider = preferenceHolder()
 }
-

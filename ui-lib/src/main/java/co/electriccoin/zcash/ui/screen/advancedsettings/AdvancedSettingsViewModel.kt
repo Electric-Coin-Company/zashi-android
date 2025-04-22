@@ -8,8 +8,8 @@ import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToWalletBackupUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToWalletBackupUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes

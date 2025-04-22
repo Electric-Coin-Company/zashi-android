@@ -31,44 +31,47 @@ class WalletBackupInfoViewModel(
     private val navigationRouter: NavigationRouter,
     private val remindWalletBackupLater: RemindWalletBackupLaterUseCase,
 ) : ViewModel() {
-
     private val isConsentChecked = MutableStateFlow(false)
 
-    private val lockoutDuration = walletBackupDataSource
-        .observe()
-        .filterIsInstance<WalletBackupAvailability.Available>()
-        .take(1)
-        .map { it.lockoutDuration }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = null
-        )
+    private val lockoutDuration =
+        walletBackupDataSource
+            .observe()
+            .filterIsInstance<WalletBackupAvailability.Available>()
+            .take(1)
+            .map { it.lockoutDuration }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = null
+            )
 
-    val state: StateFlow<WalletBackupInfoState?> = combine(
-        lockoutDuration.filterNotNull(),
-        isConsentChecked,
-        walletBackupConsentStorageProvider.observe().take(1)
-    ) { lockout, isConsentChecked, isConsentSaved ->
+    val state: StateFlow<WalletBackupInfoState?> =
+        combine(
+            lockoutDuration.filterNotNull(),
+            isConsentChecked,
+            walletBackupConsentStorageProvider.observe().take(1)
+        ) { lockout, isConsentChecked, isConsentSaved ->
             WalletBackupInfoState(
                 onBack = ::onBack,
-                secondaryButton = ButtonState(
-                    text = stringRes(R.string.general_remind_me_in, stringRes(lockout.res)),
-                    onClick = ::onRemindMeLaterClick,
-                    isEnabled = isConsentChecked || isConsentSaved
-                ),
-                checkboxState = CheckboxState(
-                    isChecked = isConsentChecked,
-                    onClick = ::onConsentClick,
-                    text = stringRes(R.string.home_info_backup_checkbox)
-                ).takeIf { !isConsentSaved },
-                primaryButton = ButtonState(
-                    text = stringRes(R.string.general_ok),
-                    onClick = ::onPrimaryClick
-                )
+                secondaryButton =
+                    ButtonState(
+                        text = stringRes(R.string.general_remind_me_in, stringRes(lockout.res)),
+                        onClick = ::onRemindMeLaterClick,
+                        isEnabled = isConsentChecked || isConsentSaved
+                    ),
+                checkboxState =
+                    CheckboxState(
+                        isChecked = isConsentChecked,
+                        onClick = ::onConsentClick,
+                        text = stringRes(R.string.home_info_backup_checkbox)
+                    ).takeIf { !isConsentSaved },
+                primaryButton =
+                    ButtonState(
+                        text = stringRes(R.string.general_ok),
+                        onClick = ::onPrimaryClick
+                    )
             )
-        }
-        .stateIn(
+        }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = null

@@ -44,7 +44,6 @@ class ExchangeRateRepositoryImpl(
     private val synchronizerProvider: SynchronizerProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
 ) : ExchangeRateRepository {
-
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private val isExchangeRateUsdOptedIn = nullableBooleanStateFlow(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN)

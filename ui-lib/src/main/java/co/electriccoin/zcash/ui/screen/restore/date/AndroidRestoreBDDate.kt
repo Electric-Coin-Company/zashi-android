@@ -17,4 +17,6 @@ fun AndroidRestoreBDDate(args: RestoreBDDate) {
 }
 
 @Serializable
-data class RestoreBDDate(val seed: String)
+data class RestoreBDDate(
+    val seed: String
+)

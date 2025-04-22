@@ -41,12 +41,12 @@ fun ZashiScreenDialog(
 
 @Composable
 private fun Dialog(
-    modifier: Modifier = Modifier,
     positive: ButtonState,
     negative: ButtonState,
-    onDismissRequest: (() -> Unit),
     title: StringResource,
     message: StringResource,
+    onDismissRequest: (() -> Unit),
+    modifier: Modifier = Modifier,
     properties: DialogProperties = DialogProperties()
 ) {
     AlertDialog(

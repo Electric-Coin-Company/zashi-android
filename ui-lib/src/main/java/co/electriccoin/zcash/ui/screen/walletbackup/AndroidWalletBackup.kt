@@ -17,4 +17,6 @@ internal fun AndroidWalletBackup(args: WalletBackup) {
 }
 
 @Serializable
-data class WalletBackup(val isOpenedFromSeedBackupInfo: Boolean)
+data class WalletBackup(
+    val isOpenedFromSeedBackupInfo: Boolean
+)

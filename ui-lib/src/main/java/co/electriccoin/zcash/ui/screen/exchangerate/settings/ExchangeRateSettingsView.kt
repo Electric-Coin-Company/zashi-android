@@ -187,11 +187,12 @@ private fun SettingsExchangeRateOptInPreview() =
     ZcashTheme {
         BlankSurface {
             ExchangeRateSettingsView(
-                state = ExchangeRateSettingsState(
-                    isOptedIn = true,
-                    onSaveClick = {},
-                    onDismiss = {}
-                )
+                state =
+                    ExchangeRateSettingsState(
+                        isOptedIn = true,
+                        onSaveClick = {},
+                        onDismiss = {}
+                    )
             )
         }
     }

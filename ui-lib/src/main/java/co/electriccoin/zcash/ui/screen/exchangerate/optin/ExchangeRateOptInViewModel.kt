@@ -9,14 +9,15 @@ import kotlinx.coroutines.flow.StateFlow
 class ExchangeRateOptInViewModel(
     private val exchangeRateRepository: ExchangeRateRepository,
     private val navigationRouter: NavigationRouter
-): ViewModel() {
-    val state: StateFlow<ExchangeRateOptInState> = MutableStateFlow(
-        ExchangeRateOptInState(
-            onBack = ::dismissOptInExchangeRateUsd,
-            onEnableClick = ::optInExchangeRateUsd,
-            onSkipClick = ::onSkipClick
+) : ViewModel() {
+    val state: StateFlow<ExchangeRateOptInState> =
+        MutableStateFlow(
+            ExchangeRateOptInState(
+                onBack = ::dismissOptInExchangeRateUsd,
+                onEnableClick = ::optInExchangeRateUsd,
+                onSkipClick = ::onSkipClick
+            )
         )
-    )
 
     private fun onSkipClick() {
         exchangeRateRepository.optInExchangeRateUsd(false)

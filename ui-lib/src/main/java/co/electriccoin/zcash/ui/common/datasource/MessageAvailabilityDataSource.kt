@@ -16,25 +16,28 @@ import kotlinx.coroutines.flow.update
 interface MessageAvailabilityDataSource {
     val canShowMessage: Flow<Boolean>
     val canShowShieldMessage: Flow<Boolean>
+
     fun onMessageShown()
+
     fun onThirdPartyUiShown()
+
     fun onShieldingInitiated()
 }
 
 class MessageAvailabilityDataSourceImpl(
     applicationStateProvider: ApplicationStateProvider
 ) : MessageAvailabilityDataSource {
-
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
-    private val state = MutableStateFlow(
-        MessageAvailabilityData(
-            isAppInForeground = true,
-            isThirdPartyUiShown = false,
-            hasMessageBeenShown = false,
-            canShowShieldMessage = true
+    private val state =
+        MutableStateFlow(
+            MessageAvailabilityData(
+                isAppInForeground = true,
+                isThirdPartyUiShown = false,
+                hasMessageBeenShown = false,
+                canShowShieldMessage = true
+            )
         )
-    )
 
     override val canShowMessage: Flow<Boolean> = state.map { it.canShowMessage }.distinctUntilChanged()
     override val canShowShieldMessage: Flow<Boolean> = state.map { it.canShowShieldMessage }.distinctUntilChanged()
@@ -58,8 +61,7 @@ class MessageAvailabilityDataSourceImpl(
                         )
                     }
                 }
-            }
-            .launchIn(scope)
+            }.launchIn(scope)
     }
 
     override fun onMessageShown() {

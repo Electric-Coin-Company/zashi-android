@@ -6,7 +6,6 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.datasource.WalletBackupAvailability
 import co.electriccoin.zcash.ui.common.repository.ShieldFundsData
 import co.electriccoin.zcash.ui.common.repository.ShieldFundsRepository
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
@@ -32,43 +31,42 @@ class ShieldFundsInfoViewModel(
     private val remindShieldFundsLater: RemindShieldFundsLaterUseCase,
     private val shieldFunds: ShieldFundsUseCase,
 ) : ViewModel() {
-
-    private val lockoutDuration = shieldFundsRepository
-        .availability
-        .filterIsInstance<ShieldFundsData.Available>()
-        .take(1)
-        .map { it.lockoutDuration }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = null
-        )
+    private val lockoutDuration =
+        shieldFundsRepository
+            .availability
+            .filterIsInstance<ShieldFundsData.Available>()
+            .take(1)
+            .map { it.lockoutDuration }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = null
+            )
 
     val state: StateFlow<ShieldFundsInfoState?> =
         combine(
             getSelectedWalletAccount.observe(),
             lockoutDuration.filterNotNull(),
         ) { account, lockoutDuration ->
-                ShieldFundsInfoState(
-                    onBack = ::onBack,
-                    primaryButton =
-                        ButtonState(
-                            onClick = ::onShieldClick,
-                            text = stringRes(R.string.home_info_transparent_balance_shield)
-                        ),
-                    secondaryButton =
-                        ButtonState(
-                            onClick = ::onRemindMeClick,
-                            text = stringRes(R.string.general_remind_me_in, stringRes(lockoutDuration.res))
-                        ),
-                    transparentAmount = account?.transparent?.balance ?: Zatoshi(0)
-                )
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = null
+            ShieldFundsInfoState(
+                onBack = ::onBack,
+                primaryButton =
+                    ButtonState(
+                        onClick = ::onShieldClick,
+                        text = stringRes(R.string.home_info_transparent_balance_shield)
+                    ),
+                secondaryButton =
+                    ButtonState(
+                        onClick = ::onRemindMeClick,
+                        text = stringRes(R.string.general_remind_me_in, stringRes(lockoutDuration.res))
+                    ),
+                transparentAmount = account?.transparent?.balance ?: Zatoshi(0)
             )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
+        )
 
     private fun onRemindMeClick() = viewModelScope.launch { remindShieldFundsLater() }
 
@@ -76,4 +74,3 @@ class ShieldFundsInfoViewModel(
 
     private fun onShieldClick() = shieldFunds(closeCurrentScreen = true)
 }
-

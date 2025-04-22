@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.flowOf
 import java.time.Instant
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
-import kotlin.time.Duration.Companion.seconds
 
 interface ShieldFundsDataSource {
     suspend fun observe(forAccount: AccountUuid): Flow<ShieldFundsAvailability>
@@ -26,34 +25,37 @@ interface ShieldFundsDataSource {
 class ShieldFundsDataSourceImpl(
     private val shieldFundsRemindMeCountStorageProvider: ShieldFundsRemindMeCountStorageProvider,
     private val shieldFundsRemindMeTimestampStorageProvider: ShieldFundsRemindMeTimestampStorageProvider
-): ShieldFundsDataSource {
-
+) : ShieldFundsDataSource {
     @OptIn(ExperimentalCoroutinesApi::class)
-    override suspend fun observe(forAccount: AccountUuid): Flow<ShieldFundsAvailability> = combine(
-        shieldFundsRemindMeCountStorageProvider.observe(forAccount),
-        shieldFundsRemindMeTimestampStorageProvider.observe(forAccount)
-    ) { count, timestamp ->
-        count to timestamp
-    }.flatMapLatest {(count, timestamp) ->
-        when {
-            timestamp == null -> flowOf(ShieldFundsAvailability.Available(ShieldFundsLockoutDuration.TWO_DAYS))
-            count == 1 -> calculateNext(
-                lastTimestamp = timestamp,
-                lastLockoutDuration = ShieldFundsLockoutDuration.TWO_DAYS,
-                nextLockoutDuration = ShieldFundsLockoutDuration.TWO_WEEKS
-            )
+    override suspend fun observe(forAccount: AccountUuid): Flow<ShieldFundsAvailability> =
+        combine(
+            shieldFundsRemindMeCountStorageProvider.observe(forAccount),
+            shieldFundsRemindMeTimestampStorageProvider.observe(forAccount)
+        ) { count, timestamp ->
+            count to timestamp
+        }.flatMapLatest { (count, timestamp) ->
+            when {
+                timestamp == null -> flowOf(ShieldFundsAvailability.Available(ShieldFundsLockoutDuration.TWO_DAYS))
+                count == 1 ->
+                    calculateNext(
+                        lastTimestamp = timestamp,
+                        lastLockoutDuration = ShieldFundsLockoutDuration.TWO_DAYS,
+                        nextLockoutDuration = ShieldFundsLockoutDuration.TWO_WEEKS
+                    )
 
-            else -> calculateNext(
-                lastTimestamp = timestamp,
-                lastLockoutDuration = if (count == 2) {
-                    ShieldFundsLockoutDuration.TWO_WEEKS
-                } else {
-                    ShieldFundsLockoutDuration.ONE_MONTH
-                },
-                nextLockoutDuration = ShieldFundsLockoutDuration.ONE_MONTH
-            )
+                else ->
+                    calculateNext(
+                        lastTimestamp = timestamp,
+                        lastLockoutDuration =
+                            if (count == 2) {
+                                ShieldFundsLockoutDuration.TWO_WEEKS
+                            } else {
+                                ShieldFundsLockoutDuration.ONE_MONTH
+                            },
+                        nextLockoutDuration = ShieldFundsLockoutDuration.ONE_MONTH
+                    )
+            }
         }
-    }
 
     override suspend fun remindMeLater(forAccount: AccountUuid) {
         val count = shieldFundsRemindMeCountStorageProvider.get(forAccount)
@@ -83,11 +85,17 @@ class ShieldFundsDataSourceImpl(
 }
 
 sealed interface ShieldFundsAvailability {
-    data class Available(val lockoutDuration: ShieldFundsLockoutDuration) : ShieldFundsAvailability
+    data class Available(
+        val lockoutDuration: ShieldFundsLockoutDuration
+    ) : ShieldFundsAvailability
+
     data object Unavailable : ShieldFundsAvailability
 }
 
-enum class ShieldFundsLockoutDuration(val duration: Duration, @StringRes val res: Int) {
+enum class ShieldFundsLockoutDuration(
+    val duration: Duration,
+    @StringRes val res: Int
+) {
     TWO_DAYS(2.days, R.string.general_remind_me_in_two_days),
     TWO_WEEKS(2.days, R.string.general_remind_me_in_two_weeks),
     ONE_MONTH(30.days, R.string.general_remind_me_in_two_months)

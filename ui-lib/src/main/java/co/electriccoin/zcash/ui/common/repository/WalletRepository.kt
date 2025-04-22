@@ -6,7 +6,6 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.FastestServersResult
-import cash.z.ecc.android.sdk.model.PercentDecimal
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
@@ -14,7 +13,6 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
-import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.datasource.WalletSnapshotDataSource
@@ -28,7 +26,6 @@ import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.provider.WalletRestoringStateProvider
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
-import co.electriccoin.zcash.ui.common.viewmodel.SynchronizerError
 import co.electriccoin.zcash.ui.preference.PersistableWalletPreferenceDefault
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.chooseserver.AvailableServerProvider
@@ -36,13 +33,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
@@ -51,7 +46,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -196,13 +190,14 @@ class WalletRepositoryImpl(
     /**
      * A flow of the wallet block synchronization state.
      */
-    override val walletRestoringState: StateFlow<WalletRestoringState> = walletRestoringStateProvider
-        .observe()
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = WalletRestoringState.NONE
-        )
+    override val walletRestoringState: StateFlow<WalletRestoringState> =
+        walletRestoringStateProvider
+            .observe()
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = WalletRestoringState.NONE
+            )
 
     /**
      * Persists a wallet asynchronously.  Clients observe [secretState] to see the side effects.

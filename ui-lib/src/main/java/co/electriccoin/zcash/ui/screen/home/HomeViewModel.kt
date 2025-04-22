@@ -28,8 +28,8 @@ import co.electriccoin.zcash.ui.screen.home.currency.EnableCurrencyConversionMes
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedInfo
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedMessageState
 import co.electriccoin.zcash.ui.screen.home.error.WalletErrorMessageState
-import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptIn
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportMessageState
+import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptIn
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfo
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringMessageState
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfo
@@ -53,6 +53,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@Suppress("TooManyFunctions")
 class HomeViewModel(
     getHomeMessage: GetHomeMessageUseCase,
     getVersionInfoProvider: GetVersionInfoProvider,
@@ -63,15 +64,15 @@ class HomeViewModel(
     private val shieldFunds: ShieldFundsUseCase,
     private val navigateToError: NavigateToErrorUseCase
 ) : ViewModel() {
-
-    private val messageState = getHomeMessage
-        .observe()
-        .map { createMessageState(it) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = null
-        )
+    private val messageState =
+        getHomeMessage
+            .observe()
+            .map { createMessageState(it) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = null
+            )
 
     private val isRestoreDialogVisible: Flow<Boolean?> =
         isRestoreSuccessDialogVisible
@@ -155,54 +156,65 @@ class HomeViewModel(
         message = messageState
     )
 
-    private fun createMessageState(it: HomeMessageData?) = when (it) {
-        is HomeMessageData.Backup -> WalletBackupMessageState(
-            onClick = ::onWalletBackupMessageClick,
-            onButtonClick = ::onWalletBackupMessageButtonClick,
-        )
+    private fun createMessageState(it: HomeMessageData?) =
+        when (it) {
+            is HomeMessageData.Backup ->
+                WalletBackupMessageState(
+                    onClick = ::onWalletBackupMessageClick,
+                    onButtonClick = ::onWalletBackupMessageButtonClick,
+                )
 
-        HomeMessageData.Disconnected -> WalletDisconnectedMessageState(
-            onClick = ::onWalletDisconnectedMessageClick
-        )
+            HomeMessageData.Disconnected ->
+                WalletDisconnectedMessageState(
+                    onClick = ::onWalletDisconnectedMessageClick
+                )
 
-        HomeMessageData.EnableCurrencyConversion -> EnableCurrencyConversionMessageState(
-            onClick = ::onEnableCurrencyConversionClick,
-            onButtonClick = ::onEnableCurrencyConversionClick
-        )
+            HomeMessageData.EnableCurrencyConversion ->
+                EnableCurrencyConversionMessageState(
+                    onClick = ::onEnableCurrencyConversionClick,
+                    onButtonClick = ::onEnableCurrencyConversionClick
+                )
 
-        is HomeMessageData.Error -> WalletErrorMessageState(
-            onClick = { onWalletErrorMessageClick(it) }
-        )
+            is HomeMessageData.Error ->
+                WalletErrorMessageState(
+                    onClick = { onWalletErrorMessageClick(it) }
+                )
 
-        is HomeMessageData.Restoring -> WalletRestoringMessageState(
-            progress = it.progress,
-            onClick = ::onWalletRestoringMessageClick
-        )
+            is HomeMessageData.Restoring ->
+                WalletRestoringMessageState(
+                    progress = it.progress,
+                    onClick = ::onWalletRestoringMessageClick
+                )
 
-        is HomeMessageData.Syncing -> WalletSyncingMessageState(
-            progress = it.progress,
-            onClick = ::onWalletSyncingMessageClick
-        )
+            is HomeMessageData.Syncing ->
+                WalletSyncingMessageState(
+                    progress = it.progress,
+                    onClick = ::onWalletSyncingMessageClick
+                )
 
-        is HomeMessageData.ShieldFunds -> ShieldFundsMessageState(
-            subtitle = stringRes(
-                R.string.home_message_transparent_balance_subtitle,
-                stringRes(it.zatoshi)
-            ),
-            onClick = ::onShieldFundsMessageClick,
-            onButtonClick = ::onShieldFundsMessageButtonClick,
-        )
+            is HomeMessageData.ShieldFunds ->
+                ShieldFundsMessageState(
+                    subtitle =
+                        stringRes(
+                            R.string.home_message_transparent_balance_subtitle,
+                            stringRes(it.zatoshi)
+                        ),
+                    onClick = ::onShieldFundsMessageClick,
+                    onButtonClick = ::onShieldFundsMessageButtonClick,
+                )
 
-        HomeMessageData.Updating -> WalletUpdatingMessageState(
-            onClick = ::onWalletUpdatingMessageClick
-        )
+            HomeMessageData.Updating ->
+                WalletUpdatingMessageState(
+                    onClick = ::onWalletUpdatingMessageClick
+                )
 
-        HomeMessageData.CrashReport -> CrashReportMessageState(
-            onClick = ::onCrashReportMessageClick,
-            onButtonClick = ::onCrashReportMessageClick
-        )
-        null -> null
-    }
+            HomeMessageData.CrashReport ->
+                CrashReportMessageState(
+                    onClick = ::onCrashReportMessageClick,
+                    onButtonClick = ::onCrashReportMessageClick
+                )
+            null -> null
+        }
 
     private fun onCrashReportMessageClick() = navigationRouter.forward(CrashReportOptIn)
 

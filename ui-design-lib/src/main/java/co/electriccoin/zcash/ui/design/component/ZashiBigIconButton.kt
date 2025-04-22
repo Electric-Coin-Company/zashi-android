@@ -65,22 +65,23 @@ fun ZashiBigIconButton(
             Modifier.background(darkBgGradient)
 
     Surface(
-        modifier = modifier
-            .pointerInput(Unit) {
-                awaitPointerEventScope {
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        event.changes.forEach { change ->
-                            if (change.changedToDown()) {
-                                isPressed = true
-                            }
-                            if (change.changedToUp()) {
-                                isPressed = false
+        modifier =
+            modifier
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            event.changes.forEach { change ->
+                                if (change.changedToDown()) {
+                                    isPressed = true
+                                }
+                                if (change.changedToUp()) {
+                                    isPressed = false
+                                }
                             }
                         }
                     }
-                }
-            },
+                },
         onClick = state.onClick,
         color = ZashiColors.Surfaces.bgPrimary,
         shape = RoundedCornerShape(22.dp),

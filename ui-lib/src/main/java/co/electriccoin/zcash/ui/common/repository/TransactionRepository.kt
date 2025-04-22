@@ -73,23 +73,25 @@ class TransactionRepositoryImpl(
         )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val currentTransactions: Flow<List<Transaction>?> = accountDataSource.selectedAccount
-        .distinctUntilChangedBy { it?.sdkAccount?.accountUuid }
-        .flatMapLatest { selected ->
-            if (selected is ZashiAccount) {
-                zashiTransactions
-            } else {
-                observeTransactions(
-                    accountFlow = accountDataSource.selectedAccount.map { it?.sdkAccount?.accountUuid }
-                        .distinctUntilChanged()
-                )
-            }
-        }
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(5.seconds, Duration.ZERO),
-            initialValue = null
-        )
+    override val currentTransactions: Flow<List<Transaction>?> =
+        accountDataSource.selectedAccount
+            .distinctUntilChangedBy { it?.sdkAccount?.accountUuid }
+            .flatMapLatest { selected ->
+                if (selected is ZashiAccount) {
+                    zashiTransactions
+                } else {
+                    observeTransactions(
+                        accountFlow =
+                            accountDataSource.selectedAccount
+                                .map { it?.sdkAccount?.accountUuid }
+                                .distinctUntilChanged()
+                    )
+                }
+            }.stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(5.seconds, Duration.ZERO),
+                initialValue = null
+            )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun TransactionRepositoryImpl.observeTransactions(accountFlow: Flow<AccountUuid?>) =
@@ -123,6 +125,7 @@ class TransactionRepositoryImpl(
                 }
             }
 
+    @Suppress("CyclomaticComplexMethod")
     private suspend fun createTransactions(
         transactions: List<TransactionOverview>,
         synchronizer: Synchronizer

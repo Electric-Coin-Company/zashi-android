@@ -14,13 +14,14 @@ class WalletBackupDetailViewModel(
     private val navigationRouter: NavigationRouter,
     private val navigateToWalletBackup: NavigateToWalletBackupUseCase
 ) : ViewModel() {
-    val state = MutableStateFlow(
-        WalletBackupDetailState(
-            onBack = ::onBack,
-            onNextClick = ::onNextClick,
-            onInfoClick = ::onInfoClick
-        )
-    ).asStateFlow()
+    val state =
+        MutableStateFlow(
+            WalletBackupDetailState(
+                onBack = ::onBack,
+                onNextClick = ::onNextClick,
+                onInfoClick = ::onInfoClick
+            )
+        ).asStateFlow()
 
     private fun onNextClick() =
         viewModelScope.launch {
@@ -39,5 +40,3 @@ class WalletBackupDetailViewModel(
         }
     }
 }
-
-

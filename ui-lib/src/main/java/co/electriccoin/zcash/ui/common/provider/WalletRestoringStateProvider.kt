@@ -11,12 +11,12 @@ interface WalletRestoringStateProvider : StorageProvider<WalletRestoringState>
 
 class WalletRestoringStateProviderImpl(
     override val preferenceHolder: StandardPreferenceProvider,
-) : BaseStorageProvider<WalletRestoringState>(), WalletRestoringStateProvider {
+) : BaseStorageProvider<WalletRestoringState>(),
+    WalletRestoringStateProvider {
     override val default: PreferenceDefault<WalletRestoringState> = WalletRestoringStatePreferenceDefault()
 }
 
 private class WalletRestoringStatePreferenceDefault : PreferenceDefault<WalletRestoringState> {
-
     private val internal = StandardPreferenceKeys.WALLET_RESTORING_STATE
 
     override val key: PreferenceKey = internal.key

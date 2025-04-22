@@ -77,11 +77,12 @@ private fun CurrencyConversionOptInPreview() =
     ZcashTheme {
         BlankSurface {
             ExchangeRateOptInView(
-                state = ExchangeRateOptInState(
-                    onEnableClick = {},
-                    onBack = {},
-                    onSkipClick = {},
-                )
+                state =
+                    ExchangeRateOptInState(
+                        onEnableClick = {},
+                        onBack = {},
+                        onSkipClick = {},
+                    )
             )
         }
     }

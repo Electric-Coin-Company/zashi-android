@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.flowOf
 import java.time.Instant
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
-import kotlin.time.Duration.Companion.seconds
 
 interface WalletBackupDataSource {
     fun observe(): Flow<WalletBackupAvailability>
@@ -30,35 +29,38 @@ class WalletBackupDataSourceImpl(
     private val walletBackupRemindMeCountStorageProvider: WalletBackupRemindMeCountStorageProvider,
     private val walletBackupRemindMeTimestampStorageProvider: WalletBackupRemindMeTimestampStorageProvider
 ) : WalletBackupDataSource {
-
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun observe(): Flow<WalletBackupAvailability> = combine(
-        walletBackupFlagStorageProvider.observe(),
-        walletBackupRemindMeCountStorageProvider.observe(),
-        walletBackupRemindMeTimestampStorageProvider.observe()
-    ) { isBackedUp, count, timestamp ->
-        Triple(isBackedUp, count, timestamp)
-    }.flatMapLatest { (isBackedUp, count, timestamp) ->
-        when {
-            isBackedUp -> flowOf(WalletBackupAvailability.Unavailable)
-            timestamp == null -> flowOf(WalletBackupAvailability.Available(WalletBackupLockoutDuration.TWO_DAYS))
-            count == 1 -> calculateNext(
-                lastTimestamp = timestamp,
-                lastLockoutDuration = WalletBackupLockoutDuration.TWO_DAYS,
-                nextLockoutDuration = WalletBackupLockoutDuration.TWO_WEEKS
-            )
+    override fun observe(): Flow<WalletBackupAvailability> =
+        combine(
+            walletBackupFlagStorageProvider.observe(),
+            walletBackupRemindMeCountStorageProvider.observe(),
+            walletBackupRemindMeTimestampStorageProvider.observe()
+        ) { isBackedUp, count, timestamp ->
+            Triple(isBackedUp, count, timestamp)
+        }.flatMapLatest { (isBackedUp, count, timestamp) ->
+            when {
+                isBackedUp -> flowOf(WalletBackupAvailability.Unavailable)
+                timestamp == null -> flowOf(WalletBackupAvailability.Available(WalletBackupLockoutDuration.TWO_DAYS))
+                count == 1 ->
+                    calculateNext(
+                        lastTimestamp = timestamp,
+                        lastLockoutDuration = WalletBackupLockoutDuration.TWO_DAYS,
+                        nextLockoutDuration = WalletBackupLockoutDuration.TWO_WEEKS
+                    )
 
-            else -> calculateNext(
-                lastTimestamp = timestamp,
-                lastLockoutDuration = if (count == 2) {
-                    WalletBackupLockoutDuration.TWO_WEEKS
-                } else {
-                    WalletBackupLockoutDuration.ONE_MONTH
-                },
-                nextLockoutDuration = WalletBackupLockoutDuration.ONE_MONTH
-            )
+                else ->
+                    calculateNext(
+                        lastTimestamp = timestamp,
+                        lastLockoutDuration =
+                            if (count == 2) {
+                                WalletBackupLockoutDuration.TWO_WEEKS
+                            } else {
+                                WalletBackupLockoutDuration.ONE_MONTH
+                            },
+                        nextLockoutDuration = WalletBackupLockoutDuration.ONE_MONTH
+                    )
+            }
         }
-    }
 
     override suspend fun onUserSavedWalletBackup() {
         walletBackupFlagStorageProvider.store(true)
@@ -92,11 +94,17 @@ class WalletBackupDataSourceImpl(
 }
 
 sealed interface WalletBackupAvailability {
-    data class Available(val lockoutDuration: WalletBackupLockoutDuration) : WalletBackupAvailability
+    data class Available(
+        val lockoutDuration: WalletBackupLockoutDuration
+    ) : WalletBackupAvailability
+
     data object Unavailable : WalletBackupAvailability
 }
 
-enum class WalletBackupLockoutDuration(val duration: Duration, @StringRes val res: Int) {
+enum class WalletBackupLockoutDuration(
+    val duration: Duration,
+    @StringRes val res: Int
+) {
     TWO_DAYS(2.days, R.string.general_remind_me_in_two_days),
     TWO_WEEKS(14.days, R.string.general_remind_me_in_two_weeks),
     ONE_MONTH(30.days, R.string.general_remind_me_in_two_months),

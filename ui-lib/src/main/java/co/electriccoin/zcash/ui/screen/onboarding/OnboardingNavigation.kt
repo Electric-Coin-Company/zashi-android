@@ -58,7 +58,6 @@ fun MainActivity.OnboardingNavigation() {
     val flexaViewModel = koinViewModel<FlexaViewModel>()
     val messageAvailabilityDataSource = koinInject<MessageAvailabilityDataSource>()
 
-
     val navigator: Navigator =
         remember(
             navController,

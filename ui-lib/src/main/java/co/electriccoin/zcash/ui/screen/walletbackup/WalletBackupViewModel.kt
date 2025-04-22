@@ -34,24 +34,25 @@ class WalletBackupViewModel(
     private val onUserSavedWalletBackup: OnUserSavedWalletBackupUseCase,
     private val remindWalletBackupLater: RemindWalletBackupLaterUseCase,
 ) : ViewModel() {
-
-    private val lockoutDuration = walletBackupDataSource
-        .observe()
-        .filterIsInstance<WalletBackupAvailability.Available>()
-        .take(1)
-        .map { it.lockoutDuration }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = null
-        )
+    private val lockoutDuration =
+        walletBackupDataSource
+            .observe()
+            .filterIsInstance<WalletBackupAvailability.Available>()
+            .take(1)
+            .map { it.lockoutDuration }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = null
+            )
 
     private val isRevealed = MutableStateFlow(false)
 
-    private val isRemindMeLaterButtonVisible = isRevealed
-        .map { isRevealed ->
-            isRevealed && args.isOpenedFromSeedBackupInfo
-        }
+    private val isRemindMeLaterButtonVisible =
+        isRevealed
+            .map { isRevealed ->
+                isRevealed && args.isOpenedFromSeedBackupInfo
+            }
 
     private val observableWallet = observePersistableWallet()
 
@@ -63,14 +64,16 @@ class WalletBackupViewModel(
             lockoutDuration
         ) { isRevealed, isRemindMeLaterButtonVisible, wallet, lockoutDuration ->
             WalletBackupState(
-                secondaryButton = ButtonState(
-                    text = if (lockoutDuration != null) {
-                        stringRes(R.string.general_remind_me_in, stringRes(lockoutDuration.res))
-                    } else {
-                        stringRes(R.string.general_remind_me_later)
-                    },
-                    onClick = ::onRemindMeLaterClick
-                ).takeIf { isRemindMeLaterButtonVisible },
+                secondaryButton =
+                    ButtonState(
+                        text =
+                            if (lockoutDuration != null) {
+                                stringRes(R.string.general_remind_me_in, stringRes(lockoutDuration.res))
+                            } else {
+                                stringRes(R.string.general_remind_me_later)
+                            },
+                        onClick = ::onRemindMeLaterClick
+                    ).takeIf { isRemindMeLaterButtonVisible },
                 primaryButton =
                     ButtonState(
                         text =
@@ -80,11 +83,12 @@ class WalletBackupViewModel(
                                 isRevealed -> stringRes(R.string.seed_recovery_hide_button)
                                 else -> stringRes(R.string.seed_recovery_reveal_button)
                             },
-                        onClick = if (isRevealed && args.isOpenedFromSeedBackupInfo) {
-                            { onWalletBackupSavedClick() }
-                        } else {
-                            { onRevealClick() }
-                        },
+                        onClick =
+                            if (isRevealed && args.isOpenedFromSeedBackupInfo) {
+                                { onWalletBackupSavedClick() }
+                            } else {
+                                { onRevealClick() }
+                            },
                         isEnabled = wallet != null,
                         isLoading = wallet == null,
                         icon =
@@ -144,4 +148,3 @@ class WalletBackupViewModel(
 
     private fun onBack() = navigationRouter.back()
 }
-

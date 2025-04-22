@@ -32,8 +32,8 @@ import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
-import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidget
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
 import co.electriccoin.zcash.ui.screen.home.error.WalletErrorMessageState
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetState
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetStateFixture

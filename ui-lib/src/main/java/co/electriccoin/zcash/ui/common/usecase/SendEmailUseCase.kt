@@ -50,7 +50,6 @@ class SendEmailUseCase(
         runCatching { context.startActivity(mailIntent) }
     }
 
-
     suspend operator fun invoke(synchronizerError: SynchronizerError) {
         val fullMessage =
             EmailUtil.formatMessage(

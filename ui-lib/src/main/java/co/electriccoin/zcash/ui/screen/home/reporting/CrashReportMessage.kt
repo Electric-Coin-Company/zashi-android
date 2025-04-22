@@ -62,7 +62,10 @@ fun CrashReportMessage(
     )
 }
 
-class CrashReportMessageState(val onClick: () -> Unit, val onButtonClick: () -> Unit) : HomeMessageState
+class CrashReportMessageState(
+    val onClick: () -> Unit,
+    val onButtonClick: () -> Unit
+) : HomeMessageState
 
 @PreviewScreens
 @Composable

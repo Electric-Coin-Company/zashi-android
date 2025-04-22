@@ -34,54 +34,57 @@ class BalanceWidgetViewModel(
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = createState(
-                account = accountDataSource.allAccounts.value?.firstOrNull { it.isSelected },
-                exchangeRateUsd = exchangeRateRepository.state.value
-            )
+            initialValue =
+                createState(
+                    account = accountDataSource.allAccounts.value?.firstOrNull { it.isSelected },
+                    exchangeRateUsd = exchangeRateRepository.state.value
+                )
         )
 
+    @Suppress("CyclomaticComplexMethod")
     private fun createState(account: WalletAccount?, exchangeRateUsd: ExchangeRateState) =
         BalanceWidgetState(
             totalBalance = account?.totalBalance ?: Zatoshi(0),
             exchangeRate = if (args.isExchangeRateButtonEnabled) exchangeRateUsd else null,
-            button = when {
-                !args.isBalanceButtonEnabled -> null
-                account == null -> null
-                account.totalBalance == account.spendableShieldedBalance -> null
-                account.totalBalance > account.spendableShieldedBalance &&
-                    !account.isShieldedPending &&
-                    account.totalShieldedBalance > Zatoshi(0) &&
-                    account.spendableShieldedBalance == Zatoshi(0) &&
-                    account.totalTransparentBalance > Zatoshi(0) ->
-                    BalanceButtonState(
-                        icon = R.drawable.ic_balances_expand,
-                        text = stringRes(R.string.widget_balances_button_spendable),
-                        amount = null,
-                        onClick = ::onBalanceButtonClick
-                    )
+            button =
+                when {
+                    !args.isBalanceButtonEnabled -> null
+                    account == null -> null
+                    account.totalBalance == account.spendableShieldedBalance -> null
+                    account.totalBalance > account.spendableShieldedBalance &&
+                        !account.isShieldedPending &&
+                        account.totalShieldedBalance > Zatoshi(0) &&
+                        account.spendableShieldedBalance == Zatoshi(0) &&
+                        account.totalTransparentBalance > Zatoshi(0) ->
+                        BalanceButtonState(
+                            icon = R.drawable.ic_balances_expand,
+                            text = stringRes(R.string.widget_balances_button_spendable),
+                            amount = null,
+                            onClick = ::onBalanceButtonClick
+                        )
 
-                account.totalBalance > account.spendableShieldedBalance &&
-                    account.isShieldedPending &&
-                    account.totalShieldedBalance > Zatoshi(0) &&
-                    account.spendableShieldedBalance == Zatoshi(0) &&
-                    account.totalTransparentBalance == Zatoshi(0) ->
-                    BalanceButtonState(
-                        icon = R.drawable.ic_balances_expand,
-                        text = stringRes(R.string.widget_balances_button_spendable),
-                        amount = null,
-                        onClick = ::onBalanceButtonClick
-                    )
+                    account.totalBalance > account.spendableShieldedBalance &&
+                        account.isShieldedPending &&
+                        account.totalShieldedBalance > Zatoshi(0) &&
+                        account.spendableShieldedBalance == Zatoshi(0) &&
+                        account.totalTransparentBalance == Zatoshi(0) ->
+                        BalanceButtonState(
+                            icon = R.drawable.ic_balances_expand,
+                            text = stringRes(R.string.widget_balances_button_spendable),
+                            amount = null,
+                            onClick = ::onBalanceButtonClick
+                        )
 
+                    account.totalBalance > account.spendableShieldedBalance ->
+                        BalanceButtonState(
+                            icon = R.drawable.ic_balances_expand,
+                            text = stringRes(R.string.widget_balances_button_spendable),
+                            amount = account.spendableShieldedBalance,
+                            onClick = ::onBalanceButtonClick
+                        )
 
-                account.totalBalance > account.spendableShieldedBalance -> BalanceButtonState(
-                    icon = R.drawable.ic_balances_expand,
-                    text = stringRes(R.string.widget_balances_button_spendable),
-                    amount = account.spendableShieldedBalance,
-                    onClick = ::onBalanceButtonClick
-                )
-
-                else -> null
-            },
+                    else -> null
+                },
             showDust = args.showDust
         )
 

@@ -38,80 +38,89 @@ class GetHomeMessageUseCase(
     private val messageAvailabilityDataSource: MessageAvailabilityDataSource,
     private val cache: HomeMessageCacheRepository,
 ) {
-    private val backupFlow = combine(
-        transactionRepository.zashiTransactions,
-        walletBackupDataSource.observe()
-    ) { transactions, backup ->
-        if (backup is WalletBackupAvailability.Available && transactions.orEmpty().any { it is ReceiveTransaction }) {
-            backup
-        } else {
-            WalletBackupAvailability.Unavailable
-        }
-    }.distinctUntilChanged()
+    private val backupFlow =
+        combine(
+            transactionRepository.zashiTransactions,
+            walletBackupDataSource.observe()
+        ) { transactions, backup ->
+            if (backup is WalletBackupAvailability.Available &&
+                transactions.orEmpty().any { it is ReceiveTransaction }
+            ) {
+                backup
+            } else {
+                WalletBackupAvailability.Unavailable
+            }
+        }.distinctUntilChanged()
 
-    private val runtimeMessage = channelFlow {
-        var firstSyncing: WalletSnapshot? = null
-        launch {
-            walletSnapshotDataSource
-                .observe()
-                .filterNotNull()
-                .collect { walletSnapshot ->
-                    val result = when {
-                        walletSnapshot.synchronizerError != null ->
-                            HomeMessageData.Error(walletSnapshot.synchronizerError)
+    @Suppress("MagicNumber")
+    private val runtimeMessage =
+        channelFlow {
+            var firstSyncing: WalletSnapshot? = null
+            launch {
+                walletSnapshotDataSource
+                    .observe()
+                    .filterNotNull()
+                    .collect { walletSnapshot ->
+                        val result =
+                            when {
+                                walletSnapshot.synchronizerError != null ->
+                                    HomeMessageData.Error(walletSnapshot.synchronizerError)
 
-                        walletSnapshot.status == Synchronizer.Status.DISCONNECTED ->
-                            HomeMessageData.Disconnected
+                                walletSnapshot.status == Synchronizer.Status.DISCONNECTED ->
+                                    HomeMessageData.Disconnected
 
-                        walletSnapshot.status in listOf(
-                            Synchronizer.Status.INITIALIZING,
-                            Synchronizer.Status.SYNCING,
-                            Synchronizer.Status.STOPPED
-                        ) -> {
-                            val progress = walletSnapshot.progress.decimal * 100f
-                            if (walletSnapshot.restoringState == WalletRestoringState.RESTORING) {
-                                HomeMessageData.Restoring(progress = progress)
-                            } else {
-                                HomeMessageData.Syncing(progress = progress)
+                                walletSnapshot.status in
+                                    listOf(
+                                        Synchronizer.Status.INITIALIZING,
+                                        Synchronizer.Status.SYNCING,
+                                        Synchronizer.Status.STOPPED
+                                    )
+                                -> {
+                                    val progress = walletSnapshot.progress.decimal * 100f
+                                    if (walletSnapshot.restoringState == WalletRestoringState.RESTORING) {
+                                        HomeMessageData.Restoring(progress = progress)
+                                    } else {
+                                        HomeMessageData.Syncing(progress = progress)
+                                    }
+                                }
+
+                                else -> null
                             }
-                        }
 
-                        else -> null
-                    }
+                        if (result is HomeMessageData.Syncing) {
+                            if (firstSyncing == null) {
+                                firstSyncing = walletSnapshot
+                            }
 
-                    if (result is HomeMessageData.Syncing) {
-                        if (firstSyncing == null) {
-                            firstSyncing = walletSnapshot
-                        }
-
-                        if ((firstSyncing?.progress?.decimal ?: 0f) >= .95f) {
-                            send(null)
+                            if ((firstSyncing?.progress?.decimal ?: 0f) >= .95f) {
+                                send(null)
+                            } else {
+                                send(result)
+                            }
                         } else {
+                            firstSyncing = null
                             send(result)
                         }
-                    } else {
-                        firstSyncing = null
-                        send(result)
                     }
-                }
-        }
+            }
 
-        awaitClose {
-            // do nothing
+            awaitClose {
+                // do nothing
+            }
         }
-    }
 
     @OptIn(FlowPreview::class)
-    private val flow = combine(
-        runtimeMessage,
-        backupFlow,
-        exchangeRateRepository.state.map { it == ExchangeRateState.OptIn }.distinctUntilChanged(),
-        shieldFundsRepository.availability
-    ) { runtimeMessage, backup, isCCAvailable, shieldFunds ->
-        createMessage(runtimeMessage, backup, shieldFunds, isCCAvailable)
-    }.distinctUntilChanged()
-        .debounce(.5.seconds)
-        .map { message -> prioritizeMessage(message) }
+    private val flow =
+        combine(
+            runtimeMessage,
+            backupFlow,
+            exchangeRateRepository.state.map { it == ExchangeRateState.OptIn }.distinctUntilChanged(),
+            shieldFundsRepository.availability
+        ) { runtimeMessage, backup, isCCAvailable, shieldFunds ->
+            createMessage(runtimeMessage, backup, shieldFunds, isCCAvailable)
+        }.distinctUntilChanged()
+            .debounce(.5.seconds)
+            .map { message -> prioritizeMessage(message) }
 
     fun observe(): Flow<HomeMessageData?> = flow
 
@@ -133,18 +142,20 @@ class GetHomeMessageUseCase(
         val someMessageBeenShown = cache.lastShownMessage != null // has any message been shown while app in fg
         val hasNoMessageBeenShownLately = cache.lastMessage == null // has no message been shown
         val isHigherPriorityMessage = (message?.priority ?: 0) > (cache.lastShownMessage?.priority ?: 0)
-        val result = when {
-            message == null -> null
-            message is RuntimeMessage -> message
-            isSameMessageUpdate -> message
-            isHigherPriorityMessage -> if (hasNoMessageBeenShownLately) {
-                if (someMessageBeenShown) null else message
-            } else {
-                message
-            }
+        val result =
+            when {
+                message == null -> null
+                message is RuntimeMessage -> message
+                isSameMessageUpdate -> message
+                isHigherPriorityMessage ->
+                    if (hasNoMessageBeenShownLately) {
+                        if (someMessageBeenShown) null else message
+                    } else {
+                        message
+                    }
 
-            else -> null
-        }
+                else -> null
+            }
 
         if (result != null) {
             messageAvailabilityDataSource.onMessageShown()

@@ -30,38 +30,37 @@ class WalletSnapshotDataSourceImpl(
     synchronizerProvider: SynchronizerProvider,
     walletRestoringStateProvider: WalletRestoringStateProvider,
 ) : WalletSnapshotDataSource {
-
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val flow = synchronizerProvider
-        .synchronizer
-        .flatMapLatest { synchronizer ->
-            if (synchronizer == null) {
-                flowOf(null)
-            } else {
-                combine(
-                    synchronizer.status,
-                    synchronizer.progress,
-                    synchronizer.toCommonError(),
-                    synchronizer.areFundsSpendable,
-                    walletRestoringStateProvider.observe()
-                ) { status, progress, error, isSpendable, restoringState ->
-                    WalletSnapshot(
-                        status = status,
-                        progress = progress,
-                        synchronizerError = error,
-                        isSpendable = isSpendable,
-                        restoringState = restoringState,
-                    )
+    val flow =
+        synchronizerProvider
+            .synchronizer
+            .flatMapLatest { synchronizer ->
+                if (synchronizer == null) {
+                    flowOf(null)
+                } else {
+                    combine(
+                        synchronizer.status,
+                        synchronizer.progress,
+                        synchronizer.toCommonError(),
+                        synchronizer.areFundsSpendable,
+                        walletRestoringStateProvider.observe()
+                    ) { status, progress, error, isSpendable, restoringState ->
+                        WalletSnapshot(
+                            status = status,
+                            progress = progress,
+                            synchronizerError = error,
+                            isSpendable = isSpendable,
+                            restoringState = restoringState,
+                        )
+                    }
                 }
-            }
-        }
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
+            }.stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
+            )
 
     override fun observe(): StateFlow<WalletSnapshot?> = flow
 

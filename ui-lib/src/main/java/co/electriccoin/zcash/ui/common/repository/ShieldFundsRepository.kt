@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 
 interface ShieldFundsRepository {
     val availability: Flow<ShieldFundsData>
@@ -25,31 +24,33 @@ class ShieldFundsRepositoryImpl(
     private val messageAvailabilityDataSource: MessageAvailabilityDataSource,
 ) : ShieldFundsRepository {
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val availability: Flow<ShieldFundsData> = accountDataSource
-        .selectedAccount
-        .flatMapLatest { account ->
-            when {
-                account == null -> flowOf(ShieldFundsData.Unavailable)
+    override val availability: Flow<ShieldFundsData> =
+        accountDataSource
+            .selectedAccount
+            .flatMapLatest { account ->
+                when {
+                    account == null -> flowOf(ShieldFundsData.Unavailable)
 
-                account.isShieldingAvailable ->
-                    combine(
-                        messageAvailabilityDataSource.canShowShieldMessage,
-                        shieldFundsDataSource.observe(account.sdkAccount.accountUuid)
-                    ) { canShowShieldMessage, availability ->
-                        when {
-                            !canShowShieldMessage -> ShieldFundsData.Unavailable
-                            availability is ShieldFundsAvailability.Available -> ShieldFundsData.Available(
-                                lockoutDuration = availability.lockoutDuration,
-                                amount = account.transparent.balance
-                            )
+                    account.isShieldingAvailable ->
+                        combine(
+                            messageAvailabilityDataSource.canShowShieldMessage,
+                            shieldFundsDataSource.observe(account.sdkAccount.accountUuid)
+                        ) { canShowShieldMessage, availability ->
+                            when {
+                                !canShowShieldMessage -> ShieldFundsData.Unavailable
+                                availability is ShieldFundsAvailability.Available ->
+                                    ShieldFundsData.Available(
+                                        lockoutDuration = availability.lockoutDuration,
+                                        amount = account.transparent.balance
+                                    )
 
-                            else -> ShieldFundsData.Unavailable
+                                else -> ShieldFundsData.Unavailable
+                            }
                         }
-                    }
 
-                else -> flowOf(ShieldFundsData.Unavailable)
+                    else -> flowOf(ShieldFundsData.Unavailable)
+                }
             }
-        }
 
     override suspend fun remindMeLater() {
         shieldFundsDataSource.remindMeLater(
