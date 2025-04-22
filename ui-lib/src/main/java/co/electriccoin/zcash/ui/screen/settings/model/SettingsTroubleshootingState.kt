@@ -6,7 +6,6 @@ import androidx.compose.runtime.Immutable
 data class SettingsTroubleshootingState(
     val backgroundSync: TroubleshootingItemState,
     val keepScreenOnDuringSync: TroubleshootingItemState,
-    val analytics: TroubleshootingItemState,
     val rescan: TroubleshootingItemState,
 )
 
