@@ -1,12 +1,15 @@
 package co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.DistributionDimension
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -25,7 +28,10 @@ class AdvancedSettingsViewModel(
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     private val navigationRouter: NavigationRouter,
     private val navigateToTaxExport: NavigateToTaxExportUseCase,
+    private val getVersionInfo: GetVersionInfoProvider,
 ) : ViewModel() {
+    private val versionInfo by lazy { getVersionInfo() }
+
     val state: StateFlow<AdvancedSettingsState> =
         getWalletRestoringState
             .observe()
@@ -41,7 +47,7 @@ class AdvancedSettingsViewModel(
         AdvancedSettingsState(
             onBack = ::onBack,
             items =
-                listOfNotNull(
+                mutableStateListOf(
                     ZashiListItemState(
                         title = stringRes(R.string.advanced_settings_recovery),
                         icon = R.drawable.ic_advanced_settings_recovery,
@@ -74,8 +80,19 @@ class AdvancedSettingsViewModel(
                         icon =
                             R.drawable.ic_advanced_settings_currency_conversion,
                         onClick = ::onCurrencyConversionClick
-                    )
-                ).toImmutableList(),
+                    ),
+                ).apply {
+                    if (versionInfo.distributionDimension == DistributionDimension.STORE) {
+                        add(
+                            ZashiListItemState(
+                                title = stringRes(R.string.advanced_settings_crash_reporting),
+                                icon =
+                                    R.drawable.ic_advanced_settings_crash_reporting,
+                                onClick = ::onCrashReportingClick
+                            )
+                        )
+                    }
+                }.toImmutableList(),
             deleteButton =
                 ButtonState(
                     text = stringRes(R.string.advanced_settings_delete_button),
@@ -88,6 +105,8 @@ class AdvancedSettingsViewModel(
     private fun onChooseServerClick() = navigationRouter.forward(NavigationTargets.CHOOSE_SERVER)
 
     private fun onCurrencyConversionClick() = navigationRouter.forward(NavigationTargets.SETTINGS_EXCHANGE_RATE_OPT_IN)
+
+    private fun onCrashReportingClick() = navigationRouter.forward(NavigationTargets.CRASH_REPORTING_OPT_IN)
 
     private fun onTaxExportClick() =
         viewModelScope.launch {

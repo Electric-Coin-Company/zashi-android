@@ -78,11 +78,11 @@ private class FirebaseCrashReporterImpl(
     }
 
     override fun enable() {
-        firebaseCrashlytics.setCrashlyticsCollectionEnabled(true)
+        firebaseCrashlytics.isCrashlyticsCollectionEnabled = true
     }
 
     override fun disableAndDelete() {
-        firebaseCrashlytics.setCrashlyticsCollectionEnabled(false)
+        firebaseCrashlytics.isCrashlyticsCollectionEnabled = false
         firebaseCrashlytics.deleteUnsentReports()
         firebaseInstallations.delete()
     }
