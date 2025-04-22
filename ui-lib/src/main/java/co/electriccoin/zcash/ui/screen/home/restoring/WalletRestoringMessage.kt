@@ -42,7 +42,11 @@ fun WalletRestoringMessage(
         },
         subtitle = {
             Text(
-                text = stringResource(R.string.home_message_restoring_subtitle),
+                text = if (state.isSpendable) {
+                    stringResource(R.string.home_message_restoring_subtitle)
+                } else {
+                    stringResource(R.string.home_message_restoring_subtitle_spendable)
+                },
             )
         },
         end = null
@@ -50,6 +54,7 @@ fun WalletRestoringMessage(
 }
 
 class WalletRestoringMessageState(
+    val isSpendable: Boolean,
     val progress: Float,
     val onClick: () -> Unit
 ) : HomeMessageState
@@ -65,6 +70,7 @@ private fun Preview() =
                 contentPadding = PaddingValues(16.dp),
                 state =
                     WalletRestoringMessageState(
+                        isSpendable = false,
                         progress = progress,
                         onClick = {}
                     )

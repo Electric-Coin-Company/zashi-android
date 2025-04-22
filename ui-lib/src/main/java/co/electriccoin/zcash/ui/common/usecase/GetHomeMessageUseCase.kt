@@ -78,7 +78,10 @@ class GetHomeMessageUseCase(
                                 -> {
                                     val progress = walletSnapshot.progress.decimal * 100f
                                     if (walletSnapshot.restoringState == WalletRestoringState.RESTORING) {
-                                        HomeMessageData.Restoring(progress = progress)
+                                        HomeMessageData.Restoring(
+                                            isSpendable = walletSnapshot.isSpendable,
+                                            progress = progress
+                                        )
                                     } else {
                                         HomeMessageData.Syncing(progress = progress)
                                     }

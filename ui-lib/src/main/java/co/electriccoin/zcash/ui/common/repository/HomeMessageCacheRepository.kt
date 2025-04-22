@@ -61,6 +61,7 @@ sealed interface HomeMessageData {
     data object Disconnected : RuntimeMessage()
 
     data class Restoring(
+        val isSpendable: Boolean,
         val progress: Float
     ) : RuntimeMessage()
 

@@ -182,6 +182,7 @@ class HomeViewModel(
 
             is HomeMessageData.Restoring ->
                 WalletRestoringMessageState(
+                    isSpendable = it.isSpendable,
                     progress = it.progress,
                     onClick = ::onWalletRestoringMessageClick
                 )
