@@ -12,8 +12,10 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-### Añadido
-- The new Crash Reporting Opt In/Out screen has been added
+## [1.5.2 (932)] - 2025-04-23
+
+### Añadido:
+- Hemos añadido una opción para que los usuarios de Playstore no compartan informes de fallos a través de Firebase Crashlytics. Puedes encontrar esta nueva configuración en Configuración Avanzada -> Informes de fallos.
 
 ## [1.5.2 (929)] - 2025-04-09
 
