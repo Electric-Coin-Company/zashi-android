@@ -15,7 +15,7 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [1.5.2 (932)] - 2025-04-22
 
 ### Añadido
-- The new Crash Reporting Opt In/Out screen has been added
+- Se ha agregado la nueva pantalla para activar o desactivar los informes de fallos
 
 ## [1.5.2 (929)] - 2025-04-09
 

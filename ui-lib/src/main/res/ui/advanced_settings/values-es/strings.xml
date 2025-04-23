@@ -5,7 +5,7 @@
     <string name="advanced_settings_export">Exportar Datos Privados</string>
     <string name="advanced_settings_choose_server">Elegir un Servidor</string>
     <string name="advanced_settings_currency_conversion">Conversión de Moneda</string>
-    <string name="advanced_settings_crash_reporting">Crash Reporting</string>
+    <string name="advanced_settings_crash_reporting">Informe de fallos</string>
     <string name="advanced_settings_info">Se te pedirá confirmación en la siguiente pantalla</string>
     <string name="advanced_settings_delete_button">Restablecer Zashi</string>
     <string name="advanced_settings_tax">Exportar Archivo de Impuestos</string>
