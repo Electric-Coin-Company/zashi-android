@@ -12,10 +12,10 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
-## [1.5.2 (932)] - 2025-04-22
+## [1.5.2 (932)] - 2025-04-23
 
-### Added
-- The new Crash Reporting Opt In/Out screen has been added
+### Added:
+- We added an option for Playstore users to opt out of sharing crash reports via Firebase Crashlytics. You can find this new setting in the Advanced Settings -> Crash Reporting.
 
 ## [1.5.2 (929)] - 2025-04-09
 

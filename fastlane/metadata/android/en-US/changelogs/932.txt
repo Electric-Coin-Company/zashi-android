@@ -1,1 +1,2 @@
 Added:
+- We added an option for Playstore users to opt out of sharing crash reports via Firebase Crashlytics. You can find this new setting in the Advanced Settings -> Crash Reporting.

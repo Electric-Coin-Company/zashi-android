@@ -6,7 +6,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
-## [1.5.2 (932)] - 2025-04-22
+## [1.5.2 (932)] - 2025-04-23
 
 ### Added
 - The new Crash Reporting Opt In/Out screen has been added 

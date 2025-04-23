@@ -1,1 +1,2 @@
 Añadido:
+- Hemos añadido una opción para que los usuarios de Playstore no compartan informes de fallos a través de Firebase Crashlytics. Puedes encontrar esta nueva configuración en Configuración Avanzada -> Informes de fallos.
