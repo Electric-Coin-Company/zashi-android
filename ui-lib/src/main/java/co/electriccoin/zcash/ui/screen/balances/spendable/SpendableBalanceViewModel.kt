@@ -57,7 +57,7 @@ class SpendableBalanceViewModel(
             message = createMessage(account, transactions),
             positive = createPositiveButton(account),
             onBack = ::onBack,
-            rows = createInfoRows(account),
+            rows = createInfoRows(account, transactions),
             shieldButton = createShieldButtonState(account)
         )
     }
@@ -67,12 +67,12 @@ class SpendableBalanceViewModel(
             when {
                 account.isAllShielded -> stringRes(R.string.balance_action_all_shielded)
 
+                account.totalBalance > account.spendableShieldedBalance &&
+                    transactions.orEmpty().any { it.transaction.isPending } ->
+                    stringRes(R.string.balance_action_pending)
+
                 account.totalBalance > account.spendableShieldedBalance ->
-                    if (transactions.orEmpty().any { it.transaction.isPending }) {
-                        stringRes(R.string.balance_action_pending)
-                    } else {
-                        stringRes(R.string.balance_action_syncing)
-                    }
+                    stringRes(R.string.balance_action_syncing)
 
                 else -> null
             }
@@ -101,22 +101,28 @@ class SpendableBalanceViewModel(
             onClick = ::onBack
         )
 
-    private fun createInfoRows(account: WalletAccount) =
-        listOfNotNull(
+    private fun createInfoRows(
+        account: WalletAccount,
+        transactions: List<ListTransactionData>?
+    ): List<SpendableBalanceRowState> {
+        val hasPendingTransaction = transactions.orEmpty().any { it.transaction.isPending }
+        return listOfNotNull(
             SpendableBalanceRowState(
                 title = stringRes(R.string.balance_action_info_shielded),
                 icon = imageRes(R.drawable.ic_balance_shield),
                 value = stringRes(R.string.general_zec, stringRes(account.spendableShieldedBalance))
             ),
             when {
-                account.totalShieldedBalance > account.spendableShieldedBalance && account.isShieldedPending ->
+                account.totalShieldedBalance > account.spendableShieldedBalance &&
+                    account.isShieldedPending &&
+                    hasPendingTransaction ->
                     SpendableBalanceRowState(
                         title = stringRes(R.string.balance_action_info_pending),
                         icon = loadingImageRes(),
                         value = stringRes(R.string.general_zec, stringRes(account.pendingShieldedBalance))
                     )
 
-                account.totalShieldedBalance > account.spendableShieldedBalance ->
+                account.totalShieldedBalance > account.spendableShieldedBalance && hasPendingTransaction ->
                     SpendableBalanceRowState(
                         title = stringRes(R.string.balance_action_info_pending),
                         icon = loadingImageRes(),
@@ -130,6 +136,7 @@ class SpendableBalanceViewModel(
                 else -> null
             },
         )
+    }
 
     private fun createShieldButtonState(account: WalletAccount): SpendableBalanceShieldButtonState? =
         SpendableBalanceShieldButtonState(
