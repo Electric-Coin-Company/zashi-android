@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.mapLatest
 
-class GetCurrentTransactionsUseCase(
+class GetTransactionsUseCase(
     private val transactionRepository: TransactionRepository,
     private val metadataRepository: MetadataRepository,
 ) {

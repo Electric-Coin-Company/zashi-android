@@ -38,3 +38,7 @@ data class ZecAmountPair(
     val main: String,
     val suffix: String
 )
+
+@Suppress("MagicNumber")
+val Zatoshi.Companion.typicalFee: Zatoshi
+    get() = Zatoshi(100000)

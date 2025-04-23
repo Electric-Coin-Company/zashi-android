@@ -1,12 +1,17 @@
-package co.electriccoin.zcash.ui.screen.balances.action
+package co.electriccoin.zcash.ui.screen.balances.spendable
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import cash.z.ecc.sdk.extension.typicalFee
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.repository.isPending
+import co.electriccoin.zcash.ui.common.usecase.GetTransactionsUseCase
+import co.electriccoin.zcash.ui.common.usecase.ListTransactionData
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.StringResource
@@ -15,35 +20,41 @@ import co.electriccoin.zcash.ui.design.util.loadingImageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 
-class BalanceActionViewModel(
+class SpendableBalanceViewModel(
     accountDataSource: AccountDataSource,
+    getTransactions: GetTransactionsUseCase,
     private val navigationRouter: NavigationRouter,
     private val shieldFunds: ShieldFundsUseCase,
 ) : ViewModel() {
     val state =
-        accountDataSource.selectedAccount
-            .mapNotNull {
-                createState(it)
-            }.stateIn(
+        combine(
+            accountDataSource.selectedAccount,
+            getTransactions.observe()
+        ) { account, transactions ->
+            createState(account, transactions)
+        }.filterNotNull()
+            .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue =
                     createState(
-                        accountDataSource.allAccounts.value
-                            .orEmpty()
-                            .firstOrNull { it.isSelected }
+                        account =
+                            accountDataSource.allAccounts.value
+                                .orEmpty()
+                                .firstOrNull { it.isSelected },
+                        transactions = null
                     )
             )
 
-    private fun createState(account: WalletAccount?): BalanceActionState? {
+    private fun createState(account: WalletAccount?, transactions: List<ListTransactionData>?): SpendableBalanceState? {
         if (account == null) return null
-
-        return BalanceActionState(
+        return SpendableBalanceState(
             title = stringRes(R.string.balance_action_title),
-            message = createMessage(account),
+            message = createMessage(account, transactions),
             positive = createPositiveButton(account),
             onBack = ::onBack,
             rows = createInfoRows(account),
@@ -51,19 +62,26 @@ class BalanceActionViewModel(
         )
     }
 
-    private fun createMessage(account: WalletAccount): StringResource {
+    private fun createMessage(account: WalletAccount, transactions: List<ListTransactionData>?): StringResource {
         val pending =
             when {
-                account.totalShieldedBalance == account.spendableShieldedBalance ->
-                    stringRes(R.string.balance_action_all_shielded)
+                account.isAllShielded -> stringRes(R.string.balance_action_all_shielded)
 
-                account.totalShieldedBalance > account.spendableShieldedBalance ->
-                    stringRes(R.string.balance_action_pending)
+                account.totalBalance > account.spendableShieldedBalance ->
+                    if (transactions.orEmpty().any { it.transaction.isPending }) {
+                        stringRes(R.string.balance_action_pending)
+                    } else {
+                        stringRes(R.string.balance_action_syncing)
+                    }
 
                 else -> null
             }
 
-        val shielding = stringRes(R.string.balance_action_shield_message).takeIf { account.isShieldingAvailable }
+        val shielding =
+            stringRes(
+                R.string.balance_action_shield_message,
+                stringRes(Zatoshi.typicalFee)
+            ).takeIf { account.isShieldingAvailable }
 
         return if (pending != null && shielding != null) {
             pending + stringRes("\n\n") + shielding
@@ -85,21 +103,21 @@ class BalanceActionViewModel(
 
     private fun createInfoRows(account: WalletAccount) =
         listOfNotNull(
-            BalanceActionRowState(
+            SpendableBalanceRowState(
                 title = stringRes(R.string.balance_action_info_shielded),
                 icon = imageRes(R.drawable.ic_balance_shield),
                 value = stringRes(R.string.general_zec, stringRes(account.spendableShieldedBalance))
             ),
             when {
                 account.totalShieldedBalance > account.spendableShieldedBalance && account.isShieldedPending ->
-                    BalanceActionRowState(
+                    SpendableBalanceRowState(
                         title = stringRes(R.string.balance_action_info_pending),
                         icon = loadingImageRes(),
                         value = stringRes(R.string.general_zec, stringRes(account.pendingShieldedBalance))
                     )
 
                 account.totalShieldedBalance > account.spendableShieldedBalance ->
-                    BalanceActionRowState(
+                    SpendableBalanceRowState(
                         title = stringRes(R.string.balance_action_info_pending),
                         icon = loadingImageRes(),
                         value =
@@ -113,8 +131,8 @@ class BalanceActionViewModel(
             },
         )
 
-    private fun createShieldButtonState(account: WalletAccount): BalanceShieldButtonState? =
-        BalanceShieldButtonState(
+    private fun createShieldButtonState(account: WalletAccount): SpendableBalanceShieldButtonState? =
+        SpendableBalanceShieldButtonState(
             amount = account.transparent.balance,
             onShieldClick = ::onShieldClick
         ).takeIf { account.isShieldingAvailable }

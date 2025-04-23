@@ -15,12 +15,10 @@ import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
-import co.electriccoin.zcash.ui.common.datasource.WalletSnapshotDataSource
 import co.electriccoin.zcash.ui.common.model.FastestServersState
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
-import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
@@ -67,7 +65,6 @@ interface WalletRepository {
 
     val allAccounts: Flow<List<WalletAccount>?>
     val currentAccount: Flow<WalletAccount?>
-    val currentWalletSnapshot: StateFlow<WalletSnapshot?>
 
     /**
      * A flow of the wallet block synchronization state.
@@ -105,7 +102,6 @@ class WalletRepositoryImpl(
     private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val walletRestoringStateProvider: WalletRestoringStateProvider,
-    private val walletSnapshotDataSource: WalletSnapshotDataSource,
 ) : WalletRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -184,8 +180,6 @@ class WalletRepositoryImpl(
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = FastestServersState(servers = emptyList(), isLoading = true)
         )
-
-    override val currentWalletSnapshot: StateFlow<WalletSnapshot?> = walletSnapshotDataSource.observe()
 
     /**
      * A flow of the wallet block synchronization state.

@@ -19,7 +19,6 @@ import co.electriccoin.zcash.ui.common.usecase.GetCoinbaseStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetCurrentTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetFlexaStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
@@ -34,6 +33,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionMetadataUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
@@ -142,7 +142,7 @@ val useCaseModule =
         factoryOf(::GetSelectedWalletAccountUseCase)
         singleOf(::ObserveClearSendUseCase)
         singleOf(::PrefillSendUseCase)
-        factoryOf(::GetCurrentTransactionsUseCase)
+        factoryOf(::GetTransactionsUseCase)
         factoryOf(::GetCurrentFilteredTransactionsUseCase) onClose ::closeableCallback
         factoryOf(::CreateProposalUseCase)
         factoryOf(::OnZip321ScannedUseCase)

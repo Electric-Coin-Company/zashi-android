@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.balances.action
+package co.electriccoin.zcash.ui.screen.balances.spendable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -42,8 +42,8 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BalanceActionView(
-    state: BalanceActionState?,
+fun SpendableBalanceView(
+    state: SpendableBalanceState?,
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
     ZashiScreenModalBottomSheet(
@@ -56,7 +56,7 @@ fun BalanceActionView(
 }
 
 @Composable
-fun BottomSheetContent(state: BalanceActionState, modifier: Modifier = Modifier) {
+fun BottomSheetContent(state: SpendableBalanceState, modifier: Modifier = Modifier) {
     Column(
         modifier =
             modifier
@@ -97,7 +97,7 @@ fun BottomSheetContent(state: BalanceActionState, modifier: Modifier = Modifier)
 }
 
 @Composable
-private fun BalanceActionRow(state: BalanceActionRowState) {
+private fun BalanceActionRow(state: SpendableBalanceRowState) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -137,7 +137,7 @@ private fun BalanceActionRow(state: BalanceActionRowState) {
 }
 
 @Composable
-private fun BalanceShieldButton(state: BalanceShieldButtonState) {
+private fun BalanceShieldButton(state: SpendableBalanceShieldButtonState) {
     ZashiCard(
         modifier = Modifier.fillMaxWidth(),
         contentPadding =
@@ -193,9 +193,9 @@ private fun BalanceShieldButton(state: BalanceShieldButtonState) {
 @Composable
 private fun Preview() =
     ZcashTheme {
-        BalanceActionView(
+        SpendableBalanceView(
             state =
-                BalanceActionState(
+                SpendableBalanceState(
                     title = stringRes("Title"),
                     message = stringRes("Subtitle"),
                     positive =
@@ -205,19 +205,19 @@ private fun Preview() =
                     onBack = {},
                     rows =
                         listOf(
-                            BalanceActionRowState(
+                            SpendableBalanceRowState(
                                 title = stringRes("Row"),
                                 icon = loadingImageRes(),
                                 value = stringRes("Value")
                             ),
-                            BalanceActionRowState(
+                            SpendableBalanceRowState(
                                 title = stringRes("Row"),
                                 icon = imageRes(R.drawable.ic_balance_shield),
                                 value = stringRes("Value")
                             )
                         ),
                     shieldButton =
-                        BalanceShieldButtonState(
+                        SpendableBalanceShieldButtonState(
                             amount = Zatoshi(10000),
                             onShieldClick = {}
                         )

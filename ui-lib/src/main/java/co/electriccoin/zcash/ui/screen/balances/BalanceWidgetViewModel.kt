@@ -11,7 +11,7 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.balances.action.BalanceAction
+import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalance
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -50,13 +50,7 @@ class BalanceWidgetViewModel(
                 when {
                     !args.isBalanceButtonEnabled -> null
                     account == null -> null
-                    account.totalBalance == account.spendableShieldedBalance -> null
-                    account.totalBalance > account.spendableShieldedBalance &&
-                        account.spendableShieldedBalance == account.totalShieldedBalance &&
-                        account.totalTransparentBalance > Zatoshi(0) &&
-                        !account.isShieldingAvailable ->
-                        null
-
+                    account.isAllShielded -> null
                     account.totalBalance > account.spendableShieldedBalance &&
                         !account.isShieldedPending &&
                         account.totalShieldedBalance > Zatoshi(0) &&
@@ -94,7 +88,7 @@ class BalanceWidgetViewModel(
             showDust = args.showDust
         )
 
-    private fun onBalanceButtonClick() = navigationRouter.forward(BalanceAction)
+    private fun onBalanceButtonClick() = navigationRouter.forward(SpendableBalance)
 }
 
 data class BalanceWidgetArgs(

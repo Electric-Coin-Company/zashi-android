@@ -7,11 +7,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import co.electriccoin.zcash.ui.NavigationRouter
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.Spacer
@@ -24,28 +25,28 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.serialization.Serializable
-import org.koin.compose.koinInject
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AndroidWalletRestoringInfo() {
-    val navigationRouter = koinInject<NavigationRouter>()
-    Content(
-        onBack = { navigationRouter.back() }
-    )
+    val viewModel = koinViewModel<WalletRestoringInfoViewModel>()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    Content(state)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Content(
-    onBack: () -> Unit,
+    state: WalletRestoringInfoState,
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
     ZashiScreenModalBottomSheet(
         sheetState = sheetState,
-        onDismissRequest = onBack
+        onDismissRequest = state.onBack
     ) {
         Column(
             modifier =
@@ -70,17 +71,17 @@ private fun Content(
                 stringResource(R.string.home_info_restoring_bullet_2),
                 color = ZashiColors.Text.textTertiary
             )
-            Spacer(32.dp)
-            ZashiInfoText(
-                stringResource(R.string.home_info_restoring_note),
-            )
+            state.info?.let {
+                Spacer(32.dp)
+                ZashiInfoText(it.getValue())
+            }
             Spacer(24.dp)
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 state =
                     ButtonState(
                         text = stringRes(R.string.general_ok),
-                        onClick = onBack
+                        onClick = state.onBack
                     )
             )
         }
@@ -93,7 +94,11 @@ private fun Content(
 private fun Preview() =
     ZcashTheme {
         Content(
-            onBack = {},
+            state =
+                WalletRestoringInfoState(
+                    onBack = {},
+                    info = stringRes(R.string.home_info_restoring_message)
+                )
         )
     }
 

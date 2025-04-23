@@ -10,7 +10,7 @@ import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.repository.Transaction
-import co.electriccoin.zcash.ui.common.usecase.GetCurrentTransactionsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 class TransactionHistoryWidgetViewModel(
-    getCurrentTransactions: GetCurrentTransactionsUseCase,
+    getTransactions: GetTransactionsUseCase,
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
@@ -31,7 +31,7 @@ class TransactionHistoryWidgetViewModel(
 ) : ViewModel() {
     val state =
         combine(
-            getCurrentTransactions.observe(),
+            getTransactions.observe(),
             getWalletRestoringState.observe(),
         ) { transactions, restoringState ->
             when {

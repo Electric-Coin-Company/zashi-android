@@ -415,3 +415,6 @@ sealed interface ShieldTransaction : Transaction {
         override val overview: TransactionOverview,
     ) : ShieldTransaction
 }
+
+val Transaction.isPending: Boolean
+    get() = this is SendTransaction.Pending || this is ShieldTransaction.Pending || this is ReceiveTransaction.Pending

@@ -9,7 +9,7 @@ import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewMode
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.SelectRecipientViewModel
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsViewModel
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
-import co.electriccoin.zcash.ui.screen.balances.action.BalanceActionViewModel
+import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
@@ -23,6 +23,7 @@ import co.electriccoin.zcash.ui.screen.home.HomeViewModel
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetailViewModel
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptInViewModel
+import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoViewModel
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
@@ -156,6 +157,7 @@ val viewModelModule =
         viewModelOf(::ExchangeRateSettingsViewModel)
         viewModelOf(::WalletBackupDetailViewModel)
         viewModelOf(::ErrorViewModel)
-        viewModelOf(::BalanceActionViewModel)
+        viewModelOf(::SpendableBalanceViewModel)
         viewModelOf(::CrashReportOptInViewModel)
+        viewModelOf(::WalletRestoringInfoViewModel)
     }

@@ -43,7 +43,7 @@
     <string name="home_info_transparent_subtitle">To protect user privacy, Zashi doesn\'t support spending transparent
         ZEC. Tap the \"Shield\" button below to make your transparent funds spendable and your total Zashi balance private. </string>
     <string name="home_info_transparent_message">This will create a shielding in-wallet transaction, consolidating your
-        transparent and shielded funds. (Typical fee: .001 ZEC)</string>
+        transparent and shielded funds. (Typical fee: %s ZEC)</string>
     <string name="home_info_transparent_subheader">Transparent</string>
     <string name="home_info_disconnected_title">Wallet Disconnected</string>
     <string name="home_info_disconnected_subtitle">You appear to be offline. Please restore your internet connection
@@ -74,7 +74,8 @@
     <string name="balance_action_title">Spendable Balance</string>
     <string name="balance_action_all_shielded">All your funds are shielded and spendable.</string>
     <string name="balance_action_pending">Pending transactions are getting mined and confirmed.</string>
-    <string name="balance_action_shield_message">Shield your transparent ZEC to make it spendable and private. Doing so will create a shielding in-wallet transaction, consolidating your transparent and shielded funds. (Typical fee: .001 ZEC)</string>
-    <string name="balance_action_info_shielded">Shielded ZEC (Spendable)</string>
+    <string name="balance_action_syncing">Zashi is scanning the blockchain to make sure your balances are displayed correctly.</string>
+    <string name="balance_action_shield_message">Shield your transparent ZEC to make it spendable and private. Doing so will create a shielding in-wallet transaction, consolidating your transparent and shielded funds. (Typical fee: %s ZEC)</string>
+    <string name="balance_action_info_shielded">Shielded (Spendable)</string>
     <string name="balance_action_info_pending">Pending</string>
 </resources>

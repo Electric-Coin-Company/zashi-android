@@ -57,6 +57,18 @@ sealed interface WalletAccount : Comparable<WalletAccount> {
     val isShieldingAvailable: Boolean
         get() = totalTransparentBalance > Zatoshi(100000L)
 
+    val isAllShielded: Boolean
+        get() {
+            val isAllShielded = totalBalance == spendableShieldedBalance
+            val isAllShieldedWithTransparentDustLeft =
+                totalBalance > spendableShieldedBalance &&
+                    spendableShieldedBalance == totalShieldedBalance &&
+                    totalTransparentBalance > Zatoshi(0) &&
+                    !isShieldingAvailable
+
+            return isAllShielded || isAllShieldedWithTransparentDustLeft
+        }
+
     fun canSpend(amount: Zatoshi): Boolean = spendableShieldedBalance >= amount
 }
 

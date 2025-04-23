@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.Zatoshi
+import cash.z.ecc.sdk.extension.typicalFee
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.Spacer
@@ -72,7 +73,10 @@ private fun Content(state: ShieldFundsInfoState) {
         )
         Spacer(24.dp)
         Text(
-            stringResource(R.string.home_info_transparent_message),
+            stringRes(
+                R.string.home_info_transparent_message,
+                stringRes(Zatoshi.typicalFee)
+            ).getValue(),
             color = ZashiColors.Text.textTertiary,
             style = ZashiTypography.textMd
         )
