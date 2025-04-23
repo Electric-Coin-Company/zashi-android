@@ -48,7 +48,8 @@ class SynchronizerProviderImpl(
                         emit(synchronizer)
                     }
                 }
-            }.flowOn(Dispatchers.IO)
+            }
+            .flowOn(Dispatchers.IO)
             .stateIn(
                 scope = scope,
                 started = SharingStarted.Lazily,

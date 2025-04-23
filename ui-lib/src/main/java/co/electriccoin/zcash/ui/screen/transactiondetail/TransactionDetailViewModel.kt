@@ -136,7 +136,8 @@ class TransactionDetailViewModel(
                         onTransactionAddressClick = { onCopyToClipboard(transaction.recipientAddress.address) },
                         fee = createFeeStringRes(transaction),
                         completedTimestamp = createTimestampStringRes(transaction),
-                        note = transaction.metadata.note?.let { stringRes(it) }
+                        note = transaction.metadata.note?.let { stringRes(it) },
+                        isPending = isPending(transaction)
                     )
                 } else {
                     SendShieldedState(
@@ -167,7 +168,8 @@ class TransactionDetailViewModel(
                                     }
                                 )
                             },
-                        note = transaction.metadata.note?.let { stringRes(it) }
+                        note = transaction.metadata.note?.let { stringRes(it) },
+                        isPending = isPending(transaction)
                     )
                 }
             }
@@ -184,7 +186,8 @@ class TransactionDetailViewModel(
                             onCopyToClipboard(transaction.transaction.id.txIdString())
                         },
                         completedTimestamp = createTimestampStringRes(transaction),
-                        note = transaction.metadata.note?.let { stringRes(it) }
+                        note = transaction.metadata.note?.let { stringRes(it) },
+                        isPending = isPending(transaction)
                     )
                 } else {
                     ReceiveShieldedState(
@@ -208,7 +211,8 @@ class TransactionDetailViewModel(
                                     }
                                 )
                             },
-                        note = transaction.metadata.note?.let { stringRes(it) }
+                        note = transaction.metadata.note?.let { stringRes(it) },
+                        isPending = isPending(transaction)
                     )
                 }
             }
@@ -225,7 +229,8 @@ class TransactionDetailViewModel(
                     },
                     completedTimestamp = createTimestampStringRes(transaction),
                     fee = createFeeStringRes(transaction),
-                    note = transaction.metadata.note?.let { stringRes(it) }
+                    note = transaction.metadata.note?.let { stringRes(it) },
+                    isPending = isPending(transaction)
                 )
             }
         }
@@ -263,6 +268,8 @@ class TransactionDetailViewModel(
                     useFullFormat = true
                 )
             } ?: stringRes(R.string.transaction_detail_pending)
+
+    private fun isPending(data: DetailedTransactionData) = data.transaction.timestamp == null
 
     private fun onCopyToClipboard(text: String) {
         copyToClipboard(

@@ -118,7 +118,11 @@ fun SendShielded(
                     modifier = Modifier.fillMaxWidth(),
                     state =
                         TransactionDetailInfoRowState(
-                            title = stringRes(R.string.transaction_detail_info_transaction_completed),
+                            title = if (state.isPending) {
+                                stringRes(R.string.transaction_detail_info_transaction_status)
+                            } else {
+                                stringRes(R.string.transaction_detail_info_transaction_completed)
+                            },
                             message = state.completedTimestamp,
                             shape =
                                 if (state.note == null) {

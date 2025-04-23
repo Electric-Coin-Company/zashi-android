@@ -44,9 +44,9 @@ fun WalletRestoringMessage(
             Text(
                 text =
                     if (state.isSpendable) {
-                        stringResource(R.string.home_message_restoring_subtitle)
-                    } else {
                         stringResource(R.string.home_message_restoring_subtitle_spendable)
+                    } else {
+                        stringResource(R.string.home_message_restoring_subtitle)
                     },
             )
         },
