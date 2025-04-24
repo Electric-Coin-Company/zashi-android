@@ -1,12 +1,23 @@
-package co.electriccoin.zcash.ui.preference
+package co.electriccoin.zcash.ui.common.provider
 
 import cash.z.ecc.android.sdk.model.PersistableWallet
+import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.api.PreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.PreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 import org.json.JSONObject
 
-data class PersistableWalletPreferenceDefault(
+interface PersistableWalletStorageProvider : NullableStorageProvider<PersistableWallet>
+
+class PersistableWalletStorageProviderImpl(
+    override val preferenceHolder: EncryptedPreferenceProvider,
+) : BaseNullableStorageProvider<PersistableWallet>(),
+    PersistableWalletStorageProvider {
+    override val default: PreferenceDefault<PersistableWallet?> =
+        PersistableWalletPreferenceDefault(PreferenceKey("persistable_wallet"))
+}
+
+private class PersistableWalletPreferenceDefault(
     override val key: PreferenceKey
 ) : PreferenceDefault<PersistableWallet?> {
     override suspend fun getValue(preferenceProvider: PreferenceProvider) =
@@ -16,8 +27,4 @@ data class PersistableWalletPreferenceDefault(
         preferenceProvider: PreferenceProvider,
         newValue: PersistableWallet?
     ) = preferenceProvider.putString(key, newValue?.toJson()?.toString())
-
-    suspend fun remove(preferenceProvider: PreferenceProvider) {
-        preferenceProvider.remove(key)
-    }
 }

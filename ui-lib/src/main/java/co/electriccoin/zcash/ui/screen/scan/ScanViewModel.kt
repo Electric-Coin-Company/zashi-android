@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.scan.viewmodel
+package co.electriccoin.zcash.ui.screen.scan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,8 +8,6 @@ import co.electriccoin.zcash.ui.common.usecase.OnAddressScannedUseCase
 import co.electriccoin.zcash.ui.common.usecase.OnZip321ScannedUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase.Zip321ParseUriValidation
-import co.electriccoin.zcash.ui.screen.scan.Scan
-import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -63,13 +61,12 @@ internal class ScanViewModel(
         result: String,
         addressValidationResult: AddressType
     ) {
-        hasBeenScannedSuccessfully = true
         state.update { ScanValidationState.VALID }
         onAddressScanned(result, addressValidationResult, args)
+        hasBeenScannedSuccessfully = true
     }
 
     private suspend fun onZip321SingleAddressScanned(zip321ValidationResult: Zip321ParseUriValidation.SingleAddress) {
-        hasBeenScannedSuccessfully = true
         val singleAddressValidation = getSynchronizer().validateAddress(zip321ValidationResult.address)
         if (singleAddressValidation is AddressType.Invalid) {
             state.update { ScanValidationState.INVALID }
@@ -77,12 +74,13 @@ internal class ScanViewModel(
             state.update { ScanValidationState.VALID }
             onAddressScanned(zip321ValidationResult.address, singleAddressValidation, args)
         }
+        hasBeenScannedSuccessfully = true
     }
 
     private suspend fun onZip321Scanned(zip321ValidationResult: Zip321ParseUriValidation.Valid) {
-        hasBeenScannedSuccessfully = true
         state.update { ScanValidationState.VALID }
         zip321Scanned(zip321ValidationResult, args)
+        hasBeenScannedSuccessfully = true
     }
 
     fun onScannedError() =

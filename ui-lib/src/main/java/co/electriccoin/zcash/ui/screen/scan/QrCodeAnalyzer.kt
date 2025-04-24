@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.scan.util
+package co.electriccoin.zcash.ui.screen.scan
 
 import androidx.camera.core.ImageAnalysis
 

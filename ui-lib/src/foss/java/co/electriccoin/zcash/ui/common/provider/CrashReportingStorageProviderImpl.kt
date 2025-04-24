@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.common.provider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-class CrashReportingStorageProviderImpl: CrashReportingStorageProvider {
+class CrashReportingStorageProviderImpl : CrashReportingStorageProvider {
     override suspend fun get(): Boolean = false
 
     override suspend fun store(amount: Boolean) {

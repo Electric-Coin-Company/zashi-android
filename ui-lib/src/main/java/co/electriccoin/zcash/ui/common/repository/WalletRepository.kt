@@ -11,7 +11,6 @@ import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
-import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
@@ -21,10 +20,10 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
+import co.electriccoin.zcash.ui.common.provider.PersistableWalletStorageProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.provider.WalletRestoringStateProvider
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
-import co.electriccoin.zcash.ui.preference.PersistableWalletPreferenceDefault
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.chooseserver.AvailableServerProvider
 import kotlinx.coroutines.CoroutineScope
@@ -98,10 +97,9 @@ class WalletRepositoryImpl(
     private val application: Application,
     private val getDefaultServers: GetDefaultServersProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
-    private val persistableWalletPreference: PersistableWalletPreferenceDefault,
-    private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val walletRestoringStateProvider: WalletRestoringStateProvider,
+    private val persistableWalletStorageProvider: PersistableWalletStorageProvider
 ) : WalletRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -206,7 +204,7 @@ class WalletRepositoryImpl(
 
     private suspend fun persistWalletInternal(persistableWallet: PersistableWallet) {
         synchronizer.value?.let { (it as? SdkSynchronizer)?.close() }
-        persistableWalletPreference.putValue(encryptedPreferenceProvider(), persistableWallet)
+        persistableWalletStorageProvider.store(persistableWallet)
     }
 
     /**

@@ -71,6 +71,7 @@ import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RemindShieldFundsLaterUseCase
 import co.electriccoin.zcash.ui.common.usecase.RemindWalletBackupLaterUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
+import co.electriccoin.zcash.ui.common.usecase.RescanQrUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetInMemoryDataUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetSharedPrefsDataUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
@@ -192,4 +193,5 @@ val useCaseModule =
         factoryOf(::RemindShieldFundsLaterUseCase)
         singleOf(::ShieldFundsUseCase)
         singleOf(::NavigateToErrorUseCase)
+        factoryOf(::RescanQrUseCase)
     }

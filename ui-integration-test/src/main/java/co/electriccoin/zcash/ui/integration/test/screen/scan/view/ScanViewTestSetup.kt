@@ -6,9 +6,9 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.integration.test.common.getPermissionNegativeButtonUiObject
 import co.electriccoin.zcash.ui.integration.test.common.getPermissionPositiveButtonUiObject
-import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
-import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
-import co.electriccoin.zcash.ui.screen.scan.view.Scan
+import co.electriccoin.zcash.ui.screen.scan.Scan
+import co.electriccoin.zcash.ui.screen.scan.ScanScreenState
+import co.electriccoin.zcash.ui.screen.scan.ScanValidationState
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import java.util.concurrent.atomic.AtomicInteger

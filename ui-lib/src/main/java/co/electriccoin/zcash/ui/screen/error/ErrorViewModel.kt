@@ -86,7 +86,11 @@ class ErrorViewModel(
     private fun createGeneralErrorState(args: ErrorArgs.General) =
         ErrorState(
             title = stringRes(R.string.error_general_title),
-            message = stringRes(R.string.error_general_message),
+            message =
+                stringRes(
+                    R.string.error_general_message,
+                    stringRes(args.exception.stackTraceToString().take(STACKTRACE_LIMIT))
+                ),
             positive =
                 ButtonState(
                     text = stringRes(R.string.general_ok),

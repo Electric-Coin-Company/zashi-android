@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.scan.util
+package co.electriccoin.zcash.ui.screen.scan
 
 import android.content.Context
 import android.graphics.Bitmap

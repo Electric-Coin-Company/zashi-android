@@ -36,7 +36,8 @@ import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
 import co.electriccoin.zcash.ui.screen.scan.Scan
-import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
+import co.electriccoin.zcash.ui.screen.scan.ScanViewModel
+import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
@@ -160,4 +161,5 @@ val viewModelModule =
         viewModelOf(::SpendableBalanceViewModel)
         viewModelOf(::CrashReportOptInViewModel)
         viewModelOf(::WalletRestoringInfoViewModel)
+        viewModelOf(::ThirdPartyScanViewModel)
     }

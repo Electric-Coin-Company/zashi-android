@@ -10,6 +10,8 @@ import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProviderImpl
+import co.electriccoin.zcash.ui.common.provider.PersistableWalletStorageProvider
+import co.electriccoin.zcash.ui.common.provider.PersistableWalletStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.RestoreTimestampStorageProvider
 import co.electriccoin.zcash.ui.common.provider.RestoreTimestampStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.SelectedAccountUUIDProvider
@@ -57,4 +59,5 @@ val providerModule =
         singleOf(::WalletBackupConsentStorageProviderImpl) bind WalletBackupConsentStorageProvider::class
         singleOf(::WalletRestoringStateProviderImpl) bind WalletRestoringStateProvider::class
         singleOf(::CrashReportingStorageProviderImpl) bind CrashReportingStorageProvider::class
+        singleOf(::PersistableWalletStorageProviderImpl) bind PersistableWalletStorageProvider::class
     }

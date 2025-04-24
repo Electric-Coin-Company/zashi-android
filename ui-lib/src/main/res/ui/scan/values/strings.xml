@@ -12,4 +12,9 @@
 
     <string name="scan_torch_content_description">Camera torch toggle</string>
     <string name="gallery_content_description">Gallery</string>
+
+    <string name="third_party_scan_title">Hello!</string>
+    <string name="third_party_scan_subtitle">Looks like you used a third-party app to scan for payment.</string>
+    <string name="third_party_scan_message">For better safety and security, rescan the QR code with Zashi.</string>
+    <string name="third_party_scan_button">Rescan in Zashi</string>
 </resources>

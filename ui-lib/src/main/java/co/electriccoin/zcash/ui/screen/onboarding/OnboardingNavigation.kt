@@ -45,6 +45,8 @@ import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.restore.seed.AndroidRestoreSeed
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeed
+import co.electriccoin.zcash.ui.screen.scan.thirdparty.AndroidThirdPartyScan
+import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScan
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -147,6 +149,7 @@ fun MainActivity.OnboardingNavigation() {
         ) {
             AndroidSeedInfo()
         }
+        composable<ThirdPartyScan> { AndroidThirdPartyScan() }
     }
 }
 

@@ -1,10 +1,5 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import cash.z.ecc.android.sdk.model.WalletAddress
-import cash.z.ecc.sdk.model.AddressType.SAPLING
-import cash.z.ecc.sdk.model.AddressType.TEX
-import cash.z.ecc.sdk.model.AddressType.TRANSPARENT
-import cash.z.ecc.sdk.model.AddressType.UNIFIED
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
@@ -25,7 +20,8 @@ class OnZip321ScannedUseCase(
     private val zashiProposalRepository: ZashiProposalRepository,
     private val accountDataSource: AccountDataSource,
     private val navigationRouter: NavigationRouter,
-    private val prefillSend: PrefillSendUseCase
+    private val prefillSend: PrefillSendUseCase,
+    private val navigateToErrorUseCase: NavigateToErrorUseCase
 ) {
     suspend operator fun invoke(
         zip321: Zip321ParseUriValidation.Valid,
@@ -69,21 +65,21 @@ class OnZip321ScannedUseCase(
                     }
                 }
 
-            navigationRouter
-                .replace(
-                    Send(
-                        recipientAddress = proposal.destination.address,
-                        recipientAddressType =
-                            when (proposal.destination) {
-                                is WalletAddress.Sapling -> SAPLING
-                                is WalletAddress.Tex -> TEX
-                                is WalletAddress.Transparent -> TRANSPARENT
-                                is WalletAddress.Unified -> UNIFIED
-                            }
-                    ),
-                    ReviewTransaction
+            prefillSend.request(
+                PrefillSendData.All(
+                    amount = proposal.amount,
+                    address = proposal.destination.address,
+                    fee = proposal.proposal.totalFeeRequired(),
+                    memos =
+                        proposal.memo.value
+                            .takeIf { it.isNotEmpty() }
+                            ?.let { listOf(it) }
                 )
+            )
+            navigationRouter.replace(Send(), ReviewTransaction)
         } catch (e: Exception) {
+            navigateToErrorUseCase(ErrorArgs.General(e))
+            zashiProposalRepository.clear()
             keystoneProposalRepository.clear()
             throw e
         }
@@ -118,6 +114,8 @@ class OnZip321ScannedUseCase(
             )
             navigationRouter.forward(ReviewTransaction)
         } catch (e: Exception) {
+            navigateToErrorUseCase(ErrorArgs.General(e))
+            zashiProposalRepository.clear()
             keystoneProposalRepository.clear()
             throw e
         }

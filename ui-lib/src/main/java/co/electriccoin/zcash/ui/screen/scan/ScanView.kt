@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.scan.view
+package co.electriccoin.zcash.ui.screen.scan
 
 import android.Manifest
 import android.view.ViewGroup
@@ -83,10 +83,6 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.screen.scan.ScanTag
-import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
-import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
-import co.electriccoin.zcash.ui.screen.scan.util.ImageUriToQrCodeConverter
 import co.electriccoin.zcash.ui.screen.scan.util.QrCodeAnalyzerImpl
 import co.electriccoin.zcash.ui.screen.scankeystone.view.CAMERA_TRANSLUCENT_BORDER
 import co.electriccoin.zcash.ui.screen.scankeystone.view.FramePosition

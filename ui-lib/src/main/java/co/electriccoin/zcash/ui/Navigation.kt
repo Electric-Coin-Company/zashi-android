@@ -104,6 +104,8 @@ import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransactio
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
 import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
+import co.electriccoin.zcash.ui.screen.scan.thirdparty.AndroidThirdPartyScan
+import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScan
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystoneSignInRequest
 import co.electriccoin.zcash.ui.screen.scankeystone.WrapScanKeystonePCZTRequest
@@ -506,9 +508,8 @@ internal fun MainActivity.Navigation() {
         ) {
             AndroidSpendableBalance()
         }
-        composable<CrashReportOptIn> {
-            AndroidCrashReportOptIn()
-        }
+        composable<CrashReportOptIn> { AndroidCrashReportOptIn() }
+        composable<ThirdPartyScan> { AndroidThirdPartyScan() }
     }
 }
 

@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.electriccoin.zcash.ui.common.compose.SecureScreen
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
@@ -12,11 +13,11 @@ fun AndroidRestoreSeed() {
     val vm = koinViewModel<RestoreSeedViewModel>()
     val state by vm.state.collectAsStateWithLifecycle()
     val suggestionsState = vm.suggestionsState.collectAsStateWithLifecycle().value
+    SecureScreen()
+    BackHandler(state != null) { state?.onBack?.invoke() }
     if (state != null && suggestionsState != null) {
         state?.let { RestoreSeedView(it, suggestionsState) }
     }
-
-    BackHandler { state?.onBack?.invoke() }
 }
 
 @Serializable

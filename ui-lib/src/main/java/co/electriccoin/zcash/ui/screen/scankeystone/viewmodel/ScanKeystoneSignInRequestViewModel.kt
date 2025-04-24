@@ -6,7 +6,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.usecase.InvalidKeystoneSignInQRException
 import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneSignInRequestUseCase
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.scan.model.ScanValidationState
+import co.electriccoin.zcash.ui.screen.scan.ScanValidationState
 import co.electriccoin.zcash.ui.screen.scankeystone.model.ScanKeystoneState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
