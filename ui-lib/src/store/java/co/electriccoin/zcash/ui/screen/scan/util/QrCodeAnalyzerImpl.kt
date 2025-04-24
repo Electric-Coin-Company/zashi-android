@@ -5,6 +5,7 @@ import android.graphics.Matrix
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageProxy
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.screen.scan.QrCodeAnalyzer
 import co.electriccoin.zcash.ui.screen.scankeystone.view.FramePosition
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
