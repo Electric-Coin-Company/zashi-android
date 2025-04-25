@@ -43,11 +43,12 @@ class ShieldFundsInfoViewModel(
                         text = stringRes(R.string.home_info_transparent_not_now),
                     ),
                 transparentAmount = account?.transparent?.balance ?: Zatoshi(0),
-                checkbox = CheckboxState(
-                    text = stringRes(R.string.home_info_transparent_checkbox),
-                    onClick = ::onCheckboxClick,
-                    isChecked = !infoEnabled
-                )
+                checkbox =
+                    CheckboxState(
+                        text = stringRes(R.string.home_info_transparent_checkbox),
+                        onClick = ::onCheckboxClick,
+                        isChecked = !infoEnabled
+                    )
             )
         }.stateIn(
             scope = viewModelScope,

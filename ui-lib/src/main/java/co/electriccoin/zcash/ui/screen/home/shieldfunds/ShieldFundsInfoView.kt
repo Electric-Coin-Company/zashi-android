@@ -155,11 +155,12 @@ private fun Preview() =
                             onClick = {}
                         ),
                     transparentAmount = Zatoshi(0),
-                    checkbox = CheckboxState(
-                        text = stringRes(R.string.home_info_transparent_checkbox),
-                        onClick = {},
-                        isChecked = false
-                    )
+                    checkbox =
+                        CheckboxState(
+                            text = stringRes(R.string.home_info_transparent_checkbox),
+                            onClick = {},
+                            isChecked = false
+                        )
                 )
         )
     }

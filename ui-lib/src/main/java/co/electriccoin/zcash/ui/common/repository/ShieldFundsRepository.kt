@@ -40,6 +40,9 @@ class ShieldFundsRepositoryImpl(
 }
 
 sealed interface ShieldFundsData {
-    data class Available(val amount: Zatoshi) : ShieldFundsData
+    data class Available(
+        val amount: Zatoshi
+    ) : ShieldFundsData
+
     data object Unavailable : ShieldFundsData
 }

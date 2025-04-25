@@ -92,7 +92,7 @@ class GetHomeMessageUseCase(
                                         Synchronizer.Status.SYNCING,
                                         Synchronizer.Status.STOPPED
                                     )
-                                    -> {
+                                -> {
                                     val progress = walletSnapshot.progress.decimal * 100f
                                     if (walletSnapshot.restoringState == WalletRestoringState.RESTORING) {
                                         HomeMessageData.Restoring(

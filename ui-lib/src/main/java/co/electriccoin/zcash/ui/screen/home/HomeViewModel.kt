@@ -203,11 +203,12 @@ class HomeViewModel(
                             R.string.home_message_transparent_balance_subtitle,
                             stringRes(it.zatoshi)
                         ),
-                    onClick = if (isShieldFundsInfoEnabled) {
-                        { onShieldFundsMessageClick() }
-                    } else {
-                        null
-                    },
+                    onClick =
+                        if (isShieldFundsInfoEnabled) {
+                            { onShieldFundsMessageClick() }
+                        } else {
+                            null
+                        },
                     onButtonClick = ::onShieldFundsMessageButtonClick,
                 )
 
