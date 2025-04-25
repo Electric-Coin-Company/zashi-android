@@ -2,12 +2,14 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.MessageAvailabilityDataSource
 import co.electriccoin.zcash.ui.common.datasource.WalletBackupData
 import co.electriccoin.zcash.ui.common.datasource.WalletBackupDataSource
 import co.electriccoin.zcash.ui.common.datasource.WalletSnapshotDataSource
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
@@ -45,6 +47,7 @@ class GetHomeMessageUseCase(
     walletSnapshotDataSource: WalletSnapshotDataSource,
     crashReportingStorageProvider: CrashReportingStorageProvider,
     synchronizerProvider: SynchronizerProvider,
+    accountDataSource: AccountDataSource,
     private val messageAvailabilityDataSource: MessageAvailabilityDataSource,
     private val cache: HomeMessageCacheRepository,
 ) {
@@ -52,10 +55,12 @@ class GetHomeMessageUseCase(
 
     private val backupFlow =
         combine(
-            transactionRepository.zashiTransactions,
+            accountDataSource.selectedAccount,
+            transactionRepository.currentTransactions,
             walletBackupDataSource.observe()
-        ) { transactions, backup ->
+        ) { account, transactions, backup ->
             if (backup is WalletBackupData.Available &&
+                account is ZashiAccount &&
                 transactions.orEmpty().any { it is ReceiveTransaction }
             ) {
                 backup
@@ -87,7 +92,7 @@ class GetHomeMessageUseCase(
                                         Synchronizer.Status.SYNCING,
                                         Synchronizer.Status.STOPPED
                                     )
-                                -> {
+                                    -> {
                                     val progress = walletSnapshot.progress.decimal * 100f
                                     if (walletSnapshot.restoringState == WalletRestoringState.RESTORING) {
                                         HomeMessageData.Restoring(

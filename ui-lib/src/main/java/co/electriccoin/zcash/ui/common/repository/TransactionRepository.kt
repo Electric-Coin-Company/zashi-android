@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.model.AccountUuid
 import cash.z.ecc.android.sdk.model.TransactionId
 import cash.z.ecc.android.sdk.model.TransactionOutput
 import cash.z.ecc.android.sdk.model.TransactionOverview
@@ -10,7 +9,6 @@ import cash.z.ecc.android.sdk.model.TransactionState.Expired
 import cash.z.ecc.android.sdk.model.TransactionState.Pending
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
-import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +21,6 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
@@ -42,8 +39,6 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 interface TransactionRepository {
-    val zashiTransactions: Flow<List<Transaction>?>
-
     val currentTransactions: Flow<List<Transaction>?>
 
     suspend fun getMemos(transaction: Transaction): List<String>
@@ -58,51 +53,21 @@ interface TransactionRepository {
 }
 
 class TransactionRepositoryImpl(
-    private val accountDataSource: AccountDataSource,
+    accountDataSource: AccountDataSource,
     private val synchronizerProvider: SynchronizerProvider,
 ) : TransactionRepository {
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
-    override val zashiTransactions: Flow<List<Transaction>?> =
-        observeTransactions(
-            accountFlow = accountDataSource.zashiAccount.map { it?.sdkAccount?.accountUuid }.distinctUntilChanged()
-        ).stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(5.seconds, Duration.ZERO),
-            initialValue = null
-        )
-
     @OptIn(ExperimentalCoroutinesApi::class)
     override val currentTransactions: Flow<List<Transaction>?> =
-        accountDataSource.selectedAccount
-            .distinctUntilChangedBy { it?.sdkAccount?.accountUuid }
-            .flatMapLatest { selected ->
-                if (selected is ZashiAccount) {
-                    zashiTransactions
-                } else {
-                    observeTransactions(
-                        accountFlow =
-                            accountDataSource.selectedAccount
-                                .map { it?.sdkAccount?.accountUuid }
-                                .distinctUntilChanged()
-                    )
-                }
-            }.stateIn(
-                scope = scope,
-                started = SharingStarted.WhileSubscribed(5.seconds, Duration.ZERO),
-                initialValue = null
-            )
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun TransactionRepositoryImpl.observeTransactions(accountFlow: Flow<AccountUuid?>) =
         combine(
             synchronizerProvider.synchronizer,
-            accountFlow
+            accountDataSource.selectedAccount.map { it?.sdkAccount }
         ) { synchronizer, account ->
             synchronizer to account
         }.distinctUntilChanged()
-            .flatMapLatest { (synchronizer, accountUuid) ->
-                if (synchronizer == null || accountUuid == null) {
+            .flatMapLatest { (synchronizer, account) ->
+                if (synchronizer == null || account == null) {
                     flowOf(null)
                 } else {
                     channelFlow<List<Transaction>?> {
@@ -110,9 +75,144 @@ class TransactionRepositoryImpl(
 
                         launch {
                             synchronizer
-                                .getTransactions(accountUuid)
+                                .getTransactions(account.accountUuid)
                                 .mapLatest { transactions ->
-                                    createTransactions(transactions = transactions, synchronizer = synchronizer)
+                                    transactions
+                                        .map { transaction ->
+                                            when (transaction.transactionState) {
+                                                Expired ->
+                                                    when {
+                                                        transaction.isShielding ->
+                                                            ShieldTransaction.Failed(
+                                                                timestamp =
+                                                                    createTimestamp(transaction) ?: Instant.now(),
+                                                                transactionOutputs =
+                                                                    synchronizer.getTransactionOutputs
+                                                                        (transaction),
+                                                                amount = transaction.totalSpent,
+                                                                id = transaction.txId,
+                                                                memoCount = transaction.memoCount,
+                                                                fee = transaction.netValue,
+                                                                overview = transaction
+                                                            )
+
+                                                        transaction.isSentTransaction ->
+                                                            SendTransaction.Failed(
+                                                                timestamp =
+                                                                    createTimestamp(transaction) ?: Instant.now(),
+                                                                transactionOutputs =
+                                                                    synchronizer.getTransactionOutputs
+                                                                        (transaction),
+                                                                amount = transaction.netValue,
+                                                                id = transaction.txId,
+                                                                memoCount = transaction.memoCount,
+                                                                fee = transaction.feePaid,
+                                                                overview = transaction
+                                                            )
+
+                                                        else ->
+                                                            ReceiveTransaction.Failed(
+                                                                timestamp =
+                                                                    createTimestamp(transaction) ?: Instant.now(),
+                                                                transactionOutputs =
+                                                                    synchronizer.getTransactionOutputs(transaction),
+                                                                amount = transaction.netValue,
+                                                                id = transaction.txId,
+                                                                memoCount = transaction.memoCount,
+                                                                overview = transaction
+                                                            )
+                                                    }
+
+                                                Confirmed ->
+                                                    when {
+                                                        transaction.isShielding ->
+                                                            ShieldTransaction.Success(
+                                                                timestamp =
+                                                                    createTimestamp(transaction) ?: Instant.now(),
+                                                                transactionOutputs =
+                                                                    synchronizer.getTransactionOutputs
+                                                                        (transaction),
+                                                                amount = transaction.totalSpent,
+                                                                id = transaction.txId,
+                                                                memoCount = transaction.memoCount,
+                                                                fee = transaction.netValue,
+                                                                overview = transaction
+                                                            )
+
+                                                        transaction.isSentTransaction ->
+                                                            SendTransaction.Success(
+                                                                timestamp =
+                                                                    createTimestamp(transaction) ?: Instant.now(),
+                                                                transactionOutputs =
+                                                                    synchronizer.getTransactionOutputs
+                                                                        (transaction),
+                                                                amount = transaction.netValue,
+                                                                id = transaction.txId,
+                                                                memoCount = transaction.memoCount,
+                                                                fee = transaction.feePaid,
+                                                                overview = transaction
+                                                            )
+
+                                                        else ->
+                                                            ReceiveTransaction.Success(
+                                                                timestamp =
+                                                                    createTimestamp(transaction) ?: Instant.now(),
+                                                                transactionOutputs =
+                                                                    synchronizer.getTransactionOutputs
+                                                                        (transaction),
+                                                                amount = transaction.netValue,
+                                                                id = transaction.txId,
+                                                                memoCount = transaction.memoCount,
+                                                                overview = transaction
+                                                            )
+                                                    }
+
+                                                Pending ->
+                                                    when {
+                                                        transaction.isShielding ->
+                                                            ShieldTransaction.Pending(
+                                                                timestamp = createTimestamp(transaction),
+                                                                transactionOutputs =
+                                                                    synchronizer.getTransactionOutputs
+                                                                        (transaction),
+                                                                amount = transaction.totalSpent,
+                                                                id = transaction.txId,
+                                                                memoCount = transaction.memoCount,
+                                                                fee = transaction.netValue,
+                                                                overview = transaction
+                                                            )
+
+                                                        transaction.isSentTransaction ->
+                                                            SendTransaction.Pending(
+                                                                timestamp = createTimestamp(transaction),
+                                                                transactionOutputs =
+                                                                    synchronizer.getTransactionOutputs
+                                                                        (transaction),
+                                                                amount = transaction.netValue,
+                                                                id = transaction.txId,
+                                                                memoCount = transaction.memoCount,
+                                                                fee = transaction.feePaid,
+                                                                overview = transaction
+                                                            )
+
+                                                        else ->
+                                                            ReceiveTransaction.Pending(
+                                                                timestamp = createTimestamp(transaction),
+                                                                transactionOutputs =
+                                                                    synchronizer.getTransactionOutputs
+                                                                        (transaction),
+                                                                amount = transaction.netValue,
+                                                                id = transaction.txId,
+                                                                memoCount = transaction.memoCount,
+                                                                overview = transaction
+                                                            )
+                                                    }
+
+                                                else -> error("Unexpected transaction stat")
+                                            }
+                                        }.sortedByDescending { transaction ->
+                                            transaction.timestamp ?: Instant.now()
+                                        }
                                 }.collect {
                                     send(it)
                                 }
@@ -123,7 +223,11 @@ class TransactionRepositoryImpl(
                         }
                     }
                 }
-            }
+            }.stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(5.seconds, Duration.ZERO),
+                initialValue = null
+            )
 
     @Suppress("CyclomaticComplexMethod")
     private suspend fun createTransactions(
