@@ -103,6 +103,10 @@ private fun ContactItemLeading(
                     )
                 }
             }
+
+        ImageResource.Loading -> {
+            // do nothing
+        }
     }
 }
 

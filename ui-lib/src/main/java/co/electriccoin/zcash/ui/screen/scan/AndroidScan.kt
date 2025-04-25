@@ -13,8 +13,6 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
-import co.electriccoin.zcash.ui.screen.scan.view.Scan
-import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
 import co.electriccoin.zcash.ui.util.SettingsUtil
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -30,7 +28,6 @@ internal fun WrapScanValidator(args: Scan) {
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
     val viewModel = koinViewModel<ScanViewModel> { parametersOf(args) }
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
-    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
     val state by viewModel.state.collectAsStateWithLifecycle()
     val navigationRouter = koinInject<NavigationRouter>()
 
@@ -46,7 +43,6 @@ internal fun WrapScanValidator(args: Scan) {
     } else {
         Scan(
             snackbarHostState = snackbarHostState,
-            validationResult = state,
             onBack = { navigationRouter.back() },
             onScan = {
                 viewModel.onScanned(it)
@@ -68,7 +64,7 @@ internal fun WrapScanValidator(args: Scan) {
                 }
             },
             onScanStateChange = {},
-            topAppBarSubTitleState = walletState,
+            validationResult = state,
         )
     }
 }

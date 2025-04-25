@@ -8,6 +8,7 @@
     <string name="transaction_detail_info_transaction_details">Detalles de la Transacción</string>
     <string name="transaction_detail_info_transaction_id">ID de la Transacción</string>
     <string name="transaction_detail_info_transaction_completed">Completada</string>
+    <string name="transaction_detail_info_transaction_status">Status</string>
     <string name="transaction_detail_info_transaction_fee">Tarifa</string>
     <string name="transaction_detail_info_address">Dirección</string>
     <string name="transaction_detail_info_sent_to">Enviado a</string>

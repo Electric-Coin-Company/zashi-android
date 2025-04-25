@@ -29,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
@@ -48,13 +47,11 @@ import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
 
 @Composable
-@Suppress("LongParameterList")
 fun About(
     onBack: () -> Unit,
     configInfo: ConfigInfo,
     onPrivacyPolicy: () -> Unit,
     snackbarHostState: SnackbarHostState,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
     versionInfo: VersionInfo,
 ) {
     Scaffold(
@@ -63,7 +60,6 @@ fun About(
                 onBack = onBack,
                 versionInfo = versionInfo,
                 configInfo = configInfo,
-                subTitleState = topAppBarSubTitleState,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -85,16 +81,9 @@ fun About(
 private fun AboutTopAppBar(
     onBack: () -> Unit,
     versionInfo: VersionInfo,
-    configInfo: ConfigInfo,
-    subTitleState: TopAppBarSubTitleState
+    configInfo: ConfigInfo
 ) {
     ZashiSmallTopAppBar(
-        subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         title = stringResource(id = R.string.about_title),
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
@@ -198,7 +187,6 @@ private fun AboutPreview() =
             configInfo = ConfigInfoFixture.new(),
             onPrivacyPolicy = {},
             snackbarHostState = SnackbarHostState(),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
             versionInfo = VersionInfoFixture.new(),
         )
     }

@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.common.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.model.BlockHeight
@@ -11,20 +10,16 @@ import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
-import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
-import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
-import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
+import co.electriccoin.zcash.ui.common.provider.WalletRestoringStateProvider
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetInMemoryDataUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetSharedPrefsDataUseCase
-import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import com.flexa.core.Flexa
 import com.flexa.identity.buildIdentity
 import kotlinx.coroutines.Dispatchers
@@ -44,38 +39,16 @@ class WalletViewModel(
     application: Application,
     private val walletCoordinator: WalletCoordinator,
     private val walletRepository: WalletRepository,
-    private val exchangeRateRepository: ExchangeRateRepository,
-    private val standardPreferenceProvider: StandardPreferenceProvider,
     private val getAvailableServers: GetDefaultServersProvider,
     private val resetInMemoryData: ResetInMemoryDataUseCase,
     private val resetSharedPrefsData: ResetSharedPrefsDataUseCase,
     private val isFlexaAvailable: IsFlexaAvailableUseCase,
     private val getSynchronizer: GetSynchronizerUseCase,
-    private val navigationRouter: NavigationRouter,
+    private val walletRestoringStateProvider: WalletRestoringStateProvider,
 ) : AndroidViewModel(application) {
     val synchronizer = walletRepository.synchronizer
 
-    val walletStateInformation = walletRepository.walletStateInformation
-
     val secretState: StateFlow<SecretState> = walletRepository.secretState
-
-    val currentWalletSnapshot: StateFlow<WalletSnapshot?> = walletRepository.currentWalletSnapshot
-
-    val isExchangeRateUsdOptedIn = exchangeRateRepository.isExchangeRateUsdOptedIn
-
-    val exchangeRateUsd = exchangeRateRepository.state
-
-    fun optInExchangeRateUsd(optIn: Boolean) {
-        exchangeRateRepository.optInExchangeRateUsd(optIn)
-    }
-
-    fun dismissOptInExchangeRateUsd() {
-        navigationRouter.back()
-    }
-
-    fun onSkipClick() {
-        navigationRouter.back()
-    }
 
     fun persistNewWalletAndRestoringState(state: WalletRestoringState) {
         val application = getApplication<Application>()
@@ -91,10 +64,7 @@ class WalletViewModel(
                 )
             walletRepository.persistWallet(newWallet)
 
-            StandardPreferenceKeys.WALLET_RESTORING_STATE.putValue(
-                standardPreferenceProvider(),
-                state.toNumber()
-            )
+            walletRestoringStateProvider.store(state)
         }
     }
 
@@ -259,5 +229,3 @@ sealed class SynchronizerError {
         override fun getStackTrace(limit: Int?): String? = null
     }
 }
-
-fun Synchronizer.Status.isSynced() = this == Synchronizer.Status.SYNCED

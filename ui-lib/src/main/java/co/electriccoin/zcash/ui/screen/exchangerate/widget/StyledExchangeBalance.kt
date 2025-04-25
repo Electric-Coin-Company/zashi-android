@@ -2,11 +2,9 @@
 
 package co.electriccoin.zcash.ui.screen.exchangerate.widget
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
@@ -105,10 +103,7 @@ private fun ExchangeAvailableRateLabelInternal(
     val isEnabled = !state.isLoading && state.isRefreshEnabled
 
     ExchangeRateButton(
-        modifier =
-            modifier
-                .basicMarquee()
-                .animateContentSize(),
+        modifier = modifier,
         onClick = state.onRefresh,
         isEnabled = isEnabled,
         textColor = textColor,
@@ -233,10 +228,7 @@ private fun ExchangeRateButton(
     content: @Composable RowScope.() -> Unit
 ) {
     ElevatedButton(
-        modifier =
-            modifier
-                .height(36.dp)
-                .animateContentSize(),
+        modifier = modifier.height(36.dp),
         onClick = onClick,
         enabled = isEnabled,
         shape = RoundedCornerShape(8.dp),

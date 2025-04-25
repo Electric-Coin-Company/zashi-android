@@ -297,7 +297,7 @@ private fun Preview() =
                                 }
                         ),
                     onBack = {},
-                    dialogButton = IconButtonState(R.drawable.ic_restore_dialog) {},
+                    dialogButton = IconButtonState(R.drawable.ic_help) {},
                     nextButton =
                         ButtonState(
                             text = stringRes("Next"),

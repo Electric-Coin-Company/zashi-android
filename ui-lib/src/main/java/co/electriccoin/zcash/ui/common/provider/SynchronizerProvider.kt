@@ -10,7 +10,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
-import kotlin.time.Duration
 
 interface SynchronizerProvider {
     val synchronizer: StateFlow<Synchronizer?>
@@ -53,7 +51,7 @@ class SynchronizerProviderImpl(
             }.flowOn(Dispatchers.IO)
             .stateIn(
                 scope = scope,
-                started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
+                started = SharingStarted.Lazily,
                 initialValue = null
             )
 

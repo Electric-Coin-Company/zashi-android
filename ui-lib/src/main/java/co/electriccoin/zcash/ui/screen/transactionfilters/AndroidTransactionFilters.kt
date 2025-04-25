@@ -13,7 +13,5 @@ import org.koin.androidx.compose.koinViewModel
 fun AndroidTransactionFiltersList() {
     val viewModel = koinViewModel<TransactionFiltersViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    TransactionFiltersView(
-        state = state,
-    )
+    TransactionFiltersView(state = state)
 }

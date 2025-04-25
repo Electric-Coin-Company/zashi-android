@@ -104,7 +104,7 @@ class SendViewTestSetup(
             // TODO [#1260]: Cover Send.Form screen UI with tests
             // TODO [#1260]: https://github.com/Electric-Coin-Company/zashi-android/issues/1260
             Send(
-                balanceState = BalanceStateFixture.new(),
+                balanceWidgetState = BalanceStateFixture.new(),
                 sendStage = sendStage,
                 onCreateZecSend = setZecSend,
                 onBack = onBackAction,

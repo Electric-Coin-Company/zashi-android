@@ -23,17 +23,18 @@ import co.electriccoin.zcash.ui.common.appbar.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarWithAccountSelection
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
+import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiBigIconButton
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
-import co.electriccoin.zcash.ui.screen.balances.BalanceState
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidget
-import co.electriccoin.zcash.ui.screen.home.messages.HomeMessage
-import co.electriccoin.zcash.ui.screen.home.messages.WalletErrorMessageState
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
+import co.electriccoin.zcash.ui.screen.home.error.WalletErrorMessageState
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetState
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetStateFixture
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.createTransactionHistoryWidgets
@@ -41,7 +42,7 @@ import co.electriccoin.zcash.ui.screen.transactionhistory.widget.createTransacti
 @Composable
 internal fun HomeView(
     appBarState: ZashiMainTopAppBarState?,
-    balanceState: BalanceState,
+    balanceWidgetState: BalanceWidgetState,
     transactionWidgetState: TransactionHistoryWidgetState,
     state: HomeState
 ) {
@@ -49,10 +50,10 @@ internal fun HomeView(
         topBar = { ZashiTopAppBarWithAccountSelection(appBarState) }
     ) { paddingValues ->
         Content(
-            modifier = Modifier.padding(top = paddingValues.calculateTopPadding() + 24.dp),
+            modifier = Modifier.padding(top = paddingValues.calculateTopPadding() + ZashiDimensions.Spacing.spacingLg),
             paddingValues = paddingValues,
             transactionHistoryWidgetState = transactionWidgetState,
-            balanceState = balanceState,
+            balanceWidgetState = balanceWidgetState,
             state = state
         )
     }
@@ -62,7 +63,7 @@ internal fun HomeView(
 private fun Content(
     transactionHistoryWidgetState: TransactionHistoryWidgetState,
     paddingValues: PaddingValues,
-    balanceState: BalanceState,
+    balanceWidgetState: BalanceWidgetState,
     state: HomeState,
     modifier: Modifier = Modifier,
 ) {
@@ -72,7 +73,7 @@ private fun Content(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+            Spacer(8.dp)
             BalanceWidget(
                 modifier =
                     Modifier
@@ -80,8 +81,9 @@ private fun Content(
                             start = ZcashTheme.dimens.screenHorizontalSpacingRegular,
                             end = ZcashTheme.dimens.screenHorizontalSpacingRegular,
                         ),
-                balanceState = balanceState,
+                state = balanceWidgetState,
             )
+            Spacer(16.dp)
             NavButtons(
                 modifier =
                     Modifier
@@ -161,7 +163,7 @@ private fun Preview() {
     ZcashTheme {
         HomeView(
             appBarState = ZashiMainTopAppBarStateFixture.new(),
-            balanceState = BalanceStateFixture.new(),
+            balanceWidgetState = BalanceStateFixture.new(),
             transactionWidgetState = TransactionHistoryWidgetStateFixture.new(),
             state =
                 HomeState(

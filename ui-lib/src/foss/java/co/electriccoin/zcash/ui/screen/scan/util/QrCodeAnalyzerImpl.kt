@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.scan.util
 import android.graphics.ImageFormat
 import androidx.camera.core.ImageProxy
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.screen.scan.QrCodeAnalyzer
 import co.electriccoin.zcash.ui.screen.scankeystone.view.FramePosition
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.BinaryBitmap

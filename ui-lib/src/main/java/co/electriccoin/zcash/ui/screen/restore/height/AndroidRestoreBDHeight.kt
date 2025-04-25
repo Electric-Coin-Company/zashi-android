@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.electriccoin.zcash.ui.common.compose.SecureScreen
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -12,10 +13,9 @@ import org.koin.core.parameter.parametersOf
 fun AndroidRestoreBDHeight(args: RestoreBDHeight) {
     val vm = koinViewModel<RestoreBDHeightViewModel> { parametersOf(args) }
     val state by vm.state.collectAsStateWithLifecycle()
+    SecureScreen()
+    BackHandler { state.onBack() }
     RestoreBDHeightView(state)
-    BackHandler {
-        state.onBack()
-    }
 }
 
 @Serializable

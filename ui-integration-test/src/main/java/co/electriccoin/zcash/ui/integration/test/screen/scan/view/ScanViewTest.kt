@@ -14,8 +14,8 @@ import co.electriccoin.zcash.ui.integration.test.common.getPermissionPositiveBut
 import co.electriccoin.zcash.ui.integration.test.common.getStringResource
 import co.electriccoin.zcash.ui.integration.test.common.getStringResourceWithArgs
 import co.electriccoin.zcash.ui.integration.test.common.waitForDeviceIdle
+import co.electriccoin.zcash.ui.screen.scan.ScanScreenState
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
-import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue

@@ -13,10 +13,7 @@ sealed interface ExchangeRateState {
         val onRefresh: () -> Unit,
     ) : ExchangeRateState
 
-    data class OptIn(
-        val onDismissClick: () -> Unit = {},
-        val onPrimaryClick: () -> Unit = {}
-    ) : ExchangeRateState
+    data object OptIn : ExchangeRateState
 
     data object OptedOut : ExchangeRateState
 }

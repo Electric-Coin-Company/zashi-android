@@ -6,16 +6,13 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarViewModel
-import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AndroidTransactionHistory() {
     val viewModel = koinViewModel<TransactionHistoryViewModel>()
-    val walletViewModel = koinActivityViewModel<WalletViewModel>()
-    val mainTopAppBarViewModel = koinViewModel<ZashiTopAppBarViewModel>()
+    val mainTopAppBarViewModel = koinActivityViewModel<ZashiTopAppBarViewModel>()
     val mainAppBarState by mainTopAppBarViewModel.state.collectAsStateWithLifecycle()
-    val topAppbarState by walletViewModel.walletStateInformation.collectAsStateWithLifecycle()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val searchState by viewModel.search.collectAsStateWithLifecycle()
 
@@ -25,8 +22,7 @@ fun AndroidTransactionHistory() {
 
     TransactionHistoryView(
         state = state,
-        mainAppBarState = mainAppBarState,
-        appBarState = topAppbarState,
-        search = searchState
+        search = searchState,
+        mainAppBarState = mainAppBarState
     )
 }

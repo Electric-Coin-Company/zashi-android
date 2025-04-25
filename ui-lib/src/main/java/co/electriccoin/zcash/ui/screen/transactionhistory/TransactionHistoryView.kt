@@ -38,7 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiMainTopAppBarState
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
@@ -61,13 +60,11 @@ import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 fun TransactionHistoryView(
     state: TransactionHistoryState,
     search: TextFieldState,
-    appBarState: TopAppBarSubTitleState,
     mainAppBarState: ZashiMainTopAppBarState?,
 ) {
     BlankBgScaffold(
         topBar = {
             TransactionHistoryAppBar(
-                appBarState = appBarState,
                 mainAppBarState = mainAppBarState,
                 state = state,
             )
@@ -343,18 +340,11 @@ private fun BadgeIconButton(
 
 @Composable
 private fun TransactionHistoryAppBar(
-    appBarState: TopAppBarSubTitleState,
     mainAppBarState: ZashiMainTopAppBarState?,
     state: TransactionHistoryState
 ) {
     ZashiSmallTopAppBar(
         title = stringResource(R.string.transaction_history_screen_title),
-        subtitle =
-            when (appBarState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         showTitleLogo = true,
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = state.onBack)
@@ -406,9 +396,8 @@ private fun DataPreview() =
                             ),
                         )
                 ),
-            appBarState = TopAppBarSubTitleState.None,
-            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
             search = TextFieldState(stringRes(value = "")) {},
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
         )
     }
 
@@ -427,9 +416,8 @@ private fun EmptyPreview() =
                             onClick = {}
                         )
                 ),
-            appBarState = TopAppBarSubTitleState.None,
-            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
             search = TextFieldState(stringRes(value = "")) {},
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
         )
     }
 
@@ -448,8 +436,7 @@ private fun LoadingPreview() =
                             onClick = {}
                         )
                 ),
-            appBarState = TopAppBarSubTitleState.None,
-            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
             search = TextFieldState(stringRes(value = "")) {},
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
         )
     }

@@ -64,6 +64,7 @@ import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.AppAlertDialog
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
@@ -74,8 +75,8 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
-import co.electriccoin.zcash.ui.screen.balances.BalanceState
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidget
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
 import co.electriccoin.zcash.ui.screen.send.SendTag
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
@@ -90,7 +91,7 @@ import java.util.Locale
 private fun PreviewSendForm() {
     ZcashTheme(forceDarkMode = false) {
         Send(
-            balanceState = BalanceStateFixture.new(),
+            balanceWidgetState = BalanceStateFixture.new(),
             sendStage = SendStage.Form,
             onCreateZecSend = {},
             onBack = {},
@@ -125,7 +126,7 @@ private fun PreviewSendForm() {
 private fun SendFormTransparentAddressPreview() {
     ZcashTheme(forceDarkMode = false) {
         Send(
-            balanceState = BalanceStateFixture.new(),
+            balanceWidgetState = BalanceStateFixture.new(),
             sendStage = SendStage.Form,
             onCreateZecSend = {},
             onBack = {},
@@ -164,7 +165,7 @@ private fun SendFormTransparentAddressPreview() {
 @Suppress("LongParameterList")
 @Composable
 fun Send(
-    balanceState: BalanceState,
+    balanceWidgetState: BalanceWidgetState,
     sendStage: SendStage,
     onCreateZecSend: (ZecSend) -> Unit,
     onBack: () -> Unit,
@@ -193,7 +194,7 @@ fun Send(
         )
     }) { paddingValues ->
         SendMainContent(
-            balanceState = balanceState,
+            balanceWidgetState = balanceWidgetState,
             selectedAccount = selectedAccount,
             exchangeRateState = exchangeRateState,
             onBack = onBack,
@@ -216,7 +217,7 @@ fun Send(
 @Suppress("LongParameterList")
 @Composable
 private fun SendMainContent(
-    balanceState: BalanceState,
+    balanceWidgetState: BalanceWidgetState,
     selectedAccount: WalletAccount,
     exchangeRateState: ExchangeRateState,
     onBack: () -> Unit,
@@ -237,7 +238,7 @@ private fun SendMainContent(
     // loader if calling the Proposal API takes longer than expected
 
     SendForm(
-        balanceState = balanceState,
+        balanceWidgetState = balanceWidgetState,
         selectedAccount = selectedAccount,
         recipientAddressState = recipientAddressState,
         exchangeRateState = exchangeRateState,
@@ -270,7 +271,7 @@ private fun SendMainContent(
 @Suppress("LongParameterList", "LongMethod")
 @Composable
 private fun SendForm(
-    balanceState: BalanceState,
+    balanceWidgetState: BalanceWidgetState,
     selectedAccount: WalletAccount,
     recipientAddressState: RecipientAddressState,
     exchangeRateState: ExchangeRateState,
@@ -295,13 +296,13 @@ private fun SendForm(
                 .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
+        Spacer(8.dp)
 
         BalanceWidget(
-            balanceState = balanceState
+            state = balanceWidgetState
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(24.dp)
 
         // TODO [#1256]: Consider Send.Form TextFields scrolling
         // TODO [#1256]: https://github.com/Electric-Coin-Company/zashi-android/issues/1256
@@ -429,10 +430,13 @@ fun SendButton(
 
                                         AddressType.Tex ->
                                             WalletAddress.Tex.new(recipientAddressState.address)
+
                                         AddressType.Transparent ->
                                             WalletAddress.Transparent.new(recipientAddressState.address)
+
                                         AddressType.Unified ->
                                             WalletAddress.Unified.new(recipientAddressState.address)
+
                                         null -> WalletAddress.Unified.new(recipientAddressState.address)
                                     }
                             )
@@ -603,7 +607,7 @@ fun SendFormAmountTextField(
             }
 
             is AmountState.Valid -> {
-                if (selectedAccount.spendableBalance < amountState.zatoshi) {
+                if (selectedAccount.spendableShieldedBalance < amountState.zatoshi) {
                     stringResource(id = R.string.send_amount_insufficient_balance)
                 } else {
                     null
@@ -629,7 +633,9 @@ fun SendFormAmountTextField(
 
         Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingSmall))
 
-        Row {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
             ZashiTextField(
                 singleLine = true,
                 maxLines = 1,
@@ -647,7 +653,10 @@ fun SendFormAmountTextField(
                     )
                 },
                 modifier = Modifier.weight(1f),
-                innerModifier = Modifier.testTag(SendTag.SEND_AMOUNT_FIELD),
+                innerModifier =
+                    ZashiTextFieldDefaults
+                        .innerModifier
+                        .testTag(SendTag.SEND_AMOUNT_FIELD),
                 error = amountError,
                 placeholder = {
                     Text(

@@ -28,8 +28,7 @@ val LightZashiColorsInternal =
                 textError = ErrorRed.`500`,
                 textLink = HyperBlue.`500`,
                 textLight = Gray.`25`,
-                textLightSupport = Gray.`200`,
-                textOpposite = Base.Bone
+                textLightSupport = Gray.`200`
             ),
         Btns =
             Btns(

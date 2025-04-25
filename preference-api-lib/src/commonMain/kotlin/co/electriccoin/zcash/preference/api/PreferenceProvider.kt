@@ -29,5 +29,7 @@ interface PreferenceProvider {
 
     fun observe(key: PreferenceKey): Flow<String?>
 
+    suspend fun remove(key: PreferenceKey)
+
     suspend fun clearPreferences(): Boolean
 }

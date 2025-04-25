@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common.provider
 
-import cash.z.ecc.android.sdk.WalletCoordinator
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,12 +19,13 @@ interface PersistableWalletProvider {
 }
 
 class PersistableWalletProviderImpl(
-    walletCoordinator: WalletCoordinator
+    persistableWalletStorageProvider: PersistableWalletStorageProvider,
 ) : PersistableWalletProvider {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override val persistableWallet: Flow<PersistableWallet?> =
-        walletCoordinator.persistableWallet
+        persistableWalletStorageProvider
+            .observe()
             .stateIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),

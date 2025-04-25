@@ -8,8 +8,8 @@ import androidx.test.filters.LargeTest
 import co.electriccoin.zcash.test.UiTestPrerequisites
 import co.electriccoin.zcash.ui.integration.test.common.IntegrationTestingActivity
 import co.electriccoin.zcash.ui.integration.test.common.getPermissionPositiveButtonUiObject
+import co.electriccoin.zcash.ui.screen.scan.ScanScreenState
 import co.electriccoin.zcash.ui.screen.scan.ScanTag
-import co.electriccoin.zcash.ui.screen.scan.model.ScanScreenState
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Before

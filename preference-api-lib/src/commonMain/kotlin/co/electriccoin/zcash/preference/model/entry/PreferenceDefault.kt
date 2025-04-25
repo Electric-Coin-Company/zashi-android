@@ -39,6 +39,10 @@ interface PreferenceDefault<T> {
         newValue: T
     )
 
+    suspend fun clear(preferenceProvider: PreferenceProvider) {
+        preferenceProvider.remove(key)
+    }
+
     /**
      * @param preferenceProvider Provides actual preference values.
      * @return Flow that emits preference changes.  Note that implementations should emit an initial value

@@ -12,4 +12,9 @@
 
     <string name="scan_torch_content_description">Alternar linterna de la cámara</string>
     <string name="gallery_content_description">Galería</string>
+
+    <string name="third_party_scan_title">¡Hola!</string>
+    <string name="third_party_scan_subtitle">Parece que utilizaste una aplicación de terceros para escanear un pago.</string>
+    <string name="third_party_scan_message">Para mayor seguridad y protección, vuelve a escanear el código QR con Zashi.</string>
+    <string name="third_party_scan_button">Reescanear en Zashi</string>
 </resources>

@@ -34,12 +34,12 @@ fun Zatoshi.toZecStringAbbreviated(suffix: String): ZecAmountPair {
     }
 }
 
-private const val DEFAULT_LESS_THAN_FEE = 100_000L
-
-val DEFAULT_FEE: String
-    get() = Zatoshi(DEFAULT_LESS_THAN_FEE).toZecStringFull()
-
 data class ZecAmountPair(
     val main: String,
     val suffix: String
 )
+
+val Zatoshi.Companion.typicalFee: Zatoshi
+    get() = Zatoshi(TYPICAL_FEE)
+
+private const val TYPICAL_FEE = 100000L

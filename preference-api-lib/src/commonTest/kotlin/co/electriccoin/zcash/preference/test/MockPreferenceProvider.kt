@@ -22,6 +22,10 @@ class MockPreferenceProvider(
     // For the mock implementation, does not support observability of changes
     override fun observe(key: PreferenceKey): Flow<String?> = flow { emit(getString(key)) }
 
+    override suspend fun remove(key: PreferenceKey) {
+        map.remove(key.key)
+    }
+
     override suspend fun clearPreferences(): Boolean {
         map.clear()
         return true
