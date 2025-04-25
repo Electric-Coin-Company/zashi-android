@@ -12,6 +12,19 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.0.0 (934)] - 2025-04-25
+
+### Añadido:
+- Un widget de estado de la billetera te ayuda a navegar por Zashi y a obtener información con un click.
+
+### Cambiado:
+- Pantalla de inicio rediseñada y navegación optimizada.
+- Saldos rediseñados con un nuevo componente Gastable en la pantalla de envío.
+- Flujo de restauración renovado.
+- ¡Crea tu billetera facil! Un nuevo proceso de backup que se traslado a cuando recibes los primeros fondos.
+- Firebase Crashlytics es totalmente opcional.
+- ¡Escanear un código QR ZIP 321 abre Zashi!
+
 ## [1.5.2 (932)] - 2025-04-23
 
 ### Añadido:
