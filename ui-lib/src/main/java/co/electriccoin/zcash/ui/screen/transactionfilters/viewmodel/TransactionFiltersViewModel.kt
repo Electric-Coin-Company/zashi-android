@@ -19,26 +19,19 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactionfilters.model.TransactionFilterState
 import co.electriccoin.zcash.ui.screen.transactionfilters.model.TransactionFiltersState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 internal class TransactionFiltersViewModel(
     private val navigationRouter: NavigationRouter,
     getTransactionFilters: GetTransactionFiltersUseCase,
     private val applyTransactionFilters: ApplyTransactionFiltersUseCase,
 ) : ViewModel() {
-    val hideBottomSheetRequest = MutableSharedFlow<Unit>()
-
-    private val bottomSheetHiddenResponse = MutableSharedFlow<Unit>()
-
     private val selectedFilters = MutableStateFlow(getTransactionFilters())
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -88,7 +81,6 @@ internal class TransactionFiltersViewModel(
                             }
                         },
                     onBack = ::onBack,
-                    onBottomSheetHidden = ::onBottomSheetHidden,
                     primaryButton =
                         ButtonState(
                             text = stringRes(R.string.transaction_filters_btn_apply),
@@ -101,9 +93,9 @@ internal class TransactionFiltersViewModel(
                         ),
                 )
             }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                null
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
             )
 
     private fun onTransactionFilterClicked(filter: TransactionFilter) {
@@ -116,29 +108,9 @@ internal class TransactionFiltersViewModel(
         }
     }
 
-    private suspend fun hideBottomSheet() {
-        hideBottomSheetRequest.emit(Unit)
-        bottomSheetHiddenResponse.first()
-    }
+    private fun onBack() = navigationRouter.back()
 
-    private fun onBottomSheetHidden() =
-        viewModelScope.launch {
-            bottomSheetHiddenResponse.emit(Unit)
-        }
+    private fun onApplyTransactionFiltersClick() = applyTransactionFilters(selectedFilters.value)
 
-    private fun onBack() =
-        viewModelScope.launch {
-            hideBottomSheet()
-            navigationRouter.back()
-        }
-
-    private fun onApplyTransactionFiltersClick() =
-        viewModelScope.launch {
-            applyTransactionFilters(selectedFilters.value) { hideBottomSheet() }
-        }
-
-    private fun onResetTransactionFiltersClick() =
-        viewModelScope.launch {
-            selectedFilters.update { emptyList() }
-        }
+    private fun onResetTransactionFiltersClick() = selectedFilters.update { emptyList() }
 }

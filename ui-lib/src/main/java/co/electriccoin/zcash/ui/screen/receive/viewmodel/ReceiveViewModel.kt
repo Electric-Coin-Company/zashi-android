@@ -11,7 +11,6 @@ import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveOnAccountChangedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
@@ -24,11 +23,9 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class ReceiveViewModel(
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
-    observeOnAccountChanged: ObserveOnAccountChangedUseCase,
     private val application: Application,
     private val copyToClipboard: CopyToClipboardUseCase,
     private val navigationRouter: NavigationRouter,
@@ -55,21 +52,21 @@ class ReceiveViewModel(
                             onClick = { onAddressClick(1) }
                         ),
                     ),
-                isLoading = false
+                isLoading = false,
+                onBack = ::onBack
             )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = ReceiveState(items = null, isLoading = true)
+            initialValue =
+                ReceiveState(
+                    items = null,
+                    isLoading = true,
+                    onBack = ::onBack
+                )
         )
 
-    init {
-        viewModelScope.launch {
-            observeOnAccountChanged().collect {
-                expandedIndex.update { 0 }
-            }
-        }
-    }
+    private fun onBack() = navigationRouter.back()
 
     private fun createAddressState(
         account: WalletAccount,
@@ -96,6 +93,7 @@ class ReceiveViewModel(
                     } else {
                         stringRes(R.string.receive_wallet_address_transparent_keystone)
                     }
+
                 is ZashiAccount ->
                     if (type == ReceiveAddressType.Unified) {
                         stringRes(R.string.receive_wallet_address_shielded)

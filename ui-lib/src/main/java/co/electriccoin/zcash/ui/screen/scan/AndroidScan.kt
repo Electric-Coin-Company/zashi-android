@@ -3,61 +3,36 @@ package co.electriccoin.zcash.ui.screen.scan
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
-import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_RECIPIENT_ADDRESS
-import co.electriccoin.zcash.ui.NavigationArguments.SEND_SCAN_ZIP_321_URI
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
-import co.electriccoin.zcash.ui.popBackStackJustOnce
-import co.electriccoin.zcash.ui.screen.scan.model.ScanResultState
-import co.electriccoin.zcash.ui.screen.scan.view.Scan
-import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
 import co.electriccoin.zcash.ui.util.SettingsUtil
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun WrapScanValidator(args: ScanNavigationArgs) {
-    val navController = LocalNavController.current
+internal fun WrapScanValidator(args: Scan) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
     val viewModel = koinViewModel<ScanViewModel> { parametersOf(args) }
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
-    val walletState = walletViewModel.walletStateInformation.collectAsStateWithLifecycle().value
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val navigationRouter = koinInject<NavigationRouter>()
 
     BackHandler {
-        navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE)
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.navigateBack.collect { scanResult ->
-            navController.previousBackStackEntry?.savedStateHandle?.apply {
-                when (scanResult) {
-                    is ScanResultState.Address -> set(SEND_SCAN_RECIPIENT_ADDRESS, scanResult.address)
-                    is ScanResultState.Zip321Uri -> set(SEND_SCAN_ZIP_321_URI, scanResult.zip321Uri)
-                }
-            }
-            navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE)
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.navigateCommand.collect {
-            navController.popBackStack()
-            navController.navigate(it)
-        }
+        navigationRouter.back()
     }
 
     if (synchronizer == null) {
@@ -68,8 +43,7 @@ internal fun WrapScanValidator(args: ScanNavigationArgs) {
     } else {
         Scan(
             snackbarHostState = snackbarHostState,
-            validationResult = state,
-            onBack = { navController.popBackStackJustOnce(ScanNavigationArgs.ROUTE) },
+            onBack = { navigationRouter.back() },
             onScan = {
                 viewModel.onScanned(it)
             },
@@ -90,20 +64,19 @@ internal fun WrapScanValidator(args: ScanNavigationArgs) {
                 }
             },
             onScanStateChange = {},
-            topAppBarSubTitleState = walletState,
+            validationResult = state,
         )
     }
 }
 
-enum class ScanNavigationArgs {
-    DEFAULT,
-    ADDRESS_BOOK;
+@Serializable
+data class Scan(
+    val flow: ScanFlow,
+    val isScanZip321Enabled: Boolean = true
+)
 
-    companion object {
-        private const val PATH = "scan"
-        const val KEY = "mode"
-        const val ROUTE = "$PATH/{$KEY}"
-
-        operator fun invoke(mode: ScanNavigationArgs) = "$PATH/${mode.name}"
-    }
+enum class ScanFlow {
+    HOMEPAGE,
+    SEND,
+    ADDRESS_BOOK
 }

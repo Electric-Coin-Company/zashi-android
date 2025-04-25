@@ -77,7 +77,7 @@ class TransactionDetailViewModel(
                     secondaryButton =
                         ButtonState(
                             text =
-                                if (transaction.metadata?.note != null) {
+                                if (transaction.metadata.note != null) {
                                     stringRes(R.string.transaction_detail_edit_note)
                                 } else {
                                     stringRes(R.string.transaction_detail_add_a_note)
@@ -87,7 +87,7 @@ class TransactionDetailViewModel(
                     bookmarkButton =
                         IconButtonState(
                             icon =
-                                if (transaction.metadata?.isBookmarked == true) {
+                                if (transaction.metadata.isBookmarked) {
                                     R.drawable.ic_transaction_detail_bookmark
                                 } else {
                                     R.drawable.ic_transaction_detail_no_bookmark
@@ -116,6 +116,7 @@ class TransactionDetailViewModel(
         navigationRouter.forward(TransactionNote(transactionDetail.transactionId))
     }
 
+    @Suppress("CyclomaticComplexMethod")
     private fun createTransactionInfoState(transaction: DetailedTransactionData): TransactionDetailInfoState =
         when (transaction.transaction) {
             is SendTransaction -> {
@@ -135,7 +136,8 @@ class TransactionDetailViewModel(
                         onTransactionAddressClick = { onCopyToClipboard(transaction.recipientAddress.address) },
                         fee = createFeeStringRes(transaction),
                         completedTimestamp = createTimestampStringRes(transaction),
-                        note = transaction.metadata?.note?.let { stringRes(it) }
+                        note = transaction.metadata.note?.let { stringRes(it) },
+                        isPending = isPending(transaction)
                     )
                 } else {
                     SendShieldedState(
@@ -156,17 +158,18 @@ class TransactionDetailViewModel(
                         fee = createFeeStringRes(transaction),
                         completedTimestamp = createTimestampStringRes(transaction),
                         memo =
-                            TransactionDetailMemosState(
-                                transaction.memos
-                                    .orEmpty()
-                                    .map { memo ->
+                            transaction.memos?.let {
+                                TransactionDetailMemosState(
+                                    it.map { memo ->
                                         TransactionDetailMemoState(
                                             content = stringRes(memo),
                                             onClick = { onCopyToClipboard(memo) }
                                         )
                                     }
-                            ),
-                        note = transaction.metadata?.note?.let { stringRes(it) }
+                                )
+                            },
+                        note = transaction.metadata.note?.let { stringRes(it) },
+                        isPending = isPending(transaction)
                     )
                 }
             }
@@ -183,7 +186,8 @@ class TransactionDetailViewModel(
                             onCopyToClipboard(transaction.transaction.id.txIdString())
                         },
                         completedTimestamp = createTimestampStringRes(transaction),
-                        note = transaction.metadata?.note?.let { stringRes(it) }
+                        note = transaction.metadata.note?.let { stringRes(it) },
+                        isPending = isPending(transaction)
                     )
                 } else {
                     ReceiveShieldedState(
@@ -197,17 +201,18 @@ class TransactionDetailViewModel(
                         },
                         completedTimestamp = createTimestampStringRes(transaction),
                         memo =
-                            TransactionDetailMemosState(
-                                transaction.memos
-                                    .orEmpty()
-                                    .map { memo ->
+                            transaction.memos?.let {
+                                TransactionDetailMemosState(
+                                    it.map { memo ->
                                         TransactionDetailMemoState(
                                             content = stringRes(memo),
                                             onClick = { onCopyToClipboard(memo) }
                                         )
                                     }
-                            ),
-                        note = transaction.metadata?.note?.let { stringRes(it) }
+                                )
+                            },
+                        note = transaction.metadata.note?.let { stringRes(it) },
+                        isPending = isPending(transaction)
                     )
                 }
             }
@@ -224,7 +229,8 @@ class TransactionDetailViewModel(
                     },
                     completedTimestamp = createTimestampStringRes(transaction),
                     fee = createFeeStringRes(transaction),
-                    note = transaction.metadata?.note?.let { stringRes(it) }
+                    note = transaction.metadata.note?.let { stringRes(it) },
+                    isPending = isPending(transaction)
                 )
             }
         }
@@ -262,6 +268,8 @@ class TransactionDetailViewModel(
                     useFullFormat = true
                 )
             } ?: stringRes(R.string.transaction_detail_pending)
+
+    private fun isPending(data: DetailedTransactionData) = data.transaction.timestamp == null
 
     private fun onCopyToClipboard(text: String) {
         copyToClipboard(

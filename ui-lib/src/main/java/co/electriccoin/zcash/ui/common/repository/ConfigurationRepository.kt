@@ -61,6 +61,7 @@ class ConfigurationRepositoryImpl(
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = null
             )
+
     override val isCoinbaseAvailable: StateFlow<Boolean?> =
         flow {
             val versionInfo = getVersionInfo()

@@ -17,7 +17,6 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
-import co.electriccoin.zcash.ui.screen.balances.DEFAULT_SHIELDING_THRESHOLD
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -94,19 +93,21 @@ class ProposalDataSourceImpl(
         zip321Uri: String
     ): Zip321TransactionProposal =
         withContext(Dispatchers.IO) {
-            val synchronizer = synchronizerProvider.getSynchronizer()
-
-            val request =
-                getOrThrow {
-                    ZIP321.request(uriString = zip321Uri, validatingRecipients = null)
-                }
-            val payment =
-                when (request) {
-                    is ZIP321.ParserResult.Request -> request.paymentRequest.payments[0]
-                    else -> throw TransactionProposalNotCreatedException(IllegalArgumentException("Invalid ZIP321 URI"))
-                }
-
             getOrThrow {
+                val synchronizer = synchronizerProvider.getSynchronizer()
+
+                val request =
+                    getOrThrow {
+                        ZIP321.request(uriString = zip321Uri, validatingRecipients = null)
+                    }
+                val payment =
+                    when (request) {
+                        is ZIP321.ParserResult.Request -> request.paymentRequest.payments[0]
+                        else -> throw TransactionProposalNotCreatedException(
+                            IllegalArgumentException("Invalid ZIP321 URI"),
+                        )
+                    }
+
                 Zip321TransactionProposal(
                     destination =
                         synchronizer
@@ -279,3 +280,5 @@ data class Zip321TransactionProposal(
     override val memo: Memo,
     override val proposal: Proposal
 ) : SendTransactionProposal
+
+private const val DEFAULT_SHIELDING_THRESHOLD = 100000L

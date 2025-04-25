@@ -1,16 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="restore_button_clear">Borrar Semilla</string>
+    <string name="restore_title">Restaurar</string>
+    <string name="restore_subtitle">Frase de Recuperación</string>
+    <string name="restore_message">Por favor, ingresa tu frase secreta de recuperación de 24 palabras en el orden correcto.</string>
+    <string name="restore_button">Siguiente</string>
 
-    <string name="restore_title">Ingresa la frase secreta de recuperación</string>
-    <string name="restore_seed_instructions">Ingresa tu frase de semilla de 24 palabras para restaurar la billetera asociada.</string>
-    <string name="restore_seed_hint">privacidad dignidad libertad …</string>
-    <string name="restore_seed_button_next">Siguiente</string>
+    <string name="restore_dialog_title">¿Necesitas más información?</string>
+    <string name="restore_dialog_message_1_bold_part">La Frase Secreta de Recuperación</string>
+    <string name="restore_dialog_message_1">es un conjunto único de 24 palabras que aparecen en un orden preciso. Puede usarse para obtener control total de tus fondos desde cualquier dispositivo a través de cualquier app de billetera Zcash. Piénsala como la llave maestra de tu billetera. Está guardada en la Configuración Avanzada de Zashi.</string>
+    <string name="restore_dialog_message_2_bold_part">La Altura de Cumpleaños de la Billetera</string>
+    <string name="restore_dialog_message_2">es la altura de bloque (número de bloque en la cadena de bloques) en la que se creó tu billetera. Si alguna vez pierdes acceso a tu app de Zashi y necesitas recuperar tus fondos, proporcionar esta altura junto con tu frase de recuperación puede acelerar significativamente el proceso.</string>
+    <string name="restore_dialog_button">¡Entendido!</string>
 
-    <string name="restore_seed_warning_suggestions">Esta palabra no está en el diccionario de frases semilla. Por favor, selecciona la correcta de las sugerencias.</string>
-    <string name="restore_seed_warning_no_suggestions">Esta palabra no está en el diccionario de frases semilla.</string>
+    <string name="restore_bd_height_btn">Estimar mi altura de bloque</string>
+    <string name="restore_bd_restore_btn">Restaurar</string>
 
-    <string name="restore_birthday_header">Altura de cumpleaños de la billetera</string>
-    <string name="restore_birthday_sub_header">(opcional)</string>
-    <string name="restore_birthday_button_restore">Restaurar</string>
+    <string name="restore_bd_subtitle">Altura de Cumpleaños de la Billetera</string>
+    <string name="restore_bd_message">Ingresar la Altura de Cumpleaños de tu billetera ayuda a acelerar el proceso de restauración.</string>
+    <string name="restore_bd_text_field_title">Altura de Bloque</string>
+    <string name="restore_bd_text_field_hint">Ingresa un número</string>
+    <string name="restore_bd_text_field_note">La Altura de Cumpleaños de la Billetera es el momento en que se creó tu billetera.</string>
+
+    <string name="restore_bd_date_subtitle">Primera Transacción de la Billetera</string>
+    <string name="restore_bd_date_message">Ingresar la altura de bloque en la que se creó tu billetera reduce la cantidad de bloques que deben escanearse para restaurarla.</string>
+    <string name="restore_bd_date_note">Si no estás seguro, elige una fecha anterior.</string>
+    <string name="restore_bd_date_next">Siguiente</string>
+
+    <string name="restore_bd_estimation_subtitle">Altura de Bloque Estimada</string>
+    <string name="restore_bd_estimation_message">Zashi escaneará y recuperará todas las transacciones realizadas después del siguiente número de bloque.</string>
+    <string name="restore_bd_estimation_copy">Copiar</string>
+    <string name="restore_bd_estimation_restore">Restaurar</string>
+
+    <string name="restore_seed_warning_suggestions">Esta palabra no está en el diccionario de frases de recuperación. Por favor selecciona la correcta de las sugerencias.</string>
 </resources>

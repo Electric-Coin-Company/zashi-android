@@ -1,54 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="balances_title">Saldos</string>
-    <string name="balances_shielded_spendable">ZEC protegidos (disponibles)</string>
-    <string name="balances_change_pending">Cambio pendiente</string>
-    <string name="balances_pending_transactions">Transacciones pendientes</string>
-    <string name="balances_transparent_balance">Saldo transparente</string>
-    <string name="balances_transparent_balance_help" formatted="true">
-        <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> utiliza la última actualización de la red y no
-        admite el envío de <xliff:g id="currency" example="ZEC">%2$s</xliff:g> transparentes (no protegidos). Usa el botón de Proteger y Consolidar para proteger tus fondos, lo cual se sumará a tu saldo disponible y hará que tus <xliff:g id="currency" example="ZEC">%2$s</xliff:g> sean gastables.</string>
-    <string name="balances_transparent_balance_help_close">¡Entendido!</string>
-    <string name="balances_transparent_help_content_description">Mostrar ayuda</string>
-    <string name="balances_transparent_balance_shield">Proteger y consolidar fondos</string>
-    <string name="balances_transparent_balance_fee">(Tarifa típica &lt; <xliff:g id="fee_amount" example="0.001">%1$s</xliff:g>)</string>
-
-    <string name="balances_status_syncing" formatted="true">Sincronizando…</string>
-    <string name="balances_status_syncing_amount_suffix" formatted="true"><xliff:g id="amount_prefix" example="123$">%1$s</xliff:g> hasta ahora</string>
-    <string name="balances_status_syncing_percentage" formatted="true"><xliff:g id="synced_percent" example="50.25">%1$s</xliff:g>%%</string> <!-- double %% for escaping -->
-    <string name="balances_status_synced">Sincronizado</string>
-    <string name="balances_status_update">Por favor, actualiza <xliff:g id="app_name" example="Zashi">%1$s</xliff:g> usando Google Play</string>
-    <string name="balances_status_error_simple"><xliff:g id="app_name" example="Zashi">%1$s</xliff:g> encontró un error al sincronizar, intentando resolver…</string>
-    <string name="balances_status_restoring_text">El proceso de restauración puede tomar varias horas en dispositivos de baja potencia, e incluso en dispositivos potentes es probable que tome más de una hora.</string>
-
-    <string name="balances_shielding_successful">La protección ha sido enviada con éxito</string>
-
-    <string name="balances_status_error_dialog_title">Error</string>
-    <string name="balances_status_error_dialog_connection">
-        Desconectado. Por favor, revisa tu conexión a internet.
-    </string>
-    <string name="balances_status_error_dialog_cause" formatted="true">Error:
-        <xliff:g id="error_cause" example="Problema al escanear bloques">%1$s</xliff:g>\n\nRastro de error:
-        <xliff:g id="error_stacktrace" example="java.lang.IllegalStateException: Estado de billetera no soportado
-        at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:104)
-        Causado por: java.lang.RuntimeException: Error del backend Rust">%2$s</xliff:g>
-    </string>
-    <string name="balances_status_error_dialog_cause_unknown">
-        Causa desconocida. Por favor contacta a nuestro equipo de soporte si el problema persiste.
-    </string>
-    <string name="balances_status_error_dialog_stacktrace_unknown">Rastro de error desconocido.</string>
-    <string name="balances_status_dialog_stopped">La sincronización está detenida. Se reanudará pronto.</string>
-    <string name="balances_status_dialog_ok_button">OK</string>
-    <string name="balances_status_dialog_report_button">Reportar</string>
-
-    <string name="balances_shielding_dialog_error_title">Transacción Fallida</string>
-    <string name="balances_shielding_dialog_error_text">El intento de proteger los fondos transparentes falló. Inténtalo de nuevo, por favor.</string>
-    <string name="balances_shielding_dialog_error_btn">OK</string>
-    <string name="balances_shielding_dialog_report_btn">Reportar</string>
-    <string name="balances_shielding_dialog_error_text_below_threshold">El saldo transparente actual es cero o está por debajo del límite permitido para proteger.</string>
-
-    <string name="balances_shielding_dialog_error_grpc_title">Error de conexión</string>
-    <string name="balances_shielding_dialog_error_grpc_text">Zashi encontró algunos problemas de conexión al enviar la transacción protegida a la red. Lo intentará de nuevo en los próximos minutos.</string>
-    <string name="balances_shielding_dialog_error_grpc_btn">OK</string>
-
+<resources>
+    <string name="balance_action_shield">Proteger</string>
+    <string name="balance_action_shield_button_header">Transparente</string>
+    <string name="widget_balances_button_spendable">Disponible</string>
 </resources>

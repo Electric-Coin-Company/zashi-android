@@ -6,4 +6,6 @@ class GetSelectedWalletAccountUseCase(
     private val accountDataSource: AccountDataSource
 ) {
     suspend operator fun invoke() = accountDataSource.getSelectedAccount()
+
+    fun observe() = accountDataSource.selectedAccount
 }

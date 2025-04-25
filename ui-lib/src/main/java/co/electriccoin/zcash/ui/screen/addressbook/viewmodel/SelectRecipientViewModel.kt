@@ -9,9 +9,9 @@ import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveWalletAccountsUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiContactListItemState
 import co.electriccoin.zcash.ui.design.util.ImageResource
@@ -20,7 +20,8 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookItem
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
-import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
+import co.electriccoin.zcash.ui.screen.scan.Scan
+import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -31,12 +32,12 @@ import kotlinx.coroutines.launch
 
 class SelectRecipientViewModel(
     observeAddressBookContacts: ObserveAddressBookContactsUseCase,
-    observeWalletAccountsUseCase: ObserveWalletAccountsUseCase,
+    getWalletAccountsUseCase: GetWalletAccountsUseCase,
     private val observeContactPicked: ObserveContactPickedUseCase,
     private val navigationRouter: NavigationRouter
 ) : ViewModel() {
     val state =
-        combine(observeAddressBookContacts(), observeWalletAccountsUseCase()) { contacts, accounts ->
+        combine(observeAddressBookContacts(), getWalletAccountsUseCase.observe()) { contacts, accounts ->
             if (accounts != null && accounts.size > 1) {
                 createStateWithAccounts(contacts, accounts)
             } else {
@@ -174,5 +175,5 @@ class SelectRecipientViewModel(
 
     private fun onAddContactManuallyClick() = navigationRouter.forward(AddContactArgs(null))
 
-    private fun onScanContactClick() = navigationRouter.forward(ScanNavigationArgs(ScanNavigationArgs.ADDRESS_BOOK))
+    private fun onScanContactClick() = navigationRouter.forward(Scan(ScanFlow.ADDRESS_BOOK))
 }

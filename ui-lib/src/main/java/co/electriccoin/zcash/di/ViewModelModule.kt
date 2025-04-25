@@ -1,36 +1,48 @@
 package co.electriccoin.zcash.di
 
+import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
-import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
+import co.electriccoin.zcash.ui.common.viewmodel.OldHomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.SelectRecipientViewModel
-import co.electriccoin.zcash.ui.screen.advancedsettings.viewmodel.AdvancedSettingsViewModel
+import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsViewModel
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
+import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
 import co.electriccoin.zcash.ui.screen.crashreporting.viewmodel.CrashReportingViewModel
+import co.electriccoin.zcash.ui.screen.error.ErrorViewModel
+import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInViewModel
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsViewModel
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
-import co.electriccoin.zcash.ui.screen.integrations.viewmodel.IntegrationsViewModel
-import co.electriccoin.zcash.ui.screen.onboarding.viewmodel.OnboardingViewModel
+import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
+import co.electriccoin.zcash.ui.screen.home.HomeViewModel
+import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetailViewModel
+import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupInfoViewModel
+import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptInViewModel
+import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfoViewModel
+import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoViewModel
+import co.electriccoin.zcash.ui.screen.integrations.IntegrationsViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
 import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
-import co.electriccoin.zcash.ui.screen.restore.viewmodel.RestoreViewModel
-import co.electriccoin.zcash.ui.screen.restoresuccess.viewmodel.RestoreSuccessViewModel
+import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateViewModel
+import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationViewModel
+import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightViewModel
+import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
+import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
-import co.electriccoin.zcash.ui.screen.scan.ScanNavigationArgs
-import co.electriccoin.zcash.ui.screen.scan.viewmodel.ScanViewModel
+import co.electriccoin.zcash.ui.screen.scan.Scan
+import co.electriccoin.zcash.ui.screen.scan.ScanViewModel
+import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
-import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
-import co.electriccoin.zcash.ui.screen.seed.viewmodel.SeedViewModel
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel.SelectKeystoneAccountViewModel
 import co.electriccoin.zcash.ui.screen.send.SendViewModel
-import co.electriccoin.zcash.ui.screen.sendconfirmation.viewmodel.CreateTransactionsViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewModel
 import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
@@ -44,6 +56,7 @@ import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHist
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
 import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNoteViewModel
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressViewModel
+import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackupViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.screen.whatsnew.viewmodel.WhatsNewViewModel
 import org.koin.core.module.dsl.viewModel
@@ -54,15 +67,13 @@ val viewModelModule =
     module {
         viewModelOf(::WalletViewModel)
         viewModelOf(::AuthenticationViewModel)
-        viewModelOf(::HomeViewModel)
-        viewModelOf(::OnboardingViewModel)
+        viewModelOf(::OldHomeViewModel)
         viewModelOf(::StorageCheckViewModel)
-        viewModelOf(::RestoreViewModel)
+        viewModelOf(::RestoreSeedViewModel)
         viewModelOf(::ScreenBrightnessViewModel)
         viewModelOf(::SettingsViewModel)
         viewModelOf(::AdvancedSettingsViewModel)
         viewModelOf(::SupportViewModel)
-        viewModelOf(::CreateTransactionsViewModel)
         viewModelOf(::RestoreSuccessViewModel)
         viewModelOf(::WhatsNewViewModel)
         viewModelOf(::ChooseServerViewModel)
@@ -79,29 +90,25 @@ val viewModelModule =
         viewModelOf(::ReceiveViewModel)
         viewModelOf(::QrCodeViewModel)
         viewModelOf(::RequestViewModel)
-        viewModelOf(::IntegrationsViewModel)
-        viewModel { (args: ScanNavigationArgs) ->
+        viewModel { (args: Scan) ->
             ScanViewModel(
                 args = args,
                 getSynchronizer = get(),
                 zip321ParseUriValidationUseCase = get(),
+                onAddressScanned = get(),
+                zip321Scanned = get()
             )
         }
         viewModelOf(::ScanKeystoneSignInRequestViewModel)
         viewModelOf(::ScanKeystonePCZTViewModel)
         viewModelOf(::IntegrationsViewModel)
+        viewModelOf(::FlexaViewModel)
         viewModelOf(::SendViewModel)
-        viewModel { (args: SeedNavigationArgs) ->
-            SeedViewModel(
-                observePersistableWallet = get(),
-                args = args,
-                walletRepository = get(),
-            )
-        }
+        viewModelOf(::WalletBackupViewModel)
         viewModelOf(::FeedbackViewModel)
         viewModelOf(::SignKeystoneTransactionViewModel)
         viewModelOf(::AccountListViewModel)
-        viewModelOf(::ZashiMainTopAppBarViewModel)
+        viewModelOf(::ZashiTopAppBarViewModel)
         viewModel { (args: SelectKeystoneAccount) ->
             SelectKeystoneAccountViewModel(
                 args = args,
@@ -140,4 +147,19 @@ val viewModelModule =
         }
         viewModelOf(::TaxExportViewModel)
         viewModelOf(::CrashReportingViewModel)
+        viewModelOf(::BalanceWidgetViewModel)
+        viewModelOf(::HomeViewModel)
+        viewModelOf(::RestoreBDHeightViewModel)
+        viewModelOf(::RestoreBDDateViewModel)
+        viewModelOf(::RestoreBDEstimationViewModel)
+        viewModelOf(::ShieldFundsInfoViewModel)
+        viewModelOf(::WalletBackupInfoViewModel)
+        viewModelOf(::ExchangeRateOptInViewModel)
+        viewModelOf(::ExchangeRateSettingsViewModel)
+        viewModelOf(::WalletBackupDetailViewModel)
+        viewModelOf(::ErrorViewModel)
+        viewModelOf(::SpendableBalanceViewModel)
+        viewModelOf(::CrashReportOptInViewModel)
+        viewModelOf(::WalletRestoringInfoViewModel)
+        viewModelOf(::ThirdPartyScanViewModel)
     }

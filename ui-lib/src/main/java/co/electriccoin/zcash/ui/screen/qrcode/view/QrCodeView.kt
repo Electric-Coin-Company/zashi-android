@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.fixture.WalletAddressFixture
 import cash.z.ecc.android.sdk.model.WalletAddress
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.OldZashiBottomBar
@@ -71,7 +70,6 @@ private fun QrCodeLoadingPreview() =
         QrCodeView(
             state = QrCodeState.Loading,
             snackbarHostState = SnackbarHostState(),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 
@@ -89,7 +87,6 @@ private fun ZashiPreview() =
                     onBack = {},
                 ),
             snackbarHostState = SnackbarHostState(),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 
@@ -107,7 +104,6 @@ private fun KeystonePreview() =
                     onBack = {},
                 ),
             snackbarHostState = SnackbarHostState(),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 
@@ -115,7 +111,6 @@ private fun KeystonePreview() =
 internal fun QrCodeView(
     state: QrCodeState,
     snackbarHostState: SnackbarHostState,
-    topAppBarSubTitleState: TopAppBarSubTitleState,
 ) {
     when (state) {
         QrCodeState.Loading -> {
@@ -137,7 +132,6 @@ internal fun QrCodeView(
                 topBar = {
                     QrCodeTopAppBar(
                         onBack = state.onBack,
-                        subTitleState = topAppBarSubTitleState,
                     )
                 },
                 snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -164,15 +158,8 @@ internal fun QrCodeView(
 @Composable
 private fun QrCodeTopAppBar(
     onBack: () -> Unit,
-    subTitleState: TopAppBarSubTitleState,
 ) {
     ZashiSmallTopAppBar(
-        subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         title = null,
         navigationAction = {
             IconButton(
@@ -218,7 +205,7 @@ private fun QrCodeBottomBar(
 
         ZashiButton(
             text = stringResource(id = R.string.qr_code_copy_btn),
-            icon = R.drawable.ic_copy,
+            icon = R.drawable.ic_qr_copy,
             onClick = { state.onAddressCopy(state.walletAddress.address) },
             colors = ZashiButtonDefaults.secondaryColors(),
             modifier =

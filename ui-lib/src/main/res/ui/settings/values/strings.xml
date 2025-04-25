@@ -3,7 +3,6 @@
     <string name="settings_title">Settings</string>
     <string name="settings_advanced_settings">Advanced Settings</string>
     <string name="settings_integrations">Integrations</string>
-    <string name="settings_integrations_subtitle_disabled">Switch from Keystone to Zashi to use Integrations.</string>
     <string name="settings_about_us">About Us</string>
     <string name="settings_feedback">Send Us Feedback</string>
     <string name="settings_version">Version <xliff:g example="1" id="version">%s</xliff:g></string>

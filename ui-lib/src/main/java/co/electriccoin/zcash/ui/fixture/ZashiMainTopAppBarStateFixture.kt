@@ -1,9 +1,9 @@
 package co.electriccoin.zcash.ui.fixture
 
+import co.electriccoin.zcash.ui.common.appbar.AccountSwitchState
+import co.electriccoin.zcash.ui.common.appbar.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.design.R
-import co.electriccoin.zcash.ui.design.component.AccountSwitchState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
-import co.electriccoin.zcash.ui.design.component.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 object ZashiMainTopAppBarStateFixture {
@@ -26,7 +26,6 @@ object ZashiMainTopAppBarStateFixture {
     ) = ZashiMainTopAppBarState(
         accountSwitchState = accountSwitchState,
         balanceVisibilityButton = balanceVisibilityButton,
-        settingsButton = settingsButton,
-        subtitle = null
+        settingsButton = settingsButton
     )
 }

@@ -543,7 +543,8 @@ val DarkZashiColorsInternal =
                         utilityPurple50 = Purple.`950`,
                         utilityPurple100 = Purple.`900`,
                         utilityPurple400 = Purple.`600`,
-                        utilityPurple300 = Purple.`700`
+                        utilityPurple300 = Purple.`700`,
+                        utilityPurple900 = Purple.`50`
                     ),
                 Espresso =
                     UtilityEspresso(
@@ -551,12 +552,13 @@ val DarkZashiColorsInternal =
                         utilityEspresso600 = Espresso.`300`,
                         utilityEspresso500 = Espresso.`400`,
                         utilityEspresso200 = Espresso.`700`,
-                        utilityEspresso50 = Espresso.`900`,
-                        utilityEspresso100 = Espresso.`800`,
+                        utilityEspresso50 = Espresso.`950`,
+                        utilityEspresso100 = Espresso.`900`,
                         utilityEspresso400 = Espresso.`500`,
                         utilityEspresso300 = Espresso.`600`,
+                        utilityEspresso800 = Espresso.`100`,
                         utilityEspresso900 = Espresso.`50`,
-                        utilityEspresso800 = Espresso.`100`
+                        utilityEspresso950 = Espresso.`25`
                     )
             ),
         Transparent =

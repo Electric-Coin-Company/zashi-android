@@ -3,6 +3,7 @@
 package co.electriccoin.zcash.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.SystemClock
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,22 +23,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
-import cash.z.ecc.android.sdk.fixture.WalletFixture
-import cash.z.ecc.android.sdk.model.SeedPhrase
-import cash.z.ecc.android.sdk.model.ZcashNetwork
-import cash.z.ecc.sdk.type.fromResources
-import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BindCompLocalProvider
 import co.electriccoin.zcash.ui.common.extension.setContentCompat
-import co.electriccoin.zcash.ui.common.model.OnboardingState
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationUIState
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
-import co.electriccoin.zcash.ui.common.viewmodel.HomeViewModel
+import co.electriccoin.zcash.ui.common.viewmodel.OldHomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
-import co.electriccoin.zcash.ui.configuration.RemoteConfig
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.Override
@@ -48,11 +40,8 @@ import co.electriccoin.zcash.ui.screen.authentication.RETRY_TRIGGER_DELAY
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.authentication.view.AnimationConstants
 import co.electriccoin.zcash.ui.screen.authentication.view.WelcomeAnimationAutostart
-import co.electriccoin.zcash.ui.screen.onboarding.WrapOnboarding
-import co.electriccoin.zcash.ui.screen.onboarding.persistExistingWalletWithSeedPhrase
-import co.electriccoin.zcash.ui.screen.securitywarning.WrapSecurityWarning
-import co.electriccoin.zcash.ui.screen.seed.SeedNavigationArgs
-import co.electriccoin.zcash.ui.screen.seed.WrapSeed
+import co.electriccoin.zcash.ui.screen.onboarding.OnboardingNavigation
+import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScan
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.work.WorkIds
 import kotlinx.coroutines.delay
@@ -61,13 +50,14 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class MainActivity : FragmentActivity() {
-    private val homeViewModel by viewModel<HomeViewModel>()
+    private val oldHomeViewModel by viewModel<OldHomeViewModel>()
 
     val walletViewModel by viewModel<WalletViewModel>()
 
@@ -78,6 +68,8 @@ class MainActivity : FragmentActivity() {
     lateinit var navControllerForTesting: NavHostController
 
     val configurationOverrideFlow = MutableStateFlow<ConfigurationOverride?>(null)
+
+    private val navigationRouter: NavigationRouter by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,6 +82,18 @@ class MainActivity : FragmentActivity() {
         setupUiContent()
 
         monitorForBackgroundSync()
+
+        if (intent.data != null) {
+            navigationRouter.forward(ThirdPartyScan)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
+        if (intent.data != null) {
+            navigationRouter.forward(ThirdPartyScan)
+        }
     }
 
     override fun onStart() {
@@ -131,8 +135,7 @@ class MainActivity : FragmentActivity() {
                 }
             }
 
-            // Note this condition needs to be kept in sync with the condition in MainContent()
-            homeViewModel.configurationFlow.value == null || SecretState.Loading == walletViewModel.secretState.value
+            SecretState.LOADING == walletViewModel.secretState.value
         }
     }
 
@@ -143,7 +146,7 @@ class MainActivity : FragmentActivity() {
         enableEdgeToEdge()
         setContentCompat {
             Override(configurationOverrideFlow) {
-                val isHideBalances by homeViewModel.isHideBalances.collectAsStateWithLifecycle()
+                val isHideBalances by oldHomeViewModel.isHideBalances.collectAsStateWithLifecycle()
                 ZcashTheme(
                     balancesAvailable = isHideBalances == false
                 ) {
@@ -235,58 +238,20 @@ class MainActivity : FragmentActivity() {
 
     @Composable
     private fun MainContent() {
-        val configuration = homeViewModel.configurationFlow.collectAsStateWithLifecycle().value
-        val secretState = walletViewModel.secretState.collectAsStateWithLifecycle().value
+        val secretState by walletViewModel.secretState.collectAsStateWithLifecycle()
 
-        // Note this condition needs to be kept in sync with the condition in setupSplashScreen()
-        if (null == configuration || secretState == SecretState.Loading) {
-            // For now, keep displaying splash screen using condition above.
-            // In the future, we might consider displaying something different here.
-        } else {
-            // Note that the deeply nested child views will probably receive arguments derived from
-            // the configuration.  The CompositionLocalProvider is helpful for passing the configuration
-            // to the "platform" layer, which is where the arguments will be derived from.
-            CompositionLocalProvider(RemoteConfig provides configuration) {
-                when (secretState) {
-                    SecretState.None -> {
-                        WrapOnboarding()
-                    }
+        when (secretState) {
+            SecretState.NONE -> {
+                OnboardingNavigation()
+            }
 
-                    is SecretState.NeedsWarning -> {
-                        WrapSecurityWarning(
-                            onBack = { walletViewModel.persistOnboardingState(OnboardingState.NONE) },
-                            onConfirm = {
-                                walletViewModel.persistOnboardingState(OnboardingState.NEEDS_BACKUP)
+            SecretState.READY -> {
+                Navigation()
+            }
 
-                                if (FirebaseTestLabUtil.isFirebaseTestLab(applicationContext)) {
-                                    persistExistingWalletWithSeedPhrase(
-                                        applicationContext,
-                                        walletViewModel,
-                                        SeedPhrase.new(WalletFixture.Alice.seedPhrase),
-                                        WalletFixture.Alice.getBirthday(ZcashNetwork.fromResources(applicationContext))
-                                    )
-                                } else {
-                                    walletViewModel.persistNewWalletAndRestoringState(WalletRestoringState.INITIATING)
-                                }
-                            }
-                        )
-                    }
-
-                    is SecretState.NeedsBackup -> {
-                        WrapSeed(
-                            args = SeedNavigationArgs.NEW_WALLET,
-                            goBackOverride = null
-                        )
-                    }
-
-                    is SecretState.Ready -> {
-                        Navigation()
-                    }
-
-                    else -> {
-                        error("Unhandled secret state: $secretState")
-                    }
-                }
+            SecretState.LOADING -> {
+                // For now, keep displaying splash screen using condition above.
+                // In the future, we might consider displaying something different here.
             }
         }
     }
@@ -294,8 +259,8 @@ class MainActivity : FragmentActivity() {
     private fun monitorForBackgroundSync() {
         val isEnableBackgroundSyncFlow =
             run {
-                val isSecretReadyFlow = walletViewModel.secretState.map { it is SecretState.Ready }
-                val isBackgroundSyncEnabledFlow = homeViewModel.isBackgroundSyncEnabled.filterNotNull()
+                val isSecretReadyFlow = walletViewModel.secretState.map { it == SecretState.READY }
+                val isBackgroundSyncEnabledFlow = oldHomeViewModel.isBackgroundSyncEnabled.filterNotNull()
 
                 isSecretReadyFlow.combine(isBackgroundSyncEnabledFlow) { isSecretReady, isBackgroundSyncEnabled ->
                     isSecretReady && isBackgroundSyncEnabled

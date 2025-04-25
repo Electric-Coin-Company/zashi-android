@@ -2,23 +2,28 @@
 
 package co.electriccoin.zcash.ui.screen.receive
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
-import co.electriccoin.zcash.ui.common.viewmodel.ZashiMainTopAppBarViewModel
+import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarViewModel
 import co.electriccoin.zcash.ui.screen.receive.view.ReceiveView
 import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
 
 @Composable
-internal fun WrapReceive() {
+internal fun AndroidReceive() {
     val receiveViewModel = koinActivityViewModel<ReceiveViewModel>()
-    val receiveState by receiveViewModel.state.collectAsStateWithLifecycle()
-    val topAppBarViewModel = koinActivityViewModel<ZashiMainTopAppBarViewModel>()
-    val zashiMainTopAppBarState by topAppBarViewModel.state.collectAsStateWithLifecycle()
+    val state by receiveViewModel.state.collectAsStateWithLifecycle()
+    val topAppBarViewModel = koinActivityViewModel<ZashiTopAppBarViewModel>()
+    val appBarState by topAppBarViewModel.state.collectAsStateWithLifecycle()
+
+    BackHandler {
+        state.onBack()
+    }
 
     ReceiveView(
-        state = receiveState,
-        zashiMainTopAppBarState = zashiMainTopAppBarState,
+        state = state,
+        appBarState = appBarState,
     )
 }

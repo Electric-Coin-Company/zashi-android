@@ -11,10 +11,6 @@ import org.koin.androidx.compose.koinViewModel
 fun AndroidCrashReportingOptIn() {
     val crashReportingViewModel = koinViewModel<CrashReportingViewModel>()
     val state = crashReportingViewModel.state.collectAsStateWithLifecycle().value
-
-    BackHandler {
-        state.onBack()
-    }
-
-    CrashReportingOptIn(state = state)
+    BackHandler(state != null) { state?.onBack?.invoke() }
+    state?.let { CrashReportingOptIn(state = it) }
 }

@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
 import cash.z.ecc.sdk.extension.toZecStringFull
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
-import co.electriccoin.zcash.ui.common.compose.BalanceWidgetBigLineOnly
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.R
@@ -51,6 +50,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetHeader
 import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeLabel
 import kotlinx.datetime.Clock
 
@@ -340,7 +340,7 @@ private fun AmountWidget(state: AmountState) {
                 color = ZashiColors.Text.textPrimary
             )
         }
-        BalanceWidgetBigLineOnly(
+        BalanceWidgetHeader(
             parts = state.amount.toZecStringFull().asZecAmountTriple(),
             isHideBalances = false
         )

@@ -20,10 +20,15 @@
     <string name="disconnected_label_new">Desconectado…</string>
     <string name="unable_to_open_play_store">No se pudo iniciar la aplicación de Google Play Store…</string>
 
-    <string name="server_disconnected_dialog_title">Aviso</string>
-    <string name="server_disconnected_dialog_message">Tu servidor actual está experimentando dificultades. Verifica la conexión de tu dispositivo y/o navega a Configuración Avanzada para elegir un servidor diferente.</string>
-    <string name="server_disconnected_dialog_switch_btn">Cambiar servidor</string>
-    <string name="server_disconnected_dialog_ignore_btn">Ignorar</string>
-
     <string name="general_etc">…</string>
+
+    <string name="general_ok">OK</string>
+    <string name="general_remind_me_later">Recordarme más tarde</string>
+    <string name="general_remind_me_in">Recordarme en %s</string>
+    <string name="general_report">Reportar</string>
+    <string name="general_remind_me_in_two_days">dos días</string>
+    <string name="general_remind_me_in_two_weeks">dos semanas</string>
+    <string name="general_remind_me_in_two_months">dos meses</string>
+    <string name="general_zec">%s ZEC</string>
+    <string name="general_dismiss">Descartar</string>
 </resources>

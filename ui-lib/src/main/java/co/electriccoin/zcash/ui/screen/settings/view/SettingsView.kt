@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
@@ -46,15 +45,11 @@ import co.electriccoin.zcash.ui.screen.settings.model.SettingsTroubleshootingSta
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun Settings(
-    state: SettingsState,
-    topAppBarSubTitleState: TopAppBarSubTitleState
-) {
+fun Settings(state: SettingsState) {
     BlankBgScaffold(
         topBar = {
             SettingsTopAppBar(
                 onBack = state.onBack,
-                subTitleState = topAppBarSubTitleState,
                 state = state
             )
         }
@@ -87,17 +82,10 @@ fun Settings(
 @Composable
 private fun SettingsTopAppBar(
     onBack: () -> Unit,
-    subTitleState: TopAppBarSubTitleState,
     state: SettingsState
 ) {
     ZashiSmallTopAppBar(
         title = stringResource(id = R.string.settings_title),
-        subtitle =
-            when (subTitleState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         modifier = Modifier.testTag(SettingsTag.SETTINGS_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
@@ -223,7 +211,6 @@ private fun PreviewSettings() {
                             ),
                         ),
                 ),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 }
@@ -248,7 +235,6 @@ private fun IntegrationsDisabledPreview() {
                             ZashiListItemState(
                                 title = stringRes(R.string.settings_integrations),
                                 icon = R.drawable.ic_settings_integrations_disabled,
-                                subtitle = stringRes(R.string.settings_integrations_subtitle_disabled),
                                 onClick = { },
                                 isEnabled = false,
                                 titleIcons =
@@ -274,7 +260,6 @@ private fun IntegrationsDisabledPreview() {
                             ),
                         ),
                 ),
-            topAppBarSubTitleState = TopAppBarSubTitleState.None,
         )
     }
 }

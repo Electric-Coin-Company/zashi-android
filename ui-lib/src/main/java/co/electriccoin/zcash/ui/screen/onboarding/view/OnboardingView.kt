@@ -4,7 +4,6 @@ package co.electriccoin.zcash.ui.screen.onboarding.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +29,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.android.sdk.fixture.WalletFixture
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.MINIMAL_WEIGHT
@@ -49,10 +47,8 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 private fun OnboardingComposablePreview() {
     ZcashTheme {
         Onboarding(
-            isDebugMenuEnabled = true,
             onImportWallet = {},
-            onCreateWallet = {},
-            onFixtureWallet = {}
+            onCreateWallet = {}
         )
     }
 }
@@ -63,10 +59,8 @@ private fun OnboardingComposablePreview() {
  */
 @Composable
 fun Onboarding(
-    isDebugMenuEnabled: Boolean,
     onImportWallet: () -> Unit,
-    onCreateWallet: () -> Unit,
-    onFixtureWallet: (String) -> Unit
+    onCreateWallet: () -> Unit
 ) {
     Scaffold { paddingValues ->
         Box(
@@ -90,10 +84,8 @@ fun Onboarding(
                 )
         ) {
             OnboardingMainContent(
-                isDebugMenuEnabled = isDebugMenuEnabled,
-                onCreateWallet = onCreateWallet,
-                onFixtureWallet = onFixtureWallet,
                 onImportWallet = onImportWallet,
+                onCreateWallet = onCreateWallet,
                 modifier =
                     Modifier
                         .padding(
@@ -111,8 +103,6 @@ fun Onboarding(
 private fun OnboardingMainContent(
     onImportWallet: () -> Unit,
     onCreateWallet: () -> Unit,
-    onFixtureWallet: (String) -> Unit,
-    isDebugMenuEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -123,18 +113,10 @@ private fun OnboardingMainContent(
                 .then(modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        var imageModifier =
+        val imageModifier =
             Modifier
                 .height(ZcashTheme.dimens.inScreenZcashLogoHeight)
                 .width(ZcashTheme.dimens.inScreenZcashLogoWidth)
-        if (isDebugMenuEnabled) {
-            imageModifier =
-                imageModifier.then(
-                    Modifier.clickable {
-                        onFixtureWallet(WalletFixture.Alice.seedPhrase)
-                    }
-                )
-        }
 
         Spacer(Modifier.weight(1f))
 
@@ -177,18 +159,18 @@ private fun OnboardingMainContent(
         )
 
         ZashiButton(
-            onClick = onCreateWallet,
-            text = stringResource(R.string.onboarding_create_new_wallet),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.onboarding_import_existing_wallet),
+            onClick = onImportWallet,
+            colors = ZashiButtonDefaults.tertiaryColors()
         )
 
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
 
         ZashiButton(
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(R.string.onboarding_import_existing_wallet),
-            onClick = onImportWallet,
-            colors = ZashiButtonDefaults.tertiaryColors()
+            onClick = onCreateWallet,
+            text = stringResource(R.string.onboarding_create_new_wallet),
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }

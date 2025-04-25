@@ -43,7 +43,7 @@ class ReviewTransactionViewModel(
     observeContactByAddress: ObserveContactByAddressUseCase,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     observeKeystoneSendTransactionProposal: ObserveProposalUseCase,
-    private val cancelKeystoneProposalFlow: CancelProposalFlowUseCase,
+    private val cancelProposalFlow: CancelProposalFlowUseCase,
     private val getExchangeRate: GetExchangeRateUseCase,
     private val navigationRouter: NavigationRouter,
     private val confirmProposal: ConfirmProposalUseCase,
@@ -242,11 +242,11 @@ class ReviewTransactionViewModel(
     }
 
     private fun onBack() {
-        cancelKeystoneProposalFlow(clearSendForm = false)
+        cancelProposalFlow(clearSendForm = false)
     }
 
     private fun onCancelClick() {
-        cancelKeystoneProposalFlow(clearSendForm = false)
+        cancelProposalFlow(clearSendForm = false)
     }
 
     private fun onConfirmClick() =

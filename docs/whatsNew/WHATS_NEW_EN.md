@@ -12,6 +12,20 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.0.0 (934)] - 2025-04-25
+
+### Added:
+- Zashi 2.0 is here!
+- New Wallet Status Widget helps you navigate Zashi with ease and get more info upon tap.
+
+### Changed:
+- Redesigned Home Screen and streamlined app navigation.
+- Balances redesigned into a new Spendable component on the Send screen.
+- Revamped Restore flow.
+- Create Wallet with a tap! New Wallet Backup flow moved to when your wallet receives first funds.
+- Firebase Crashlytics are fully opt-in. Help us improve Zashi, or don’t, your choice.
+- Scanning a ZIP 321 QR code now opens Zashi!
+
 ## [1.5.2 (932)] - 2025-04-23
 
 ### Added:

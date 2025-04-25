@@ -11,9 +11,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -32,6 +34,8 @@ class AndroidPreferenceProvider private constructor(
     private val sharedPreferences: SharedPreferences,
     private val dispatcher: CoroutineDispatcher
 ) : PreferenceProvider {
+    private val clearPipeline = MutableSharedFlow<Unit>()
+
     private val mutex = Mutex()
     /*
      * Implementation note: EncryptedSharedPreferences are not thread-safe, so this implementation
@@ -119,6 +123,8 @@ class AndroidPreferenceProvider private constructor(
 
             editor.clear()
 
+            clearPipeline.emit(Unit)
+
             return@withContext editor.commit()
         }
 
@@ -131,6 +137,12 @@ class AndroidPreferenceProvider private constructor(
                 }
             sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
 
+            this.launch {
+                clearPipeline.collect {
+                    send(Unit)
+                }
+            }
+
             // Kickstart the emissions
             trySend(Unit)
 
@@ -139,6 +151,17 @@ class AndroidPreferenceProvider private constructor(
             }
         }.flowOn(dispatcher)
             .map { getString(key) }
+
+    @SuppressLint("ApplySharedPref")
+    override suspend fun remove(key: PreferenceKey) {
+        withContext(dispatcher) {
+            val editor = sharedPreferences.edit()
+
+            editor.remove(key.key)
+
+            editor.commit()
+        }
+    }
 
     companion object {
         suspend fun newStandard(

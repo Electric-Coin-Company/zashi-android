@@ -25,7 +25,6 @@ import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.TopAppBarSubTitleState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.SmallTopAppBar
@@ -47,12 +46,11 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun WhatsNewView(
     state: WhatsNewState,
-    walletState: TopAppBarSubTitleState,
     onBack: () -> Unit
 ) {
     BlankBgScaffold(
         topBar = {
-            AppBar(walletState = walletState, onBack = onBack)
+            AppBar(onBack = onBack)
         },
     ) { paddingValues ->
         Column(
@@ -145,16 +143,9 @@ private fun WhatsNewSection(state: WhatsNewSectionState) {
 
 @Composable
 private fun AppBar(
-    walletState: TopAppBarSubTitleState,
     onBack: () -> Unit
 ) {
     SmallTopAppBar(
-        subTitle =
-            when (walletState) {
-                TopAppBarSubTitleState.Disconnected -> stringResource(id = R.string.disconnected_label)
-                TopAppBarSubTitleState.Restoring -> stringResource(id = R.string.restoring_wallet_label)
-                TopAppBarSubTitleState.None -> null
-            },
         titleText = stringResource(id = R.string.whats_new_title).uppercase(),
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
@@ -171,7 +162,6 @@ private fun WhatsNewViewPreview() {
                     changelog = ChangelogFixture.new(),
                     version = VersionInfoFixture.new().versionName
                 ),
-            walletState = TopAppBarSubTitleState.None,
             onBack = {}
         )
     }

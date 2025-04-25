@@ -2,11 +2,9 @@
 
 package co.electriccoin.zcash.ui.screen.exchangerate.widget
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
@@ -41,6 +39,7 @@ import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
@@ -56,7 +55,6 @@ fun StyledExchangeBalance(
     zatoshi: Zatoshi,
     state: ExchangeRateState,
     modifier: Modifier = Modifier,
-    isHideBalances: Boolean = false,
     hiddenBalancePlaceholder: StringResource =
         stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
     textColor: Color = ZashiColors.Text.textPrimary,
@@ -75,9 +73,9 @@ fun StyledExchangeBalance(
                     style = style,
                     textColor = textColor,
                     zatoshi = zatoshi,
-                    isHideBalances = isHideBalances,
                     state = state,
-                    hiddenBalancePlaceholder = hiddenBalancePlaceholder
+                    hiddenBalancePlaceholder = hiddenBalancePlaceholder,
+                    isHideBalance = LocalBalancesAvailable.current.not()
                 )
             }
 
@@ -97,24 +95,21 @@ private fun ExchangeAvailableRateLabelInternal(
     style: TextStyle,
     textColor: Color,
     zatoshi: Zatoshi,
-    isHideBalances: Boolean,
     state: ExchangeRateState.Data,
     hiddenBalancePlaceholder: StringResource,
+    isHideBalance: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val isEnabled = !state.isLoading && state.isRefreshEnabled
 
     ExchangeRateButton(
-        modifier =
-            modifier
-                .basicMarquee()
-                .animateContentSize(),
+        modifier = modifier,
         onClick = state.onRefresh,
         isEnabled = isEnabled,
         textColor = textColor,
     ) {
         Text(
-            text = createExchangeRateText(state, isHideBalances, hiddenBalancePlaceholder, zatoshi),
+            text = createExchangeRateText(state, hiddenBalancePlaceholder, zatoshi, isHideBalance),
             style = style,
             maxLines = 1,
             color = textColor
@@ -148,9 +143,9 @@ private fun ExchangeAvailableRateLabelInternal(
 @Composable
 internal fun createExchangeRateText(
     state: ExchangeRateState.Data,
-    isHideBalances: Boolean,
     hiddenBalancePlaceholder: StringResource,
-    zatoshi: Zatoshi
+    zatoshi: Zatoshi,
+    isHideBalances: Boolean
 ): String {
     val currencySymbol = state.fiatCurrency.symbol
     val text =
@@ -233,10 +228,7 @@ private fun ExchangeRateButton(
     content: @Composable RowScope.() -> Unit
 ) {
     ElevatedButton(
-        modifier =
-            modifier
-                .height(36.dp)
-                .animateContentSize(),
+        modifier = modifier.height(36.dp),
         onClick = onClick,
         enabled = isEnabled,
         shape = RoundedCornerShape(8.dp),
@@ -268,7 +260,6 @@ private fun ExchangeRateButton(
     )
 }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun DefaultPreview() =
@@ -276,7 +267,6 @@ private fun DefaultPreview() =
         BlankSurface {
             Column {
                 StyledExchangeBalance(
-                    isHideBalances = false,
                     modifier = Modifier,
                     zatoshi = Zatoshi(1),
                     state =
@@ -294,7 +284,6 @@ private fun DefaultPreview() =
         }
     }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun DefaultNoRefreshPreview() =
@@ -302,7 +291,6 @@ private fun DefaultNoRefreshPreview() =
         BlankSurface {
             Column {
                 StyledExchangeBalance(
-                    isHideBalances = false,
                     modifier = Modifier,
                     zatoshi = Zatoshi(1),
                     state =
@@ -321,7 +309,6 @@ private fun DefaultNoRefreshPreview() =
         }
     }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun HiddenPreview() =
@@ -329,7 +316,6 @@ private fun HiddenPreview() =
         BlankSurface {
             Column {
                 StyledExchangeBalance(
-                    isHideBalances = true,
                     modifier = Modifier,
                     zatoshi = Zatoshi(1),
                     state =
@@ -347,7 +333,6 @@ private fun HiddenPreview() =
         }
     }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun HiddenStalePreview() =
@@ -355,7 +340,6 @@ private fun HiddenStalePreview() =
         BlankSurface {
             Column {
                 StyledExchangeBalance(
-                    isHideBalances = true,
                     modifier = Modifier,
                     zatoshi = Zatoshi(1),
                     state =
@@ -374,7 +358,6 @@ private fun HiddenStalePreview() =
         }
     }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun LoadingPreview() =
@@ -382,7 +365,6 @@ private fun LoadingPreview() =
         BlankSurface {
             Column {
                 StyledExchangeBalance(
-                    isHideBalances = false,
                     modifier = Modifier,
                     zatoshi = Zatoshi(1),
                     state = ObserveFiatCurrencyResultFixture.new()
@@ -391,7 +373,6 @@ private fun LoadingPreview() =
         }
     }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun LoadingEmptyPreview() =
@@ -399,7 +380,6 @@ private fun LoadingEmptyPreview() =
         BlankSurface {
             Column {
                 StyledExchangeBalance(
-                    isHideBalances = false,
                     modifier = Modifier,
                     zatoshi = Zatoshi(1),
                     state = ObserveFiatCurrencyResultFixture.new(currencyConversion = null)
@@ -408,7 +388,6 @@ private fun LoadingEmptyPreview() =
         }
     }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun LoadingStalePreview() =
@@ -416,7 +395,6 @@ private fun LoadingStalePreview() =
         BlankSurface {
             Column {
                 StyledExchangeBalance(
-                    isHideBalances = false,
                     modifier = Modifier,
                     zatoshi = Zatoshi(1),
                     state =
@@ -429,7 +407,6 @@ private fun LoadingStalePreview() =
         }
     }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun StalePreview() =
@@ -437,7 +414,6 @@ private fun StalePreview() =
         BlankSurface {
             Column {
                 StyledExchangeBalance(
-                    isHideBalances = false,
                     modifier = Modifier,
                     zatoshi = Zatoshi(1),
                     state =

@@ -1,11 +1,13 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.model.ZecSend
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
+import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +29,7 @@ interface ZashiProposalRepository {
     suspend fun createProposal(zecSend: ZecSend)
 
     @Throws(TransactionProposalNotCreatedException::class)
-    suspend fun createZip321Proposal(zip321Uri: String)
+    suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createShieldProposal()
@@ -63,14 +65,13 @@ class ZashiProposalRepositoryImpl(
         }
     }
 
-    override suspend fun createZip321Proposal(zip321Uri: String) {
+    override suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal =
         createProposalInternal {
             proposalDataSource.createZip321Proposal(
                 account = accountDataSource.getSelectedAccount(),
                 zip321Uri = zip321Uri
             )
         }
-    }
 
     override suspend fun createShieldProposal() {
         createProposalInternal {
@@ -127,14 +128,16 @@ class ZashiProposalRepositoryImpl(
         submitState.update { null }
     }
 
-    private inline fun <T : TransactionProposal> createProposalInternal(block: () -> T) {
+    private inline fun <T : TransactionProposal> createProposalInternal(block: () -> T): T {
         val proposal =
             try {
                 block()
             } catch (e: TransactionProposalNotCreatedException) {
+                Twig.error(e) { "Unable to create proposal" }
                 transactionProposal.update { null }
                 throw e
             }
         transactionProposal.update { proposal }
+        return proposal
     }
 }

@@ -6,9 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import cash.z.ecc.android.sdk.fixture.WalletBalanceFixture
 import cash.z.ecc.android.sdk.model.MonetarySeparators
-import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
@@ -17,7 +15,6 @@ import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
-import co.electriccoin.zcash.ui.fixture.WalletSnapshotFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
@@ -107,18 +104,13 @@ class SendViewTestSetup(
             // TODO [#1260]: Cover Send.Form screen UI with tests
             // TODO [#1260]: https://github.com/Electric-Coin-Company/zashi-android/issues/1260
             Send(
-                balanceState = BalanceStateFixture.new(),
+                balanceWidgetState = BalanceStateFixture.new(),
                 sendStage = sendStage,
                 onCreateZecSend = setZecSend,
                 onBack = onBackAction,
                 onQrScannerOpen = {
                     onScannerCount.incrementAndGet()
                 },
-                goBalances = {
-                    // TODO [#1194]: Cover Current balances UI widget with tests
-                    // TODO [#1194]: https://github.com/Electric-Coin-Company/zashi-android/issues/1194
-                },
-                isHideBalances = false,
                 hasCameraFeature = hasCameraFeature,
                 recipientAddressState = RecipientAddressState("", AddressType.Invalid()),
                 onRecipientAddressChange = {
@@ -137,13 +129,7 @@ class SendViewTestSetup(
                     ),
                 setMemoState = {},
                 memoState = MemoState.new(""),
-                walletSnapshot =
-                    WalletSnapshotFixture.new(
-                        saplingBalance =
-                            WalletBalanceFixture.new(
-                                available = Zatoshi(Zatoshi.MAX_INCLUSIVE.div(100))
-                            )
-                    ),
+                selectedAccount = null,
                 exchangeRateState = ExchangeRateState.OptedOut,
                 sendAddressBookState =
                     SendAddressBookState(
