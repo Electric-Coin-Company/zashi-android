@@ -20,10 +20,12 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.extension.typicalFee
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.CheckboxState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiCard
+import co.electriccoin.zcash.ui.design.component.ZashiCheckbox
 import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -118,6 +120,8 @@ private fun Content(state: ShieldFundsInfoState) {
             )
         }
         Spacer(24.dp)
+        ZashiCheckbox(state = state.checkbox)
+        Spacer(24.dp)
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
             state = state.secondaryButton,
@@ -147,10 +151,15 @@ private fun Preview() =
                         ),
                     secondaryButton =
                         ButtonState(
-                            text = stringRes("Shield"),
+                            text = stringRes("Not now"),
                             onClick = {}
                         ),
-                    transparentAmount = Zatoshi(0)
+                    transparentAmount = Zatoshi(0),
+                    checkbox = CheckboxState(
+                        text = stringRes(R.string.home_info_transparent_checkbox),
+                        onClick = {},
+                        isChecked = false
+                    )
                 )
         )
     }

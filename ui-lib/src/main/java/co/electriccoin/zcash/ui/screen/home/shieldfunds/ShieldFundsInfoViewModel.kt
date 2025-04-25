@@ -6,48 +6,30 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.repository.ShieldFundsData
-import co.electriccoin.zcash.ui.common.repository.ShieldFundsRepository
+import co.electriccoin.zcash.ui.common.provider.ShieldFundsInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
-import co.electriccoin.zcash.ui.common.usecase.RemindShieldFundsLaterUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.CheckboxState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 
 class ShieldFundsInfoViewModel(
     getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
-    shieldFundsRepository: ShieldFundsRepository,
+    private val shieldFundsInfoProvider: ShieldFundsInfoProvider,
     private val navigationRouter: NavigationRouter,
-    private val remindShieldFundsLater: RemindShieldFundsLaterUseCase,
     private val shieldFunds: ShieldFundsUseCase,
 ) : ViewModel() {
-    private val lockoutDuration =
-        shieldFundsRepository
-            .availability
-            .filterIsInstance<ShieldFundsData.Available>()
-            .take(1)
-            .map { it.lockoutDuration }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = null
-            )
-
     val state: StateFlow<ShieldFundsInfoState?> =
         combine(
             getSelectedWalletAccount.observe(),
-            lockoutDuration.filterNotNull(),
-        ) { account, lockoutDuration ->
+            shieldFundsInfoProvider.observe(),
+        ) { account, infoEnabled ->
             ShieldFundsInfoState(
                 onBack = ::onBack,
                 primaryButton =
@@ -57,10 +39,15 @@ class ShieldFundsInfoViewModel(
                     ),
                 secondaryButton =
                     ButtonState(
-                        onClick = ::onRemindMeClick,
-                        text = stringRes(R.string.general_remind_me_in, stringRes(lockoutDuration.res))
+                        onClick = ::onNotNowClick,
+                        text = stringRes(R.string.home_info_transparent_not_now),
                     ),
-                transparentAmount = account?.transparent?.balance ?: Zatoshi(0)
+                transparentAmount = account?.transparent?.balance ?: Zatoshi(0),
+                checkbox = CheckboxState(
+                    text = stringRes(R.string.home_info_transparent_checkbox),
+                    onClick = ::onCheckboxClick,
+                    isChecked = !infoEnabled
+                )
             )
         }.stateIn(
             scope = viewModelScope,
@@ -68,7 +55,9 @@ class ShieldFundsInfoViewModel(
             initialValue = null
         )
 
-    private fun onRemindMeClick() = viewModelScope.launch { remindShieldFundsLater() }
+    private fun onCheckboxClick() = viewModelScope.launch { shieldFundsInfoProvider.store(false) }
+
+    private fun onNotNowClick() = navigationRouter.back()
 
     private fun onBack() = navigationRouter.back()
 

@@ -67,7 +67,7 @@ fun ShieldFundsMessage(
 
 class ShieldFundsMessageState(
     val subtitle: StringResource,
-    val onClick: () -> Unit,
+    val onClick: (() -> Unit)?,
     val onButtonClick: () -> Unit,
 ) : HomeMessageState
 

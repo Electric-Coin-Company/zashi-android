@@ -68,7 +68,6 @@ import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneUrToZashiAccountsUse
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.PrefillSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
-import co.electriccoin.zcash.ui.common.usecase.RemindShieldFundsLaterUseCase
 import co.electriccoin.zcash.ui.common.usecase.RemindWalletBackupLaterUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanQrUseCase
@@ -83,6 +82,7 @@ import co.electriccoin.zcash.ui.common.usecase.SendSupportEmailUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendTransactionAgainUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
+import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
@@ -190,8 +190,8 @@ val useCaseModule =
         singleOf(::GetHomeMessageUseCase)
         factoryOf(::OnUserSavedWalletBackupUseCase)
         factoryOf(::RemindWalletBackupLaterUseCase)
-        factoryOf(::RemindShieldFundsLaterUseCase)
         singleOf(::ShieldFundsUseCase)
         singleOf(::NavigateToErrorUseCase)
         factoryOf(::RescanQrUseCase)
+        factoryOf(::ShieldFundsMessageUseCase)
     }

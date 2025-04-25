@@ -33,7 +33,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 fun HomeMessageWrapper(
     innerModifier: Modifier,
     contentPadding: PaddingValues,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
     start: @Composable RowScope.() -> Unit,
     title: @Composable () -> Unit,
     subtitle: @Composable () -> Unit,
@@ -96,9 +96,10 @@ fun HomeMessageWrapper(
 private fun Container(
     innerModifier: Modifier,
     contentPadding: PaddingValues,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
     content: @Composable (RowScope.() -> Unit),
 ) {
+    val clickModifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
     Box(
         modifier =
             Modifier
@@ -107,8 +108,7 @@ private fun Container(
                         0f to ZashiLightColors.Utility.Purple.utilityPurple500,
                         1f to ZashiLightColors.Utility.Purple.utilityPurple900,
                     )
-                ).clickable(onClick = onClick)
-                .padding(contentPadding),
+                ) then clickModifier then Modifier.padding(contentPadding),
     ) {
         Row(
             modifier =

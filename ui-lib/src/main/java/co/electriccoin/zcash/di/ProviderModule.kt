@@ -16,10 +16,8 @@ import co.electriccoin.zcash.ui.common.provider.RestoreTimestampStorageProvider
 import co.electriccoin.zcash.ui.common.provider.RestoreTimestampStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.SelectedAccountUUIDProvider
 import co.electriccoin.zcash.ui.common.provider.SelectedAccountUUIDProviderImpl
-import co.electriccoin.zcash.ui.common.provider.ShieldFundsRemindMeCountStorageProvider
-import co.electriccoin.zcash.ui.common.provider.ShieldFundsRemindMeCountStorageProviderImpl
-import co.electriccoin.zcash.ui.common.provider.ShieldFundsRemindMeTimestampStorageProvider
-import co.electriccoin.zcash.ui.common.provider.ShieldFundsRemindMeTimestampStorageProviderImpl
+import co.electriccoin.zcash.ui.common.provider.ShieldFundsInfoProvider
+import co.electriccoin.zcash.ui.common.provider.ShieldFundsInfoProviderImpl
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProviderImpl
 import co.electriccoin.zcash.ui.common.provider.WalletBackupConsentStorageProvider
@@ -47,10 +45,6 @@ val providerModule =
         singleOf(::SynchronizerProviderImpl) bind SynchronizerProvider::class
         singleOf(::ApplicationStateProviderImpl) bind ApplicationStateProvider::class
         singleOf(::RestoreTimestampStorageProviderImpl) bind RestoreTimestampStorageProvider::class
-        singleOf(::ShieldFundsRemindMeCountStorageProviderImpl) bind
-            ShieldFundsRemindMeCountStorageProvider::class
-        singleOf(::ShieldFundsRemindMeTimestampStorageProviderImpl) bind
-            ShieldFundsRemindMeTimestampStorageProvider::class
         singleOf(::WalletBackupRemindMeCountStorageProviderImpl) bind
             WalletBackupRemindMeCountStorageProvider::class
         singleOf(::WalletBackupRemindMeTimestampStorageProviderImpl) bind
@@ -60,4 +54,5 @@ val providerModule =
         singleOf(::WalletRestoringStateProviderImpl) bind WalletRestoringStateProvider::class
         singleOf(::CrashReportingStorageProviderImpl) bind CrashReportingStorageProvider::class
         singleOf(::PersistableWalletStorageProviderImpl) bind PersistableWalletStorageProvider::class
+        singleOf(::ShieldFundsInfoProviderImpl) bind ShieldFundsInfoProvider::class
     }

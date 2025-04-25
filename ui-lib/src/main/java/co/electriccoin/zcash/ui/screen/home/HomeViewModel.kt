@@ -10,6 +10,7 @@ import co.electriccoin.zcash.ui.common.model.DistributionDimension
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
+import co.electriccoin.zcash.ui.common.provider.ShieldFundsInfoProvider
 import co.electriccoin.zcash.ui.common.repository.HomeMessageData
 import co.electriccoin.zcash.ui.common.usecase.ErrorArgs
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
@@ -17,7 +18,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
-import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
+import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptIn
@@ -32,7 +33,6 @@ import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportMessageState
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptIn
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfo
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringMessageState
-import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfo
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsMessageState
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
@@ -58,21 +58,24 @@ class HomeViewModel(
     getHomeMessage: GetHomeMessageUseCase,
     getVersionInfoProvider: GetVersionInfoProvider,
     getSelectedWalletAccountUseCase: GetSelectedWalletAccountUseCase,
+    shieldFundsInfoProvider: ShieldFundsInfoProvider,
     private val navigationRouter: NavigationRouter,
     private val isRestoreSuccessDialogVisible: IsRestoreSuccessDialogVisibleUseCase,
     private val navigateToCoinbase: NavigateToCoinbaseUseCase,
-    private val shieldFunds: ShieldFundsUseCase,
-    private val navigateToError: NavigateToErrorUseCase
+    private val shieldFunds: ShieldFundsMessageUseCase,
+    private val navigateToError: NavigateToErrorUseCase,
 ) : ViewModel() {
     private val messageState =
-        getHomeMessage
-            .observe()
-            .map { createMessageState(it) }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = null
-            )
+        combine(
+            getHomeMessage.observe(),
+            shieldFundsInfoProvider.observe()
+        ) { message, isShieldFundsInfoEnabled ->
+            createMessageState(message, isShieldFundsInfoEnabled)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = null
+        )
 
     private val isRestoreDialogVisible: Flow<Boolean?> =
         isRestoreSuccessDialogVisible
@@ -110,7 +113,7 @@ class HomeViewModel(
     private fun createState(
         getVersionInfoProvider: GetVersionInfoProvider,
         selectedAccount: WalletAccount?,
-        messageState: HomeMessageState?
+        messageState: HomeMessageState?,
     ) = HomeState(
         firstButton =
             BigIconButtonState(
@@ -156,7 +159,7 @@ class HomeViewModel(
         message = messageState
     )
 
-    private fun createMessageState(it: HomeMessageData?) =
+    private fun createMessageState(it: HomeMessageData?, isShieldFundsInfoEnabled: Boolean) =
         when (it) {
             is HomeMessageData.Backup ->
                 WalletBackupMessageState(
@@ -200,7 +203,11 @@ class HomeViewModel(
                             R.string.home_message_transparent_balance_subtitle,
                             stringRes(it.zatoshi)
                         ),
-                    onClick = ::onShieldFundsMessageClick,
+                    onClick = if (isShieldFundsInfoEnabled) {
+                        { onShieldFundsMessageClick() }
+                    } else {
+                        null
+                    },
                     onButtonClick = ::onShieldFundsMessageButtonClick,
                 )
 
@@ -214,6 +221,7 @@ class HomeViewModel(
                     onClick = ::onCrashReportMessageClick,
                     onButtonClick = ::onCrashReportMessageClick
                 )
+
             null -> null
         }
 
@@ -248,9 +256,9 @@ class HomeViewModel(
 
     private fun onWalletBackupMessageButtonClick() = navigationRouter.forward(WalletBackupDetail(false))
 
-    private fun onShieldFundsMessageClick() = navigationRouter.forward(ShieldFundsInfo)
+    private fun onShieldFundsMessageClick() = viewModelScope.launch { shieldFunds() }
 
-    private fun onShieldFundsMessageButtonClick() = shieldFunds(closeCurrentScreen = false)
+    private fun onShieldFundsMessageButtonClick() = viewModelScope.launch { shieldFunds() }
 
     private fun onWalletErrorMessageClick(homeMessageData: HomeMessageData.Error) =
         navigateToError(ErrorArgs.SyncError(homeMessageData.synchronizerError))

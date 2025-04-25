@@ -38,6 +38,8 @@
     <string name="home_info_backup_message_2">Anyone with access to your Secret Recovery Phrase will have full control
         of your wallet, so keep it secure and never show it to anyone.</string>
     <string name="home_info_backup_checkbox">I read and understand the risks of not backing up my wallet.</string>
+    <string name="home_info_transparent_not_now">Not now</string>
+    <string name="home_info_transparent_checkbox">Do not show this message again.</string>
     <string name="home_info_transparent_balance_shield">Shield</string>
     <string name="home_info_transparent_title">Always Shield Transparent Funds</string>
     <string name="home_info_transparent_subtitle">To protect user privacy, Zashi doesn\'t support spending transparent
