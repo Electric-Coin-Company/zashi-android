@@ -34,8 +34,8 @@
     <string name="home_info_backup_message_1">Si pierdes acceso a la app o a tu dispositivo, conocer la Frase Secreta de Recuperación es la única forma de recuperar tus fondos. Nosotros no podemos verla ni ayudarte a recuperarla.</string>
     <string name="home_info_backup_message_2">Cualquiera que tenga acceso a tu Frase Secreta de Recuperación tendrá control total de tu billetera, así que mantenla segura y no la compartas con nadie.</string>
     <string name="home_info_backup_checkbox">He leído y entiendo los riesgos de no respaldar mi billetera.</string>
-    <string name="home_info_transparent_not_now">Not now</string>
-    <string name="home_info_transparent_checkbox">Do not show this message again.</string>
+    <string name="home_info_transparent_not_now">Ahora no</string>
+    <string name="home_info_transparent_checkbox">No mostrar este mensaje de nuevo.</string>
     <string name="home_info_transparent_balance_shield">Proteger</string>
     <string name="home_info_transparent_title">Siempre proteger fondos transparentes</string>
     <string name="home_info_transparent_subtitle">Para proteger la privacidad del usuario, Zashi no permite gastar ZEC transparentes. Toca el botón "Proteger" para hacer que tus fondos transparentes se puedan usar y mantener tu saldo de Zashi privado.</string>

@@ -55,9 +55,7 @@ class ShieldFundsInfoViewModel(
             initialValue = null
         )
 
-    private fun onCheckboxClick() = viewModelScope.launch {
-        shieldFundsInfoProvider.store(!shieldFundsInfoProvider.get())
-    }
+    private fun onCheckboxClick() = viewModelScope.launch { shieldFundsInfoProvider.flip() }
 
     private fun onNotNowClick() = navigationRouter.back()
 
