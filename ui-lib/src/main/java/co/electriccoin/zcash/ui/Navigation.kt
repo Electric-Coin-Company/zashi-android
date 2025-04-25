@@ -35,6 +35,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.datasource.MessageAvailabilityDataSource
+import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
 import co.electriccoin.zcash.ui.design.LocalKeyboardManager
 import co.electriccoin.zcash.ui.design.LocalSheetStateManager
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
@@ -156,6 +157,10 @@ internal fun MainActivity.Navigation() {
         rememberSaveable { mutableStateOf(false) }
     val (deleteWalletAuthentication, setDeleteWalletAuthentication) =
         rememberSaveable { mutableStateOf(false) }
+
+    val getHomeMessage = koinInject<GetHomeMessageUseCase>()
+    // hook up for collection
+    getHomeMessage.observe().collectAsStateWithLifecycle()
 
     val navigator: Navigator =
         remember(

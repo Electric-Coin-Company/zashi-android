@@ -25,8 +25,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
@@ -166,11 +166,11 @@ class GetHomeMessageUseCase(
             .map { message -> prioritizeMessage(message) }
             .stateIn(
                 scope = scope,
-                started = SharingStarted.Eagerly,
+                started = SharingStarted.WhileSubscribed(0, 0),
                 initialValue = null
             )
 
-    fun observe(): Flow<HomeMessageData?> = flow
+    fun observe(): StateFlow<HomeMessageData?> = flow
 
     private fun createMessage(
         runtimeMessage: RuntimeMessage?,
