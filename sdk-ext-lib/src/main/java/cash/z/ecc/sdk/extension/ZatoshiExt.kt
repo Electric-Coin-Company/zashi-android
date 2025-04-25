@@ -39,7 +39,6 @@ data class ZecAmountPair(
     val suffix: String
 )
 
-@Suppress("MagicNumber")
 val Zatoshi.Companion.typicalFee: Zatoshi
     get() = Zatoshi(TYPICAL_FEE)
 
