@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
+import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
@@ -77,6 +78,11 @@ class OnZip321ScannedUseCase(
                 )
             )
             navigationRouter.replace(Send(), ReviewTransaction)
+        } catch (e: TransactionProposalNotCreatedException) {
+            prefillSend.requestFromZip321(zip321.payment)
+            navigationRouter.replace(Send())
+            zashiProposalRepository.clear()
+            keystoneProposalRepository.clear()
         } catch (e: Exception) {
             navigateToErrorUseCase(ErrorArgs.General(e))
             zashiProposalRepository.clear()
@@ -113,6 +119,11 @@ class OnZip321ScannedUseCase(
                 )
             )
             navigationRouter.forward(ReviewTransaction)
+        } catch (e: TransactionProposalNotCreatedException) {
+            prefillSend.requestFromZip321(zip321.payment)
+            navigationRouter.back()
+            zashiProposalRepository.clear()
+            keystoneProposalRepository.clear()
         } catch (e: Exception) {
             navigateToErrorUseCase(ErrorArgs.General(e))
             zashiProposalRepository.clear()

@@ -8,7 +8,7 @@ class SendTransactionAgainUseCase(
     private val navigationRouter: NavigationRouter
 ) {
     operator fun invoke(value: DetailedTransactionData) {
-        prefillSendUseCase.request(value)
+        prefillSendUseCase.requestFromTransactionDetail(value)
         navigationRouter.forward(
             Send(
                 isScanZip321Enabled = false
