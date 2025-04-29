@@ -1,5 +1,7 @@
 package co.electriccoin.zcash.ui.common.usecase
 
+import PaymentRequest
+import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.Zatoshi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +17,7 @@ class PrefillSendUseCase {
 
     operator fun invoke() = bus.receiveAsFlow()
 
-    fun request(value: DetailedTransactionData) =
+    fun requestFromTransactionDetail(value: DetailedTransactionData) =
         scope.launch {
             bus.send(
                 PrefillSendData.All(
@@ -27,10 +29,20 @@ class PrefillSendUseCase {
             )
         }
 
-    fun request(value: PrefillSendData) =
+    fun requestFromZip321(value: PaymentRequest) =
         scope.launch {
-            bus.send(value)
+            val request = value.payments.firstOrNull()
+            bus.send(
+                PrefillSendData.All(
+                    amount = request?.nonNegativeAmount?.value?.convertZecToZatoshi() ?: Zatoshi(0),
+                    address = request?.recipientAddress?.value,
+                    fee = null,
+                    memos = request?.message?.let { listOf(it) }
+                )
+            )
         }
+
+    fun request(value: PrefillSendData) = scope.launch { bus.send(value) }
 }
 
 sealed interface PrefillSendData {
