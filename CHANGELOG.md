@@ -6,6 +6,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.0.1 (941)] - 2025-04-29
+
 ### Fixed
 - Homepage buttons now display correctly on small screen devices
 - Scan navigates back to zip 321 when insufficient funds detected 
