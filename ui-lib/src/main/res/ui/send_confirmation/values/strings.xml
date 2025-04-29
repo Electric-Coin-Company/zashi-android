@@ -12,26 +12,26 @@
     <string name="send_confirmation_back_button">Cancel</string>
 
     <string name="send_confirmation_sending_title">Sending…</string>
-    <string name="send_confirmation_sending_subtitle">Your tokens are being sent to\n
+    <string name="send_confirmation_sending_subtitle">Your coins are being sent to\n
         <xliff:g example="zs12ghrbdjfs24383x5T…" id="index">%1$s</xliff:g>
     </string>
     <string name="send_confirmation_sending_title_transparent">Shielding…</string>
-    <string name="send_confirmation_sending_subtitle_transparent">Your tokens are getting shielded</string>
+    <string name="send_confirmation_sending_subtitle_transparent">Your coins are getting shielded</string>
     <string name="send_confirmation_success_title_transparent">Shielded!</string>
-    <string name="send_confirmation_success_subtitle_transparent">Your tokens have been successfully shielded</string>
+    <string name="send_confirmation_success_subtitle_transparent">Your coins have been successfully shielded</string>
     <string name="send_confirmation_failure_title_transparent">Unable to shield</string>
     <string name="send_confirmation_failure_subtitle_transparent">There was an error attempting to shield your
-        tokens. Try it again, please.</string>
+        coins. Try it again, please.</string>
 
     <string name="send_confirmation_success_title">Sent!</string>
-    <string name="send_confirmation_success_subtitle">Your tokens were successfully sent to\n
+    <string name="send_confirmation_success_subtitle">Your coins were successfully sent to\n
         <xliff:g example="zs12ghrbdjfs24383x5T…" id="index">%1$s</xliff:g>
     </string>
     <string name="send_confirmation_success_view_trx">View Transaction</string>
     <string name="send_confirmation_success_btn_close">Close</string>
 
     <string name="send_confirmation_failure_title">Send Failed</string>
-    <string name="send_confirmation_failure_subtitle">There was an error attempting to send tokens.\nTry it again, please.</string>
+    <string name="send_confirmation_failure_subtitle">There was an error attempting to send coins.\nTry it again, please.</string>
     <string name="send_confirmation_failure_view_trx">View Transaction</string>
     <string name="send_confirmation_failure_close_button">Close</string>
     <string name="send_confirmation_failure_report_button">Report</string>

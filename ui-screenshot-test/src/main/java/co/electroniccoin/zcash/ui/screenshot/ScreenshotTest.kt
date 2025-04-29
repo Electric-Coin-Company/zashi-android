@@ -574,12 +574,18 @@ private fun aboutScreenshots(
     ScreenshotTest.takeScreenshot(tag, "About 1")
 }
 
+@OptIn(ExperimentalTestApi::class)
 private fun seedScreenshots(
     resContext: Context,
     tag: String,
     composeTestRule: ComposeTestRule
 ) {
-    composeTestRule.onNode(hasText(resContext.getString(R.string.seed_recovery_header))).also {
+    composeTestRule
+        .waitUntilAtLeastOneExists(
+            hasText(resContext.getString(R.string.seed_recovery_header), ignoreCase = true),
+            DEFAULT_TIMEOUT_MILLISECONDS
+        )
+    composeTestRule.onNode(hasText(resContext.getString(R.string.seed_recovery_header), ignoreCase = true)).also {
         it.assertExists()
     }
 
