@@ -92,6 +92,7 @@ fun ZashiBigIconButton(
         shadowElevation = shadowElevation
     ) {
         Column(
+            modifier = backgroundModifier,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

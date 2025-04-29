@@ -78,7 +78,7 @@ class OnZip321ScannedUseCase(
                 )
             )
             navigationRouter.replace(Send(), ReviewTransaction)
-        } catch (e: TransactionProposalNotCreatedException) {
+        } catch (_: TransactionProposalNotCreatedException) {
             prefillSend.requestFromZip321(zip321.payment)
             navigationRouter.replace(Send())
             zashiProposalRepository.clear()
@@ -119,7 +119,7 @@ class OnZip321ScannedUseCase(
                 )
             )
             navigationRouter.forward(ReviewTransaction)
-        } catch (e: TransactionProposalNotCreatedException) {
+        } catch (_: TransactionProposalNotCreatedException) {
             prefillSend.requestFromZip321(zip321.payment)
             navigationRouter.back()
             zashiProposalRepository.clear()

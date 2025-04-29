@@ -157,6 +157,7 @@ private fun NavButtons(
     }
 }
 
+@Suppress("MagicNumber")
 fun Modifier.minHeight106Percent(): Modifier =
     layout { measurable, constraints ->
         val placeable = measurable.measure(constraints)
