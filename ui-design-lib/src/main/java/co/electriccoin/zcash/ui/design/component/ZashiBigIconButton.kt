@@ -27,6 +27,7 @@ import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -91,21 +92,24 @@ fun ZashiBigIconButton(
         shadowElevation = shadowElevation
     ) {
         Column(
-            modifier = backgroundModifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Image(
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
                 painter = painterResource(state.icon),
                 contentDescription = state.text.getValue(),
                 colorFilter = ColorFilter.tint(ZashiColors.Text.textPrimary)
             )
             Spacer(Modifier.height(4.dp))
             Text(
+                modifier = Modifier.padding(bottom = 16.dp),
                 text = state.text.getValue(),
                 style = ZashiTypography.textXs,
                 fontWeight = FontWeight.Medium,
-                color = ZashiColors.Text.textPrimary
+                color = ZashiColors.Text.textPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Clip
             )
         }
     }
