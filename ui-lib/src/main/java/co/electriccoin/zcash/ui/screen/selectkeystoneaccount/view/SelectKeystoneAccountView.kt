@@ -99,12 +99,12 @@ private fun BottomSection(
     ) {
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
-            state = state.positiveButtonState
+            state = state.negativeButtonState,
+            colors = ZashiButtonDefaults.secondaryColors()
         )
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
-            state = state.negativeButtonState,
-            colors = ZashiButtonDefaults.secondaryColors()
+            state = state.positiveButtonState
         )
     }
 }
