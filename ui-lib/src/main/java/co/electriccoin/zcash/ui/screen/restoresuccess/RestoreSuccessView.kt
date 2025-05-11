@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
-import co.electriccoin.zcash.ui.design.component.GradientBgScaffold
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiCheckbox
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme

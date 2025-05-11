@@ -144,13 +144,11 @@ private fun AddressPanel(
                         ZashiColors.Utility.Gray.utilityGray50
                     },
                     RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
-                )
-                .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
+                ).clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
                 .clickable(onClick = state.onClick)
                 .padding(all = ZcashTheme.dimens.spacingLarge)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
-
             Box {
                 Image(
                     modifier = Modifier.sizeIn(maxWidth = 34.dp, maxHeight = 34.dp),

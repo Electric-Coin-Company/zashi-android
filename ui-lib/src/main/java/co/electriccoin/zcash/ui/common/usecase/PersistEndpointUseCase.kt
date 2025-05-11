@@ -21,9 +21,10 @@ class PersistEndpointUseCase(
         if (selected == endpoint) return
 
         when (val result = validateServerEndpoint(endpoint)) {
-            ServerValidation.Valid -> persistableWalletStorageProvider.get()?.let {
-                persistWallet(it.copy(endpoint = endpoint))
-            }
+            ServerValidation.Valid ->
+                persistableWalletStorageProvider.get()?.let {
+                    persistWallet(it.copy(endpoint = endpoint))
+                }
 
             is ServerValidation.InValid -> throw PersistEndpointException(result.reason.message)
             ServerValidation.Running -> throw PersistEndpointException(null)
