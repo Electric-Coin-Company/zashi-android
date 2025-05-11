@@ -461,7 +461,7 @@ private fun receiveZecScreenshots(
 ) {
     composeTestRule.waitUntilAtLeastOneExists(
         hasText(
-            text = resContext.getString(R.string.receive_header),
+            text = resContext.getString(R.string.receive_title),
             ignoreCase = true
         ),
         15.seconds.inWholeMilliseconds
@@ -470,7 +470,7 @@ private fun receiveZecScreenshots(
     composeTestRule
         .onNode(
             hasText(
-                text = resContext.getString(R.string.receive_header),
+                text = resContext.getString(R.string.receive_title),
                 ignoreCase = true
             )
         ).also {

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="receive_title">Recibir</string>
-    <string name="receive_header">Recibir Zcash</string>
     <string name="receive_prioritize_shielded">Prioriza usar tu dirección protegida para máxima privacidad.</string>
     <string name="receive_wallet_address_shielded">Dirección Protegida de Zashi</string>
     <string name="receive_wallet_address_sapling">Dirección Sapling de Zashi</string>

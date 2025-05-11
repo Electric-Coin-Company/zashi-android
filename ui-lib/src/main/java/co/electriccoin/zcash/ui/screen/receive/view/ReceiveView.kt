@@ -5,12 +5,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
@@ -29,12 +31,14 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppbar
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -61,7 +65,7 @@ internal fun ReceiveView(
             BlankBgScaffold(
                 topBar = {
                     ZashiTopAppbar(
-                        title = null,
+                        title = stringRes(R.string.receive_title),
                         state = appBarState,
                         showHideBalances = false,
                         onBack = state.onBack
@@ -94,27 +98,6 @@ private fun ReceiveContents(
                 .verticalScroll(rememberScrollState())
                 .padding(all = ZcashTheme.dimens.spacingSmall),
     ) {
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-        Text(
-            text = stringResource(id = R.string.receive_header),
-            color = ZashiColors.Text.textPrimary,
-            style = ZashiTypography.header5,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
-        )
-
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-        Text(
-            text = stringResource(id = R.string.receive_prioritize_shielded),
-            color = ZashiColors.Text.textSecondary,
-            style = ZashiTypography.textMd,
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
-        )
-
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingLarge))
-
         items.forEachIndexed { index, state ->
             if (index != 0) {
                 Spacer(Modifier.height(8.dp))
@@ -125,6 +108,22 @@ private fun ReceiveContents(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+        Spacer(24.dp)
+        Spacer(1f)
+        Image(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            painter = painterResource(R.drawable.ic_receive_info),
+            contentDescription = ""
+        )
+        Spacer(8.dp)
+        Text(
+            text = stringResource(id = R.string.receive_prioritize_shielded),
+            color = ZashiColors.Text.textTertiary,
+            style = ZashiTypography.textSm,
+            modifier = Modifier.padding(horizontal = 70.dp),
+            textAlign = TextAlign.Center
+        )
+        Spacer(8.dp)
     }
 }
 
@@ -145,16 +144,27 @@ private fun AddressPanel(
                         ZashiColors.Utility.Gray.utilityGray50
                     },
                     RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
-                ).clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
+                )
+                .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
                 .clickable(onClick = state.onClick)
                 .padding(all = ZcashTheme.dimens.spacingLarge)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            Image(
-                modifier = Modifier.sizeIn(maxWidth = 34.dp, maxHeight = 34.dp),
-                painter = painterResource(id = state.icon),
-                contentDescription = null
-            )
+
+            Box {
+                Image(
+                    modifier = Modifier.sizeIn(maxWidth = 34.dp, maxHeight = 34.dp),
+                    painter = painterResource(id = state.icon),
+                    contentDescription = null
+                )
+                if (state.isShielded) {
+                    Image(
+                        modifier = Modifier.align(Alignment.BottomEnd).offset(2.dp, 4.dp),
+                        painter = painterResource(R.drawable.ic_receive_shield),
+                        contentDescription = "",
+                    )
+                }
+            }
 
             Spacer(Modifier.width(ZcashTheme.dimens.spacingDefault))
 
