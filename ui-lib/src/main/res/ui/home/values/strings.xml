@@ -23,7 +23,7 @@
     <string name="home_message_restoring_subtitle">Keep Zashi open on active phone screen</string>
     <string name="home_message_restoring_subtitle_spendable">Your shielded funds are spendable now</string>
     <string name="home_message_syncing_title">Syncing • %1$.1f%% Complete</string>
-    <string name="home_message_syncing_subtitle">Your wallet is getting updated</string>
+    <string name="home_message_syncing_subtitle">Your wallet is updating</string>
     <string name="home_message_error_title">Error encountered while syncing</string>
     <string name="home_message_error_subtitle">Attempting to resolve</string>
     <string name="home_info_backup_title">Backup Required</string>
