@@ -4,9 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
@@ -21,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.design.component.HorizontalSpacer
+import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
@@ -58,10 +56,9 @@ fun BottomSheetContent(state: IntegrationsState) {
             fontWeight = FontWeight.SemiBold,
             color = ZashiColors.Text.textPrimary
         )
-        Spacer(Modifier.height(8.dp))
+        Spacer(8.dp)
         IntegrationItems(state, contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp))
-        Spacer(modifier = Modifier.height(16.dp))
-
+        Spacer(16.dp)
         Row(
             modifier =
                 Modifier
@@ -74,15 +71,16 @@ fun BottomSheetContent(state: IntegrationsState) {
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(ZashiColors.Text.textTertiary)
             )
-            HorizontalSpacer(8.dp)
+            Spacer(8.dp)
             Text(
                 modifier = Modifier.weight(1f),
-                text = stringResource(id = R.string.integrations_info),
+                text = stringResource(id = R.string.integrations_dialog_info),
                 textAlign = TextAlign.Start,
                 style = ZashiTypography.textXs,
                 color = ZashiColors.Text.textTertiary
             )
         }
+        Spacer(52.dp)
     }
 }
 
