@@ -80,7 +80,6 @@ fun BottomSheetContent(state: IntegrationsState) {
                 color = ZashiColors.Text.textTertiary
             )
         }
-        Spacer(52.dp)
     }
 }
 
