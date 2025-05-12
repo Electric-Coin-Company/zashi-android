@@ -35,6 +35,7 @@ fun Zatoshi.toZecStringAbbreviated(suffix: String): ZecAmountPair {
     }
 }
 
+@Suppress("MagicNumber")
 fun Zatoshi.floor(): Zatoshi = Zatoshi(floorRoundBy(value.toDouble(), 2500.0).toLong())
 
 data class ZecAmountPair(

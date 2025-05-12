@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.request.model
 import android.content.Context
 import cash.z.ecc.android.sdk.ext.convertUsdToZec
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
-import cash.z.ecc.android.sdk.ext.toZec
 import cash.z.ecc.android.sdk.ext.toZecString
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
 import cash.z.ecc.android.sdk.model.Locale
@@ -28,33 +27,34 @@ data class AmountState(
 ) {
     fun toZecString(
         conversion: FiatCurrencyConversion,
-    ): String {
-        return runCatching {
+    ): String =
+        runCatching {
             amount.convertToDouble().convertUsdToZec(conversion.priceOfZec).toZecString()
         }.getOrElse { "" }
-    }
 
     fun toZecStringFloored(
         conversion: FiatCurrencyConversion,
-    ): String {
-        return runCatching {
-            amount.convertToDouble().convertUsdToZec(conversion.priceOfZec)
+    ): String =
+        runCatching {
+            amount
+                .convertToDouble()
+                .convertUsdToZec(conversion.priceOfZec)
                 .convertZecToZatoshi()
                 .floor()
                 .toZecStringFull()
         }.getOrElse { "" }
-    }
 
     fun toFiatString(context: Context, conversion: FiatCurrencyConversion) =
         runCatching {
-            Zatoshi.fromZecString(
-                context = context,
-                zecString = amount,
-                locale = Locale.getDefault()
-            )?.toFiatString(
-                currencyConversion = conversion,
-                locale = Locale.getDefault()
-            ) ?: ""
+            Zatoshi
+                .fromZecString(
+                    context = context,
+                    zecString = amount,
+                    locale = Locale.getDefault()
+                )?.toFiatString(
+                    currencyConversion = conversion,
+                    locale = Locale.getDefault()
+                ) ?: ""
         }.getOrElse { "" }
 }
 

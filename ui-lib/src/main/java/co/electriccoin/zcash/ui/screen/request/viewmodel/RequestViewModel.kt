@@ -69,11 +69,12 @@ class RequestViewModel(
     internal val request =
         MutableStateFlow(
             Request(
-                amountState = AmountState(
-                    amount = defaultAmount,
-                    currency = RequestCurrency.ZEC,
-                    isValid = null
-                ),
+                amountState =
+                    AmountState(
+                        amount = defaultAmount,
+                        currency = RequestCurrency.ZEC,
+                        isValid = null
+                    ),
                 memoState = MemoState.Valid(DEFAULT_MEMO, 0, defaultAmount),
                 qrCodeState = QrCodeState(DEFAULT_URI, defaultAmount, DEFAULT_MEMO),
             )
@@ -170,11 +171,12 @@ class RequestViewModel(
         exchangeRateUsd: ExchangeRateState
     ) {
         when (walletAddress) {
-            is WalletAddress.Transparent -> onAmountAndMemoDone(
-                walletAddress.address,
-                zip321BuildUriUseCase,
-                resolveExchangeRateValue(exchangeRateUsd)
-            )
+            is WalletAddress.Transparent ->
+                onAmountAndMemoDone(
+                    walletAddress.address,
+                    zip321BuildUriUseCase,
+                    resolveExchangeRateValue(exchangeRateUsd)
+                )
 
             is WalletAddress.Unified, is WalletAddress.Sapling ->
                 onAmountDone(resolveExchangeRateValue(exchangeRateUsd))
@@ -270,11 +272,12 @@ class RequestViewModel(
             if (resultAmount.contains(defaultAmountValidationRegex)) {
                 AmountState(
                     // Check for the max decimals in the default (i.e. 0.000) number, too
-                    amount = if (!resultAmount.contains(allowedNumberFormatValidationRegex)) {
-                        request.value.amountState.amount
-                    } else {
-                        resultAmount
-                    },
+                    amount =
+                        if (!resultAmount.contains(allowedNumberFormatValidationRegex)) {
+                            request.value.amountState.amount
+                        } else {
+                            resultAmount
+                        },
                     currency = request.value.amountState.currency,
                     isValid = null
                 )
@@ -330,11 +333,12 @@ class RequestViewModel(
 
             RequestStage.MEMO -> stage.update { RequestStage.AMOUNT }
 
-            RequestStage.QR_CODE -> when (ReceiveAddressType.fromOrdinal(addressTypeOrdinal)) {
-                ReceiveAddressType.Transparent -> stage.update { RequestStage.AMOUNT }
+            RequestStage.QR_CODE ->
+                when (ReceiveAddressType.fromOrdinal(addressTypeOrdinal)) {
+                    ReceiveAddressType.Transparent -> stage.update { RequestStage.AMOUNT }
 
-                ReceiveAddressType.Unified, ReceiveAddressType.Sapling -> stage.update { RequestStage.MEMO }
-            }
+                    ReceiveAddressType.Unified, ReceiveAddressType.Sapling -> stage.update { RequestStage.MEMO }
+                }
         }
     }
 
@@ -426,20 +430,22 @@ class RequestViewModel(
         request.update {
             val newAmount =
                 when (onSwitchTo) {
-                    RequestCurrency.FIAT -> it.amountState.toFiatString(
-                        context = application.applicationContext,
-                        conversion = conversion
-                    )
+                    RequestCurrency.FIAT ->
+                        it.amountState.toFiatString(
+                            context = application.applicationContext,
+                            conversion = conversion
+                        )
 
                     RequestCurrency.ZEC -> it.amountState.toZecString(conversion)
                 }
 
             it.copy(
-                amountState = if (newAmount.contains(defaultAmountValidationRegex)) {
-                    it.amountState.copy(amount = defaultAmount, currency = onSwitchTo)
-                } else {
-                    it.amountState.copy(amount = newAmount, currency = onSwitchTo)
-                }
+                amountState =
+                    if (newAmount.contains(defaultAmountValidationRegex)) {
+                        it.amountState.copy(amount = defaultAmount, currency = onSwitchTo)
+                    } else {
+                        it.amountState.copy(amount = newAmount, currency = onSwitchTo)
+                    }
             )
         }
     }
