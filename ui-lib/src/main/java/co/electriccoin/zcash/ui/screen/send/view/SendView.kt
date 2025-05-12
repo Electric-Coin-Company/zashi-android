@@ -78,6 +78,7 @@ import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidget
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
 import co.electriccoin.zcash.ui.screen.send.SendTag
+import co.electriccoin.zcash.ui.screen.send.model.AmountField
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
@@ -104,7 +105,8 @@ private fun PreviewSendForm() {
                 AmountState.Valid(
                     value = ZatoshiFixture.ZATOSHI_LONG.toString(),
                     fiatValue = "",
-                    zatoshi = ZatoshiFixture.new()
+                    zatoshi = ZatoshiFixture.new(),
+                    lastFieldChangedByUser = AmountField.FIAT
                 ),
             setMemoState = {},
             memoState = MemoState.new("Test message "),
@@ -143,7 +145,8 @@ private fun SendFormTransparentAddressPreview() {
                 AmountState.Valid(
                     value = ZatoshiFixture.ZATOSHI_LONG.toString(),
                     fiatValue = "",
-                    zatoshi = ZatoshiFixture.new()
+                    zatoshi = ZatoshiFixture.new(),
+                    lastFieldChangedByUser = AmountField.FIAT
                 ),
             setMemoState = {},
             memoState = MemoState.new("Test message"),
@@ -692,7 +695,7 @@ fun SendFormAmountTextField(
                 }
             )
 
-            if (exchangeRateState is ExchangeRateState.Data) {
+            if (exchangeRateState is ExchangeRateState.Data && exchangeRateState.currencyConversion != null) {
                 Spacer(modifier = Modifier.width(12.dp))
                 Image(
                     modifier = Modifier.padding(top = 12.dp),

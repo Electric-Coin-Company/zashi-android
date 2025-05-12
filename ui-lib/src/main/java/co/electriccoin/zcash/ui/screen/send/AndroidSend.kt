@@ -192,7 +192,8 @@ internal fun WrapSend(
                     monetarySeparators = monetarySeparators,
                     value = amountState.value,
                     fiatValue = amountState.fiatValue,
-                    exchangeRateState = exchangeRateState
+                    exchangeRateState = exchangeRateState,
+                    lastFieldChangedByUser = amountState.lastFieldChangedByUser
                 )
             } else {
                 AmountState.newFromFiat(
@@ -302,6 +303,7 @@ internal fun WrapSend(
             onCreateZecSend = { newZecSend ->
                 viewModel.onCreateZecSendClick(
                     newZecSend = newZecSend,
+                    amountState = amountState,
                     setSendStage = setSendStage
                 )
             },

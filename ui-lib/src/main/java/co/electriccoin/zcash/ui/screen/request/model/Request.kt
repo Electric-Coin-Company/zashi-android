@@ -2,6 +2,8 @@ package co.electriccoin.zcash.ui.screen.request.model
 
 import android.content.Context
 import cash.z.ecc.android.sdk.ext.convertUsdToZec
+import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
+import cash.z.ecc.android.sdk.ext.toZec
 import cash.z.ecc.android.sdk.ext.toZecString
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
 import cash.z.ecc.android.sdk.model.Locale
@@ -9,6 +11,8 @@ import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.fromZecString
 import cash.z.ecc.android.sdk.model.toFiatString
+import cash.z.ecc.sdk.extension.floor
+import cash.z.ecc.sdk.extension.toZecStringFull
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
 
 data class Request(
@@ -17,63 +21,41 @@ data class Request(
     val qrCodeState: QrCodeState,
 )
 
-sealed class AmountState(
-    open val amount: String,
-    open val currency: RequestCurrency
+data class AmountState(
+    val amount: String,
+    val currency: RequestCurrency,
+    val isValid: Boolean?
 ) {
-    fun isValid(): Boolean = this is Valid
-
-    abstract fun copyState(
-        newValue: String = amount,
-        newCurrency: RequestCurrency = currency
-    ): AmountState
-
-    fun toZecString(conversion: FiatCurrencyConversion): String =
-        runCatching {
+    fun toZecString(
+        conversion: FiatCurrencyConversion,
+    ): String {
+        return runCatching {
             amount.convertToDouble().convertUsdToZec(conversion.priceOfZec).toZecString()
         }.getOrElse { "" }
-
-    fun toFiatString(
-        context: Context,
-        conversion: FiatCurrencyConversion
-    ): String =
-        kotlin
-            .runCatching {
-                Zatoshi.fromZecString(context, amount, Locale.getDefault())?.toFiatString(
-                    currencyConversion = conversion,
-                    locale = Locale.getDefault()
-                ) ?: ""
-            }.getOrElse { "" }
-
-    data class Valid(
-        override val amount: String,
-        override val currency: RequestCurrency
-    ) : AmountState(amount, currency) {
-        override fun copyState(
-            newValue: String,
-            newCurrency: RequestCurrency
-        ) = copy(amount = newValue, currency = newCurrency)
     }
 
-    data class Default(
-        override val amount: String,
-        override val currency: RequestCurrency
-    ) : AmountState(amount, currency) {
-        override fun copyState(
-            newValue: String,
-            newCurrency: RequestCurrency
-        ) = copy(amount = newValue, currency = newCurrency)
+    fun toZecStringFloored(
+        conversion: FiatCurrencyConversion,
+    ): String {
+        return runCatching {
+            amount.convertToDouble().convertUsdToZec(conversion.priceOfZec)
+                .convertZecToZatoshi()
+                .floor()
+                .toZecStringFull()
+        }.getOrElse { "" }
     }
 
-    data class InValid(
-        override val amount: String,
-        override val currency: RequestCurrency
-    ) : AmountState(amount, currency) {
-        override fun copyState(
-            newValue: String,
-            newCurrency: RequestCurrency
-        ) = copy(amount = newValue, currency = newCurrency)
-    }
+    fun toFiatString(context: Context, conversion: FiatCurrencyConversion) =
+        runCatching {
+            Zatoshi.fromZecString(
+                context = context,
+                zecString = amount,
+                locale = Locale.getDefault()
+            )?.toFiatString(
+                currencyConversion = conversion,
+                locale = Locale.getDefault()
+            ) ?: ""
+        }.getOrElse { "" }
 }
 
 sealed class MemoState(
@@ -96,10 +78,7 @@ sealed class MemoState(
     ) : MemoState(text, byteSize, zecAmount)
 
     companion object {
-        fun new(
-            memo: String,
-            amount: String
-        ): MemoState {
+        fun new(memo: String, amount: String): MemoState {
             val bytesCount = Memo.countLength(memo)
             return if (bytesCount > Memo.MAX_MEMO_LENGTH_BYTES) {
                 InValid(memo, bytesCount, amount)

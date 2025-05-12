@@ -43,6 +43,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @Suppress("TooManyFunctions")
@@ -68,7 +69,11 @@ class RequestViewModel(
     internal val request =
         MutableStateFlow(
             Request(
-                amountState = AmountState.Default(defaultAmount, RequestCurrency.Zec),
+                amountState = AmountState(
+                    amount = defaultAmount,
+                    currency = RequestCurrency.ZEC,
+                    isValid = null
+                ),
                 memoState = MemoState.Valid(DEFAULT_MEMO, 0, defaultAmount),
                 qrCodeState = QrCodeState(DEFAULT_URI, defaultAmount, DEFAULT_MEMO),
             )
@@ -94,26 +99,13 @@ class RequestViewModel(
                         monetarySeparators = getMonetarySeparators(),
                         onAmount = { onAmount(resolveExchangeRateValue(exchangeRateUsd), it) },
                         onBack = { onBack() },
-                        onDone = {
-                            when (walletAddress) {
-                                is WalletAddress.Transparent -> {
-                                    onAmountAndMemoDone(
-                                        walletAddress.address,
-                                        zip321BuildUriUseCase,
-                                        resolveExchangeRateValue(exchangeRateUsd)
-                                    )
-                                }
-                                is WalletAddress.Unified, is WalletAddress.Sapling -> {
-                                    onAmountDone(resolveExchangeRateValue(exchangeRateUsd))
-                                }
-                                else -> error("Unexpected address type")
-                            }
-                        },
+                        onDone = { onNextClick(walletAddress, zip321BuildUriUseCase, exchangeRateUsd) },
                         onSwitch = { onSwitch(resolveExchangeRateValue(exchangeRateUsd), it) },
                         request = request,
                         zcashCurrency = getZcashCurrency(),
                     )
                 }
+
                 RequestStage.MEMO -> {
                     RequestState.Memo(
                         icon =
@@ -129,6 +121,7 @@ class RequestViewModel(
                         zcashCurrency = getZcashCurrency(),
                     )
                 }
+
                 RequestStage.QR_CODE -> {
                     RequestState.QrCode(
                         icon =
@@ -136,6 +129,7 @@ class RequestViewModel(
                                 is KeystoneAccount ->
                                     co.electriccoin.zcash.ui.design.R.drawable
                                         .ic_item_keystone_qr
+
                                 is ZashiAccount -> R.drawable.logo_zec_fill_stroke
                             },
                         fullScreenIcon =
@@ -143,6 +137,7 @@ class RequestViewModel(
                                 is KeystoneAccount ->
                                     co.electriccoin.zcash.ui.design.R.drawable
                                         .ic_item_keystone_qr_white
+
                                 is ZashiAccount -> R.drawable.logo_zec_fill_stroke_white
                             },
                         walletAddress = walletAddress,
@@ -169,6 +164,25 @@ class RequestViewModel(
 
     val shareResultCommand = MutableSharedFlow<Boolean>()
 
+    private fun onNextClick(
+        walletAddress: WalletAddress,
+        zip321BuildUriUseCase: Zip321BuildUriUseCase,
+        exchangeRateUsd: ExchangeRateState
+    ) {
+        when (walletAddress) {
+            is WalletAddress.Transparent -> onAmountAndMemoDone(
+                walletAddress.address,
+                zip321BuildUriUseCase,
+                resolveExchangeRateValue(exchangeRateUsd)
+            )
+
+            is WalletAddress.Unified, is WalletAddress.Sapling ->
+                onAmountDone(resolveExchangeRateValue(exchangeRateUsd))
+
+            else -> error("Unexpected address type")
+        }
+    }
+
     private fun resolveExchangeRateValue(exchangeRateUsd: ExchangeRateState): FiatCurrencyConversion? =
         when (exchangeRateUsd) {
             is ExchangeRateState.Data -> {
@@ -179,6 +193,7 @@ class RequestViewModel(
                     exchangeRateUsd.currencyConversion
                 }
             }
+
             else -> {
                 // Should not happen as the conversion rate related use cases should not be available
                 Twig.error { "Unexpected screen state" }
@@ -186,53 +201,54 @@ class RequestViewModel(
             }
         }
 
-    private fun onAmount(
-        conversion: FiatCurrencyConversion?,
-        onAmount: OnAmount
-    ) = viewModelScope.launch {
-        val newState =
-            when (onAmount) {
-                is OnAmount.Number -> {
-                    if (request.value.amountState.amount == defaultAmount) {
-                        // Special case with current value only zero
-                        validateAmountState(conversion, onAmount.number.toString())
-                    } else {
-                        // Adding new number to the result string
-                        validateAmountState(
-                            conversion,
-                            request.value.amountState.amount + onAmount.number
-                        )
+    private fun onAmount(conversion: FiatCurrencyConversion?, onAmount: OnAmount) {
+        request.update {
+            val newState =
+                when (onAmount) {
+                    is OnAmount.Number -> {
+                        if (it.amountState.amount == defaultAmount) {
+                            // Special case with current value only zero
+                            validateAmountState(conversion, onAmount.number.toString())
+                        } else {
+                            // Adding new number to the result string
+                            validateAmountState(
+                                conversion,
+                                it.amountState.amount + onAmount.number
+                            )
+                        }
+                    }
+
+                    is OnAmount.Delete -> {
+                        if (it.amountState.amount.length == 1) {
+                            // Deleting up to the last character
+                            AmountState(
+                                amount = defaultAmount,
+                                currency = it.amountState.currency,
+                                isValid = null
+                            )
+                        } else {
+                            validateAmountState(
+                                conversion,
+                                it.amountState.amount.dropLast(1)
+                            )
+                        }
+                    }
+
+                    is OnAmount.Separator -> {
+                        if (it.amountState.amount.contains(onAmount.separator)) {
+                            // Separator already present
+                            validateAmountState(conversion, it.amountState.amount)
+                        } else {
+                            validateAmountState(
+                                conversion,
+                                it.amountState.amount + onAmount.separator
+                            )
+                        }
                     }
                 }
-                is OnAmount.Delete -> {
-                    if (request.value.amountState.amount.length == 1) {
-                        // Deleting up to the last character
-                        AmountState.Default(defaultAmount, request.value.amountState.currency)
-                    } else {
-                        validateAmountState(
-                            conversion,
-                            request.value.amountState.amount
-                                .dropLast(1)
-                        )
-                    }
-                }
-                is OnAmount.Separator -> {
-                    if (request.value.amountState.amount
-                            .contains(onAmount.separator)
-                    ) {
-                        // Separator already present
-                        validateAmountState(conversion, request.value.amountState.amount)
-                    } else {
-                        validateAmountState(
-                            conversion,
-                            request.value.amountState.amount + onAmount.separator
-                        )
-                    }
-                }
-            }
-        request.emit(
-            request.value.copy(amountState = newState)
-        )
+
+            it.copy(amountState = newState)
+        }
     }
 
     // Validates only zeros and decimal separator
@@ -252,31 +268,40 @@ class RequestViewModel(
     ): AmountState {
         val newAmount =
             if (resultAmount.contains(defaultAmountValidationRegex)) {
-                AmountState.Default(
+                AmountState(
                     // Check for the max decimals in the default (i.e. 0.000) number, too
-                    if (!resultAmount.contains(allowedNumberFormatValidationRegex)) {
+                    amount = if (!resultAmount.contains(allowedNumberFormatValidationRegex)) {
                         request.value.amountState.amount
                     } else {
                         resultAmount
                     },
-                    request.value.amountState.currency
+                    currency = request.value.amountState.currency,
+                    isValid = null
                 )
             } else if (!resultAmount.contains(allowedNumberFormatValidationRegex)) {
-                AmountState.Valid(request.value.amountState.amount, request.value.amountState.currency)
+                AmountState(
+                    amount = request.value.amountState.amount,
+                    currency = request.value.amountState.currency,
+                    isValid = true
+                )
             } else {
-                AmountState.Valid(resultAmount, request.value.amountState.currency)
+                AmountState(
+                    amount = resultAmount,
+                    currency = request.value.amountState.currency,
+                    isValid = true
+                )
             }
 
         // Check for max Zcash supply
         return newAmount.amount.convertToDouble()?.let { currentValue ->
             val zecValue =
-                if (newAmount.currency == RequestCurrency.Fiat && conversion != null) {
+                if (newAmount.currency == RequestCurrency.FIAT && conversion != null) {
                     currentValue / conversion.priceOfZec
                 } else {
                     currentValue
                 }
             if (zecValue > MAX_ZCASH_SUPPLY) {
-                newAmount.copyState(request.value.amountState.amount)
+                newAmount.copy(amount = request.value.amountState.amount)
             } else {
                 newAmount
             }
@@ -299,89 +324,81 @@ class RequestViewModel(
             }
     }
 
-    internal fun onBack() =
-        viewModelScope.launch {
-            when (stage.value) {
-                RequestStage.AMOUNT -> {
-                    navigationRouter.back()
-                }
-                RequestStage.MEMO -> {
-                    stage.emit(RequestStage.AMOUNT)
-                }
-                RequestStage.QR_CODE -> {
-                    when (ReceiveAddressType.fromOrdinal(addressTypeOrdinal)) {
-                        ReceiveAddressType.Transparent -> {
-                            stage.emit(RequestStage.AMOUNT)
-                        }
-                        ReceiveAddressType.Unified, ReceiveAddressType.Sapling -> {
-                            stage.emit(RequestStage.MEMO)
-                        }
-                    }
-                }
+    internal fun onBack() {
+        when (stage.value) {
+            RequestStage.AMOUNT -> navigationRouter.back()
+
+            RequestStage.MEMO -> stage.update { RequestStage.AMOUNT }
+
+            RequestStage.QR_CODE -> when (ReceiveAddressType.fromOrdinal(addressTypeOrdinal)) {
+                ReceiveAddressType.Transparent -> stage.update { RequestStage.AMOUNT }
+
+                ReceiveAddressType.Unified, ReceiveAddressType.Sapling -> stage.update { RequestStage.MEMO }
             }
         }
+    }
 
     private fun onClose() = navigationRouter.back()
 
-    private fun onAmountDone(conversion: FiatCurrencyConversion?) =
-        viewModelScope.launch {
+    private fun onAmountDone(conversion: FiatCurrencyConversion?) {
+        request.update {
             val memoAmount =
-                when (request.value.amountState.currency) {
-                    RequestCurrency.Fiat ->
+                when (it.amountState.currency) {
+                    RequestCurrency.FIAT ->
                         if (conversion != null) {
-                            request.value.amountState.toZecString(conversion)
+                            it.amountState.toZecStringFloored(conversion)
                         } else {
                             Twig.error { "Unexpected screen state" }
-                            request.value.amountState.amount
+                            it.amountState.amount
                         }
 
-                    RequestCurrency.Zec -> request.value.amountState.amount
+                    RequestCurrency.ZEC -> it.amountState.amount
                 }
-            request.emit(request.value.copy(memoState = MemoState.new(DEFAULT_MEMO, memoAmount)))
-            stage.emit(RequestStage.MEMO)
-        }
 
-    private fun onMemoDone(
-        address: String,
-        zip321BuildUriUseCase: Zip321BuildUriUseCase
-    ) = viewModelScope.launch {
-        request.emit(
-            request.value.copy(
+            it.copy(memoState = MemoState.new(DEFAULT_MEMO, memoAmount))
+        }
+        stage.update { RequestStage.MEMO }
+    }
+
+    private fun onMemoDone(address: String, zip321BuildUriUseCase: Zip321BuildUriUseCase) {
+        request.update {
+            it.copy(
                 qrCodeState =
                     QrCodeState(
                         requestUri =
                             createZip321Uri(
                                 address = address,
-                                amount = request.value.memoState.zecAmount,
-                                memo = request.value.memoState.text,
+                                amount = it.memoState.zecAmount,
+                                memo = it.memoState.text,
                                 zip321BuildUriUseCase = zip321BuildUriUseCase
                             ),
-                        zecAmount = request.value.memoState.zecAmount,
-                        memo = request.value.memoState.text,
+                        zecAmount = it.memoState.zecAmount,
+                        memo = it.memoState.text,
                     )
             )
-        )
-        stage.emit(RequestStage.QR_CODE)
+        }
+        stage.update { RequestStage.QR_CODE }
     }
 
     private fun onAmountAndMemoDone(
         address: String,
         zip321BuildUriUseCase: Zip321BuildUriUseCase,
         conversion: FiatCurrencyConversion?
-    ) = viewModelScope.launch {
-        val qrCodeAmount =
-            when (request.value.amountState.currency) {
-                RequestCurrency.Fiat ->
-                    if (conversion != null) {
-                        request.value.amountState.toZecString(conversion)
-                    } else {
-                        Twig.error { "Unexpected screen state" }
-                        request.value.amountState.amount
-                    }
-                RequestCurrency.Zec -> request.value.amountState.amount
-            }
-        val newRequest =
-            request.value.copy(
+    ) {
+        request.update {
+            val qrCodeAmount =
+                when (it.amountState.currency) {
+                    RequestCurrency.FIAT ->
+                        if (conversion != null) {
+                            it.amountState.toZecStringFloored(conversion)
+                        } else {
+                            Twig.error { "Unexpected screen state" }
+                            it.amountState.amount
+                        }
+
+                    RequestCurrency.ZEC -> it.amountState.amount
+                }
+            it.copy(
                 qrCodeState =
                     QrCodeState(
                         requestUri =
@@ -395,49 +412,39 @@ class RequestViewModel(
                         memo = DEFAULT_MEMO,
                     )
             )
-        request.emit(newRequest)
-        stage.emit(RequestStage.QR_CODE)
+        }
+
+        stage.update { RequestStage.QR_CODE }
     }
 
     private fun onSwitch(
         conversion: FiatCurrencyConversion?,
         onSwitchTo: RequestCurrency
     ) = viewModelScope.launch {
-        if (conversion == null) {
-            return@launch
+        if (conversion == null) return@launch
+
+        request.update {
+            val newAmount =
+                when (onSwitchTo) {
+                    RequestCurrency.FIAT -> it.amountState.toFiatString(
+                        context = application.applicationContext,
+                        conversion = conversion
+                    )
+
+                    RequestCurrency.ZEC -> it.amountState.toZecString(conversion)
+                }
+
+            it.copy(
+                amountState = if (newAmount.contains(defaultAmountValidationRegex)) {
+                    it.amountState.copy(amount = defaultAmount, currency = onSwitchTo)
+                } else {
+                    it.amountState.copy(amount = newAmount, currency = onSwitchTo)
+                }
+            )
         }
-        val newAmount =
-            when (onSwitchTo) {
-                is RequestCurrency.Fiat -> {
-                    request.value.amountState.toFiatString(
-                        application.applicationContext,
-                        conversion
-                    )
-                }
-                is RequestCurrency.Zec -> {
-                    request.value.amountState.toZecString(
-                        conversion
-                    )
-                }
-            }
-
-        // Check default value and shrink it to 0 if necessary
-        val newState =
-            if (newAmount.contains(defaultAmountValidationRegex)) {
-                request.value.amountState.copyState(defaultAmount, onSwitchTo)
-            } else {
-                request.value.amountState.copyState(newAmount, onSwitchTo)
-            }
-
-        request.emit(
-            request.value.copy(amountState = newState)
-        )
     }
 
-    private fun onMemo(memoState: MemoState) =
-        viewModelScope.launch {
-            request.emit(request.value.copy(memoState = memoState))
-        }
+    private fun onMemo(memoState: MemoState) = request.update { it.copy(memoState = memoState) }
 
     private fun createZip321Uri(
         address: String,

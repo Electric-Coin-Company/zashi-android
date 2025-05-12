@@ -63,16 +63,16 @@ internal fun RequestAmountView(
 
         when (state.exchangeRateState) {
             is ExchangeRateState.Data -> {
-                if (state.request.amountState.currency == RequestCurrency.Zec) {
+                if (state.request.amountState.currency == RequestCurrency.ZEC) {
                     RequestAmountWithMainZecView(
                         state = state,
-                        onFiatPreferenceSwitch = { state.onSwitch(RequestCurrency.Fiat) },
+                        onFiatPreferenceSwitch = { state.onSwitch(RequestCurrency.FIAT) },
                         modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
                     )
                 } else {
                     RequestAmountWithMainFiatView(
                         state = state,
-                        onFiatPreferenceSwitch = { state.onSwitch(RequestCurrency.Zec) },
+                        onFiatPreferenceSwitch = { state.onSwitch(RequestCurrency.ZEC) },
                         modifier = Modifier.padding(horizontal = ZcashTheme.dimens.screenHorizontalSpacingRegular)
                     )
                 }
@@ -417,7 +417,7 @@ private fun InvalidAmountView(
                 .fillMaxWidth()
                 .requiredHeight(48.dp)
     ) {
-        if (amountState is AmountState.InValid) {
+        if (amountState.isValid == false) {
             Image(
                 painter = painterResource(id = R.drawable.ic_alert_outline),
                 contentDescription = null

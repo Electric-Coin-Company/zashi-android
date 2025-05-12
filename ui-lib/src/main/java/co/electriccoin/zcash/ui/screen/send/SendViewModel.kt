@@ -12,6 +12,8 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
+import co.electriccoin.zcash.ui.screen.send.model.AmountField
+import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.send.model.SendAddressBookState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
@@ -133,10 +135,11 @@ class SendViewModel(
     @Suppress("TooGenericExceptionCaught")
     fun onCreateZecSendClick(
         newZecSend: ZecSend,
+        amountState: AmountState,
         setSendStage: (SendStage) -> Unit
     ) = viewModelScope.launch {
         try {
-            createProposal(newZecSend)
+            createProposal(zecSend = newZecSend, floor = amountState.lastFieldChangedByUser == AmountField.FIAT)
         } catch (e: Exception) {
             setSendStage(SendStage.SendFailure(e.cause?.message ?: e.message ?: ""))
             Twig.error(e) { "Error creating proposal" }
