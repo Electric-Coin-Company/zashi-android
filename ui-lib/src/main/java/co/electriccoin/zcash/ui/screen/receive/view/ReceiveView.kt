@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -157,7 +158,10 @@ private fun AddressPanel(
                 )
                 if (state.isShielded) {
                     Image(
-                        modifier = Modifier.align(Alignment.BottomEnd).offset(2.dp, 4.dp),
+                        modifier = Modifier
+                            .size(14.dp)
+                            .align(Alignment.BottomEnd)
+                            .offset(3.5.dp, 3.5.dp),
                         painter = painterResource(R.drawable.ic_receive_shield),
                         contentDescription = "",
                     )
