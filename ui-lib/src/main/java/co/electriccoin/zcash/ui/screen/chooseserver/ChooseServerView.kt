@@ -496,7 +496,6 @@ private fun ChooseServerPreview(
                                             TextFieldState(
                                                 value = stringRes(""),
                                                 error = null,
-                                                isEnabled = true,
                                                 onValueChange = { },
                                             ),
                                         badge = null,

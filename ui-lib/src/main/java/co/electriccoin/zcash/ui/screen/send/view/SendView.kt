@@ -23,6 +23,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -695,7 +696,7 @@ fun SendFormAmountTextField(
                 }
             )
 
-            if (exchangeRateState is ExchangeRateState.Data && exchangeRateState.currencyConversion != null) {
+            if (exchangeRateState is ExchangeRateState.Data) {
                 Spacer(modifier = Modifier.width(12.dp))
                 Image(
                     modifier = Modifier.padding(top = 12.dp),
@@ -707,7 +708,7 @@ fun SendFormAmountTextField(
                 ZashiTextField(
                     singleLine = true,
                     maxLines = 1,
-                    isEnabled = !exchangeRateState.isStale,
+                    isEnabled = !exchangeRateState.isStale && exchangeRateState.currencyConversion != null,
                     value = amountState.fiatValue,
                     onValueChange = { newValue ->
                         setAmountState(
@@ -729,7 +730,7 @@ fun SendFormAmountTextField(
                                     id = R.string.send_usd_amount_hint
                                 ),
                             style = ZashiTypography.textMd,
-                            color = ZashiColors.Inputs.Default.text
+                            color = LocalContentColor.current
                         )
                     },
                     keyboardOptions =

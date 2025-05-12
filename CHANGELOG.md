@@ -7,7 +7,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [Unreleased]
 
 ### Fixed
-- Fiat text field on Send screen does not display anymore if fetching exchange rate fails
+- Fiat text field on Send screen is disabled if fetching exchange rate fails
 
 ### Changed
 - When entering amount in USD in the Send or Request ZEC flow, we floor the Zatoshi amount automatically to the nearest 5000 Zatoshi to prevent creating unspendable dust notes in your wallet.
