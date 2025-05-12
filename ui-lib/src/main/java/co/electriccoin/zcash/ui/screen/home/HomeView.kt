@@ -163,7 +163,7 @@ fun Modifier.minHeight106Percent(): Modifier =
         val placeable = measurable.measure(constraints)
         val minHeight = (placeable.width.toFloat() / (106f / 100f)).toInt()
 
-        val newConstraints = constraints.copy(minHeight = minHeight)
+        val newConstraints = constraints.copy(minHeight = minHeight.coerceAtMost(constraints.maxHeight))
         val newPlaceable = measurable.measure(newConstraints)
 
         layout(newPlaceable.width, newPlaceable.height) {
