@@ -158,10 +158,11 @@ private fun AddressPanel(
                 )
                 if (state.isShielded) {
                     Image(
-                        modifier = Modifier
-                            .size(14.dp)
-                            .align(Alignment.BottomEnd)
-                            .offset(3.5.dp, 3.5.dp),
+                        modifier =
+                            Modifier
+                                .size(14.dp)
+                                .align(Alignment.BottomEnd)
+                                .offset(3.5.dp, 3.5.dp),
                         painter = painterResource(R.drawable.ic_receive_shield),
                         contentDescription = "",
                     )
