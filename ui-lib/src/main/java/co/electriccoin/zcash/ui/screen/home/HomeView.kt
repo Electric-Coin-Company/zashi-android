@@ -184,25 +184,25 @@ private fun Preview() {
                     firstButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
-                            icon = R.drawable.ic_warning,
+                            icon = R.drawable.ic_home_receive,
                             onClick = {}
                         ),
                     secondButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
-                            icon = R.drawable.ic_warning,
+                            icon = R.drawable.ic_home_send,
                             onClick = {}
                         ),
                     thirdButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
-                            icon = R.drawable.ic_warning,
+                            icon = R.drawable.ic_home_scan,
                             onClick = {}
                         ),
                     fourthButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
-                            icon = R.drawable.ic_warning,
+                            icon = R.drawable.ic_home_buy,
                             onClick = {}
                         ),
                     message = WalletErrorMessageState(onClick = {})
