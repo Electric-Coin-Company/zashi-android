@@ -12,6 +12,19 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.0.2 (962)] - 2025-05-14
+
+### Cambiado:
+- Al ingresar un monto en USD, redondeamos automáticamente a los 5000 Zatoshi más cercanos evitando el acarreo de cantidades no gastables en tu billetera.
+- Actualizamos la posición de los botones principal y secundario.
+- Actualizamos el diseño de la pantalla Recibir.
+- Actualizamos los íconos de las pantallas Enviar y Recibir.
+- Mejoramos el texto en algunos puntos.
+- Ajustes adicionales a la interfaz de usuario.
+
+### Corregido:
+- Hicimos algunas correcciones de errores.
+
 ## [2.0.1 (941)] - 2025-04-29
 
 ### Añadido:
