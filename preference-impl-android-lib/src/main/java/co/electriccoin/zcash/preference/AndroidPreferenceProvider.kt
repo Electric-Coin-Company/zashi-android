@@ -30,7 +30,7 @@ import java.util.concurrent.Executors
  * this instance lives for the lifetime of the application. Constructing multiple instances will
  * potentially corrupt preference data and will leak resources.
  */
-class AndroidPreferenceProvider private constructor(
+class AndroidPreferenceProvider(
     private val sharedPreferences: SharedPreferences,
     private val dispatcher: CoroutineDispatcher
 ) : PreferenceProvider {
@@ -163,15 +163,26 @@ class AndroidPreferenceProvider private constructor(
         }
     }
 
-    companion object {
-        suspend fun newStandard(
-            context: Context,
-            filename: String
-        ): PreferenceProvider {
-            /*
-             * Because of this line, we don't want multiple instances of this object created
-             * because we don't clean up the thread afterwards.
-             */
+    companion object Factory : AndroidPreferenceFactory by AndroidPreferenceFactoryImpl()
+}
+
+interface AndroidPreferenceFactory {
+    suspend fun newStandard(context: Context, filename: String): PreferenceProvider
+
+    suspend fun newEncrypted(context: Context, filename: String): PreferenceProvider
+}
+
+private class AndroidPreferenceFactoryImpl : AndroidPreferenceFactory {
+    private val semaphore = Mutex()
+    private val standardCache = mutableMapOf<String, PreferenceProvider>()
+    private val encryptedCache = mutableMapOf<String, PreferenceProvider>()
+
+    override suspend fun newStandard(context: Context, filename: String) =
+        getOrCreate(standardCache, filename) {
+        /*
+         * Because of this line, we don't want multiple instances of this object created
+         * because we don't clean up the thread afterwards.
+         */
             val singleThreadedDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
             val sharedPreferences =
@@ -182,14 +193,12 @@ class AndroidPreferenceProvider private constructor(
             return AndroidPreferenceProvider(sharedPreferences, singleThreadedDispatcher)
         }
 
-        suspend fun newEncrypted(
-            context: Context,
-            filename: String
-        ): PreferenceProvider {
-            /*
-             * Because of this line, we don't want multiple instances of this object created
-             * because we don't clean up the thread afterwards.
-             */
+    override suspend fun newEncrypted(context: Context, filename: String) =
+        getOrCreate(encryptedCache, filename) {
+        /*
+         * Because of this line, we don't want multiple instances of this object created
+         * because we don't clean up the thread afterwards.
+         */
             val singleThreadedDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
             val sharedPreferences =
@@ -212,5 +221,10 @@ class AndroidPreferenceProvider private constructor(
 
             return AndroidPreferenceProvider(sharedPreferences, singleThreadedDispatcher)
         }
-    }
+
+    private suspend inline fun getOrCreate(
+        map: MutableMap<String, PreferenceProvider>,
+        filename: String,
+        block: () -> PreferenceProvider
+    ): PreferenceProvider = semaphore.withLock { map.getOrPut(filename, block) }
 }
