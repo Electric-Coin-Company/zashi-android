@@ -16,16 +16,19 @@ import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 sealed interface AmountState {
     val value: String
     val fiatValue: String
+    val lastFieldChangedByUser: AmountField
 
     data class Valid(
         override val value: String,
         override val fiatValue: String,
-        val zatoshi: Zatoshi
+        override val lastFieldChangedByUser: AmountField,
+        val zatoshi: Zatoshi,
     ) : AmountState
 
     data class Invalid(
         override val value: String,
-        override val fiatValue: String
+        override val fiatValue: String,
+        override val lastFieldChangedByUser: AmountField
     ) : AmountState
 
     companion object {
@@ -37,11 +40,12 @@ sealed interface AmountState {
             fiatValue: String,
             isTransparentOrTextRecipient: Boolean,
             exchangeRateState: ExchangeRateState,
+            lastFieldChangedByUser: AmountField = AmountField.ZEC
         ): AmountState {
             val isValid = validate(context, monetarySeparators, value)
 
             if (!isValid) {
-                return Invalid(value, if (value.isBlank()) "" else fiatValue)
+                return Invalid(value, if (value.isBlank()) "" else fiatValue, lastFieldChangedByUser)
             }
 
             val zatoshi = Zatoshi.fromZecString(context, value, Locale.getDefault())
@@ -57,8 +61,9 @@ sealed interface AmountState {
 
             // Note that the zero funds sending is supported for sending a memo-only shielded transaction
             return when {
-                (zatoshi == null) -> Invalid(value, if (value.isBlank()) "" else fiatValue)
-                (zatoshi.value == 0L && isTransparentOrTextRecipient) -> Invalid(value, fiatValue)
+                (zatoshi == null) -> Invalid(value, if (value.isBlank()) "" else fiatValue, lastFieldChangedByUser)
+                (zatoshi.value == 0L && isTransparentOrTextRecipient) ->
+                    Invalid(value, fiatValue, lastFieldChangedByUser)
                 else -> {
                     Valid(
                         value = value,
@@ -71,7 +76,8 @@ sealed interface AmountState {
                                     currencyConversion = currencyConversion,
                                     locale = Locale.getDefault(),
                                 )
-                            }
+                            },
+                        lastFieldChangedByUser = lastFieldChangedByUser
                     )
                 }
             }
@@ -89,7 +95,11 @@ sealed interface AmountState {
             val isValid = validate(context, monetarySeparators, fiatValue)
 
             if (!isValid) {
-                return Invalid(value = if (fiatValue.isBlank()) "" else value, fiatValue = fiatValue)
+                return Invalid(
+                    value = if (fiatValue.isBlank()) "" else value,
+                    fiatValue = fiatValue,
+                    lastFieldChangedByUser = AmountField.FIAT
+                )
             }
 
             val zatoshi =
@@ -101,16 +111,25 @@ sealed interface AmountState {
 
             return when {
                 (zatoshi == null) -> {
-                    Invalid(value = if (fiatValue.isBlank()) "" else value, fiatValue = fiatValue)
+                    Invalid(
+                        value = if (fiatValue.isBlank()) "" else value,
+                        fiatValue = fiatValue,
+                        lastFieldChangedByUser = AmountField.FIAT
+                    )
                 }
                 (zatoshi.value == 0L && isTransparentOrTextRecipient) -> {
-                    Invalid(if (fiatValue.isBlank()) "" else value, fiatValue)
+                    Invalid(
+                        value = if (fiatValue.isBlank()) "" else value,
+                        fiatValue = fiatValue,
+                        lastFieldChangedByUser = AmountField.FIAT
+                    )
                 }
                 else -> {
                     Valid(
                         value = zatoshi.toZecString(),
                         zatoshi = zatoshi,
-                        fiatValue = fiatValue
+                        fiatValue = fiatValue,
+                        lastFieldChangedByUser = AmountField.FIAT
                     )
                 }
             }
@@ -122,6 +141,7 @@ sealed interface AmountState {
         private const val KEY_VALUE = "value" // $NON-NLS
         private const val KEY_FIAT_VALUE = "fiat_value" // $NON-NLS
         private const val KEY_ZATOSHI = "zatoshi" // $NON-NLS
+        private const val KEY_LAST_FIELD_CHANGED_BY_USER = "last_field_changed_by_user" // $NON-NLS
 
         private fun validate(
             context: Context,
@@ -145,18 +165,22 @@ sealed interface AmountState {
                                 val amountString = (it[KEY_VALUE] as String)
                                 val fiatAmountString = (it[KEY_FIAT_VALUE] as String)
                                 val type = (it[KEY_TYPE] as String)
+                                val lastFieldChangedByUser =
+                                    AmountField.valueOf(it[KEY_LAST_FIELD_CHANGED_BY_USER] as String)
                                 when (type) {
                                     TYPE_VALID ->
                                         Valid(
                                             value = amountString,
                                             fiatValue = fiatAmountString,
-                                            zatoshi = Zatoshi(it[KEY_ZATOSHI] as Long)
+                                            zatoshi = Zatoshi(it[KEY_ZATOSHI] as Long),
+                                            lastFieldChangedByUser = lastFieldChangedByUser
                                         )
 
                                     TYPE_INVALID ->
                                         Invalid(
                                             value = amountString,
-                                            fiatValue = fiatAmountString
+                                            fiatValue = fiatAmountString,
+                                            lastFieldChangedByUser = lastFieldChangedByUser
                                         )
 
                                     else -> null
@@ -178,8 +202,11 @@ sealed interface AmountState {
             }
             saverMap[KEY_VALUE] = this.value
             saverMap[KEY_FIAT_VALUE] = this.fiatValue
+            saverMap[KEY_LAST_FIELD_CHANGED_BY_USER] = this.lastFieldChangedByUser.name
 
             return saverMap
         }
     }
 }
+
+enum class AmountField { ZEC, FIAT }

@@ -28,8 +28,8 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
-import co.electriccoin.zcash.ui.design.component.GradientBgScaffold
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiCheckbox
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -40,10 +40,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
 fun RestoreSuccessView(state: RestoreSuccessViewState) {
-    GradientBgScaffold(
-        startColor = ZashiColors.Utility.WarningYellow.utilityOrange100,
-        endColor = ZashiColors.Surfaces.bgPrimary,
-    ) { paddingValues ->
+    BlankBgScaffold { paddingValues ->
         RestoreSuccessContent(
             state = state,
             modifier =

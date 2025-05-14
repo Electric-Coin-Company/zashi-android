@@ -65,7 +65,7 @@ private fun RequestPreview() =
                 RequestState.Amount(
                     request =
                         Request(
-                            amountState = AmountState.Valid("2.25", RequestCurrency.Zec),
+                            amountState = AmountState("2.25", RequestCurrency.ZEC, true),
                             memoState = MemoState.Valid("", 0, "2.25"),
                             qrCodeState =
                                 QrCodeState(
@@ -143,7 +143,7 @@ private fun RequestBottomBar(
                 ZashiButton(
                     text = stringResource(id = R.string.request_amount_btn),
                     onClick = state.onDone,
-                    enabled = state.request.amountState.isValid(),
+                    enabled = state.request.amountState.isValid == true,
                     modifier =
                         Modifier
                             .fillMaxWidth()

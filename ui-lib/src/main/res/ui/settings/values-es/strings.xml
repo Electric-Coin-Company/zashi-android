@@ -3,7 +3,7 @@
     <string name="settings_title">Configuración</string>
     <string name="settings_advanced_settings">Configuración Avanzada</string>
     <string name="settings_integrations">Integraciones</string>
-    <string name="settings_about_us">Sobre Nosotros</string>
+    <string name="settings_about_us">Sobre</string>
     <string name="settings_feedback">Envíanos tus Comentarios</string>
     <string name="settings_version">Versión <xliff:g example="1" id="version">%s</xliff:g></string>
     <string name="settings_address_book">Libreta de Direcciones</string>

@@ -502,7 +502,7 @@ object ZashiTextFieldDefaults {
         disabledHintColor: Color = ZashiColors.Inputs.Disabled.hint,
         disabledBorderColor: Color = ZashiColors.Inputs.Disabled.stroke,
         disabledContainerColor: Color = ZashiColors.Inputs.Disabled.bg,
-        disabledPlaceholderColor: Color = ZashiColors.Inputs.Disabled.text,
+        disabledPlaceholderColor: Color = ZashiColors.Inputs.Disabled.iconMain,
         errorTextColor: Color = ZashiColors.Inputs.ErrorFilled.text,
         errorHintColor: Color = ZashiColors.Inputs.ErrorDefault.hint,
         errorBorderColor: Color = ZashiColors.Inputs.ErrorDefault.stroke,

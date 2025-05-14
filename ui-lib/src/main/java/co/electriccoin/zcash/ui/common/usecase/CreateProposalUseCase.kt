@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import cash.z.ecc.android.sdk.model.ZecSend
+import cash.z.ecc.sdk.extension.floor
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
@@ -16,15 +17,16 @@ class CreateProposalUseCase(
     private val navigationRouter: NavigationRouter
 ) {
     @Suppress("TooGenericExceptionCaught")
-    suspend operator fun invoke(zecSend: ZecSend) {
+    suspend operator fun invoke(zecSend: ZecSend, floor: Boolean) {
+        val normalized = if (floor) zecSend.copy(amount = zecSend.amount.floor()) else zecSend
         try {
             when (accountDataSource.getSelectedAccount()) {
                 is KeystoneAccount -> {
-                    keystoneProposalRepository.createProposal(zecSend)
+                    keystoneProposalRepository.createProposal(normalized)
                     keystoneProposalRepository.createPCZTFromProposal()
                 }
                 is ZashiAccount ->
-                    zashiProposalRepository.createProposal(zecSend)
+                    zashiProposalRepository.createProposal(normalized)
             }
             navigationRouter.forward(ReviewTransaction)
         } catch (e: Exception) {
