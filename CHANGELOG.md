@@ -6,6 +6,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Fixed 
+- Shared preferences object cached in-memory and locked with semaphore in order to improve stability of security-crypto library
+
 ## [2.0.2 (962)] - 2025-05-14
 
 ### Fixed
