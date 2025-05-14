@@ -6,6 +6,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.0.2 (962)] - 2025-05-14
+
 ### Fixed
 - Fiat text field on Send screen is disabled if fetching exchange rate fails
 
