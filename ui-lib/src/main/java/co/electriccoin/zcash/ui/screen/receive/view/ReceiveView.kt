@@ -46,6 +46,7 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
@@ -140,9 +141,9 @@ private fun AddressPanel(
                 .wrapContentHeight()
                 .background(
                     if (state.isShielded) {
-                        ZashiColors.Utility.Purple.utilityPurple50
+                        ZashiColors.Utility.Purple.utilityPurple50 orDark ZashiColors.Utility.Indigo.utilityIndigo50
                     } else {
-                        ZashiColors.Utility.Gray.utilityGray50
+                        ZashiColors.Surfaces.bgSecondary
                     },
                     RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
                 ).clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
@@ -152,7 +153,7 @@ private fun AddressPanel(
         Row(modifier = Modifier.fillMaxWidth()) {
             Box {
                 Image(
-                    modifier = Modifier.sizeIn(maxWidth = 34.dp, maxHeight = 34.dp),
+                    modifier = Modifier.size(40.dp),
                     painter = painterResource(id = state.icon),
                     contentDescription = null
                 )
@@ -162,7 +163,7 @@ private fun AddressPanel(
                             Modifier
                                 .size(14.dp)
                                 .align(Alignment.BottomEnd)
-                                .offset(3.5.dp, 3.5.dp),
+                                .offset(1.5.dp, .5.dp),
                         painter = painterResource(R.drawable.ic_receive_shield),
                         contentDescription = "",
                     )
@@ -178,9 +179,7 @@ private fun AddressPanel(
                     style = ZashiTypography.textMd,
                     fontWeight = FontWeight.SemiBold
                 )
-
-                Spacer(Modifier.height(ZcashTheme.dimens.spacingTiny))
-
+                Spacer(4.dp)
                 Text(
                     text = state.subtitle.getValue(),
                     color = ZashiColors.Text.textTertiary,
@@ -191,13 +190,6 @@ private fun AddressPanel(
             Spacer(Modifier.width(ZcashTheme.dimens.spacingSmall))
 
             Spacer(modifier = Modifier.weight(1f))
-
-            if (state.isShielded) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_check_shielded_solid),
-                    contentDescription = null
-                )
-            }
         }
 
         AnimatedVisibility(visible = state.isExpanded) {
@@ -210,13 +202,13 @@ private fun AddressPanel(
             ) {
                 val containerColor =
                     if (state.isShielded) {
-                        ZashiColors.Utility.Purple.utilityPurple100
+                        ZashiColors.Utility.Purple.utilityPurple100 orDark ZashiColors.Utility.Indigo.utilityIndigo100
                     } else {
                         ZashiColors.Surfaces.bgTertiary
                     }
                 val contentColor =
                     if (state.isShielded) {
-                        ZashiColors.Utility.Purple.utilityPurple800
+                        ZashiColors.Utility.Purple.utilityPurple800 orDark ZashiColors.Utility.Indigo.utilityIndigo800
                     } else {
                         ZashiColors.Text.textPrimary
                     }
@@ -272,16 +264,14 @@ private fun ReceiveIconButton(
                 .background(containerColor, RoundedCornerShape(ZashiDimensions.Radius.radiusXl))
                 .clip(RoundedCornerShape(ZashiDimensions.Radius.radiusXl))
                 .clickable { onClick() }
-                .padding(ZcashTheme.dimens.spacingMid)
+                .padding(12.dp)
     ) {
         Icon(
             painter = iconPainter,
             contentDescription = text,
             tint = contentColor
         )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
-
+        Spacer(4.dp)
         Text(
             text = text,
             color = contentColor,

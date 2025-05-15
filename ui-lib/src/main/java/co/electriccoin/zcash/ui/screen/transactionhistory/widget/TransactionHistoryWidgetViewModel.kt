@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class TransactionHistoryWidgetViewModel(
     getTransactions: GetTransactionsUseCase,
@@ -28,6 +30,7 @@ class TransactionHistoryWidgetViewModel(
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
+    private val navigateToRequestShielded: NavigateToRequestShieldedUseCase
 ) : ViewModel() {
     val state =
         combine(
@@ -88,9 +91,7 @@ class TransactionHistoryWidgetViewModel(
         navigationRouter.forward(TransactionHistory)
     }
 
-    private fun onRequestZecClick() {
-        navigationRouter.forward("${NavigationTargets.REQUEST}/${ReceiveAddressType.Unified.ordinal}")
-    }
+    private fun onRequestZecClick() = viewModelScope.launch { navigateToRequestShielded() }
 }
 
 private const val MAX_TRANSACTION_COUNT = 5
