@@ -197,9 +197,9 @@ class AccountDataSourceImpl(
                 .map {
                     val request =
                         if (sdkAccount.keySource?.lowercase() == KEYSTONE_KEYSOURCE) {
-                            UnifiedAddressRequest.ORCHARD
+                            UnifiedAddressRequest.Orchard
                         } else {
-                            UnifiedAddressRequest.SHIELDED
+                            UnifiedAddressRequest.shielded
                         }
 
                     WalletAddress.Unified.new(synchronizer.getCustomUnifiedAddress(sdkAccount, request))
