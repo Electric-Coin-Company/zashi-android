@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -117,17 +118,10 @@ class AccountDataSourceImpl(
                                             )
                                     }
                                 }
-                            }
-                            ?.combineToFlow() ?: flowOf(null)
-                    }
-                    ?.retryWhen { _, attempt ->
-                        emit(null)
-                        delay(attempt.coerceAtMost(RETRY_DELAY).seconds)
-                        true
+                            }?.combineToFlow() ?: flowOf(null)
                     }
                     ?: flowOf(null)
-            }
-            .flowOn(Dispatchers.IO)
+            }.flowOn(Dispatchers.IO)
             .stateIn(
                 scope = scope,
                 started = SharingStarted.Eagerly,
@@ -152,11 +146,10 @@ class AccountDataSourceImpl(
 
     override suspend fun getZashiAccount() = withContext(Dispatchers.IO) { zashiAccount.filterNotNull().first() }
 
-    override suspend fun selectAccount(account: Account) {
+    override suspend fun selectAccount(account: Account) =
         withContext(Dispatchers.IO) {
             selectedAccountUUIDProvider.setUUID(account.accountUuid)
         }
-    }
 
     override suspend fun selectAccount(account: WalletAccount) = selectAccount(account.sdkAccount)
 
@@ -186,71 +179,80 @@ class AccountDataSourceImpl(
     override suspend fun requestNextShieldedAddress() {
         scope
             .launch {
-                requestNextShieldedAddressPipeline.emit(getSelectedAccount().sdkAccount.accountUuid)
+                val selectedAccount = getSelectedAccount()
+                if (selectedAccount is ZashiAccount) {
+                    requestNextShieldedAddressPipeline.emit(selectedAccount.sdkAccount.accountUuid)
+                }
             }
             .join()
     }
 
-    private fun observeIsSelected(sdkAccount: Account, allAccounts: List<Account>) = selectedAccountUUIDProvider
-        .uuid
-        .map { uuid ->
-            when (sdkAccount.keySource?.lowercase()) {
-                KEYSTONE_KEYSOURCE -> sdkAccount.accountUuid == uuid || allAccounts.size == 1
-                else -> uuid == null || sdkAccount.accountUuid == uuid || allAccounts.size == 1
+    private fun observeIsSelected(sdkAccount: Account, allAccounts: List<Account>) =
+        selectedAccountUUIDProvider
+            .uuid
+            .map { uuid ->
+                when (sdkAccount.keySource?.lowercase()) {
+                    KEYSTONE_KEYSOURCE -> sdkAccount.accountUuid == uuid || allAccounts.size == 1
+                    else -> uuid == null || sdkAccount.accountUuid == uuid || allAccounts.size == 1
+                }
             }
-        }
 
-    private suspend fun observeUnified(synchronizer: Synchronizer, sdkAccount: Account): Flow<UnifiedInfo> {
-        return combine(
-            requestNextShieldedAddressPipeline
-                .onStart { emit(sdkAccount.accountUuid) }
-                .map {
-                    WalletAddress.Unified.new(
-                        synchronizer.getCustomUnifiedAddress(sdkAccount, UnifiedAddressRequest.SHIELDED)
-                    )
-                },
-            synchronizer.walletBalances
-        ) { address, balances ->
+    private fun observeUnified(synchronizer: Synchronizer, sdkAccount: Account): Flow<UnifiedInfo> {
+        val addressFlow =
+            when (sdkAccount.keySource?.lowercase()) {
+                KEYSTONE_KEYSOURCE -> flow { emit(WalletAddress.Unified.new(synchronizer.getUnifiedAddress(sdkAccount))) }
+
+                else ->
+                    requestNextShieldedAddressPipeline
+                        .onStart { emit(sdkAccount.accountUuid) }
+                        .map {
+                            WalletAddress.Unified.new(
+                                synchronizer.getCustomUnifiedAddress(sdkAccount, UnifiedAddressRequest.SHIELDED)
+                            )
+                        }
+            }.retryWhen { _, attempt ->
+                delay(attempt.coerceAtMost(RETRY_DELAY).seconds)
+                true
+            }
+
+        return combine(addressFlow, synchronizer.walletBalances) { address, balances ->
             val balance = balances?.get(sdkAccount.accountUuid)
-            UnifiedInfo(
-                address = address,
-                balance = balance?.orchard ?: createEmptyWalletBalance()
-            )
+            UnifiedInfo(address = address, balance = balance?.orchard ?: createEmptyWalletBalance())
         }
     }
 
-    private suspend fun observeTransparent(synchronizer: Synchronizer, sdkAccount: Account): Flow<TransparentInfo> {
-        val address = WalletAddress.Transparent.new(synchronizer.getTransparentAddress(sdkAccount))
-        return synchronizer.walletBalances.map {
-            val balance = it?.get(sdkAccount.accountUuid)
-            TransparentInfo(
-                address = address,
-                balance = balance?.unshielded ?: Zatoshi.ZERO
-            )
+    private fun observeTransparent(synchronizer: Synchronizer, sdkAccount: Account): Flow<TransparentInfo> {
+        val transparentAddress =
+            flow {
+                emit(WalletAddress.Transparent.new(synchronizer.getTransparentAddress(sdkAccount)))
+            }.retryWhen { _, attempt ->
+                delay(attempt.coerceAtMost(RETRY_DELAY).seconds)
+                true
+            }
+        return combine(transparentAddress, synchronizer.walletBalances) { address, balances ->
+            val balance = balances?.get(sdkAccount.accountUuid)
+            TransparentInfo(address = address, balance = balance?.unshielded ?: Zatoshi.ZERO)
         }
     }
 
-    private suspend fun observeSapling(synchronizer: Synchronizer, sdkAccount: Account): Flow<SaplingInfo?> {
-        return if (sdkAccount.keySource == KEYSTONE_KEYSOURCE) {
+    private fun observeSapling(synchronizer: Synchronizer, sdkAccount: Account): Flow<SaplingInfo?> =
+        if (sdkAccount.keySource == KEYSTONE_KEYSOURCE) {
             flowOf(null)
         } else {
-            val address = WalletAddress.Sapling.new(synchronizer.getSaplingAddress(sdkAccount))
-            synchronizer.walletBalances.map {
-                val balance = it?.get(sdkAccount.accountUuid)
-                SaplingInfo(
-                    address = address,
-                    balance = balance?.sapling ?: createEmptyWalletBalance()
-                )
+            val saplingAddress =
+                flow {
+                    emit(WalletAddress.Sapling.new(synchronizer.getSaplingAddress(sdkAccount)))
+                }.retryWhen { _, attempt ->
+                    delay(attempt.coerceAtMost(RETRY_DELAY).seconds)
+                    true
+                }
+            combine(saplingAddress, synchronizer.walletBalances) { address, balances ->
+                val balance = balances?.get(sdkAccount.accountUuid)
+                SaplingInfo(address = address, balance = balance?.sapling ?: createEmptyWalletBalance())
             }
         }
-    }
 
-    private fun createEmptyWalletBalance() =
-        WalletBalance(
-            available = Zatoshi.ZERO,
-            changePending = Zatoshi.ZERO,
-            valuePending = Zatoshi.ZERO,
-        )
+    private fun createEmptyWalletBalance() = WalletBalance(Zatoshi.ZERO, Zatoshi.ZERO, Zatoshi.ZERO)
 }
 
 private const val RETRY_DELAY = 3L
