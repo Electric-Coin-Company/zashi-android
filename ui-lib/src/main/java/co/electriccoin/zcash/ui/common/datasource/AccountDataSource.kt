@@ -65,11 +65,7 @@ interface AccountDataSource {
 
     suspend fun selectAccount(account: WalletAccount)
 
-    suspend fun importKeystoneAccount(
-        ufvk: String,
-        seedFingerprint: String,
-        index: Long
-    ): Account
+    suspend fun importKeystoneAccount(ufvk: String, seedFingerprint: String, index: Long): Account
 
     suspend fun requestNextShieldedAddress()
 }
@@ -121,7 +117,9 @@ class AccountDataSourceImpl(
                             }?.combineToFlow() ?: flowOf(null)
                     }
                     ?: flowOf(null)
-            }.flowOn(Dispatchers.IO)
+            }
+            .map { it?.sortedDescending() }
+            .flowOn(Dispatchers.IO)
             .stateIn(
                 scope = scope,
                 started = SharingStarted.Eagerly,
