@@ -117,8 +117,7 @@ class AccountDataSourceImpl(
                             }?.combineToFlow() ?: flowOf(null)
                     }
                     ?: flowOf(null)
-            }
-            .map { it?.sortedDescending() }
+            }.map { it?.sortedDescending() }
             .flowOn(Dispatchers.IO)
             .stateIn(
                 scope = scope,
@@ -177,12 +176,8 @@ class AccountDataSourceImpl(
     override suspend fun requestNextShieldedAddress() {
         scope
             .launch {
-                val selectedAccount = getSelectedAccount()
-                if (selectedAccount is ZashiAccount) {
-                    requestNextShieldedAddressPipeline.emit(selectedAccount.sdkAccount.accountUuid)
-                }
-            }
-            .join()
+                requestNextShieldedAddressPipeline.emit(getSelectedAccount().sdkAccount.accountUuid)
+            }.join()
     }
 
     private fun observeIsSelected(sdkAccount: Account, allAccounts: List<Account>) =
@@ -197,21 +192,21 @@ class AccountDataSourceImpl(
 
     private fun observeUnified(synchronizer: Synchronizer, sdkAccount: Account): Flow<UnifiedInfo> {
         val addressFlow =
-            when (sdkAccount.keySource?.lowercase()) {
-                KEYSTONE_KEYSOURCE -> flow { emit(WalletAddress.Unified.new(synchronizer.getUnifiedAddress(sdkAccount))) }
-
-                else ->
-                    requestNextShieldedAddressPipeline
-                        .onStart { emit(sdkAccount.accountUuid) }
-                        .map {
-                            WalletAddress.Unified.new(
-                                synchronizer.getCustomUnifiedAddress(sdkAccount, UnifiedAddressRequest.SHIELDED)
-                            )
+            requestNextShieldedAddressPipeline
+                .onStart { emit(sdkAccount.accountUuid) }
+                .map {
+                    val request =
+                        if (sdkAccount.keySource?.lowercase() == KEYSTONE_KEYSOURCE) {
+                            UnifiedAddressRequest.ORCHARD
+                        } else {
+                            UnifiedAddressRequest.SHIELDED
                         }
-            }.retryWhen { _, attempt ->
-                delay(attempt.coerceAtMost(RETRY_DELAY).seconds)
-                true
-            }
+
+                    WalletAddress.Unified.new(synchronizer.getCustomUnifiedAddress(sdkAccount, request))
+                }.retryWhen { _, attempt ->
+                    delay(attempt.coerceAtMost(RETRY_DELAY).seconds)
+                    true
+                }
 
         return combine(addressFlow, synchronizer.walletBalances) { address, balances ->
             val balance = balances?.get(sdkAccount.accountUuid)
