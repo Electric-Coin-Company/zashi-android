@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="send_confirmation_failure_grpc_close_button">Закрыть</string>
+    <string name="send_confirmation_multiple_trx_failure_title">Отправка не удалась</string>
+    <string name="send_confirmation_multiple_trx_failure_report_button">Связаться со службой поддержки</string>
+    <string name="send_confirmation_fee">Комиссия</string>
+    <string name="send_confirmation_send_button">Отправить</string>
+    <string name="send_confirmation_back_button">Отмена</string>
+    <string name="send_confirmation_sending_title">Отправление…</string>
+    <string name="send_confirmation_success_btn_close">Закрыть</string>
+    <string name="send_confirmation_failure_title">Отправка не удалась</string>
+    <string name="send_confirmation_failure_close_button">Закрыть</string>
+    <string name="send_confirmation_failure_report_button">Отчёт</string>
+    <string name="send_confirmation_failure_grpc_title">Ошибка соединения</string>
+    <string name="send_confirmation_multiple_trx_failure_report_unable_open_email">Не удалось запустить приложение электронной почты.</string>
+    <string name="send_confirmation_multiple_trx_failure_copy_button">Копировать идентификаторы транзакций</string>
+    <string name="send_confirmation_multiple_report_text">Hi, Zashi Team.\n\nWhile sending a transaction to a TEX address, I encountered an error state. I\'m reaching out to get guidance on how to recover my funds.\n\nThank you.</string>
+    <string name="send_stage_confirmation_title">Подтверждение</string>
+    <string name="send_confirmation_address">Отправить по адресу</string>
+    <string name="send_confirmation_address_from">Отправка от</string>
+    <string name="send_confirmation_sending_subtitle">Ваши средства будут отправлены к\n <xliff:g example="zs12ghrbdjfs24383x5T…" id="index">%1$s</xliff:g></string>
+    <string name="send_confirmation_success_subtitle_transparent">Ваши токены были успешно защищены</string>
+    <string name="send_confirmation_success_title">Отправлено!</string>
+    <string name="send_confirmation_success_subtitle">Ваши токены были успешно отправлены к\n<xliff:g example="zs12ghrbdjfs24383x5T..." id="index">%1$s</xliff:g></string>
+    <string name="send_confirmation_success_view_trx">Просмотреть транзакцию</string>
+    <string name="send_confirmation_failure_subtitle">Произошла ошибка при попытке отправить токены.\nПопробуйте ещё раз, пожалуйста.</string>
+    <string name="send_confirmation_multiple_report_statuses" formatted="true">Статус транзакции:</string>
+    <string name="send_confirmation_multiple_trx_failure_copy_tag">Transaction IDs</string>
+    <string name="send_confirmation_amount">Общая сумма</string>
+    <string name="send_confirmation_memo">Сообщение</string>
+    <string name="send_confirmation_amount_item">Сумма</string>
+    <string name="send_confirmation_sending_title_transparent">Защищение…</string>
+    <string name="send_confirmation_sending_subtitle_transparent">Ваши токены защищаются</string>
+    <string name="send_confirmation_success_title_transparent">Защищенно!</string>
+    <string name="send_confirmation_failure_title_transparent">Не удалось защитить</string>
+    <string name="send_confirmation_failure_subtitle_transparent">Произошла ошибка при попытке защитить ваши токены. Попробуйте ещё раз, пожалуйста.</string>
+    <string name="send_confirmation_failure_view_trx">Просмотр транзакции</string>
+    <string name="send_confirmation_failure_grpc_subtitle">Zashi столкнулся с проблемами с подключением при отправке транзакции. Он попытается повторно в ближайшие несколько минут.</string>
+    <string name="send_confirmation_multiple_trx_failure_ids_title">Идентификаторы транзакций</string>
+    <string name="send_confirmation_multiple_trx_failure_text_1">Отправить этому получателю требовалось несколько
+        транзакций, но только некоторые из них успешно прошли, а остальные не удались. Ваши средства в безопасности, но
+        они должны быть возвращены с помощью от нашей стороны.</string>
+    <string name="send_confirmation_multiple_trx_failure_text_2">Пожалуйста используйте кнопку ниже, чтобы связаться с нами. Это автоматически подготовит все данные необходимые для восстановления ваших средств.</string>
+    <string name="send_confirmation_multiple_report_status_failure" formatted="true"><xliff:g example="3" id="index">%1$d</xliff:g>: Failure: gRPC: <xliff:g example="true" id="grpc">%2$s</xliff:g>, code: <xliff:g example="123" id="code">%3$d</xliff:g>, description: <xliff:g example="Network unreachable" id="desc">%4$s</xliff:g></string>
+    <string name="send_confirmation_multiple_report_status_success"><xliff:g example="1" id="index">%1$d</xliff:g>: Успешно</string>
+    <string name="send_confirmation_multiple_report_status_not_attempt" formatted="true"><xliff:g example="2" id="index">%1$d</xliff:g>: Нет попытки</string>
+</resources>

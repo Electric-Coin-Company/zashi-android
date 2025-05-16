@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="restore_button_clear">Очистить сид-фразу</string>
+    <string name="restore_title">Введите секретную сид-фразу для восстановления</string>
+    <string name="restore_seed_instructions">Введите 24-словную сид-фразу, чтобы восстановить соответствующий кошелёк.</string>
+    <string name="restore_seed_hint">privacy dignity freedom …</string>
+    <string name="restore_seed_warning_suggestions">Этого слова нет в словаре сид-фраз. Пожалуйста, выберите правильное слово из предложенных.</string>
+    <string name="restore_seed_warning_no_suggestions">Этого слова нет в словаре сид-фраз.</string>
+    <string name="restore_birthday_sub_header">(необязательно)</string>
+    <string name="restore_seed_button_next">Далее</string>
+    <string name="restore_birthday_header">Высота дня рождения кошелька</string>
+    <string name="restore_birthday_button_restore">Восстановить</string>
+</resources>
