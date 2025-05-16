@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.DistributionDimension
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
@@ -18,6 +17,8 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -39,8 +40,6 @@ import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
-import co.electriccoin.zcash.ui.screen.receive.Receive
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import co.electriccoin.zcash.ui.screen.send.Send
@@ -61,9 +60,11 @@ class HomeViewModel(
     shieldFundsInfoProvider: ShieldFundsInfoProvider,
     private val navigationRouter: NavigationRouter,
     private val isRestoreSuccessDialogVisible: IsRestoreSuccessDialogVisibleUseCase,
-    private val navigateToCoinbase: NavigateToCoinbaseUseCase,
     private val shieldFunds: ShieldFundsMessageUseCase,
+    private val navigateToCoinbase: NavigateToCoinbaseUseCase,
     private val navigateToError: NavigateToErrorUseCase,
+    private val navigateToReceive: NavigateToReceiveUseCase,
+    private val navigateToRequestShielded: NavigateToRequestShieldedUseCase
 ) : ViewModel() {
     private val messageState =
         combine(
@@ -234,14 +235,13 @@ class HomeViewModel(
 
     private fun onSendButtonClick() = navigationRouter.forward(Send())
 
-    private fun onReceiveButtonClick() = navigationRouter.forward(Receive)
+    private fun onReceiveButtonClick() = viewModelScope.launch { navigateToReceive() }
 
     private fun onScanButtonClick() = navigationRouter.forward(Scan(ScanFlow.HOMEPAGE))
 
     private fun onBuyClick() = viewModelScope.launch { navigateToCoinbase(replaceCurrentScreen = false) }
 
-    private fun onRequestClick() =
-        navigationRouter.forward("${NavigationTargets.REQUEST}/${ReceiveAddressType.Unified.ordinal}")
+    private fun onRequestClick() = viewModelScope.launch { navigateToRequestShielded() }
 
     private fun onWalletUpdatingMessageClick() = navigationRouter.forward(WalletUpdatingInfo)
 

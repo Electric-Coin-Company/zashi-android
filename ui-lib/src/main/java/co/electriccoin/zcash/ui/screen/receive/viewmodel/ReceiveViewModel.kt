@@ -78,12 +78,7 @@ class ReceiveViewModel(
         icon =
             when (account) {
                 is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
-                is ZashiAccount ->
-                    if (type == ReceiveAddressType.Unified) {
-                        R.drawable.ic_zec_round_full
-                    } else {
-                        R.drawable.ic_zec_round_stroke
-                    }
+                is ZashiAccount -> R.drawable.ic_zec_round_full
             },
         title =
             when (account) {

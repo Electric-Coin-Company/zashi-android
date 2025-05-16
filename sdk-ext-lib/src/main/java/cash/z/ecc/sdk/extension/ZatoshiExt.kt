@@ -11,6 +11,9 @@ private const val DECIMALS_SHORT = 3
 
 private const val MIN_ZATOSHI_FOR_DOTS_SHORT = Zatoshi.ZATOSHI_PER_ZEC / 1000
 
+val Zatoshi.Companion.ZERO: Zatoshi
+    get() = Zatoshi(0)
+
 fun Zatoshi.toZecStringFull() =
     convertZatoshiToZecString(
         maxDecimals = DECIMALS_MAX_LONG,
