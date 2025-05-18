@@ -6,6 +6,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Added
+- Shielded address is not rotated by navigating to Receive and Request screens from homepage
+
 ## [2.0.2 (962)] - 2025-05-14
 
 ### Fixed
