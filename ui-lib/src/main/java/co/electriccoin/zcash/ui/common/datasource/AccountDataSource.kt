@@ -70,6 +70,7 @@ interface AccountDataSource {
     suspend fun requestNextShieldedAddress()
 }
 
+@Suppress("TooManyFunctions")
 class AccountDataSourceImpl(
     private val synchronizerProvider: SynchronizerProvider,
     private val selectedAccountUUIDProvider: SelectedAccountUUIDProvider,
