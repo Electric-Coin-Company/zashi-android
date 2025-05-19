@@ -12,6 +12,14 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.0.3 (965)] - 2025-05-19
+
+### Changed:
+- Zashi no longer includes transparent receivers in Unified Addresses.
+- The Receive screen now displays a rotating, shielded-only UA which gets freshly generated each time you open the Receive screen.
+- All transactions sent to your different rotating Shielded Addresses will remain part of one wallet balance under the same seed phrase.
+- Wallets and exchanges that don’t support sending funds to shielded receivers will require transparent address.
+
 ## [2.0.2 (962)] - 2025-05-14
 
 ### Changed:
