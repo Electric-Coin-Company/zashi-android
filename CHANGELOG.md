@@ -4,11 +4,11 @@ All notable changes to this application will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this application adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.0.3 (965)] - 2025-05-19
 
 ### Fixed 
 - Shared preferences object cached in-memory and locked with semaphore in order to improve stability of security-crypto library
-- Shielded address is not rotated by navigating to Receive and Request screens from homepage
+- Shielded address is now rotated by navigating to Receive and Request screens from homepage
 
 ## [2.0.2 (962)] - 2025-05-14
 
