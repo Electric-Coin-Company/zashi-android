@@ -44,13 +44,14 @@ class ExchangeRateRepositoryImpl(
 ) : ExchangeRateRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    private val isExchangeRateUsdOptedIn = exchangeRateOptInStorageProvider
-        .observe()
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
+    private val isExchangeRateUsdOptedIn =
+        exchangeRateOptInStorageProvider
+            .observe()
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
+            )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val exchangeRateUsdInternal =
@@ -66,8 +67,7 @@ class ExchangeRateRepositoryImpl(
                 } else {
                     flowOf(ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null))
                 }
-            }
-            .stateIn(
+            }.stateIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(USD_EXCHANGE_REFRESH_LOCK_THRESHOLD),
                 initialValue = ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null)
