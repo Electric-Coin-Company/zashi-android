@@ -4,6 +4,14 @@ All notable changes to this application will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this application adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- Receive screen now correctly displays colors for shielded addresses for both Zashi and Keystone
+
+### Changed
+- Exchange rate is now always refreshed upon navigating to Send screen
+
 ## [2.0.3 (965)] - 2025-05-19
 
 ### Fixed 

@@ -15,6 +15,9 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCa
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState.ColorMode.DEFAULT
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState.ColorMode.KEYSTONE
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState.ColorMode.ZASHI
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -107,7 +110,12 @@ class ReceiveViewModel(
         onQrClicked = { onQrCodeClick(type) },
         onRequestClicked = { onRequestClick(type) },
         onClick = onClick,
-        isExpanded = isExpanded
+        isExpanded = isExpanded,
+        colorMode =
+            when (account) {
+                is KeystoneAccount -> if (type == ReceiveAddressType.Unified) KEYSTONE else DEFAULT
+                is ZashiAccount -> if (type == ReceiveAddressType.Unified) ZASHI else DEFAULT
+            }
     )
 
     private fun onRequestClick(addressType: ReceiveAddressType) =
