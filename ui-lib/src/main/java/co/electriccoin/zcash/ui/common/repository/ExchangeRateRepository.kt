@@ -2,14 +2,12 @@ package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.model.ObserveFiatCurrencyResult
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.preference.StandardPreferenceProvider
-import co.electriccoin.zcash.preference.model.entry.NullableBooleanPreferenceDefault
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.provider.ExchangeRateOptInStorageProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.common.wallet.RefreshLock
 import co.electriccoin.zcash.ui.common.wallet.StaleLock
-import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,10 +19,8 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -38,15 +34,23 @@ interface ExchangeRateRepository {
     val state: StateFlow<ExchangeRateState>
 
     fun optInExchangeRateUsd(optIn: Boolean)
+
+    fun refreshExchangeRateUsd()
 }
 
 class ExchangeRateRepositoryImpl(
     private val synchronizerProvider: SynchronizerProvider,
-    private val standardPreferenceProvider: StandardPreferenceProvider,
+    private val exchangeRateOptInStorageProvider: ExchangeRateOptInStorageProvider
 ) : ExchangeRateRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    private val isExchangeRateUsdOptedIn = nullableBooleanStateFlow(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN)
+    private val isExchangeRateUsdOptedIn = exchangeRateOptInStorageProvider
+        .observe()
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
+        )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val exchangeRateUsdInternal =
@@ -62,7 +66,8 @@ class ExchangeRateRepositoryImpl(
                 } else {
                     flowOf(ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null))
                 }
-            }.stateIn(
+            }
+            .stateIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(USD_EXCHANGE_REFRESH_LOCK_THRESHOLD),
                 initialValue = ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null)
@@ -163,7 +168,7 @@ class ExchangeRateRepositoryImpl(
         return lastExchangeRateUsdValue
     }
 
-    private fun refreshExchangeRateUsd() {
+    override fun refreshExchangeRateUsd() {
         refreshExchangeRateUsdInternal()
     }
 
@@ -177,25 +182,7 @@ class ExchangeRateRepositoryImpl(
         }
 
     override fun optInExchangeRateUsd(optIn: Boolean) {
-        setNullableBooleanPreference(StandardPreferenceKeys.EXCHANGE_RATE_OPTED_IN, optIn)
-    }
-
-    private fun nullableBooleanStateFlow(default: NullableBooleanPreferenceDefault): StateFlow<Boolean?> =
-        flow {
-            emitAll(default.observe(standardPreferenceProvider()))
-        }.stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
-
-    private fun setNullableBooleanPreference(
-        default: NullableBooleanPreferenceDefault,
-        newState: Boolean?
-    ) {
-        scope.launch {
-            default.putValue(standardPreferenceProvider(), newState)
-        }
+        scope.launch { exchangeRateOptInStorageProvider.store(optIn) }
     }
 }
 

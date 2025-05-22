@@ -4,6 +4,8 @@ import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProviderImpl
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProviderImpl
+import co.electriccoin.zcash.ui.common.provider.ExchangeRateOptInStorageProvider
+import co.electriccoin.zcash.ui.common.provider.ExchangeRateOptInStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
@@ -55,4 +57,5 @@ val providerModule =
         singleOf(::CrashReportingStorageProviderImpl) bind CrashReportingStorageProvider::class
         singleOf(::PersistableWalletStorageProviderImpl) bind PersistableWalletStorageProvider::class
         singleOf(::ShieldFundsInfoProviderImpl) bind ShieldFundsInfoProvider::class
+        singleOf(::ExchangeRateOptInStorageProviderImpl) bind ExchangeRateOptInStorageProvider::class
     }
