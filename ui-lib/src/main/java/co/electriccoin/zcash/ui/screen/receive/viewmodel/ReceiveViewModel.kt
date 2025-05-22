@@ -113,8 +113,8 @@ class ReceiveViewModel(
         isExpanded = isExpanded,
         colorMode =
             when (account) {
-                is KeystoneAccount -> if (type == ReceiveAddressType.Unified) DEFAULT else KEYSTONE
-                is ZashiAccount -> if (type == ReceiveAddressType.Unified) DEFAULT else ZASHI
+                is KeystoneAccount -> if (type == ReceiveAddressType.Unified) KEYSTONE else DEFAULT
+                is ZashiAccount -> if (type == ReceiveAddressType.Unified) ZASHI else DEFAULT
             }
     )
 
