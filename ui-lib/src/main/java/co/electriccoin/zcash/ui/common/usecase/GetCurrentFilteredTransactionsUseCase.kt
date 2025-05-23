@@ -13,6 +13,7 @@ import co.electriccoin.zcash.ui.common.repository.TransactionFilter
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
+import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.combineToFlow
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -252,7 +253,7 @@ class GetCurrentFilteredTransactionsUseCase(
         transaction: FilterTransactionData,
         fulltextFilter: String
     ): Boolean {
-        val text = stringRes(transaction.transaction.amount).getString(context)
+        val text = stringRes(transaction.transaction.amount, HIDDEN).getString(context)
         return text.contains(fulltextFilter, ignoreCase = true)
     }
 

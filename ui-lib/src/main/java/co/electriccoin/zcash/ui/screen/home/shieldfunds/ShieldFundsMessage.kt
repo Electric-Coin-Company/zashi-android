@@ -18,6 +18,7 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -82,7 +83,7 @@ private fun Preview() =
                         subtitle =
                             stringRes(
                                 R.string.home_message_transparent_balance_subtitle,
-                                stringRes(Zatoshi(10000))
+                                stringRes(Zatoshi(10000), HIDDEN)
                             ),
                         onClick = {},
                         onButtonClick = {}

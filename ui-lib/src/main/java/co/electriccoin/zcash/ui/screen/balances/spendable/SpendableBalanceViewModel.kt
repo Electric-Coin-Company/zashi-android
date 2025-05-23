@@ -14,6 +14,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ListTransactionData
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.loadingImageRes
@@ -80,7 +81,7 @@ class SpendableBalanceViewModel(
         val shielding =
             stringRes(
                 R.string.balance_action_shield_message,
-                stringRes(Zatoshi.typicalFee)
+                stringRes(Zatoshi.typicalFee, HIDDEN)
             ).takeIf { account.isShieldingAvailable }
 
         return if (pending != null && shielding != null) {
@@ -110,7 +111,7 @@ class SpendableBalanceViewModel(
             SpendableBalanceRowState(
                 title = stringRes(R.string.balance_action_info_shielded),
                 icon = imageRes(R.drawable.ic_balance_shield),
-                value = stringRes(R.string.general_zec, stringRes(account.spendableShieldedBalance))
+                value = stringRes(R.string.general_zec, stringRes(account.spendableShieldedBalance, HIDDEN))
             ),
             when {
                 account.totalShieldedBalance > account.spendableShieldedBalance &&
@@ -119,7 +120,7 @@ class SpendableBalanceViewModel(
                     SpendableBalanceRowState(
                         title = stringRes(R.string.balance_action_info_pending),
                         icon = loadingImageRes(),
-                        value = stringRes(R.string.general_zec, stringRes(account.pendingShieldedBalance))
+                        value = stringRes(R.string.general_zec, stringRes(account.pendingShieldedBalance), HIDDEN)
                     )
 
                 account.totalShieldedBalance > account.spendableShieldedBalance && hasPendingTransaction ->
@@ -129,7 +130,7 @@ class SpendableBalanceViewModel(
                         value =
                             stringRes(
                                 R.string.general_zec,
-                                stringRes(account.totalShieldedBalance - account.spendableShieldedBalance)
+                                stringRes(account.totalShieldedBalance - account.spendableShieldedBalance, HIDDEN)
                             )
                     )
 

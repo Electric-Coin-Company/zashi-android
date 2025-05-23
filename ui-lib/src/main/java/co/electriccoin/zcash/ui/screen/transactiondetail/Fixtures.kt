@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.transactiondetail
 
 import cash.z.ecc.android.sdk.model.Zatoshi
+import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
@@ -24,7 +25,7 @@ object SendShieldStateFixture {
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
             onTransactionAddressClick = {},
-            fee = stringRes(Zatoshi(1011)),
+            fee = stringRes(Zatoshi(1011), HIDDEN),
             completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
             memo =
                 TransactionDetailMemosState(
@@ -48,7 +49,7 @@ object SendTransparentStateFixture {
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
             onTransactionAddressClick = {},
-            fee = stringRes(Zatoshi(1011)),
+            fee = stringRes(Zatoshi(1011), HIDDEN),
             completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
             note = stringRes("None"),
             isPending = false
@@ -94,7 +95,7 @@ object ShieldingStateFixture {
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
             completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
-            fee = stringRes(Zatoshi(1011)),
+            fee = stringRes(Zatoshi(1011), HIDDEN),
             note = stringRes("None"),
             isPending = false
         )
