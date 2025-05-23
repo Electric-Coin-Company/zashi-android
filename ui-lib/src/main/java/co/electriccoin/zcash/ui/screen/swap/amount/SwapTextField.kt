@@ -107,7 +107,7 @@ fun SwapTextField(
                     contentPadding = PaddingValues(0.dp)
                 )
                 Spacer(4.dp)
-                Token(
+                SwapToken(
                     state = state.token
                 )
             }
@@ -143,7 +143,7 @@ fun SwapTextField(
 data class SwapTextFieldState(
     val title: StringResource,
     val symbol: StringResource,
-    val token: TokenState,
+    val token: SwapTokenState,
     val primaryText: TextFieldState,
     val primaryPlaceholder: StringResource,
     val secondaryText: StringResource,
@@ -157,7 +157,7 @@ private fun Preview() = ZcashTheme {
     BlankSurface {
         SwapTextField(
             state = SwapTextFieldState(
-                token = TokenState(stringRes("USDT")),
+                token = SwapTokenState(stringRes("USDT")),
                 title = stringRes("Recipient gets"),
                 symbol = stringRes("$"),
                 primaryText = TextFieldState(value = stringRes("")) {},

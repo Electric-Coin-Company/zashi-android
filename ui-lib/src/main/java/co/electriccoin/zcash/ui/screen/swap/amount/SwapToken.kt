@@ -21,8 +21,8 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
-fun Token(
-    state: TokenState,
+fun SwapToken(
+    state: SwapTokenState,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -46,7 +46,7 @@ fun Token(
 }
 
 @Immutable
-data class TokenState(
+data class SwapTokenState(
     val ticker: StringResource
 )
 
@@ -54,8 +54,8 @@ data class TokenState(
 @Composable
 private fun Preview() = ZcashTheme {
     BlankSurface {
-        Token(
-            state = TokenState(
+        SwapToken(
+            state = SwapTokenState(
                 stringRes("USDT")
             )
         )

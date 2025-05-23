@@ -53,7 +53,7 @@ fun SwapText(
                     color = ZashiColors.Text.textTertiary
                 )
                 Spacer(1f)
-                Token(
+                SwapToken(
                     state = state.token
                 )
             }
@@ -70,7 +70,7 @@ fun SwapText(
 
 @Immutable
 data class SwapTextState(
-    val token: TokenState,
+    val token: SwapTokenState,
     val title: StringResource,
     val text: StringResource,
     val secondaryText: StringResource,
@@ -82,7 +82,7 @@ private fun Preview() = ZcashTheme {
     BlankSurface {
         SwapText(
             state = SwapTextState(
-                token = TokenState(
+                token = SwapTokenState(
                     stringRes("ZEC")
                 ),
                 title = stringRes("You pay"),

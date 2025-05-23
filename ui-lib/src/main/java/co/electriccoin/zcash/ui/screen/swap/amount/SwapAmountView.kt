@@ -119,7 +119,7 @@ private fun Preview() = ZcashTheme {
     SwapAmountView(
         state = SwapAmountState(
             recipientGets = SwapTextFieldState(
-                token = TokenState(stringRes("USDT")),
+                token = SwapTokenState(stringRes("USDT")),
                 title = stringRes("Recipient gets"),
                 symbol = stringRes("$"),
                 primaryText = TextFieldState(value = stringRes("")) {},
@@ -133,7 +133,7 @@ private fun Preview() = ZcashTheme {
                 icon = R.drawable.ic_swap_slippage
             ),
             youPay = SwapTextState(
-                token = TokenState(
+                token = SwapTokenState(
                     stringRes("ZEC")
                 ),
                 title = stringRes("You pay"),
