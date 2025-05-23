@@ -14,7 +14,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToWalletBackupUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettings
 import kotlinx.collections.immutable.toImmutableList
@@ -50,17 +50,17 @@ class AdvancedSettingsViewModel(
             onBack = ::onBack,
             items =
                 mutableStateListOf(
-                    ZashiListItemState(
+                    ListItemState(
                         title = stringRes(R.string.advanced_settings_recovery),
                         icon = R.drawable.ic_advanced_settings_recovery,
                         onClick = ::onSeedRecoveryClick
                     ),
-                    ZashiListItemState(
+                    ListItemState(
                         title = stringRes(R.string.advanced_settings_export),
                         icon = R.drawable.ic_advanced_settings_export,
                         onClick = {}
                     ),
-                    ZashiListItemState(
+                    ListItemState(
                         title = stringRes(R.string.advanced_settings_tax),
                         icon =
                             if (walletRestoringState == WalletRestoringState.RESTORING) {
@@ -71,13 +71,13 @@ class AdvancedSettingsViewModel(
                         isEnabled = walletRestoringState != WalletRestoringState.RESTORING,
                         onClick = ::onTaxExportClick
                     ),
-                    ZashiListItemState(
+                    ListItemState(
                         title = stringRes(R.string.advanced_settings_choose_server),
                         icon =
                             R.drawable.ic_advanced_settings_choose_server,
                         onClick = ::onChooseServerClick
                     ),
-                    ZashiListItemState(
+                    ListItemState(
                         title = stringRes(R.string.advanced_settings_currency_conversion),
                         icon =
                             R.drawable.ic_advanced_settings_currency_conversion,
@@ -86,7 +86,7 @@ class AdvancedSettingsViewModel(
                 ).apply {
                     if (versionInfo.distributionDimension == DistributionDimension.STORE) {
                         add(
-                            ZashiListItemState(
+                            ListItemState(
                                 title = stringRes(R.string.advanced_settings_crash_reporting),
                                 icon =
                                     R.drawable.ic_advanced_settings_crash_reporting,

@@ -34,7 +34,6 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
-import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -57,7 +56,7 @@ fun ZashiListItem(
         modifier = modifier,
         contentPadding = contentPadding,
         state =
-            ZashiListItemState(
+            ListItemState(
                 title = stringRes(title),
                 subtitle = subtitle?.let { stringRes(it) },
                 isEnabled = isEnabled,
@@ -71,7 +70,7 @@ fun ZashiListItem(
 
 @Composable
 fun ZashiListItem(
-    state: ZashiListItemState,
+    state: ListItemState,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = ZashiListItemDefaults.contentPadding,
     colors: ZashiListItemColors =
@@ -141,7 +140,7 @@ private fun ZashiListTrailingItem(
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(R.drawable.ic_chevron_right orDark R.drawable.ic_chevron_right_dark),
+                painter = painterResource(R.drawable.ic_chevron_right),
                 contentDescription = contentDescription,
             )
         }
@@ -214,7 +213,7 @@ private fun ZashiListContentItem(
     }
 }
 
-data class ZashiListItemState(
+data class ListItemState(
     val title: StringResource,
     @DrawableRes val icon: Int? = null,
     val design: ZashiListItemDesignType = ZashiListItemDesignType.PRIMARY,

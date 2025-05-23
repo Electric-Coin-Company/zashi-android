@@ -602,7 +602,7 @@ private fun MultipleFailureTransaction(
                             Modifier
                                 .fillMaxWidth()
                                 .background(
-                                    shape = RoundedCornerShape(ZashiDimensions.Radius.radiusIg),
+                                    shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg),
                                     color = ZashiColors.Inputs.Default.bg
                                 ).padding(
                                     horizontal = ZashiDimensions.Spacing.spacingLg,

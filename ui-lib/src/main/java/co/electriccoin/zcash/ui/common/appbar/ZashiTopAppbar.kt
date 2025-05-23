@@ -37,8 +37,8 @@ fun ZashiTopAppbar(
                 Crossfade(state.balanceVisibilityButton, label = "BalanceVisibility") {
                     ZashiIconButton(it, modifier = Modifier.size(40.dp))
                 }
+                Spacer(Modifier.width(20.dp))
             }
-            Spacer(Modifier.width(20.dp))
         },
         colors =
             ZcashTheme.colors.topAppBarColors orDark

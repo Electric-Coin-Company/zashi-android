@@ -35,7 +35,7 @@ import co.electriccoin.zcash.ui.design.component.listitem.BaseListItem
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemColors
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDefaults
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDesignType
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
 import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -131,7 +131,7 @@ private fun ZashiKeystonePromoListItem(item: AccountListItem.Other) {
 
 @Composable
 private fun ZashiKeystonePromoListItem(
-    state: ZashiListItemState,
+    state: ListItemState,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(24.dp),
     colors: ZashiListItemColors =
@@ -259,7 +259,7 @@ private fun Preview() =
                                 )
                             ),
                             AccountListItem.Other(
-                                ZashiListItemState(
+                                ListItemState(
                                     title = stringRes("Keystone Hardware Wallet"),
                                     subtitle = stringRes("Get a Keystone Hardware Wallet and secure your Zcash."),
                                     design = ZashiListItemDesignType.SECONDARY,

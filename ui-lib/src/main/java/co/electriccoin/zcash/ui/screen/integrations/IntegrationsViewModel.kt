@@ -20,7 +20,7 @@ import co.electriccoin.zcash.ui.common.usecase.Status
 import co.electriccoin.zcash.ui.common.usecase.Status.DISABLED
 import co.electriccoin.zcash.ui.common.usecase.Status.ENABLED
 import co.electriccoin.zcash.ui.common.usecase.Status.UNAVAILABLE
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import co.electriccoin.zcash.ui.screen.flexa.Flexa
@@ -84,7 +84,7 @@ class IntegrationsViewModel(
         onBack = ::onBack,
         items =
             listOfNotNull(
-                ZashiListItemState(
+                ListItemState(
                     // Set the wallet currency by app build is more future-proof, although we hide it from
                     // the UI in the Testnet build
                     icon = R.drawable.ic_integrations_coinbase,
@@ -96,7 +96,7 @@ class IntegrationsViewModel(
                         ),
                     onClick = ::onBuyWithCoinbaseClicked
                 ).takeIf { coinbaseStatus != UNAVAILABLE },
-                ZashiListItemState(
+                ListItemState(
                     // Set the wallet currency by app build is more future-proof, although we hide it from
                     // the UI in the Testnet build
                     isEnabled = isRestoring.not() && selectedAccount is ZashiAccount,
@@ -110,7 +110,7 @@ class IntegrationsViewModel(
                     subtitle = stringRes(R.string.integrations_flexa_subtitle),
                     onClick = ::onFlexaClicked
                 ).takeIf { flexaStatus != UNAVAILABLE },
-                ZashiListItemState(
+                ListItemState(
                     title = stringRes(R.string.integrations_keystone),
                     subtitle = stringRes(R.string.integrations_keystone_subtitle),
                     icon = R.drawable.ic_integrations_keystone,

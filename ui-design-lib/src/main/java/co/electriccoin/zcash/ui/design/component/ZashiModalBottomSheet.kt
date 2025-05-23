@@ -39,6 +39,7 @@ fun ZashiModalBottomSheet(
     scrimColor: Color = BottomSheetDefaults.ScrimColor,
     sheetState: SheetState = rememberModalBottomSheetState(),
     properties: ModalBottomSheetProperties = ModalBottomSheetDefaults.properties,
+    dragHandle: @Composable (() -> Unit)? = { ZashiModalBottomSheetDragHandle() },
     content: @Composable ColumnScope.() -> Unit,
 ) {
     ModalBottomSheet(
@@ -48,7 +49,7 @@ fun ZashiModalBottomSheet(
         scrimColor = scrimColor,
         shape = ZashiModalBottomSheetDefaults.SheetShape,
         containerColor = ZashiModalBottomSheetDefaults.ContainerColor,
-        dragHandle = { ZashiModalBottomSheetDragHandle() },
+        dragHandle = dragHandle,
         properties = properties,
         content = content,
     )

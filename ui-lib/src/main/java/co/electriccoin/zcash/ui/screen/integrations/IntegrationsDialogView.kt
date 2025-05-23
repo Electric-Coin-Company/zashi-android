@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
 import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -102,19 +102,19 @@ private fun IntegrationSettings() =
                     disabledInfo = stringRes("Disabled info"),
                     items =
                         persistentListOf(
-                            ZashiListItemState(
+                            ListItemState(
                                 icon = R.drawable.ic_integrations_coinbase,
                                 title = stringRes("Coinbase"),
                                 subtitle = stringRes("subtitle"),
                                 onClick = {}
                             ),
-                            ZashiListItemState(
+                            ListItemState(
                                 title = stringRes(R.string.integrations_flexa),
                                 subtitle = stringRes(R.string.integrations_flexa),
                                 icon = R.drawable.ic_integrations_flexa,
                                 onClick = {}
                             ),
-                            ZashiListItemState(
+                            ListItemState(
                                 title = stringRes(R.string.integrations_keystone),
                                 subtitle = stringRes(R.string.integrations_keystone_subtitle),
                                 icon = R.drawable.ic_integrations_keystone,

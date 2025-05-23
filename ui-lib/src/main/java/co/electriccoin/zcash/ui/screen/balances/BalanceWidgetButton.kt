@@ -51,7 +51,7 @@ internal fun BalanceWidgetButton(
     Button(
         onClick = state.onClick,
         modifier = modifier,
-        shape = RoundedCornerShape(ZashiDimensions.Radius.radiusIg),
+        shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg),
         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
         colors = colors.toButtonColors(),
         elevation =
