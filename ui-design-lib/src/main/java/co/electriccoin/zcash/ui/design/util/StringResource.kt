@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.design.util
 
 import android.content.Context
@@ -44,7 +46,7 @@ sealed interface StringResource {
         val amount: Number,
         val ticker: String,
         val symbolLocation: CurrencySymbolLocation
-    ): StringResource
+    ) : StringResource
 
     @Immutable
     data class ByDateTime(
@@ -98,11 +100,12 @@ fun stringRes(
 fun stringResByDynamicCurrencyAmount(
     amount: Number,
     ticker: String,
-    symbolLocation: CurrencySymbolLocation = if (ticker == FiatCurrency.USD.symbol) {
-        CurrencySymbolLocation.BEFORE
-    } else {
-        CurrencySymbolLocation.AFTER
-    }
+    symbolLocation: CurrencySymbolLocation =
+        if (ticker == FiatCurrency.USD.symbol) {
+            CurrencySymbolLocation.BEFORE
+        } else {
+            CurrencySymbolLocation.AFTER
+        }
 ): StringResource = StringResource.ByDynamicCurrencyAmount(amount, ticker, symbolLocation)
 
 @Stable
@@ -207,8 +210,9 @@ object StringResourceDefaults {
     }
 
     fun convertCurrency(res: StringResource.ByDynamicCurrencyAmount): String {
-        val amount = currencyFormatter(maxDecimals = ZEC_FORMATTER.maximumFractionDigits, minDecimals = 2)
-            .format(res.amount)
+        val amount =
+            currencyFormatter(maxDecimals = ZEC_FORMATTER.maximumFractionDigits, minDecimals = 2)
+                .format(res.amount)
         return when (res.symbolLocation) {
             CurrencySymbolLocation.BEFORE -> "${res.ticker}$amount"
             CurrencySymbolLocation.AFTER -> "$amount ${res.ticker}"
@@ -276,5 +280,7 @@ private const val TRANSACTION_MAX_PREFIX_SUFFIX_LENGHT = 5
 private const val ADDRESS_MAX_LENGTH_ABBREVIATED = 20
 
 enum class CurrencySymbolLocation {
-    BEFORE, AFTER, HIDDEN
+    BEFORE,
+    AFTER,
+    HIDDEN
 }

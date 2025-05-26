@@ -45,11 +45,12 @@ fun PaySwapView(state: PaySwapState?) {
         state = state
     ) { innerState ->
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f, false)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f, false)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 24.dp)
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
@@ -144,49 +145,56 @@ private fun Item(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    PaySwapView(
-        state = PaySwapState(
-            from = SwapTokenAmountState(
-                stringResByDynamicCurrencyAmount(2.4214, "", CurrencySymbolLocation.HIDDEN),
-                stringResByDynamicCurrencyAmount(21312, "$")
-            ),
-            to = SwapTokenAmountState(
-                stringResByDynamicCurrencyAmount(2.4214, "", CurrencySymbolLocation.HIDDEN),
-                stringResByDynamicCurrencyAmount(21312, "$")
-            ),
-            items = listOf(
-                PaySwapInfoItem(
-                    description = stringRes("Pay from"),
-                    title = stringRes("Zashi"),
-                    subtitle = null
-                ),
-                PaySwapInfoItem(
-                    description = stringRes("Pay to"),
-                    title = stringResByAddress("Asdwae12easdasd", abbreviated = true),
-                    subtitle = null
-                ),
-                PaySwapInfoItem(
-                    description = stringRes("ZEC transaction fee"),
-                    title = stringRes(Zatoshi(1231234)),
-                    subtitle = null
-                ),
-                PaySwapInfoItem(
-                    description = stringRes("Max slippage 1%"),
-                    title = stringRes(Zatoshi(1231234)),
-                    subtitle = stringResByDynamicCurrencyAmount(23, "$")
+private fun Preview() =
+    ZcashTheme {
+        PaySwapView(
+            state =
+                PaySwapState(
+                    from =
+                        SwapTokenAmountState(
+                            stringResByDynamicCurrencyAmount(2.4214, "", CurrencySymbolLocation.HIDDEN),
+                            stringResByDynamicCurrencyAmount(21312, "$")
+                        ),
+                    to =
+                        SwapTokenAmountState(
+                            stringResByDynamicCurrencyAmount(2.4214, "", CurrencySymbolLocation.HIDDEN),
+                            stringResByDynamicCurrencyAmount(21312, "$")
+                        ),
+                    items =
+                        listOf(
+                            PaySwapInfoItem(
+                                description = stringRes("Pay from"),
+                                title = stringRes("Zashi"),
+                                subtitle = null
+                            ),
+                            PaySwapInfoItem(
+                                description = stringRes("Pay to"),
+                                title = stringResByAddress("Asdwae12easdasd", abbreviated = true),
+                                subtitle = null
+                            ),
+                            PaySwapInfoItem(
+                                description = stringRes("ZEC transaction fee"),
+                                title = stringRes(Zatoshi(1231234)),
+                                subtitle = null
+                            ),
+                            PaySwapInfoItem(
+                                description = stringRes("Max slippage 1%"),
+                                title = stringRes(Zatoshi(1231234)),
+                                subtitle = stringResByDynamicCurrencyAmount(23, "$")
+                            )
+                        ),
+                    amount =
+                        PaySwapInfoItem(
+                            description = stringRes("Total amount"),
+                            title = stringRes(Zatoshi(123213)),
+                            subtitle = stringResByDynamicCurrencyAmount(12312, "$")
+                        ),
+                    primaryButton =
+                        ButtonState(
+                            text = stringRes("Confirm"),
+                            onClick = {}
+                        ),
+                    onBack = {}
                 )
-            ),
-            amount = PaySwapInfoItem(
-                description = stringRes("Total amount"),
-                title = stringRes(Zatoshi(123213)),
-                subtitle = stringResByDynamicCurrencyAmount(12312, "$")
-            ),
-            primaryButton = ButtonState(
-                text = stringRes("Confirm"),
-                onClick = {}
-            ),
-            onBack = {}
         )
-    )
-}
+    }

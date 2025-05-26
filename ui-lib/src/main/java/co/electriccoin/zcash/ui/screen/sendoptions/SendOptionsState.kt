@@ -9,4 +9,4 @@ import kotlinx.collections.immutable.ImmutableList
 data class SendOptionsState(
     override val onBack: () -> Unit,
     val items: ImmutableList<ListItemState>,
-): ModalBottomSheetState
+) : ModalBottomSheetState

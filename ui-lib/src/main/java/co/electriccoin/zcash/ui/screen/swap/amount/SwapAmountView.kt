@@ -46,10 +46,11 @@ fun SwapAmountView(
         }
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .scaffoldPadding(it)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .scaffoldPadding(it)
         ) {
             SwapTextField(state = state.recipientGets)
             Spacer(8.dp)
@@ -115,35 +116,42 @@ private fun TopAppBar(state: SwapAmountState) {
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    SwapAmountView(
-        state = SwapAmountState(
-            recipientGets = SwapTextFieldState(
-                token = SwapTokenState(stringRes("USDT")),
-                title = stringRes("Recipient gets"),
-                symbol = stringRes("$"),
-                primaryText = TextFieldState(value = stringRes("")) {},
-                primaryPlaceholder = stringResByDynamicCurrencyAmount(0, "$"),
-                secondaryText = stringResByDynamicCurrencyAmount(100, "USDT"),
-                exchangeRate = stringResByDynamicCurrencyAmount(100, "$"),
-                onSwapChange = {},
-            ),
-            slippage = ButtonState(
-                stringRes("1%"),
-                icon = R.drawable.ic_swap_slippage
-            ),
-            youPay = SwapTextState(
-                token = SwapTokenState(
-                    stringRes("ZEC")
-                ),
-                title = stringRes("You pay"),
-                text = stringResByDynamicCurrencyAmount(101, "$"),
-                secondaryText = stringResByDynamicCurrencyAmount(2.47123, "ZEC")
-            ),
-            primaryButton = ButtonState(
-                stringRes("Get a quote")
-            ),
-            onBack = {}
+private fun Preview() =
+    ZcashTheme {
+        SwapAmountView(
+            state =
+                SwapAmountState(
+                    recipientGets =
+                        SwapTextFieldState(
+                            token = SwapTokenState(stringRes("USDT")),
+                            title = stringRes("Recipient gets"),
+                            symbol = stringRes("$"),
+                            primaryText = TextFieldState(value = stringRes("")) {},
+                            primaryPlaceholder = stringResByDynamicCurrencyAmount(0, "$"),
+                            secondaryText = stringResByDynamicCurrencyAmount(100, "USDT"),
+                            exchangeRate = stringResByDynamicCurrencyAmount(100, "$"),
+                            onSwapChange = {},
+                        ),
+                    slippage =
+                        ButtonState(
+                            stringRes("1%"),
+                            icon = R.drawable.ic_swap_slippage
+                        ),
+                    youPay =
+                        SwapTextState(
+                            token =
+                                SwapTokenState(
+                                    stringRes("ZEC")
+                                ),
+                            title = stringRes("You pay"),
+                            text = stringResByDynamicCurrencyAmount(101, "$"),
+                            secondaryText = stringResByDynamicCurrencyAmount(2.47123, "ZEC")
+                        ),
+                    primaryButton =
+                        ButtonState(
+                            stringRes("Get a quote")
+                        ),
+                    onBack = {}
+                )
         )
-    )
-}
+    }

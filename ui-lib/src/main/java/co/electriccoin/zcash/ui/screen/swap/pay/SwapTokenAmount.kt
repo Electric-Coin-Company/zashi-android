@@ -62,13 +62,15 @@ data class SwapTokenAmountState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        SwapTokenAmount(
-            state = SwapTokenAmountState(
-                stringResByDynamicCurrencyAmount(2.4214, "", CurrencySymbolLocation.HIDDEN),
-                stringResByDynamicCurrencyAmount(21312, "$")
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            SwapTokenAmount(
+                state =
+                    SwapTokenAmountState(
+                        stringResByDynamicCurrencyAmount(2.4214, "", CurrencySymbolLocation.HIDDEN),
+                        stringResByDynamicCurrencyAmount(21312, "$")
+                    )
             )
-        )
+        }
     }
-}

@@ -89,31 +89,34 @@ data class PickerState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        ZashiPicker(
-            state = PickerState(
-                icon = imageRes(R.drawable.ic_item_keystone),
-                text = stringRes("Text"),
-                placeholder = stringRes("Placeholder"),
-                onClick = {}
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiPicker(
+                state =
+                    PickerState(
+                        icon = imageRes(R.drawable.ic_item_keystone),
+                        text = stringRes("Text"),
+                        placeholder = stringRes("Placeholder"),
+                        onClick = {}
+                    )
             )
-        )
+        }
     }
-}
-
 
 @PreviewScreens
 @Composable
-private fun PlaceholderPreview() = ZcashTheme {
-    BlankSurface {
-        ZashiPicker(
-            state = PickerState(
-                icon = null,
-                text = null,
-                placeholder = stringRes("Placeholder..."),
-                onClick = {}
+private fun PlaceholderPreview() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiPicker(
+                state =
+                    PickerState(
+                        icon = null,
+                        text = null,
+                        placeholder = stringRes("Placeholder..."),
+                        onClick = {}
+                    )
             )
-        )
+        }
     }
-}

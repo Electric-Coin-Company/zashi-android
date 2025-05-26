@@ -78,17 +78,20 @@ data class SwapTextState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        SwapText(
-            state = SwapTextState(
-                token = SwapTokenState(
-                    stringRes("ZEC")
-                ),
-                title = stringRes("You pay"),
-                text = stringResByDynamicCurrencyAmount(101, "$"),
-                secondaryText = stringResByDynamicCurrencyAmount(2.47123, "ZEC")
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            SwapText(
+                state =
+                    SwapTextState(
+                        token =
+                            SwapTokenState(
+                                stringRes("ZEC")
+                            ),
+                        title = stringRes("You pay"),
+                        text = stringResByDynamicCurrencyAmount(101, "$"),
+                        secondaryText = stringResByDynamicCurrencyAmount(2.47123, "ZEC")
+                    )
             )
-        )
+        }
     }
-}

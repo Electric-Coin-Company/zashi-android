@@ -48,20 +48,22 @@ fun SwapPickerView(state: SwapPickerState?) {
             topBar = { TopAppBar(innerState) }
         ) { padding ->
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(
-                        padding.asScaffoldScrollPaddingValues(
-                            top = padding.calculateTopPadding() + 8.dp,
-                        ),
-                    )
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(
+                            padding.asScaffoldScrollPaddingValues(
+                                top = padding.calculateTopPadding() + 8.dp,
+                            ),
+                        )
             ) {
                 SearchTextField(innerState)
 
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
                     contentPadding = PaddingValues(top = 20.dp)
                 ) {
                     itemsIndexed(innerState.items) { index, item ->
@@ -98,9 +100,10 @@ private fun Item(item: ListItemState) {
 private fun SearchTextField(innerState: SwapPickerState) {
     ZashiTextField(
         state = innerState.search,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
         leadingIcon = {
             Image(
                 painter = painterResource(R.drawable.ic_transaction_search),
@@ -133,21 +136,24 @@ private fun TopAppBar(innerState: SwapPickerState) {
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    SwapPickerView(
-        state = SwapPickerState(
-            onBack = {},
-            search = TextFieldState(stringRes("")) {},
-            items = listOf(
-                ListItemState(
-                    title = stringRes("title"),
-                    subtitle = stringRes("subtitle")
-                ),
-                ListItemState(
-                    title = stringRes("title"),
-                    subtitle = stringRes("subtitle")
+private fun Preview() =
+    ZcashTheme {
+        SwapPickerView(
+            state =
+                SwapPickerState(
+                    onBack = {},
+                    search = TextFieldState(stringRes("")) {},
+                    items =
+                        listOf(
+                            ListItemState(
+                                title = stringRes("title"),
+                                subtitle = stringRes("subtitle")
+                            ),
+                            ListItemState(
+                                title = stringRes("title"),
+                                subtitle = stringRes("subtitle")
+                            )
+                        )
                 )
-            )
         )
-    )
-}
+    }

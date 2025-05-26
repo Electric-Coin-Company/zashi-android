@@ -76,7 +76,10 @@ fun SwapTextField(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = CenterVertically
             ) {
-                if (state.primaryText.value.getValue().isNotEmpty()) {
+                if (state.primaryText.value
+                        .getValue()
+                        .isNotEmpty()
+                ) {
                     Text(
                         text = state.symbol.getValue(),
                         style = ZashiTypography.header4,
@@ -89,14 +92,15 @@ fun SwapTextField(
                     state = state.primaryText,
                     interactionSource = interactionSource,
                     textStyle = ZashiTypography.header4.copy(fontWeight = FontWeight.SemiBold),
-                    colors = ZashiTextFieldDefaults.defaultColors(
-                        textColor = ZashiColors.Text.textPrimary,
-                        placeholderColor = ZashiColors.Text.textSecondary,
-                        borderColor = Color.Unspecified,
-                        focusedBorderColor = Color.Unspecified,
-                        containerColor = Color.Transparent,
-                        focusedContainerColor = Color.Transparent,
-                    ),
+                    colors =
+                        ZashiTextFieldDefaults.defaultColors(
+                            textColor = ZashiColors.Text.textPrimary,
+                            placeholderColor = ZashiColors.Text.textSecondary,
+                            borderColor = Color.Unspecified,
+                            focusedBorderColor = Color.Unspecified,
+                            containerColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                        ),
                     placeholder = {
                         Text(
                             text = state.primaryPlaceholder.getValue(),
@@ -153,19 +157,21 @@ data class SwapTextFieldState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        SwapTextField(
-            state = SwapTextFieldState(
-                token = SwapTokenState(stringRes("USDT")),
-                title = stringRes("Recipient gets"),
-                symbol = stringRes("$"),
-                primaryText = TextFieldState(value = stringRes("")) {},
-                primaryPlaceholder = stringResByDynamicCurrencyAmount(0, "$"),
-                secondaryText = stringResByDynamicCurrencyAmount(100, "USDT"),
-                exchangeRate = stringResByDynamicCurrencyAmount(100, "$"),
-                onSwapChange = {},
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            SwapTextField(
+                state =
+                    SwapTextFieldState(
+                        token = SwapTokenState(stringRes("USDT")),
+                        title = stringRes("Recipient gets"),
+                        symbol = stringRes("$"),
+                        primaryText = TextFieldState(value = stringRes("")) {},
+                        primaryPlaceholder = stringResByDynamicCurrencyAmount(0, "$"),
+                        secondaryText = stringResByDynamicCurrencyAmount(100, "USDT"),
+                        exchangeRate = stringResByDynamicCurrencyAmount(100, "$"),
+                        onSwapChange = {},
+                    )
             )
-        )
+        }
     }
-}

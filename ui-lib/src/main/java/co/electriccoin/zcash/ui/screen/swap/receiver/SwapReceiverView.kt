@@ -60,10 +60,11 @@ fun SwapReceiverView(
         }
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .scaffoldPadding(it)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .scaffoldPadding(it)
         ) {
             Spacer(8.dp)
             BalanceWidget(
@@ -153,19 +154,21 @@ private fun AddressTextField(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    SwapReceiverView(
-        state = SwapReceiverState(
-            address = TextFieldState(stringRes("")) {},
-            token = PickerState(null, null, stringRes("Select...")) {},
-            chain = PickerState(null, null, stringRes("Select...")) {},
-            isAddressBookHintVisible = true,
-            addressBookButton = IconButtonState(R.drawable.send_address_book) {},
-            qrScannerButton = IconButtonState(R.drawable.qr_code_icon) {},
-            positiveButton = ButtonState(stringRes("Next")) {},
-            onBack = {},
-        ),
-        balanceWidgetState = BalanceStateFixture.new(),
-        appBarState = ZashiMainTopAppBarStateFixture.new()
-    )
-}
+private fun Preview() =
+    ZcashTheme {
+        SwapReceiverView(
+            state =
+                SwapReceiverState(
+                    address = TextFieldState(stringRes("")) {},
+                    token = PickerState(null, null, stringRes("Select...")) {},
+                    chain = PickerState(null, null, stringRes("Select...")) {},
+                    isAddressBookHintVisible = true,
+                    addressBookButton = IconButtonState(R.drawable.send_address_book) {},
+                    qrScannerButton = IconButtonState(R.drawable.qr_code_icon) {},
+                    positiveButton = ButtonState(stringRes("Next")) {},
+                    onBack = {},
+                ),
+            balanceWidgetState = BalanceStateFixture.new(),
+            appBarState = ZashiMainTopAppBarStateFixture.new()
+        )
+    }

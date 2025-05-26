@@ -33,7 +33,7 @@ fun SwapToken(
         shadowElevation = 4.dp
     ) {
         Row(
-           modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
         ) {
             Text(
                 text = state.ticker.getValue(),
@@ -52,12 +52,14 @@ data class SwapTokenState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        SwapToken(
-            state = SwapTokenState(
-                stringRes("USDT")
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            SwapToken(
+                state =
+                    SwapTokenState(
+                        stringRes("USDT")
+                    )
             )
-        )
+        }
     }
-}

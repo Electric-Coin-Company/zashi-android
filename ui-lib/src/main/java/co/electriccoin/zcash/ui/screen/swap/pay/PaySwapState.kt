@@ -13,7 +13,7 @@ data class PaySwapState(
     val amount: PaySwapInfoItem,
     val primaryButton: ButtonState,
     override val onBack: () -> Unit,
-): ModalBottomSheetState
+) : ModalBottomSheetState
 
 @Immutable
 data class PaySwapInfoItem(
