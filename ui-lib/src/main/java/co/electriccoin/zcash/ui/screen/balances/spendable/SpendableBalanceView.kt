@@ -34,6 +34,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
@@ -169,7 +170,7 @@ private fun BalanceShieldButton(state: SpendableBalanceShieldButtonState) {
                     text =
                         stringResource(
                             R.string.home_message_transparent_balance_subtitle,
-                            stringRes(state.amount).getValue()
+                            stringRes(state.amount, HIDDEN).getValue()
                         ),
                     color = ZashiColors.Text.textPrimary,
                     style = ZashiTypography.textXl,

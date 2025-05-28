@@ -33,8 +33,8 @@ import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiVersion
+import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -162,7 +162,7 @@ fun AboutMainContent(
         ZashiListItem(
             modifier = Modifier.padding(horizontal = 4.dp),
             state =
-                ZashiListItemState(
+                ListItemState(
                     icon = R.drawable.ic_settings_info,
                     title = stringRes(R.string.about_button_privacy_policy),
                     onClick = onPrivacyPolicy

@@ -31,9 +31,9 @@ import co.electriccoin.zcash.ui.design.component.ZashiCard
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDefaults
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -169,19 +169,19 @@ private fun IntegrationSettings() =
                     disabledInfo = stringRes("Disabled info"),
                     items =
                         persistentListOf(
-                            ZashiListItemState(
+                            ListItemState(
                                 icon = R.drawable.ic_integrations_coinbase,
                                 title = stringRes("Coinbase"),
                                 subtitle = stringRes("subtitle"),
                                 onClick = {}
                             ),
-                            ZashiListItemState(
+                            ListItemState(
                                 title = stringRes(R.string.integrations_flexa),
                                 subtitle = stringRes(R.string.integrations_flexa),
                                 icon = R.drawable.ic_integrations_flexa,
                                 onClick = {}
                             ),
-                            ZashiListItemState(
+                            ListItemState(
                                 title = stringRes(R.string.integrations_keystone),
                                 subtitle = stringRes(R.string.integrations_keystone_subtitle),
                                 icon = R.drawable.ic_integrations_keystone,

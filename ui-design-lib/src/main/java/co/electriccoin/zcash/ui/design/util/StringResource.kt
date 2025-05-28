@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package co.electriccoin.zcash.ui.design.util
 
 import android.content.Context
@@ -6,7 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.platform.LocalContext
+import cash.z.ecc.android.sdk.ext.Conversions.ZEC_FORMATTER
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
+import cash.z.ecc.android.sdk.ext.currencyFormatter
+import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.Zatoshi
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
@@ -32,7 +37,15 @@ sealed interface StringResource {
 
     @Immutable
     data class ByZatoshi(
-        val zatoshi: Zatoshi
+        val zatoshi: Zatoshi,
+        val symbolLocation: CurrencySymbolLocation
+    ) : StringResource
+
+    @Immutable
+    data class ByDynamicCurrencyAmount(
+        val amount: Number,
+        val ticker: String,
+        val symbolLocation: CurrencySymbolLocation
     ) : StringResource
 
     @Immutable
@@ -78,7 +91,22 @@ fun stringRes(
 fun stringRes(value: String): StringResource = StringResource.ByString(value)
 
 @Stable
-fun stringRes(zatoshi: Zatoshi): StringResource = StringResource.ByZatoshi(zatoshi)
+fun stringRes(
+    zatoshi: Zatoshi,
+    symbolLocation: CurrencySymbolLocation = CurrencySymbolLocation.AFTER
+): StringResource = StringResource.ByZatoshi(zatoshi, symbolLocation)
+
+@Stable
+fun stringResByDynamicCurrencyAmount(
+    amount: Number,
+    ticker: String,
+    symbolLocation: CurrencySymbolLocation =
+        if (ticker == FiatCurrency.USD.symbol) {
+            CurrencySymbolLocation.BEFORE
+        } else {
+            CurrencySymbolLocation.AFTER
+        }
+): StringResource = StringResource.ByDynamicCurrencyAmount(amount, ticker, symbolLocation)
 
 @Stable
 fun stringResByDateTime(
@@ -113,7 +141,8 @@ fun stringResByTransactionId(
 @Stable
 @Composable
 fun StringResource.getValue(
-    convertZatoshi: (Zatoshi) -> String = StringResourceDefaults::convertZatoshi,
+    convertZatoshi: (StringResource.ByZatoshi) -> String = StringResourceDefaults::convertZatoshi,
+    convertCurrency: (StringResource.ByDynamicCurrencyAmount) -> String = StringResourceDefaults::convertCurrency,
     convertDateTime: (StringResource.ByDateTime) -> String = StringResourceDefaults::convertDateTime,
     convertYearMonth: (YearMonth) -> String = StringResourceDefaults::convertYearMonth,
     convertAddress: (StringResource.ByAddress) -> String = StringResourceDefaults::convertAddress,
@@ -122,6 +151,7 @@ fun StringResource.getValue(
     getString(
         context = LocalContext.current,
         convertZatoshi = convertZatoshi,
+        convertCurrency = convertCurrency,
         convertDateTime = convertDateTime,
         convertYearMonth = convertYearMonth,
         convertAddress = convertAddress,
@@ -131,7 +161,8 @@ fun StringResource.getValue(
 @Suppress("SpreadOperator")
 fun StringResource.getString(
     context: Context,
-    convertZatoshi: (Zatoshi) -> String = StringResourceDefaults::convertZatoshi,
+    convertZatoshi: (StringResource.ByZatoshi) -> String = StringResourceDefaults::convertZatoshi,
+    convertCurrency: (StringResource.ByDynamicCurrencyAmount) -> String = StringResourceDefaults::convertCurrency,
     convertDateTime: (StringResource.ByDateTime) -> String = StringResourceDefaults::convertDateTime,
     convertYearMonth: (YearMonth) -> String = StringResourceDefaults::convertYearMonth,
     convertAddress: (StringResource.ByAddress) -> String = StringResourceDefaults::convertAddress,
@@ -140,7 +171,8 @@ fun StringResource.getString(
     when (this) {
         is StringResource.ByResource -> context.getString(resource, *args.normalize(context).toTypedArray())
         is StringResource.ByString -> value
-        is StringResource.ByZatoshi -> convertZatoshi(zatoshi)
+        is StringResource.ByZatoshi -> convertZatoshi(this)
+        is StringResource.ByDynamicCurrencyAmount -> convertCurrency(this)
         is StringResource.ByDateTime -> convertDateTime(this)
         is StringResource.ByYearMonth -> convertYearMonth(yearMonth)
         is StringResource.ByAddress -> convertAddress(this)
@@ -150,6 +182,7 @@ fun StringResource.getString(
                 it.getString(
                     context = context,
                     convertZatoshi = convertZatoshi,
+                    convertCurrency = convertCurrency,
                     convertDateTime = convertDateTime,
                     convertYearMonth = convertYearMonth,
                     convertAddress = convertAddress,
@@ -167,7 +200,25 @@ private fun List<Any>.normalize(context: Context): List<Any> =
     }
 
 object StringResourceDefaults {
-    fun convertZatoshi(zatoshi: Zatoshi) = zatoshi.convertZatoshiToZecString()
+    fun convertZatoshi(res: StringResource.ByZatoshi): String {
+        val amount = res.zatoshi.convertZatoshiToZecString()
+        return when (res.symbolLocation) {
+            CurrencySymbolLocation.BEFORE -> "ZEC $amount"
+            CurrencySymbolLocation.AFTER -> "$amount ZEC"
+            CurrencySymbolLocation.HIDDEN -> amount
+        }
+    }
+
+    fun convertCurrency(res: StringResource.ByDynamicCurrencyAmount): String {
+        val amount =
+            currencyFormatter(maxDecimals = ZEC_FORMATTER.maximumFractionDigits, minDecimals = 2)
+                .format(res.amount)
+        return when (res.symbolLocation) {
+            CurrencySymbolLocation.BEFORE -> "${res.ticker}$amount"
+            CurrencySymbolLocation.AFTER -> "$amount ${res.ticker}"
+            CurrencySymbolLocation.HIDDEN -> amount
+        }
+    }
 
     fun convertDateTime(res: StringResource.ByDateTime): String {
         if (res.useFullFormat) {
@@ -227,3 +278,9 @@ object StringResourceDefaults {
 private const val TRANSACTION_MAX_PREFIX_SUFFIX_LENGHT = 5
 
 private const val ADDRESS_MAX_LENGTH_ABBREVIATED = 20
+
+enum class CurrencySymbolLocation {
+    BEFORE,
+    AFTER,
+    HIDDEN
+}

@@ -536,7 +536,7 @@ private fun Zip321Preview() =
                                 name = stringRes("Name"),
                                 address = stringRes("Address"),
                                 ZashiChipButtonState(
-                                    startIcon = co.electriccoin.zcash.ui.R.drawable.ic_chevron_down,
+                                    startIcon = R.drawable.ic_chevron_down,
                                     text =
                                         stringRes(
                                             co.electriccoin.zcash.ui.R.string.payment_request_btn_show_address,

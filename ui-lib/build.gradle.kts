@@ -71,6 +71,7 @@ android {
                     "src/main/res/ui/send_confirmation",
                     "src/main/res/ui/settings",
                     "src/main/res/ui/sign_keystone_transaction",
+                    "src/main/res/ui/swap",
                     "src/main/res/ui/transaction_detail",
                     "src/main/res/ui/transaction_filters",
                     "src/main/res/ui/transaction_history",

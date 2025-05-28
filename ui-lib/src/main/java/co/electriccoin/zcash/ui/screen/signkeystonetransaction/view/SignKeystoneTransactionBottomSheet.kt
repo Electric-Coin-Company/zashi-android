@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,7 +24,6 @@ import co.electriccoin.zcash.ui.design.component.ModalBottomSheetState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiInScreenModalBottomSheet
-import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -38,11 +35,9 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 fun SignKeystoneTransactionBottomSheet(
     state: SignKeystoneTransactionBottomSheetState?,
     modifier: Modifier = Modifier,
-    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
 ) {
     ZashiInScreenModalBottomSheet(
         state = state,
-        sheetState = sheetState,
         modifier = modifier
     ) {
         Column(
@@ -88,18 +83,11 @@ data class SignKeystoneTransactionBottomSheetState(
     val negativeButton: ButtonState,
 ) : ModalBottomSheetState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @PreviewScreens
 @Composable
 private fun Preview() =
     ZcashTheme {
         SignKeystoneTransactionBottomSheet(
-            sheetState =
-                rememberModalBottomSheetState(
-                    skipPartiallyExpanded = true,
-                    skipHiddenState = true,
-                    initialValue = SheetValue.Expanded,
-                ),
             state =
                 SignKeystoneTransactionBottomSheetState(
                     onBack = {},

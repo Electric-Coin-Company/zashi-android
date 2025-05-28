@@ -26,6 +26,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orHiddenString
@@ -125,7 +126,7 @@ private fun Preview() =
                 state =
                     TransactionDetailHeaderState(
                         title = stringRes("Sending"),
-                        amount = stringRes(Zatoshi(100000000))
+                        amount = stringRes(Zatoshi(100000000), HIDDEN)
                     )
             )
         }

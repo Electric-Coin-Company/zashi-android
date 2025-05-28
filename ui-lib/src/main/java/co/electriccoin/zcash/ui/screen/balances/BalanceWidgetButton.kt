@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -51,7 +52,7 @@ internal fun BalanceWidgetButton(
     Button(
         onClick = state.onClick,
         modifier = modifier,
-        shape = RoundedCornerShape(ZashiDimensions.Radius.radiusIg),
+        shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg),
         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
         colors = colors.toButtonColors(),
         elevation =
@@ -86,7 +87,7 @@ internal fun BalanceWidgetButton(
                     )
                     Spacer(3.dp)
                     Text(
-                        text = stringRes(state.amount).getValue(),
+                        text = stringRes(state.amount, HIDDEN).getValue(),
                         color = ZashiColors.Btns.Tertiary.btnTertiaryFg,
                         style = ZashiTypography.textSm,
                         fontWeight = FontWeight.SemiBold
