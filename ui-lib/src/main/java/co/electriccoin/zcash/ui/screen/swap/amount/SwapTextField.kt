@@ -88,10 +88,18 @@ fun SwapTextField(
                     )
                 }
                 ZashiTextField(
-                    modifier = Modifier.weight(1f),
                     state = state.primaryText,
-                    interactionSource = interactionSource,
+                    modifier = Modifier.weight(1f),
                     textStyle = ZashiTypography.header4.copy(fontWeight = FontWeight.SemiBold),
+                    placeholder = {
+                        Text(
+                            text = state.primaryPlaceholder.getValue(),
+                            style = ZashiTypography.header4,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    },
+                    interactionSource = interactionSource,
+                    contentPadding = PaddingValues(0.dp),
                     colors =
                         ZashiTextFieldDefaults.defaultColors(
                             textColor = ZashiColors.Text.textPrimary,
@@ -100,15 +108,7 @@ fun SwapTextField(
                             focusedBorderColor = Color.Unspecified,
                             containerColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
-                        ),
-                    placeholder = {
-                        Text(
-                            text = state.primaryPlaceholder.getValue(),
-                            style = ZashiTypography.header4,
-                            fontWeight = FontWeight.SemiBold
                         )
-                    },
-                    contentPadding = PaddingValues(0.dp)
                 )
                 Spacer(4.dp)
                 SwapToken(

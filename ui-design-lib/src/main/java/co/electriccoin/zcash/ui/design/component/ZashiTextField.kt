@@ -70,15 +70,12 @@ fun ZashiTextField(
                 onValueChange = onValueChange,
             )
         ),
-    readOnly: Boolean = false,
     textStyle: TextStyle = ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium),
-    label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     prefix: @Composable (() -> Unit)? = null,
     suffix: @Composable (() -> Unit)? = null,
-    supportingText: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -98,15 +95,14 @@ fun ZashiTextField(
                 onValueChange = onValueChange,
             ),
         modifier = modifier,
-        readOnly = readOnly,
+        innerModifier = innerModifier,
+        handle = handle,
         textStyle = textStyle,
-        label = label,
         placeholder = placeholder,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         prefix = prefix,
         suffix = suffix,
-        supportingText = supportingText,
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
@@ -116,8 +112,6 @@ fun ZashiTextField(
         interactionSource = interactionSource,
         shape = shape,
         colors = colors,
-        innerModifier = innerModifier,
-        handle = handle,
     )
 }
 
@@ -128,15 +122,12 @@ fun ZashiTextField(
     modifier: Modifier = Modifier,
     innerModifier: Modifier = ZashiTextFieldDefaults.innerModifier,
     handle: ZashiTextFieldHandle = rememberZashiTextFieldHandle(state),
-    readOnly: Boolean = false,
     textStyle: TextStyle = ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium),
-    label: @Composable (() -> Unit)? = null,
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     prefix: @Composable (() -> Unit)? = null,
     suffix: @Composable (() -> Unit)? = null,
-    supportingText: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -145,27 +136,17 @@ fun ZashiTextField(
     minLines: Int = 1,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = ZashiTextFieldDefaults.shape,
-    contentPadding: PaddingValues =
-        PaddingValues(
-            start = if (leadingIcon != null) 8.dp else 14.dp,
-            end = if (suffix != null) 4.dp else 12.dp,
-            top = getVerticalPadding(trailingIcon, leadingIcon, suffix, prefix),
-            bottom = getVerticalPadding(trailingIcon, leadingIcon, suffix, prefix),
-        ),
+    contentPadding: PaddingValues = ZashiTextFieldDefaults.contentPadding(leadingIcon, suffix, trailingIcon, prefix),
     colors: ZashiTextFieldColors = ZashiTextFieldDefaults.defaultColors()
 ) {
     TextFieldInternal(
         state = state,
-        modifier = modifier,
-        readOnly = readOnly,
         textStyle = textStyle,
-        label = label,
         placeholder = placeholder,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         prefix = prefix,
         suffix = suffix,
-        supportingText = supportingText,
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
@@ -176,8 +157,9 @@ fun ZashiTextField(
         shape = shape,
         colors = colors,
         contentPadding = contentPadding,
-        innerModifier = innerModifier,
-        handle = handle
+        handle = handle,
+        modifier = modifier,
+        innerModifier = innerModifier
     )
 }
 
@@ -215,15 +197,12 @@ fun rememberZashiTextFieldHandle(state: TextFieldState): ZashiTextFieldHandle {
 @Composable
 private fun TextFieldInternal(
     state: TextFieldState,
-    readOnly: Boolean,
     textStyle: TextStyle,
-    label: @Composable (() -> Unit)?,
     placeholder: @Composable (() -> Unit)?,
     leadingIcon: @Composable (() -> Unit)?,
     trailingIcon: @Composable (() -> Unit)?,
     prefix: @Composable (() -> Unit)?,
     suffix: @Composable (() -> Unit)?,
-    supportingText: @Composable (() -> Unit)?,
     visualTransformation: VisualTransformation,
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions,
@@ -297,7 +276,7 @@ private fun TextFieldInternal(
                     }
                 },
                 enabled = state.isEnabled,
-                readOnly = readOnly,
+                readOnly = false,
                 textStyle = mergedTextStyle,
                 cursorBrush = SolidColor(androidColors.cursorColor(state.isError).value),
                 visualTransformation = visualTransformation,
@@ -323,12 +302,12 @@ private fun TextFieldInternal(
                         } else {
                             null
                         },
-                    label = label,
+                    label = null,
                     leadingIcon = leadingIcon,
                     trailingIcon = trailingIcon,
                     prefix = prefix,
                     suffix = suffix,
-                    supportingText = supportingText,
+                    supportingText = null,
                     shape = shape,
                     singleLine = singleLine,
                     enabled = state.isEnabled,
@@ -353,7 +332,7 @@ private fun TextFieldInternal(
 
 @ReadOnlyComposable
 @Composable
-private fun getVerticalPadding(
+fun getVerticalPadding(
     trailingIcon: @Composable (() -> Unit)?,
     leadingIcon: @Composable (() -> Unit)?,
     suffix: @Composable (() -> Unit)?,
@@ -526,6 +505,19 @@ object ZashiTextFieldDefaults {
         errorBorderColor = errorBorderColor,
         errorContainerColor = errorContainerColor,
         errorPlaceholderColor = errorPlaceholderColor,
+    )
+
+    @Composable
+    fun contentPadding(
+        leadingIcon: @Composable (() -> Unit)?,
+        suffix: @Composable (() -> Unit)?,
+        trailingIcon: @Composable (() -> Unit)?,
+        prefix: @Composable (() -> Unit)?
+    ) = PaddingValues(
+        start = if (leadingIcon != null) 8.dp else 14.dp,
+        end = if (suffix != null) 4.dp else 12.dp,
+        top = getVerticalPadding(trailingIcon, leadingIcon, suffix, prefix),
+        bottom = getVerticalPadding(trailingIcon, leadingIcon, suffix, prefix),
     )
 }
 
