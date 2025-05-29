@@ -1,9 +1,11 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -41,15 +43,24 @@ fun ZashiPicker(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (state.icon != null) {
-                if (state.icon is ImageResource.ByDrawable) {
+            if (state.icon is ImageResource.ByDrawable) {
+                Box {
                     Image(
-                        modifier = Modifier.sizeIn(24.dp),
+                        modifier = Modifier.size(24.dp),
                         painter = painterResource(state.icon.resource),
                         contentDescription = null,
                     )
-                } else {
-                    // we support only drawable images here atm
+                    if (state.badge is ImageResource.ByDrawable) {
+                        Image(
+                            modifier =
+                                Modifier
+                                    .size(14.dp)
+                                    .align(Alignment.BottomEnd)
+                                    .offset(3.dp, 3.dp),
+                            painter = painterResource(state.badge.resource),
+                            contentDescription = null,
+                        )
+                    }
                 }
                 Spacer(8.dp)
             }
@@ -82,6 +93,7 @@ fun ZashiPicker(
 @Immutable
 data class PickerState(
     val icon: ImageResource?,
+    val badge: ImageResource?,
     val text: StringResource?,
     val placeholder: StringResource,
     val onClick: () -> Unit
@@ -96,6 +108,7 @@ private fun Preview() =
                 state =
                     PickerState(
                         icon = imageRes(R.drawable.ic_item_keystone),
+                        badge = imageRes(R.drawable.ic_item_keystone),
                         text = stringRes("Text"),
                         placeholder = stringRes("Placeholder"),
                         onClick = {}
@@ -113,6 +126,7 @@ private fun PlaceholderPreview() =
                 state =
                     PickerState(
                         icon = null,
+                        badge = null,
                         text = null,
                         placeholder = stringRes("Placeholder..."),
                         onClick = {}

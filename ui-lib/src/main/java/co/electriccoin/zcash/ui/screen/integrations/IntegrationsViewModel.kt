@@ -16,11 +16,13 @@ import co.electriccoin.zcash.ui.common.usecase.GetKeystoneStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToNearSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.Status
 import co.electriccoin.zcash.ui.common.usecase.Status.DISABLED
 import co.electriccoin.zcash.ui.common.usecase.Status.ENABLED
 import co.electriccoin.zcash.ui.common.usecase.Status.UNAVAILABLE
 import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import co.electriccoin.zcash.ui.screen.flexa.Flexa
@@ -42,6 +44,7 @@ class IntegrationsViewModel(
     private val isDialog: Boolean,
     private val navigationRouter: NavigationRouter,
     private val navigateToCoinbase: NavigateToCoinbaseUseCase,
+    private val navigateToNearSwap: NavigateToNearSwapUseCase
 ) : ViewModel() {
     private val isRestoring = getWalletRestoringState.observe().map { it == WalletRestoringState.RESTORING }
 
@@ -85,9 +88,15 @@ class IntegrationsViewModel(
         items =
             listOfNotNull(
                 ListItemState(
+                    icon = imageRes(R.drawable.ic_integrations_near),
+                    title = stringRes("Pay with NEAR"),
+                    subtitle = stringRes("Send payments in any coin or token supported by Zashi's DEX integration."),
+                    onClick = ::onNearSwapClick
+                ).takeIf { isDialog },
+                ListItemState(
                     // Set the wallet currency by app build is more future-proof, although we hide it from
                     // the UI in the Testnet build
-                    icon = R.drawable.ic_integrations_coinbase,
+                    icon = imageRes(R.drawable.ic_integrations_coinbase),
                     title = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
                     subtitle =
                         stringRes(
@@ -101,11 +110,13 @@ class IntegrationsViewModel(
                     // the UI in the Testnet build
                     isEnabled = isRestoring.not() && selectedAccount is ZashiAccount,
                     icon =
-                        when (flexaStatus) {
-                            ENABLED -> R.drawable.ic_integrations_flexa
-                            DISABLED -> R.drawable.ic_integrations_flexa_disabled
-                            UNAVAILABLE -> R.drawable.ic_integrations_flexa_disabled
-                        },
+                        imageRes(
+                            when (flexaStatus) {
+                                ENABLED -> R.drawable.ic_integrations_flexa
+                                DISABLED -> R.drawable.ic_integrations_flexa_disabled
+                                UNAVAILABLE -> R.drawable.ic_integrations_flexa_disabled
+                            }
+                        ),
                     title = stringRes(R.string.integrations_flexa),
                     subtitle = stringRes(R.string.integrations_flexa_subtitle),
                     onClick = ::onFlexaClicked
@@ -113,29 +124,19 @@ class IntegrationsViewModel(
                 ListItemState(
                     title = stringRes(R.string.integrations_keystone),
                     subtitle = stringRes(R.string.integrations_keystone_subtitle),
-                    icon = R.drawable.ic_integrations_keystone,
+                    icon = imageRes(R.drawable.ic_integrations_keystone),
                     onClick = ::onConnectKeystoneClick
                 ).takeIf { keystoneStatus != UNAVAILABLE },
             ).toImmutableList(),
     )
 
+    private fun onNearSwapClick() = navigateToNearSwap()
+
     private fun onBack() = navigationRouter.back()
 
-    private fun onBuyWithCoinbaseClicked() =
-        viewModelScope.launch {
-            navigateToCoinbase(isDialog)
-        }
+    private fun onBuyWithCoinbaseClicked() = viewModelScope.launch { navigateToCoinbase(isDialog) }
 
-    private fun onConnectKeystoneClick() =
-        viewModelScope.launch {
-            navigationRouter.replace(ConnectKeystone)
-        }
+    private fun onConnectKeystoneClick() = viewModelScope.launch { navigationRouter.replace(ConnectKeystone) }
 
-    private fun onFlexaClicked() {
-        if (isDialog) {
-            navigationRouter.replace(Flexa)
-        } else {
-            navigationRouter.forward(Flexa)
-        }
-    }
+    private fun onFlexaClicked() = if (isDialog) navigationRouter.replace(Flexa) else navigationRouter.forward(Flexa)
 }

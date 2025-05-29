@@ -43,6 +43,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListItem
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListState
@@ -213,7 +214,8 @@ private fun ZashiAccountListItem(
         leading = {
             ZashiListItemDefaults.LeadingItem(
                 modifier = it,
-                icon = state.icon,
+                icon = imageRes(state.icon),
+                badge = null,
                 contentDescription = state.title.getValue()
             )
         },
@@ -226,9 +228,7 @@ private fun ZashiAccountListItem(
                 isEnabled = true
             )
         },
-        trailing = {
-            // empty
-        },
+        trailing = null,
         color =
             if (state.isSelected) {
                 ZashiColors.Surfaces.bgSecondary

@@ -34,8 +34,8 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.home.common.CommonShimmerLoadingScreen
 import co.electriccoin.zcash.ui.screen.transactionhistory.Transaction
-import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionShimmerLoading
 
 fun LazyListScope.createTransactionHistoryWidgets(state: TransactionHistoryWidgetState) {
     when (state) {
@@ -80,7 +80,7 @@ private fun LazyListScope.transactionHistoryWidgets(state: TransactionHistoryWid
 private fun LazyListScope.transactionHistoryEmptyWidget(state: TransactionHistoryWidgetState.Empty) {
     item {
         Box {
-            TransactionShimmerLoading(
+            CommonShimmerLoadingScreen(
                 modifier = Modifier.padding(top = 32.dp),
                 shimmerItemsCount = 2,
                 contentPaddingValues = PaddingValues(horizontal = 24.dp, vertical = 10.dp),
@@ -145,7 +145,7 @@ private fun LazyListScope.transactionHistoryLoadingWidget() {
                 style = ZashiTypography.textLg
             )
             Spacer(Modifier.height(10.dp))
-            TransactionShimmerLoading(
+            CommonShimmerLoadingScreen(
                 modifier = Modifier.fillParentMaxWidth(),
                 shimmerItemsCount = 5
             )

@@ -45,13 +45,17 @@ fun BottomSheetContent(state: SendOptionsState) {
             ZashiListItem(
                 state = item,
                 modifier = Modifier.padding(horizontal = 4.dp),
-                leading = {
-                    ZashiListItemDefaults.LeadingItem(
-                        modifier = Modifier.size(40.dp),
-                        icon = item.icon,
-                        contentDescription = item.title.getValue()
-                    )
-                },
+                leading =
+                    item.icon?.let { icon ->
+                        {
+                            ZashiListItemDefaults.LeadingItem(
+                                modifier = Modifier.size(40.dp),
+                                icon = icon,
+                                badge = item.badge,
+                                contentDescription = item.title.getValue()
+                            )
+                        }
+                    },
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp)
             )
             if (index != state.items.lastIndex) {

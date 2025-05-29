@@ -28,6 +28,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.collections.immutable.persistentListOf
 
@@ -103,7 +104,7 @@ private fun IntegrationSettings() =
                     items =
                         persistentListOf(
                             ListItemState(
-                                icon = R.drawable.ic_integrations_coinbase,
+                                icon = imageRes(R.drawable.ic_integrations_coinbase),
                                 title = stringRes("Coinbase"),
                                 subtitle = stringRes("subtitle"),
                                 onClick = {}
@@ -111,13 +112,13 @@ private fun IntegrationSettings() =
                             ListItemState(
                                 title = stringRes(R.string.integrations_flexa),
                                 subtitle = stringRes(R.string.integrations_flexa),
-                                icon = R.drawable.ic_integrations_flexa,
+                                icon = imageRes(R.drawable.ic_integrations_flexa),
                                 onClick = {}
                             ),
                             ListItemState(
                                 title = stringRes(R.string.integrations_keystone),
                                 subtitle = stringRes(R.string.integrations_keystone_subtitle),
-                                icon = R.drawable.ic_integrations_keystone,
+                                icon = imageRes(R.drawable.ic_integrations_keystone),
                                 onClick = {}
                             ),
                         ),

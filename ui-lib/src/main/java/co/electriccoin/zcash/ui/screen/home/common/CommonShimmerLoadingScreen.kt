@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.transactionhistory
+package co.electriccoin.zcash.ui.screen.home.common
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -32,7 +32,7 @@ import com.valentinilk.shimmer.shimmer
 
 @Suppress("MagicNumber")
 @Composable
-fun TransactionShimmerLoading(
+fun CommonShimmerLoadingScreen(
     shimmerItemsCount: Int,
     modifier: Modifier = Modifier,
     contentPaddingValues: PaddingValues = PaddingValues(horizontal = 24.dp, vertical = 12.dp),
@@ -124,7 +124,7 @@ private fun FakeItem(modifier: Modifier = Modifier) {
 private fun Preview() =
     ZcashTheme {
         BlankSurface {
-            TransactionShimmerLoading(
+            CommonShimmerLoadingScreen(
                 10,
                 modifier = Modifier.fillMaxSize()
             )

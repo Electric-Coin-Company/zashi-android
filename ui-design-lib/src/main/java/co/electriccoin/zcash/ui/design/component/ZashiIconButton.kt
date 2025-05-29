@@ -1,13 +1,16 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -45,19 +48,50 @@ fun ZashiIconButton(
             )
         }
         if (state.badge != null) {
-            Text(
-                modifier =
-                    Modifier
-                        .size(20.dp)
-                        .background(ZashiColors.Utility.Gray.utilityGray900, CircleShape)
-                        .align(Alignment.TopEnd)
-                        .padding(top = 3.dp),
-                text = state.badge.getValue(),
-                textAlign = TextAlign.Center,
-                color = ZashiColors.Surfaces.bgPrimary,
-                style = ZashiTypography.textXs,
-                fontWeight = FontWeight.Medium
-            )
+            Badge(state.badge)
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.Badge(badge: StringResource) {
+    Text(
+        modifier =
+            Modifier
+                .size(20.dp)
+                .background(ZashiColors.Utility.Gray.utilityGray900, CircleShape)
+                .align(Alignment.TopEnd)
+                .padding(top = 3.dp),
+        text = badge.getValue(),
+        textAlign = TextAlign.Center,
+        color = ZashiColors.Surfaces.bgPrimary,
+        style = ZashiTypography.textXs,
+        fontWeight = FontWeight.Medium
+    )
+}
+
+@Composable
+fun ZashiImageButton(
+    state: IconButtonState,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+    ) {
+        Surface(
+            onClick = state.onClick,
+            color = Color.Transparent
+        ) {
+            Box {
+                Image(
+                    painter = painterResource(state.icon),
+                    contentDescription = state.contentDescription?.getValue()
+                )
+            }
+        }
+
+        if (state.badge != null) {
+            Badge(state.badge)
         }
     }
 }
@@ -75,6 +109,20 @@ data class IconButtonState(
 private fun Preview() =
     ZcashTheme {
         ZashiIconButton(
+            state =
+                IconButtonState(
+                    icon = R.drawable.ic_item_keystone,
+                    badge = stringRes("1"),
+                    onClick = {}
+                )
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun ImagePreview() =
+    ZcashTheme {
+        ZashiImageButton(
             state =
                 IconButtonState(
                     icon = R.drawable.ic_item_keystone,

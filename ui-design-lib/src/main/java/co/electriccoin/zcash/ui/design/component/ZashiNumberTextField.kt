@@ -48,12 +48,13 @@ fun ZashiNumberTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = ZashiTextFieldDefaults.shape,
-    contentPadding: PaddingValues = ZashiTextFieldDefaults.contentPadding(
-        leadingIcon = null,
-        suffix = suffix,
-        trailingIcon = null,
-        prefix = prefix
-    ),
+    contentPadding: PaddingValues =
+        ZashiTextFieldDefaults.contentPadding(
+            leadingIcon = null,
+            suffix = suffix,
+            trailingIcon = null,
+            prefix = prefix
+        ),
     colors: ZashiTextFieldColors = ZashiTextFieldDefaults.defaultColors()
 ) {
     val locale = LocalConfiguration.current.locales[0]

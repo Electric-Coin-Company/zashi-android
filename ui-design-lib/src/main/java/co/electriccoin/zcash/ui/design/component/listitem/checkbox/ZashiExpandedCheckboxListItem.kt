@@ -33,6 +33,7 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
@@ -46,7 +47,8 @@ fun ZashiExpandedCheckboxListItem(
         leading = {
             ZashiListItemDefaults.LeadingItem(
                 modifier = it,
-                icon = state.icon,
+                icon = imageRes(state.icon),
+                badge = null,
                 contentDescription = state.title.getValue()
             )
         },

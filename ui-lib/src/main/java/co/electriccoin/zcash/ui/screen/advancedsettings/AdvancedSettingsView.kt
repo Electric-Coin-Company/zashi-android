@@ -37,6 +37,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.collections.immutable.persistentListOf
@@ -135,27 +136,27 @@ private fun AdvancedSettingsPreview() =
                         persistentListOf(
                             ListItemState(
                                 title = stringRes(R.string.advanced_settings_recovery),
-                                icon = R.drawable.ic_advanced_settings_recovery,
+                                icon = imageRes(R.drawable.ic_advanced_settings_recovery),
                                 onClick = {}
                             ),
                             ListItemState(
                                 title = stringRes(R.string.advanced_settings_export),
-                                icon = R.drawable.ic_advanced_settings_export,
+                                icon = imageRes(R.drawable.ic_advanced_settings_export),
                                 onClick = {}
                             ),
                             ListItemState(
                                 title = stringRes(R.string.advanced_settings_choose_server),
-                                icon = R.drawable.ic_advanced_settings_choose_server,
+                                icon = imageRes(R.drawable.ic_advanced_settings_choose_server),
                                 onClick = {}
                             ),
                             ListItemState(
                                 title = stringRes(R.string.advanced_settings_currency_conversion),
-                                icon = R.drawable.ic_advanced_settings_currency_conversion,
+                                icon = imageRes(R.drawable.ic_advanced_settings_currency_conversion),
                                 onClick = {}
                             ),
                             ListItemState(
                                 title = stringRes(R.string.advanced_settings_crash_reporting),
-                                icon = R.drawable.ic_advanced_settings_crash_reporting,
+                                icon = imageRes(R.drawable.ic_advanced_settings_crash_reporting),
                                 onClick = {}
                             )
                         ),
