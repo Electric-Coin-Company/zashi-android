@@ -26,10 +26,9 @@ class SwapSlippageViewModel(
     private val setSlippage: SetSlippageUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
-    @Suppress("MagicNumber")
     private val slippageSelection =
         MutableStateFlow(
-            if (getSlippage() < 40) {
+            if (getSlippage() < TOTAL_STEPS) {
                 SlippageSliderState.Selection.ByPercent(getSlippage())
             } else {
                 SlippageSliderState.Selection.Custom
@@ -46,10 +45,7 @@ class SwapSlippageViewModel(
                 initialValue = isCustomSlippageVisible(slippageSelection.value)
             )
 
-    private val customSlippage =
-        MutableStateFlow(
-            createCustomSlippageInitialState(getSlippage)
-        )
+    private val customSlippage = MutableStateFlow(createCustomSlippageInitialState(getSlippage))
 
     private val customSlippageState =
         combine(
@@ -165,7 +161,6 @@ class SwapSlippageViewModel(
         )
     }
 
-    @Suppress("MagicNumber")
     private fun getActualSelection(
         slippageSelection: SlippageSliderState.Selection,
         customSlippage: NumberTextFieldState
@@ -174,7 +169,7 @@ class SwapSlippageViewModel(
         SlippageSliderState.Selection.Custom -> {
             val customAmount = customSlippage.amount
             if (customAmount != null) {
-                (customAmount.toDouble() * 10).toInt()
+                (customAmount.toDouble() * STEPS_IN_ONE_PERCENT).toInt()
             } else {
                 null
             }
@@ -184,17 +179,16 @@ class SwapSlippageViewModel(
     private fun createSlippageSliderState(it: SlippageSliderState.Selection) =
         SlippageSliderState(
             selected = it,
-            percentRange = 0..30 step 1,
-            labelRange = 0..30 step 10,
+            percentRange = 0..STEPS step 1,
+            labelRange = 0..STEPS step STEPS_IN_ONE_PERCENT.toInt(),
             onValueChange = ::onSlippageChanged
         )
 
     private fun isCustomSlippageVisible(selection: SlippageSliderState.Selection) =
         selection is SlippageSliderState.Selection.Custom
 
-    @Suppress("MagicNumber")
     private fun createCustomSlippageInitialState(getSlippage: GetSlippageUseCase): NumberTextFieldState {
-        val amount = getSlippage().let { BigDecimal.valueOf(it.toDouble() / 10.0) }
+        val amount = getSlippage().let { BigDecimal.valueOf(it.toDouble() / STEPS_IN_ONE_PERCENT) }
         return NumberTextFieldState(
             text = stringResByNumber(amount),
             amount = amount,
@@ -218,3 +212,7 @@ class SwapSlippageViewModel(
 
     private fun onBack() = navigationRouter.back()
 }
+
+private const val STEPS_IN_ONE_PERCENT = 10.0
+private const val STEPS = 30
+private const val TOTAL_STEPS = 40
