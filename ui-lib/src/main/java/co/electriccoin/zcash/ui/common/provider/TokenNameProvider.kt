@@ -11,7 +11,7 @@ class TokenNameProviderImpl : TokenNameProvider {
     override fun getName(ticker: String): StringResource =
         when (ticker.lowercase()) {
             "cbbtc", "wbtc", "xbtc", "btc" -> stringRes("Bitcoin")
-            "eth" -> stringRes("Ethereum")
+            "weth", "eth" -> stringRes("Ethereum")
             "near" -> stringRes("Near")
             "sol" -> stringRes("Solana")
             "tron" -> stringRes("Tron")

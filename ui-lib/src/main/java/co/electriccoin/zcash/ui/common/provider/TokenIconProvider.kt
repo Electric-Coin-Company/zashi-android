@@ -13,8 +13,8 @@ class TokenIconProviderImpl : TokenIconProvider {
         when (ticker.lowercase()) {
             "arb" -> imageRes(R.drawable.ic_token_arb)
             "base" -> imageRes(R.drawable.ic_token_base)
-            "btc" -> imageRes(R.drawable.ic_token_btc)
-            "eth" -> imageRes(R.drawable.ic_token_eth)
+            "cbbtc", "wbtc", "xbtc", "btc" -> imageRes(R.drawable.ic_token_btc)
+            "weth", "eth" -> imageRes(R.drawable.ic_token_eth)
             "gnear" -> imageRes(R.drawable.ic_token_gnear)
             "mpdao" -> imageRes(R.drawable.ic_token_mpdao)
             "sol" -> imageRes(R.drawable.ic_token_sol)
