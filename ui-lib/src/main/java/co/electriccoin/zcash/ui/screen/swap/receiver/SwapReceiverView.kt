@@ -1,10 +1,12 @@
 package co.electriccoin.zcash.ui.screen.swap.receiver
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -30,7 +32,8 @@ import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.PickerState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.TextFieldState
-import co.electriccoin.zcash.ui.design.component.ZashiIconButton
+import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiImageButton
 import co.electriccoin.zcash.ui.design.component.ZashiPicker
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -43,6 +46,7 @@ import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidget
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
+import co.electriccoin.zcash.ui.screen.send.view.SendAddressBookHint
 
 @Composable
 fun SwapReceiverView(
@@ -80,6 +84,12 @@ fun SwapReceiverView(
             )
             Spacer(8.dp)
             AddressTextField(state)
+            AnimatedVisibility(visible = state.isAddressBookHintVisible) {
+                Column {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    SendAddressBookHint(Modifier.fillMaxWidth())
+                }
+            }
             Spacer(20.dp)
             Text(
                 text = "Select token",
@@ -89,18 +99,13 @@ fun SwapReceiverView(
             )
             Spacer(8.dp)
             ZashiPicker(
-                state = state.token
+                state = state.chainToken
             )
-            Spacer(20.dp)
-            Text(
-                text = "Select chain",
-                style = ZashiTypography.textSm,
-                fontWeight = FontWeight.Medium,
-                color = ZashiColors.Dropdowns.Default.label
-            )
-            Spacer(8.dp)
-            ZashiPicker(
-                state = state.chain
+            Spacer(24.dp)
+            Spacer(1f)
+            ZashiButton(
+                modifier = Modifier.fillMaxWidth(),
+                state = state.positiveButton
             )
         }
     }
@@ -127,12 +132,12 @@ private fun AddressTextField(
             Row(
                 verticalAlignment = Alignment.Top
             ) {
-                ZashiIconButton(
+                ZashiImageButton(
                     modifier = Modifier.size(36.dp),
                     state = state.addressBookButton
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                ZashiIconButton(
+                ZashiImageButton(
                     modifier = Modifier.size(36.dp),
                     state = state.qrScannerButton
                 )
@@ -160,8 +165,13 @@ private fun Preview() =
             state =
                 SwapReceiverState(
                     address = TextFieldState(stringRes("")) {},
-                    token = PickerState(null, null, stringRes("Select...")) {},
-                    chain = PickerState(null, null, stringRes("Select...")) {},
+                    chainToken =
+                        PickerState(
+                            icon = null,
+                            badge = null,
+                            text = null,
+                            placeholder = stringRes("Select...")
+                        ) {},
                     isAddressBookHintVisible = true,
                     addressBookButton = IconButtonState(R.drawable.send_address_book) {},
                     qrScannerButton = IconButtonState(R.drawable.qr_code_icon) {},

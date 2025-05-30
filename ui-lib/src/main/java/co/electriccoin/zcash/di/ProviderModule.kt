@@ -2,12 +2,18 @@ package co.electriccoin.zcash.di
 
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProviderImpl
+import co.electriccoin.zcash.ui.common.provider.ChainIconProvider
+import co.electriccoin.zcash.ui.common.provider.ChainIconProviderImpl
+import co.electriccoin.zcash.ui.common.provider.ChainNameProvider
+import co.electriccoin.zcash.ui.common.provider.ChainNameProviderImpl
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
+import co.electriccoin.zcash.ui.common.provider.KtorNearApiProvider
+import co.electriccoin.zcash.ui.common.provider.NearApiProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProviderImpl
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletStorageProvider
@@ -20,6 +26,10 @@ import co.electriccoin.zcash.ui.common.provider.ShieldFundsInfoProvider
 import co.electriccoin.zcash.ui.common.provider.ShieldFundsInfoProviderImpl
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProviderImpl
+import co.electriccoin.zcash.ui.common.provider.TokenIconProvider
+import co.electriccoin.zcash.ui.common.provider.TokenIconProviderImpl
+import co.electriccoin.zcash.ui.common.provider.TokenNameProvider
+import co.electriccoin.zcash.ui.common.provider.TokenNameProviderImpl
 import co.electriccoin.zcash.ui.common.provider.WalletBackupConsentStorageProvider
 import co.electriccoin.zcash.ui.common.provider.WalletBackupConsentStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.WalletBackupFlagStorageProvider
@@ -55,4 +65,9 @@ val providerModule =
         singleOf(::CrashReportingStorageProviderImpl) bind CrashReportingStorageProvider::class
         singleOf(::PersistableWalletStorageProviderImpl) bind PersistableWalletStorageProvider::class
         singleOf(::ShieldFundsInfoProviderImpl) bind ShieldFundsInfoProvider::class
+        singleOf(::ChainIconProviderImpl) bind ChainIconProvider::class
+        singleOf(::ChainNameProviderImpl) bind ChainNameProvider::class
+        singleOf(::TokenIconProviderImpl) bind TokenIconProvider::class
+        singleOf(::TokenNameProviderImpl) bind TokenNameProvider::class
+        singleOf(::KtorNearApiProvider) bind NearApiProvider::class
     }

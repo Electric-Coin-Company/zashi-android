@@ -15,6 +15,7 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToWalletBackupUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettings
 import kotlinx.collections.immutable.toImmutableList
@@ -52,35 +53,35 @@ class AdvancedSettingsViewModel(
                 mutableStateListOf(
                     ListItemState(
                         title = stringRes(R.string.advanced_settings_recovery),
-                        icon = R.drawable.ic_advanced_settings_recovery,
+                        icon = imageRes(R.drawable.ic_advanced_settings_recovery),
                         onClick = ::onSeedRecoveryClick
                     ),
                     ListItemState(
                         title = stringRes(R.string.advanced_settings_export),
-                        icon = R.drawable.ic_advanced_settings_export,
+                        icon = imageRes(R.drawable.ic_advanced_settings_export),
                         onClick = {}
                     ),
                     ListItemState(
                         title = stringRes(R.string.advanced_settings_tax),
                         icon =
-                            if (walletRestoringState == WalletRestoringState.RESTORING) {
-                                R.drawable.ic_advanced_settings_tax_disabled
-                            } else {
-                                R.drawable.ic_advanced_settings_tax
-                            },
+                            imageRes(
+                                if (walletRestoringState == WalletRestoringState.RESTORING) {
+                                    R.drawable.ic_advanced_settings_tax_disabled
+                                } else {
+                                    R.drawable.ic_advanced_settings_tax
+                                }
+                            ),
                         isEnabled = walletRestoringState != WalletRestoringState.RESTORING,
                         onClick = ::onTaxExportClick
                     ),
                     ListItemState(
                         title = stringRes(R.string.advanced_settings_choose_server),
-                        icon =
-                            R.drawable.ic_advanced_settings_choose_server,
+                        icon = imageRes(R.drawable.ic_advanced_settings_choose_server),
                         onClick = ::onChooseServerClick
                     ),
                     ListItemState(
                         title = stringRes(R.string.advanced_settings_currency_conversion),
-                        icon =
-                            R.drawable.ic_advanced_settings_currency_conversion,
+                        icon = imageRes(R.drawable.ic_advanced_settings_currency_conversion),
                         onClick = ::onCurrencyConversionClick
                     ),
                 ).apply {
@@ -88,8 +89,7 @@ class AdvancedSettingsViewModel(
                         add(
                             ListItemState(
                                 title = stringRes(R.string.advanced_settings_crash_reporting),
-                                icon =
-                                    R.drawable.ic_advanced_settings_crash_reporting,
+                                icon = imageRes(R.drawable.ic_advanced_settings_crash_reporting),
                                 onClick = ::onCrashReportingClick
                             )
                         )

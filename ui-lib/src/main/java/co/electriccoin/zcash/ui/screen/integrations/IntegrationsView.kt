@@ -41,15 +41,14 @@ import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.settings.SettingsTag
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun Integrations(
-    state: IntegrationsState
-) {
+fun Integrations(state: IntegrationsState) {
     BlankBgScaffold(
         topBar = {
             IntegrationsTopAppBar(onBack = state.onBack)
@@ -104,13 +103,17 @@ fun IntegrationItems(
         ZashiListItem(
             state = item,
             modifier = Modifier.padding(horizontal = 4.dp),
-            leading = {
-                ZashiListItemDefaults.LeadingItem(
-                    modifier = Modifier.size(40.dp),
-                    icon = item.icon,
-                    contentDescription = item.title.getValue()
-                )
-            },
+            leading =
+                item.icon?.let { icon ->
+                    {
+                        ZashiListItemDefaults.LeadingItem(
+                            modifier = Modifier.size(40.dp),
+                            icon = icon,
+                            badge = item.badge,
+                            contentDescription = item.title.getValue()
+                        )
+                    }
+                },
             contentPadding = contentPadding
         )
         if (index != state.items.lastIndex) {
@@ -170,7 +173,7 @@ private fun IntegrationSettings() =
                     items =
                         persistentListOf(
                             ListItemState(
-                                icon = R.drawable.ic_integrations_coinbase,
+                                icon = imageRes(R.drawable.ic_integrations_coinbase),
                                 title = stringRes("Coinbase"),
                                 subtitle = stringRes("subtitle"),
                                 onClick = {}
@@ -178,13 +181,13 @@ private fun IntegrationSettings() =
                             ListItemState(
                                 title = stringRes(R.string.integrations_flexa),
                                 subtitle = stringRes(R.string.integrations_flexa),
-                                icon = R.drawable.ic_integrations_flexa,
+                                icon = imageRes(R.drawable.ic_integrations_flexa),
                                 onClick = {}
                             ),
                             ListItemState(
                                 title = stringRes(R.string.integrations_keystone),
                                 subtitle = stringRes(R.string.integrations_keystone_subtitle),
-                                icon = R.drawable.ic_integrations_keystone,
+                                icon = imageRes(R.drawable.ic_integrations_keystone),
                                 onClick = {}
                             ),
                         ),

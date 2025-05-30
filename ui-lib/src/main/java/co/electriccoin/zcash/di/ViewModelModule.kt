@@ -43,10 +43,11 @@ import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignIn
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel.SelectKeystoneAccountViewModel
 import co.electriccoin.zcash.ui.screen.send.SendViewModel
-import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewModel
-import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
+import co.electriccoin.zcash.ui.screen.settings.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
+import co.electriccoin.zcash.ui.screen.swap.receiver.SwapReceiverViewModel
+import co.electriccoin.zcash.ui.screen.swap.receiver.picker.SwapAssetPickerViewModel
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExportViewModel
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailViewModel
@@ -70,7 +71,6 @@ val viewModelModule =
         viewModelOf(::OldHomeViewModel)
         viewModelOf(::StorageCheckViewModel)
         viewModelOf(::RestoreSeedViewModel)
-        viewModelOf(::ScreenBrightnessViewModel)
         viewModelOf(::SettingsViewModel)
         viewModelOf(::AdvancedSettingsViewModel)
         viewModelOf(::SupportViewModel)
@@ -162,4 +162,6 @@ val viewModelModule =
         viewModelOf(::CrashReportOptInViewModel)
         viewModelOf(::WalletRestoringInfoViewModel)
         viewModelOf(::ThirdPartyScanViewModel)
+        viewModelOf(::SwapReceiverViewModel)
+        viewModelOf(::SwapAssetPickerViewModel)
     }

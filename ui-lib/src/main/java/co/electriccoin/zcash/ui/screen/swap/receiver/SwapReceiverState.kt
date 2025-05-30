@@ -9,8 +9,7 @@ import co.electriccoin.zcash.ui.design.component.TextFieldState
 @Immutable
 data class SwapReceiverState(
     val address: TextFieldState,
-    val token: PickerState,
-    val chain: PickerState,
+    val chainToken: PickerState,
     val isAddressBookHintVisible: Boolean,
     val addressBookButton: IconButtonState,
     val qrScannerButton: IconButtonState,

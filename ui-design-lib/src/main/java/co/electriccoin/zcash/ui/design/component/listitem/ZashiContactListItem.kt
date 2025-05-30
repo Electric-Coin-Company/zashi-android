@@ -41,9 +41,8 @@ fun ZashiContactListItem(
         },
         trailing = {
             ZashiListItemDefaults.TrailingItem(
-                modifier = it,
-                isEnabled = true,
-                contentDescription = state.name.getValue()
+                contentDescription = state.name.getValue(),
+                modifier = it
             )
         },
         onClick = state.onClick,
