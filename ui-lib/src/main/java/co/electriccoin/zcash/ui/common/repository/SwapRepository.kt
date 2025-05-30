@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
 
 interface SwapRepository {
@@ -53,7 +54,15 @@ class NearSwapRepository(
             assets.update { it.copy(isLoading = true) }
             try {
                 val tokens = nearDataSource.getSupportedTokens()
-                assets.update { it.copy(data = tokens, isLoading = false) }
+                val filtered =
+                    withContext(Dispatchers.Default) {
+                        tokens
+                            .toMutableList()
+                            .apply {
+                                removeIf { it.tokenTicker.lowercase() == "zec" }
+                            }.toList()
+                    }
+                assets.update { it.copy(data = filtered, isLoading = false) }
             } catch (_: ResponseException) {
                 assets.update { it.copy(isLoading = false) }
             } catch (_: IOException) {
