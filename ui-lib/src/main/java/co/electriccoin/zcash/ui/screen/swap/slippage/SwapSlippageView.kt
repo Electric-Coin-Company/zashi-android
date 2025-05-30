@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.swap.slippage
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -136,11 +137,15 @@ fun SwapSlippageView(state: SwapSlippageState?) {
 
 @Composable
 private fun SlippageInfoCard(state: SwapSlippageInfoState) {
+    val containerColor by animateColorAsState(state.mode.containerColor)
+    val titleColor by animateColorAsState(state.mode.titleColor)
+    val descriptionColor by animateColorAsState(state.mode.descriptionColor)
+
     ZashiCard(
         modifier = Modifier.fillMaxWidth(),
         colors =
             CardDefaults.cardColors(
-                containerColor = state.mode.containerColor
+                containerColor = containerColor
             ),
         contentPadding = PaddingValues(20.dp)
     ) {
@@ -157,13 +162,13 @@ private fun SlippageInfoCard(state: SwapSlippageInfoState) {
                     text = state.title.getValue(),
                     style = ZashiTypography.textSm,
                     fontWeight = FontWeight.SemiBold,
-                    color = state.mode.titleColor
+                    color = titleColor
                 )
                 Spacer(4.dp)
                 Text(
                     text = state.description.getValue(),
                     style = ZashiTypography.textXs,
-                    color = state.mode.descriptionColor
+                    color = descriptionColor
                 )
             }
         }
