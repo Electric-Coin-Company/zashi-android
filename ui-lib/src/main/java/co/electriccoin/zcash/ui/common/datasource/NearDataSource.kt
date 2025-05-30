@@ -1,6 +1,6 @@
 package co.electriccoin.zcash.ui.common.datasource
 
-import co.electriccoin.zcash.ui.common.model.NearTokenChain
+import co.electriccoin.zcash.ui.common.model.NearSwapAsset
 import co.electriccoin.zcash.ui.common.provider.ChainIconProvider
 import co.electriccoin.zcash.ui.common.provider.ChainNameProvider
 import co.electriccoin.zcash.ui.common.provider.NearApiProvider
@@ -10,7 +10,7 @@ import kotlinx.io.IOException
 
 interface NearDataSource {
     @Throws(IOException::class)
-    suspend fun getSupportedTokens(): List<NearTokenChain>
+    suspend fun getSupportedTokens(): List<NearSwapAsset>
 }
 
 class NearDataSourceImpl(
@@ -20,9 +20,9 @@ class NearDataSourceImpl(
     private val tokenNameProvider: TokenNameProvider,
     private val nearApiProvider: NearApiProvider,
 ) : NearDataSource {
-    override suspend fun getSupportedTokens(): List<NearTokenChain> =
+    override suspend fun getSupportedTokens(): List<NearSwapAsset> =
         nearApiProvider.getSupportedTokens().map {
-            NearTokenChain(
+            NearSwapAsset(
                 token = it,
                 tokenName = tokenNameProvider.getName(it.symbol),
                 tokenIcon = tokenIconProvider.getIcon(it.symbol),

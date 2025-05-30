@@ -7,24 +7,24 @@ import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 
 @Immutable
-data class SwapReceiverPickerState(
+data class SwapAssetPickerState(
     val search: TextFieldState,
-    val data: SwapPickerDataState,
+    val data: SwapAssetPickerDataState,
     override val onBack: () -> Unit,
 ) : ModalBottomSheetState
 
 @Immutable
-sealed interface SwapPickerDataState {
+sealed interface SwapAssetPickerDataState {
     @Immutable
-    data object Loading : SwapPickerDataState
+    data object Loading : SwapAssetPickerDataState
 
     @Immutable
     data class Success(
         val items: List<ListItemState>
-    ) : SwapPickerDataState
+    ) : SwapAssetPickerDataState
 
     @Immutable
     data class Error(
         val button: ButtonState
-    ) : SwapPickerDataState
+    ) : SwapAssetPickerDataState
 }

@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.SwapTokenChain
+import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetSelectedTokenChainUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -18,7 +18,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.swap.amount.SwapAmount
-import co.electriccoin.zcash.ui.screen.swap.receiver.picker.SwapReceiverPicker
+import co.electriccoin.zcash.ui.screen.swap.receiver.picker.SwapAssetPicker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
 class SwapReceiverViewModel(
-    getSelectedTokenChain: GetSelectedTokenChainUseCase,
+    getSelectedSwapAsset: GetSelectedSwapAssetUseCase,
     private val cancelSwap: CancelSwapUseCase,
     private val navigationRouter: NavigationRouter,
     private val observeContactByAddress: ObserveContactByAddressUseCase,
@@ -101,13 +101,13 @@ class SwapReceiverViewModel(
 
     val state: StateFlow<SwapReceiverState> =
         combine(
-            getSelectedTokenChain.observe(),
+            getSelectedSwapAsset.observe(),
             address,
             addressBookButtonState,
             isAddressBookHintVisible
-        ) { tokenChain, address, addressBookButton, isAddressBookHintVisible ->
+        ) { asset, address, addressBookButton, isAddressBookHintVisible ->
             createState(
-                tokenChain = tokenChain,
+                asset = asset,
                 addressState = address,
                 addressBookButton = addressBookButton,
                 isAddressBookHintVisible = isAddressBookHintVisible
@@ -117,7 +117,7 @@ class SwapReceiverViewModel(
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue =
                 createState(
-                    tokenChain = getSelectedTokenChain.observe().value,
+                    asset = getSelectedSwapAsset.observe().value,
                     addressState = address.value,
                     addressBookButton = addressBookButtonState.value,
                     isAddressBookHintVisible = isAddressBookHintVisible.value
@@ -125,7 +125,7 @@ class SwapReceiverViewModel(
         )
 
     private fun createState(
-        tokenChain: SwapTokenChain?,
+        asset: SwapAsset?,
         addressState: TextFieldState,
         addressBookButton: IconButtonState,
         isAddressBookHintVisible: Boolean
@@ -134,9 +134,9 @@ class SwapReceiverViewModel(
             address = addressState,
             chainToken =
                 PickerState(
-                    icon = tokenChain?.tokenIcon,
-                    badge = tokenChain?.chainIcon,
-                    text = tokenChain?.tokenTicker?.let { stringRes(it) },
+                    icon = asset?.tokenIcon,
+                    badge = asset?.chainIcon,
+                    text = asset?.tokenTicker?.let { stringRes(it) },
                     placeholder = stringRes("Select..."),
                     onClick = ::onSelectChainTokenClick
                 ),
@@ -150,7 +150,7 @@ class SwapReceiverViewModel(
             positiveButton =
                 ButtonState(
                     text = stringRes("Next"),
-                    isEnabled = addressState.error == null && tokenChain != null,
+                    isEnabled = addressState.error == null && asset != null,
                     onClick = ::onPositiveClick
                 ),
             onBack = ::onBack,
@@ -183,7 +183,7 @@ class SwapReceiverViewModel(
 
     private fun onBack() = cancelSwap()
 
-    private fun onSelectChainTokenClick() = navigationRouter.forward(SwapReceiverPicker)
+    private fun onSelectChainTokenClick() = navigationRouter.forward(SwapAssetPicker)
 
     private fun onPickAddressBookContact() =
         viewModelScope.launch { navigateToAddressBook(AddressBookArgs.PICK_CONTACT) }

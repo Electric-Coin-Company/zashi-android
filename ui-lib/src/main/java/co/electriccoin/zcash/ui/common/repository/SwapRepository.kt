@@ -1,8 +1,8 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import co.electriccoin.zcash.ui.common.datasource.NearDataSource
-import co.electriccoin.zcash.ui.common.model.NearTokenChain
-import co.electriccoin.zcash.ui.common.model.SwapTokenChain
+import co.electriccoin.zcash.ui.common.model.NearSwapAsset
+import co.electriccoin.zcash.ui.common.model.SwapAsset
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,12 +15,12 @@ import kotlinx.coroutines.launch
 import kotlinx.io.IOException
 
 interface SwapRepository {
-    val tokenChains: StateFlow<SwapTokenChains>
-    val selectedTokenChain: StateFlow<SwapTokenChain?>
+    val assets: StateFlow<SwapAssets>
+    val selectedAsset: StateFlow<SwapAsset?>
 
-    fun selectTokenChain(swapTokenChain: SwapTokenChain)
+    fun select(asset: SwapAsset)
 
-    fun requestRefreshTokenChains()
+    fun requestRefreshAssets()
 
     fun clear()
 }
@@ -30,34 +30,34 @@ class NearSwapRepository(
 ) : SwapRepository {
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
-    override val tokenChains =
+    override val assets =
         MutableStateFlow(
-            SwapTokenChains(
+            SwapAssets(
                 data = null,
                 isLoading = true,
-                type = SwapTokenChains.Type.NEAR
+                type = SwapAssets.Type.NEAR
             )
         )
 
-    override val selectedTokenChain = MutableStateFlow<NearTokenChain?>(null)
+    override val selectedAsset = MutableStateFlow<NearSwapAsset?>(null)
 
     private var refreshJob: Job? = null
 
-    override fun selectTokenChain(swapTokenChain: SwapTokenChain) {
-        check(swapTokenChain is NearTokenChain)
-        selectedTokenChain.update { swapTokenChain }
+    override fun select(asset: SwapAsset) {
+        check(asset is NearSwapAsset)
+        selectedAsset.update { asset }
     }
 
-    override fun requestRefreshTokenChains() {
+    override fun requestRefreshAssets() {
         scope.launch {
-            tokenChains.update { it.copy(isLoading = true) }
+            assets.update { it.copy(isLoading = true) }
             try {
                 val tokens = nearDataSource.getSupportedTokens()
-                tokenChains.update { it.copy(data = tokens, isLoading = false) }
+                assets.update { it.copy(data = tokens, isLoading = false) }
             } catch (_: ResponseException) {
-                tokenChains.update { it.copy(isLoading = false) }
+                assets.update { it.copy(isLoading = false) }
             } catch (_: IOException) {
-                tokenChains.update { it.copy(isLoading = false) }
+                assets.update { it.copy(isLoading = false) }
             }
         }
     }
@@ -65,12 +65,12 @@ class NearSwapRepository(
     override fun clear() {
         refreshJob?.cancel()
         refreshJob = null
-        selectedTokenChain.update { null }
+        selectedAsset.update { null }
     }
 }
 
-data class SwapTokenChains(
-    val data: List<SwapTokenChain>?,
+data class SwapAssets(
+    val data: List<SwapAsset>?,
     val isLoading: Boolean,
     val type: Type
 ) {

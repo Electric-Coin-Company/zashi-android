@@ -122,8 +122,8 @@ import co.electriccoin.zcash.ui.screen.swap.amount.SwapAmount
 import co.electriccoin.zcash.ui.screen.swap.amount.SwapAmountScreen
 import co.electriccoin.zcash.ui.screen.swap.receiver.SwapReceiver
 import co.electriccoin.zcash.ui.screen.swap.receiver.SwapReceiverScreen
-import co.electriccoin.zcash.ui.screen.swap.receiver.picker.SwapReceiverPicker
-import co.electriccoin.zcash.ui.screen.swap.receiver.picker.SwapReceiverPickerScreen
+import co.electriccoin.zcash.ui.screen.swap.receiver.picker.SwapAssetPicker
+import co.electriccoin.zcash.ui.screen.swap.receiver.picker.SwapAssetPickerScreen
 import co.electriccoin.zcash.ui.screen.taxexport.AndroidTaxExport
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExport
 import co.electriccoin.zcash.ui.screen.transactiondetail.AndroidTransactionDetail
@@ -522,13 +522,13 @@ internal fun MainActivity.Navigation() {
         composable<CrashReportOptIn> { AndroidCrashReportOptIn() }
         composable<ThirdPartyScan> { AndroidThirdPartyScan() }
         composable<SwapReceiver> { SwapReceiverScreen() }
-        dialog<SwapReceiverPicker>(
+        dialog<SwapAssetPicker>(
             dialogProperties =
                 DialogProperties(
                     dismissOnBackPress = false,
                     dismissOnClickOutside = false
                 )
-        ) { SwapReceiverPickerScreen() }
+        ) { SwapAssetPickerScreen() }
         composable<SwapAmount> { SwapAmountScreen() }
     }
 }

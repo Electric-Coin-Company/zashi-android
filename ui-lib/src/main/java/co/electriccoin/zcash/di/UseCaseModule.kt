@@ -15,7 +15,7 @@ import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteTransactionNoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ExportTaxUseCase
-import co.electriccoin.zcash.ui.common.usecase.FilterSwapTokenChainsUseCase
+import co.electriccoin.zcash.ui.common.usecase.FilterSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.FlipTransactionBookmarkUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCoinbaseStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetConfigurationUseCase
@@ -28,11 +28,11 @@ import co.electriccoin.zcash.ui.common.usecase.GetKeystoneStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetMetadataUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetSelectedTokenChainUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetTokenChainsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionMetadataUseCase
@@ -82,7 +82,7 @@ import co.electriccoin.zcash.ui.common.usecase.ResetSharedPrefsDataUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RestoreWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveContactUseCase
-import co.electriccoin.zcash.ui.common.usecase.SelectTokenChainUseCase
+import co.electriccoin.zcash.ui.common.usecase.SelectSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.SelectWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendSupportEmailUseCase
@@ -204,8 +204,8 @@ val useCaseModule =
         factoryOf(::NavigateToRequestShieldedUseCase)
         factoryOf(::NavigateToNearSwapUseCase)
         factoryOf(::CancelSwapUseCase)
-        factoryOf(::GetSelectedTokenChainUseCase)
-        factoryOf(::SelectTokenChainUseCase)
-        factoryOf(::GetTokenChainsUseCase)
-        factoryOf(::FilterSwapTokenChainsUseCase)
+        factoryOf(::GetSelectedSwapAssetUseCase)
+        factoryOf(::SelectSwapAssetUseCase)
+        factoryOf(::GetSwapAssetsUseCase)
+        factoryOf(::FilterSwapAssetsUseCase)
     }

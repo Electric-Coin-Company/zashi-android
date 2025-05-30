@@ -9,7 +9,7 @@ class NavigateToNearSwapUseCase(
     private val navigationRouter: NavigationRouter
 ) {
     operator fun invoke() {
-        swapRepository.requestRefreshTokenChains()
+        swapRepository.requestRefreshAssets()
         navigationRouter.forward(SwapReceiver)
     }
 }

@@ -7,11 +7,11 @@ import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SwapReceiverPickerScreen() {
-    val vm = koinViewModel<SwapReceiverPickerViewModel>()
+fun SwapAssetPickerScreen() {
+    val vm = koinViewModel<SwapAssetPickerViewModel>()
     val state by vm.state.collectAsStateWithLifecycle()
-    SwapReceiverPickerView(state)
+    SwapAssetPickerView(state)
 }
 
 @Serializable
-object SwapReceiverPicker
+object SwapAssetPicker

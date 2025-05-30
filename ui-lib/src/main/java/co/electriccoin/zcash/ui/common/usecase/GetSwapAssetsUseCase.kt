@@ -2,8 +2,8 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 
-class GetSelectedTokenChainUseCase(
+class GetSwapAssetsUseCase(
     private val swapRepository: SwapRepository
 ) {
-    fun observe() = swapRepository.selectedTokenChain
+    fun observe() = swapRepository.assets
 }

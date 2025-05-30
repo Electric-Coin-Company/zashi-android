@@ -45,7 +45,7 @@ import co.electriccoin.zcash.ui.screen.home.common.CommonShimmerLoadingScreen
 @Suppress("ForbiddenComment")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SwapReceiverPickerView(state: SwapReceiverPickerState?) {
+fun SwapAssetPickerView(state: SwapAssetPickerState?) {
     ZashiScreenModalBottomSheet(
         state = state,
         dragHandle = null,
@@ -70,11 +70,11 @@ fun SwapReceiverPickerView(state: SwapReceiverPickerState?) {
                 SearchTextField(innerState)
 
                 when (innerState.data) {
-                    is SwapPickerDataState.Error -> {
+                    is SwapAssetPickerDataState.Error -> {
                         // TODO swap
                     }
 
-                    SwapPickerDataState.Loading ->
+                    SwapAssetPickerDataState.Loading ->
                         CommonShimmerLoadingScreen(
                             shimmerItemsCount = 10,
                             modifier =
@@ -84,7 +84,7 @@ fun SwapReceiverPickerView(state: SwapReceiverPickerState?) {
                             contentPaddingValues = PaddingValues(24.dp, 12.dp),
                         )
 
-                    is SwapPickerDataState.Success ->
+                    is SwapAssetPickerDataState.Success ->
                         if (innerState.data.items.isEmpty()) {
                             CommonEmptyScreen(modifier = Modifier.fillMaxSize())
                         } else {
@@ -104,7 +104,7 @@ fun SwapReceiverPickerView(state: SwapReceiverPickerState?) {
 
 @Composable
 private fun Success(
-    state: SwapPickerDataState.Success,
+    state: SwapAssetPickerDataState.Success,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberLazyListState()
@@ -152,7 +152,7 @@ private fun Item(item: ListItemState) {
 }
 
 @Composable
-private fun SearchTextField(innerState: SwapReceiverPickerState) {
+private fun SearchTextField(innerState: SwapAssetPickerState) {
     ZashiTextField(
         state = innerState.search,
         modifier =
@@ -176,7 +176,7 @@ private fun SearchTextField(innerState: SwapReceiverPickerState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopAppBar(
-    innerState: SwapReceiverPickerState,
+    innerState: SwapAssetPickerState,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
 ) {
     ZashiSmallTopAppBar(
@@ -200,13 +200,13 @@ private fun TopAppBar(
 @Composable
 private fun SuccessPreview() =
     ZcashTheme {
-        SwapReceiverPickerView(
+        SwapAssetPickerView(
             state =
-                SwapReceiverPickerState(
+                SwapAssetPickerState(
                     onBack = {},
                     search = TextFieldState(stringRes("")) {},
                     data =
-                        SwapPickerDataState.Success(
+                        SwapAssetPickerDataState.Success(
                             listOf(
                                 ListItemState(
                                     title = stringRes("title"),
@@ -226,12 +226,12 @@ private fun SuccessPreview() =
 @Composable
 private fun EmptyPreview() =
     ZcashTheme {
-        SwapReceiverPickerView(
+        SwapAssetPickerView(
             state =
-                SwapReceiverPickerState(
+                SwapAssetPickerState(
                     onBack = {},
                     search = TextFieldState(stringRes("")) {},
-                    data = SwapPickerDataState.Success(listOf())
+                    data = SwapAssetPickerDataState.Success(listOf())
                 )
         )
     }
@@ -240,12 +240,12 @@ private fun EmptyPreview() =
 @Composable
 private fun LoadingPreview() =
     ZcashTheme {
-        SwapReceiverPickerView(
+        SwapAssetPickerView(
             state =
-                SwapReceiverPickerState(
+                SwapAssetPickerState(
                     onBack = {},
                     search = TextFieldState(stringRes("")) {},
-                    data = SwapPickerDataState.Loading
+                    data = SwapAssetPickerDataState.Loading
                 )
         )
     }
