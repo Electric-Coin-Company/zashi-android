@@ -6,6 +6,7 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.repository.SwapAssets
+import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.FilterSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.SelectSwapAssetUseCase
@@ -28,7 +29,8 @@ class SwapAssetPickerViewModel(
     getSwapAssets: GetSwapAssetsUseCase,
     private val selectSwapAsset: SelectSwapAssetUseCase,
     private val navigationRouter: NavigationRouter,
-    private val filterSwapAssets: FilterSwapAssetsUseCase
+    private val filterSwapAssets: FilterSwapAssetsUseCase,
+    private val swapRepository: SwapRepository,
 ) : ViewModel() {
     private val searchText = MutableStateFlow("")
 
@@ -85,7 +87,15 @@ class SwapAssetPickerViewModel(
                         )
 
                     assets.isLoading -> SwapAssetPickerDataState.Loading
-                    else -> SwapAssetPickerDataState.Error(ButtonState(stringRes("")))
+                    else ->
+                        SwapAssetPickerDataState.Error(
+                            stringRes("Something went wrong"),
+                            stringRes("We couldn’t load the assets. Please check your connection and try again."),
+                            ButtonState(
+                                text = stringRes("Try again"),
+                                onClick = ::onRetry
+                            )
+                        )
                 },
             onBack = ::onBack,
             search = search
@@ -102,4 +112,6 @@ class SwapAssetPickerViewModel(
     private fun onSwapAssetClick(asset: SwapAsset) = selectSwapAsset.select(asset)
 
     private fun onBack() = navigationRouter.back()
+
+    private fun onRetry() = swapRepository.requestRefreshAssets()
 }

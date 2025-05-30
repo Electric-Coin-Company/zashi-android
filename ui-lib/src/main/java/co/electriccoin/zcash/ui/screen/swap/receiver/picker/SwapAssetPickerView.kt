@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
+import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
@@ -40,6 +41,7 @@ import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.home.common.CommonEmptyScreen
+import co.electriccoin.zcash.ui.screen.home.common.CommonErrorScreen
 import co.electriccoin.zcash.ui.screen.home.common.CommonShimmerLoadingScreen
 
 @Suppress("ForbiddenComment")
@@ -54,25 +56,29 @@ fun SwapAssetPickerView(state: SwapAssetPickerState?) {
     ) { innerState ->
         BlankBgScaffold(
             topBar = {
-                TopAppBar(innerState, windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp,))
+                TopAppBar(innerState, windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp))
             }
         ) { padding ->
             Column(
                 modifier =
-                    Modifier.fillMaxSize().scaffoldScrollPadding(
-                        paddingValues = padding,
-                        top = padding.calculateTopPadding(),
-                        bottom = 0.dp,
-                        start = 0.dp,
-                        end = 0.dp,
-                    )
+                    Modifier
+                        .fillMaxSize()
+                        .scaffoldScrollPadding(
+                            paddingValues = padding,
+                            top = padding.calculateTopPadding(),
+                            bottom = 0.dp,
+                            start = 0.dp,
+                            end = 0.dp,
+                        )
             ) {
                 SearchTextField(innerState)
 
                 when (innerState.data) {
-                    is SwapAssetPickerDataState.Error -> {
-                        // TODO swap
-                    }
+                    is SwapAssetPickerDataState.Error ->
+                        CommonErrorScreen(
+                            state = innerState.data,
+                            modifier = Modifier.fillMaxSize()
+                        )
 
                     SwapAssetPickerDataState.Loading ->
                         CommonShimmerLoadingScreen(
@@ -250,16 +256,21 @@ private fun LoadingPreview() =
         )
     }
 
-// @PreviewScreens
-// @Composable
-// private fun ErrorPreview() =
-//     ZcashTheme {
-//         SwapPickerView(
-//             state =
-//                 SwapPickerState(
-//                     onBack = {},
-//                     search = TextFieldState(stringRes("")) {},
-//                     data = SwapPickerDataState.Error(ButtonState(stringRes("text")))
-//                 )
-//         )
-//     }
+@PreviewScreens
+@Composable
+private fun ErrorPreview() =
+    ZcashTheme {
+        SwapAssetPickerView(
+            state =
+                SwapAssetPickerState(
+                    onBack = {},
+                    search = TextFieldState(stringRes("")) {},
+                    data =
+                        SwapAssetPickerDataState.Error(
+                            stringRes("title"),
+                            stringRes("subtitle"),
+                            ButtonState(stringRes("text"))
+                        )
+                )
+        )
+    }
