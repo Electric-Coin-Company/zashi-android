@@ -21,7 +21,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyAmount
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 
 @Composable
 fun SwapText(
@@ -89,8 +89,8 @@ private fun Preview() =
                                 stringRes("ZEC")
                             ),
                         title = stringRes("You pay"),
-                        text = stringResByDynamicCurrencyAmount(101, "$"),
-                        secondaryText = stringResByDynamicCurrencyAmount(2.47123, "ZEC")
+                        text = stringResByDynamicCurrencyNumber(101, "$"),
+                        secondaryText = stringResByDynamicCurrencyNumber(2.47123, "ZEC")
                     )
             )
         }

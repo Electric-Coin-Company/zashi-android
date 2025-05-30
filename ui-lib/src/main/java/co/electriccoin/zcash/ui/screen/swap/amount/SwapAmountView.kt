@@ -34,7 +34,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyAmount
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 
 @Composable
 fun SwapAmountView(
@@ -127,9 +127,9 @@ private fun Preview() =
                             title = stringRes("Recipient gets"),
                             symbol = stringRes("$"),
                             primaryText = TextFieldState(value = stringRes("")) {},
-                            primaryPlaceholder = stringResByDynamicCurrencyAmount(0, "$"),
-                            secondaryText = stringResByDynamicCurrencyAmount(100, "USDT"),
-                            exchangeRate = stringResByDynamicCurrencyAmount(100, "$"),
+                            primaryPlaceholder = stringResByDynamicCurrencyNumber(0, "$"),
+                            secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
+                            exchangeRate = stringResByDynamicCurrencyNumber(100, "$"),
                             onSwapChange = {},
                         ),
                     slippage =
@@ -144,8 +144,8 @@ private fun Preview() =
                                     stringRes("ZEC")
                                 ),
                             title = stringRes("You pay"),
-                            text = stringResByDynamicCurrencyAmount(101, "$"),
-                            secondaryText = stringResByDynamicCurrencyAmount(2.47123, "ZEC")
+                            text = stringResByDynamicCurrencyNumber(101, "$"),
+                            secondaryText = stringResByDynamicCurrencyNumber(2.47123, "ZEC")
                         ),
                     primaryButton =
                         ButtonState(

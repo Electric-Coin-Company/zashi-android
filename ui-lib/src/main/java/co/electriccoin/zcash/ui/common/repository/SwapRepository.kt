@@ -17,9 +17,14 @@ import kotlinx.io.IOException
 
 interface SwapRepository {
     val assets: StateFlow<SwapAssets>
+
     val selectedAsset: StateFlow<SwapAsset?>
 
+    val slippage: StateFlow<Int>
+
     fun select(asset: SwapAsset)
+
+    fun setSlippage(amount: Int)
 
     fun requestRefreshAssets()
 
@@ -42,12 +47,16 @@ class NearSwapRepository(
 
     override val selectedAsset = MutableStateFlow<NearSwapAsset?>(null)
 
+    override val slippage = MutableStateFlow(DEFAULT_SLIPPAGE)
+
     private var refreshJob: Job? = null
 
     override fun select(asset: SwapAsset) {
         check(asset is NearSwapAsset)
         selectedAsset.update { asset }
     }
+
+    override fun setSlippage(amount: Int) = slippage.update { amount }
 
     override fun requestRefreshAssets() {
         scope.launch {
@@ -75,6 +84,7 @@ class NearSwapRepository(
         refreshJob?.cancel()
         refreshJob = null
         selectedAsset.update { null }
+        slippage.update { DEFAULT_SLIPPAGE }
     }
 }
 
@@ -87,3 +97,5 @@ data class SwapAssets(
         NEAR
     }
 }
+
+private const val DEFAULT_SLIPPAGE = 10 // 1%

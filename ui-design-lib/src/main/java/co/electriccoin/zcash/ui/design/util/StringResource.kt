@@ -42,7 +42,7 @@ sealed interface StringResource {
     ) : StringResource
 
     @Immutable
-    data class ByDynamicCurrencyAmount(
+    data class ByDynamicCurrencyNumber(
         val amount: Number,
         val ticker: String,
         val symbolLocation: CurrencySymbolLocation
@@ -71,6 +71,11 @@ sealed interface StringResource {
         val abbreviated: Boolean
     ) : StringResource
 
+    @Immutable
+    data class ByNumber(
+        val number: Number
+    ) : StringResource
+
     operator fun plus(other: StringResource): StringResource = CompositeStringResource(listOf(this, other))
 
     operator fun plus(other: String): StringResource = CompositeStringResource(listOf(this, stringRes(other)))
@@ -97,7 +102,7 @@ fun stringRes(
 ): StringResource = StringResource.ByZatoshi(zatoshi, symbolLocation)
 
 @Stable
-fun stringResByDynamicCurrencyAmount(
+fun stringResByDynamicCurrencyNumber(
     amount: Number,
     ticker: String,
     symbolLocation: CurrencySymbolLocation =
@@ -106,7 +111,7 @@ fun stringResByDynamicCurrencyAmount(
         } else {
             CurrencySymbolLocation.AFTER
         }
-): StringResource = StringResource.ByDynamicCurrencyAmount(amount, ticker, symbolLocation)
+): StringResource = StringResource.ByDynamicCurrencyNumber(amount, ticker, symbolLocation)
 
 @Stable
 fun stringResByDateTime(
@@ -137,16 +142,20 @@ fun stringResByTransactionId(
     abbreviated: Boolean
 ): StringResource = StringResource.ByTransactionId(value, abbreviated)
 
+@Stable
+fun stringResByNumber(number: Number): StringResource = StringResource.ByNumber(number)
+
 @Suppress("SpreadOperator")
 @Stable
 @Composable
 fun StringResource.getValue(
     convertZatoshi: (StringResource.ByZatoshi) -> String = StringResourceDefaults::convertZatoshi,
-    convertCurrency: (StringResource.ByDynamicCurrencyAmount) -> String = StringResourceDefaults::convertCurrency,
+    convertCurrency: (StringResource.ByDynamicCurrencyNumber) -> String = StringResourceDefaults::convertCurrency,
     convertDateTime: (StringResource.ByDateTime) -> String = StringResourceDefaults::convertDateTime,
     convertYearMonth: (YearMonth) -> String = StringResourceDefaults::convertYearMonth,
     convertAddress: (StringResource.ByAddress) -> String = StringResourceDefaults::convertAddress,
-    convertTransactionId: (StringResource.ByTransactionId) -> String = StringResourceDefaults::convertTransactionId
+    convertTransactionId: (StringResource.ByTransactionId) -> String = StringResourceDefaults::convertTransactionId,
+    convertNumber: (StringResource.ByNumber) -> String = StringResourceDefaults::convertNumber
 ): String =
     getString(
         context = LocalContext.current,
@@ -155,28 +164,31 @@ fun StringResource.getValue(
         convertDateTime = convertDateTime,
         convertYearMonth = convertYearMonth,
         convertAddress = convertAddress,
-        convertTransactionId = convertTransactionId
+        convertTransactionId = convertTransactionId,
+        convertNumber = convertNumber
     )
 
 @Suppress("SpreadOperator")
 fun StringResource.getString(
     context: Context,
     convertZatoshi: (StringResource.ByZatoshi) -> String = StringResourceDefaults::convertZatoshi,
-    convertCurrency: (StringResource.ByDynamicCurrencyAmount) -> String = StringResourceDefaults::convertCurrency,
+    convertCurrency: (StringResource.ByDynamicCurrencyNumber) -> String = StringResourceDefaults::convertCurrency,
     convertDateTime: (StringResource.ByDateTime) -> String = StringResourceDefaults::convertDateTime,
     convertYearMonth: (YearMonth) -> String = StringResourceDefaults::convertYearMonth,
     convertAddress: (StringResource.ByAddress) -> String = StringResourceDefaults::convertAddress,
-    convertTransactionId: (StringResource.ByTransactionId) -> String = StringResourceDefaults::convertTransactionId
+    convertTransactionId: (StringResource.ByTransactionId) -> String = StringResourceDefaults::convertTransactionId,
+    convertNumber: (StringResource.ByNumber) -> String = StringResourceDefaults::convertNumber
 ): String =
     when (this) {
         is StringResource.ByResource -> context.getString(resource, *args.normalize(context).toTypedArray())
         is StringResource.ByString -> value
         is StringResource.ByZatoshi -> convertZatoshi(this)
-        is StringResource.ByDynamicCurrencyAmount -> convertCurrency(this)
+        is StringResource.ByDynamicCurrencyNumber -> convertCurrency(this)
         is StringResource.ByDateTime -> convertDateTime(this)
         is StringResource.ByYearMonth -> convertYearMonth(yearMonth)
         is StringResource.ByAddress -> convertAddress(this)
         is StringResource.ByTransactionId -> convertTransactionId(this)
+        is StringResource.ByNumber -> convertNumber(this)
         is CompositeStringResource ->
             this.resources.joinToString(separator = "") {
                 it.getString(
@@ -192,14 +204,12 @@ fun StringResource.getString(
     }
 
 private fun List<Any>.normalize(context: Context): List<Any> =
-    this.map {
-        when (it) {
-            is StringResource -> it.getString(context)
-            else -> it
-        }
-    }
+    this.map { if (it is StringResource) it.getString(context) else it }
 
 object StringResourceDefaults {
+    fun convertNumber(resource: StringResource.ByNumber): String =
+        currencyFormatter(maxDecimals = 2, minDecimals = 0).format(resource.number)
+
     fun convertZatoshi(res: StringResource.ByZatoshi): String {
         val amount = res.zatoshi.convertZatoshiToZecString()
         return when (res.symbolLocation) {
@@ -209,7 +219,7 @@ object StringResourceDefaults {
         }
     }
 
-    fun convertCurrency(res: StringResource.ByDynamicCurrencyAmount): String {
+    fun convertCurrency(res: StringResource.ByDynamicCurrencyNumber): String {
         val amount =
             currencyFormatter(maxDecimals = ZEC_FORMATTER.maximumFractionDigits, minDecimals = 2)
                 .format(res.amount)
@@ -267,9 +277,11 @@ object StringResourceDefaults {
 
     fun convertTransactionId(res: StringResource.ByTransactionId): String =
         if (res.abbreviated) {
-            "${res.transactionId.take(TRANSACTION_MAX_PREFIX_SUFFIX_LENGHT)}...${res.transactionId.takeLast(
-                TRANSACTION_MAX_PREFIX_SUFFIX_LENGHT
-            )}"
+            "${res.transactionId.take(TRANSACTION_MAX_PREFIX_SUFFIX_LENGHT)}...${
+                res.transactionId.takeLast(
+                    TRANSACTION_MAX_PREFIX_SUFFIX_LENGHT
+                )
+            }"
         } else {
             res.transactionId
         }

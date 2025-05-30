@@ -37,7 +37,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyAmount
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 
 @Composable
 fun SwapTextField(
@@ -167,9 +167,9 @@ private fun Preview() =
                         title = stringRes("Recipient gets"),
                         symbol = stringRes("$"),
                         primaryText = TextFieldState(value = stringRes("")) {},
-                        primaryPlaceholder = stringResByDynamicCurrencyAmount(0, "$"),
-                        secondaryText = stringResByDynamicCurrencyAmount(100, "USDT"),
-                        exchangeRate = stringResByDynamicCurrencyAmount(100, "$"),
+                        primaryPlaceholder = stringResByDynamicCurrencyNumber(0, "$"),
+                        secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
+                        exchangeRate = stringResByDynamicCurrencyNumber(100, "$"),
                         onSwapChange = {},
                     )
             )

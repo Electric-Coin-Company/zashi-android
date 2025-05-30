@@ -22,7 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.Zatoshi
-import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -36,7 +35,7 @@ import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
-import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyAmount
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -152,13 +151,13 @@ private fun Preview() =
                 PaySwapState(
                     from =
                         SwapTokenAmountState(
-                            stringResByDynamicCurrencyAmount(2.4214, "", CurrencySymbolLocation.HIDDEN),
-                            stringResByDynamicCurrencyAmount(21312, "$")
+                            stringResByDynamicCurrencyNumber(2.4214, "", CurrencySymbolLocation.HIDDEN),
+                            stringResByDynamicCurrencyNumber(21312, "$")
                         ),
                     to =
                         SwapTokenAmountState(
-                            stringResByDynamicCurrencyAmount(2.4214, "", CurrencySymbolLocation.HIDDEN),
-                            stringResByDynamicCurrencyAmount(21312, "$")
+                            stringResByDynamicCurrencyNumber(2.4214, "", CurrencySymbolLocation.HIDDEN),
+                            stringResByDynamicCurrencyNumber(21312, "$")
                         ),
                     items =
                         listOf(
@@ -180,14 +179,14 @@ private fun Preview() =
                             PaySwapInfoItem(
                                 description = stringRes("Max slippage 1%"),
                                 title = stringRes(Zatoshi(1231234)),
-                                subtitle = stringResByDynamicCurrencyAmount(23, "$")
+                                subtitle = stringResByDynamicCurrencyNumber(23, "$")
                             )
                         ),
                     amount =
                         PaySwapInfoItem(
                             description = stringRes("Total amount"),
                             title = stringRes(Zatoshi(123213)),
-                            subtitle = stringResByDynamicCurrencyAmount(12312, "$")
+                            subtitle = stringResByDynamicCurrencyNumber(12312, "$")
                         ),
                     primaryButton =
                         ButtonState(

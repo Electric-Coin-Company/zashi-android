@@ -29,7 +29,9 @@ import cash.z.ecc.android.sdk.model.MonetarySeparators
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
+import java.math.BigDecimal
 import java.text.ParseException
 import java.util.Locale
 
@@ -63,17 +65,17 @@ fun ZashiNumberTextField(
     val allowedNumbersRegex by remember { derivedStateOf { allowedNumbersRegex(monetarySeparators) } }
     val textFieldState =
         TextFieldState(
-            value = stringRes(state.text),
-            error = state.errorString.takeIf { state.amount == null && state.text.isNotEmpty() },
+            value = state.text,
+            error = state.errorString.takeIf { state.amount == null && state.text.getValue().isNotEmpty() },
             onValueChange = { text ->
                 val amount =
-                    parseAmountToDouble(
+                    parseAmount(
                         defaultAmountValidationRegex = defaultRegex,
                         allowedNumberFormatValidationRegex = allowedNumbersRegex,
                         text = text,
                         locale = locale
                     )
-                state.onValueChange(state.copy(text = text, amount = amount))
+                state.onValueChange(state.copy(text = stringRes(text), amount = amount))
             }
         )
     val handle: ZashiTextFieldHandle = rememberZashiTextFieldHandle(textFieldState)
@@ -117,12 +119,12 @@ private fun allowedNumbersRegex(monetarySeparators: MonetarySeparators) =
  */
 private fun defaultRegex(monetarySeparators: MonetarySeparators) = "^[0${monetarySeparators.decimal}]*$".toRegex()
 
-private fun parseAmountToDouble(
+private fun parseAmount(
     defaultAmountValidationRegex: Regex,
     allowedNumberFormatValidationRegex: Regex,
     text: String,
     locale: Locale
-): Double? {
+): BigDecimal? {
     if (text.contains(defaultAmountValidationRegex) || text.contains(allowedNumberFormatValidationRegex)) {
         val decimalFormat =
             android.icu.text.NumberFormat.getInstance(locale, android.icu.text.NumberFormat.NUMBERSTYLE).apply {
@@ -133,7 +135,14 @@ private fun parseAmountToDouble(
             }
 
         return try {
-            decimalFormat.parse(text).toDouble()
+            when (val result = decimalFormat.parse(text)) {
+                is Int -> result.toBigDecimal()
+                is Float -> result.toBigDecimal()
+                is Double -> result.toBigDecimal()
+                is Short -> result.toFloat().toBigDecimal()
+                is BigDecimal -> result
+                else -> result.toDouble().toBigDecimal()
+            }
         } catch (e: ParseException) {
             null
         }
@@ -144,8 +153,8 @@ private fun parseAmountToDouble(
 
 @Immutable
 data class NumberTextFieldState(
-    val text: String = "",
-    val amount: Double? = null,
+    val text: StringResource = stringRes(""),
+    val amount: BigDecimal? = null,
     val errorString: StringResource = stringRes(""),
     val onValueChange: (NumberTextFieldState) -> Unit,
 )

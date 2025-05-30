@@ -30,6 +30,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
@@ -87,6 +88,7 @@ import co.electriccoin.zcash.ui.common.usecase.SelectWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendSupportEmailUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendTransactionAgainUseCase
+import co.electriccoin.zcash.ui.common.usecase.SetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
@@ -208,4 +210,6 @@ val useCaseModule =
         factoryOf(::SelectSwapAssetUseCase)
         factoryOf(::GetSwapAssetsUseCase)
         factoryOf(::FilterSwapAssetsUseCase)
+        factoryOf(::SetSlippageUseCase)
+        factoryOf(::GetSlippageUseCase)
     }
