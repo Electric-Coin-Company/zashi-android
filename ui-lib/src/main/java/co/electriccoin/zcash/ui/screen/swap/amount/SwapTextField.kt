@@ -23,12 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.Spacer
-import co.electriccoin.zcash.ui.design.component.TextFieldState
-import co.electriccoin.zcash.ui.design.component.ZashiTextField
+import co.electriccoin.zcash.ui.design.component.ZashiNumberTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -40,19 +41,43 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 
 @Composable
-fun SwapTextField(
+fun SwapTextField(state: SwapTextFieldState, modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        SwapTextFieldCard(
+            modifier = Modifier.fillMaxWidth(),
+            state = state
+        )
+
+        if (state.isError) {
+            val error = state.error ?: state.textField.errorString
+
+            if (error.getValue().isNotEmpty()) {
+                Spacer(8.dp)
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = error.getValue(),
+                    style = ZashiTypography.textSm,
+                    color = ZashiColors.Inputs.ErrorDefault.hint,
+                    textAlign = TextAlign.End
+                )
+                Spacer(8.dp)
+            }
+        }
+    }
+}
+
+@Composable
+private fun SwapTextFieldCard(
     state: SwapTextFieldState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-
     val isFocused by interactionSource.collectIsFocusedAsState()
-
     val borderColor by animateColorAsState(
-        if (isFocused) {
-            ZashiColors.Dropdowns.Focused.stroke
-        } else {
-            ZashiColors.Surfaces.strokeSecondary
+        when {
+            state.isError -> ZashiColors.Inputs.ErrorDefault.stroke
+            isFocused -> ZashiColors.Dropdowns.Focused.stroke
+            else -> ZashiColors.Surfaces.strokeSecondary
         }
     )
 
@@ -76,24 +101,21 @@ fun SwapTextField(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = CenterVertically
             ) {
-                if (state.primaryText.value
-                        .getValue()
-                        .isNotEmpty()
-                ) {
+                if (state.textFieldPrefix != null && !state.textField.text.isEmpty()) {
                     Text(
-                        text = state.symbol.getValue(),
+                        text = state.textFieldPrefix.getValue(),
                         style = ZashiTypography.header4,
                         fontWeight = FontWeight.SemiBold,
                         color = ZashiColors.Text.textPrimary,
                     )
                 }
-                ZashiTextField(
-                    state = state.primaryText,
+                ZashiNumberTextField(
+                    state = state.textField,
                     modifier = Modifier.weight(1f),
                     textStyle = ZashiTypography.header4.copy(fontWeight = FontWeight.SemiBold),
                     placeholder = {
                         Text(
-                            text = state.primaryPlaceholder.getValue(),
+                            text = state.textFieldPlaceholder.getValue(),
                             style = ZashiTypography.header4,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -108,10 +130,15 @@ fun SwapTextField(
                             focusedBorderColor = Color.Unspecified,
                             containerColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
+                            errorTextColor = ZashiColors.Text.textPrimary,
+                            errorHintColor = ZashiColors.Inputs.Default.hint,
+                            errorBorderColor = Color.Unspecified,
+                            errorContainerColor = Color.Transparent,
+                            errorPlaceholderColor = ZashiColors.Inputs.Default.text,
                         )
                 )
                 Spacer(4.dp)
-                SwapToken(
+                SwapAssetCard(
                     state = state.token
                 )
             }
@@ -132,12 +159,14 @@ fun SwapTextField(
                     contentDescription = null
                 )
                 Spacer(1f)
-                Text(
-                    text = state.exchangeRate.getValue(),
-                    style = ZashiTypography.textSm,
-                    fontWeight = FontWeight.Medium,
-                    color = ZashiColors.Text.textTertiary
-                )
+                if (state.totalBalance != null) {
+                    Text(
+                        text = state.totalBalance.getValue(),
+                        style = ZashiTypography.textSm,
+                        fontWeight = FontWeight.Medium,
+                        color = if (state.isError) ZashiColors.Text.textError else ZashiColors.Text.textTertiary
+                    )
+                }
             }
         }
     }
@@ -146,14 +175,17 @@ fun SwapTextField(
 @Immutable
 data class SwapTextFieldState(
     val title: StringResource,
-    val symbol: StringResource,
-    val token: SwapTokenState,
-    val primaryText: TextFieldState,
-    val primaryPlaceholder: StringResource,
+    val error: StringResource?,
+    val token: SwapAssetCardState,
+    val textFieldPrefix: StringResource?,
+    val textField: NumberTextFieldState,
+    val textFieldPlaceholder: StringResource,
     val secondaryText: StringResource,
-    val exchangeRate: StringResource,
+    val totalBalance: StringResource?,
     val onSwapChange: () -> Unit
-)
+) {
+    val isError = error != null || textField.isError
+}
 
 @PreviewScreens
 @Composable
@@ -163,13 +195,36 @@ private fun Preview() =
             SwapTextField(
                 state =
                     SwapTextFieldState(
-                        token = SwapTokenState(stringRes("USDT")),
+                        token = SwapAssetCardState(stringRes("USDT"), null, null),
                         title = stringRes("Recipient gets"),
-                        symbol = stringRes("$"),
-                        primaryText = TextFieldState(value = stringRes("")) {},
-                        primaryPlaceholder = stringResByDynamicCurrencyNumber(0, "$"),
+                        textFieldPrefix = stringRes("$"),
+                        textField = NumberTextFieldState {},
+                        textFieldPlaceholder = stringResByDynamicCurrencyNumber(0, "$"),
                         secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
-                        exchangeRate = stringResByDynamicCurrencyNumber(100, "$"),
+                        totalBalance = stringResByDynamicCurrencyNumber(1000, "$"),
+                        error = null,
+                        onSwapChange = {},
+                    )
+            )
+        }
+    }
+
+@PreviewScreens
+@Composable
+private fun ErrorPreview() =
+    ZcashTheme {
+        BlankSurface {
+            SwapTextField(
+                state =
+                    SwapTextFieldState(
+                        token = SwapAssetCardState(stringRes("USDT"), null, null),
+                        title = stringRes("Recipient gets"),
+                        textFieldPrefix = stringRes("$"),
+                        textField = NumberTextFieldState {},
+                        textFieldPlaceholder = stringResByDynamicCurrencyNumber(0, "$"),
+                        secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
+                        totalBalance = stringResByDynamicCurrencyNumber(100, "$"),
+                        error = stringRes("Error"),
                         onSwapChange = {},
                     )
             )

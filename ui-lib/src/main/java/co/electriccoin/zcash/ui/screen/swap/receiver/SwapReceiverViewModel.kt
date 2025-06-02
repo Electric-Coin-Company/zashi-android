@@ -41,7 +41,7 @@ class SwapReceiverViewModel(
     private val cancelSwap: CancelSwapUseCase,
     private val navigationRouter: NavigationRouter,
     private val observeContactByAddress: ObserveContactByAddressUseCase,
-    private val navigateToAddressBook: NavigateToAddressBookUseCase
+    private val navigateToAddressBook: NavigateToAddressBookUseCase,
 ) : ViewModel() {
     private val addressText = MutableStateFlow("")
 
@@ -150,7 +150,7 @@ class SwapReceiverViewModel(
             positiveButton =
                 ButtonState(
                     text = stringRes("Next"),
-                    isEnabled = addressState.error == null && asset != null,
+                    isEnabled = addressState.error == null && !addressState.value.isEmpty() && asset != null,
                     onClick = ::onPositiveClick
                 ),
             onBack = ::onBack,

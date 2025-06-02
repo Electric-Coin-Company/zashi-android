@@ -1,7 +1,9 @@
 package co.electriccoin.zcash.ui.common.model
 
+import co.electriccoin.zcash.ui.common.serialization.BigDecimalSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.math.BigDecimal
 
 @Serializable
 data class NearTokenDto(
@@ -14,7 +16,8 @@ data class NearTokenDto(
     @SerialName("symbol")
     val symbol: String,
     @SerialName("price")
-    val price: String,
+    @Serializable(BigDecimalSerializer::class)
+    val price: BigDecimal? = null,
     @SerialName("priceUpdatedAt")
     val priceUpdatedAt: String,
     @SerialName("contractAddress")

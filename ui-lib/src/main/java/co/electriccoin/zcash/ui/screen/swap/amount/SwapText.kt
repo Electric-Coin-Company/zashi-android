@@ -53,13 +53,13 @@ fun SwapText(
                     color = ZashiColors.Text.textTertiary
                 )
                 Spacer(1f)
-                SwapToken(
+                SwapAssetCard(
                     state = state.token
                 )
             }
             Spacer(6.dp)
             Text(
-                text = state.secondaryText.getValue(),
+                text = state.secondaryText?.getValue() ?: "",
                 style = ZashiTypography.textSm,
                 fontWeight = FontWeight.Medium,
                 color = ZashiColors.Text.textTertiary
@@ -70,10 +70,10 @@ fun SwapText(
 
 @Immutable
 data class SwapTextState(
-    val token: SwapTokenState,
+    val token: SwapAssetCardState,
     val title: StringResource,
     val text: StringResource,
-    val secondaryText: StringResource,
+    val secondaryText: StringResource?,
 )
 
 @PreviewScreens
@@ -85,9 +85,7 @@ private fun Preview() =
                 state =
                     SwapTextState(
                         token =
-                            SwapTokenState(
-                                stringRes("ZEC")
-                            ),
+                            SwapAssetCardState(stringRes("ZEC"), null, null),
                         title = stringRes("You pay"),
                         text = stringResByDynamicCurrencyNumber(101, "$"),
                         secondaryText = stringResByDynamicCurrencyNumber(2.47123, "ZEC")
