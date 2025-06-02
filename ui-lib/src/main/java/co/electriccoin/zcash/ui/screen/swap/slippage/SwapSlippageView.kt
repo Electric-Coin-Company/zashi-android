@@ -1,9 +1,11 @@
 package co.electriccoin.zcash.ui.screen.swap.slippage
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,9 +35,9 @@ import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiCard
-import co.electriccoin.zcash.ui.design.component.ZashiInScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.ZashiInfoText
 import co.electriccoin.zcash.ui.design.component.ZashiNumberTextField
+import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarCloseNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -47,16 +49,18 @@ import co.electriccoin.zcash.ui.design.util.asScaffoldPaddingValues
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.swap.slippage.SlippageInfoState.Mode.HIGH
-import co.electriccoin.zcash.ui.screen.swap.slippage.SlippageInfoState.Mode.LOW
-import co.electriccoin.zcash.ui.screen.swap.slippage.SlippageInfoState.Mode.MEDIUM
+import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageInfoState.Mode.HIGH
+import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageInfoState.Mode.LOW
+import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageInfoState.Mode.MEDIUM
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SwapPickerView(state: SlippageState?) {
-    ZashiInScreenModalBottomSheet(
+fun SwapSlippageView(state: SwapSlippageState?) {
+    ZashiScreenModalBottomSheet(
         state = state,
-        dragHandle = null
+        dragHandle = null,
+        includeBottomPadding = false,
+        contentWindowInsets = { WindowInsets(0.dp, 0.dp, 0.dp, 0.dp) }
     ) { innerState ->
         BlankBgScaffold(
             modifier = Modifier.fillMaxSize(),
@@ -110,8 +114,11 @@ fun SwapPickerView(state: SlippageState?) {
                         placeholder = { Text("0%") }
                     )
                 }
-                Spacer(32.dp)
-                SlippageInfoCard(innerState)
+                if (innerState.info != null) {
+                    Spacer(32.dp)
+                    SlippageInfoCard(innerState.info)
+                }
+                Spacer(24.dp)
                 Spacer(1f)
                 ZashiInfoText(
                     text =
@@ -129,12 +136,16 @@ fun SwapPickerView(state: SlippageState?) {
 }
 
 @Composable
-private fun SlippageInfoCard(innerState: SlippageState) {
+private fun SlippageInfoCard(state: SwapSlippageInfoState) {
+    val containerColor by animateColorAsState(state.mode.containerColor)
+    val titleColor by animateColorAsState(state.mode.titleColor)
+    val descriptionColor by animateColorAsState(state.mode.descriptionColor)
+
     ZashiCard(
         modifier = Modifier.fillMaxWidth(),
         colors =
             CardDefaults.cardColors(
-                containerColor = innerState.info.mode.containerColor
+                containerColor = containerColor
             ),
         contentPadding = PaddingValues(20.dp)
     ) {
@@ -142,22 +153,22 @@ private fun SlippageInfoCard(innerState: SlippageState) {
             Image(
                 painter = painterResource(R.drawable.ic_info),
                 contentDescription = null,
-                colorFilter = ColorFilter.tint(innerState.info.mode.titleColor)
+                colorFilter = ColorFilter.tint(state.mode.titleColor)
             )
             Spacer(8.dp)
             Column {
                 Spacer(2.dp)
                 Text(
-                    text = innerState.info.title.getValue(),
+                    text = state.title.getValue(),
                     style = ZashiTypography.textSm,
                     fontWeight = FontWeight.SemiBold,
-                    color = innerState.info.mode.titleColor
+                    color = titleColor
                 )
                 Spacer(4.dp)
                 Text(
-                    text = innerState.info.description.getValue(),
+                    text = state.description.getValue(),
                     style = ZashiTypography.textXs,
-                    color = innerState.info.mode.descriptionColor
+                    color = descriptionColor
                 )
             }
         }
@@ -165,7 +176,7 @@ private fun SlippageInfoCard(innerState: SlippageState) {
 }
 
 @Composable
-private fun TopAppBar(innerState: SlippageState) {
+private fun TopAppBar(innerState: SwapSlippageState) {
     ZashiSmallTopAppBar(
         navigationAction = {
             ZashiTopAppBarCloseNavigation(
@@ -181,7 +192,7 @@ private fun TopAppBar(innerState: SlippageState) {
     )
 }
 
-private val SlippageInfoState.Mode.containerColor: Color
+private val SwapSlippageInfoState.Mode.containerColor: Color
     @Composable get() =
         when (this) {
             LOW -> ZashiColors.Utility.Gray.utilityGray50
@@ -189,7 +200,7 @@ private val SlippageInfoState.Mode.containerColor: Color
             HIGH -> ZashiColors.Utility.ErrorRed.utilityError50
         }
 
-private val SlippageInfoState.Mode.titleColor: Color
+private val SwapSlippageInfoState.Mode.titleColor: Color
     @Composable get() =
         when (this) {
             LOW -> ZashiColors.Utility.Gray.utilityGray600
@@ -197,7 +208,7 @@ private val SlippageInfoState.Mode.titleColor: Color
             HIGH -> ZashiColors.Utility.ErrorRed.utilityError600
         }
 
-private val SlippageInfoState.Mode.descriptionColor: Color
+private val SwapSlippageInfoState.Mode.descriptionColor: Color
     @Composable get() =
         when (this) {
             LOW -> ZashiColors.Utility.Gray.utilityGray800
@@ -210,30 +221,30 @@ private val SlippageInfoState.Mode.descriptionColor: Color
 private fun Preview() =
     ZcashTheme {
         var selected: SlippageSliderState.Selection by remember {
-            mutableStateOf(SlippageSliderState.Selection.Custom)
+            mutableStateOf(SlippageSliderState.Selection.ByPercent(10))
         }
 
         var custom by remember { mutableStateOf(NumberTextFieldState {}) }
 
         val isCustomVisible by remember { derivedStateOf { selected is SlippageSliderState.Selection.Custom } }
 
-        SwapPickerView(
+        SwapSlippageView(
             state =
-                SlippageState(
+                SwapSlippageState(
                     onBack = {},
                     customSlippage = custom.copy(onValueChange = { custom = it }).takeIf { isCustomVisible },
                     slider =
                         SlippageSliderState(
                             selected = selected,
-                            percentRange = 0..300 step 10,
-                            labelRange = 0..300 step 100,
+                            percentRange = 0..30 step 1,
+                            labelRange = 0..30 step 10,
                             onValueChange = { selected = it }
                         ),
                     info =
-                        SlippageInfoState(
+                        SwapSlippageInfoState(
                             title = stringRes("Title"),
                             description = stringRes("Description"),
-                            mode = SlippageInfoState.Mode.HIGH,
+                            mode = SwapSlippageInfoState.Mode.HIGH,
                         ),
                     primary =
                         ButtonState(

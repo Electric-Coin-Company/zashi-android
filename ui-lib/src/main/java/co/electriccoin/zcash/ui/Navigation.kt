@@ -124,6 +124,8 @@ import co.electriccoin.zcash.ui.screen.swap.receiver.SwapReceiver
 import co.electriccoin.zcash.ui.screen.swap.receiver.SwapReceiverScreen
 import co.electriccoin.zcash.ui.screen.swap.receiver.picker.SwapAssetPicker
 import co.electriccoin.zcash.ui.screen.swap.receiver.picker.SwapAssetPickerScreen
+import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippage
+import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageScreen
 import co.electriccoin.zcash.ui.screen.taxexport.AndroidTaxExport
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExport
 import co.electriccoin.zcash.ui.screen.transactiondetail.AndroidTransactionDetail
@@ -530,6 +532,13 @@ internal fun MainActivity.Navigation() {
                 )
         ) { SwapAssetPickerScreen() }
         composable<SwapAmount> { SwapAmountScreen() }
+        dialog<SwapSlippage>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) { SwapSlippageScreen() }
     }
 }
 

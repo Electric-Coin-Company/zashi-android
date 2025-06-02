@@ -35,7 +35,7 @@ fun SlippageSlider(
     state: SlippageSliderState,
     modifier: Modifier = Modifier,
 ) {
-    val range = state.percentRange.first()..(state.percentRange.last + TEN_PERCENT) step state.percentRange.step
+    val range = state.percentRange.first()..(state.percentRange.last + ONE_PERCENT) step state.percentRange.step
     val selection =
         when (state.selected) {
             is SlippageSliderState.Selection.Custom -> range.last
@@ -69,8 +69,8 @@ fun SlippageSlider(
                     .fillMaxWidth()
         ) {
             state.labelRange.forEach { percent ->
-                val positionPercent = percent.toFloat() / (state.labelRange.last + TEN_PERCENT).toFloat()
-                val displayPercent = percent / TEN_PERCENT
+                val positionPercent = percent.toFloat() / (state.labelRange.last + ONE_PERCENT).toFloat()
+                val displayPercent = percent / ONE_PERCENT
                 Step(
                     isSelected =
                         state.selected is SlippageSliderState.Selection.ByPercent &&
@@ -183,11 +183,14 @@ data class SlippageSliderState(
     val labelRange: IntProgression,
     val onValueChange: (Selection) -> Unit
 ) {
+    @Immutable
     sealed interface Selection {
+        @Immutable
         data class ByPercent(
             val percent: Int
         ) : Selection
 
+        @Immutable
         data object Custom : Selection
     }
 }
@@ -207,8 +210,8 @@ private fun Preview() =
                     state =
                         SlippageSliderState(
                             selected = selected,
-                            percentRange = 0..400 step ONE_PERCENT,
-                            labelRange = 0..400 step TEN_PERCENT,
+                            percentRange = 0..30 step ZERO_POINT_ONE_PERCENT,
+                            labelRange = 0..30 step ONE_PERCENT,
                             onValueChange = { selected = it }
                         ),
                     modifier = Modifier.fillMaxWidth()
@@ -221,5 +224,5 @@ private fun Preview() =
         }
     }
 
+private const val ZERO_POINT_ONE_PERCENT = 1
 private const val ONE_PERCENT = 10
-private const val TEN_PERCENT = ONE_PERCENT * 10

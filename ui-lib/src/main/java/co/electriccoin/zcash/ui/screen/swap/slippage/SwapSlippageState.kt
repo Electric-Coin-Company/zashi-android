@@ -7,16 +7,16 @@ import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.util.StringResource
 
 @Immutable
-data class SlippageState(
+data class SwapSlippageState(
     val slider: SlippageSliderState,
     val customSlippage: NumberTextFieldState?,
-    val info: SlippageInfoState,
+    val info: SwapSlippageInfoState?,
     val primary: ButtonState,
     override val onBack: () -> Unit
 ) : ModalBottomSheetState
 
 @Immutable
-data class SlippageInfoState(
+data class SwapSlippageInfoState(
     val title: StringResource,
     val description: StringResource,
     val mode: Mode,

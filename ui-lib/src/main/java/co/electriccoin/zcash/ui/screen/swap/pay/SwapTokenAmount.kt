@@ -20,7 +20,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
-import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyAmount
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 
 @Composable
 fun SwapTokenAmount(
@@ -68,8 +68,8 @@ private fun Preview() =
             SwapTokenAmount(
                 state =
                     SwapTokenAmountState(
-                        stringResByDynamicCurrencyAmount(2.4214, "", CurrencySymbolLocation.HIDDEN),
-                        stringResByDynamicCurrencyAmount(21312, "$")
+                        stringResByDynamicCurrencyNumber(2.4214, "", CurrencySymbolLocation.HIDDEN),
+                        stringResByDynamicCurrencyNumber(21312, "$")
                     )
             )
         }
