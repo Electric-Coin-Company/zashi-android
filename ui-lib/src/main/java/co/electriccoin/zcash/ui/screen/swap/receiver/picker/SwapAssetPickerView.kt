@@ -44,7 +44,6 @@ import co.electriccoin.zcash.ui.screen.home.common.CommonEmptyScreen
 import co.electriccoin.zcash.ui.screen.home.common.CommonErrorScreen
 import co.electriccoin.zcash.ui.screen.home.common.CommonShimmerLoadingScreen
 
-@Suppress("ForbiddenComment")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwapAssetPickerView(state: SwapAssetPickerState?) {

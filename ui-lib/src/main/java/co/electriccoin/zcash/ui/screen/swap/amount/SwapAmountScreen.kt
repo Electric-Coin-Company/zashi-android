@@ -6,7 +6,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
-@Suppress("ForbiddenComment")
 @Composable
 fun SwapAmountScreen() {
     val vm = koinViewModel<SwapAmountViewModel>()

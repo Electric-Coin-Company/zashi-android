@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.preference
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.IntegerPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.LongPreferenceDefault
-import co.electriccoin.zcash.preference.model.entry.NullableBooleanPreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 
@@ -42,25 +41,10 @@ object StandardPreferenceKeys {
             PreferenceKey("IS_EXPORT_PRIVATE_DATA_AUTHENTICATION"),
             true
         )
-    val IS_SEED_AUTHENTICATION =
-        BooleanPreferenceDefault(
-            PreferenceKey("IS_SEED_AUTHENTICATION"),
-            true
-        )
-    val IS_SEND_FUNDS_AUTHENTICATION =
-        BooleanPreferenceDefault(
-            PreferenceKey("IS_SEND_FUNDS_AUTHENTICATION"),
-            true
-        )
     val IS_HIDE_BALANCES =
         BooleanPreferenceDefault(
             PreferenceKey("IS_HIDE_BALANCES"),
             false
-        )
-    val EXCHANGE_RATE_OPTED_IN =
-        NullableBooleanPreferenceDefault(
-            PreferenceKey("EXCHANGE_RATE_OPTED_IN"),
-            null
         )
     val LATEST_APP_BACKGROUND_TIME_MILLIS =
         LongPreferenceDefault(

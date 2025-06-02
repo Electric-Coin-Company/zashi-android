@@ -39,6 +39,7 @@ import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.loadingImageRes
+import co.electriccoin.zcash.ui.design.util.orHidden
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -115,6 +116,7 @@ private fun BalanceActionRow(state: SpendableBalanceRowState) {
                     painter = painterResource(state.icon.resource),
                     contentDescription = null
                 )
+
             ImageResource.Loading -> LottieProgress(modifier = Modifier.size(20.dp))
             is ImageResource.DisplayString -> {
                 // do nothing
@@ -123,7 +125,9 @@ private fun BalanceActionRow(state: SpendableBalanceRowState) {
         Spacer(8.dp)
         SelectionContainer {
             Text(
-                text = state.value.getValue(),
+                text =
+                    state.value.getValue() orHidden
+                        stringResource(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                 color =
                     if (state.icon is ImageResource.Loading) {
                         ZashiColors.Text.textTertiary
@@ -171,7 +175,7 @@ private fun BalanceShieldButton(state: SpendableBalanceShieldButtonState) {
                         stringResource(
                             R.string.home_message_transparent_balance_subtitle,
                             stringRes(state.amount, HIDDEN).getValue()
-                        ),
+                        ) orHidden stringResource(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                     color = ZashiColors.Text.textPrimary,
                     style = ZashiTypography.textXl,
                     fontWeight = FontWeight.SemiBold

@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -35,6 +36,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.orHidden
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
@@ -87,7 +89,9 @@ internal fun BalanceWidgetButton(
                     )
                     Spacer(3.dp)
                     Text(
-                        text = stringRes(state.amount, HIDDEN).getValue(),
+                        text =
+                            stringRes(state.amount, HIDDEN).getValue() orHidden
+                                stringResource(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                         color = ZashiColors.Btns.Tertiary.btnTertiaryFg,
                         style = ZashiTypography.textSm,
                         fontWeight = FontWeight.SemiBold
