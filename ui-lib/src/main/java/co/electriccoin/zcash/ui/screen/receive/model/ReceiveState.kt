@@ -13,9 +13,16 @@ data class ReceiveAddressState(
     val title: StringResource,
     val subtitle: StringResource,
     val isExpanded: Boolean,
+    val colorMode: ColorMode,
     val onClick: () -> Unit,
     val isShielded: Boolean,
     val onCopyClicked: () -> Unit,
     val onQrClicked: () -> Unit,
     val onRequestClicked: () -> Unit,
-)
+) {
+    enum class ColorMode {
+        ZASHI,
+        KEYSTONE,
+        DEFAULT
+    }
+}
