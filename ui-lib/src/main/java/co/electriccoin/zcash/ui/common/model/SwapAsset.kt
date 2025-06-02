@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common.model
 
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResource
+import java.math.BigDecimal
 
 sealed interface SwapAsset {
     val tokenTicker: String
@@ -10,6 +11,7 @@ sealed interface SwapAsset {
     val tokenIcon: ImageResource?
     val chainName: StringResource
     val chainIcon: ImageResource?
+    val usdPrice: BigDecimal?
 }
 
 data class NearSwapAsset(
@@ -21,4 +23,5 @@ data class NearSwapAsset(
 ) : SwapAsset {
     override val tokenTicker: String = token.symbol
     override val chainTicker: String = token.blockchain
+    override val usdPrice: BigDecimal? = token.price
 }
