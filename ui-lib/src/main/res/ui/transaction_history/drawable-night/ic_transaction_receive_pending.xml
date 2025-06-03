@@ -18,15 +18,18 @@
       </gradient>
     </aapt:attr>
   </path>
-  <group>
-    <clip-path
-        android:pathData="M10,10h20v20h-20z"/>
-    <path
-        android:pathData="M24.167,13.215C26.658,14.656 28.333,17.349 28.333,20.434C28.333,25.036 24.603,28.767 20,28.767C15.398,28.767 11.667,25.036 11.667,20.434C11.667,17.349 13.343,14.656 15.833,13.215M16.667,20.434L20,23.767M20,23.767L23.333,20.434M20,23.767V12.1"
-        android:strokeLineJoin="round"
-        android:strokeWidth="1.66667"
-        android:fillColor="#00000000"
-        android:strokeColor="#2970FF"
-        android:strokeLineCap="round"/>
-  </group>
+  <path
+      android:pathData="M24.167,12.781C26.657,14.222 28.333,16.916 28.333,20C28.333,24.602 24.602,28.333 20,28.333C15.398,28.333 11.667,24.602 11.667,20C11.667,16.916 13.342,14.222 15.833,12.781"
+      android:strokeLineJoin="round"
+      android:strokeWidth="1.66667"
+      android:fillColor="#00000000"
+      android:strokeColor="#2970FF"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M16.667,20L20,23.333M20,23.333L23.333,20M20,23.333V16.667"
+      android:strokeLineJoin="round"
+      android:strokeWidth="1.66667"
+      android:fillColor="#00000000"
+      android:strokeColor="#2970FF"
+      android:strokeLineCap="round"/>
 </vector>

@@ -123,7 +123,7 @@ private fun ReceiveContents(
             text = stringResource(id = R.string.receive_prioritize_shielded),
             color = ZashiColors.Text.textTertiary,
             style = ZashiTypography.textSm,
-            modifier = Modifier.padding(horizontal = 70.dp),
+            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
             textAlign = TextAlign.Center
         )
         Spacer(8.dp)
