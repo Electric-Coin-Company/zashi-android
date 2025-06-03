@@ -26,6 +26,7 @@ import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.datasource.MessageAvailabilityDataSource
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.LocalKeyboardManager
 import co.electriccoin.zcash.ui.design.LocalSheetStateManager
@@ -59,6 +60,7 @@ fun MainActivity.OnboardingNavigation() {
     val navigationRouter = koinInject<NavigationRouter>()
     val flexaViewModel = koinViewModel<FlexaViewModel>()
     val messageAvailabilityDataSource = koinInject<MessageAvailabilityDataSource>()
+    val applicationStateProvider = koinInject<ApplicationStateProvider>()
 
     val navigator: Navigator =
         remember(
@@ -74,7 +76,7 @@ fun MainActivity.OnboardingNavigation() {
                 flexaViewModel = flexaViewModel,
                 keyboardManager = keyboardManager,
                 sheetStateManager = sheetStateManager,
-                messageAvailabilityDataSource = messageAvailabilityDataSource
+                applicationStateProvider = applicationStateProvider
             )
         }
 
