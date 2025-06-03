@@ -23,6 +23,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -78,6 +79,7 @@ import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidget
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
 import co.electriccoin.zcash.ui.screen.send.SendTag
+import co.electriccoin.zcash.ui.screen.send.model.AmountField
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.MemoState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
@@ -104,7 +106,8 @@ private fun PreviewSendForm() {
                 AmountState.Valid(
                     value = ZatoshiFixture.ZATOSHI_LONG.toString(),
                     fiatValue = "",
-                    zatoshi = ZatoshiFixture.new()
+                    zatoshi = ZatoshiFixture.new(),
+                    lastFieldChangedByUser = AmountField.FIAT
                 ),
             setMemoState = {},
             memoState = MemoState.new("Test message "),
@@ -143,7 +146,8 @@ private fun SendFormTransparentAddressPreview() {
                 AmountState.Valid(
                     value = ZatoshiFixture.ZATOSHI_LONG.toString(),
                     fiatValue = "",
-                    zatoshi = ZatoshiFixture.new()
+                    zatoshi = ZatoshiFixture.new(),
+                    lastFieldChangedByUser = AmountField.FIAT
                 ),
             setMemoState = {},
             memoState = MemoState.new("Test message"),
@@ -704,7 +708,7 @@ fun SendFormAmountTextField(
                 ZashiTextField(
                     singleLine = true,
                     maxLines = 1,
-                    isEnabled = !exchangeRateState.isStale,
+                    isEnabled = !exchangeRateState.isStale && exchangeRateState.currencyConversion != null,
                     value = amountState.fiatValue,
                     onValueChange = { newValue ->
                         setAmountState(
@@ -726,7 +730,7 @@ fun SendFormAmountTextField(
                                     id = R.string.send_usd_amount_hint
                                 ),
                             style = ZashiTypography.textMd,
-                            color = ZashiColors.Inputs.Default.text
+                            color = LocalContentColor.current
                         )
                     },
                     keyboardOptions =

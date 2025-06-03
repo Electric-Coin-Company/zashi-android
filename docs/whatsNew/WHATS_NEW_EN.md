@@ -12,6 +12,27 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.0.3 (965)] - 2025-05-19
+
+### Changed:
+- Zashi no longer includes transparent receivers in Unified Addresses.
+- The Receive screen now displays a rotating, shielded-only UA which gets freshly generated each time you open the Receive screen.
+- All transactions sent to your different rotating Shielded Addresses will remain part of one wallet balance under the same seed phrase.
+- Wallets and exchanges that don’t support sending funds to shielded receivers will require transparent address.
+
+## [2.0.2 (962)] - 2025-05-14
+
+### Changed:
+- When entering amount in USD, we floor the Zatoshi amount automatically to the nearest 5000 Zatoshi to prevent creating unspendable dust notes in your wallet.
+- We updated primary & secondary button position to follow UX best practices.
+- We updated Receive screen design.
+- We updated the Send and Receive screen icons across the app based on your feedback.
+- We improved copy in a few places.
+- We also made a few other UI tweaks.
+
+### Fixed:
+- We made a few bug fixes.
+
 ## [2.0.1 (941)] - 2025-04-29
 
 ### Added:

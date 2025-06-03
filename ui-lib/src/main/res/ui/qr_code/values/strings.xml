@@ -7,8 +7,8 @@
     <string name="qr_code_wallet_address_shielded">Zcash Shielded Address</string>
     <string name="qr_code_wallet_address_sapling">Zcash Sapling Address</string>
     <string name="qr_code_wallet_address_transparent">Zcash Transparent Address</string>
-    <string name="qr_code_privacy_level_shielded">Maximum Privacy</string>
-    <string name="qr_code_privacy_level_transparent">Low Privacy</string>
+    <string name="qr_code_privacy_level_shielded">Private</string>
+    <string name="qr_code_privacy_level_transparent">Not Private</string>
     <string name="qr_code_share_btn">Share QR Code</string>
     <string name="qr_code_copy_btn">Copy Address</string>
     <string name="qr_code_clipboard_tag">Zcash Wallet Address</string>

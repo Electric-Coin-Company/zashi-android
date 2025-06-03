@@ -21,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.changedToDown
 import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.pointerInput
@@ -99,8 +98,7 @@ fun ZashiBigIconButton(
             Image(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
                 painter = painterResource(state.icon),
-                contentDescription = state.text.getValue(),
-                colorFilter = ColorFilter.tint(ZashiColors.Text.textPrimary)
+                contentDescription = state.text.getValue()
             )
             Spacer(Modifier.height(4.dp))
             Text(

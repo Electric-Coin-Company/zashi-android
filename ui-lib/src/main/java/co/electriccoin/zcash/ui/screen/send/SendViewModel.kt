@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.usecase.CreateProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
@@ -12,6 +13,8 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
+import co.electriccoin.zcash.ui.screen.send.model.AmountField
+import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.send.model.SendAddressBookState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
@@ -30,11 +33,12 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
 class SendViewModel(
+    exchangeRateRepository: ExchangeRateRepository,
     private val observeContactByAddress: ObserveContactByAddressUseCase,
     private val observeContactPicked: ObserveContactPickedUseCase,
     private val createProposal: CreateProposalUseCase,
     private val observeWalletAccounts: GetWalletAccountsUseCase,
-    private val navigateToAddressBook: NavigateToAddressBookUseCase
+    private val navigateToAddressBook: NavigateToAddressBookUseCase,
 ) : ViewModel() {
     val recipientAddressState = MutableStateFlow(RecipientAddressState.new("", null))
 
@@ -107,6 +111,7 @@ class SendViewModel(
                 onRecipientAddressChanged(it)
             }
         }
+        exchangeRateRepository.refreshExchangeRateUsd()
     }
 
     private fun onAddressBookButtonClicked(
@@ -133,10 +138,11 @@ class SendViewModel(
     @Suppress("TooGenericExceptionCaught")
     fun onCreateZecSendClick(
         newZecSend: ZecSend,
+        amountState: AmountState,
         setSendStage: (SendStage) -> Unit
     ) = viewModelScope.launch {
         try {
-            createProposal(newZecSend)
+            createProposal(zecSend = newZecSend, floor = amountState.lastFieldChangedByUser == AmountField.FIAT)
         } catch (e: Exception) {
             setSendStage(SendStage.SendFailure(e.cause?.message ?: e.message ?: ""))
             Twig.error(e) { "Error creating proposal" }

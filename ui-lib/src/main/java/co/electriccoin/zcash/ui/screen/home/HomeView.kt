@@ -163,7 +163,7 @@ fun Modifier.minHeight106Percent(): Modifier =
         val placeable = measurable.measure(constraints)
         val minHeight = (placeable.width.toFloat() / (106f / 100f)).toInt()
 
-        val newConstraints = constraints.copy(minHeight = minHeight)
+        val newConstraints = constraints.copy(minHeight = minHeight.coerceAtMost(constraints.maxHeight))
         val newPlaceable = measurable.measure(newConstraints)
 
         layout(newPlaceable.width, newPlaceable.height) {
@@ -184,25 +184,25 @@ private fun Preview() {
                     firstButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
-                            icon = R.drawable.ic_warning,
+                            icon = R.drawable.ic_home_receive,
                             onClick = {}
                         ),
                     secondButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
-                            icon = R.drawable.ic_warning,
+                            icon = R.drawable.ic_home_send,
                             onClick = {}
                         ),
                     thirdButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
-                            icon = R.drawable.ic_warning,
+                            icon = R.drawable.ic_home_scan,
                             onClick = {}
                         ),
                     fourthButton =
                         BigIconButtonState(
                             text = stringRes("Text"),
-                            icon = R.drawable.ic_warning,
+                            icon = R.drawable.ic_home_buy,
                             onClick = {}
                         ),
                     message = WalletErrorMessageState(onClick = {})

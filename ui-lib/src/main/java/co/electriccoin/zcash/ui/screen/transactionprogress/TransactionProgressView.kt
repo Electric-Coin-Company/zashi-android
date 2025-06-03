@@ -160,20 +160,6 @@ private fun ColumnScope.FailureTransactionBottomBar(state: FailureTransactionSta
     ZashiButton(
         state =
             ButtonState(
-                text = stringRes(R.string.send_confirmation_failure_close_button),
-                onClick = state.onCloseClick
-            ),
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
-    )
-
-    Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
-
-    ZashiButton(
-        state =
-            ButtonState(
                 text = stringRes(R.string.send_confirmation_failure_report_button),
                 onClick = state.onReportClick
             ),
@@ -182,6 +168,18 @@ private fun ColumnScope.FailureTransactionBottomBar(state: FailureTransactionSta
                 .fillMaxWidth()
                 .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
         colors = ZashiButtonDefaults.tertiaryColors()
+    )
+    Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
+    ZashiButton(
+        state =
+            ButtonState(
+                text = stringRes(R.string.send_confirmation_failure_close_button),
+                onClick = state.onCloseClick
+            ),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
     )
 }
 
@@ -214,9 +212,7 @@ private fun ColumnScope.MultipleFailuresTransactionBottomBar(state: MultipleFail
                 .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
         colors = ZashiButtonDefaults.tertiaryColors()
     )
-
     Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
-
     ZashiButton(
         state =
             ButtonState(

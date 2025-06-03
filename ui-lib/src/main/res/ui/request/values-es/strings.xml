@@ -6,8 +6,8 @@
     <string name="request_memo_btn">Solicitar</string>
     <string name="request_qr_share_btn">Compartir Código QR</string>
     <string name="request_qr_close_btn">Cerrar</string>
-    <string name="request_privacy_level_shielded">Máxima Privacidad</string>
-    <string name="request_privacy_level_transparent">Baja Privacidad</string>
+    <string name="request_privacy_level_shielded">Privado</string>
+    <string name="request_privacy_level_transparent">Público</string>
 
     <string name="request_amount_empty">0</string>
     <string name="request_amount_keyboard_zero">0</string>

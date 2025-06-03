@@ -5,14 +5,16 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
@@ -29,12 +31,14 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppbar
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -45,6 +49,9 @@ import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState.ColorMode.DEFAULT
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState.ColorMode.KEYSTONE
+import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState.ColorMode.ZASHI
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveState
 
 @Composable
@@ -61,7 +68,7 @@ internal fun ReceiveView(
             BlankBgScaffold(
                 topBar = {
                     ZashiTopAppbar(
-                        title = null,
+                        title = stringRes(R.string.receive_title),
                         state = appBarState,
                         showHideBalances = false,
                         onBack = state.onBack
@@ -94,27 +101,6 @@ private fun ReceiveContents(
                 .verticalScroll(rememberScrollState())
                 .padding(all = ZcashTheme.dimens.spacingSmall),
     ) {
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingDefault))
-
-        Text(
-            text = stringResource(id = R.string.receive_header),
-            color = ZashiColors.Text.textPrimary,
-            style = ZashiTypography.header5,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
-        )
-
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingSmall))
-
-        Text(
-            text = stringResource(id = R.string.receive_prioritize_shielded),
-            color = ZashiColors.Text.textSecondary,
-            style = ZashiTypography.textMd,
-            modifier = Modifier.padding(horizontal = ZcashTheme.dimens.spacingDefault)
-        )
-
-        Spacer(Modifier.height(ZcashTheme.dimens.spacingLarge))
-
         items.forEachIndexed { index, state ->
             if (index != 0) {
                 Spacer(Modifier.height(8.dp))
@@ -125,6 +111,22 @@ private fun ReceiveContents(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+        Spacer(24.dp)
+        Spacer(1f)
+        Image(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            painter = painterResource(R.drawable.ic_receive_info),
+            contentDescription = ""
+        )
+        Spacer(8.dp)
+        Text(
+            text = stringResource(id = R.string.receive_prioritize_shielded),
+            color = ZashiColors.Text.textTertiary,
+            style = ZashiTypography.textSm,
+            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+        Spacer(8.dp)
     }
 }
 
@@ -133,28 +135,56 @@ private fun AddressPanel(
     state: ReceiveAddressState,
     modifier: Modifier = Modifier,
 ) {
+    val containerColor =
+        when (state.colorMode) {
+            ZASHI -> ZashiColors.Utility.Purple.utilityPurple50
+            KEYSTONE -> ZashiColors.Utility.Indigo.utilityIndigo50
+            DEFAULT -> ZashiColors.Surfaces.bgSecondary
+        }
+
+    val buttonColor =
+        when (state.colorMode) {
+            ZASHI -> ZashiColors.Utility.Purple.utilityPurple100
+            KEYSTONE -> ZashiColors.Utility.Indigo.utilityIndigo100
+            DEFAULT -> ZashiColors.Surfaces.bgTertiary
+        }
+
+    val buttonTextColor =
+        when (state.colorMode) {
+            ZASHI -> ZashiColors.Utility.Purple.utilityPurple800
+            KEYSTONE -> ZashiColors.Utility.Indigo.utilityIndigo800
+            DEFAULT -> ZashiColors.Text.textPrimary
+        }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
             modifier
                 .wrapContentHeight()
-                .background(
-                    if (state.isShielded) {
-                        ZashiColors.Utility.Purple.utilityPurple50
-                    } else {
-                        ZashiColors.Utility.Gray.utilityGray50
-                    },
-                    RoundedCornerShape(ZashiDimensions.Radius.radius3xl)
-                ).clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
+                .background(containerColor, RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
+                .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
                 .clickable(onClick = state.onClick)
                 .padding(all = ZcashTheme.dimens.spacingLarge)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            Image(
-                modifier = Modifier.sizeIn(maxWidth = 34.dp, maxHeight = 34.dp),
-                painter = painterResource(id = state.icon),
-                contentDescription = null
-            )
+            Box {
+                Image(
+                    modifier = Modifier.size(40.dp),
+                    painter = painterResource(id = state.icon),
+                    contentDescription = null
+                )
+                if (state.isShielded) {
+                    Image(
+                        modifier =
+                            Modifier
+                                .size(14.dp)
+                                .align(Alignment.BottomEnd)
+                                .offset(1.5.dp, .5.dp),
+                        painter = painterResource(R.drawable.ic_receive_shield),
+                        contentDescription = "",
+                    )
+                }
+            }
 
             Spacer(Modifier.width(ZcashTheme.dimens.spacingDefault))
 
@@ -165,9 +195,7 @@ private fun AddressPanel(
                     style = ZashiTypography.textMd,
                     fontWeight = FontWeight.SemiBold
                 )
-
-                Spacer(Modifier.height(ZcashTheme.dimens.spacingTiny))
-
+                Spacer(4.dp)
                 Text(
                     text = state.subtitle.getValue(),
                     color = ZashiColors.Text.textTertiary,
@@ -178,13 +206,6 @@ private fun AddressPanel(
             Spacer(Modifier.width(ZcashTheme.dimens.spacingSmall))
 
             Spacer(modifier = Modifier.weight(1f))
-
-            if (state.isShielded) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_check_shielded_solid),
-                    contentDescription = null
-                )
-            }
         }
 
         AnimatedVisibility(visible = state.isExpanded) {
@@ -195,21 +216,9 @@ private fun AddressPanel(
                         .fillMaxWidth()
                         .padding(top = ZcashTheme.dimens.spacingDefault)
             ) {
-                val containerColor =
-                    if (state.isShielded) {
-                        ZashiColors.Utility.Purple.utilityPurple100
-                    } else {
-                        ZashiColors.Surfaces.bgTertiary
-                    }
-                val contentColor =
-                    if (state.isShielded) {
-                        ZashiColors.Utility.Purple.utilityPurple800
-                    } else {
-                        ZashiColors.Text.textPrimary
-                    }
                 ReceiveIconButton(
-                    containerColor = containerColor,
-                    contentColor = contentColor,
+                    containerColor = buttonColor,
+                    contentColor = buttonTextColor,
                     iconPainter = painterResource(id = R.drawable.ic_copy_shielded),
                     onClick = state.onCopyClicked,
                     text = stringResource(id = R.string.receive_copy),
@@ -219,8 +228,8 @@ private fun AddressPanel(
                 Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
 
                 ReceiveIconButton(
-                    containerColor = containerColor,
-                    contentColor = contentColor,
+                    containerColor = buttonColor,
+                    contentColor = buttonTextColor,
                     iconPainter = painterResource(id = R.drawable.ic_qr_code_shielded),
                     onClick = state.onQrClicked,
                     text = stringResource(id = R.string.receive_qr_code),
@@ -230,8 +239,8 @@ private fun AddressPanel(
                 Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
 
                 ReceiveIconButton(
-                    containerColor = containerColor,
-                    contentColor = contentColor,
+                    containerColor = buttonColor,
+                    contentColor = buttonTextColor,
                     iconPainter = painterResource(id = R.drawable.ic_request_shielded),
                     onClick = state.onRequestClicked,
                     text = stringResource(id = R.string.receive_request),
@@ -259,16 +268,14 @@ private fun ReceiveIconButton(
                 .background(containerColor, RoundedCornerShape(ZashiDimensions.Radius.radiusXl))
                 .clip(RoundedCornerShape(ZashiDimensions.Radius.radiusXl))
                 .clickable { onClick() }
-                .padding(ZcashTheme.dimens.spacingMid)
+                .padding(12.dp)
     ) {
         Icon(
             painter = iconPainter,
             contentDescription = text,
             tint = contentColor
         )
-
-        Spacer(modifier = Modifier.height(ZcashTheme.dimens.spacingTiny))
-
+        Spacer(4.dp)
         Text(
             text = text,
             color = contentColor,
@@ -311,18 +318,61 @@ private fun ZashiPreview() =
                                 onQrClicked = { },
                                 onRequestClicked = {},
                                 isExpanded = true,
-                                onClick = {}
+                                onClick = {},
+                                colorMode = ZASHI
                             ),
                             ReceiveAddressState(
-                                icon = R.drawable.ic_zec_round_stroke,
+                                icon = R.drawable.ic_zec_round_full,
                                 title = stringRes("Zashi"),
                                 subtitle = stringRes("subtitle"),
                                 isShielded = false,
                                 onCopyClicked = {},
                                 onQrClicked = { },
                                 onRequestClicked = { },
-                                isExpanded = false,
-                                onClick = {}
+                                isExpanded = true,
+                                onClick = {},
+                                colorMode = DEFAULT
+                            )
+                        ),
+                    isLoading = false,
+                    onBack = {}
+                ),
+            appBarState = ZashiMainTopAppBarStateFixture.new()
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun KeystonePreview() =
+    ZcashTheme {
+        ReceiveView(
+            state =
+                ReceiveState(
+                    items =
+                        listOf(
+                            ReceiveAddressState(
+                                icon = co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone,
+                                title = stringRes("Zashi"),
+                                subtitle = stringRes("subtitle"),
+                                isShielded = true,
+                                onCopyClicked = {},
+                                onQrClicked = { },
+                                onRequestClicked = {},
+                                isExpanded = true,
+                                onClick = {},
+                                colorMode = KEYSTONE
+                            ),
+                            ReceiveAddressState(
+                                icon = co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone,
+                                title = stringRes("Zashi"),
+                                subtitle = stringRes("subtitle"),
+                                isShielded = false,
+                                onCopyClicked = {},
+                                onQrClicked = { },
+                                onRequestClicked = { },
+                                isExpanded = true,
+                                onClick = {},
+                                colorMode = DEFAULT
                             )
                         ),
                     isLoading = false,

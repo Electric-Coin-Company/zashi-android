@@ -6,6 +6,30 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Fixed
+- Receive screen now correctly displays colors for shielded addresses for both Zashi and Keystone
+
+### Changed
+- Exchange rate is now always refreshed upon navigating to Send screen
+
+## [2.0.3 (965)] - 2025-05-19
+
+### Fixed 
+- Shared preferences object cached in-memory and locked with semaphore in order to improve stability of security-crypto library
+- Shielded address is now rotated by navigating to Receive and Request screens from homepage
+
+## [2.0.2 (962)] - 2025-05-14
+
+### Fixed
+- Fiat text field on Send screen is disabled if fetching exchange rate fails
+
+### Changed
+- When entering amount in USD in the Send or Request ZEC flow, we floor the Zatoshi amount automatically to the nearest 5000 Zatoshi to prevent creating unspendable dust notes in your wallet.
+- Integrations dialog screen now displays a disclaimer
+- Primary & secondary button order now follows UX best practices
+- Receive screen design now aligns better with UX after home navigation changes
+- Copy updated in a few places
+
 ## [2.0.1 (941)] - 2025-04-29
 
 ### Fixed

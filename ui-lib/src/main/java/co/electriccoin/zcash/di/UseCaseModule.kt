@@ -24,7 +24,6 @@ import co.electriccoin.zcash.ui.common.usecase.GetFlexaStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetKeystoneStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetMetadataUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
@@ -45,6 +44,8 @@ import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToWalletBackupUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
@@ -108,7 +109,6 @@ val useCaseModule =
         factoryOf(::RefreshFastestServersUseCase)
         factoryOf(::PersistEndpointUseCase)
         factoryOf(::ValidateEndpointUseCase)
-        factoryOf(::GetPersistableWalletUseCase)
         factoryOf(::GetSelectedEndpointUseCase)
         factoryOf(::GetConfigurationUseCase)
         factoryOf(::RescanBlockchainUseCase)
@@ -194,4 +194,6 @@ val useCaseModule =
         singleOf(::NavigateToErrorUseCase)
         factoryOf(::RescanQrUseCase)
         factoryOf(::ShieldFundsMessageUseCase)
+        factoryOf(::NavigateToReceiveUseCase)
+        factoryOf(::NavigateToRequestShieldedUseCase)
     }
