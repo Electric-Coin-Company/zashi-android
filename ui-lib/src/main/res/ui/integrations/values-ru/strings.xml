@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="integrations_title">Интеграции</string>
+    <string name="integrations_coinbase">Купить <xliff:g id="currency" example="ZEC">%1$s</xliff:g> на Coinbase</string>
+    <string name="integrations_coinbase_subtitle">Беспроблемный способ купить <xliff:g id="currency" example="ZEC">
+        %1$s</xliff:g> и получить её прямо в кошелёк Zashi.</string>
+    <string name="integrations_info">Интеграции Zashi обеспечивают доступ к услугам третьих лиц. Услуги и информация,
+        которые они предоставляют, находятся вне нашего контроля и подпадают под действие их политики
+        конфиденциальности.</string>
+    <string name="integrations_disabled_info">В процессе восстановления невозможно использовать платежные интеграции.</string>
+    <string name="integrations_flexa">Платить через Flexa</string>
+    <string name="integrations_flexa_subtitle">Платите через платёжные клипы Flexa и изучите новый способ расходования Zcash.</string>
+    <string name="integrations_flexa_biometric_message">Аутентифицируйте себя для платежа через Flexa</string>
+    <string name="integrations_keystone">Подключите устройство Keystone</string>
+    <string name="integrations_keystone_subtitle">Сопрягите аппаратный кошелёк Keystone с Zashi для подписания транзакций.</string>
+</resources>

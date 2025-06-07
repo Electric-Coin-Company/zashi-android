@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_contact_title">Сохранённый контакт</string>
+    <string name="update_contact_primary_btn">Сохранить</string>
+    <string name="update_contact_secondary_btn">Удалить</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_title_available">Zashi тут.</string>
+    <string name="update_title_required">Дело не в вас, а в нас.</string>
+    <string name="update_description_required">Выпущено обязательное обновление\nдля Zashi которое содержит
+        улучшения для\nпроизводительности и безопасности.</string>
+    <string name="update_description_available">Вышла новая версия Zashi с незначительными обновлениями для улучшения производительности и безопасности.\n\nПожалуйста, найдите минутку, чтобы обновить до последней версии.</string>
+    <string name="update_link_text">Подробнее об этом обновлении можно узнать здесь.</string>
+    <string name="update_download_button">Обновить</string>
+</resources>

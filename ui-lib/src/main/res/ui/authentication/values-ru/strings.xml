@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="authentication_toast_failed">Аутентификация не удалась</string>
+    <string name="authentication_error_button_retry">Повторить</string>
+    <string name="authentication_failed_title">Аутентификация не удалась</string>
+    <string name="authentication_failed_button_retry">Повторить</string>
+    <string name="authentication_error_button_support">Свяжится со службой поддержки</string>
+    <string name="authentication_system_ui_title">Аутентификация для <xliff:g id="app_name" example="Zashi">%1$s</xliff:g></string>
+    <string name="authentication_system_ui_subtitle">Используйте биометрические данные или данные устройства для доступа к <xliff:g id="use_case" example="Recovery Phrase">%1$s</xliff:g>.</string>
+    <string name="authentication_use_case_delete_wallet">Возможность удаления кошелька</string>
+    <string name="authentication_use_case_export_data">Экспорта личных данных</string>
+    <string name="authentication_use_case_seed_recovery">Восстановления из сид-фразы</string>
+    <string name="authentication_use_case_send_funds">Отправки денежных средств</string>
+    <string name="authentication_use_case_adress_book">Адресной книги</string>
+    <string name="authentication_toast_canceled">Аутентификация отменена</string>
+    <string name="authentication_error_title">Ошибка аутентификации</string>
+    <string name="authentication_error_details">Код ошибки: <xliff:g id="code" example="-1">%1$d</xliff:g>\nСообщение: <xliff:g id="message" example="No device credential">%2$s</xliff:g></string>
+    <string name="authentication_failed_button_support">Связаться со службой поддержки</string>
+    <string name="authentication_failed_welcome_icon_cont_desc">Нажмите чтобы разблокировать приложение <xliff:g id="app_name" example="Zashi">%1$s</xliff:g></string>
+    <string name="authentication_failed_welcome_title">Ваш счёт Zashi защищён.</string>
+    <string name="authentication_failed_welcome_subtitle">Чтобы разблокировать нажмите на значок ключа.</string>
+    <string name="authentication_error_text">Аутентификация не прошла по следующей причине. Повторите аутентификацию или обратитесь за помощью в службу поддержки.</string>
+    <string name="authentication_failed_text">Аутентификация была представлена, но не признана. Повторите аутентификацию или обратитесь за помощью в службу поддержки.</string>
+    <string name="authentication_use_case_tax_export">Налоговый экспорт</string>
+</resources>
