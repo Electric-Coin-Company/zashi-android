@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import cash.z.ecc.android.sdk.model.MonetarySeparators
@@ -100,6 +101,8 @@ class SendViewTestSetup(
 
         lastZecSend = zecSend
 
+        val locale = LocalConfiguration.current.locales[0]
+
         ZcashTheme {
             // TODO [#1260]: Cover Send.Form screen UI with tests
             // TODO [#1260]: https://github.com/Electric-Coin-Company/zashi-android/issues/1260
@@ -120,12 +123,11 @@ class SendViewTestSetup(
                 setAmountState = {},
                 amountState =
                     AmountState.newFromZec(
-                        context = context,
-                        monetarySeparators = monetarySeparators,
                         value = "",
                         fiatValue = "",
                         isTransparentOrTextRecipient = false,
-                        exchangeRateState = ExchangeRateState.OptedOut
+                        exchangeRateState = ExchangeRateState.OptedOut,
+                        locale = locale
                     ),
                 setMemoState = {},
                 memoState = MemoState.new(""),
