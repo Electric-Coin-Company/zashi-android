@@ -34,6 +34,7 @@ import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.orHiddenString
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
@@ -86,7 +87,9 @@ internal fun BalanceWidgetButton(
                     )
                     Spacer(3.dp)
                     Text(
-                        text = stringRes(state.amount).getValue(),
+                        text =
+                            stringRes(state.amount) orHiddenString
+                                stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                         color = ZashiColors.Btns.Tertiary.btnTertiaryFg,
                         style = ZashiTypography.textSm,
                         fontWeight = FontWeight.SemiBold
