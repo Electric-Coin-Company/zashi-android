@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.app
 
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ProcessLifecycleOwner
 import co.electriccoin.zcash.crash.android.GlobalCrashReporter
 import co.electriccoin.zcash.crash.android.di.CrashReportersProvider
@@ -16,8 +15,8 @@ import co.electriccoin.zcash.di.useCaseModule
 import co.electriccoin.zcash.di.viewModelModule
 import co.electriccoin.zcash.spackle.StrictModeCompat
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
+import co.electriccoin.zcash.ui.common.repository.ApplicationStateRepository
 import co.electriccoin.zcash.ui.common.repository.FlexaRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepository
 import co.electriccoin.zcash.ui.common.repository.WalletSnapshotRepository
@@ -26,14 +25,17 @@ import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.parameter.parametersOf
 
 class ZcashApplication : CoroutineApplication() {
     private val flexaRepository by inject<FlexaRepository>()
-    private val applicationStateProvider: ApplicationStateProvider by inject()
     private val getAvailableCrashReporters: CrashReportersProvider by inject()
     private val homeMessageCacheRepository: HomeMessageCacheRepository by inject()
     private val walletSnapshotRepository: WalletSnapshotRepository by inject()
     private val crashReportingStorageProvider: CrashReportingStorageProvider by inject()
+    private val applicationStateRepository: ApplicationStateRepository by inject {
+        parametersOf(ProcessLifecycleOwner.get().lifecycle)
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -59,13 +61,6 @@ class ZcashApplication : CoroutineApplication() {
             )
         }
 
-        // Observe the application process lifecycle
-        ProcessLifecycleOwner.get().lifecycle.addObserver(
-            LifecycleEventObserver { _, event ->
-                applicationStateProvider.setApplicationState(event)
-            }
-        )
-
         // Since analytics will need disk IO internally, we want this to be registered after strict
         // mode is configured to ensure none of that IO happens on the main thread
         configureAnalytics()
@@ -73,6 +68,7 @@ class ZcashApplication : CoroutineApplication() {
         flexaRepository.init()
         homeMessageCacheRepository.init()
         walletSnapshotRepository.init()
+        applicationStateRepository.init()
     }
 
     private fun configureLogging() {

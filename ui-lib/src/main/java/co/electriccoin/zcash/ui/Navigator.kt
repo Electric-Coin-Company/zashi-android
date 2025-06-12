@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.serialization.generateHashCode
-import co.electriccoin.zcash.ui.common.datasource.MessageAvailabilityDataSource
+import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.design.KeyboardManager
 import co.electriccoin.zcash.ui.design.SheetStateManager
 import co.electriccoin.zcash.ui.screen.ExternalUrl
@@ -26,7 +26,7 @@ class NavigatorImpl(
     private val flexaViewModel: FlexaViewModel,
     private val keyboardManager: KeyboardManager,
     private val sheetStateManager: SheetStateManager,
-    private val messageAvailabilityDataSource: MessageAvailabilityDataSource,
+    private val applicationStateProvider: ApplicationStateProvider,
 ) : Navigator {
     override suspend fun executeCommand(command: NavigationCommand) {
         keyboardManager.close()
@@ -87,7 +87,7 @@ class NavigatorImpl(
                         throw UnsupportedOperationException("External url can be opened as last screen only")
                     }
 
-                    messageAvailabilityDataSource.onThirdPartyUiShown()
+                    applicationStateProvider.onThirdPartyUiShown()
                     WebBrowserUtil.startActivity(activity, route.url)
                 }
 
@@ -128,7 +128,7 @@ class NavigatorImpl(
                         throw UnsupportedOperationException("External url can be opened as last screen only")
                     }
 
-                    messageAvailabilityDataSource.onThirdPartyUiShown()
+                    applicationStateProvider.onThirdPartyUiShown()
                     WebBrowserUtil.startActivity(activity, route.url)
                 }
 
@@ -155,7 +155,7 @@ class NavigatorImpl(
         }
 
         if (command.routes.lastOrNull() in listOf(ExternalUrl, co.electriccoin.zcash.ui.screen.flexa.Flexa)) {
-            messageAvailabilityDataSource.onThirdPartyUiShown()
+            applicationStateProvider.onThirdPartyUiShown()
         }
     }
 
@@ -179,7 +179,7 @@ class NavigatorImpl(
     }
 
     private fun createFlexaFlow(flexaViewModel: FlexaViewModel) {
-        messageAvailabilityDataSource.onThirdPartyUiShown()
+        applicationStateProvider.onThirdPartyUiShown()
         Flexa
             .buildSpend()
             .onTransactionRequest { result -> flexaViewModel.createTransaction(result) }

@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common.repository
 
-import android.app.Application
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletInitMode
@@ -97,7 +96,6 @@ class WalletRepositoryImpl(
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val walletRestoringStateProvider: WalletRestoringStateProvider,
-    private val application: Application,
 ) : WalletRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -153,7 +151,7 @@ class WalletRepositoryImpl(
                 .withIndex()
                 .flatMapLatest { (_, synchronizer) ->
                     synchronizer
-                        ?.getFastestServers(application, getDefaultServers())
+                        ?.getFastestServers(getDefaultServers())
                         ?.map {
                             when (it) {
                                 FastestServersResult.Measuring ->
