@@ -4,28 +4,23 @@ import android.app.Application
 import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.type.ServerValidation
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
-import co.electriccoin.zcash.ui.common.provider.PersistableWalletStorageProvider
+import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 
 class PersistEndpointUseCase(
     private val application: Application,
     private val walletRepository: WalletRepository,
-    private val persistableWalletStorageProvider: PersistableWalletStorageProvider,
     private val synchronizerProvider: SynchronizerProvider,
+    private val persistableWalletProvider: PersistableWalletProvider
 ) {
     @Throws(PersistEndpointException::class)
     suspend operator fun invoke(endpoint: LightWalletEndpoint) {
-        val selected = persistableWalletStorageProvider.get()?.endpoint
-
-        if (selected == endpoint) return
-
+        val selectedWallet = persistableWalletProvider.getPersistableWallet() ?: return
+        val selectedEndpoint = selectedWallet.endpoint
+        if (selectedEndpoint == endpoint) return
         when (val result = validateServerEndpoint(endpoint)) {
-            ServerValidation.Valid ->
-                persistableWalletStorageProvider.get()?.let {
-                    persistWallet(it.copy(endpoint = endpoint))
-                }
-
+            ServerValidation.Valid -> persistWallet(selectedWallet.copy(endpoint = endpoint))
             is ServerValidation.InValid -> throw PersistEndpointException(result.reason.message)
             ServerValidation.Running -> throw PersistEndpointException(null)
         }

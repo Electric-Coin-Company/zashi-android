@@ -4,7 +4,6 @@ package co.electriccoin.zcash.ui.screen.transactionprogress
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,6 +47,7 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import com.airbnb.lottie.compose.LottieAnimation
@@ -258,21 +260,18 @@ private fun SendingTransaction(
                         height = Dimension.wrapContent
                     }
         ) {
-            val lottieRes: Int =
-                if (isSystemInDarkTheme()) {
-                    R.raw.send_confirmation_sending_dark_v1
-                } else {
-                    R.raw.send_confirmation_sending_v1
-                }
-
+            val lottieRes = R.raw.send_confirmation_sending_v1 orDark R.raw.send_confirmation_sending_dark_v1
             val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(lottieRes))
-            val progress by animateLottieCompositionAsState(
-                iterations = LottieConstants.IterateForever,
-                composition = composition
-            )
+            val progress by animateLottieCompositionAsState(composition, iterations = LottieConstants.IterateForever)
 
             LottieAnimation(
-                modifier = Modifier.size(150.dp),
+                modifier =
+                    Modifier
+                        .size(150.dp)
+                        .graphicsLayer {
+                            scaleX = LOTTIE_ANIM_SCALE
+                            scaleY = LOTTIE_ANIM_SCALE
+                        }.offset(y = -ZashiDimensions.Spacing.spacing2xl),
                 composition = composition,
                 progress = { progress },
                 maintainOriginalImageBounds = true
@@ -619,6 +618,7 @@ private fun MultipleFailureTransaction(
 private fun provideRandomResourceFrom(resources: List<Int>) = resources.random()
 
 private const val TOP_BLANK_SPACE_RATIO = 0.35f
+private const val LOTTIE_ANIM_SCALE = 1.54f
 
 @PreviewScreens
 @Composable
