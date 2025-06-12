@@ -18,7 +18,7 @@ class ZashiSpendingKeyDataSourceImpl(
 ) : ZashiSpendingKeyDataSource {
     override suspend fun getZashiSpendingKey(): UnifiedSpendingKey =
         withContext(Dispatchers.IO) {
-            val persistableWallet = persistableWalletProvider.getPersistableWallet()
+            val persistableWallet = persistableWalletProvider.requirePersistableWallet()
 
             val bip39Seed = Mnemonics.MnemonicCode(persistableWallet.seedPhrase.joinToString()).toSeed()
             DerivationTool.getInstance().deriveUnifiedSpendingKey(

@@ -7,19 +7,21 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlin.time.Duration
 
 interface PersistableWalletProvider {
     val persistableWallet: Flow<PersistableWallet?>
 
-    suspend fun getPersistableWallet(): PersistableWallet
+    suspend fun store(persistableWallet: PersistableWallet)
+
+    suspend fun getPersistableWallet(): PersistableWallet?
+
+    suspend fun requirePersistableWallet(): PersistableWallet
 }
 
 class PersistableWalletProviderImpl(
-    persistableWalletStorageProvider: PersistableWalletStorageProvider,
+    private val persistableWalletStorageProvider: PersistableWalletStorageProvider,
 ) : PersistableWalletProvider {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -32,8 +34,11 @@ class PersistableWalletProviderImpl(
                 initialValue = null
             )
 
-    override suspend fun getPersistableWallet(): PersistableWallet =
-        persistableWallet
-            .filterNotNull()
-            .first()
+    override suspend fun store(persistableWallet: PersistableWallet) {
+        persistableWalletStorageProvider.store(persistableWallet)
+    }
+
+    override suspend fun getPersistableWallet() = persistableWalletStorageProvider.get()
+
+    override suspend fun requirePersistableWallet() = checkNotNull(persistableWalletStorageProvider.get())
 }
