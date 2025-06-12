@@ -11,6 +11,7 @@ interface ApplicationStateProvider {
     val isInForeground: Flow<Boolean>
 
     fun onThirdPartyUiShown()
+
     fun onApplicationLifecycleChanged(event: Lifecycle.Event)
 }
 

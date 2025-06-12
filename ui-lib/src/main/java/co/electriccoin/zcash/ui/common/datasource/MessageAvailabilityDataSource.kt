@@ -15,7 +15,9 @@ import kotlinx.coroutines.flow.update
 interface MessageAvailabilityDataSource {
     val canShowMessage: Flow<Boolean>
     val canShowShieldMessage: Flow<Boolean>
+
     fun onMessageShown()
+
     fun onShieldingInitiated()
 }
 
@@ -54,8 +56,7 @@ class MessageAvailabilityDataSourceImpl(
                         )
                     }
                 }
-            }
-            .launchIn(scope)
+            }.launchIn(scope)
     }
 
     override fun onMessageShown() {

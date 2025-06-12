@@ -19,7 +19,6 @@ class ApplicationStateRepositoryImpl(
     private val applicationStateProvider: ApplicationStateProvider,
     private val synchronizerProvider: SynchronizerProvider,
 ) : ApplicationStateRepository {
-
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     override fun init() {
