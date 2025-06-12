@@ -20,7 +20,6 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
-import co.electriccoin.zcash.ui.common.provider.PersistableWalletStorageProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.provider.WalletRestoringStateProvider
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
@@ -94,12 +93,11 @@ class WalletRepositoryImpl(
     configurationRepository: ConfigurationRepository,
     private val persistableWalletProvider: PersistableWalletProvider,
     private val synchronizerProvider: SynchronizerProvider,
-    private val application: Application,
     private val getDefaultServers: GetDefaultServersProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val walletRestoringStateProvider: WalletRestoringStateProvider,
-    private val persistableWalletStorageProvider: PersistableWalletStorageProvider
+    private val application: Application,
 ) : WalletRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -204,7 +202,7 @@ class WalletRepositoryImpl(
 
     private suspend fun persistWalletInternal(persistableWallet: PersistableWallet) {
         synchronizer.value?.let { (it as? SdkSynchronizer)?.close() }
-        persistableWalletStorageProvider.store(persistableWallet)
+        persistableWalletProvider.store(persistableWallet)
     }
 
     /**

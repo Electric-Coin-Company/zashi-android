@@ -177,7 +177,7 @@ class MetadataRepositoryImpl(
         return if (key != null) {
             key
         } else {
-            val persistableWallet = persistableWalletProvider.getPersistableWallet()
+            val persistableWallet = persistableWalletProvider.requirePersistableWallet()
             val zashiAccount = accountDataSource.getZashiAccount()
             val newKey =
                 MetadataKey.derive(
