@@ -5,9 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
@@ -25,7 +23,6 @@ import co.electriccoin.zcash.ui.screen.send.model.SendAddressBookState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.util.Locale
 import java.util.concurrent.atomic.AtomicInteger
 
 class SendViewTestSetup(
@@ -74,10 +71,6 @@ class SendViewTestSetup(
     @Composable
     @Suppress("TestFunctionName", "LongMethod")
     fun DefaultContent() {
-        val context = LocalContext.current
-
-        val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
-
         val (sendStage, setSendStage) =
             rememberSaveable(stateSaver = SendStage.Saver) { mutableStateOf(initialState) }
 

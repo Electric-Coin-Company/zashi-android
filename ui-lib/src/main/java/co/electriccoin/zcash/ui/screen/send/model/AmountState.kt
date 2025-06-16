@@ -45,8 +45,9 @@ sealed interface AmountState {
         ): AmountState {
             val normalized = UserInputNumberParser.normalizeInput(value, locale)
 
-            val zecAmount = UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
-                ?: return Invalid(normalized, if (normalized.isBlank()) "" else fiatValue, lastFieldChangedByUser)
+            val zecAmount =
+                UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
+                    ?: return Invalid(normalized, if (normalized.isBlank()) "" else fiatValue, lastFieldChangedByUser)
 
             val zatoshi = zecAmount.convertZecToZatoshi()
 
@@ -92,12 +93,13 @@ sealed interface AmountState {
         ): AmountState {
             val normalized = UserInputNumberParser.normalizeInput(fiatValue, locale)
 
-            val fiatAmount = UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
-                ?: return Invalid(
-                    value = if (normalized.isBlank()) "" else value,
-                    fiatValue = normalized,
-                    lastFieldChangedByUser = AmountField.FIAT
-                )
+            val fiatAmount =
+                UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
+                    ?: return Invalid(
+                        value = if (normalized.isBlank()) "" else value,
+                        fiatValue = normalized,
+                        lastFieldChangedByUser = AmountField.FIAT
+                    )
 
             val zatoshi =
                 (exchangeRateState as? ExchangeRateState.Data)?.currencyConversion?.toZatoshi(amount = fiatAmount)

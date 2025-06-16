@@ -11,11 +11,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
-import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.android.sdk.type.AddressType
@@ -48,7 +46,6 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
-import java.util.Locale
 
 @Composable
 internal fun WrapSend(args: Send) {
@@ -79,8 +76,6 @@ internal fun WrapSend(args: Send) {
 
     val selectedAccount = accountDataSource.selectedAccount.collectAsStateWithLifecycle(null).value
 
-    val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
-
     val balanceState = balanceWidgetViewModel.state.collectAsStateWithLifecycle().value
 
     val exchangeRateState = exchangeRateRepository.state.collectAsStateWithLifecycle().value
@@ -98,7 +93,6 @@ internal fun WrapSend(args: Send) {
         },
         goBack = { navigationRouter.back() },
         hasCameraFeature = hasCameraFeature,
-        monetarySeparators = monetarySeparators,
         sendArguments = args,
         synchronizer = synchronizer,
         selectedAccount = selectedAccount
@@ -114,7 +108,6 @@ internal fun WrapSend(
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
     hasCameraFeature: Boolean,
-    monetarySeparators: MonetarySeparators,
     sendArguments: Send,
     synchronizer: Synchronizer?,
     selectedAccount: WalletAccount?,
