@@ -17,6 +17,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - Exchange rate is now always refreshed upon navigating to Send screen
 - Transaction progress screen has a new animation while sending/shielding a new transaction
 - Spendable balance button and bottom sheet now hide sensitive information for incognito mode as expected
+- Amount on send screen now has unified handling of decimal and group separators to prevent overspend
 
 ## [2.0.3 (965)] - 2025-05-19
 
