@@ -4,9 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
@@ -24,7 +23,6 @@ import co.electriccoin.zcash.ui.screen.send.model.SendAddressBookState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import co.electriccoin.zcash.ui.screen.send.view.Send
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.util.Locale
 import java.util.concurrent.atomic.AtomicInteger
 
 class SendViewTestSetup(
@@ -73,10 +71,6 @@ class SendViewTestSetup(
     @Composable
     @Suppress("TestFunctionName", "LongMethod")
     fun DefaultContent() {
-        val context = LocalContext.current
-
-        val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
-
         val (sendStage, setSendStage) =
             rememberSaveable(stateSaver = SendStage.Saver) { mutableStateOf(initialState) }
 
@@ -100,6 +94,8 @@ class SendViewTestSetup(
 
         lastZecSend = zecSend
 
+        val locale = LocalConfiguration.current.locales[0]
+
         ZcashTheme {
             // TODO [#1260]: Cover Send.Form screen UI with tests
             // TODO [#1260]: https://github.com/Electric-Coin-Company/zashi-android/issues/1260
@@ -120,12 +116,11 @@ class SendViewTestSetup(
                 setAmountState = {},
                 amountState =
                     AmountState.newFromZec(
-                        context = context,
-                        monetarySeparators = monetarySeparators,
                         value = "",
                         fiatValue = "",
                         isTransparentOrTextRecipient = false,
-                        exchangeRateState = ExchangeRateState.OptedOut
+                        exchangeRateState = ExchangeRateState.OptedOut,
+                        locale = locale
                     ),
                 setMemoState = {},
                 memoState = MemoState.new(""),
