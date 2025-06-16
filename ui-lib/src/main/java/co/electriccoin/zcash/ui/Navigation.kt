@@ -34,7 +34,7 @@ import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
-import co.electriccoin.zcash.ui.common.datasource.MessageAvailabilityDataSource
+import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
 import co.electriccoin.zcash.ui.design.LocalKeyboardManager
 import co.electriccoin.zcash.ui.design.LocalSheetStateManager
@@ -150,7 +150,7 @@ internal fun MainActivity.Navigation() {
     val flexaViewModel = koinViewModel<FlexaViewModel>()
     val navigationRouter = koinInject<NavigationRouter>()
     val sheetStateManager = LocalSheetStateManager.current
-    val messageAvailabilityDataSource = koinInject<MessageAvailabilityDataSource>()
+    val applicationStateProvider = koinInject<ApplicationStateProvider>()
 
     // Helper properties for triggering the system security UI from callbacks
     val (exportPrivateDataAuthentication, setExportPrivateDataAuthentication) =
@@ -168,7 +168,7 @@ internal fun MainActivity.Navigation() {
             flexaViewModel,
             keyboardManager,
             sheetStateManager,
-            messageAvailabilityDataSource
+            applicationStateProvider
         ) {
             NavigatorImpl(
                 activity = this@Navigation,
@@ -176,7 +176,7 @@ internal fun MainActivity.Navigation() {
                 flexaViewModel = flexaViewModel,
                 keyboardManager = keyboardManager,
                 sheetStateManager = sheetStateManager,
-                messageAvailabilityDataSource = messageAvailabilityDataSource
+                applicationStateProvider = applicationStateProvider
             )
         }
 

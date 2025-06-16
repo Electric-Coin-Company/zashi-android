@@ -6,6 +6,10 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Added
+- `Synchronizer.onForeground` and `Synchronizer.onBackground` is called when application goes into background or 
+  foreground
+
 ### Fixed
 - Receive screen now correctly displays colors for shielded addresses for both Zashi and Keystone
 

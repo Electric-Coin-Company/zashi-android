@@ -15,7 +15,7 @@ class DeriveKeystoneAccountUnifiedAddressUseCase(
             val address =
                 DerivationTool.getInstance().deriveUnifiedAddress(
                     viewingKey = account.ufvk,
-                    network = persistableWalletProvider.getPersistableWallet().network
+                    network = persistableWalletProvider.requirePersistableWallet().network
                 )
             "${address.take(ADDRESS_MAX_LENGTH)}..."
         }

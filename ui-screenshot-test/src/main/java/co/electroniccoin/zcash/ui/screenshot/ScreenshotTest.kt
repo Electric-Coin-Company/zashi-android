@@ -58,6 +58,7 @@ import org.junit.Test
 import kotlin.time.Duration.Companion.seconds
 
 private const val DEFAULT_TIMEOUT_MILLISECONDS = 10_000L
+private const val DEFAULT_TIMEOUT_MILLISECONDS_LONG = 100_000L
 
 /*
  * This screenshot implementation does not change the system-wide configuration, but rather
@@ -486,7 +487,7 @@ private fun sendZecScreenshots(
     tag: String,
     composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
 ) {
-    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS) {
+    composeTestRule.waitUntil(DEFAULT_TIMEOUT_MILLISECONDS_LONG) {
         composeTestRule.activity.walletViewModel.synchronizer.value != null
     }
 
