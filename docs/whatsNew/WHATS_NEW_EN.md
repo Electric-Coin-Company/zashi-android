@@ -12,6 +12,20 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.0.4 (973)] - 2025-06-16
+
+### Added:
+- We added a trigger to fetch fresh conversion rate when you navigate to the Send screen.
+
+### Changed:
+- We unified the behavior of group and decimal separators to prevent overspend.
+- We updated our Send and Receive icons.
+- We updated copy on the Receive screen.
+- We updated the animation on the Sending screen.
+
+### Fixed:
+- We fixed the issue with fetching USD conversion rate and made it more reliable.
+
 ## [2.0.3 (965)] - 2025-05-19
 
 ### Changed:

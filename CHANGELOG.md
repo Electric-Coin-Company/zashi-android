@@ -6,6 +6,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.0.4 (973)] - 2025-06-16
+
 ### Added
 - `Synchronizer.onForeground` and `Synchronizer.onBackground` is called when application goes into background or 
   foreground
