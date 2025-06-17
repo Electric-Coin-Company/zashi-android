@@ -1,0 +1,9 @@
+Added:
+- We added a trigger to fetch fresh conversion rate when you navigate to the Send screen.
+Changed:
+- We unified the behavior of group and decimal separators to prevent overspend.
+- We updated our Send and Receive icons.
+- We updated copy on the Receive screen.
+- We updated the animation on the Sending screen.
+Fixed:
+- We fixed the issue with fetching USD conversion rate and made it more reliable.
