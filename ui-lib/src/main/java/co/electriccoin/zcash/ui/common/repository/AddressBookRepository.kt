@@ -147,7 +147,7 @@ class AddressBookRepositoryImpl(
             key
         } else {
             val account = accountDataSource.getZashiAccount()
-            val persistableWallet = persistableWalletProvider.getPersistableWallet()
+            val persistableWallet = persistableWalletProvider.requirePersistableWallet()
             val newKey =
                 AddressBookKey.derive(
                     seedPhrase = persistableWallet.seedPhrase,

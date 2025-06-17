@@ -2,12 +2,14 @@ package co.electriccoin.zcash.ui.screen.send.model
 
 import android.content.Context
 import androidx.compose.runtime.saveable.mapSaver
+import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.Locale
 import cash.z.ecc.android.sdk.model.MonetarySeparators
+import cash.z.ecc.android.sdk.model.UserInputNumberParser
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecStringExt
-import cash.z.ecc.android.sdk.model.fromZecString
 import cash.z.ecc.android.sdk.model.toFiatString
+import cash.z.ecc.android.sdk.model.toKotlinLocale
 import cash.z.ecc.android.sdk.model.toZatoshi
 import cash.z.ecc.android.sdk.model.toZecString
 import co.electriccoin.zcash.spackle.Twig
@@ -34,21 +36,20 @@ sealed interface AmountState {
     companion object {
         @Suppress("LongParameterList")
         fun newFromZec(
-            context: Context,
-            monetarySeparators: MonetarySeparators,
+            locale: java.util.Locale,
             value: String,
             fiatValue: String,
             isTransparentOrTextRecipient: Boolean,
             exchangeRateState: ExchangeRateState,
             lastFieldChangedByUser: AmountField = AmountField.ZEC
         ): AmountState {
-            val isValid = validate(context, monetarySeparators, value)
+            val normalized = UserInputNumberParser.normalizeInput(value, locale)
 
-            if (!isValid) {
-                return Invalid(value, if (value.isBlank()) "" else fiatValue, lastFieldChangedByUser)
-            }
+            val zecAmount =
+                UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
+                    ?: return Invalid(normalized, if (normalized.isBlank()) "" else fiatValue, lastFieldChangedByUser)
 
-            val zatoshi = Zatoshi.fromZecString(context, value, Locale.getDefault())
+            val zatoshi = zecAmount.convertZecToZatoshi()
 
             val currencyConversion =
                 if (exchangeRateState !is ExchangeRateState.Data ||
@@ -61,12 +62,11 @@ sealed interface AmountState {
 
             // Note that the zero funds sending is supported for sending a memo-only shielded transaction
             return when {
-                (zatoshi == null) -> Invalid(value, if (value.isBlank()) "" else fiatValue, lastFieldChangedByUser)
                 (zatoshi.value == 0L && isTransparentOrTextRecipient) ->
-                    Invalid(value, fiatValue, lastFieldChangedByUser)
+                    Invalid(normalized, fiatValue, lastFieldChangedByUser)
                 else -> {
                     Valid(
-                        value = value,
+                        value = normalized,
                         zatoshi = zatoshi,
                         fiatValue =
                             if (currencyConversion == null) {
@@ -74,7 +74,7 @@ sealed interface AmountState {
                             } else {
                                 zatoshi.toFiatString(
                                     currencyConversion = currencyConversion,
-                                    locale = Locale.getDefault(),
+                                    locale = locale.toKotlinLocale(),
                                 )
                             },
                         lastFieldChangedByUser = lastFieldChangedByUser
@@ -85,32 +85,27 @@ sealed interface AmountState {
 
         @Suppress("LongParameterList")
         fun newFromFiat(
-            context: Context,
-            monetarySeparators: MonetarySeparators,
+            locale: java.util.Locale,
             value: String,
             fiatValue: String,
             isTransparentOrTextRecipient: Boolean,
             exchangeRateState: ExchangeRateState,
         ): AmountState {
-            val isValid = validate(context, monetarySeparators, fiatValue)
+            val normalized = UserInputNumberParser.normalizeInput(fiatValue, locale)
 
-            if (!isValid) {
-                return Invalid(
-                    value = if (fiatValue.isBlank()) "" else value,
-                    fiatValue = fiatValue,
-                    lastFieldChangedByUser = AmountField.FIAT
-                )
-            }
+            val fiatAmount =
+                UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
+                    ?: return Invalid(
+                        value = if (normalized.isBlank()) "" else value,
+                        fiatValue = normalized,
+                        lastFieldChangedByUser = AmountField.FIAT
+                    )
 
             val zatoshi =
-                (exchangeRateState as? ExchangeRateState.Data)?.currencyConversion?.toZatoshi(
-                    context = context,
-                    value = fiatValue,
-                    locale = Locale.getDefault(),
-                )
+                (exchangeRateState as? ExchangeRateState.Data)?.currencyConversion?.toZatoshi(amount = fiatAmount)
 
             return when {
-                (zatoshi == null) -> {
+                zatoshi == null -> {
                     Invalid(
                         value = if (fiatValue.isBlank()) "" else value,
                         fiatValue = fiatValue,
@@ -128,7 +123,7 @@ sealed interface AmountState {
                     Valid(
                         value = zatoshi.toZecString(),
                         zatoshi = zatoshi,
-                        fiatValue = fiatValue,
+                        fiatValue = normalized,
                         lastFieldChangedByUser = AmountField.FIAT
                     )
                 }

@@ -10,7 +10,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,16 +23,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.android.sdk.model.FRACTION_DIGITS
-import cash.z.ecc.android.sdk.model.MonetarySeparators
+import cash.z.ecc.android.sdk.model.UserInputNumberParser
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
-import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import java.math.BigDecimal
-import java.text.ParseException
-import java.util.Locale
 
 @Suppress("LongParameterList")
 @Composable
@@ -41,8 +36,8 @@ fun ZashiNumberTextField(
     state: NumberTextFieldState,
     modifier: Modifier = Modifier,
     innerModifier: Modifier = ZashiTextFieldDefaults.innerModifier,
-    textStyle: TextStyle = ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium),
-    placeholder: @Composable (() -> Unit)? = { Text("0") },
+    textStyle: TextStyle = ZashiNumberTextFieldDefaults.textStyle,
+    placeholder: @Composable (() -> Unit)? = { ZashiNumberTextFieldDefaults.Placeholder() },
     prefix: @Composable (() -> Unit)? = null,
     suffix: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
@@ -50,36 +45,21 @@ fun ZashiNumberTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = ZashiTextFieldDefaults.shape,
-    contentPadding: PaddingValues =
-        ZashiTextFieldDefaults.contentPadding(
-            leadingIcon = null,
-            suffix = suffix,
-            trailingIcon = null,
-            prefix = prefix
-        ),
+    contentPadding: PaddingValues = ZashiNumberTextFieldDefaults.contentPadding(suffix, prefix),
     colors: ZashiTextFieldColors = ZashiTextFieldDefaults.defaultColors()
 ) {
     val locale = LocalConfiguration.current.locales[0]
-    val monetarySeparators by remember { derivedStateOf { MonetarySeparators.current(locale) } }
-    val defaultRegex by remember { derivedStateOf { defaultRegex(monetarySeparators) } }
-    val allowedNumbersRegex by remember { derivedStateOf { allowedNumbersRegex(monetarySeparators) } }
     val textFieldState =
         TextFieldState(
             value = state.text,
             error = state.errorString.takeIf { state.isError },
             onValueChange = { text ->
-                val amount =
-                    parseAmount(
-                        defaultAmountValidationRegex = defaultRegex,
-                        allowedNumberFormatValidationRegex = allowedNumbersRegex,
-                        text = text,
-                        locale = locale
-                    )
-                state.onValueChange(state.copy(text = stringRes(text), amount = amount))
+                val normalized = UserInputNumberParser.normalizeInput(text, locale)
+                val amount = UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
+                state.onValueChange(state.copy(text = stringRes(normalized), amount = amount))
             }
         )
     val handle: ZashiTextFieldHandle = rememberZashiTextFieldHandle(textFieldState)
-
     ZashiTextField(
         state = textFieldState,
         modifier = modifier,
@@ -104,53 +84,6 @@ fun ZashiNumberTextField(
     )
 }
 
-/**
- * Validates only numbers the properly use grouping and decimal separators
- * Note that this regex aligns with the one from ZcashSDK (sdk-incubator-lib/src/main/res/values/strings-regex.xml)
- * It only adds check for 0-8 digits after the decimal separator at maximum
- */
-@Suppress("MaxLineLength")
-private fun allowedNumbersRegex(monetarySeparators: MonetarySeparators) =
-    "^([0-9]*([0-9]+([${monetarySeparators.grouping}]\$|[${monetarySeparators.grouping}][0-9]+))*([${monetarySeparators.decimal}]\$|[${monetarySeparators.decimal}][0-9]{0,8})?)?\$"
-        .toRegex()
-
-/**
- * Validates only zeros and decimal separator
- */
-private fun defaultRegex(monetarySeparators: MonetarySeparators) = "^[0${monetarySeparators.decimal}]*$".toRegex()
-
-private fun parseAmount(
-    defaultAmountValidationRegex: Regex,
-    allowedNumberFormatValidationRegex: Regex,
-    text: String,
-    locale: Locale
-): BigDecimal? {
-    if (text.contains(defaultAmountValidationRegex) || text.contains(allowedNumberFormatValidationRegex)) {
-        val decimalFormat =
-            android.icu.text.NumberFormat.getInstance(locale, android.icu.text.NumberFormat.NUMBERSTYLE).apply {
-                // TODO [#343]: https://github.com/zcash/secant-android-wallet/issues/343
-                roundingMode = android.icu.math.BigDecimal.ROUND_UNNECESSARY // aka Bankers rounding
-                maximumFractionDigits = FRACTION_DIGITS
-                minimumFractionDigits = FRACTION_DIGITS
-            }
-
-        return try {
-            when (val result = decimalFormat.parse(text)) {
-                is Int -> result.toBigDecimal()
-                is Float -> result.toBigDecimal()
-                is Double -> result.toBigDecimal()
-                is Short -> result.toFloat().toBigDecimal()
-                is BigDecimal -> result
-                else -> result.toDouble().toBigDecimal()
-            }
-        } catch (e: ParseException) {
-            null
-        }
-    } else {
-        return null
-    }
-}
-
 @Immutable
 data class NumberTextFieldState(
     val text: StringResource = stringRes(""),
@@ -159,6 +92,27 @@ data class NumberTextFieldState(
     val onValueChange: (NumberTextFieldState) -> Unit,
 ) {
     val isError = amount == null && !text.isEmpty()
+}
+
+object ZashiNumberTextFieldDefaults {
+    val textStyle
+        @Composable get() = ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium)
+
+    @Composable
+    fun contentPadding(
+        suffix: @Composable (() -> Unit)?,
+        prefix: @Composable (() -> Unit)?
+    ) = ZashiTextFieldDefaults.contentPadding(
+        leadingIcon = null,
+        suffix = suffix,
+        trailingIcon = null,
+        prefix = prefix
+    )
+
+    @Composable
+    fun Placeholder() {
+        Text("0")
+    }
 }
 
 @Composable

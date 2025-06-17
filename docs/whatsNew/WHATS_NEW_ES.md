@@ -12,6 +12,20 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.0.4 (973)] - 2025-06-16
+
+### Añadido:
+- Agregamos un trigger para obtener una nueva tasa de conversión cuando navega a la pantalla Enviar.
+
+### Cambiado:
+- Unificamos el comportamiento de los separadores de grupos y decimales para evitar gastos excesivos.
+- Actualizamos los iconos Enviar y Recibir.
+- Actualizamos la copia en la pantalla Recibir.
+- Actualizamos la animación en la pantalla Enviar.
+
+### Corregido:
+- Solucionamos el problema con la obtención del tipo de cambio de USD y lo hicimos más fiable.
+
 ## [2.0.3 (965)] - 2025-05-19
 
 ### Cambiado:

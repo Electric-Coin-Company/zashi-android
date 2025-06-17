@@ -34,12 +34,11 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.loadingImageRes
-import co.electriccoin.zcash.ui.design.util.orHidden
+import co.electriccoin.zcash.ui.design.util.orHiddenString
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -126,8 +125,8 @@ private fun BalanceActionRow(state: SpendableBalanceRowState) {
         SelectionContainer {
             Text(
                 text =
-                    state.value.getValue() orHidden
-                        stringResource(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                    state.value orHiddenString
+                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                 color =
                     if (state.icon is ImageResource.Loading) {
                         ZashiColors.Text.textTertiary
@@ -172,10 +171,9 @@ private fun BalanceShieldButton(state: SpendableBalanceShieldButtonState) {
                 Spacer(4.dp)
                 Text(
                     text =
-                        stringResource(
-                            R.string.home_message_transparent_balance_subtitle,
-                            stringRes(state.amount, HIDDEN).getValue()
-                        ) orHidden stringResource(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                        stringRes(R.string.home_message_transparent_balance_subtitle, stringRes(state.amount))
+                            orHiddenString
+                            stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                     color = ZashiColors.Text.textPrimary,
                     style = ZashiTypography.textXl,
                     fontWeight = FontWeight.SemiBold

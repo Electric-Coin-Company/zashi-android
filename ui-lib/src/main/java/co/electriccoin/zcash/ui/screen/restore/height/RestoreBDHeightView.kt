@@ -149,8 +149,8 @@ private class ThousandSeparatorTransformation : VisualTransformation {
         val integerPart: Long
         val decimalPart: String
 
-        if (text.text.isNotEmpty()) {
-            val number = text.text.toDouble()
+        val number = text.text.toDoubleOrNull()
+        if (number != null) {
             integerPart = number.toLong()
             outputText += NumberFormat.getIntegerInstance().format(integerPart)
             if (text.text.contains(decimalSeparator)) {

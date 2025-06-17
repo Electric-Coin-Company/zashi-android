@@ -35,6 +35,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
@@ -49,7 +50,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.Memo
-import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.ZecSendExt
@@ -86,7 +86,6 @@ import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.send.model.SendAddressBookState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 @Composable
 @Preview("SendForm")
@@ -290,8 +289,6 @@ private fun SendForm(
     sendState: SendAddressBookState,
     modifier: Modifier = Modifier,
 ) {
-    val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
-
     Column(
         modifier =
             Modifier
@@ -349,10 +346,9 @@ private fun SendForm(
                 recipientAddressState.type?.let {
                     it == AddressType.Transparent || it == AddressType.Tex
                 } ?: false,
-            monetarySeparators = monetarySeparators,
+            exchangeRateState = exchangeRateState,
             setAmountState = setAmountState,
-            selectedAccount = selectedAccount,
-            exchangeRateState = exchangeRateState
+            selectedAccount = selectedAccount
         )
 
         Spacer(Modifier.size(ZcashTheme.dimens.spacingDefault))
@@ -589,7 +585,6 @@ fun SendFormAmountTextField(
     amountState: AmountState,
     imeAction: ImeAction,
     isTransparentOrTextRecipient: Boolean,
-    monetarySeparators: MonetarySeparators,
     exchangeRateState: ExchangeRateState,
     setAmountState: (AmountState) -> Unit,
     selectedAccount: WalletAccount,
@@ -599,6 +594,8 @@ fun SendFormAmountTextField(
     val context = LocalContext.current
 
     val zcashCurrency = ZcashCurrency.getLocalizedName(context)
+
+    val locale = LocalConfiguration.current.locales[0]
 
     val amountError =
         when (amountState) {
@@ -647,12 +644,11 @@ fun SendFormAmountTextField(
                 onValueChange = { newValue ->
                     setAmountState(
                         AmountState.newFromZec(
-                            context = context,
                             value = newValue,
-                            monetarySeparators = monetarySeparators,
-                            isTransparentOrTextRecipient = isTransparentOrTextRecipient,
                             fiatValue = amountState.fiatValue,
-                            exchangeRateState = exchangeRateState
+                            isTransparentOrTextRecipient = isTransparentOrTextRecipient,
+                            exchangeRateState = exchangeRateState,
+                            locale = locale
                         )
                     )
                 },
@@ -713,12 +709,11 @@ fun SendFormAmountTextField(
                     onValueChange = { newValue ->
                         setAmountState(
                             AmountState.newFromFiat(
-                                context = context,
                                 value = amountState.value,
-                                monetarySeparators = monetarySeparators,
-                                isTransparentOrTextRecipient = isTransparentOrTextRecipient,
                                 fiatValue = newValue,
-                                exchangeRateState = exchangeRateState
+                                isTransparentOrTextRecipient = isTransparentOrTextRecipient,
+                                exchangeRateState = exchangeRateState,
+                                locale = locale
                             )
                         )
                     },

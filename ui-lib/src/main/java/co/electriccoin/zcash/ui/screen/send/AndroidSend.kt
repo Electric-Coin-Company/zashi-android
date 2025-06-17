@@ -10,11 +10,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
-import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.android.sdk.type.AddressType
@@ -47,7 +46,6 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
-import java.util.Locale
 
 @Composable
 internal fun WrapSend(args: Send) {
@@ -78,8 +76,6 @@ internal fun WrapSend(args: Send) {
 
     val selectedAccount = accountDataSource.selectedAccount.collectAsStateWithLifecycle(null).value
 
-    val monetarySeparators = MonetarySeparators.current(Locale.getDefault())
-
     val balanceState = balanceWidgetViewModel.state.collectAsStateWithLifecycle().value
 
     val exchangeRateState = exchangeRateRepository.state.collectAsStateWithLifecycle().value
@@ -97,7 +93,6 @@ internal fun WrapSend(args: Send) {
         },
         goBack = { navigationRouter.back() },
         hasCameraFeature = hasCameraFeature,
-        monetarySeparators = monetarySeparators,
         sendArguments = args,
         synchronizer = synchronizer,
         selectedAccount = selectedAccount
@@ -113,7 +108,6 @@ internal fun WrapSend(
     goToQrScanner: () -> Unit,
     goBack: () -> Unit,
     hasCameraFeature: Boolean,
-    monetarySeparators: MonetarySeparators,
     sendArguments: Send,
     synchronizer: Synchronizer?,
     selectedAccount: WalletAccount?,
@@ -136,7 +130,7 @@ internal fun WrapSend(
 
     val zashiMainTopAppBarState by topAppBarViewModel.state.collectAsStateWithLifecycle()
 
-    val context = LocalContext.current
+    val locale = LocalConfiguration.current.locales[0]
 
     val (sendStage, setSendStage) =
         rememberSaveable(stateSaver = SendStage.Saver) { mutableStateOf(SendStage.Form) }
@@ -164,18 +158,17 @@ internal fun WrapSend(
 
     // Amount computation:
     val (amountState, setAmountState) =
-        rememberSaveable(stateSaver = AmountState.Saver) {
+        rememberSaveable(locale, stateSaver = AmountState.Saver) {
             // Default amount state
             mutableStateOf(
                 AmountState.newFromZec(
-                    context = context,
                     value = zecSend?.amount?.toZecString() ?: "",
-                    monetarySeparators = monetarySeparators,
+                    fiatValue = "",
                     isTransparentOrTextRecipient =
                         recipientAddressState.type?.let { it == AddressType.Transparent }
                             ?: false,
-                    fiatValue = "",
-                    exchangeRateState = exchangeRateState
+                    exchangeRateState = exchangeRateState,
+                    locale = locale,
                 )
             )
         }
@@ -185,26 +178,24 @@ internal fun WrapSend(
         setAmountState(
             if (amountState.value.isNotBlank() || amountState.fiatValue.isBlank()) {
                 AmountState.newFromZec(
-                    context = context,
+                    value = amountState.value,
+                    fiatValue = amountState.fiatValue,
                     isTransparentOrTextRecipient =
                         recipientAddressState.type
                             ?.let { it == AddressType.Transparent } ?: false,
-                    monetarySeparators = monetarySeparators,
-                    value = amountState.value,
-                    fiatValue = amountState.fiatValue,
                     exchangeRateState = exchangeRateState,
-                    lastFieldChangedByUser = amountState.lastFieldChangedByUser
+                    lastFieldChangedByUser = amountState.lastFieldChangedByUser,
+                    locale = locale,
                 )
             } else {
                 AmountState.newFromFiat(
-                    context = context,
+                    value = amountState.value,
+                    fiatValue = amountState.fiatValue,
                     isTransparentOrTextRecipient =
                         recipientAddressState.type
                             ?.let { it == AddressType.Transparent } ?: false,
-                    monetarySeparators = monetarySeparators,
-                    value = amountState.value,
-                    fiatValue = amountState.fiatValue,
-                    exchangeRateState = exchangeRateState
+                    exchangeRateState = exchangeRateState,
+                    locale = locale,
                 )
             }
         )
@@ -216,26 +207,25 @@ internal fun WrapSend(
             mutableStateOf(MemoState.new(zecSend?.memo?.value ?: ""))
         }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(locale) {
         observeClearSend().collect {
             setSendStage(SendStage.Form)
             setZecSend(null)
             viewModel.onRecipientAddressChanged(RecipientAddressState.new("", null))
             setAmountState(
                 AmountState.newFromZec(
-                    context = context,
-                    monetarySeparators = monetarySeparators,
                     value = "",
                     fiatValue = "",
                     isTransparentOrTextRecipient = false,
-                    exchangeRateState = exchangeRateState
+                    exchangeRateState = exchangeRateState,
+                    locale = locale
                 )
             )
             setMemoState(MemoState.new(""))
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(locale) {
         prefillSend().collect {
             when (it) {
                 is PrefillSendData.All -> {
@@ -254,12 +244,11 @@ internal fun WrapSend(
 
                     setAmountState(
                         AmountState.newFromZec(
-                            context = context,
                             value = value.convertZatoshiToZecString(),
-                            monetarySeparators = monetarySeparators,
-                            isTransparentOrTextRecipient = type == AddressType.Transparent,
                             fiatValue = amountState.fiatValue,
-                            exchangeRateState = exchangeRateState
+                            isTransparentOrTextRecipient = type == AddressType.Transparent,
+                            exchangeRateState = exchangeRateState,
+                            locale = locale
                         )
                     )
                     setMemoState(MemoState.new(it.memos?.firstOrNull().orEmpty()))
