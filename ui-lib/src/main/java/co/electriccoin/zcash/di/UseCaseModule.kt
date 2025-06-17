@@ -5,6 +5,7 @@ import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFulltextFiltersUs
 import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.ConvertFiatToZatoshiUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateFlexaTransactionUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneAccountUseCase
@@ -34,6 +35,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetTotalFiatBalanceUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionMetadataUseCase
@@ -212,4 +214,6 @@ val useCaseModule =
         factoryOf(::FilterSwapAssetsUseCase)
         factoryOf(::SetSlippageUseCase)
         factoryOf(::GetSlippageUseCase)
+        factoryOf(::GetTotalFiatBalanceUseCase)
+        factoryOf(::ConvertFiatToZatoshiUseCase)
     }

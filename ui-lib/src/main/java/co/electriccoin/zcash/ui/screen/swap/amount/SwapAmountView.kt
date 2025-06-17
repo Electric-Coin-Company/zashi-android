@@ -21,8 +21,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.Spacer
-import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
@@ -123,14 +123,15 @@ private fun Preview() =
                 SwapAmountState(
                     recipientGets =
                         SwapTextFieldState(
-                            token = SwapTokenState(stringRes("USDT")),
+                            token = SwapAssetCardState(stringRes("USDT"), null, null),
                             title = stringRes("Recipient gets"),
-                            symbol = stringRes("$"),
-                            primaryText = TextFieldState(value = stringRes("")) {},
-                            primaryPlaceholder = stringResByDynamicCurrencyNumber(0, "$"),
+                            textFieldPrefix = stringRes("$"),
+                            textField = NumberTextFieldState {},
+                            textFieldPlaceholder = stringResByDynamicCurrencyNumber(0, "$"),
                             secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
-                            exchangeRate = stringResByDynamicCurrencyNumber(100, "$"),
+                            totalBalance = stringResByDynamicCurrencyNumber(100, "$"),
                             onSwapChange = {},
+                            error = null
                         ),
                     slippage =
                         ButtonState(
@@ -140,8 +141,10 @@ private fun Preview() =
                     youPay =
                         SwapTextState(
                             token =
-                                SwapTokenState(
-                                    stringRes("ZEC")
+                                SwapAssetCardState(
+                                    stringRes("ZEC"),
+                                    null,
+                                    null
                                 ),
                             title = stringRes("You pay"),
                             text = stringResByDynamicCurrencyNumber(101, "$"),

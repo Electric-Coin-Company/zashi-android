@@ -66,7 +66,7 @@ fun ZashiNumberTextField(
     val textFieldState =
         TextFieldState(
             value = state.text,
-            error = state.errorString.takeIf { state.amount == null && state.text.getValue().isNotEmpty() },
+            error = state.errorString.takeIf { state.isError },
             onValueChange = { text ->
                 val amount =
                     parseAmount(
@@ -157,7 +157,9 @@ data class NumberTextFieldState(
     val amount: BigDecimal? = null,
     val errorString: StringResource = stringRes(""),
     val onValueChange: (NumberTextFieldState) -> Unit,
-)
+) {
+    val isError = amount == null && !text.isEmpty()
+}
 
 @Composable
 @Preview

@@ -45,7 +45,9 @@ sealed interface StringResource {
     data class ByDynamicCurrencyNumber(
         val amount: Number,
         val ticker: String,
-        val symbolLocation: CurrencySymbolLocation
+        val symbolLocation: CurrencySymbolLocation,
+        val maxDecimals: Int,
+        val minDecimals: Int
     ) : StringResource
 
     @Immutable
@@ -79,6 +81,12 @@ sealed interface StringResource {
     operator fun plus(other: StringResource): StringResource = CompositeStringResource(listOf(this, other))
 
     operator fun plus(other: String): StringResource = CompositeStringResource(listOf(this, stringRes(other)))
+
+    fun isEmpty(): Boolean =
+        when (val obj = this) {
+            is ByString -> obj.value.isEmpty()
+            else -> false
+        }
 }
 
 @Immutable
@@ -110,8 +118,17 @@ fun stringResByDynamicCurrencyNumber(
             CurrencySymbolLocation.BEFORE
         } else {
             CurrencySymbolLocation.AFTER
-        }
-): StringResource = StringResource.ByDynamicCurrencyNumber(amount, ticker, symbolLocation)
+        },
+    maxDecimals: Int = ZEC_FORMATTER.maximumFractionDigits,
+    minDecimals: Int = 2
+): StringResource =
+    StringResource.ByDynamicCurrencyNumber(
+        amount = amount,
+        ticker = ticker,
+        symbolLocation = symbolLocation,
+        maxDecimals = maxDecimals,
+        minDecimals = minDecimals
+    )
 
 @Stable
 fun stringResByDateTime(
@@ -221,7 +238,7 @@ object StringResourceDefaults {
 
     fun convertCurrency(res: StringResource.ByDynamicCurrencyNumber): String {
         val amount =
-            currencyFormatter(maxDecimals = ZEC_FORMATTER.maximumFractionDigits, minDecimals = 2)
+            currencyFormatter(maxDecimals = res.maxDecimals, minDecimals = res.minDecimals)
                 .format(res.amount)
         return when (res.symbolLocation) {
             CurrencySymbolLocation.BEFORE -> "${res.ticker}$amount"
