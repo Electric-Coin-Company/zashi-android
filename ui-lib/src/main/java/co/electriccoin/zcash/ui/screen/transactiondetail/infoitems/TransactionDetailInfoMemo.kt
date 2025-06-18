@@ -92,7 +92,11 @@ private fun ExpandableMemo(state: TransactionDetailMemoState) {
                                 } else {
                                     stringRes(R.string.transaction_detail_memo_view_more)
                                 },
-                            trailingIcon = if (it) R.drawable.ic_chevron_up_small else R.drawable.ic_chevron_down_small,
+                            trailingIcon = if (it) {
+                                co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_up_small
+                            } else {
+                                co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_down_small
+                            },
                             onClick = { isExpanded = !isExpanded }
                         ),
                     onClick = state.onClick
@@ -207,7 +211,7 @@ private fun Preview() =
                         bottomButton =
                             ButtonState(
                                 text = stringRes("Button"),
-                                trailingIcon = R.drawable.ic_chevron_down_small
+                                trailingIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_down_small
                             ),
                         onClick = {}
                     )

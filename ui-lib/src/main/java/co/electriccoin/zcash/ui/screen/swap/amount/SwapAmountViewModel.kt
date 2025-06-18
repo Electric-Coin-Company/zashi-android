@@ -12,7 +12,9 @@ import co.electriccoin.zcash.ui.common.usecase.ConvertFiatToZatoshiUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTotalFiatBalanceUseCase
+import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -175,7 +177,13 @@ class SwapAmountViewModel(
             slippage = slippage,
             youPay = text,
             primaryButton = primaryButton,
-            onBack = ::onBack
+            onBack = ::onBack,
+            swapWidgetState = SwapWidgetState(
+                selection = SwapWidgetState.Selection.SWAP,
+                onClick = { }
+            ),
+            swapInfoButton = IconButtonState(R.drawable.ic_help) {},
+            infoItems = listOf()
         )
 
     @Suppress("CyclomaticComplexMethod")
@@ -187,24 +195,38 @@ class SwapAmountViewModel(
         fiatAmount: BigDecimal?,
     ): SwapTextFieldState =
         SwapTextFieldState(
+            title = stringRes("Recipient gets"),
+            error =
+                when (currencyType) {
+                    CurrencyType.TOKEN -> {
+                        if (totalFiatBalance != null && (fiatAmount ?: BigDecimal(0)) > totalFiatBalance) {
+                            stringRes("Insufficient funds")
+                        } else {
+                            null
+                        }
+                    }
+
+                    CurrencyType.FIAT -> {
+                        if (totalFiatBalance != null && (fiatAmount ?: BigDecimal(0)) > totalFiatBalance) {
+                            stringRes("Insufficient funds")
+                        } else {
+                            null
+                        }
+                    }
+                },
             token =
-                SwapAssetCardState(
+                AssetCardState(
                     ticker = swapAsset?.tokenTicker?.let { stringRes(it) } ?: stringRes(""),
                     token = swapAsset?.tokenIcon,
-                    chain = swapAsset?.chainIcon
+                    chain = swapAsset?.chainIcon,
+                    {}
                 ),
-            title = stringRes("Recipient gets"),
             textFieldPrefix =
                 when (currencyType) {
                     CurrencyType.TOKEN -> null
-                    CurrencyType.FIAT -> stringRes(FiatCurrency.USD.symbol)
+                    CurrencyType.FIAT -> imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_symbol)
                 },
             textField = textFieldState,
-            textFieldPlaceholder =
-                when (currencyType) {
-                    CurrencyType.TOKEN -> stringResByDynamicCurrencyNumber(0, swapAsset?.tokenTicker.orEmpty())
-                    CurrencyType.FIAT -> stringResByDynamicCurrencyNumber(0, FiatCurrency.USD.symbol)
-                },
             secondaryText =
                 when (currencyType) {
                     CurrencyType.TOKEN ->
@@ -224,29 +246,11 @@ class SwapAmountViewModel(
                         stringResByDynamicCurrencyNumber(tokenAmount, swapAsset?.tokenTicker.orEmpty())
                     }
                 },
-            totalBalance =
+            max =
                 totalFiatBalance?.let {
                     stringResByDynamicCurrencyNumber(it, FiatCurrency.USD.symbol, maxDecimals = 2)
                 },
-            onSwapChange = ::onSwapChangeClick,
-            error =
-                when (currencyType) {
-                    CurrencyType.TOKEN -> {
-                        if (totalFiatBalance != null && (fiatAmount ?: BigDecimal(0)) > totalFiatBalance) {
-                            stringRes("Insufficient funds")
-                        } else {
-                            null
-                        }
-                    }
-
-                    CurrencyType.FIAT -> {
-                        if (totalFiatBalance != null && (fiatAmount ?: BigDecimal(0)) > totalFiatBalance) {
-                            stringRes("Insufficient funds")
-                        } else {
-                            null
-                        }
-                    }
-                }
+            onSwapChange = ::onSwapChangeClick
         )
 
     private fun createTextState(
@@ -255,14 +259,16 @@ class SwapAmountViewModel(
     ): SwapTextState =
         SwapTextState(
             token =
-                SwapAssetCardState(
+                AssetCardState(
                     stringRes(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
                     token = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
-                    chain = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec)
+                    chain = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
+                    {}
                 ),
             title = stringRes("You pay"),
             text = stringResByDynamicCurrencyNumber(fiatAmount ?: 0, FiatCurrency.USD.symbol),
-            secondaryText = zatoshi?.let { stringRes(it) }
+            secondaryText = zatoshi?.let { stringRes(it) },
+            max = null
         )
 
     @Suppress("MagicNumber")

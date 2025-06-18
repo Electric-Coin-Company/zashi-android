@@ -12,8 +12,10 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Spacer
+import co.electriccoin.zcash.ui.design.component.ZashiAssetCard
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -29,49 +31,60 @@ fun SwapText(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier,
-        color = ZashiColors.Utility.Gray.utilityGray50,
-        shape = RoundedCornerShape(24.dp)
+        modifier = modifier
     ) {
-        Column(
-            modifier = Modifier.padding(20.dp)
-        ) {
-            Text(
-                text = state.title.getValue(),
-                style = ZashiTypography.textSm,
-                fontWeight = FontWeight.Medium,
-                color = ZashiColors.Text.textSecondary
-            )
-            Spacer(4.dp)
+        Column {
+            Row {
+                Text(
+                    text = state.title.getValue(),
+                    style = ZashiTypography.textSm,
+                    fontWeight = FontWeight.Medium,
+                    color = ZashiColors.Text.textPrimary
+                )
+                if (state.max != null) {
+                    Spacer(1f)
+                    Text(
+                        text = state.max.getValue(),
+                        style = ZashiTypography.textSm,
+                        fontWeight = FontWeight.Medium,
+                        color = ZashiColors.Text.textTertiary
+                    )
+                }
+            }
+            Spacer(8.dp)
             Row(
                 verticalAlignment = CenterVertically
             ) {
+                ZashiAssetCard(
+                    state = state.token
+                )
+                Spacer(1f)
                 Text(
                     text = state.text.getValue(),
                     style = ZashiTypography.header4,
                     fontWeight = FontWeight.SemiBold,
                     color = ZashiColors.Text.textTertiary
                 )
+            }
+            Spacer(8.dp)
+            Row {
                 Spacer(1f)
-                SwapAssetCard(
-                    state = state.token
+                Text(
+                    text = state.secondaryText?.getValue() ?: "",
+                    style = ZashiTypography.textSm,
+                    fontWeight = FontWeight.Medium,
+                    color = ZashiColors.Text.textTertiary
                 )
             }
-            Spacer(6.dp)
-            Text(
-                text = state.secondaryText?.getValue() ?: "",
-                style = ZashiTypography.textSm,
-                fontWeight = FontWeight.Medium,
-                color = ZashiColors.Text.textTertiary
-            )
         }
     }
 }
 
 @Immutable
 data class SwapTextState(
-    val token: SwapAssetCardState,
+    val token: AssetCardState,
     val title: StringResource,
+    val max: StringResource?,
     val text: StringResource,
     val secondaryText: StringResource?,
 )
@@ -85,8 +98,9 @@ private fun Preview() =
                 state =
                     SwapTextState(
                         token =
-                            SwapAssetCardState(stringRes("ZEC"), null, null),
-                        title = stringRes("You pay"),
+                            AssetCardState(stringRes("ZEC"), null, null, {}),
+                        title = stringRes("To"),
+                        max = stringRes("Max"),
                         text = stringResByDynamicCurrencyNumber(101, "$"),
                         secondaryText = stringResByDynamicCurrencyNumber(2.47123, "ZEC")
                     )

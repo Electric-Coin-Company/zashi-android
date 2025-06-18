@@ -20,15 +20,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
+import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
+import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.imageRes
+import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
 fun ZashiContactListItem(
-    state: ZashiContactListItemState,
+    state: ContactListItemState,
     modifier: Modifier = Modifier
 ) {
     BaseListItem(
@@ -63,7 +68,7 @@ fun ZashiContactListItem(
 
 @Composable
 private fun ContactItemLeading(
-    state: ZashiContactListItemState,
+    state: ContactListItemState,
     modifier: Modifier = Modifier,
 ) {
     when (state.icon) {
@@ -111,7 +116,7 @@ private fun ContactItemLeading(
 
 @Composable
 private fun ContactItemContent(
-    state: ZashiContactListItemState,
+    state: ContactListItemState,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -134,10 +139,26 @@ private fun ContactItemContent(
     }
 }
 
-data class ZashiContactListItemState(
+data class ContactListItemState(
     val icon: ImageResource,
     val isShielded: Boolean,
     val name: StringResource,
     val address: StringResource,
     val onClick: () -> Unit,
 )
+
+@PreviewScreens
+@Composable
+private fun Preview() = ZcashTheme {
+    BlankSurface {
+        ZashiContactListItem(
+            state = ContactListItemState(
+                name = stringRes("Name Surname"),
+                address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                icon = imageRes("NS"),
+                isShielded = false,
+                onClick = {}
+            )
+        )
+    }
+}

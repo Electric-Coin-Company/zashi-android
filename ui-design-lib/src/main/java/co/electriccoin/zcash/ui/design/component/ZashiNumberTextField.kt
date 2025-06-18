@@ -21,6 +21,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.UserInputNumberParser
@@ -40,6 +41,7 @@ fun ZashiNumberTextField(
     placeholder: @Composable (() -> Unit)? = { ZashiNumberTextFieldDefaults.Placeholder() },
     prefix: @Composable (() -> Unit)? = null,
     suffix: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -67,7 +69,7 @@ fun ZashiNumberTextField(
         handle = handle,
         textStyle = textStyle,
         placeholder = placeholder,
-        leadingIcon = null,
+        leadingIcon = leadingIcon,
         trailingIcon = null,
         prefix = prefix,
         suffix = suffix,
@@ -110,8 +112,19 @@ object ZashiNumberTextFieldDefaults {
     )
 
     @Composable
-    fun Placeholder() {
-        Text("0")
+    fun Placeholder(
+        modifier: Modifier = Modifier,
+        style: TextStyle = ZashiTypography.textMd,
+        fontWeight: FontWeight = FontWeight.Normal,
+        textAlign: TextAlign = TextAlign.Start
+    ) {
+        Text(
+            text = "0",
+            modifier = modifier,
+            style = style,
+            fontWeight = fontWeight,
+            textAlign = textAlign,
+        )
     }
 }
 

@@ -1,40 +1,52 @@
 package co.electriccoin.zcash.ui.screen.swap.amount
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
+import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
+import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
+import co.electriccoin.zcash.ui.design.component.ZashiIconButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
-import co.electriccoin.zcash.ui.design.component.ZashiVerticallDivider
+import co.electriccoin.zcash.ui.design.component.listitem.SimpleListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiSimpleListItem
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
+import co.electriccoin.zcash.ui.screen.swap.amount.SwapWidgetState.Selection.*
 
 @Composable
 fun SwapAmountView(
@@ -53,13 +65,22 @@ fun SwapAmountView(
                     .scaffoldPadding(it)
         ) {
             SwapTextField(state = state.recipientGets)
-            Spacer(8.dp)
+            Spacer(14.dp)
+            SlippageSeparator(state = state.swapWidgetState)
+            Spacer(14.dp)
+            SwapText(state = state.youPay)
+            Spacer(32.dp)
             SlippageButton(
-                modifier = Modifier.padding(start = 20.dp),
                 state = state.slippage
             )
-            Spacer(8.dp)
-            SwapText(state = state.youPay)
+
+            state.infoItems.forEach { infoItem ->
+                Spacer(16.dp)
+                ZashiSimpleListItem(
+                    state = infoItem
+                )
+            }
+
             Spacer(24.dp)
             Spacer(1f)
             ZashiButton(
@@ -76,22 +97,53 @@ private fun SlippageButton(state: ButtonState, modifier: Modifier = Modifier) {
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ZashiVerticallDivider(
-            modifier = Modifier.height(32.dp),
-            thickness = 1.dp,
-            color = ZashiColors.Utility.Gray.utilityGray100
-        )
-        Spacer(20.dp)
         Text(
-            text = "Slippage",
+            text = "Slippage tolerance",
             style = ZashiTypography.textSm,
             fontWeight = FontWeight.Medium,
-            color = ZashiColors.Text.textSecondary
+            color = ZashiColors.Text.textTertiary
         )
         Spacer(1f)
         ZashiButton(
-            state,
-            contentPadding = PaddingValues(start = 12.dp, end = 10.dp)
+            state = state,
+            contentPadding = PaddingValues(start = 10.dp, end = 12.dp),
+            colors = ZashiButtonDefaults.tertiaryColors()
+        )
+    }
+}
+
+@Composable
+private fun SlippageSeparator(
+    state: SwapWidgetState,
+    modifier: Modifier = Modifier
+) {
+    val rotation by animateFloatAsState(
+        when (state.selection) {
+            SWAP -> 0f
+            PAY -> 360f
+        }
+    )
+
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ZashiHorizontalDivider(
+            modifier = Modifier.weight(1f),
+            color = ZashiColors.Utility.Gray.utilityGray100
+        )
+
+        Image(
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .rotate(rotation),
+            painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_arrow_narrow_down),
+            contentDescription = null
+        )
+
+        ZashiHorizontalDivider(
+            modifier = Modifier.weight(1f),
+            color = ZashiColors.Utility.Gray.utilityGray100
         )
     }
 }
@@ -99,12 +151,18 @@ private fun SlippageButton(state: ButtonState, modifier: Modifier = Modifier) {
 @Composable
 private fun TopAppBar(state: SwapAmountState) {
     ZashiSmallTopAppBar(
-        title = "SWAPnPAY",
+        content = {
+            SwapWidget(state = state.swapWidgetState)
+        },
         navigationAction = {
             ZashiTopAppBarBackNavigation(
                 onBack = state.onBack,
                 modifier = Modifier.testTag(ZashiTopAppBarTags.BACK)
             )
+        },
+        regularActions = {
+            ZashiIconButton(state.swapInfoButton)
+            Spacer(20.dp)
         },
         colors =
             ZcashTheme.colors.topAppBarColors orDark
@@ -123,38 +181,50 @@ private fun Preview() =
                 SwapAmountState(
                     recipientGets =
                         SwapTextFieldState(
-                            token = SwapAssetCardState(stringRes("USDT"), null, null),
-                            title = stringRes("Recipient gets"),
-                            textFieldPrefix = stringRes("$"),
+                            title = stringRes("From"),
+                            error = null,
+                            token = AssetCardState(stringRes("USDT"), null, null, {}),
+                            textFieldPrefix = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_symbol),
                             textField = NumberTextFieldState {},
-                            textFieldPlaceholder = stringResByDynamicCurrencyNumber(0, "$"),
                             secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
-                            totalBalance = stringResByDynamicCurrencyNumber(100, "$"),
-                            onSwapChange = {},
-                            error = null
+                            max = stringResByDynamicCurrencyNumber(100, "$"),
+                            onSwapChange = {}
                         ),
                     slippage =
                         ButtonState(
                             stringRes("1%"),
-                            icon = R.drawable.ic_swap_slippage
+                            trailingIcon = R.drawable.ic_swap_slippage
                         ),
                     youPay =
                         SwapTextState(
                             token =
-                                SwapAssetCardState(
+                                AssetCardState(
                                     stringRes("ZEC"),
                                     null,
-                                    null
+                                    null,
+                                    {}
                                 ),
-                            title = stringRes("You pay"),
+                            title = stringRes("To"),
                             text = stringResByDynamicCurrencyNumber(101, "$"),
-                            secondaryText = stringResByDynamicCurrencyNumber(2.47123, "ZEC")
+                            secondaryText = stringResByDynamicCurrencyNumber(2.47123, "ZEC"),
+                            max = null
                         ),
                     primaryButton =
                         ButtonState(
                             stringRes("Get a quote")
                         ),
-                    onBack = {}
+                    onBack = {},
+                    swapWidgetState = SwapWidgetState(
+                        selection = SWAP,
+                        onClick = { }
+                    ),
+                    swapInfoButton = IconButtonState(R.drawable.ic_help) {},
+                    infoItems = listOf(
+                        SimpleListItemState(
+                            title = stringRes("Rate"),
+                            text = stringRes("1 ZEC = 51.74 USDC")
+                        )
+                    )
                 )
         )
     }

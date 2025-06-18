@@ -1,11 +1,8 @@
 package co.electriccoin.zcash.ui.screen.swap.amount
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,27 +13,28 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.Spacer
+import co.electriccoin.zcash.ui.design.component.ZashiAssetCard
 import co.electriccoin.zcash.ui.design.component.ZashiNumberTextField
-import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
+import co.electriccoin.zcash.ui.design.component.ZashiNumberTextFieldDefaults
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 
@@ -71,81 +69,80 @@ private fun SwapTextFieldCard(
     state: SwapTextFieldState,
     modifier: Modifier = Modifier,
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
-    val borderColor by animateColorAsState(
-        when {
-            state.isError -> ZashiColors.Inputs.ErrorDefault.stroke
-            isFocused -> ZashiColors.Dropdowns.Focused.stroke
-            else -> ZashiColors.Surfaces.strokeSecondary
-        }
-    )
-
     Surface(
         modifier = modifier,
-        color = ZashiColors.Surfaces.bgPrimary,
-        shape = RoundedCornerShape(24.dp),
-        border = BorderStroke(width = 1.dp, color = borderColor)
+        color = ZashiColors.Surfaces.bgPrimary
     ) {
-        Column(
-            modifier = Modifier.padding(20.dp)
-        ) {
-            Text(
-                text = state.title.getValue(),
-                style = ZashiTypography.textSm,
-                fontWeight = FontWeight.Medium,
-                color = ZashiColors.Text.textSecondary
-            )
-            Spacer(4.dp)
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = state.title.getValue(),
+                    style = ZashiTypography.textSm,
+                    fontWeight = FontWeight.Medium,
+                    color = ZashiColors.Text.textPrimary
+                )
+                if (state.max != null) {
+                    Spacer(1f)
+                    Text(
+                        text = state.max.getValue(),
+                        style = ZashiTypography.textSm,
+                        fontWeight = FontWeight.Medium,
+                        color = ZashiColors.Text.textTertiary
+                    )
+                }
+            }
+
+            Spacer(8.dp)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = CenterVertically
             ) {
-                if (state.textFieldPrefix != null && !state.textField.text.isEmpty()) {
-                    Text(
-                        text = state.textFieldPrefix.getValue(),
-                        style = ZashiTypography.header4,
-                        fontWeight = FontWeight.SemiBold,
-                        color = ZashiColors.Text.textPrimary,
+                Box(
+                    modifier = Modifier.weight(.45f)
+                ) {
+                    ZashiAssetCard(
+                        state = state.token
                     )
                 }
                 ZashiNumberTextField(
                     state = state.textField,
-                    modifier = Modifier.weight(1f),
-                    textStyle = ZashiTypography.header4.copy(fontWeight = FontWeight.SemiBold),
+                    modifier = Modifier.weight(.55f),
+                    textStyle = ZashiTypography.header4.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.End
+                    ),
+                    contentPadding = if (state.textFieldPrefix == null) {
+                        PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                    } else {
+                        PaddingValues(start = 8.dp, top = 4.dp, end = 12.dp, bottom = 4.dp)
+                    },
                     placeholder = {
-                        Text(
-                            text = state.textFieldPlaceholder.getValue(),
+                        ZashiNumberTextFieldDefaults.Placeholder(
+                            modifier = Modifier.fillMaxWidth(),
                             style = ZashiTypography.header4,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            textAlign = TextAlign.End
                         )
                     },
-                    interactionSource = interactionSource,
-                    contentPadding = PaddingValues(0.dp),
-                    colors =
-                        ZashiTextFieldDefaults.defaultColors(
-                            textColor = ZashiColors.Text.textPrimary,
-                            placeholderColor = ZashiColors.Text.textSecondary,
-                            borderColor = Color.Unspecified,
-                            focusedBorderColor = Color.Unspecified,
-                            containerColor = Color.Transparent,
-                            focusedContainerColor = Color.Transparent,
-                            errorTextColor = ZashiColors.Text.textPrimary,
-                            errorHintColor = ZashiColors.Inputs.Default.hint,
-                            errorBorderColor = Color.Unspecified,
-                            errorContainerColor = Color.Transparent,
-                            errorPlaceholderColor = ZashiColors.Inputs.Default.text,
-                        )
-                )
-                Spacer(4.dp)
-                SwapAssetCard(
-                    state = state.token
+                    leadingIcon = if (state.textFieldPrefix is ImageResource.ByDrawable) {
+                        {
+                            Image(
+                                painter = painterResource(state.textFieldPrefix.resource),
+                                contentDescription = null
+                            )
+                        }
+                    } else {
+                        null
+                    },
                 )
             }
-            Spacer(6.dp)
+            Spacer(8.dp)
             Row(
                 verticalAlignment = CenterVertically
             ) {
+                Spacer(1f)
                 Text(
                     text = state.secondaryText.getValue(),
                     style = ZashiTypography.textSm,
@@ -158,15 +155,6 @@ private fun SwapTextFieldCard(
                     painter = painterResource(R.drawable.ic_swap_recipient),
                     contentDescription = null
                 )
-                Spacer(1f)
-                if (state.totalBalance != null) {
-                    Text(
-                        text = state.totalBalance.getValue(),
-                        style = ZashiTypography.textSm,
-                        fontWeight = FontWeight.Medium,
-                        color = if (state.isError) ZashiColors.Text.textError else ZashiColors.Text.textTertiary
-                    )
-                }
             }
         }
     }
@@ -175,13 +163,12 @@ private fun SwapTextFieldCard(
 @Immutable
 data class SwapTextFieldState(
     val title: StringResource,
+    val max: StringResource?,
     val error: StringResource?,
-    val token: SwapAssetCardState,
-    val textFieldPrefix: StringResource?,
+    val token: AssetCardState,
+    val textFieldPrefix: ImageResource?,
     val textField: NumberTextFieldState,
-    val textFieldPlaceholder: StringResource,
     val secondaryText: StringResource,
-    val totalBalance: StringResource?,
     val onSwapChange: () -> Unit
 ) {
     val isError = error != null || textField.isError
@@ -195,14 +182,18 @@ private fun Preview() =
             SwapTextField(
                 state =
                     SwapTextFieldState(
-                        token = SwapAssetCardState(stringRes("USDT"), null, null),
-                        title = stringRes("Recipient gets"),
-                        textFieldPrefix = stringRes("$"),
-                        textField = NumberTextFieldState {},
-                        textFieldPlaceholder = stringResByDynamicCurrencyNumber(0, "$"),
-                        secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
-                        totalBalance = stringResByDynamicCurrencyNumber(1000, "$"),
+                        title = stringRes("From"),
                         error = null,
+                        token = AssetCardState(
+                            ticker = stringRes("USDT"),
+                            token = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                            chain = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
+                            onClick = null
+                        ),
+                        textFieldPrefix = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_symbol),
+                        textField = NumberTextFieldState {},
+                        secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
+                        max = stringResByDynamicCurrencyNumber(1000, "$"),
                         onSwapChange = {},
                     )
             )
@@ -217,14 +208,18 @@ private fun ErrorPreview() =
             SwapTextField(
                 state =
                     SwapTextFieldState(
-                        token = SwapAssetCardState(stringRes("USDT"), null, null),
                         title = stringRes("Recipient gets"),
-                        textFieldPrefix = stringRes("$"),
-                        textField = NumberTextFieldState {},
-                        textFieldPlaceholder = stringResByDynamicCurrencyNumber(0, "$"),
-                        secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
-                        totalBalance = stringResByDynamicCurrencyNumber(100, "$"),
                         error = stringRes("Error"),
+                        token = AssetCardState(
+                            ticker = stringRes("USDT"),
+                            token = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                            chain = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
+                            onClick = null
+                        ),
+                        textFieldPrefix = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_symbol),
+                        textField = NumberTextFieldState {},
+                        secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
+                        max = stringResByDynamicCurrencyNumber(100, "$"),
                         onSwapChange = {},
                     )
             )

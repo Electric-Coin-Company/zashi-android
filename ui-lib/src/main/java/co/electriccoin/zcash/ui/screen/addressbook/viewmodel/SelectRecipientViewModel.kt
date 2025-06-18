@@ -13,7 +13,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiContactListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -61,7 +61,7 @@ class SelectRecipientViewModel(
                 *accounts
                     .map { account ->
                         AddressBookItem.Contact(
-                            ZashiContactListItemState(
+                            ContactListItemState(
                                 icon =
                                     imageRes(
                                         when (account) {
@@ -89,7 +89,7 @@ class SelectRecipientViewModel(
                     *contacts
                         .map { contact ->
                             AddressBookItem.Contact(
-                                ZashiContactListItemState(
+                                ContactListItemState(
                                     icon = getContactInitials(contact),
                                     isShielded = false,
                                     name = stringRes(contact.name),
@@ -126,7 +126,7 @@ class SelectRecipientViewModel(
                 contacts
                     ?.map { contact ->
                         AddressBookItem.Contact(
-                            ZashiContactListItemState(
+                            ContactListItemState(
                                 icon = getContactInitials(contact),
                                 isShielded = false,
                                 name = stringRes(contact.name),

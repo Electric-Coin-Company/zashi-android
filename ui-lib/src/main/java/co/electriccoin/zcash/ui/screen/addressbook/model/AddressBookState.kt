@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.addressbook.model
 
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiContactListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
 import co.electriccoin.zcash.ui.design.util.Itemizable
 import co.electriccoin.zcash.ui.design.util.StringResource
 
@@ -23,7 +23,7 @@ sealed interface AddressBookItem : Itemizable {
     }
 
     data class Contact(
-        val state: ZashiContactListItemState
+        val state: ContactListItemState
     ) : AddressBookItem {
         override val contentType = "Contact"
         override val key = Empty.contentType

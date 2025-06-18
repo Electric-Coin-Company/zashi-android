@@ -49,7 +49,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiContactListItem
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiContactListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -344,7 +344,7 @@ private fun AddressBookDataPreview() {
                         listOf(
                             AddressBookItem.Title(stringRes("Title")),
                             AddressBookItem.Contact(
-                                ZashiContactListItemState(
+                                ContactListItemState(
                                     name = stringRes("Name Surname"),
                                     address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
                                     icon = imageRes("NS"),
@@ -353,7 +353,7 @@ private fun AddressBookDataPreview() {
                                 )
                             ),
                             AddressBookItem.Contact(
-                                ZashiContactListItemState(
+                                ContactListItemState(
                                     name = stringRes("Name Surname"),
                                     address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
                                     icon = imageRes("NS"),
@@ -389,7 +389,7 @@ private fun SelectRecipientDataPreview() {
                         listOf(
                             AddressBookItem.Title(stringRes("Title")),
                             AddressBookItem.Contact(
-                                ZashiContactListItemState(
+                                ContactListItemState(
                                     name = stringRes("Name Surname"),
                                     address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
                                     icon = imageRes("NS"),
@@ -398,7 +398,7 @@ private fun SelectRecipientDataPreview() {
                                 )
                             ),
                             AddressBookItem.Contact(
-                                ZashiContactListItemState(
+                                ContactListItemState(
                                     name = stringRes("Name Surname"),
                                     address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
                                     icon = imageRes("NS"),
@@ -408,7 +408,7 @@ private fun SelectRecipientDataPreview() {
                             ),
                             AddressBookItem.Title(stringRes("Title")),
                             AddressBookItem.Contact(
-                                ZashiContactListItemState(
+                                ContactListItemState(
                                     name = stringRes("Name Surname"),
                                     address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
                                     icon = imageRes("NS"),
@@ -417,7 +417,7 @@ private fun SelectRecipientDataPreview() {
                                 )
                             ),
                             AddressBookItem.Contact(
-                                ZashiContactListItemState(
+                                ContactListItemState(
                                     name = stringRes("Name Surname"),
                                     address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
                                     icon = imageRes("NS"),
@@ -501,7 +501,7 @@ private fun EmptySelectRecipientPreview() {
                         listOf(
                             AddressBookItem.Title(stringRes("Title")),
                             AddressBookItem.Contact(
-                                ZashiContactListItemState(
+                                ContactListItemState(
                                     name = stringRes("Name Surname"),
                                     address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
                                     icon = imageRes("NS"),
