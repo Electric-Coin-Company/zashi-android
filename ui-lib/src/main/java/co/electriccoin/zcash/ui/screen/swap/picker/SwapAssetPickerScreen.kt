@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap.amount
+package co.electriccoin.zcash.ui.screen.swap.picker
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -7,11 +7,11 @@ import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SwapAmountScreen() {
-    val vm = koinViewModel<SwapAmountViewModel>()
+fun SwapAssetPickerScreen() {
+    val vm = koinViewModel<SwapAssetPickerViewModel>()
     val state by vm.state.collectAsStateWithLifecycle()
-    SwapAmountView(state)
+    SwapAssetPickerView(state)
 }
 
 @Serializable
-object SwapAmount
+object SwapAssetPicker

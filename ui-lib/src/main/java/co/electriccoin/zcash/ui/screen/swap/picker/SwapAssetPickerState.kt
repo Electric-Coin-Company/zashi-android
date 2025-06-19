@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap.receiver.picker
+package co.electriccoin.zcash.ui.screen.swap.picker
 
 import androidx.compose.runtime.Immutable
 import co.electriccoin.zcash.ui.design.component.ButtonState

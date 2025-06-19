@@ -1,18 +1,23 @@
-package co.electriccoin.zcash.ui.screen.swap.amount
+package co.electriccoin.zcash.ui.screen.swap
 
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -20,20 +25,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
+import co.electriccoin.zcash.ui.common.repository.SwapMode
+import co.electriccoin.zcash.ui.common.repository.SwapMode.PAY
+import co.electriccoin.zcash.ui.common.repository.SwapMode.SWAP
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.Spacer
+import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.listitem.SimpleListItemState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiSimpleListItem
@@ -46,11 +58,11 @@ import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
-import co.electriccoin.zcash.ui.screen.swap.amount.SwapWidgetState.Selection.*
+import co.electriccoin.zcash.ui.screen.send.view.SendAddressBookHint
 
 @Composable
-fun SwapAmountView(
-    state: SwapAmountState,
+internal fun SwapView(
+    state: SwapState,
 ) {
     BlankBgScaffold(
         topBar = {
@@ -64,12 +76,34 @@ fun SwapAmountView(
                     .verticalScroll(rememberScrollState())
                     .scaffoldPadding(it)
         ) {
-            SwapTextField(state = state.recipientGets)
+            SwapAmountTextField(state = state.amountTextField)
+
+            when (state.swapModeSelectorState.swapMode) {
+                SWAP -> {
+                    Spacer(16.dp)
+                }
+                PAY -> {
+                    Spacer(10.dp)
+                    AddressTextField(state = state)
+                    Spacer(22.dp)
+                }
+            }
+
+            SlippageSeparator(state = state.swapModeSelectorState)
             Spacer(14.dp)
-            SlippageSeparator(state = state.swapWidgetState)
-            Spacer(14.dp)
-            SwapText(state = state.youPay)
-            Spacer(32.dp)
+            SwapAmountText(state = state.amountText)
+
+            when (state.swapModeSelectorState.swapMode) {
+                SWAP -> {
+                    Spacer(10.dp)
+                    AddressTextField(state = state)
+                    Spacer(22.dp)
+                }
+                PAY -> {
+                    Spacer(25.dp)
+                }
+            }
+
             SlippageButton(
                 state = state.slippage
             )
@@ -114,15 +148,13 @@ private fun SlippageButton(state: ButtonState, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SlippageSeparator(
-    state: SwapWidgetState,
+    state: SwapModeSelectorState,
     modifier: Modifier = Modifier
 ) {
-    val rotation by animateFloatAsState(
-        when (state.selection) {
-            SWAP -> 0f
-            PAY -> 360f
-        }
-    )
+    val rotation = when (state.swapMode) {
+        SWAP -> 0f
+        PAY -> 180f
+    }
 
     Row(
         modifier = modifier,
@@ -149,10 +181,10 @@ private fun SlippageSeparator(
 }
 
 @Composable
-private fun TopAppBar(state: SwapAmountState) {
+private fun TopAppBar(state: SwapState) {
     ZashiSmallTopAppBar(
         content = {
-            SwapWidget(state = state.swapWidgetState)
+            SwapModeSelector(state = state.swapModeSelectorState)
         },
         navigationAction = {
             ZashiTopAppBarBackNavigation(
@@ -172,19 +204,73 @@ private fun TopAppBar(state: SwapAmountState) {
     )
 }
 
+@Composable
+private fun ColumnScope.AddressTextField(
+    state: SwapState
+) {
+    Text(
+        text = "Address",
+        style = ZashiTypography.textSm,
+        fontWeight = FontWeight.Medium
+    )
+    Spacer(6.dp)
+    ZashiTextField(
+        state = state.address,
+        singleLine = true,
+        maxLines = 1,
+        modifier = Modifier.fillMaxWidth(),
+        placeholder = {
+            Text(
+                text = "Enter address...",
+                style = ZashiTypography.textMd,
+                color = ZashiColors.Inputs.Default.text
+            )
+        },
+        // suffix = {
+        //     Row(
+        //         verticalAlignment = Alignment.Top
+        //     ) {
+        //         ZashiImageButton(
+        //             modifier = Modifier.size(36.dp),
+        //             state = state.addressBookButton
+        //         )
+        //         androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(4.dp))
+        //         ZashiImageButton(
+        //             modifier = Modifier.size(36.dp),
+        //             state = state.qrScannerButton
+        //         )
+        //     }
+        // },
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
+    )
+
+    AnimatedVisibility(visible = state.isAddressBookHintVisible) {
+        Column {
+            Spacer(8.dp)
+            SendAddressBookHint(Modifier.fillMaxWidth())
+        }
+    }
+}
+
 @PreviewScreens
 @Composable
-private fun Preview() =
+private fun Preview() {
+    var swapModeSwapMode by remember { mutableStateOf(SwapMode.SWAP) }
+
     ZcashTheme {
-        SwapAmountView(
+        SwapView(
             state =
-                SwapAmountState(
-                    recipientGets =
-                        SwapTextFieldState(
+                SwapState(
+                    amountTextField =
+                        SwapAmountTextFieldState(
                             title = stringRes("From"),
                             error = null,
                             token = AssetCardState(stringRes("USDT"), null, null, {}),
-                            textFieldPrefix = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_symbol),
+                            textFieldPrefix = imageRes(R.drawable.ic_send_zashi),
                             textField = NumberTextFieldState {},
                             secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
                             max = stringResByDynamicCurrencyNumber(100, "$"),
@@ -195,8 +281,8 @@ private fun Preview() =
                             stringRes("1%"),
                             trailingIcon = R.drawable.ic_swap_slippage
                         ),
-                    youPay =
-                        SwapTextState(
+                    amountText =
+                        SwapAmountTextState(
                             token =
                                 AssetCardState(
                                     stringRes("ZEC"),
@@ -207,16 +293,16 @@ private fun Preview() =
                             title = stringRes("To"),
                             text = stringResByDynamicCurrencyNumber(101, "$"),
                             secondaryText = stringResByDynamicCurrencyNumber(2.47123, "ZEC"),
-                            max = null
+                            subtitle = null
                         ),
                     primaryButton =
                         ButtonState(
                             stringRes("Get a quote")
                         ),
                     onBack = {},
-                    swapWidgetState = SwapWidgetState(
-                        selection = SWAP,
-                        onClick = { }
+                    swapModeSelectorState = SwapModeSelectorState(
+                        swapMode = swapModeSwapMode,
+                        onClick = { swapModeSwapMode = it }
                     ),
                     swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     infoItems = listOf(
@@ -224,7 +310,10 @@ private fun Preview() =
                             title = stringRes("Rate"),
                             text = stringRes("1 ZEC = 51.74 USDC")
                         )
-                    )
+                    ),
+                    address = TextFieldState(stringRes("")) {},
+                    isAddressBookHintVisible = true
                 )
         )
     }
+}

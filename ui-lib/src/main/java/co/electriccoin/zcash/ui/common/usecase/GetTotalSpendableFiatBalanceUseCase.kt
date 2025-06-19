@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.combine
 import java.math.BigDecimal
 import java.math.MathContext
 
-class GetTotalFiatBalanceUseCase(
+class GetTotalSpendableFiatBalanceUseCase(
     private val accountDataSource: AccountDataSource,
     private val exchangeRateRepository: ExchangeRateRepository
 ) {
@@ -34,7 +34,7 @@ class GetTotalFiatBalanceUseCase(
     ) = if (account == null || exchangeRate !is ExchangeRateState.Data || exchangeRate.currencyConversion == null) {
         null
     } else {
-        account.totalBalance
+        account.spendableShieldedBalance
             .convertZatoshiToZec()
             .multiply(BigDecimal(exchangeRate.currencyConversion.priceOfZec), MathContext.DECIMAL128)
     }

@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap.receiver.picker
+package co.electriccoin.zcash.ui.screen.swap.picker
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column

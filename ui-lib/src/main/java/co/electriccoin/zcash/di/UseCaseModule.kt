@@ -5,7 +5,6 @@ import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFulltextFiltersUs
 import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
-import co.electriccoin.zcash.ui.common.usecase.ConvertFiatToZatoshiUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateFlexaTransactionUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneAccountUseCase
@@ -34,8 +33,10 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSwapModeUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetTotalFiatBalanceUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableBalanceUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableFiatBalanceUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionMetadataUseCase
@@ -44,6 +45,8 @@ import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetZecSwapAssetUseCase
+import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
@@ -54,6 +57,7 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToNearSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToWalletBackupUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
@@ -96,6 +100,7 @@ import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.UpdateSwapModeUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
@@ -214,6 +219,11 @@ val useCaseModule =
         factoryOf(::FilterSwapAssetsUseCase)
         factoryOf(::SetSlippageUseCase)
         factoryOf(::GetSlippageUseCase)
-        factoryOf(::GetTotalFiatBalanceUseCase)
-        factoryOf(::ConvertFiatToZatoshiUseCase)
+        factoryOf(::GetTotalSpendableFiatBalanceUseCase)
+        factoryOf(::NavigateToSwapInfoUseCase)
+        factoryOf(::GetSwapModeUseCase)
+        factoryOf(::UpdateSwapModeUseCase)
+        factoryOf(::GetTotalSpendableBalanceUseCase)
+        factoryOf(::GetZecSwapAssetUseCase)
+        factoryOf(::IsABContactHintVisibleUseCase)
     }

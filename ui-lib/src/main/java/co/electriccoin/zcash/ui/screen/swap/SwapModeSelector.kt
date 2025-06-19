@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap.amount
+package co.electriccoin.zcash.ui.screen.swap
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -30,6 +30,7 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import co.electriccoin.zcash.ui.common.repository.SwapMode
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -40,8 +41,8 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.orDark
 
 @Composable
-fun SwapWidget(
-    state: SwapWidgetState,
+internal fun SwapModeSelector(
+    state: SwapModeSelectorState,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -54,13 +55,13 @@ fun SwapWidget(
             tabs = listOf(
                 {
                     TabInternal(
-                        mode = SwapWidgetState.Selection.SWAP,
+                        mode = SwapMode.SWAP,
                         state = state,
                     )
                 },
                 {
                     TabInternal(
-                        mode = SwapWidgetState.Selection.PAY,
+                        mode = SwapMode.PAY,
                         state = state,
                     )
                 }
@@ -80,7 +81,7 @@ fun SwapWidget(
 private fun Indicator(
     height: Dp,
     width: Dp,
-    state: SwapWidgetState,
+    state: SwapModeSelectorState,
 ) {
     Box(
         modifier = Modifier
@@ -89,7 +90,7 @@ private fun Indicator(
     ) {
 
         val finalOffset by animateDpAsState(
-            if (state.selection == SwapWidgetState.Selection.SWAP) 0.dp else width,
+            if (state.swapMode == SwapMode.SWAP) 0.dp else width,
             animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)
         )
 
@@ -163,8 +164,8 @@ private fun CustomTabLayout(
 
 @Composable
 private fun TabInternal(
-    mode: SwapWidgetState.Selection,
-    state: SwapWidgetState,
+    mode: SwapMode,
+    state: SwapModeSelectorState,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -179,7 +180,7 @@ private fun TabInternal(
             )
     ) {
         val textColor by animateColorAsState(
-            if (state.selection == mode) {
+            if (state.swapMode == mode) {
                 ZashiColors.Switcher.defaultText orDark ZashiLightColors.Switcher.defaultText
             } else {
                 ZashiColors.Switcher.selectedText orDark ZashiColors.Text.textSecondary
@@ -189,8 +190,8 @@ private fun TabInternal(
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = when (mode) {
-                SwapWidgetState.Selection.SWAP -> "Swap"
-                SwapWidgetState.Selection.PAY -> "Pay"
+                SwapMode.SWAP -> "Swap"
+                SwapMode.PAY -> "Pay"
             },
             color = textColor,
             style = ZashiTypography.textMd,
@@ -199,22 +200,20 @@ private fun TabInternal(
     }
 }
 
-data class SwapWidgetState(
-    val selection: Selection,
-    val onClick: (Selection) -> Unit
-) {
-    enum class Selection { SWAP, PAY }
-}
+internal data class SwapModeSelectorState(
+    val swapMode: SwapMode,
+    val onClick: (SwapMode) -> Unit
+)
 
 @PreviewScreens
 @Composable
 private fun Preview() = ZcashTheme {
-    var selection by remember { mutableStateOf(SwapWidgetState.Selection.SWAP) }
+    var swapMode by remember { mutableStateOf(SwapMode.SWAP) }
     BlankSurface {
-        SwapWidget(
-            SwapWidgetState(
-                selection = selection,
-                onClick = { selection = it }
+        SwapModeSelector(
+            SwapModeSelectorState(
+                swapMode = swapMode,
+                onClick = { swapMode = it }
             )
         )
     }

@@ -16,6 +16,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
 
 interface SwapRepository {
+    val mode: StateFlow<SwapMode>
+
     val assets: StateFlow<SwapAssets>
 
     val selectedAsset: StateFlow<SwapAsset?>
@@ -28,18 +30,25 @@ interface SwapRepository {
 
     fun requestRefreshAssets()
 
+    fun changeMode(mode: SwapMode)
+
     fun clear()
 }
+
+enum class SwapMode { SWAP, PAY }
 
 class NearSwapRepository(
     private val nearDataSource: NearDataSource
 ) : SwapRepository {
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
+    override val mode = MutableStateFlow(DEFAULT_MODE)
+
     override val assets =
         MutableStateFlow(
             SwapAssets(
                 data = null,
+                zecAsset = null,
                 isLoading = true,
                 type = SwapAssets.Type.NEAR
             )
@@ -59,19 +68,33 @@ class NearSwapRepository(
     override fun setSlippage(amount: Int) = slippage.update { amount }
 
     override fun requestRefreshAssets() {
+        fun findZecSwapAsset(assets: List<SwapAsset>) = assets.find { asset ->
+            asset.tokenTicker.lowercase() == "zec" && asset.chainTicker.lowercase() == "zec"
+        }
+
+        fun filterSwapAssets(assets: List<SwapAsset>) = assets
+            .toMutableList()
+            .apply {
+                removeIf {
+                    val usdPrice = it.usdPrice
+                    it.tokenTicker.lowercase() == "zec" || usdPrice == null || usdPrice.toFloat() == 0f
+                }
+            }
+            .toList()
+
         scope.launch {
             assets.update { it.copy(isLoading = true) }
             try {
                 val tokens = nearDataSource.getSupportedTokens()
-                val filtered =
-                    withContext(Dispatchers.Default) {
-                        tokens
-                            .toMutableList()
-                            .apply {
-                                removeIf { it.tokenTicker.lowercase() == "zec" }
-                            }.toList()
-                    }
-                assets.update { it.copy(data = filtered, isLoading = false) }
+                val filtered = withContext(Dispatchers.Default) { filterSwapAssets(tokens) }
+                val zecAsset = withContext(Dispatchers.Default) { findZecSwapAsset(tokens) }
+                assets.update {
+                    it.copy(
+                        data = filtered,
+                        zecAsset = zecAsset,
+                        isLoading = false
+                    )
+                }
             } catch (_: ResponseException) {
                 assets.update { it.copy(isLoading = false) }
             } catch (_: IOException) {
@@ -80,16 +103,22 @@ class NearSwapRepository(
         }
     }
 
+    override fun changeMode(mode: SwapMode) {
+        this.mode.update { mode }
+    }
+
     override fun clear() {
         refreshJob?.cancel()
         refreshJob = null
         selectedAsset.update { null }
         slippage.update { DEFAULT_SLIPPAGE }
+        mode.update { DEFAULT_MODE }
     }
 }
 
 data class SwapAssets(
     val data: List<SwapAsset>?,
+    val zecAsset: SwapAsset?,
     val isLoading: Boolean,
     val type: Type
 ) {
@@ -99,3 +128,5 @@ data class SwapAssets(
 }
 
 private const val DEFAULT_SLIPPAGE = 10 // 1%
+
+private val DEFAULT_MODE = SwapMode.SWAP

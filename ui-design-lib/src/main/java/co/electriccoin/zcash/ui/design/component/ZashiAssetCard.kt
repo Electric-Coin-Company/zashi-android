@@ -47,29 +47,29 @@ private fun Content(state: AssetCardState) {
     Row(
         modifier =
             Modifier.padding(
-                start = if (state.token is ImageResource.ByDrawable) 4.dp else 14.dp,
-                top = if (state.token is ImageResource.ByDrawable) 4.dp else 8.dp,
+                start = if (state.bigIcon is ImageResource.ByDrawable) 4.dp else 14.dp,
+                top = if (state.bigIcon is ImageResource.ByDrawable) 4.dp else 8.dp,
                 end = 12.dp,
-                bottom = if (state.token is ImageResource.ByDrawable) 4.dp else 8.dp,
+                bottom = if (state.bigIcon is ImageResource.ByDrawable) 4.dp else 8.dp,
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (state.token is ImageResource.ByDrawable) {
+        if (state.bigIcon is ImageResource.ByDrawable) {
             Box {
                 Image(
                     modifier = Modifier.size(24.dp),
-                    painter = painterResource(state.token.resource),
+                    painter = painterResource(state.bigIcon.resource),
                     contentDescription = null
                 )
 
-                if (state.chain is ImageResource.ByDrawable) {
+                if (state.smallIcon is ImageResource.ByDrawable) {
                     Image(
                         modifier =
                             Modifier
                                 .size(14.dp)
                                 .align(Alignment.BottomEnd)
                                 .offset(4.dp, 4.dp),
-                        painter = painterResource(state.chain.resource),
+                        painter = painterResource(state.smallIcon.resource),
                         contentDescription = null,
                     )
                 }
@@ -123,8 +123,8 @@ private fun Card(
 @Immutable
 data class AssetCardState(
     val ticker: StringResource,
-    val token: ImageResource?,
-    val chain: ImageResource?,
+    val bigIcon: ImageResource?,
+    val smallIcon: ImageResource?,
     val onClick: (() -> Unit)?
 )
 
@@ -137,8 +137,8 @@ private fun ClickablePreview() =
                 state =
                     AssetCardState(
                         ticker = stringRes("USDT"),
-                        token = imageRes(R.drawable.ic_token_zec),
-                        chain = imageRes(R.drawable.ic_chain_zec),
+                        bigIcon = imageRes(R.drawable.ic_token_zec),
+                        smallIcon = imageRes(R.drawable.ic_chain_zec),
                         onClick = {}
                     )
             )
@@ -154,8 +154,8 @@ private fun UnclickablePreview() =
                 state =
                     AssetCardState(
                         ticker = stringRes("USDT"),
-                        token = imageRes(R.drawable.ic_token_zec),
-                        chain = imageRes(R.drawable.ic_chain_zec),
+                        bigIcon = imageRes(R.drawable.ic_token_zec),
+                        smallIcon = imageRes(R.drawable.ic_chain_zec),
                         onClick = null
                     )
             )

@@ -47,7 +47,12 @@ fun ZashiNumberTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = ZashiTextFieldDefaults.shape,
-    contentPadding: PaddingValues = ZashiNumberTextFieldDefaults.contentPadding(suffix, prefix),
+    contentPadding: PaddingValues = ZashiTextFieldDefaults.contentPadding(
+        leadingIcon = leadingIcon,
+        suffix = suffix,
+        trailingIcon = null,
+        prefix = prefix
+    ),
     colors: ZashiTextFieldColors = ZashiTextFieldDefaults.defaultColors()
 ) {
     val locale = LocalConfiguration.current.locales[0]
@@ -99,17 +104,6 @@ data class NumberTextFieldState(
 object ZashiNumberTextFieldDefaults {
     val textStyle
         @Composable get() = ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium)
-
-    @Composable
-    fun contentPadding(
-        suffix: @Composable (() -> Unit)?,
-        prefix: @Composable (() -> Unit)?
-    ) = ZashiTextFieldDefaults.contentPadding(
-        leadingIcon = null,
-        suffix = suffix,
-        trailingIcon = null,
-        prefix = prefix
-    )
 
     @Composable
     fun Placeholder(

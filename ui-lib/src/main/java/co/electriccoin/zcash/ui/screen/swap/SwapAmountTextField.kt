@@ -1,20 +1,22 @@
-package co.electriccoin.zcash.ui.screen.swap.amount
+package co.electriccoin.zcash.ui.screen.swap
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,7 +41,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 
 @Composable
-fun SwapTextField(state: SwapTextFieldState, modifier: Modifier = Modifier) {
+internal fun SwapAmountTextField(state: SwapAmountTextFieldState, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         SwapTextFieldCard(
             modifier = Modifier.fillMaxWidth(),
@@ -66,7 +68,7 @@ fun SwapTextField(state: SwapTextFieldState, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SwapTextFieldCard(
-    state: SwapTextFieldState,
+    state: SwapAmountTextFieldState,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -114,7 +116,7 @@ private fun SwapTextFieldCard(
                         textAlign = TextAlign.End
                     ),
                     contentPadding = if (state.textFieldPrefix == null) {
-                        PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                        PaddingValues(horizontal = 12.dp, vertical = 4.5.dp)
                     } else {
                         PaddingValues(start = 8.dp, top = 4.dp, end = 12.dp, bottom = 4.dp)
                     },
@@ -129,8 +131,10 @@ private fun SwapTextFieldCard(
                     leadingIcon = if (state.textFieldPrefix is ImageResource.ByDrawable) {
                         {
                             Image(
+                                modifier = Modifier.size(24.dp),
                                 painter = painterResource(state.textFieldPrefix.resource),
-                                contentDescription = null
+                                contentDescription = null,
+                                colorFilter = ColorFilter.tint(ZashiColors.Text.textPrimary)
                             )
                         }
                     } else {
@@ -151,7 +155,12 @@ private fun SwapTextFieldCard(
                 )
                 Spacer(4.dp)
                 Image(
-                    modifier = Modifier.clickable(onClick = state.onSwapChange),
+                    modifier = Modifier
+                        .clickable(
+                            onClick = state.onSwapChange,
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ),
                     painter = painterResource(R.drawable.ic_swap_recipient),
                     contentDescription = null
                 )
@@ -161,7 +170,7 @@ private fun SwapTextFieldCard(
 }
 
 @Immutable
-data class SwapTextFieldState(
+data class SwapAmountTextFieldState(
     val title: StringResource,
     val max: StringResource?,
     val error: StringResource?,
@@ -179,18 +188,18 @@ data class SwapTextFieldState(
 private fun Preview() =
     ZcashTheme {
         BlankSurface {
-            SwapTextField(
+            SwapAmountTextField(
                 state =
-                    SwapTextFieldState(
+                    SwapAmountTextFieldState(
                         title = stringRes("From"),
                         error = null,
                         token = AssetCardState(
                             ticker = stringRes("USDT"),
-                            token = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
-                            chain = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
+                            bigIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                            smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
                             onClick = null
                         ),
-                        textFieldPrefix = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_symbol),
+                        textFieldPrefix = imageRes(R.drawable.ic_send_zashi),
                         textField = NumberTextFieldState {},
                         secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
                         max = stringResByDynamicCurrencyNumber(1000, "$"),
@@ -205,18 +214,18 @@ private fun Preview() =
 private fun ErrorPreview() =
     ZcashTheme {
         BlankSurface {
-            SwapTextField(
+            SwapAmountTextField(
                 state =
-                    SwapTextFieldState(
+                    SwapAmountTextFieldState(
                         title = stringRes("Recipient gets"),
                         error = stringRes("Error"),
                         token = AssetCardState(
                             ticker = stringRes("USDT"),
-                            token = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
-                            chain = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
+                            bigIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                            smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
                             onClick = null
                         ),
-                        textFieldPrefix = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_symbol),
+                        textFieldPrefix = imageRes(R.drawable.ic_send_zashi),
                         textField = NumberTextFieldState {},
                         secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
                         max = stringResByDynamicCurrencyNumber(100, "$"),

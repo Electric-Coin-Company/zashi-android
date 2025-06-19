@@ -1,9 +1,7 @@
-package co.electriccoin.zcash.ui.screen.swap.amount
+package co.electriccoin.zcash.ui.screen.swap
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,8 +24,8 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 
 @Composable
-fun SwapText(
-    state: SwapTextState,
+internal fun SwapAmountText(
+    state: SwapAmountTextState,
     modifier: Modifier = Modifier
 ) {
     Surface(
@@ -41,10 +39,10 @@ fun SwapText(
                     fontWeight = FontWeight.Medium,
                     color = ZashiColors.Text.textPrimary
                 )
-                if (state.max != null) {
+                if (state.subtitle != null) {
                     Spacer(1f)
                     Text(
-                        text = state.max.getValue(),
+                        text = state.subtitle.getValue(),
                         style = ZashiTypography.textSm,
                         fontWeight = FontWeight.Medium,
                         color = ZashiColors.Text.textTertiary
@@ -81,10 +79,10 @@ fun SwapText(
 }
 
 @Immutable
-data class SwapTextState(
+data class SwapAmountTextState(
     val token: AssetCardState,
     val title: StringResource,
-    val max: StringResource?,
+    val subtitle: StringResource?,
     val text: StringResource,
     val secondaryText: StringResource?,
 )
@@ -94,13 +92,13 @@ data class SwapTextState(
 private fun Preview() =
     ZcashTheme {
         BlankSurface {
-            SwapText(
+            SwapAmountText(
                 state =
-                    SwapTextState(
+                    SwapAmountTextState(
                         token =
                             AssetCardState(stringRes("ZEC"), null, null, {}),
                         title = stringRes("To"),
-                        max = stringRes("Max"),
+                        subtitle = stringRes("Max"),
                         text = stringResByDynamicCurrencyNumber(101, "$"),
                         secondaryText = stringResByDynamicCurrencyNumber(2.47123, "ZEC")
                     )
