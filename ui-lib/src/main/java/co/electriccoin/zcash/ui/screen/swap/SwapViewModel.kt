@@ -295,4 +295,12 @@ internal data class InternalState(
             PAY -> calculateForPay(fiatAmount)
         }
     }
+
+    fun getZecToAssetExchangeRate(): BigDecimal? {
+        val zecUsdPrice = zecSwapAsset?.usdPrice
+        val assetUsdPrice = swapAsset?.usdPrice
+        if (zecUsdPrice == null || assetUsdPrice == null) return null
+
+        return zecUsdPrice.divide(assetUsdPrice, MathContext.DECIMAL32)
+    }
 }

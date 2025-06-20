@@ -10,6 +10,7 @@ import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
+import co.electriccoin.zcash.ui.design.component.listitem.SimpleListItemState
 import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -61,7 +62,7 @@ internal class SwapMapper {
             isAddressBookHintVisible = internalState.isAddressBookHintVisible,
             onBack = onBack,
             swapInfoButton = IconButtonState(R.drawable.ic_help, onClick = onSwapInfoClick),
-            infoItems = emptyList()
+            infoItems = createListItems(internalState)
         )
     }
 
@@ -206,5 +207,20 @@ internal class SwapMapper {
             value = stringRes(text),
             onValueChange = onAddressChange
         )
+    }
+
+    private fun createListItems(internalState: InternalState): List<SimpleListItemState> {
+        val zecToAssetExchangeRate = internalState.getZecToAssetExchangeRate()
+        val assetTokenTicker = internalState.swapAsset?.tokenTicker
+        return if (zecToAssetExchangeRate == null || assetTokenTicker == null) {
+            emptyList()
+        } else {
+            listOf(
+                SimpleListItemState(
+                    stringRes("Rate"), stringRes("1 ZEC = ") +
+                        stringResByDynamicCurrencyNumber(zecToAssetExchangeRate, assetTokenTicker)
+                )
+            )
+        }
     }
 }
