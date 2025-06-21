@@ -20,10 +20,10 @@ import co.electriccoin.zcash.ui.common.usecase.GetZecSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateSwapModeUseCase
-import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
+import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
 import co.electriccoin.zcash.ui.design.util.combine
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPicker
-import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippage
+import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.update
 import java.math.BigDecimal
 import java.math.MathContext
 
-internal class SwapViewModel(
+internal class SwapVM(
     getSwapMode: GetSwapModeUseCase,
     getSlippage: GetSlippageUseCase,
     getSelectedSwapAsset: GetSelectedSwapAssetUseCase,
@@ -50,101 +50,87 @@ internal class SwapViewModel(
     private val payMapper: PayMapper,
     private val swapMapper: SwapMapper
 ) : ViewModel() {
-
-    private val defaultText: String
-        get() = ""
-
     private val defaultCurrencyType: CurrencyType
         get() = CurrencyType.TOKEN
 
-    private val defaultTextFieldState: NumberTextFieldState
-        get() = NumberTextFieldState(onValueChange = ::onTextFieldChange)
+    private val currencyType: MutableStateFlow<CurrencyType> = MutableStateFlow(defaultCurrencyType)
 
-    private val currencyType = MutableStateFlow(defaultCurrencyType)
+    private val addressText: MutableStateFlow<String> = MutableStateFlow("")
 
-    private val addressText = MutableStateFlow(defaultText)
-
-    private val amountText = MutableStateFlow(defaultTextFieldState)
+    private val amountText: MutableStateFlow<NumberTextFieldInnerState> = MutableStateFlow(NumberTextFieldInnerState())
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val innerState = combine(
-        getTotalSpendableBalance.observe(),
-        getTotalSpendableFiatBalance.observe(),
-        addressText,
-        amountText,
-        getSelectedSwapAsset.observe(),
-        getSlippage.observe(),
-        addressText.flatMapLatest { isABContactHintVisible.observe(it) },
-        currencyType,
-        getZecSwapAsset.observe(),
-        getSwapMode.observe()
-    ) { spendable,
-        spendableFiat,
-        address,
-        amount,
-        asset,
-        slippage,
-        isAddressBookHintVisible,
-        currencyType,
-        zecSwapAsset,
-        mode ->
-        InternalState(
-            swapAsset = asset,
-            currencyType = currencyType,
-            totalSpendableBalance = spendable,
-            totalSpendableFiatBalance = spendableFiat,
-            amountTextState = amount,
-            addressText = address,
-            slippage = slippage,
-            isAddressBookHintVisible = isAddressBookHintVisible,
-            zecSwapAsset = zecSwapAsset,
-            swapMode = mode
-        )
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val state = getSwapMode.observe()
-        .flatMapLatest {
-            when (it) {
-                SWAP -> observeSwapFlow()
-                PAY -> observePayFlow()
-            }
+    private val innerState =
+        combine(
+            getTotalSpendableBalance.observe(),
+            getTotalSpendableFiatBalance.observe(),
+            addressText,
+            amountText,
+            getSelectedSwapAsset.observe(),
+            getSlippage.observe(),
+            addressText.flatMapLatest { isABContactHintVisible.observe(it) },
+            currencyType,
+            getZecSwapAsset.observe(),
+            getSwapMode.observe()
+        ) { spendable,
+            spendableFiat,
+            address,
+            amount,
+            asset,
+            slippage,
+            isAddressBookHintVisible,
+            currencyType,
+            zecSwapAsset,
+            mode
+            ->
+            InternalState(
+                swapAsset = asset,
+                currencyType = currencyType,
+                totalSpendableBalance = spendable,
+                totalSpendableFiatBalance = spendableFiat,
+                amountTextState = amount,
+                addressText = address,
+                slippage = slippage,
+                isAddressBookHintVisible = isAddressBookHintVisible,
+                zecSwapAsset = zecSwapAsset,
+                swapMode = mode
+            )
         }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
 
-    private fun observePayFlow() = innerState.map {
-        payMapper.createState(
-            internalState = it,
-            onSwapInfoClick = ::onSwapInfoClick,
-            onSwapAssetPickerClick = ::onSwapAssetPickerClick,
-            onSwapCurrencyTypeClick = ::onSwapCurrencyTypeClick,
-            onSlippageClick = ::onSlippageClick,
-            onPrimaryClick = ::onPrimaryClick,
-            onAddressChange = ::onAddressChange,
-            onSwapModeChange = ::onSwapModeChange,
-            onBack = ::onBack,
-        )
-    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val state =
+        getSwapMode
+            .observe()
+            .flatMapLatest { mode ->
+                innerState.map { innerState ->
+                    val mapper =
+                        when (mode) {
+                            SWAP -> swapMapper
+                            PAY -> payMapper
+                        }
 
-    private fun observeSwapFlow() = innerState.map {
-        swapMapper.createState(
-            internalState = it,
-            onSwapInfoClick = ::onSwapInfoClick,
-            onSwapAssetPickerClick = ::onSwapAssetPickerClick,
-            onSwapCurrencyTypeClick = ::onSwapCurrencyTypeClick,
-            onSlippageClick = ::onSlippageClick,
-            onPrimaryClick = ::onPrimaryClick,
-            onAddressChange = ::onAddressChange,
-            onSwapModeChange = ::onSwapModeChange,
-            onBack = ::onBack,
-        )
-    }
+                    mapper.createState(
+                        internalState = innerState,
+                        onBack = ::onBack,
+                        onSwapInfoClick = ::onSwapInfoClick,
+                        onSwapAssetPickerClick = ::onSwapAssetPickerClick,
+                        onSwapCurrencyTypeClick = ::onSwapCurrencyTypeClick,
+                        onSlippageClick = ::onSlippageClick,
+                        onPrimaryClick = ::onPrimaryClick,
+                        onAddressChange = ::onAddressChange,
+                        onSwapModeChange = ::onSwapModeChange,
+                        onTextFieldChange = ::onTextFieldChange
+                    )
+                }
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
+            )
 
-    private fun onSlippageClick() = navigationRouter.forward(SwapSlippage)
+    private fun onSlippageClick(fiatAmount: BigDecimal?) = navigationRouter.forward(
+        SwapSlippageArgs(fiatAmount = fiatAmount?.toPlainString())
+    )
 
     private fun onBack() = cancelSwap()
 
@@ -157,7 +143,7 @@ internal class SwapViewModel(
         }
     }
 
-    private fun onTextFieldChange(new: NumberTextFieldState) {
+    private fun onTextFieldChange(new: NumberTextFieldInnerState) {
         amountText.update { new }
     }
 
@@ -186,9 +172,9 @@ internal data class InternalState(
     val currencyType: CurrencyType,
     val totalSpendableBalance: Zatoshi?,
     val totalSpendableFiatBalance: BigDecimal?,
-    val amountTextState: NumberTextFieldState,
+    val amountTextState: NumberTextFieldInnerState,
     val addressText: String,
-    val slippage: Int,
+    val slippage: BigDecimal,
     val isAddressBookHintVisible: Boolean,
     val zecSwapAsset: SwapAsset?,
     val swapMode: SwapMode
@@ -247,23 +233,25 @@ internal data class InternalState(
     }
 
     fun getAmountFiat(): BigDecimal? {
-        fun calculateForPay() = when (currencyType) {
-            CurrencyType.TOKEN -> {
-                val tokenAmount = amountTextState.amount
-                if (tokenAmount == null || swapAsset == null) null else tokenAmount.multiply(swapAsset.usdPrice)
+        fun calculateForPay() =
+            when (currencyType) {
+                CurrencyType.TOKEN -> {
+                    val tokenAmount = amountTextState.amount
+                    if (tokenAmount == null || swapAsset == null) null else tokenAmount.multiply(swapAsset.usdPrice)
+                }
+
+                CurrencyType.FIAT -> amountTextState.amount
             }
 
-            CurrencyType.FIAT -> amountTextState.amount
-        }
+        fun calculateForSwap() =
+            when (currencyType) {
+                CurrencyType.TOKEN -> {
+                    val tokenAmount = amountTextState.amount
+                    if (tokenAmount == null || zecSwapAsset == null) null else tokenAmount.multiply(zecSwapAsset.usdPrice)
+                }
 
-        fun calculateForSwap() = when (currencyType) {
-            CurrencyType.TOKEN -> {
-                val tokenAmount = amountTextState.amount
-                if (tokenAmount == null || zecSwapAsset == null) null else tokenAmount.multiply(zecSwapAsset.usdPrice)
+                CurrencyType.FIAT -> amountTextState.amount
             }
-
-            CurrencyType.FIAT -> amountTextState.amount
-        }
 
         return when (swapMode) {
             SWAP -> calculateForSwap()
@@ -272,23 +260,28 @@ internal data class InternalState(
     }
 
     fun getAmountToken(): BigDecimal? {
-        fun calculateForPay(fiatAmount: BigDecimal?) = when (currencyType) {
-            CurrencyType.TOKEN -> fiatAmount
-            CurrencyType.FIAT -> if (fiatAmount == null || swapAsset == null) {
-                null
-            } else {
-                fiatAmount.divide(swapAsset.usdPrice, MathContext.DECIMAL32)
+        fun calculateForPay(fiatAmount: BigDecimal?) =
+            when (currencyType) {
+                CurrencyType.TOKEN -> fiatAmount
+                CurrencyType.FIAT ->
+                    if (fiatAmount == null || swapAsset == null) {
+                        null
+                    } else {
+                        fiatAmount.divide(swapAsset.usdPrice, MathContext.DECIMAL32)
+                    }
             }
-        }
 
-        fun calculateForSwap(fiatAmount: BigDecimal?) = when (currencyType) {
-            CurrencyType.TOKEN -> fiatAmount
-            CurrencyType.FIAT -> if (fiatAmount == null || zecSwapAsset == null) {
-                null
-            } else {
-                fiatAmount.divide(zecSwapAsset.usdPrice, MathContext.DECIMAL32)
+        fun calculateForSwap(fiatAmount: BigDecimal?) =
+            when (currencyType) {
+                CurrencyType.TOKEN -> fiatAmount
+                CurrencyType.FIAT ->
+                    if (fiatAmount == null || zecSwapAsset == null) {
+                        null
+                    } else {
+                        fiatAmount.divide(zecSwapAsset.usdPrice, MathContext.DECIMAL32)
+                    }
             }
-        }
+
         val fiatAmount = amountTextState.amount
         return when (swapMode) {
             SWAP -> calculateForSwap(fiatAmount)

@@ -50,13 +50,15 @@ data class SimpleListItemState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        ZashiSimpleListItem(
-            state = SimpleListItemState(
-                title = stringRes("Title"),
-                text = stringRes("Text")
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiSimpleListItem(
+                state =
+                    SimpleListItemState(
+                        title = stringRes("Title"),
+                        text = stringRes("Text")
+                    )
             )
-        )
+        }
     }
-}

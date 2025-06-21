@@ -46,7 +46,7 @@ import co.electriccoin.zcash.ui.screen.send.SendViewModel
 import co.electriccoin.zcash.ui.screen.settings.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
-import co.electriccoin.zcash.ui.screen.swap.SwapViewModel
+import co.electriccoin.zcash.ui.screen.swap.SwapVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerViewModel
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageViewModel
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExportViewModel
@@ -165,5 +165,5 @@ val viewModelModule =
         viewModelOf(::ThirdPartyScanViewModel)
         viewModelOf(::SwapAssetPickerViewModel)
         viewModelOf(::SwapSlippageViewModel)
-        viewModelOf(::SwapViewModel)
+        viewModelOf(::SwapVM)
     }

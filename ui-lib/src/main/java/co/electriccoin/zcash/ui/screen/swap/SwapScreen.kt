@@ -8,7 +8,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SwapScreen() {
-    val vm = koinViewModel<SwapViewModel>()
+    val vm = koinViewModel<SwapVM>()
     val state by vm.state.collectAsStateWithLifecycle()
     state?.let { SwapView(it) }
 }

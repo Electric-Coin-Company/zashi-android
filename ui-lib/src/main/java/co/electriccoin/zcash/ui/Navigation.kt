@@ -124,7 +124,7 @@ import co.electriccoin.zcash.ui.screen.swap.near.NearInfoArgs
 import co.electriccoin.zcash.ui.screen.swap.near.NearInfoScreen
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPicker
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerScreen
-import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippage
+import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageScreen
 import co.electriccoin.zcash.ui.screen.taxexport.AndroidTaxExport
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExport
@@ -524,25 +524,15 @@ internal fun MainActivity.Navigation() {
         composable<CrashReportOptIn> { AndroidCrashReportOptIn() }
         composable<ThirdPartyScan> { AndroidThirdPartyScan() }
         dialog<SwapAssetPicker>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
+            dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
         ) { SwapAssetPickerScreen() }
         composable<SwapAmount> { SwapScreen() }
-        dialog<SwapSlippage>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) { SwapSlippageScreen() }
+        dialog<SwapSlippageArgs>(
+            dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+        ) { SwapSlippageScreen(it.toRoute()) }
         dialog<NearInfoArgs>(
             dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
-        ) {
-            NearInfoScreen()
-        }
+        ) { NearInfoScreen() }
     }
 }
 

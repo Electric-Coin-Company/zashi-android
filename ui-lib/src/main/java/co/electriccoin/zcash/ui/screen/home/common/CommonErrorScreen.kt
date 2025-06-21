@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
@@ -69,6 +70,10 @@ fun CommonErrorScreen(
             )
             Spacer(20.dp)
             Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                textAlign = TextAlign.Center,
                 text = state.title.getValue(),
                 color = ZashiColors.Text.textPrimary,
                 style = ZashiTypography.textLg,
@@ -76,6 +81,10 @@ fun CommonErrorScreen(
             )
             Spacer(8.dp)
             Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                textAlign = TextAlign.Center,
                 text = state.subtitle.getValue(),
                 color = ZashiColors.Text.textTertiary,
                 style = ZashiTypography.textSm,

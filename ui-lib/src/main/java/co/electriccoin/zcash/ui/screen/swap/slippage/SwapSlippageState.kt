@@ -8,8 +8,7 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 
 @Immutable
 data class SwapSlippageState(
-    val slider: SlippageSliderState,
-    val customSlippage: NumberTextFieldState?,
+    val picker: SlippagePickerState,
     val info: SwapSlippageInfoState?,
     val primary: ButtonState,
     override val onBack: () -> Unit
@@ -18,7 +17,6 @@ data class SwapSlippageState(
 @Immutable
 data class SwapSlippageInfoState(
     val title: StringResource,
-    val description: StringResource,
     val mode: Mode,
 ) {
     enum class Mode { LOW, MEDIUM, HIGH }

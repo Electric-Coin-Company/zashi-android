@@ -52,20 +52,21 @@ internal fun SwapModeSelector(
     ) {
         CustomTabLayout(
             modifier = Modifier.padding(2.dp),
-            tabs = listOf(
-                {
-                    TabInternal(
-                        mode = SwapMode.SWAP,
-                        state = state,
-                    )
-                },
-                {
-                    TabInternal(
-                        mode = SwapMode.PAY,
-                        state = state,
-                    )
-                }
-            ),
+            tabs =
+                listOf(
+                    {
+                        TabInternal(
+                            mode = SwapMode.SWAP,
+                            state = state,
+                        )
+                    },
+                    {
+                        TabInternal(
+                            mode = SwapMode.PAY,
+                            state = state,
+                        )
+                    }
+                ),
             indicator = { height, width ->
                 Indicator(
                     height = height,
@@ -84,29 +85,29 @@ private fun Indicator(
     state: SwapModeSelectorState,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(height)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(height)
     ) {
-
         val finalOffset by animateDpAsState(
             if (state.swapMode == SwapMode.SWAP) 0.dp else width,
             animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)
         )
 
         Box(
-            modifier = Modifier
-                .height(height)
-                .width(width)
-                .offset(x = finalOffset)
-                .background(
-                    shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg),
-                    color = ZashiColors.Switcher.selectedBg,
-                )
-                .border(
-                    border = BorderStroke(1.dp, ZashiColors.Switcher.selectedStroke),
-                    shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg)
-                )
+            modifier =
+                Modifier
+                    .height(height)
+                    .width(width)
+                    .offset(x = finalOffset)
+                    .background(
+                        shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg),
+                        color = ZashiColors.Switcher.selectedBg,
+                    ).border(
+                        border = BorderStroke(1.dp, ZashiColors.Switcher.selectedStroke),
+                        shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg)
+                    )
         )
     }
 }
@@ -139,23 +140,25 @@ private fun CustomTabLayout(
                     height.toDp(),
                     maxWidth.toDp()
                 )
-            }[0].measure(
-                constraints.copy(
-                    minWidth = totalWidth,
-                    maxWidth = totalWidth,
-                    minHeight = height,
-                    maxHeight = height
-                )
-            ).placeRelative(0, 0, .1f)
+            }[0]
+                .measure(
+                    constraints.copy(
+                        minWidth = totalWidth,
+                        maxWidth = totalWidth,
+                        minHeight = height,
+                        maxHeight = height
+                    )
+                ).placeRelative(0, 0, .1f)
 
             for ((index, _) in tabs.withIndex()) {
                 val child = subcompose("final_$index", tabs[index])[0]
-                val finalPlaceable = child.measure(
-                    constraints.copy(
-                        minWidth = maxWidth,
-                        maxWidth = maxWidth,
+                val finalPlaceable =
+                    child.measure(
+                        constraints.copy(
+                            minWidth = maxWidth,
+                            maxWidth = maxWidth,
+                        )
                     )
-                )
                 finalPlaceable.placeRelative(index * maxWidth, 0, 1f)
             }
         }
@@ -169,15 +172,16 @@ private fun TabInternal(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) { state.onClick(mode) }
-            .padding(
-                vertical = 8.dp,
-                horizontal = 20.dp
-            )
+        modifier =
+            modifier
+                .clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ) { state.onClick(mode) }
+                .padding(
+                    vertical = 8.dp,
+                    horizontal = 20.dp
+                )
     ) {
         val textColor by animateColorAsState(
             if (state.swapMode == mode) {
@@ -189,10 +193,11 @@ private fun TabInternal(
 
         Text(
             modifier = Modifier.align(Alignment.Center),
-            text = when (mode) {
-                SwapMode.SWAP -> "Swap"
-                SwapMode.PAY -> "Pay"
-            },
+            text =
+                when (mode) {
+                    SwapMode.SWAP -> "Swap"
+                    SwapMode.PAY -> "Pay"
+                },
             color = textColor,
             style = ZashiTypography.textMd,
             fontWeight = FontWeight.Medium
@@ -207,14 +212,15 @@ internal data class SwapModeSelectorState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    var swapMode by remember { mutableStateOf(SwapMode.SWAP) }
-    BlankSurface {
-        SwapModeSelector(
-            SwapModeSelectorState(
-                swapMode = swapMode,
-                onClick = { swapMode = it }
+private fun Preview() =
+    ZcashTheme {
+        var swapMode by remember { mutableStateOf(SwapMode.SWAP) }
+        BlankSurface {
+            SwapModeSelector(
+                SwapModeSelectorState(
+                    swapMode = swapMode,
+                    onClick = { swapMode = it }
+                )
             )
-        )
+        }
     }
-}

@@ -48,8 +48,8 @@ import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiContactListItem
 import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ZashiContactListItem
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors

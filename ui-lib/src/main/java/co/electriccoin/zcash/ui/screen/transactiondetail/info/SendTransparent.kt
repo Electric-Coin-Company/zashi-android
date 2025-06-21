@@ -59,11 +59,12 @@ fun SendTransparent(
                             !isExpanded -> state.addressAbbreviated
                             else -> null
                         },
-                    trailingIcon = if (isExpanded) {
-                        co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_up_small
-                    } else {
-                        co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_down_small
-                    },
+                    trailingIcon =
+                        if (isExpanded) {
+                            co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_up_small
+                        } else {
+                            co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_down_small
+                        },
                     shape = TransactionDetailInfoShape.FIRST,
                     onClick = { isExpanded = !isExpanded }
                 )

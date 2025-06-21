@@ -149,16 +149,18 @@ data class ContactListItemState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        ZashiContactListItem(
-            state = ContactListItemState(
-                name = stringRes("Name Surname"),
-                address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                icon = imageRes("NS"),
-                isShielded = false,
-                onClick = {}
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiContactListItem(
+                state =
+                    ContactListItemState(
+                        name = stringRes("Name Surname"),
+                        address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                        icon = imageRes("NS"),
+                        isShielded = false,
+                        onClick = {}
+                    )
             )
-        )
+        }
     }
-}

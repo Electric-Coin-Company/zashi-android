@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,23 +48,31 @@ fun ZashiNumberTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = ZashiTextFieldDefaults.shape,
-    contentPadding: PaddingValues = ZashiTextFieldDefaults.contentPadding(
-        leadingIcon = leadingIcon,
-        suffix = suffix,
-        trailingIcon = null,
-        prefix = prefix
-    ),
+    contentPadding: PaddingValues =
+        ZashiTextFieldDefaults.contentPadding(
+            leadingIcon = leadingIcon,
+            suffix = suffix,
+            trailingIcon = null,
+            prefix = prefix
+        ),
     colors: ZashiTextFieldColors = ZashiTextFieldDefaults.defaultColors()
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val textFieldState =
         TextFieldState(
-            value = state.text,
-            error = state.errorString.takeIf { state.isError },
+            value = state.innerState.text,
+            error = state.errorString.takeIf { state.innerState.isError },
             onValueChange = { text ->
                 val normalized = UserInputNumberParser.normalizeInput(text, locale)
                 val amount = UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
-                state.onValueChange(state.copy(text = stringRes(normalized), amount = amount))
+                val lastValidAmount = amount ?: state.innerState.lastValidAmount
+                val new =
+                    state.innerState.copy(
+                        text = stringRes(normalized),
+                        amount = amount,
+                        lastValidAmount = lastValidAmount
+                    )
+                state.onValueChange(new)
             }
         )
     val handle: ZashiTextFieldHandle = rememberZashiTextFieldHandle(textFieldState)
@@ -93,10 +102,15 @@ fun ZashiNumberTextField(
 
 @Immutable
 data class NumberTextFieldState(
+    val innerState: NumberTextFieldInnerState = NumberTextFieldInnerState(),
+    val errorString: StringResource = stringRes(""),
+    val onValueChange: (NumberTextFieldInnerState) -> Unit,
+)
+
+data class NumberTextFieldInnerState(
     val text: StringResource = stringRes(""),
     val amount: BigDecimal? = null,
-    val errorString: StringResource = stringRes(""),
-    val onValueChange: (NumberTextFieldState) -> Unit,
+    val lastValidAmount: BigDecimal? = null,
 ) {
     val isError = amount == null && !text.isEmpty()
 }
@@ -126,15 +140,20 @@ object ZashiNumberTextFieldDefaults {
 @Preview
 private fun Preview() =
     ZcashTheme {
-        var state by remember { mutableStateOf(NumberTextFieldState(onValueChange = { })) }
+        var innerState by remember { mutableStateOf(NumberTextFieldInnerState()) }
+        val state by remember {
+            derivedStateOf {
+                NumberTextFieldState(
+                    innerState = innerState,
+                    onValueChange = { innerState = it }
+                )
+            }
+        }
 
         BlankSurface {
             Column(modifier = Modifier.fillMaxSize()) {
                 ZashiNumberTextField(
-                    state =
-                        state.copy(
-                            onValueChange = { state = it }
-                        ),
+                    state = state,
                     modifier = Modifier.fillMaxWidth(),
                 )
 

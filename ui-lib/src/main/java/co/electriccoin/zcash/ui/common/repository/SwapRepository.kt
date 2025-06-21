@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
+import java.math.BigDecimal
 
 interface SwapRepository {
     val mode: StateFlow<SwapMode>
@@ -22,11 +23,11 @@ interface SwapRepository {
 
     val selectedAsset: StateFlow<SwapAsset?>
 
-    val slippage: StateFlow<Int>
+    val slippage: StateFlow<BigDecimal>
 
     fun select(asset: SwapAsset)
 
-    fun setSlippage(amount: Int)
+    fun setSlippage(amount: BigDecimal)
 
     fun requestRefreshAssets()
 
@@ -65,22 +66,23 @@ class NearSwapRepository(
         selectedAsset.update { asset }
     }
 
-    override fun setSlippage(amount: Int) = slippage.update { amount }
+    override fun setSlippage(amount: BigDecimal) = slippage.update { amount }
 
     override fun requestRefreshAssets() {
-        fun findZecSwapAsset(assets: List<SwapAsset>) = assets.find { asset ->
-            asset.tokenTicker.lowercase() == "zec" && asset.chainTicker.lowercase() == "zec"
-        }
-
-        fun filterSwapAssets(assets: List<SwapAsset>) = assets
-            .toMutableList()
-            .apply {
-                removeIf {
-                    val usdPrice = it.usdPrice
-                    it.tokenTicker.lowercase() == "zec" || usdPrice == null || usdPrice.toFloat() == 0f
-                }
+        fun findZecSwapAsset(assets: List<SwapAsset>) =
+            assets.find { asset ->
+                asset.tokenTicker.lowercase() == "zec" && asset.chainTicker.lowercase() == "zec"
             }
-            .toList()
+
+        fun filterSwapAssets(assets: List<SwapAsset>) =
+            assets
+                .toMutableList()
+                .apply {
+                    removeIf {
+                        val usdPrice = it.usdPrice
+                        it.tokenTicker.lowercase() == "zec" || usdPrice == null || usdPrice.toFloat() == 0f
+                    }
+                }.toList()
 
         scope.launch {
             assets.update { it.copy(isLoading = true) }
@@ -127,6 +129,6 @@ data class SwapAssets(
     }
 }
 
-private const val DEFAULT_SLIPPAGE = 10 // 1%
+private val DEFAULT_SLIPPAGE = BigDecimal("0.5")
 
 private val DEFAULT_MODE = SwapMode.SWAP

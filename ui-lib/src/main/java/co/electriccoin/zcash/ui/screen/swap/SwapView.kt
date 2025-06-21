@@ -151,10 +151,11 @@ private fun SlippageSeparator(
     state: SwapModeSelectorState,
     modifier: Modifier = Modifier
 ) {
-    val rotation = when (state.swapMode) {
-        SWAP -> 0f
-        PAY -> 180f
-    }
+    val rotation =
+        when (state.swapMode) {
+            SWAP -> 0f
+            PAY -> 180f
+        }
 
     Row(
         modifier = modifier,
@@ -166,9 +167,10 @@ private fun SlippageSeparator(
         )
 
         Image(
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .rotate(rotation),
+            modifier =
+                Modifier
+                    .padding(horizontal = 8.dp)
+                    .rotate(rotation),
             painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_arrow_narrow_down),
             contentDescription = null
         )
@@ -300,17 +302,19 @@ private fun Preview() {
                             stringRes("Get a quote")
                         ),
                     onBack = {},
-                    swapModeSelectorState = SwapModeSelectorState(
-                        swapMode = swapModeSwapMode,
-                        onClick = { swapModeSwapMode = it }
-                    ),
+                    swapModeSelectorState =
+                        SwapModeSelectorState(
+                            swapMode = swapModeSwapMode,
+                            onClick = { swapModeSwapMode = it }
+                        ),
                     swapInfoButton = IconButtonState(R.drawable.ic_help) {},
-                    infoItems = listOf(
-                        SimpleListItemState(
-                            title = stringRes("Rate"),
-                            text = stringRes("1 ZEC = 51.74 USDC")
-                        )
-                    ),
+                    infoItems =
+                        listOf(
+                            SimpleListItemState(
+                                title = stringRes("Rate"),
+                                text = stringRes("1 ZEC = 51.74 USDC")
+                            )
+                        ),
                     address = TextFieldState(stringRes("")) {},
                     isAddressBookHintVisible = true
                 )

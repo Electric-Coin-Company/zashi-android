@@ -12,10 +12,11 @@ import org.koin.compose.koinInject
 fun NearInfoScreen() {
     val navigationRouter = koinInject<NavigationRouter>()
     val mode by koinInject<GetSwapModeUseCase>().observe().collectAsStateWithLifecycle()
-    val state = NearInfoState(
-        mode = mode,
-        onBack = { navigationRouter.back() }
-    )
+    val state =
+        NearInfoState(
+            mode = mode,
+            onBack = { navigationRouter.back() }
+        )
     NearInfoView(state)
 }
 
