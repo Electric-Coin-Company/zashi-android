@@ -6,6 +6,10 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.0.5 (974)] - 2025-06-25
+
+- `TorClient` initialization within `Synchronizer` now does not crash the application in case it fails 
+
 ## [2.0.4 (973)] - 2025-06-16
 
 ### Added
