@@ -85,7 +85,7 @@ internal fun SwapView(
                 PAY -> {
                     Spacer(10.dp)
                     AddressTextField(state = state)
-                    Spacer(22.dp)
+                    Spacer(16.dp)
                 }
             }
 
@@ -100,7 +100,7 @@ internal fun SwapView(
                     Spacer(22.dp)
                 }
                 PAY -> {
-                    Spacer(25.dp)
+                    Spacer(22.dp)
                 }
             }
 
@@ -271,7 +271,12 @@ private fun Preview() {
                         SwapAmountTextFieldState(
                             title = stringRes("From"),
                             error = null,
-                            token = AssetCardState(stringRes("USDT"), null, null, {}),
+                            token = AssetCardState(
+                                ticker = stringRes("USDT"),
+                                bigIcon = null,
+                                smallIcon = null,
+                                isEnabled = false,
+                                onClick = {}),
                             textFieldPrefix = imageRes(R.drawable.ic_send_zashi),
                             textField = NumberTextFieldState {},
                             secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
@@ -287,10 +292,11 @@ private fun Preview() {
                         SwapAmountTextState(
                             token =
                                 AssetCardState(
-                                    stringRes("ZEC"),
-                                    null,
-                                    null,
-                                    {}
+                                    ticker = stringRes("ZEC"),
+                                    bigIcon = null,
+                                    smallIcon = null,
+                                    isEnabled = false,
+                                    onClick = {}
                                 ),
                             title = stringRes("To"),
                             text = stringResByDynamicCurrencyNumber(101, "$"),

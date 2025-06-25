@@ -6,6 +6,7 @@ import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.repository.SwapMode
 import co.electriccoin.zcash.ui.common.repository.SwapMode.PAY
@@ -19,12 +20,18 @@ import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableFiatBalanceUseCa
 import co.electriccoin.zcash.ui.common.usecase.GetZecSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.RequestSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateSwapModeUseCase
+import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
 import co.electriccoin.zcash.ui.design.util.combine
+import co.electriccoin.zcash.ui.design.util.imageRes
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPicker
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -32,6 +39,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.math.MathContext
 
@@ -47,8 +55,10 @@ internal class SwapVM(
     private val isABContactHintVisible: IsABContactHintVisibleUseCase,
     private val cancelSwap: CancelSwapUseCase,
     private val navigationRouter: NavigationRouter,
-    private val payMapper: PayMapper,
-    private val swapMapper: SwapMapper
+    private val nearPayMapper: NearPayMapper,
+    private val nearSwapMapper: NearSwapMapper,
+    private val requestSwapQuote: RequestSwapQuoteUseCase,
+    private val navigateToSwapQuoteIfAvailable: NavigateToSwapQuoteIfAvailableUseCase
 ) : ViewModel() {
     private val defaultCurrencyType: CurrencyType
         get() = CurrencyType.TOKEN
@@ -58,6 +68,37 @@ internal class SwapVM(
     private val addressText: MutableStateFlow<String> = MutableStateFlow("")
 
     private val amountText: MutableStateFlow<NumberTextFieldInnerState> = MutableStateFlow(NumberTextFieldInnerState())
+
+    private val isRequestingQuote = MutableStateFlow(false)
+
+    private val isCancelStateVisible = MutableStateFlow(false)
+
+    val cancelState = isCancelStateVisible
+        .map { isVisible ->
+            if (isVisible) {
+                SwapCancelState(
+                    icon = imageRes(R.drawable.ic_swap_quote_cancel),
+                    title = stringRes("Are you sure?"),
+                    subtitle = stringRes("If you leave this screen, all the information you entered will be lost. "),
+                    negativeButton = ButtonState(
+                        text = stringRes("Cancel swap"),
+                        onClick = ::onCancelSwapClick
+                    ),
+                    positiveButton = ButtonState(
+                        text = stringRes("Don’t cancel"),
+                        onClick = ::onDismissCancelClick
+                    ),
+                    onBack = ::onBack
+                )
+            } else {
+                null
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
+        )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val innerState =
@@ -71,7 +112,8 @@ internal class SwapVM(
             addressText.flatMapLatest { isABContactHintVisible.observe(it) },
             currencyType,
             getZecSwapAsset.observe(),
-            getSwapMode.observe()
+            getSwapMode.observe(),
+            isRequestingQuote
         ) { spendable,
             spendableFiat,
             address,
@@ -81,7 +123,8 @@ internal class SwapVM(
             isAddressBookHintVisible,
             currencyType,
             zecSwapAsset,
-            mode
+            mode,
+            isRequestingQuote
             ->
             InternalState(
                 swapAsset = asset,
@@ -93,7 +136,8 @@ internal class SwapVM(
                 slippage = slippage,
                 isAddressBookHintVisible = isAddressBookHintVisible,
                 zecSwapAsset = zecSwapAsset,
-                swapMode = mode
+                swapMode = mode,
+                isRequestingQuote = isRequestingQuote
             )
         }
 
@@ -105,8 +149,8 @@ internal class SwapVM(
                 innerState.map { innerState ->
                     val mapper =
                         when (mode) {
-                            SWAP -> swapMapper
-                            PAY -> payMapper
+                            SWAP -> nearSwapMapper
+                            PAY -> nearPayMapper
                         }
 
                     mapper.createState(
@@ -132,7 +176,36 @@ internal class SwapVM(
         SwapSlippageArgs(fiatAmount = fiatAmount?.toPlainString())
     )
 
-    private fun onBack() = cancelSwap()
+    private fun onBack() = viewModelScope.launch {
+        if (isRequestingQuote.value) {
+            isCancelStateVisible.update { true }
+        } else if (isCancelStateVisible.value) {
+            isCancelStateVisible.update { false }
+            navigateToSwapQuoteIfAvailable { hideCancelBottomSheet() }
+        } else {
+            if (isCancelStateVisible.value) {
+                hideCancelBottomSheet()
+            }
+            cancelSwap()
+        }
+    }
+
+    private fun onCancelSwapClick() = viewModelScope.launch {
+        if (isCancelStateVisible.value) {
+            hideCancelBottomSheet()
+        }
+        cancelSwap()
+    }
+
+    private fun onDismissCancelClick() = viewModelScope.launch {
+        isCancelStateVisible.update { false }
+        navigateToSwapQuoteIfAvailable { hideCancelBottomSheet() }
+    }
+
+    private suspend fun hideCancelBottomSheet() {
+        isCancelStateVisible.update { false }
+        delay(350)
+    }
 
     private fun onSwapCurrencyTypeClick() {
         currencyType.update {
@@ -148,15 +221,19 @@ internal class SwapVM(
     }
 
     @Suppress("ForbiddenComment")
-    private fun onPrimaryClick() {
-        // TODO swap
+    private fun onPrimaryClick(amount: BigDecimal, address: String) {
+        viewModelScope.launch {
+            isRequestingQuote.update { true }
+            requestSwapQuote(
+                amount = amount,
+                address = address,
+                canNavigateToSwapQuote = { !isCancelStateVisible.value }
+            )
+            isRequestingQuote.update { false }
+        }
     }
 
-    private fun onSwapModeChange(swapMode: SwapMode) {
-        // addressText.update { defaultText }
-        // amountText.update { defaultTextFieldState }
-        updateSwapMode(swapMode)
-    }
+    private fun onSwapModeChange(swapMode: SwapMode) = updateSwapMode(swapMode)
 
     private fun onSwapInfoClick() = navigateToSwapInfo()
 
@@ -177,7 +254,8 @@ internal data class InternalState(
     val slippage: BigDecimal,
     val isAddressBookHintVisible: Boolean,
     val zecSwapAsset: SwapAsset?,
-    val swapMode: SwapMode
+    val swapMode: SwapMode,
+    val isRequestingQuote: Boolean,
 ) {
     fun getZatoshiAmount(): Zatoshi? {
         fun calculateAmountForSwap() = getAmountToken()?.convertZecToZatoshi()

@@ -1,16 +1,12 @@
 package co.electriccoin.zcash.ui.common.model.near
 
+import co.electriccoin.zcash.ui.common.serialization.BigDecimalSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.math.BigDecimal
 
 @Serializable
 data class QuoteResponseDto(
-    @SerialName("timestamp")
-    val timestamp: String,
-
-    @SerialName("signature")
-    val signature: String,
-
     @SerialName("quoteRequest")
     val quoteRequest: QuoteRequestDetails,
 
@@ -81,35 +77,34 @@ data class QuoteDetails(
     val depositAddress: String,
 
     @SerialName("amountIn")
-    val amountIn: String,
+    @Serializable(with = BigDecimalSerializer::class)
+    val amountIn: BigDecimal,
 
     @SerialName("amountInFormatted")
-    val amountInFormatted: String,
+    @Serializable(with = BigDecimalSerializer::class)
+    val amountInFormatted: BigDecimal,
 
     @SerialName("amountInUsd")
-    val amountInUsd: String,
+    @Serializable(with = BigDecimalSerializer::class)
+    val amountInUsd: BigDecimal,
 
     @SerialName("minAmountIn")
-    val minAmountIn: String,
+    @Serializable(with = BigDecimalSerializer::class)
+    val minAmountIn: BigDecimal,
 
     @SerialName("amountOut")
-    val amountOut: String,
+    @Serializable(with = BigDecimalSerializer::class)
+    val amountOut: BigDecimal,
 
     @SerialName("amountOutFormatted")
-    val amountOutFormatted: String,
+    @Serializable(with = BigDecimalSerializer::class)
+    val amountOutFormatted: BigDecimal,
 
     @SerialName("amountOutUsd")
-    val amountOutUsd: String,
+    @Serializable(with = BigDecimalSerializer::class)
+    val amountOutUsd: BigDecimal,
 
     @SerialName("minAmountOut")
-    val minAmountOut: String,
-
-    @SerialName("deadline")
-    val deadline: String,
-
-    @SerialName("timeWhenInactive")
-    val timeWhenInactive: String,
-
-    @SerialName("timeEstimate")
-    val timeEstimate: Int
+    @Serializable(with = BigDecimalSerializer::class)
+    val minAmountOut: BigDecimal,
 )

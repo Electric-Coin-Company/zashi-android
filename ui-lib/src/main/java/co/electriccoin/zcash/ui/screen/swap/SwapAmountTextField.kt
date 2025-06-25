@@ -163,13 +163,16 @@ private fun SwapTextFieldCard(
                 }
                 Spacer(4.dp)
                 Image(
-                    modifier =
+                    modifier = if (state.isSwapChangeEnabled) {
                         Modifier
                             .clickable(
                                 onClick = state.onSwapChange,
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() }
-                            ),
+                            )
+                    } else {
+                        Modifier
+                    },
                     painter = painterResource(R.drawable.ic_swap_recipient),
                     contentDescription = null
                 )
@@ -187,7 +190,8 @@ data class SwapAmountTextFieldState(
     val textFieldPrefix: ImageResource?,
     val textField: NumberTextFieldState,
     val secondaryText: StringResource,
-    val onSwapChange: () -> Unit
+    val isSwapChangeEnabled: Boolean = true,
+    val onSwapChange: () -> Unit,
 ) {
     val isError = error != null || textField.innerState.isError
 }

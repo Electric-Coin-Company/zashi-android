@@ -19,6 +19,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 fun ZashiInfoText(
     text: String,
     modifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier,
     color: Color = ZashiColors.Text.textTertiary,
     style: TextStyle = ZashiTypography.textXs,
     textAlign: TextAlign = TextAlign.Start,
@@ -35,8 +36,8 @@ fun ZashiInfoText(
         Spacer(8.dp)
         Text(
             modifier =
-                Modifier
-                    .weight(1f),
+                textModifier
+                    .weight(1f, false),
             text = text,
             textAlign = textAlign,
             style = style,

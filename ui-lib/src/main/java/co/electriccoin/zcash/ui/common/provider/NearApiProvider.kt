@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.common.provider
 
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.near.NearTokenDto
-import co.electriccoin.zcash.ui.common.model.near.QouteRequest
+import co.electriccoin.zcash.ui.common.model.near.QuoteRequest
 import co.electriccoin.zcash.ui.common.model.near.QuoteResponseDto
 import co.electriccoin.zcash.ui.common.model.near.SubmitDepositTransactionRequest
 import co.electriccoin.zcash.ui.common.model.near.SwapStatusResponseDto
@@ -18,7 +18,9 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -31,7 +33,7 @@ interface NearApiProvider {
     suspend fun getSupportedTokens(): GetNearSupportedTokensResponse
 
     @Throws(ResponseException::class, IOException::class)
-    suspend fun requestQuote(request: QouteRequest): QuoteResponseDto
+    suspend fun requestQuote(request: QuoteRequest): QuoteResponseDto
 
     @Throws(ResponseException::class, IOException::class)
     suspend fun submitDepositTransaction(request: SubmitDepositTransactionRequest): SwapStatusResponseDto
@@ -46,9 +48,10 @@ class KtorNearApiProvider : NearApiProvider {
             get("https://1click.chaindefuser.com/v0/tokens").body()
         }
 
-    override suspend fun requestQuote(request: QouteRequest): QuoteResponseDto =
+    override suspend fun requestQuote(request: QuoteRequest): QuoteResponseDto =
         execute {
             post("https://1click.chaindefuser.com/v0/quote") {
+                contentType(ContentType.Application.Json)
                 setBody(request)
             }.body()
         }
@@ -85,7 +88,9 @@ class KtorNearApiProvider : NearApiProvider {
     @Suppress("MagicNumber")
     private fun createHttpClient() =
         HttpClient(OkHttp) {
-            install(ContentNegotiation) { json() }
+            install(ContentNegotiation) {
+                json()
+            }
             install(Logging) {
                 logger =
                     object : Logger {

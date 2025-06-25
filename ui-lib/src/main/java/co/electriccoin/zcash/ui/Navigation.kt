@@ -122,6 +122,8 @@ import co.electriccoin.zcash.ui.screen.swap.SwapAmount
 import co.electriccoin.zcash.ui.screen.swap.SwapScreen
 import co.electriccoin.zcash.ui.screen.swap.near.NearInfoArgs
 import co.electriccoin.zcash.ui.screen.swap.near.NearInfoScreen
+import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteArgs
+import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteScreen
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPicker
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerScreen
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
@@ -533,6 +535,9 @@ internal fun MainActivity.Navigation() {
         dialog<NearInfoArgs>(
             dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
         ) { NearInfoScreen() }
+        dialog<SwapQuoteArgs>(
+            dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+        ) { SwapQuoteScreen() }
     }
 }
 

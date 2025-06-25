@@ -177,7 +177,11 @@ private fun TabInternal(
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
-                ) { state.onClick(mode) }
+                ) {
+                    if (state.isEnabled) {
+                        state.onClick(mode)
+                    }
+                }
                 .padding(
                     vertical = 8.dp,
                     horizontal = 20.dp
@@ -207,6 +211,7 @@ private fun TabInternal(
 
 internal data class SwapModeSelectorState(
     val swapMode: SwapMode,
+    val isEnabled: Boolean = true,
     val onClick: (SwapMode) -> Unit
 )
 

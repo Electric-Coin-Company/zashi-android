@@ -1,12 +1,15 @@
 package co.electriccoin.zcash.ui.common.model.near
 
+import co.electriccoin.zcash.ui.common.serialization.BigDecimalSerializer
 import co.electriccoin.zcash.ui.common.serialization.RefundTypeSerializer
 import co.electriccoin.zcash.ui.common.serialization.SwapTypeSerializer
+import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.math.BigDecimal
 
 @Serializable
-data class QouteRequest(
+data class QuoteRequest(
     @SerialName("dry")
     val dry: Boolean,
     @SerialName("swapType")
@@ -22,7 +25,8 @@ data class QouteRequest(
     @SerialName("destinationAsset")
     val destinationAsset: String,
     @SerialName("amount")
-    val amount: String,
+    @Serializable(BigDecimalSerializer::class)
+    val amount: BigDecimal,
     @SerialName("refundTo")
     val refundTo: String,
     @SerialName("refundType")
@@ -31,11 +35,9 @@ data class QouteRequest(
     @SerialName("recipient")
     val recipient: String,
     @SerialName("recipientType")
-    val recipientType: String,
+    val recipientType: RecipientType,
     @SerialName("deadline")
-    val deadline: String,
-    @SerialName("referral")
-    val referral: String,
+    val deadline: Instant,
     @SerialName("quoteWaitingTimeMs")
     val quoteWaitingTimeMs: Int,
 )
@@ -48,4 +50,9 @@ enum class RefundType(val apiValue: String) {
 enum class SwapType(val apiValue: String) {
     EXACT_INPUT("EXACT_INPUT"),
     EXACT_OUTPUT("EXACT_OUTPUT"),
+}
+
+enum class RecipientType(val apiValue: String) {
+    DESTINATION_CHAIN("DESTINATION_CHAIN"),
+    INTENTS("INTENTS")
 }

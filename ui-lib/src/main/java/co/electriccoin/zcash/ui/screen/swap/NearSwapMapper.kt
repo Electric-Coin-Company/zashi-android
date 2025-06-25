@@ -1,9 +1,10 @@
 package co.electriccoin.zcash.ui.screen.swap
 
 import cash.z.ecc.android.sdk.model.FiatCurrency
+import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.repository.SwapMode
-import co.electriccoin.zcash.ui.common.repository.SwapMode.PAY
+import co.electriccoin.zcash.ui.common.repository.SwapMode.SWAP
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
@@ -19,7 +20,7 @@ import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import java.math.BigDecimal
 import java.math.MathContext
 
-internal class PayMapper : SwapVMMapper {
+internal class NearSwapMapper : SwapVMMapper {
     override fun createState(
         internalState: InternalState,
         onBack: () -> Unit,
@@ -27,7 +28,7 @@ internal class PayMapper : SwapVMMapper {
         onSwapAssetPickerClick: () -> Unit,
         onSwapCurrencyTypeClick: () -> Unit,
         onSlippageClick: (BigDecimal?) -> Unit,
-        onPrimaryClick: () -> Unit,
+        onPrimaryClick: (BigDecimal, String) -> Unit,
         onAddressChange: (String) -> Unit,
         onSwapModeChange: (SwapMode) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit
@@ -35,7 +36,6 @@ internal class PayMapper : SwapVMMapper {
         val textFieldState =
             createAmountTextFieldState(
                 internalState = internalState,
-                onSwapAssetPickerClick = onSwapAssetPickerClick,
                 onSwapCurrencyTypeClick = onSwapCurrencyTypeClick,
                 onTextFieldChange = onTextFieldChange
             )
@@ -46,7 +46,11 @@ internal class PayMapper : SwapVMMapper {
                     internalState = internalState,
                     onSlippageClick = onSlippageClick
                 ),
-            amountText = createAmountTextState(internalState),
+            amountText =
+                createAmountTextState(
+                    internalState = internalState,
+                    onSwapAssetPickerClick = onSwapAssetPickerClick
+                ),
             primaryButton =
                 createPrimaryButtonState(
                     textField = textFieldState,
@@ -55,8 +59,9 @@ internal class PayMapper : SwapVMMapper {
                 ),
             swapModeSelectorState =
                 SwapModeSelectorState(
-                    swapMode = PAY,
-                    onClick = onSwapModeChange
+                    swapMode = SWAP,
+                    onClick = onSwapModeChange,
+                    isEnabled = !internalState.isRequestingQuote
                 ),
             address =
                 createAddressState(
@@ -66,14 +71,13 @@ internal class PayMapper : SwapVMMapper {
             isAddressBookHintVisible = internalState.isAddressBookHintVisible,
             onBack = onBack,
             swapInfoButton = IconButtonState(R.drawable.ic_help, onClick = onSwapInfoClick),
-            infoItems = createListItems(internalState)
+            infoItems = createListItems(internalState),
         )
     }
 
     @Suppress("CyclomaticComplexMethod")
     private fun createAmountTextFieldState(
         internalState: InternalState,
-        onSwapAssetPickerClick: () -> Unit,
         onSwapCurrencyTypeClick: () -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
     ): SwapAmountTextFieldState {
@@ -81,7 +85,7 @@ internal class PayMapper : SwapVMMapper {
         val totalSpendableFiat = internalState.totalSpendableFiatBalance
         val zatoshiAmount = internalState.getZatoshiAmount()
         return SwapAmountTextFieldState(
-            title = stringRes("To"),
+            title = stringRes("From"),
             error =
                 when (internalState.currencyType) {
                     CurrencyType.TOKEN -> {
@@ -107,10 +111,10 @@ internal class PayMapper : SwapVMMapper {
                 },
             token =
                 AssetCardState(
-                    ticker = internalState.swapAsset?.tokenTicker?.let { stringRes(it) } ?: stringRes("Select token"),
-                    bigIcon = internalState.swapAsset?.tokenIcon,
-                    smallIcon = internalState.swapAsset?.chainIcon,
-                    onClick = onSwapAssetPickerClick
+                    ticker = stringRes(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
+                    bigIcon = imageRes(R.drawable.ic_zec_round_full),
+                    smallIcon = imageRes(R.drawable.ic_receive_shield),
+                    onClick = null
                 ),
             textFieldPrefix =
                 when (internalState.currencyType) {
@@ -120,7 +124,8 @@ internal class PayMapper : SwapVMMapper {
             textField =
                 NumberTextFieldState(
                     innerState = internalState.amountTextState,
-                    onValueChange = onTextFieldChange
+                    onValueChange = onTextFieldChange,
+                    isEnabled = !internalState.isRequestingQuote
                 ),
             secondaryText =
                 when (internalState.currencyType) {
@@ -131,41 +136,38 @@ internal class PayMapper : SwapVMMapper {
                             maxDecimals = 2
                         )
 
-                    CurrencyType.FIAT -> {
-                        val tokenAmount =
-                            if (amountFiat == null || internalState.swapAsset == null) {
-                                BigDecimal.valueOf(0)
-                            } else {
-                                amountFiat.divide(
-                                    internalState.swapAsset.usdPrice,
-                                    MathContext.DECIMAL128
-                                )
-                            }
-                        stringResByDynamicCurrencyNumber(tokenAmount, internalState.swapAsset?.tokenTicker.orEmpty())
-                    }
+                    CurrencyType.FIAT -> stringRes(zatoshiAmount ?: Zatoshi(0))
                 },
-            max = null,
-            onSwapChange = onSwapCurrencyTypeClick
-        )
-    }
-
-    private fun createAmountTextState(internalState: InternalState): SwapAmountTextState =
-        SwapAmountTextState(
-            token =
-                AssetCardState(
-                    stringRes(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
-                    bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                    smallIcon = imageRes(R.drawable.ic_receive_shield),
-                    onClick = null
-                ),
-            title = stringRes("From"),
-            subtitle =
+            max =
                 internalState.totalSpendableBalance?.let {
                     stringRes("Max: ") + stringRes(it, CurrencySymbolLocation.HIDDEN)
                 },
+            onSwapChange = onSwapCurrencyTypeClick,
+            isSwapChangeEnabled = !internalState.isRequestingQuote
+        )
+    }
+
+    private fun createAmountTextState(
+        internalState: InternalState,
+        onSwapAssetPickerClick: (() -> Unit)?
+    ): SwapAmountTextState =
+        SwapAmountTextState(
+            token =
+                AssetCardState(
+                    ticker = internalState.swapAsset?.tokenTicker?.let { stringRes(it) } ?: stringRes("Select token"),
+                    bigIcon = internalState.swapAsset?.tokenIcon,
+                    smallIcon = internalState.swapAsset?.chainIcon,
+                    onClick = onSwapAssetPickerClick,
+                    isEnabled = !internalState.isRequestingQuote
+                ),
+            title = stringRes("To"),
+            subtitle = null,
             text =
-                internalState.getZatoshiAmount()?.let { stringRes(it, CurrencySymbolLocation.HIDDEN) }
-                    ?: stringRes("0"),
+                stringResByDynamicCurrencyNumber(
+                    amount = internalState.getTargetAssetAmount() ?: 0,
+                    ticker = internalState.swapAsset?.tokenTicker.orEmpty(),
+                    symbolLocation = CurrencySymbolLocation.HIDDEN
+                ),
             secondaryText =
                 stringResByDynamicCurrencyNumber(
                     amount = internalState.getAmountFiat() ?: 0,
@@ -182,24 +184,32 @@ internal class PayMapper : SwapVMMapper {
         return ButtonState(
             text = stringResByNumber(amount) + stringRes("%"),
             icon = R.drawable.ic_swap_slippage,
-            onClick = { onSlippageClick(internalState.getAmountFiat()) }
+            onClick = { onSlippageClick(internalState.getAmountFiat()) },
+            isEnabled = !internalState.isRequestingQuote
         )
     }
 
     private fun createPrimaryButtonState(
         textField: SwapAmountTextFieldState,
         internalState: InternalState,
-        onPrimaryClick: () -> Unit
+        onPrimaryClick: (BigDecimal, String) -> Unit
     ): ButtonState {
         val amount = textField.textField.innerState.amount
         return ButtonState(
             text = stringRes("Confirm"),
-            onClick = onPrimaryClick,
+            onClick = {
+                internalState.getAmountToken()?.let {
+                    onPrimaryClick(it, internalState.addressText)
+                }
+            },
             isEnabled =
+                internalState.swapAsset != null &&
                 !textField.isError &&
                     amount != null &&
                     amount > BigDecimal(0) &&
-                    internalState.addressText.isNotBlank()
+                    internalState.addressText.isNotBlank() &&
+                    !internalState.isRequestingQuote,
+            isLoading = internalState.isRequestingQuote
         )
     }
 
@@ -214,7 +224,8 @@ internal class PayMapper : SwapVMMapper {
                     else -> null
                 },
             value = stringRes(text),
-            onValueChange = onAddressChange
+            onValueChange = onAddressChange,
+            isEnabled = !internalState.isRequestingQuote
         )
     }
 

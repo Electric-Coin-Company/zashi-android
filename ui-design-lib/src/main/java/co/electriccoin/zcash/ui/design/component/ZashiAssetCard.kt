@@ -2,6 +2,8 @@ package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
@@ -12,6 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,7 +39,7 @@ fun ZashiAssetCard(
 ) {
     Card(
         modifier = modifier,
-        onClick = state.onClick
+        onClick = state.onClick.takeIf { state.isEnabled }
     ) {
         Content(state)
     }
@@ -44,9 +47,14 @@ fun ZashiAssetCard(
 
 @Composable
 private fun Content(state: AssetCardState) {
+    val clickModifier = if (state.onClick != null) Modifier.clickable(
+        onClick = state.onClick,
+        indication = null,
+        interactionSource = remember { MutableInteractionSource() }
+    ) else Modifier
     Row(
         modifier =
-            Modifier.padding(
+            clickModifier then Modifier.padding(
                 start = if (state.bigIcon is ImageResource.ByDrawable) 4.dp else 14.dp,
                 top = if (state.bigIcon is ImageResource.ByDrawable) 4.dp else 8.dp,
                 end = 12.dp,
@@ -83,7 +91,7 @@ private fun Content(state: AssetCardState) {
             fontWeight = FontWeight.SemiBold
         )
         Spacer(4.dp)
-        if (state.onClick != null) {
+        if (state.onClick != null && state.isEnabled) {
             Image(
                 painter = painterResource(R.drawable.ic_chevron_down_small),
                 contentDescription = null
@@ -115,7 +123,6 @@ private fun Card(
             border = BorderStroke(.33.dp, ZashiColors.Surfaces.strokeSecondary),
             shadowElevation = 1.dp,
             content = content,
-            onClick = onClick
         )
     }
 }
@@ -125,6 +132,7 @@ data class AssetCardState(
     val ticker: StringResource,
     val bigIcon: ImageResource?,
     val smallIcon: ImageResource?,
+    val isEnabled: Boolean = true,
     val onClick: (() -> Unit)?
 )
 

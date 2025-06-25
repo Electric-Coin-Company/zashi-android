@@ -8,7 +8,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SwapAssetPickerScreen() {
-    val vm = koinViewModel<SwapAssetPickerViewModel>()
+    val vm = koinViewModel<SwapAssetPickerVM>()
     val state by vm.state.collectAsStateWithLifecycle()
     SwapAssetPickerView(state)
 }

@@ -103,7 +103,12 @@ private fun Preview() =
                 state =
                     SwapAmountTextState(
                         token =
-                            AssetCardState(stringRes("ZEC"), null, null, {}),
+                            AssetCardState(
+                                ticker = stringRes(value = "ZEC"),
+                                bigIcon = null,
+                                smallIcon = null,
+                                isEnabled = true,
+                                onClick = {}),
                         title = stringRes("To"),
                         subtitle = stringRes("Max"),
                         text = stringResByDynamicCurrencyNumber(101, "$"),

@@ -1,13 +1,13 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import android.content.Context
-import co.electriccoin.zcash.ui.common.repository.SwapAssets
+import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.design.util.getString
 
 class FilterSwapAssetsUseCase(
     private val context: Context
 ) {
-    operator fun invoke(assets: SwapAssets, text: String): SwapAssets {
+    operator fun invoke(assets: SwapAssetsData, text: String): SwapAssetsData {
         val filtered =
             if (assets.data == null) {
                 null

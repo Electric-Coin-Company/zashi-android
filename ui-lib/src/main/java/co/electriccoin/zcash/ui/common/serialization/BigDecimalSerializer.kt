@@ -10,7 +10,7 @@ import java.math.BigDecimal
 
 object BigDecimalSerializer : KSerializer<BigDecimal> {
     override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("Instant", PrimitiveKind.LONG)
+        PrimitiveSerialDescriptor("BigDecimal", PrimitiveKind.STRING)
 
     override fun serialize(
         encoder: Encoder,

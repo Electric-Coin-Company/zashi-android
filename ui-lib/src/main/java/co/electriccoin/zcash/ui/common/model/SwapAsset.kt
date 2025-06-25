@@ -13,6 +13,7 @@ sealed interface SwapAsset {
     val chainName: StringResource
     val chainIcon: ImageResource?
     val usdPrice: BigDecimal?
+    val assetId: String
 }
 
 data class NearSwapAsset(
@@ -25,4 +26,5 @@ data class NearSwapAsset(
     override val tokenTicker: String = token.symbol
     override val chainTicker: String = token.blockchain
     override val usdPrice: BigDecimal? = token.price
+    override val assetId: String = token.assetId
 }

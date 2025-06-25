@@ -61,6 +61,7 @@ fun ZashiNumberTextField(
     val textFieldState =
         TextFieldState(
             value = state.innerState.text,
+            isEnabled = state.isEnabled,
             error = state.errorString.takeIf { state.innerState.isError },
             onValueChange = { text ->
                 val normalized = UserInputNumberParser.normalizeInput(text, locale)
@@ -103,6 +104,7 @@ fun ZashiNumberTextField(
 @Immutable
 data class NumberTextFieldState(
     val innerState: NumberTextFieldInnerState = NumberTextFieldInnerState(),
+    val isEnabled: Boolean = true,
     val errorString: StringResource = stringRes(""),
     val onValueChange: (NumberTextFieldInnerState) -> Unit,
 )

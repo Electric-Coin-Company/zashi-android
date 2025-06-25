@@ -30,4 +30,14 @@ class ObserveProposalUseCase(
     fun filterSendTransactions() =
         this()
             .filterIsInstance<SendTransactionProposal>()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun observeNullable() = accountDataSource.selectedAccount
+        .filterNotNull()
+        .flatMapLatest {
+            when (it) {
+                is KeystoneAccount -> keystoneProposalRepository.transactionProposal
+                is ZashiAccount -> zashiProposalRepository.transactionProposal
+            }
+        }
 }

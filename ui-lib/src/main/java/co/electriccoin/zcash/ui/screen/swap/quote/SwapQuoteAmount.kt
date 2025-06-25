@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap.pay
+package co.electriccoin.zcash.ui.screen.swap.quote
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -33,7 +33,7 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 
 @Composable
-fun SwapTokenAmount(
+fun SwapQuoteAmount(
     state: SwapTokenAmountState,
     modifier: Modifier = Modifier
 ) {
@@ -101,7 +101,7 @@ data class SwapTokenAmountState(
 private fun Preview() =
     ZcashTheme {
         BlankSurface {
-            SwapTokenAmount(
+            SwapQuoteAmount(
                 state =
                     SwapTokenAmountState(
                         bigIcon = imageRes(R.drawable.ic_zec_round_full),

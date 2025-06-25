@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.model.SwapAsset
-import co.electriccoin.zcash.ui.common.repository.SwapAssets
+import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.FilterSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
-class SwapAssetPickerViewModel(
+class SwapAssetPickerVM(
     getSwapAssets: GetSwapAssetsUseCase,
     private val selectSwapAsset: SelectSwapAssetUseCase,
     private val navigationRouter: NavigationRouter,
@@ -67,7 +67,7 @@ class SwapAssetPickerViewModel(
             initialValue = createState(filteredSwapAssets.value, searchTextFieldState.value)
         )
 
-    private fun createState(assets: SwapAssets, search: TextFieldState): SwapAssetPickerState =
+    private fun createState(assets: SwapAssetsData, search: TextFieldState): SwapAssetPickerState =
         SwapAssetPickerState(
             data =
                 when {

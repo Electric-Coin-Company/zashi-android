@@ -12,7 +12,7 @@ internal interface SwapVMMapper {
         onSwapAssetPickerClick: () -> Unit,
         onSwapCurrencyTypeClick: () -> Unit,
         onSlippageClick: (BigDecimal?) -> Unit,
-        onPrimaryClick: () -> Unit,
+        onPrimaryClick: (BigDecimal, String) -> Unit,
         onAddressChange: (String) -> Unit,
         onSwapModeChange: (SwapMode) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit

@@ -23,7 +23,7 @@ import java.math.BigDecimal
 import java.math.MathContext
 
 @Suppress("TooManyFunctions")
-class SwapSlippageViewModel(
+class SwapSlippageVM(
     swapSlippageArgs: SwapSlippageArgs,
     getSlippage: GetSlippageUseCase,
     private val setSlippage: SetSlippageUseCase,

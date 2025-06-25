@@ -4,6 +4,7 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
+import co.electriccoin.zcash.ui.common.datasource.RegularTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
@@ -15,18 +16,19 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 interface ZashiProposalRepository {
-    val transactionProposal: Flow<TransactionProposal?>
+    val transactionProposal: StateFlow<TransactionProposal?>
 
-    val submitState: Flow<SubmitProposalState?>
+    val submitState: StateFlow<SubmitProposalState?>
 
     @Throws(TransactionProposalNotCreatedException::class)
-    suspend fun createProposal(zecSend: ZecSend)
+    suspend fun createProposal(zecSend: ZecSend): RegularTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal
@@ -56,14 +58,13 @@ class ZashiProposalRepositoryImpl(
 
     private var submitJob: Job? = null
 
-    override suspend fun createProposal(zecSend: ZecSend) {
+    override suspend fun createProposal(zecSend: ZecSend): RegularTransactionProposal =
         createProposalInternal {
             proposalDataSource.createProposal(
                 account = accountDataSource.getSelectedAccount(),
                 send = zecSend
             )
         }
-    }
 
     override suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal =
         createProposalInternal {

@@ -1,18 +1,41 @@
 package co.electriccoin.zcash.ui.common.datasource
 
 import co.electriccoin.zcash.ui.common.model.NearSwapAsset
+import co.electriccoin.zcash.ui.common.model.SwapAsset
+import co.electriccoin.zcash.ui.common.model.near.QuoteRequest
+import co.electriccoin.zcash.ui.common.model.near.QuoteResponseDto
+import co.electriccoin.zcash.ui.common.model.near.RecipientType
+import co.electriccoin.zcash.ui.common.model.near.RefundType
+import co.electriccoin.zcash.ui.common.model.near.SwapType
 import co.electriccoin.zcash.ui.common.provider.ChainIconProvider
 import co.electriccoin.zcash.ui.common.provider.ChainNameProvider
 import co.electriccoin.zcash.ui.common.provider.NearApiProvider
 import co.electriccoin.zcash.ui.common.provider.TokenIconProvider
 import co.electriccoin.zcash.ui.common.provider.TokenNameProvider
+import co.electriccoin.zcash.ui.common.repository.SwapMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.io.IOException
+import java.math.BigDecimal
+import java.math.MathContext
+import kotlin.time.Duration.Companion.minutes
 
 interface NearDataSource {
     @Throws(IOException::class)
     suspend fun getSupportedTokens(): List<NearSwapAsset>
+
+    @Throws(IOException::class)
+    suspend fun requestQuote(
+        swapMode: SwapMode,
+        amount: BigDecimal,
+        originAddress: String,
+        originAsset: SwapAsset,
+        destinationAddress: String,
+        destinationAsset: SwapAsset,
+        slippage: BigDecimal,
+    ): QuoteResponseDto
 }
 
 class NearDataSourceImpl(
@@ -34,4 +57,37 @@ class NearDataSourceImpl(
                 )
             }
         }
+
+    override suspend fun requestQuote(
+        swapMode: SwapMode,
+        amount: BigDecimal,
+        originAddress: String,
+        originAsset: SwapAsset,
+        destinationAddress: String,
+        destinationAsset: SwapAsset,
+        slippage: BigDecimal,
+    ): QuoteResponseDto {
+        val request = QuoteRequest(
+            dry = false,
+            swapType = when (swapMode) {
+                SwapMode.SWAP -> SwapType.EXACT_INPUT
+                SwapMode.PAY -> SwapType.EXACT_OUTPUT
+            },
+            slippageTolerance = slippage.multiply(BigDecimal(100), MathContext.DECIMAL32).toInt(),
+            originAsset = originAsset.assetId,
+            depositType = RefundType.ORIGIN_CHAIN,
+            destinationAsset = destinationAsset.assetId,
+            amount = amount,
+            refundTo = originAddress,
+            refundType = RefundType.ORIGIN_CHAIN,
+            recipient = destinationAddress,
+            recipientType = RecipientType.DESTINATION_CHAIN,
+            deadline = Clock.System.now() + 10.minutes,
+            quoteWaitingTimeMs = QUOTE_WAITING_TIME
+        )
+
+        return nearApiProvider.requestQuote(request)
+    }
 }
+
+private const val QUOTE_WAITING_TIME = 3000

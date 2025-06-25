@@ -1,8 +1,11 @@
 package co.electriccoin.zcash.ui.common.repository
 
+import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.NearDataSource
 import co.electriccoin.zcash.ui.common.model.NearSwapAsset
+import co.electriccoin.zcash.ui.common.model.NearSwapQuote
 import co.electriccoin.zcash.ui.common.model.SwapAsset
+import co.electriccoin.zcash.ui.common.model.SwapQuote
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,13 +20,16 @@ import kotlinx.io.IOException
 import java.math.BigDecimal
 
 interface SwapRepository {
+
     val mode: StateFlow<SwapMode>
 
-    val assets: StateFlow<SwapAssets>
+    val assets: StateFlow<SwapAssetsData>
 
     val selectedAsset: StateFlow<SwapAsset?>
 
     val slippage: StateFlow<BigDecimal>
+
+    val quote: StateFlow<SwapQuoteData?>
 
     fun select(asset: SwapAsset)
 
@@ -33,13 +39,37 @@ interface SwapRepository {
 
     fun changeMode(mode: SwapMode)
 
+    fun requestQuote(amount: BigDecimal, address: String)
+
     fun clear()
+
+    fun clearQuote()
 }
 
 enum class SwapMode { SWAP, PAY }
 
+sealed interface SwapQuoteData {
+    data class Success(
+        val quote: SwapQuote,
+    ) : SwapQuoteData
+
+    data class Error(val exception: Exception) : SwapQuoteData
+    data object Loading : SwapQuoteData
+}
+
+data class SwapAssetsData(
+    val data: List<SwapAsset>?,
+    val zecAsset: SwapAsset?,
+    val isLoading: Boolean,
+    val type: Type
+) {
+    enum class Type { NEAR }
+}
+
 class NearSwapRepository(
-    private val nearDataSource: NearDataSource
+    private val nearDataSource: NearDataSource,
+    private val accountDataSource: AccountDataSource,
+    // private val synchronizerProvider: SynchronizerProvider,
 ) : SwapRepository {
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
@@ -47,11 +77,11 @@ class NearSwapRepository(
 
     override val assets =
         MutableStateFlow(
-            SwapAssets(
+            SwapAssetsData(
                 data = null,
                 zecAsset = null,
                 isLoading = true,
-                type = SwapAssets.Type.NEAR
+                type = SwapAssetsData.Type.NEAR
             )
         )
 
@@ -59,7 +89,11 @@ class NearSwapRepository(
 
     override val slippage = MutableStateFlow(DEFAULT_SLIPPAGE)
 
+    override val quote = MutableStateFlow<SwapQuoteData?>(null)
+
     private var refreshJob: Job? = null
+
+    private var requestQuoteJob: Job? = null
 
     override fun select(asset: SwapAsset) {
         check(asset is NearSwapAsset)
@@ -109,24 +143,55 @@ class NearSwapRepository(
         this.mode.update { mode }
     }
 
+    override fun requestQuote(amount: BigDecimal, address: String) {
+        requestQuoteJob = scope.launch {
+            quote.update { SwapQuoteData.Loading }
+            val originAsset = assets.value.zecAsset ?: return@launch
+            val destinationAsset = selectedAsset.value ?: return@launch
+            try {
+                val selectedAccount = accountDataSource.getSelectedAccount()
+                val quoteDto = nearDataSource.requestQuote(
+                    swapMode = mode.value,
+                    amount = amount,
+                    originAddress = selectedAccount.transparent.address.address,
+                    originAsset = originAsset,
+                    destinationAddress = address,
+                    destinationAsset = destinationAsset,
+                    slippage = slippage.value,
+                )
+                quote.update {
+                    SwapQuoteData.Success(quote = NearSwapQuote(quoteDto))
+                }
+            } catch (e: Exception) {
+                quote.update { SwapQuoteData.Error(e) }
+            }
+        }
+    }
+
     override fun clear() {
         refreshJob?.cancel()
         refreshJob = null
         selectedAsset.update { null }
         slippage.update { DEFAULT_SLIPPAGE }
         mode.update { DEFAULT_MODE }
+        clearQuote()
     }
-}
 
-data class SwapAssets(
-    val data: List<SwapAsset>?,
-    val zecAsset: SwapAsset?,
-    val isLoading: Boolean,
-    val type: Type
-) {
-    enum class Type {
-        NEAR
+    override fun clearQuote() {
+        requestQuoteJob?.cancel()
+        requestQuoteJob = null
+        quote.update { null }
     }
+
+    // private suspend fun getWalletAddress(address: String): WalletAddress {
+    //     return when (val result = synchronizerProvider.getSynchronizer().validateAddress(address)) {
+    //         AddressType.Shielded -> WalletAddress.Sapling.new(address)
+    //         AddressType.Tex -> WalletAddress.Tex.new(address)
+    //         AddressType.Transparent -> WalletAddress.Transparent.new(address)
+    //         AddressType.Unified -> WalletAddress.Unified.new(address)
+    //         is AddressType.Invalid -> throw IllegalStateException(result.reason)
+    //     }
+    // }
 }
 
 private val DEFAULT_SLIPPAGE = BigDecimal("0.5")
