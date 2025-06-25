@@ -125,7 +125,7 @@ class SwapSlippageViewModel(
             title = result,
             mode =
                 when {
-                    percent <= BigDecimal("1") -> SwapSlippageInfoState.Mode.LOW
+                    percent < BigDecimal("1") -> SwapSlippageInfoState.Mode.LOW
                     percent < BigDecimal("2") -> SwapSlippageInfoState.Mode.MEDIUM
                     else -> SwapSlippageInfoState.Mode.HIGH
                 }

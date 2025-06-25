@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -87,12 +88,14 @@ private fun SwapTextFieldCard(
                 )
                 if (state.max != null) {
                     Spacer(1f)
-                    Text(
-                        text = state.max.getValue(),
-                        style = ZashiTypography.textSm,
-                        fontWeight = FontWeight.Medium,
-                        color = ZashiColors.Text.textTertiary
-                    )
+                    SelectionContainer {
+                        Text(
+                            text = state.max.getValue(),
+                            style = ZashiTypography.textSm,
+                            fontWeight = FontWeight.Medium,
+                            color = ZashiColors.Text.textTertiary
+                        )
+                    }
                 }
             }
 
@@ -150,12 +153,14 @@ private fun SwapTextFieldCard(
                 verticalAlignment = CenterVertically
             ) {
                 Spacer(1f)
-                Text(
-                    text = state.secondaryText.getValue(),
-                    style = ZashiTypography.textSm,
-                    fontWeight = FontWeight.Medium,
-                    color = ZashiColors.Text.textTertiary
-                )
+                SelectionContainer {
+                    Text(
+                        text = state.secondaryText.getValue(),
+                        style = ZashiTypography.textSm,
+                        fontWeight = FontWeight.Medium,
+                        color = ZashiColors.Text.textTertiary
+                    )
+                }
                 Spacer(4.dp)
                 Image(
                     modifier =

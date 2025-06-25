@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.design.component.listitem
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -33,12 +34,14 @@ fun ZashiSimpleListItem(
             color = ZashiColors.Text.textTertiary
         )
         Spacer(1f)
-        Text(
-            text = state.text.getValue(),
-            style = ZashiTypography.textSm,
-            fontWeight = FontWeight.Medium,
-            color = ZashiColors.Text.textPrimary
-        )
+        SelectionContainer {
+            Text(
+                text = state.text.getValue(),
+                style = ZashiTypography.textSm,
+                fontWeight = FontWeight.Medium,
+                color = ZashiColors.Text.textPrimary
+            )
+        }
     }
 }
 

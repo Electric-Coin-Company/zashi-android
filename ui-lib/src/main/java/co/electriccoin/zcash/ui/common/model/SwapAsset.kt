@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.model
 
+import co.electriccoin.zcash.ui.common.model.near.NearTokenDto
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResource
 import java.math.BigDecimal

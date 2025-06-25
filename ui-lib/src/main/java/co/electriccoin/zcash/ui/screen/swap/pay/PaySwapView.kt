@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.Zatoshi
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -33,6 +34,7 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
@@ -151,13 +153,17 @@ private fun Preview() =
                 PaySwapState(
                     from =
                         SwapTokenAmountState(
-                            stringResByDynamicCurrencyNumber(2.4214, "", CurrencySymbolLocation.HIDDEN),
-                            stringResByDynamicCurrencyNumber(21312, "$")
+                            bigIcon = imageRes(R.drawable.ic_zec_round_full),
+                            smallIcon = imageRes(R.drawable.ic_receive_shield),
+                            title = stringResByDynamicCurrencyNumber(2.4214, "", CurrencySymbolLocation.HIDDEN),
+                            subtitle = stringResByDynamicCurrencyNumber(21312, "$")
                         ),
                     to =
                         SwapTokenAmountState(
-                            stringResByDynamicCurrencyNumber(2.4214, "", CurrencySymbolLocation.HIDDEN),
-                            stringResByDynamicCurrencyNumber(21312, "$")
+                            bigIcon = imageRes(R.drawable.ic_zec_round_full),
+                            smallIcon = imageRes(R.drawable.ic_receive_shield),
+                            title = stringResByDynamicCurrencyNumber(2.4214, "", CurrencySymbolLocation.HIDDEN),
+                            subtitle = stringResByDynamicCurrencyNumber(21312, "$")
                         ),
                     items =
                         listOf(

@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.common.model
+package co.electriccoin.zcash.ui.common.model.near
 
 import co.electriccoin.zcash.ui.common.serialization.BigDecimalSerializer
 import kotlinx.serialization.SerialName

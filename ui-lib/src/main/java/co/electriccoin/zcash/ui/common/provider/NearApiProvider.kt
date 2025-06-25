@@ -1,7 +1,11 @@
 package co.electriccoin.zcash.ui.common.provider
 
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.common.model.NearTokenDto
+import co.electriccoin.zcash.ui.common.model.near.NearTokenDto
+import co.electriccoin.zcash.ui.common.model.near.QouteRequest
+import co.electriccoin.zcash.ui.common.model.near.QuoteResponseDto
+import co.electriccoin.zcash.ui.common.model.near.SubmitDepositTransactionRequest
+import co.electriccoin.zcash.ui.common.model.near.SwapStatusResponseDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
@@ -11,6 +15,9 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
@@ -22,12 +29,42 @@ typealias GetNearSupportedTokensResponse = List<NearTokenDto>
 interface NearApiProvider {
     @Throws(ResponseException::class, IOException::class)
     suspend fun getSupportedTokens(): GetNearSupportedTokensResponse
+
+    @Throws(ResponseException::class, IOException::class)
+    suspend fun requestQuote(request: QouteRequest): QuoteResponseDto
+
+    @Throws(ResponseException::class, IOException::class)
+    suspend fun submitDepositTransaction(request: SubmitDepositTransactionRequest): SwapStatusResponseDto
+
+    @Throws(ResponseException::class, IOException::class)
+    suspend fun checkSwapStatus(depositAddress: String): SwapStatusResponseDto
 }
 
 class KtorNearApiProvider : NearApiProvider {
     override suspend fun getSupportedTokens(): GetNearSupportedTokensResponse =
         execute {
             get("https://1click.chaindefuser.com/v0/tokens").body()
+        }
+
+    override suspend fun requestQuote(request: QouteRequest): QuoteResponseDto =
+        execute {
+            post("https://1click.chaindefuser.com/v0/quote") {
+                setBody(request)
+            }.body()
+        }
+
+    override suspend fun submitDepositTransaction(request: SubmitDepositTransactionRequest): SwapStatusResponseDto =
+        execute {
+            post("https://1click.chaindefuser.com/v0/deposit/submit") {
+                setBody(request)
+            }.body()
+        }
+
+    override suspend fun checkSwapStatus(depositAddress: String): SwapStatusResponseDto =
+        execute {
+            get("https://1click.chaindefuser.com/v0/status") {
+                parameter("depositAddress", depositAddress)
+            }.body()
         }
 
     @Suppress("TooGenericExceptionCaught")

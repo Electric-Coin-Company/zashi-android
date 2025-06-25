@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.swap
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,12 +42,14 @@ internal fun SwapAmountText(
                 )
                 if (state.subtitle != null) {
                     Spacer(1f)
-                    Text(
-                        text = state.subtitle.getValue(),
-                        style = ZashiTypography.textSm,
-                        fontWeight = FontWeight.Medium,
-                        color = ZashiColors.Text.textTertiary
-                    )
+                    SelectionContainer {
+                        Text(
+                            text = state.subtitle.getValue(),
+                            style = ZashiTypography.textSm,
+                            fontWeight = FontWeight.Medium,
+                            color = ZashiColors.Text.textTertiary
+                        )
+                    }
                 }
             }
             Spacer(8.dp)
@@ -57,22 +60,26 @@ internal fun SwapAmountText(
                     state = state.token
                 )
                 Spacer(1f)
-                Text(
-                    text = state.text.getValue(),
-                    style = ZashiTypography.header4,
-                    fontWeight = FontWeight.SemiBold,
-                    color = ZashiColors.Text.textTertiary
-                )
+                SelectionContainer {
+                    Text(
+                        text = state.text.getValue(),
+                        style = ZashiTypography.header4,
+                        fontWeight = FontWeight.SemiBold,
+                        color = ZashiColors.Text.textTertiary
+                    )
+                }
             }
             Spacer(8.dp)
             Row {
                 Spacer(1f)
-                Text(
-                    text = state.secondaryText?.getValue() ?: "",
-                    style = ZashiTypography.textSm,
-                    fontWeight = FontWeight.Medium,
-                    color = ZashiColors.Text.textTertiary
-                )
+                SelectionContainer {
+                    Text(
+                        text = state.secondaryText?.getValue() ?: "",
+                        style = ZashiTypography.textSm,
+                        fontWeight = FontWeight.Medium,
+                        color = ZashiColors.Text.textTertiary
+                    )
+                }
             }
         }
     }
