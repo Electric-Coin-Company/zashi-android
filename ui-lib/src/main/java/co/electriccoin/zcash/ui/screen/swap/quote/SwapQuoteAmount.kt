@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,13 +48,15 @@ fun SwapQuoteAmount(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row {
-                Text(
-                    textAlign = TextAlign.Center,
-                    text = state.title.getValue(),
-                    style = ZashiTypography.textXl,
-                    fontWeight = FontWeight.SemiBold,
-                    color = ZashiColors.Text.textPrimary
-                )
+                SelectionContainer {
+                    Text(
+                        textAlign = TextAlign.Center,
+                        text = state.title.getValue(),
+                        style = ZashiTypography.textXl,
+                        fontWeight = FontWeight.SemiBold,
+                        color = ZashiColors.Text.textPrimary
+                    )
+                }
                 if (state.bigIcon is ImageResource.ByDrawable) {
                     Spacer(4.dp)
                     Box {
@@ -77,13 +80,15 @@ fun SwapQuoteAmount(
                     }
                 }
             }
-            Text(
-                textAlign = TextAlign.Center,
-                text = state.subtitle.getValue(),
-                style = ZashiTypography.textSm,
-                fontWeight = FontWeight.Medium,
-                color = ZashiColors.Text.textTertiary
-            )
+            SelectionContainer {
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = state.subtitle.getValue(),
+                    style = ZashiTypography.textSm,
+                    fontWeight = FontWeight.Medium,
+                    color = ZashiColors.Text.textTertiary
+                )
+            }
         }
     }
 }

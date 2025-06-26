@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
@@ -205,18 +206,22 @@ private fun Item(
         Column(
             horizontalAlignment = Alignment.End
         ) {
-            Text(
-                text = item.title.getValue(),
-                style = ZashiTypography.textSm,
-                fontWeight = FontWeight.Medium,
-                color = ZashiColors.Text.textPrimary
-            )
-            if (item.subtitle != null) {
+            SelectionContainer {
                 Text(
-                    text = item.subtitle.getValue(),
-                    style = ZashiTypography.textXs,
-                    color = ZashiColors.Text.textTertiary
+                    text = item.title.getValue(),
+                    style = ZashiTypography.textSm,
+                    fontWeight = FontWeight.Medium,
+                    color = ZashiColors.Text.textPrimary
                 )
+            }
+            if (item.subtitle != null) {
+                SelectionContainer {
+                    Text(
+                        text = item.subtitle.getValue(),
+                        style = ZashiTypography.textXs,
+                        color = ZashiColors.Text.textTertiary
+                    )
+                }
             }
         }
     }

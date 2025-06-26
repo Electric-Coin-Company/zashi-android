@@ -17,7 +17,10 @@ object RefundTypeSerializer : KSerializer<RefundType> {
         encoder.encodeString(value.apiValue)
     }
 
-    override fun deserialize(decoder: Decoder): RefundType = RefundType
-        .entries
-        .first { it.apiValue == decoder.decodeString() }
+    override fun deserialize(decoder: Decoder): RefundType {
+        val decoded = decoder.decodeString()
+        return RefundType
+            .entries
+            .first { it.apiValue == decoded }
+    }
 }

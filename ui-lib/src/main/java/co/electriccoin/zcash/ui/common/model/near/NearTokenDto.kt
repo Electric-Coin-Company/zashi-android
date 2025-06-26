@@ -10,7 +10,7 @@ data class NearTokenDto(
     @SerialName("assetId")
     val assetId: String,
     @SerialName("decimals")
-    val decimals: Long,
+    val decimals: Int,
     @SerialName("blockchain")
     val blockchain: String,
     @SerialName("symbol")

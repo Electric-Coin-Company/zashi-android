@@ -57,7 +57,8 @@ internal class NearPayMapper : SwapVMMapper {
             swapModeSelectorState =
                 SwapModeSelectorState(
                     swapMode = PAY,
-                    onClick = onSwapModeChange
+                    onClick = onSwapModeChange,
+                    isEnabled = !internalState.isRequestingQuote,
                 ),
             address =
                 createAddressState(
@@ -111,7 +112,8 @@ internal class NearPayMapper : SwapVMMapper {
                     ticker = internalState.swapAsset?.tokenTicker?.let { stringRes(it) } ?: stringRes("Select token"),
                     bigIcon = internalState.swapAsset?.tokenIcon,
                     smallIcon = internalState.swapAsset?.chainIcon,
-                    onClick = onSwapAssetPickerClick
+                    onClick = onSwapAssetPickerClick,
+                    isEnabled = !internalState.isRequestingQuote,
                 ),
             textFieldPrefix =
                 when (internalState.currencyType) {
@@ -121,7 +123,8 @@ internal class NearPayMapper : SwapVMMapper {
             textField =
                 NumberTextFieldState(
                     innerState = internalState.amountTextState,
-                    onValueChange = onTextFieldChange
+                    onValueChange = onTextFieldChange,
+                    isEnabled = !internalState.isRequestingQuote,
                 ),
             secondaryText =
                 when (internalState.currencyType) {
@@ -146,7 +149,8 @@ internal class NearPayMapper : SwapVMMapper {
                     }
                 },
             max = null,
-            onSwapChange = onSwapCurrencyTypeClick
+            onSwapChange = onSwapCurrencyTypeClick,
+            isSwapChangeEnabled = !internalState.isRequestingQuote,
         )
     }
 
@@ -183,7 +187,8 @@ internal class NearPayMapper : SwapVMMapper {
         return ButtonState(
             text = stringResByNumber(amount) + stringRes("%"),
             icon = R.drawable.ic_swap_slippage,
-            onClick = { onSlippageClick(internalState.getAmountFiat()) }
+            onClick = { onSlippageClick(internalState.getAmountFiat()) },
+            isEnabled = !internalState.isRequestingQuote,
         )
     }
 
@@ -196,13 +201,13 @@ internal class NearPayMapper : SwapVMMapper {
         return ButtonState(
             text = stringRes("Confirm"),
             onClick = {
-                internalState.getZatoshiAmount()?.convertZatoshiToZec()?.let {
+                internalState.getAmountToken()?.let {
                     onPrimaryClick(it, internalState.addressText)
                 }
             },
             isEnabled =
                 internalState.swapAsset != null &&
-                !textField.isError &&
+                    !textField.isError &&
                     amount != null &&
                     amount > BigDecimal(0) &&
                     internalState.addressText.isNotBlank() &&
@@ -222,7 +227,8 @@ internal class NearPayMapper : SwapVMMapper {
                     else -> null
                 },
             value = stringRes(text),
-            onValueChange = onAddressChange
+            onValueChange = onAddressChange,
+            isEnabled = !internalState.isRequestingQuote,
         )
     }
 

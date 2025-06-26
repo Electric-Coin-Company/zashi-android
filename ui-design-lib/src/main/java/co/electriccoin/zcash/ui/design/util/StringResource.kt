@@ -75,7 +75,8 @@ sealed interface StringResource {
 
     @Immutable
     data class ByNumber(
-        val number: Number
+        val number: Number,
+        val maxDecimals: Int
     ) : StringResource
 
     operator fun plus(other: StringResource): StringResource = CompositeStringResource(listOf(this, other))
@@ -160,7 +161,10 @@ fun stringResByTransactionId(
 ): StringResource = StringResource.ByTransactionId(value, abbreviated)
 
 @Stable
-fun stringResByNumber(number: Number): StringResource = StringResource.ByNumber(number)
+fun stringResByNumber(number: Number, maxDecimals: Int = 2): StringResource = StringResource.ByNumber(
+    number = number,
+    maxDecimals = maxDecimals
+)
 
 @Suppress("SpreadOperator")
 @Stable
@@ -225,7 +229,7 @@ private fun List<Any>.normalize(context: Context): List<Any> =
 
 object StringResourceDefaults {
     fun convertNumber(resource: StringResource.ByNumber): String =
-        currencyFormatter(maxDecimals = 2, minDecimals = 0).format(resource.number)
+        currencyFormatter(maxDecimals = resource.maxDecimals, minDecimals = 0).format(resource.number)
 
     fun convertZatoshi(res: StringResource.ByZatoshi): String {
         val amount = res.zatoshi.convertZatoshiToZecString()

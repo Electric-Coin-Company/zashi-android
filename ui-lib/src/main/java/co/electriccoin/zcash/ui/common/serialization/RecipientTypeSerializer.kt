@@ -18,7 +18,10 @@ object RecipientTypeSerializer : KSerializer<RecipientType> {
         encoder.encodeString(value.apiValue)
     }
 
-    override fun deserialize(decoder: Decoder): RecipientType = RecipientType
-        .entries
-        .first { it.apiValue == decoder.decodeString() }
+    override fun deserialize(decoder: Decoder): RecipientType {
+        val decoded = decoder.decodeString()
+        return RecipientType
+            .entries
+            .first { it.apiValue == decoded }
+    }
 }

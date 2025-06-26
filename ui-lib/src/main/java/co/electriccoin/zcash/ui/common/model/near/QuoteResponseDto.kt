@@ -1,10 +1,16 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package co.electriccoin.zcash.ui.common.model.near
 
 import co.electriccoin.zcash.ui.common.serialization.BigDecimalSerializer
+import co.electriccoin.zcash.ui.common.serialization.SwapTypeSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 import java.math.BigDecimal
 
+@JsonIgnoreUnknownKeys
 @Serializable
 data class QuoteResponseDto(
     @SerialName("quoteRequest")
@@ -14,13 +20,15 @@ data class QuoteResponseDto(
     val quote: QuoteDetails
 )
 
+@JsonIgnoreUnknownKeys
 @Serializable
 data class QuoteRequestDetails(
     @SerialName("dry")
     val dry: Boolean,
 
     @SerialName("swapType")
-    val swapType: String,
+    @Serializable(with = SwapTypeSerializer::class)
+    val swapType: SwapType,
 
     @SerialName("slippageTolerance")
     val slippageTolerance: Int,
@@ -52,16 +60,17 @@ data class QuoteRequestDetails(
     @SerialName("deadline")
     val deadline: String,
 
-    @SerialName("referral")
-    val referral: String,
+    // @SerialName("referral")
+    // val referral: String,
 
-    @SerialName("quoteWaitingTimeMs")
-    val quoteWaitingTimeMs: Int,
+    // @SerialName("quoteWaitingTimeMs")
+    // val quoteWaitingTimeMs: Int,
 
-    @SerialName("appFees")
-    val appFees: List<AppFeeDetails>
+    // @SerialName("appFees")
+    // val appFees: List<AppFeeDetails>
 )
 
+@JsonIgnoreUnknownKeys
 @Serializable
 data class AppFeeDetails(
     @SerialName("recipient")
@@ -71,6 +80,7 @@ data class AppFeeDetails(
     val fee: Int
 )
 
+@JsonIgnoreUnknownKeys
 @Serializable
 data class QuoteDetails(
     @SerialName("depositAddress")

@@ -71,22 +71,21 @@ class ReviewTransactionViewModel(
             Quadruple(wallet, zecSend, isReceiverExpanded, exchangeRate)
         }.flatMapLatest { (selectedWallet, proposal, isReceiverExpanded, exchangeRate) ->
             observeContactByAddress(proposal.destination.address).map { addressBookContact ->
-                when (proposal) {
-                    is RegularTransactionProposal ->
-                        createState(
-                            transactionProposal = proposal,
-                            addressBookContact = addressBookContact,
-                            selectedWallet = selectedWallet,
-                            exchangeRateState = exchangeRate
-                        )
-                    is Zip321TransactionProposal ->
-                        createZip321State(
-                            transactionProposal = proposal,
-                            addressBookContact = addressBookContact,
-                            selectedWallet = selectedWallet,
-                            isReceiverExpanded = isReceiverExpanded,
-                            exchangeRateState = exchangeRate
-                        )
+                if (proposal is Zip321TransactionProposal) {
+                    createZip321State(
+                        transactionProposal = proposal,
+                        addressBookContact = addressBookContact,
+                        selectedWallet = selectedWallet,
+                        isReceiverExpanded = isReceiverExpanded,
+                        exchangeRateState = exchangeRate
+                    )
+                } else {
+                    createState(
+                        transactionProposal = proposal,
+                        addressBookContact = addressBookContact,
+                        selectedWallet = selectedWallet,
+                        exchangeRateState = exchangeRate
+                    )
                 }
             }
         }.stateIn(
@@ -237,24 +236,13 @@ class ReviewTransactionViewModel(
         onBack = ::onBack,
     )
 
-    private fun onExpandReceiverClick() {
-        isReceiverExpanded.update { !it }
-    }
+    private fun onExpandReceiverClick() = isReceiverExpanded.update { !it }
 
-    private fun onBack() {
-        cancelProposalFlow(clearSendForm = false)
-    }
+    private fun onBack() = cancelProposalFlow(clearSendForm = false)
 
-    private fun onCancelClick() {
-        cancelProposalFlow(clearSendForm = false)
-    }
+    private fun onCancelClick() = cancelProposalFlow(clearSendForm = false)
 
-    private fun onConfirmClick() =
-        viewModelScope.launch {
-            confirmProposal()
-        }
+    private fun onConfirmClick() = viewModelScope.launch { confirmProposal() }
 
-    private fun onAddContactClick(address: String) {
-        navigationRouter.forward(AddContactArgs(address))
-    }
+    private fun onAddContactClick(address: String) = navigationRouter.forward(AddContactArgs(address))
 }

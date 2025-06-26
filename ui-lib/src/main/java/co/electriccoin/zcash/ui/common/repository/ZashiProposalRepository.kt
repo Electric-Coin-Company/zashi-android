@@ -5,6 +5,8 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
 import co.electriccoin.zcash.ui.common.datasource.RegularTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.ExactOutputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
@@ -14,7 +16,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -32,6 +33,12 @@ interface ZashiProposalRepository {
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal
+
+    @Throws(TransactionProposalNotCreatedException::class)
+    suspend fun createExactInputSwapProposal(zecSend: ZecSend): ExactInputSwapTransactionProposal
+
+    @Throws(TransactionProposalNotCreatedException::class)
+    suspend fun createExactOutputSwapProposal(zecSend: ZecSend): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createShieldProposal()
@@ -55,7 +62,6 @@ class ZashiProposalRepositoryImpl(
     override val transactionProposal = MutableStateFlow<TransactionProposal?>(null)
 
     override val submitState = MutableStateFlow<SubmitProposalState?>(null)
-
     private var submitJob: Job? = null
 
     override suspend fun createProposal(zecSend: ZecSend): RegularTransactionProposal =
@@ -71,6 +77,22 @@ class ZashiProposalRepositoryImpl(
             proposalDataSource.createZip321Proposal(
                 account = accountDataSource.getSelectedAccount(),
                 zip321Uri = zip321Uri
+            )
+        }
+
+    override suspend fun createExactInputSwapProposal(zecSend: ZecSend): ExactInputSwapTransactionProposal =
+        createProposalInternal {
+            proposalDataSource.createExactInputProposal(
+                account = accountDataSource.getSelectedAccount(),
+                send = zecSend
+            )
+        }
+
+    override suspend fun createExactOutputSwapProposal(zecSend: ZecSend): ExactOutputSwapTransactionProposal =
+        createProposalInternal {
+            proposalDataSource.createExactOutputProposal(
+                account = accountDataSource.getSelectedAccount(),
+                send = zecSend
             )
         }
 

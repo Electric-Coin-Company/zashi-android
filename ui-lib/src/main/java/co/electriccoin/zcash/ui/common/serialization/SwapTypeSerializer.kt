@@ -17,7 +17,10 @@ object SwapTypeSerializer : KSerializer<SwapType> {
         encoder.encodeString(value.apiValue)
     }
 
-    override fun deserialize(decoder: Decoder): SwapType = SwapType
-        .entries
-        .first { it.apiValue == decoder.decodeString() }
+    override fun deserialize(decoder: Decoder): SwapType {
+        val decoded = decoder.decodeString()
+        return SwapType
+            .entries
+            .first { it.apiValue == decoded }
+    }
 }

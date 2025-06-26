@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.datasource.RegularTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
+import co.electriccoin.zcash.ui.common.model.NearSwapAsset
 import co.electriccoin.zcash.ui.common.model.NearSwapQuote
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
@@ -14,24 +16,26 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapModeUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapQuoteUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetZecSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.util.combine
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class SwapQuoteVM(
+internal class SwapQuoteVM(
     getSwapQuote: GetSwapQuoteUseCase,
     observeProposal: ObserveProposalUseCase,
     getSwapMode: GetSwapModeUseCase,
     getSlippage: GetSlippageUseCase,
     getSelectedSwapAsset: GetSelectedSwapAssetUseCase,
+    getZecSwapAsset: GetZecSwapAssetUseCase,
     private val cancelSwapQuote: CancelSwapQuoteUseCase,
     private val cancelSwap: CancelSwapUseCase,
     private val swapQuoteSuccessMapper: NearSwapQuoteSuccessMapper,
@@ -43,8 +47,9 @@ class SwapQuoteVM(
         getSwapMode.observe(),
         getSwapQuote.observe().filterNotNull(),
         observeProposal.observeNullable(),
-        getSelectedSwapAsset.observe().filterNotNull()
-    ) { slippage, mode, quote, proposal, asset ->
+        getSelectedSwapAsset.observe().filterNotNull(),
+        getZecSwapAsset.observe().filterNotNull()
+    ) { slippage, mode, quote, proposal, destinationAsset, originAsset ->
         when (quote) {
             SwapQuoteData.Loading -> null
             is SwapQuoteData.Error -> SwapQuoteState.Error(
@@ -63,18 +68,21 @@ class SwapQuoteVM(
             )
 
             is SwapQuoteData.Success -> {
-                if (proposal !is RegularTransactionProposal) {
+                if (proposal !is SendTransactionProposal) {
                     null
                 } else {
                     when (quote.quote) {
                         is NearSwapQuote -> swapQuoteSuccessMapper.createState(
-                            mode = mode,
-                            quote = quote.quote,
-                            proposal = proposal,
-                            slippage = slippage,
+                            state = NearSwapQuoteSuccessInternalState(
+                                originAsset = originAsset as NearSwapAsset,
+                                quote = quote.quote,
+                                proposal = proposal,
+                                slippage = slippage,
+                                destinationAsset = destinationAsset as NearSwapAsset,
+                                mode = mode,
+                            ),
                             onBack = ::onBack,
                             onSubmitQuoteClick = ::onSubmitQuoteClick,
-                            destinationAsset = asset,
                         )
                     }
                 }

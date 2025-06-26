@@ -258,7 +258,9 @@ internal data class InternalState(
     val isRequestingQuote: Boolean,
 ) {
     fun getZatoshiAmount(): Zatoshi? {
-        fun calculateAmountForSwap() = getAmountToken()?.convertZecToZatoshi()
+        fun calculateAmountForSwap(): Zatoshi? {
+            return getAmountToken()?.convertZecToZatoshi()
+        }
 
         fun calculateAmountForPay(
             amountToken: BigDecimal?,
@@ -268,8 +270,8 @@ internal data class InternalState(
             null
         } else {
             amountToken
-                .multiply(swapAsset.usdPrice, MathContext.DECIMAL32)
-                .divide(zecSwapAsset.usdPrice, MathContext.DECIMAL32)
+                .multiply(swapAsset.usdPrice, MathContext.DECIMAL128)
+                .divide(zecSwapAsset.usdPrice, MathContext.DECIMAL128)
                 .convertZecToZatoshi()
         }
 
@@ -288,8 +290,8 @@ internal data class InternalState(
             null
         } else {
             amountToken
-                .multiply(zecSwapAsset.usdPrice, MathContext.DECIMAL32)
-                .divide(swapAsset.usdPrice, MathContext.DECIMAL32)
+                .multiply(zecSwapAsset.usdPrice, MathContext.DECIMAL128)
+                .divide(swapAsset.usdPrice, MathContext.DECIMAL128)
         }
 
         fun calculateAmountForPay(
@@ -300,8 +302,8 @@ internal data class InternalState(
             null
         } else {
             amountToken
-                .multiply(swapAsset.usdPrice, MathContext.DECIMAL32)
-                .divide(zecSwapAsset.usdPrice, MathContext.DECIMAL32)
+                .multiply(swapAsset.usdPrice, MathContext.DECIMAL128)
+                .divide(zecSwapAsset.usdPrice, MathContext.DECIMAL128)
         }
 
         return when (swapMode) {
@@ -345,7 +347,7 @@ internal data class InternalState(
                     if (fiatAmount == null || swapAsset == null) {
                         null
                     } else {
-                        fiatAmount.divide(swapAsset.usdPrice, MathContext.DECIMAL32)
+                        fiatAmount.divide(swapAsset.usdPrice, MathContext.DECIMAL128)
                     }
             }
 
@@ -356,7 +358,7 @@ internal data class InternalState(
                     if (fiatAmount == null || zecSwapAsset == null) {
                         null
                     } else {
-                        fiatAmount.divide(zecSwapAsset.usdPrice, MathContext.DECIMAL32)
+                        fiatAmount.divide(zecSwapAsset.usdPrice, MathContext.DECIMAL128)
                     }
             }
 
@@ -372,6 +374,6 @@ internal data class InternalState(
         val assetUsdPrice = swapAsset?.usdPrice
         if (zecUsdPrice == null || assetUsdPrice == null) return null
 
-        return zecUsdPrice.divide(assetUsdPrice, MathContext.DECIMAL32)
+        return zecUsdPrice.divide(assetUsdPrice, MathContext.DECIMAL128)
     }
 }

@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.ExactOutputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ShieldTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
@@ -118,10 +120,16 @@ class TransactionProgressViewModel(
         },
         onCloseClick = ::onViewTransactions,
         text =
-            if (proposal is ShieldTransactionProposal) {
-                stringRes(R.string.send_confirmation_success_subtitle_transparent)
-            } else {
-                stringRes(R.string.send_confirmation_success_subtitle, getAddressAbbreviated())
+            when (proposal) {
+                is ShieldTransactionProposal -> stringRes(R.string.send_confirmation_success_subtitle_transparent)
+
+                is ExactInputSwapTransactionProposal ->
+                    stringRes("You successfully initiated a swap. Follow its status on the transaction screen.")
+
+                is ExactOutputSwapTransactionProposal ->
+                    stringRes("You successfully initiated a cross-chain payment. Follow its status on the transaction screen.")
+
+                else -> stringRes(R.string.send_confirmation_success_subtitle, getAddressAbbreviated())
             },
         title =
             if (proposal is ShieldTransactionProposal) {
@@ -170,10 +178,13 @@ class TransactionProgressViewModel(
                 // do nothing
             },
             text =
-                if (proposal is ShieldTransactionProposal) {
-                    stringRes(R.string.send_confirmation_sending_subtitle_transparent)
-                } else {
-                    stringRes(R.string.send_confirmation_sending_subtitle, getAddressAbbreviated())
+                when (proposal) {
+                    is ShieldTransactionProposal -> stringRes(R.string.send_confirmation_sending_subtitle_transparent)
+                    is ExactOutputSwapTransactionProposal,
+                    is ExactInputSwapTransactionProposal ->
+                        stringRes("Your coins are being sent to the deposit address...")
+
+                    else -> stringRes(R.string.send_confirmation_sending_subtitle, getAddressAbbreviated())
                 },
             title =
                 if (proposal is ShieldTransactionProposal) {

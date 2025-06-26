@@ -109,8 +109,8 @@ class SwapSlippageVM(
             percentString
         } else {
             val slippageFiat = fiatAmount.multiply(
-                percent.divide(BigDecimal(100), MathContext.DECIMAL32),
-                MathContext.DECIMAL32
+                percent.divide(BigDecimal(100), MathContext.DECIMAL128),
+                MathContext.DECIMAL128
             )
             percentString +
                 stringRes(" ") +

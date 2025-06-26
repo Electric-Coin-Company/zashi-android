@@ -1,12 +1,15 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.WalletAddress
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.model.NearSwapQuote
+import co.electriccoin.zcash.ui.common.model.near.SwapType
+import co.electriccoin.zcash.ui.common.model.near.SwapType.EXACT_INPUT
+import co.electriccoin.zcash.ui.common.model.near.SwapType.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
@@ -28,25 +31,38 @@ class RequestSwapQuoteUseCase(
         val result = swapRepository.quote.filter { it != null && it !is SwapQuoteData.Loading }.first()
 
         if (result is SwapQuoteData.Success) {
-            val destinationAmount: BigDecimal
+            val destinationAmount: Zatoshi
             val destinationAddress: WalletAddress
+            val swapType: SwapType
 
             try {
                 when (result.quote) {
                     is NearSwapQuote -> {
-                        destinationAmount = result.quote.response.quote.amountIn
+                        destinationAmount = Zatoshi(result.quote.response.quote.amountIn.toLong())
                         destinationAddress = getWalletAddress(result.quote.response.quote.depositAddress)
+                        swapType = result.quote.response.quoteRequest.swapType
                     }
                 }
 
-                zashiProposalRepository.createProposal(
-                    ZecSend(
-                        destination = destinationAddress,
-                        amount = destinationAmount.convertZecToZatoshi(),
-                        memo = Memo(""),
-                        proposal = null
+                when (swapType) {
+                    EXACT_INPUT -> zashiProposalRepository.createExactInputSwapProposal(
+                        ZecSend(
+                            destination = destinationAddress,
+                            amount = destinationAmount,
+                            memo = Memo(""),
+                            proposal = null
+                        )
                     )
-                )
+
+                    EXACT_OUTPUT -> zashiProposalRepository.createExactOutputSwapProposal(
+                        ZecSend(
+                            destination = destinationAddress,
+                            amount = destinationAmount,
+                            memo = Memo(""),
+                            proposal = null
+                        )
+                    )
+                }
             } catch (e: Exception) {
                 swapRepository.clearQuote()
                 zashiProposalRepository.clear()
