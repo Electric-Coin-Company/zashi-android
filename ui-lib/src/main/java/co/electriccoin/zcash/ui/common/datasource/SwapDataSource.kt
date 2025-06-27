@@ -22,6 +22,7 @@ import kotlinx.datetime.Clock
 import kotlinx.io.IOException
 import java.math.BigDecimal
 import java.math.MathContext
+import java.math.RoundingMode
 import kotlin.time.Duration.Companion.minutes
 
 interface SwapDataSource {
@@ -72,8 +73,14 @@ class SwapDataSourceImpl(
         destinationAsset: SwapAsset,
         slippage: BigDecimal,
     ): QuoteResponseDto {
-        require(originAsset is NearSwapAsset)
-        require(destinationAsset is NearSwapAsset)
+        val decimals = when (swapMode) {
+            SWAP -> originAsset.decimals
+            PAY -> destinationAsset.decimals
+        }
+
+        val shifted = amount.movePointRight(decimals)
+        val integer = shifted.toBigInteger().toBigDecimal()
+        val normalizedAmount = shifted.round(MathContext(integer.precision(), RoundingMode.HALF_EVEN))
 
         val request = QuoteRequest(
             dry = false,
@@ -85,10 +92,7 @@ class SwapDataSourceImpl(
             originAsset = originAsset.assetId,
             depositType = RefundType.ORIGIN_CHAIN,
             destinationAsset = destinationAsset.assetId,
-            amount = when (swapMode) {
-                SWAP -> amount.movePointRight(originAsset.token.decimals)
-                PAY -> amount.movePointRight(destinationAsset.token.decimals)
-            },
+            amount = normalizedAmount,
             refundTo = originAddress,
             refundType = RefundType.ORIGIN_CHAIN,
             recipient = destinationAddress,

@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.swap
 
-import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
+import cash.z.ecc.android.sdk.ext.Conversions
+import cash.z.ecc.android.sdk.ext.Conversions.ZEC_FORMATTER
 import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
@@ -24,6 +25,7 @@ import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapModeSelectorState
 import java.math.BigDecimal
 import java.math.MathContext
+import kotlin.math.absoluteValue
 
 internal class ExactInputVMMapper : SwapVMMapper {
     override fun createState(
@@ -87,33 +89,17 @@ internal class ExactInputVMMapper : SwapVMMapper {
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
     ): SwapAmountTextFieldState {
         val amountFiat = state.getOriginFiatAmount()
-        val totalSpendableFiat = state.totalSpendableFiatBalance
         val zatoshiAmount = state.getZatoshi()
         return SwapAmountTextFieldState(
             title = stringRes("From"),
-            error =
-                when (state.currencyType) {
-                    CurrencyType.TOKEN -> {
-                        if (state.totalSpendableBalance != null &&
-                            zatoshiAmount != null &&
-                            state.totalSpendableBalance < zatoshiAmount
-                        ) {
-                            stringRes("Insufficient funds")
-                        } else {
-                            null
-                        }
-                    }
-
-                    CurrencyType.FIAT -> {
-                        if (totalSpendableFiat != null &&
-                            (amountFiat ?: BigDecimal(0)) > totalSpendableFiat
-                        ) {
-                            stringRes("Insufficient funds")
-                        } else {
-                            null
-                        }
-                    }
-                },
+            error = if (state.totalSpendableBalance != null &&
+                zatoshiAmount != null &&
+                state.totalSpendableBalance.value < zatoshiAmount
+            ) {
+                stringRes("Insufficient funds")
+            } else {
+                null
+            },
             token =
                 AssetCardState(
                     ticker = stringRes(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
@@ -141,7 +127,10 @@ internal class ExactInputVMMapper : SwapVMMapper {
                             maxDecimals = 2
                         )
 
-                    CurrencyType.FIAT -> stringRes(zatoshiAmount ?: Zatoshi(0))
+                    CurrencyType.FIAT -> stringResByDynamicCurrencyNumber(
+                        (zatoshiAmount ?: 0).convertZatoshiToZecBigDecimal(),
+                        "ZEC"
+                    )
                 },
             max =
                 state.totalSpendableBalance?.let {
@@ -208,7 +197,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
             },
             isEnabled =
                 state.swapAsset != null &&
-                !textField.isError &&
+                    !textField.isError &&
                     amount != null &&
                     amount > BigDecimal(0) &&
                     state.addressText.isNotBlank() &&
@@ -254,7 +243,6 @@ internal data class ExactInputInternalState(
     override val swapAsset: SwapAsset?,
     override val currencyType: CurrencyType,
     override val totalSpendableBalance: Zatoshi?,
-    override val totalSpendableFiatBalance: BigDecimal?,
     override val amountTextState: NumberTextFieldInnerState,
     override val addressText: String,
     override val slippage: BigDecimal,
@@ -262,13 +250,12 @@ internal data class ExactInputInternalState(
     override val zecSwapAsset: SwapAsset?,
     override val swapMode: SwapMode,
     override val isRequestingQuote: Boolean
-): InternalState {
+) : InternalState {
 
-    constructor(original: InternalState): this(
+    constructor(original: InternalState) : this(
         swapAsset = original.swapAsset,
         currencyType = original.currencyType,
         totalSpendableBalance = original.totalSpendableBalance,
-        totalSpendableFiatBalance = original.totalSpendableFiatBalance,
         amountTextState = original.amountTextState,
         addressText = original.addressText,
         slippage = original.slippage,
@@ -320,6 +307,23 @@ internal data class ExactInputInternalState(
         return zecUsdPrice.divide(assetUsdPrice, MathContext.DECIMAL128)
     }
 
-    fun getZatoshi(): Zatoshi? = getOriginTokenAmount()?.convertZecToZatoshi()
+    fun getZatoshi() = getOriginTokenAmount()?.convertZecToZatoshiLong()
 }
+
+internal fun BigDecimal.convertZecToZatoshiLong(): Long {
+    if (this < BigDecimal.ZERO) {
+        throw IllegalArgumentException(
+            "Invalid ZEC value: $this. ZEC is represented by notes and" +
+                " cannot be negative"
+        )
+    }
+    return this.multiply(Conversions.ONE_ZEC_IN_ZATOSHI, MathContext.DECIMAL128).toLong().absoluteValue
+}
+
+internal fun Long.convertZatoshiToZecBigDecimal(scale: Int = ZEC_FORMATTER.maximumFractionDigits): BigDecimal =
+    BigDecimal(this, MathContext.DECIMAL128)
+        .divide(
+            Conversions.ONE_ZEC_IN_ZATOSHI,
+            MathContext.DECIMAL128
+        ).setScale(scale, ZEC_FORMATTER.roundingMode)
 

@@ -30,12 +30,14 @@ internal sealed interface InternalState {
     val swapProviderFee: Zatoshi
 
     val swapProviderFeeUsd: BigDecimal
+
+    val amountInZatoshi: Zatoshi
     val amountInZec: BigDecimal
     val amountInDecimals: Int
-
     val amountInUsd: BigDecimal
+
     val amountOutFormatted: BigDecimal
-    val amountOutMaxDecimals: Int
+    val amountOutDecimals: Int
 
     val amountOutUsd: BigDecimal
 

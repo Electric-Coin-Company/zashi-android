@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.common.repository.SwapMode
 import co.electriccoin.zcash.ui.common.repository.SwapMode.PAY
 import co.electriccoin.zcash.ui.common.repository.SwapMode.SWAP
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
@@ -99,7 +100,7 @@ internal class NearSwapQuoteVMMapper : SwapQuoteVMMapper {
                 SwapTokenAmountState(
                     bigIcon = imageRes(R.drawable.ic_zec_round_full),
                     smallIcon = imageRes(R.drawable.ic_receive_shield),
-                    title = stringResByNumber(amountInZec, amountInDecimals),
+                    title = stringRes(amountInZatoshi, CurrencySymbolLocation.HIDDEN),
                     subtitle = stringResByDynamicCurrencyNumber(amountInUsd, FiatCurrency.USD.symbol)
                 )
             }
@@ -107,7 +108,7 @@ internal class NearSwapQuoteVMMapper : SwapQuoteVMMapper {
             PAY -> SwapTokenAmountState(
                 bigIcon = destinationAsset.tokenIcon,
                 smallIcon = destinationAsset.chainIcon,
-                title = stringResByNumber(amountOutFormatted, amountOutMaxDecimals),
+                title = stringResByNumber(amountOutFormatted, amountOutDecimals),
                 subtitle = stringResByDynamicCurrencyNumber(amountOutUsd, FiatCurrency.USD.symbol)
             )
         }
@@ -118,14 +119,14 @@ internal class NearSwapQuoteVMMapper : SwapQuoteVMMapper {
             SWAP -> SwapTokenAmountState(
                 bigIcon = destinationAsset.tokenIcon,
                 smallIcon = destinationAsset.chainIcon,
-                title = stringResByNumber(amountOutFormatted, amountOutMaxDecimals),
+                title = stringResByNumber(amountOutFormatted, amountOutDecimals),
                 subtitle = stringResByDynamicCurrencyNumber(amountOutUsd, FiatCurrency.USD.symbol)
             )
 
             PAY -> SwapTokenAmountState(
                 bigIcon = imageRes(R.drawable.ic_zec_round_full),
                 smallIcon = imageRes(R.drawable.ic_receive_shield),
-                title = stringResByNumber(amountInZec),
+                title = stringRes(amountInZatoshi, CurrencySymbolLocation.HIDDEN),
                 subtitle = stringResByDynamicCurrencyNumber(amountInUsd, FiatCurrency.USD.symbol)
             )
         }
@@ -151,12 +152,13 @@ internal data class NearInternalState(
         .convertZecToZatoshi()
     override val swapProviderFeeUsd: BigDecimal = data.amountInUsd - data.amountOutUsd
 
+    override val amountInZatoshi: Zatoshi = Zatoshi(data.amountIn.toLong())
     override val amountInZec: BigDecimal = data.amountInFormatted
     override val amountInDecimals: Int = originAsset.token.decimals
     override val amountInUsd: BigDecimal = data.amountInUsd
 
     override val amountOutFormatted: BigDecimal = data.amountOutFormatted
-    override val amountOutMaxDecimals: Int = destinationAsset.token.decimals
+    override val amountOutDecimals: Int = destinationAsset.token.decimals
     override val amountOutUsd: BigDecimal = data.amountOutUsd
 
     override val recipient: String = quote.response.quoteRequest.recipient

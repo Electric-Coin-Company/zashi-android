@@ -99,7 +99,6 @@ internal class SwapVM(
     private val innerState =
         combine(
             getTotalSpendableBalance.observe(),
-            getTotalSpendableFiatBalance.observe(),
             addressText,
             amountText,
             getSelectedSwapAsset.observe(),
@@ -110,7 +109,6 @@ internal class SwapVM(
             getSwapMode.observe(),
             isRequestingQuote
         ) { spendable,
-            spendableFiat,
             address,
             amount,
             asset,
@@ -125,7 +123,6 @@ internal class SwapVM(
                 swapAsset = asset,
                 currencyType = currencyType,
                 totalSpendableBalance = spendable,
-                totalSpendableFiatBalance = spendableFiat,
                 amountTextState = amount,
                 addressText = address,
                 slippage = slippage,

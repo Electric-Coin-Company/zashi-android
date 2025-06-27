@@ -9,6 +9,7 @@ import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
 import co.electriccoin.zcash.ui.common.repository.BiometricsCancelledException
 import co.electriccoin.zcash.ui.common.repository.BiometricsFailureException
+import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
@@ -19,6 +20,7 @@ class ConfirmProposalUseCase(
     private val accountDataSource: AccountDataSource,
     private val zashiProposalRepository: ZashiProposalRepository,
     private val biometricRepository: BiometricRepository,
+    private val swapRepository: SwapRepository
 ) {
     suspend operator fun invoke() {
         try {
@@ -37,6 +39,7 @@ class ConfirmProposalUseCase(
                 is ZashiAccount -> {
                     zashiProposalRepository.submitTransaction()
                     navigationRouter.forward(TransactionProgress)
+                    swapRepository.clear()
                 }
             }
         } catch (_: BiometricsFailureException) {

@@ -25,7 +25,6 @@ internal interface InternalState{
     val swapAsset: SwapAsset?
     val currencyType: CurrencyType
     val totalSpendableBalance: Zatoshi?
-    val totalSpendableFiatBalance: BigDecimal?
     val amountTextState: NumberTextFieldInnerState
     val addressText: String
     val slippage: BigDecimal
@@ -39,7 +38,6 @@ internal data class InternalStateImpl(
     override val swapAsset: SwapAsset?,
     override val currencyType: CurrencyType,
     override val totalSpendableBalance: Zatoshi?,
-    override val totalSpendableFiatBalance: BigDecimal?,
     override val amountTextState: NumberTextFieldInnerState,
     override val addressText: String,
     override val slippage: BigDecimal,
