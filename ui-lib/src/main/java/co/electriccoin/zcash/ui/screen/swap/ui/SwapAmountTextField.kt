@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap
+package co.electriccoin.zcash.ui.screen.swap.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

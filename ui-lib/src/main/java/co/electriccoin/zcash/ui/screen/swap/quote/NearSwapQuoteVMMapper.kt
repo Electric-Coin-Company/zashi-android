@@ -5,12 +5,9 @@ import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionProposal
-import co.electriccoin.zcash.ui.common.datasource.RegularTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.model.NearSwapAsset
 import co.electriccoin.zcash.ui.common.model.NearSwapQuote
-import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.repository.SwapMode
 import co.electriccoin.zcash.ui.common.repository.SwapMode.PAY
 import co.electriccoin.zcash.ui.common.repository.SwapMode.SWAP
@@ -23,9 +20,9 @@ import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import java.math.BigDecimal
 import java.math.MathContext
 
-internal class NearSwapQuoteSuccessMapper {
-    fun createState(
-        state: SwapQuoteSuccessInternalState,
+internal class NearSwapQuoteVMMapper : SwapQuoteVMMapper {
+    override fun createState(
+        state: InternalState,
         onBack: () -> Unit,
         onSubmitQuoteClick: () -> Unit
     ): SwapQuoteState.Success = with(state) {
@@ -50,7 +47,7 @@ internal class NearSwapQuoteSuccessMapper {
         )
     }
 
-    private fun createItems(state: SwapQuoteSuccessInternalState): List<SwapQuoteInfoItem> = with(state) {
+    private fun createItems(state: InternalState): List<SwapQuoteInfoItem> = with(state) {
         return listOf(
             SwapQuoteInfoItem(
                 description = when (mode) {
@@ -85,7 +82,7 @@ internal class NearSwapQuoteSuccessMapper {
         )
     }
 
-    private fun createTotalAmountState(state: SwapQuoteSuccessInternalState): SwapQuoteInfoItem = with(state) {
+    private fun createTotalAmountState(state: InternalState): SwapQuoteInfoItem = with(state) {
         return SwapQuoteInfoItem(
             description = stringRes("Total Amount"),
             title = stringRes(totalZec.convertZecToZatoshi()),
@@ -93,7 +90,7 @@ internal class NearSwapQuoteSuccessMapper {
         )
     }
 
-    private fun createFromState(state: SwapQuoteSuccessInternalState): SwapTokenAmountState = with(state) {
+    private fun createFromState(state: InternalState): SwapTokenAmountState = with(state) {
         require(originAsset is NearSwapAsset)
         require(destinationAsset is NearSwapAsset)
 
@@ -116,7 +113,7 @@ internal class NearSwapQuoteSuccessMapper {
         }
     }
 
-    private fun createToState(state: SwapQuoteSuccessInternalState): SwapTokenAmountState = with(state) {
+    private fun createToState(state: InternalState): SwapTokenAmountState = with(state) {
         return when (mode) {
             SWAP -> SwapTokenAmountState(
                 bigIcon = destinationAsset.tokenIcon,
@@ -135,44 +132,14 @@ internal class NearSwapQuoteSuccessMapper {
     }
 }
 
-internal sealed interface SwapQuoteSuccessInternalState {
-    val mode: SwapMode
-    val originAsset: SwapAsset
-    val destinationAsset: SwapAsset
-    val slippage: BigDecimal
-    val proposal: SendTransactionProposal
-
-
-    val zecExchangeRate: BigDecimal
-    val zecFee: BigDecimal
-    val zecFeeUsd: BigDecimal
-
-    val recipient: String
-
-    val swapProviderFee: Zatoshi
-
-    val swapProviderFeeUsd: BigDecimal
-    val amountInZec: BigDecimal
-    val amountInDecimals: Int
-
-    val amountInUsd: BigDecimal
-    val amountOutFormatted: BigDecimal
-    val amountOutMaxDecimals: Int
-
-    val amountOutUsd: BigDecimal
-
-    val totalZec: BigDecimal
-    val totalUsd: BigDecimal
-}
-
-internal data class NearSwapQuoteSuccessInternalState(
+internal data class NearInternalState(
     override val mode: SwapMode,
     override val originAsset: NearSwapAsset,
     override val destinationAsset: NearSwapAsset,
-    val quote: NearSwapQuote,
     override val slippage: BigDecimal,
     override val proposal: SendTransactionProposal,
-): SwapQuoteSuccessInternalState {
+    val quote: NearSwapQuote,
+) : InternalState {
     private val data = quote.response.quote
 
     override val zecExchangeRate: BigDecimal = data.amountInUsd.divide(data.amountInFormatted, MathContext.DECIMAL128)

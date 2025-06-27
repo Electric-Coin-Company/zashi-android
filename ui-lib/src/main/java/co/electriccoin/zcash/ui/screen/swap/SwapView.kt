@@ -59,6 +59,12 @@ import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.screen.send.view.SendAddressBookHint
+import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountText
+import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextField
+import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
+import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
+import co.electriccoin.zcash.ui.screen.swap.ui.SwapModeSelector
+import co.electriccoin.zcash.ui.screen.swap.ui.SwapModeSelectorState
 
 @Composable
 internal fun SwapView(

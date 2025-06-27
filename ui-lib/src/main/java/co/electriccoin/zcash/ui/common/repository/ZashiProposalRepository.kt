@@ -7,6 +7,8 @@ import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
 import co.electriccoin.zcash.ui.common.datasource.RegularTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ExactOutputSwapTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.SwapDataSource
+import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
@@ -55,7 +57,8 @@ interface ZashiProposalRepository {
 class ZashiProposalRepositoryImpl(
     private val accountDataSource: AccountDataSource,
     private val proposalDataSource: ProposalDataSource,
-    private val zashiSpendingKeyDataSource: ZashiSpendingKeyDataSource
+    private val zashiSpendingKeyDataSource: ZashiSpendingKeyDataSource,
+    private val swapDataSource: SwapDataSource,
 ) : ZashiProposalRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -113,7 +116,8 @@ class ZashiProposalRepositoryImpl(
         submitJob?.cancel()
         submitJob =
             scope.launch {
-                val proposal = transactionProposal.value?.proposal
+                val transactionProposal = transactionProposal.value
+                val proposal = transactionProposal?.proposal
 
                 if (proposal == null) {
                     submitState.update { createErrorState("proposal is null") }
@@ -138,6 +142,14 @@ class ZashiProposalRepositoryImpl(
                         usk = spendingKey
                     )
                 submitState.update { SubmitProposalState.Result(result) }
+
+                if (result is SubmitResult.Success && transactionProposal is SwapTransactionProposal) {
+                    val txId = result.txIds.firstOrNull()
+
+                    if (!txId.isNullOrEmpty()) {
+                        submitDepositTransaction(txId, transactionProposal)
+                    }
+                }
             }
     }
 
@@ -162,5 +174,16 @@ class ZashiProposalRepositoryImpl(
             }
         transactionProposal.update { proposal }
         return proposal
+    }
+
+    private suspend fun submitDepositTransaction(txId: String, transactionProposal: SwapTransactionProposal) {
+        try {
+            swapDataSource.submitDepositTransaction(
+                txHash = txId,
+                depositAddress = transactionProposal.destination.address
+            )
+        } catch (e: Exception) {
+            Twig.error(e) { "Unable to submit deposit transaction" }
+        }
     }
 }

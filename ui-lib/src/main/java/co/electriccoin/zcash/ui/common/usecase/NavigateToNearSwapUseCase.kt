@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
-import co.electriccoin.zcash.ui.screen.swap.SwapAmount
+import co.electriccoin.zcash.ui.screen.swap.SwapArgs
 
 class NavigateToNearSwapUseCase(
     private val swapRepository: SwapRepository,
@@ -10,6 +10,6 @@ class NavigateToNearSwapUseCase(
 ) {
     operator fun invoke() {
         swapRepository.requestRefreshAssets()
-        navigationRouter.forward(SwapAmount)
+        navigationRouter.forward(SwapArgs)
     }
 }

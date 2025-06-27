@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common.datasource
 
-import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import co.electriccoin.zcash.ui.common.model.NearSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.near.QuoteRequest
@@ -17,18 +16,15 @@ import co.electriccoin.zcash.ui.common.provider.TokenIconProvider
 import co.electriccoin.zcash.ui.common.provider.TokenNameProvider
 import co.electriccoin.zcash.ui.common.repository.SwapMode
 import co.electriccoin.zcash.ui.common.repository.SwapMode.*
-import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.io.IOException
-import kotlinx.serialization.SerialName
 import java.math.BigDecimal
 import java.math.MathContext
 import kotlin.time.Duration.Companion.minutes
 
-interface NearDataSource {
+interface SwapDataSource {
     @Throws(IOException::class)
     suspend fun getSupportedTokens(): List<NearSwapAsset>
 
@@ -43,17 +39,17 @@ interface NearDataSource {
         slippage: BigDecimal,
     ): QuoteResponseDto
 
-    // @Throws(IOException::class)
-    // suspend fun submitDepositTransaction(txHash: String, depositAddress: String): SwapStatusResponseDto
+    @Throws(IOException::class)
+    suspend fun submitDepositTransaction(txHash: String, depositAddress: String): SwapStatusResponseDto
 }
 
-class NearDataSourceImpl(
+class SwapDataSourceImpl(
     private val chainIconProvider: ChainIconProvider,
     private val chainNameProvider: ChainNameProvider,
     private val tokenIconProvider: TokenIconProvider,
     private val tokenNameProvider: TokenNameProvider,
     private val nearApiProvider: NearApiProvider,
-) : NearDataSource {
+) : SwapDataSource {
     override suspend fun getSupportedTokens(): List<NearSwapAsset> =
         withContext(Dispatchers.Default) {
             nearApiProvider.getSupportedTokens().map {
@@ -102,6 +98,15 @@ class NearDataSourceImpl(
         )
 
         return nearApiProvider.requestQuote(request)
+    }
+
+    override suspend fun submitDepositTransaction(txHash: String, depositAddress: String): SwapStatusResponseDto {
+        return nearApiProvider.submitDepositTransaction(
+            SubmitDepositTransactionRequest(
+                txHash = txHash,
+                depositAddress = depositAddress
+            )
+        )
     }
 }
 

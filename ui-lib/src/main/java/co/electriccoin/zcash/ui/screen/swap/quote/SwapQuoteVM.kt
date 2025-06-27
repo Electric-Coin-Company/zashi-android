@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionProposal
-import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.model.NearSwapAsset
 import co.electriccoin.zcash.ui.common.model.NearSwapQuote
+import co.electriccoin.zcash.ui.common.model.SwapAsset
+import co.electriccoin.zcash.ui.common.repository.SwapMode
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
@@ -28,6 +30,7 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 internal class SwapQuoteVM(
     getSwapQuote: GetSwapQuoteUseCase,
@@ -38,7 +41,7 @@ internal class SwapQuoteVM(
     getZecSwapAsset: GetZecSwapAssetUseCase,
     private val cancelSwapQuote: CancelSwapQuoteUseCase,
     private val cancelSwap: CancelSwapUseCase,
-    private val swapQuoteSuccessMapper: NearSwapQuoteSuccessMapper,
+    private val swapQuoteSuccessMapper: NearSwapQuoteVMMapper,
     private val confirmProposal: ConfirmProposalUseCase,
 ) : ViewModel() {
 
@@ -52,46 +55,67 @@ internal class SwapQuoteVM(
     ) { slippage, mode, quote, proposal, destinationAsset, originAsset ->
         when (quote) {
             SwapQuoteData.Loading -> null
-            is SwapQuoteData.Error -> SwapQuoteState.Error(
-                icon = imageRes(R.drawable.ic_swap_quote_error),
-                title = stringRes("Quote Unavailable"),
-                subtitle = stringRes("We tried but couldn’t get a quote for a payment with your parameters. You can try to adjust the payment details or try again later."),
-                negativeButton = ButtonState(
-                    text = stringRes("Cancel payment"),
-                    onClick = ::onCancelPaymentClick
-                ),
-                positiveButton = ButtonState(
-                    text = stringRes("Edit payment"),
-                    onClick = ::onEditPaymentClick
-                ),
-                onBack = ::onBackDuringError
+            is SwapQuoteData.Error -> createErrorState()
+            is SwapQuoteData.Success -> createState(
+                proposal = proposal,
+                quote = quote,
+                originAsset = originAsset,
+                slippage = slippage,
+                destinationAsset = destinationAsset,
+                mode = mode
             )
-
-            is SwapQuoteData.Success -> {
-                if (proposal !is SendTransactionProposal) {
-                    null
-                } else {
-                    when (quote.quote) {
-                        is NearSwapQuote -> swapQuoteSuccessMapper.createState(
-                            state = NearSwapQuoteSuccessInternalState(
-                                originAsset = originAsset as NearSwapAsset,
-                                quote = quote.quote,
-                                proposal = proposal,
-                                slippage = slippage,
-                                destinationAsset = destinationAsset as NearSwapAsset,
-                                mode = mode,
-                            ),
-                            onBack = ::onBack,
-                            onSubmitQuoteClick = ::onSubmitQuoteClick,
-                        )
-                    }
-                }
-            }
         }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
         initialValue = null
+    )
+
+    private fun createState(
+        proposal: TransactionProposal?,
+        quote: SwapQuoteData.Success,
+        originAsset: SwapAsset,
+        slippage: BigDecimal,
+        destinationAsset: SwapAsset,
+        mode: SwapMode
+    ): SwapQuoteState.Success? {
+        return when {
+            quote.quote is NearSwapQuote &&
+                proposal is SwapTransactionProposal &&
+                originAsset is NearSwapAsset &&
+                destinationAsset is NearSwapAsset -> {
+                val internalState = NearInternalState(
+                    originAsset = originAsset,
+                    quote = quote.quote,
+                    proposal = proposal,
+                    slippage = slippage,
+                    destinationAsset = destinationAsset,
+                    mode = mode,
+                )
+                swapQuoteSuccessMapper.createState(
+                    state = internalState,
+                    onBack = ::onBack,
+                    onSubmitQuoteClick = ::onSubmitQuoteClick,
+                )
+            }
+
+            else -> null
+        }
+    }
+
+    private fun createErrorState() = SwapQuoteState.Error(
+        icon = imageRes(R.drawable.ic_swap_quote_error),
+        title = stringRes("Quote Unavailable"),
+        subtitle = stringRes("We tried but couldn’t get a quote for a payment with your parameters. You can try to adjust the payment details or try again later."),
+        negativeButton = ButtonState(
+            text = stringRes("Cancel payment"),
+            onClick = ::onCancelPaymentClick
+        ),
+        positiveButton = ButtonState(
+            text = stringRes("Edit payment"),
+            onClick = ::onEditPaymentClick
+        ),
+        onBack = ::onBackDuringError
     )
 
     private fun onEditPaymentClick() = cancelSwapQuote()

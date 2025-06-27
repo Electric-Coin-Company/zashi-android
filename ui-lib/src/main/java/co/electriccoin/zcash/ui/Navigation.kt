@@ -118,13 +118,13 @@ import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
-import co.electriccoin.zcash.ui.screen.swap.SwapAmount
+import co.electriccoin.zcash.ui.screen.swap.SwapArgs
 import co.electriccoin.zcash.ui.screen.swap.SwapScreen
 import co.electriccoin.zcash.ui.screen.swap.near.NearInfoArgs
 import co.electriccoin.zcash.ui.screen.swap.near.NearInfoScreen
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteArgs
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteScreen
-import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPicker
+import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerScreen
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageScreen
@@ -525,10 +525,10 @@ internal fun MainActivity.Navigation() {
         }
         composable<CrashReportOptIn> { AndroidCrashReportOptIn() }
         composable<ThirdPartyScan> { AndroidThirdPartyScan() }
-        dialog<SwapAssetPicker>(
+        dialog<SwapAssetPickerArgs>(
             dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
         ) { SwapAssetPickerScreen() }
-        composable<SwapAmount> { SwapScreen() }
+        composable<SwapArgs> { SwapScreen() }
         dialog<SwapSlippageArgs>(
             dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
         ) { SwapSlippageScreen(it.toRoute()) }

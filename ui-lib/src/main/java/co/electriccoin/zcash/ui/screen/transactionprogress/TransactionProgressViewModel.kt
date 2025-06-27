@@ -8,6 +8,7 @@ import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionPropo
 import co.electriccoin.zcash.ui.common.datasource.ExactOutputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ShieldTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.repository.SubmitProposalState
@@ -180,8 +181,7 @@ class TransactionProgressViewModel(
             text =
                 when (proposal) {
                     is ShieldTransactionProposal -> stringRes(R.string.send_confirmation_sending_subtitle_transparent)
-                    is ExactOutputSwapTransactionProposal,
-                    is ExactInputSwapTransactionProposal ->
+                    is SwapTransactionProposal ->
                         stringRes("Your coins are being sent to the deposit address...")
 
                     else -> stringRes(R.string.send_confirmation_sending_subtitle, getAddressAbbreviated())

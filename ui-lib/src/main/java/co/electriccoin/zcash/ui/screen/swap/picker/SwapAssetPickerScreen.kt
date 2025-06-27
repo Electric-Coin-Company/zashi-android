@@ -14,4 +14,4 @@ fun SwapAssetPickerScreen() {
 }
 
 @Serializable
-object SwapAssetPicker
+object SwapAssetPickerArgs

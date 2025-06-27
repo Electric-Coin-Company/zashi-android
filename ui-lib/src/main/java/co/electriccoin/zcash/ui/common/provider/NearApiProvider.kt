@@ -59,6 +59,7 @@ class KtorNearApiProvider : NearApiProvider {
     override suspend fun submitDepositTransaction(request: SubmitDepositTransactionRequest): SwapStatusResponseDto =
         execute {
             post("https://1click.chaindefuser.com/v0/deposit/submit") {
+                contentType(ContentType.Application.Json)
                 setBody(request)
             }.body()
         }
@@ -66,6 +67,7 @@ class KtorNearApiProvider : NearApiProvider {
     override suspend fun checkSwapStatus(depositAddress: String): SwapStatusResponseDto =
         execute {
             get("https://1click.chaindefuser.com/v0/status") {
+                contentType(ContentType.Application.Json)
                 parameter("depositAddress", depositAddress)
             }.body()
         }

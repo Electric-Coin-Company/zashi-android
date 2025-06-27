@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
-import co.electriccoin.zcash.ui.common.datasource.NearDataSource
+import co.electriccoin.zcash.ui.common.datasource.SwapDataSource
 import co.electriccoin.zcash.ui.common.model.NearSwapAsset
 import co.electriccoin.zcash.ui.common.model.NearSwapQuote
 import co.electriccoin.zcash.ui.common.model.SwapAsset
@@ -67,7 +67,7 @@ data class SwapAssetsData(
 }
 
 class NearSwapRepository(
-    private val nearDataSource: NearDataSource,
+    private val swapDataSource: SwapDataSource,
     private val accountDataSource: AccountDataSource,
     // private val synchronizerProvider: SynchronizerProvider,
 ) : SwapRepository {
@@ -121,7 +121,7 @@ class NearSwapRepository(
         scope.launch {
             assets.update { it.copy(isLoading = true) }
             try {
-                val tokens = nearDataSource.getSupportedTokens()
+                val tokens = swapDataSource.getSupportedTokens()
                 val filtered = withContext(Dispatchers.Default) { filterSwapAssets(tokens) }
                 val zecAsset = withContext(Dispatchers.Default) { findZecSwapAsset(tokens) }
                 assets.update {
@@ -150,7 +150,7 @@ class NearSwapRepository(
             val destinationAsset = selectedAsset.value ?: return@launch
             try {
                 val selectedAccount = accountDataSource.getSelectedAccount()
-                val quoteDto = nearDataSource.requestQuote(
+                val quoteDto = swapDataSource.requestQuote(
                     swapMode = mode.value,
                     amount = amount,
                     originAddress = selectedAccount.transparent.address.address,

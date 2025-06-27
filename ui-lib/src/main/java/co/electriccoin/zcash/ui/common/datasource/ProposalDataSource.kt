@@ -310,6 +310,8 @@ sealed interface SendTransactionProposal : TransactionProposal {
     val memo: Memo
 }
 
+sealed interface SwapTransactionProposal: SendTransactionProposal
+
 data class ShieldTransactionProposal(
     override val proposal: Proposal,
 ) : TransactionProposal
@@ -333,13 +335,13 @@ data class ExactInputSwapTransactionProposal(
     override val amount: Zatoshi,
     override val memo: Memo,
     override val proposal: Proposal
-) : SendTransactionProposal
+) : SwapTransactionProposal
 
 data class ExactOutputSwapTransactionProposal(
     override val destination: WalletAddress,
     override val amount: Zatoshi,
     override val memo: Memo,
     override val proposal: Proposal
-) : SendTransactionProposal
+) : SwapTransactionProposal
 
 private const val DEFAULT_SHIELDING_THRESHOLD = 100000L

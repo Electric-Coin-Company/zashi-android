@@ -8,6 +8,9 @@ import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.listitem.SimpleListItemState
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
+import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
+import co.electriccoin.zcash.ui.screen.swap.ui.SwapModeSelectorState
 
 @Immutable
 internal data class SwapState(
@@ -24,7 +27,7 @@ internal data class SwapState(
 )
 
 @Immutable
-data class SwapCancelState(
+internal data class SwapCancelState(
     val icon: ImageResource,
     val title: StringResource,
     val subtitle: StringResource,
