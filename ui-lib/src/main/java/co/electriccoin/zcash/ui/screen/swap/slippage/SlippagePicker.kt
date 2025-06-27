@@ -60,25 +60,7 @@ fun SlippagePicker(
 ) {
     val focusManager = LocalFocusManager.current
     val textFieldInteractionSource = remember { MutableInteractionSource() }
-    var textFieldInnerState by remember {
-        val text = when (state.amount) {
-            null -> stringRes("")
-            BigDecimal("0.5") -> stringRes("")
-            BigDecimal(1) -> stringRes("")
-            BigDecimal(2) -> stringRes("")
-            else -> stringResByNumber(state.amount)
-        }
-
-        val amount = when (state.amount) {
-            null -> null
-            BigDecimal("0.5") -> null
-            BigDecimal(1) -> null
-            BigDecimal(2) -> null
-            else -> state.amount
-        }
-
-        mutableStateOf(NumberTextFieldInnerState(text = text, amount = amount, lastValidAmount = amount))
-    }
+    var textFieldInnerState by remember { mutableStateOf(createTextFieldInnerState(state.amount)) }
     val isTextFieldFocused by textFieldInteractionSource.collectIsFocusedAsState()
     val selection by remember(state.amount, isTextFieldFocused) {
         mutableStateOf(
@@ -100,8 +82,13 @@ fun SlippagePicker(
             NumberTextFieldState(
                 innerState = textFieldInnerState,
                 onValueChange = {
-                    textFieldInnerState = it
-                    state.onAmountChange(it.amount)
+                    val normalized = if (it.text.isEmpty()) {
+                        it.copy(amount = BigDecimal(0))
+                    } else {
+                        it
+                    }
+                    textFieldInnerState = normalized
+                    state.onAmountChange(normalized.amount)
                 }
             )
         }
@@ -129,7 +116,7 @@ fun SlippagePicker(
                 isSelected = selection is Selection.ByButton1 && !isTextFieldFocused,
                 onClick = {
                     focusManager.clearFocus(true)
-                    textFieldInnerState = NumberTextFieldInnerState()
+                    textFieldInnerState = createTextFieldInnerState(null)
                     state.onAmountChange(BigDecimal("0.5"))
                 }
             )
@@ -138,7 +125,7 @@ fun SlippagePicker(
                 isSelected = selection is Selection.ByButton2 && !isTextFieldFocused,
                 onClick = {
                     focusManager.clearFocus(true)
-                    textFieldInnerState = NumberTextFieldInnerState()
+                    textFieldInnerState = createTextFieldInnerState(null)
                     state.onAmountChange(BigDecimal(1))
                 }
             )
@@ -147,7 +134,7 @@ fun SlippagePicker(
                 isSelected = selection is Selection.ByButton3 && !isTextFieldFocused,
                 onClick = {
                     focusManager.clearFocus(true)
-                    textFieldInnerState = NumberTextFieldInnerState()
+                    textFieldInnerState = createTextFieldInnerState(null)
                     state.onAmountChange(BigDecimal(2))
                 }
             )
@@ -165,7 +152,8 @@ fun SlippagePicker(
                     disabledContainerColor = Color.Transparent,
                     placeholderColor = ZashiColors.Switcher.defaultText,
                     textColor = ZashiColors.Switcher.selectedText,
-                    errorTextColor = ZashiColors.Switcher.selectedText,
+                    errorTextColor = ZashiColors.Inputs.ErrorDefault.stroke,
+                    errorContainerColor = Color.Transparent,
                 ),
                 placeholder = {
                     val color by animateColorAsState(
@@ -197,6 +185,26 @@ fun SlippagePicker(
             )
         }
     }
+}
+
+private fun createTextFieldInnerState(amount: BigDecimal?): NumberTextFieldInnerState {
+    val text = when (amount) {
+        null -> stringRes("")
+        BigDecimal("0.5") -> stringRes("")
+        BigDecimal(1) -> stringRes("")
+        BigDecimal(2) -> stringRes("")
+        else -> stringResByNumber(amount)
+    }
+
+    val newAmount = when (amount) {
+        null -> null
+        BigDecimal("0.5") -> null
+        BigDecimal(1) -> null
+        BigDecimal(2) -> null
+        else -> amount
+    }
+
+    return NumberTextFieldInnerState(text = text, amount = newAmount, lastValidAmount = newAmount)
 }
 
 @Composable
@@ -315,10 +323,18 @@ private fun Indicator(
     }
 }
 
+@Immutable
 private sealed interface Selection {
+    @Immutable
     data object ByButton1 : Selection
+
+    @Immutable
     data object ByButton2 : Selection
+
+    @Immutable
     data object ByButton3 : Selection
+
+    @Immutable
     data class ByTextField(val bigDecimal: BigDecimal?) : Selection
 }
 
