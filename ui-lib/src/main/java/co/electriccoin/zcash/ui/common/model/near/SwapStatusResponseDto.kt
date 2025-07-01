@@ -1,8 +1,13 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package co.electriccoin.zcash.ui.common.model.near
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
+@JsonIgnoreUnknownKeys
 @Serializable
 data class SwapStatusResponseDto(
     @SerialName("quoteResponse")
@@ -15,6 +20,7 @@ data class SwapStatusResponseDto(
     val swapDetails: SwapDetails
 )
 
+@JsonIgnoreUnknownKeys
 @Serializable
 data class TransactionChainHash(
     @SerialName("hash")
@@ -23,6 +29,7 @@ data class TransactionChainHash(
     val explorerUrl: String
 )
 
+@JsonIgnoreUnknownKeys
 @Serializable
 data class SwapDetails(
     @SerialName("intentHashes")

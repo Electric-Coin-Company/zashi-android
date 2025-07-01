@@ -12,10 +12,12 @@ import co.electriccoin.zcash.ui.common.model.near.SwapType
 import co.electriccoin.zcash.ui.common.provider.ChainIconProvider
 import co.electriccoin.zcash.ui.common.provider.ChainNameProvider
 import co.electriccoin.zcash.ui.common.provider.NearApiProvider
+import co.electriccoin.zcash.ui.common.provider.ResponseWithErrorException
 import co.electriccoin.zcash.ui.common.provider.TokenIconProvider
 import co.electriccoin.zcash.ui.common.provider.TokenNameProvider
 import co.electriccoin.zcash.ui.common.repository.SwapMode
 import co.electriccoin.zcash.ui.common.repository.SwapMode.*
+import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
@@ -26,10 +28,10 @@ import java.math.RoundingMode
 import kotlin.time.Duration.Companion.minutes
 
 interface SwapDataSource {
-    @Throws(IOException::class)
+    @Throws(ResponseException::class, IOException::class)
     suspend fun getSupportedTokens(): List<NearSwapAsset>
 
-    @Throws(IOException::class)
+    @Throws(ResponseException::class, IOException::class, QuoteLowAmountException::class)
     suspend fun requestQuote(
         swapMode: SwapMode,
         amount: BigDecimal,
@@ -40,9 +42,15 @@ interface SwapDataSource {
         slippage: BigDecimal,
     ): QuoteResponseDto
 
-    @Throws(IOException::class)
+    @Throws(ResponseException::class, IOException::class)
     suspend fun submitDepositTransaction(txHash: String, depositAddress: String): SwapStatusResponseDto
 }
+
+class QuoteLowAmountException(
+    val asset: SwapAsset,
+    val amount: BigDecimal?,
+    val amountFormatted: BigDecimal?
+) : Exception()
 
 class SwapDataSourceImpl(
     private val chainIconProvider: ChainIconProvider,
@@ -101,7 +109,32 @@ class SwapDataSourceImpl(
             quoteWaitingTimeMs = QUOTE_WAITING_TIME
         )
 
-        return nearApiProvider.requestQuote(request)
+        return try {
+            nearApiProvider.requestQuote(request)
+        } catch (e: ResponseWithErrorException) {
+            when {
+                e.error.message.startsWith("Amount is too low for bridge, try at least") -> {
+                    val errorAmount = e.error.message.split(" ").lastOrNull()?.toBigDecimalOrNull() ?: throw e
+                    val errorAsset = when (swapMode) {
+                        SWAP -> originAsset
+                        PAY -> destinationAsset
+                    }
+                    throw QuoteLowAmountException(
+                        asset = errorAsset,
+                        amount = errorAmount,
+                        amountFormatted = errorAmount.movePointLeft(errorAsset.decimals)
+                    )
+                }
+                e.error.message.startsWith("No quotes found") -> throw QuoteLowAmountException(
+                    asset = originAsset,
+                    amount = null,
+                    amountFormatted = null
+                )
+                else -> {
+                    throw e
+                }
+            }
+        }
     }
 
     override suspend fun submitDepositTransaction(txHash: String, depositAddress: String): SwapStatusResponseDto {

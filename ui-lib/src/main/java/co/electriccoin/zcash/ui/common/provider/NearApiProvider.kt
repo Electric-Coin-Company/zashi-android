@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.common.provider
 
-import co.electriccoin.zcash.spackle.Twig
+import android.util.Log
+import co.electriccoin.zcash.ui.common.model.near.ErrorDto
 import co.electriccoin.zcash.ui.common.model.near.NearTokenDto
 import co.electriccoin.zcash.ui.common.model.near.QuoteRequest
 import co.electriccoin.zcash.ui.common.model.near.QuoteResponseDto
@@ -9,6 +10,7 @@ import co.electriccoin.zcash.ui.common.model.near.SwapStatusResponseDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
@@ -18,6 +20,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
@@ -29,18 +32,24 @@ import kotlinx.io.IOException
 typealias GetNearSupportedTokensResponse = List<NearTokenDto>
 
 interface NearApiProvider {
-    @Throws(ResponseException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
     suspend fun getSupportedTokens(): GetNearSupportedTokensResponse
 
-    @Throws(ResponseException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
     suspend fun requestQuote(request: QuoteRequest): QuoteResponseDto
 
-    @Throws(ResponseException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
     suspend fun submitDepositTransaction(request: SubmitDepositTransactionRequest): SwapStatusResponseDto
 
-    @Throws(ResponseException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
     suspend fun checkSwapStatus(depositAddress: String): SwapStatusResponseDto
 }
+
+class ResponseWithErrorException(
+    response: HttpResponse,
+    cachedResponseText: String,
+    val error: ErrorDto
+) : ResponseException(response, cachedResponseText)
 
 class KtorNearApiProvider : NearApiProvider {
     override suspend fun getSupportedTokens(): GetNearSupportedTokensResponse =
@@ -87,7 +96,6 @@ class KtorNearApiProvider : NearApiProvider {
             }
         }
 
-    @Suppress("MagicNumber")
     private fun createHttpClient() =
         HttpClient(OkHttp) {
             install(ContentNegotiation) {
@@ -97,11 +105,35 @@ class KtorNearApiProvider : NearApiProvider {
                 logger =
                     object : Logger {
                         override fun log(message: String) {
-                            message.chunked(250).forEach { Twig.debug { it } }
+                            Log.d("HttpClient", message)
                         }
                     }
                 level = LogLevel.ALL
                 sanitizeHeader { header -> header == HttpHeaders.Authorization }
+            }
+            HttpResponseValidator {
+                handleResponseExceptionWithRequest { exception, request ->
+                    val clientException = exception as? ResponseException ?: return@handleResponseExceptionWithRequest
+                    val response = clientException.response
+                    val error: ErrorDto? = runCatching { response.body<ErrorDto?>() }.getOrNull()
+                    if (error != null) {
+                        throw ResponseWithErrorException(
+                            response = response,
+                            cachedResponseText = "Code: ${response.status}, message: ${error.message}",
+                            error = error
+                        )
+                    }
+                }
+                // validateResponse { response ->
+                //     val error: ErrorDto? = runCatching { response.body<ErrorDto?>() }.getOrNull()
+                //     if (error != null) {
+                //         throw ResponseWithErrorException(
+                //             response = response,
+                //             cachedResponseText = "Code: ${response.status}, message: ${error.message}",
+                //             error = error
+                //         )
+                //     }
+                // }
             }
             expectSuccess = true
         }

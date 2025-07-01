@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.datasource.QuoteLowAmountException
 import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.model.NearSwapAsset
 import co.electriccoin.zcash.ui.common.model.NearSwapQuote
 import co.electriccoin.zcash.ui.common.model.SwapAsset
+import co.electriccoin.zcash.ui.common.provider.ResponseWithErrorException
 import co.electriccoin.zcash.ui.common.repository.SwapMode
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
@@ -24,6 +26,7 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.combine
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -55,7 +58,7 @@ internal class SwapQuoteVM(
     ) { slippage, mode, quote, proposal, destinationAsset, originAsset ->
         when (quote) {
             SwapQuoteData.Loading -> null
-            is SwapQuoteData.Error -> createErrorState()
+            is SwapQuoteData.Error -> createErrorState(quote)
             is SwapQuoteData.Success -> createState(
                 proposal = proposal,
                 quote = quote,
@@ -103,20 +106,35 @@ internal class SwapQuoteVM(
         }
     }
 
-    private fun createErrorState() = SwapQuoteState.Error(
-        icon = imageRes(R.drawable.ic_swap_quote_error),
-        title = stringRes("Quote Unavailable"),
-        subtitle = stringRes("We tried but couldn’t get a quote for a payment with your parameters. You can try to adjust the payment details or try again later."),
-        negativeButton = ButtonState(
-            text = stringRes("Cancel payment"),
-            onClick = ::onCancelPaymentClick
-        ),
-        positiveButton = ButtonState(
-            text = stringRes("Edit payment"),
-            onClick = ::onEditPaymentClick
-        ),
-        onBack = ::onBackDuringError
-    )
+    private fun createErrorState(quote: SwapQuoteData.Error): SwapQuoteState.Error {
+        val message = when {
+            quote.exception is QuoteLowAmountException &&
+                quote.exception.amountFormatted != null -> stringRes("Amount is too low " +
+                "for bridge, try at least ") +
+                stringResByDynamicCurrencyNumber(
+                    amount = quote.exception.amountFormatted,
+                    ticker = quote.exception.asset.tokenTicker
+                )
+            quote.exception is QuoteLowAmountException -> stringRes("Amount is too low for bridge, try higher amount.")
+            quote.exception is ResponseWithErrorException -> stringRes(quote.exception.error.message)
+            else -> stringRes("We tried but couldn’t get a quote for a payment with your parameters. You can try to adjust the payment details or try again later.")
+        }
+
+        return SwapQuoteState.Error(
+            icon = imageRes(R.drawable.ic_swap_quote_error),
+            title = stringRes("Quote Unavailable"),
+            subtitle = message,
+            negativeButton = ButtonState(
+                text = stringRes("Cancel payment"),
+                onClick = ::onCancelPaymentClick
+            ),
+            positiveButton = ButtonState(
+                text = stringRes("Edit payment"),
+                onClick = ::onEditPaymentClick
+            ),
+            onBack = ::onBackDuringError
+        )
+    }
 
     private fun onEditPaymentClick() = cancelSwapQuote()
 
