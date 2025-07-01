@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap.near
+package co.electriccoin.zcash.ui.screen.swap.info
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -9,16 +9,16 @@ import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 
 @Composable
-fun NearInfoScreen() {
+fun SwapInfoScreen() {
     val navigationRouter = koinInject<NavigationRouter>()
     val mode by koinInject<GetSwapModeUseCase>().observe().collectAsStateWithLifecycle()
     val state =
-        NearInfoState(
+        SwapInfoState(
             mode = mode,
             onBack = { navigationRouter.back() }
         )
-    NearInfoView(state)
+    SwapInfoInfoView(state)
 }
 
 @Serializable
-data object NearInfoArgs
+data object SwapInfoArgs

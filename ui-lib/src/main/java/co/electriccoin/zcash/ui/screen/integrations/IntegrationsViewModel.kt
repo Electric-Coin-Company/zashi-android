@@ -130,7 +130,7 @@ class IntegrationsViewModel(
             ).toImmutableList(),
     )
 
-    private fun onNearSwapClick() = navigateToNearSwap()
+    private fun onNearSwapClick() = viewModelScope.launch { navigateToNearSwap() }
 
     private fun onBack() = navigationRouter.back()
 

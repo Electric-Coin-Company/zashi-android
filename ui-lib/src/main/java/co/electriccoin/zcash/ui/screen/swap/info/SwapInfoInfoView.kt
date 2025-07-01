@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap.near
+package co.electriccoin.zcash.ui.screen.swap.info
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +29,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NearInfoView(state: NearInfoState) {
+fun SwapInfoInfoView(state: SwapInfoState) {
     ZashiScreenModalBottomSheet(state) {
         Column(
             modifier = Modifier.padding(horizontal = 24.dp)
@@ -86,9 +86,9 @@ fun NearInfoView(state: NearInfoState) {
 @Composable
 private fun SwapPreview() =
     ZcashTheme {
-        NearInfoView(
+        SwapInfoInfoView(
             state =
-                NearInfoState(
+                SwapInfoState(
                     mode = SWAP,
                     onBack = {}
                 )
@@ -99,9 +99,9 @@ private fun SwapPreview() =
 @Composable
 private fun PayPreview() =
     ZcashTheme {
-        NearInfoView(
+        SwapInfoInfoView(
             state =
-                NearInfoState(
+                SwapInfoState(
                     mode = PAY,
                     onBack = {}
                 )

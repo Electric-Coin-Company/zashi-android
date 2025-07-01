@@ -8,23 +8,24 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -42,21 +43,19 @@ fun ZashiCheckbox(
     isChecked: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    style: TextStyle = ZashiTypography.textSm,
-    fontWeight: FontWeight = FontWeight.Medium,
-    color: Color = ZashiColors.Text.textPrimary,
+    spacing: Dp = ZashiDimensions.Spacing.spacingMd,
+    textStyles: CheckboxTextStyles = ZashiCheckboxDefaults.textStyles()
 ) {
     ZashiCheckbox(
         state =
             CheckboxState(
-                text = text,
+                title = text,
                 isChecked = isChecked,
                 onClick = onClick,
             ),
         modifier = modifier,
-        style = style,
-        fontWeight = fontWeight,
-        color = color,
+        spacing = spacing,
+        textStyles = textStyles
     )
 }
 
@@ -64,27 +63,34 @@ fun ZashiCheckbox(
 fun ZashiCheckbox(
     state: CheckboxState,
     modifier: Modifier = Modifier,
-    style: TextStyle = ZashiTypography.textSm,
-    fontWeight: FontWeight = FontWeight.Medium,
-    color: Color = ZashiColors.Text.textPrimary,
+    spacing: Dp = ZashiDimensions.Spacing.spacingMd,
+    contentPadding: PaddingValues = ZashiCheckboxDefaults.contentPadding,
+    textStyles: CheckboxTextStyles = ZashiCheckboxDefaults.textStyles()
 ) {
     Row(
         modifier =
             modifier
                 .clip(RoundedCornerShape(8.dp))
                 .clickable(onClick = state.onClick)
-                .padding(vertical = 12.dp)
+                .padding(contentPadding)
     ) {
         ZashiCheckboxIndicator(state.isChecked)
 
-        Spacer(Modifier.width(ZashiDimensions.Spacing.spacingMd))
+        Spacer(spacing)
 
-        Text(
-            text = state.text.getValue(),
-            style = style,
-            fontWeight = fontWeight,
-            color = color,
-        )
+        Column {
+            Text(
+                text = state.title.getValue(),
+                style = textStyles.title,
+            )
+            state.subtitle?.let {
+                Spacer(2.dp)
+                Text(
+                    text = it.getValue(),
+                    style = textStyles.subtitle
+                )
+            }
+        }
     }
 }
 
@@ -121,9 +127,32 @@ fun ZashiCheckboxIndicator(isChecked: Boolean) {
     }
 }
 
+@Immutable
+data class CheckboxTextStyles(val title: TextStyle, val subtitle: TextStyle)
+
+object ZashiCheckboxDefaults {
+
+    val spacing = ZashiDimensions.Spacing.spacingMd
+
+    val contentPadding = PaddingValues(vertical = 12.dp)
+
+    @Composable
+    fun textStyles(
+        title: TextStyle = ZashiTypography.textSm.copy(
+            fontWeight = FontWeight.Medium,
+            color = ZashiColors.Text.textPrimary
+        ),
+        subtitle: TextStyle = ZashiTypography.textSm.copy(
+            color = ZashiColors.Text.textTertiary
+        ),
+    ) = CheckboxTextStyles(title = title, subtitle = subtitle)
+}
+
+@Immutable
 data class CheckboxState(
-    val text: StringResource,
+    val title: StringResource,
     val isChecked: Boolean,
+    val subtitle: StringResource? = null,
     val onClick: () -> Unit,
 )
 
@@ -136,7 +165,8 @@ private fun ZashiCheckboxPreview() =
             ZashiCheckbox(
                 state =
                     CheckboxState(
-                        text = stringRes("title"),
+                        title = stringRes("title"),
+                        subtitle = stringRes("subtitle"),
                         isChecked = isChecked,
                         onClick = { isChecked = isChecked.not() }
                     )

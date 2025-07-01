@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiCheckbox
+import co.electriccoin.zcash.ui.design.component.ZashiCheckboxDefaults
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
@@ -157,9 +158,12 @@ private fun RestoreSuccessContent(
             isChecked = state.isKeepScreenOnChecked,
             onClick = state.onCheckboxClick,
             text = stringRes(R.string.restoring_initial_dialog_checkbox),
-            style = ZashiTypography.textMd,
-            fontWeight = FontWeight.Medium,
-            color = ZashiColors.Text.textPrimary,
+            textStyles = ZashiCheckboxDefaults.textStyles(
+                title = ZashiTypography.textMd.copy(
+                    fontWeight = FontWeight.Medium,
+                    color = ZashiColors.Text.textPrimary,
+                )
+            )
         )
 
         Spacer(Modifier.height(14.dp))

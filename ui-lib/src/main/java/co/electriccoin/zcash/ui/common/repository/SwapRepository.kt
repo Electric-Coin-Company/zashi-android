@@ -69,7 +69,6 @@ data class SwapAssetsData(
 class NearSwapRepository(
     private val swapDataSource: SwapDataSource,
     private val accountDataSource: AccountDataSource,
-    // private val synchronizerProvider: SynchronizerProvider,
 ) : SwapRepository {
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
@@ -182,16 +181,6 @@ class NearSwapRepository(
         requestQuoteJob = null
         quote.update { null }
     }
-
-    // private suspend fun getWalletAddress(address: String): WalletAddress {
-    //     return when (val result = synchronizerProvider.getSynchronizer().validateAddress(address)) {
-    //         AddressType.Shielded -> WalletAddress.Sapling.new(address)
-    //         AddressType.Tex -> WalletAddress.Tex.new(address)
-    //         AddressType.Transparent -> WalletAddress.Transparent.new(address)
-    //         AddressType.Unified -> WalletAddress.Unified.new(address)
-    //         is AddressType.Invalid -> throw IllegalStateException(result.reason)
-    //     }
-    // }
 }
 
 private val DEFAULT_SLIPPAGE = BigDecimal("0.5")

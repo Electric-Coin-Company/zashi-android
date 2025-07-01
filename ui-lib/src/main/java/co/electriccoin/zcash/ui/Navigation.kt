@@ -120,8 +120,12 @@ import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeysto
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.swap.SwapArgs
 import co.electriccoin.zcash.ui.screen.swap.SwapScreen
-import co.electriccoin.zcash.ui.screen.swap.near.NearInfoArgs
-import co.electriccoin.zcash.ui.screen.swap.near.NearInfoScreen
+import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
+import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoScreen
+import co.electriccoin.zcash.ui.screen.swap.optin.SwapOptInArgs
+import co.electriccoin.zcash.ui.screen.swap.optin.SwapOptInScreen
+import co.electriccoin.zcash.ui.screen.swap.optin.SwapUnsecureOptInArgs
+import co.electriccoin.zcash.ui.screen.swap.optin.SwapUnsecureOptInScreen
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteArgs
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteScreen
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
@@ -532,12 +536,14 @@ internal fun MainActivity.Navigation() {
         dialog<SwapSlippageArgs>(
             dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
         ) { SwapSlippageScreen(it.toRoute()) }
-        dialog<NearInfoArgs>(
+        dialog<SwapInfoArgs>(
             dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
-        ) { NearInfoScreen() }
+        ) { SwapInfoScreen() }
         dialog<SwapQuoteArgs>(
             dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
         ) { SwapQuoteScreen() }
+        composable<SwapOptInArgs> { SwapOptInScreen() }
+        composable<SwapUnsecureOptInArgs> { SwapUnsecureOptInScreen() }
     }
 }
 
