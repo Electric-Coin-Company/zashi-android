@@ -23,8 +23,10 @@ internal data class SwapState(
     val infoItems: List<SimpleListItemState>,
     val address: TextFieldState,
     val isAddressBookHintVisible: Boolean,
+    val qrScannerButton: IconButtonState,
     val onBack: () -> Unit
-)
+) {
+}
 
 @Immutable
 internal data class SwapCancelState(

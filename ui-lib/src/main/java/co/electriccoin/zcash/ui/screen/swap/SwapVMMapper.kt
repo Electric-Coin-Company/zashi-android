@@ -17,7 +17,8 @@ internal interface SwapVMMapper {
         onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
         onAddressChange: (String) -> Unit,
         onSwapModeChange: (SwapMode) -> Unit,
-        onTextFieldChange: (NumberTextFieldInnerState) -> Unit
+        onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
+        onQrCodeScannerClick: () -> Unit
     ): SwapState
 }
 

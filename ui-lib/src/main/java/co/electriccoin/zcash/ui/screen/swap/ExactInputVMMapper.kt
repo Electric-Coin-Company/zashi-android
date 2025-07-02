@@ -38,7 +38,8 @@ internal class ExactInputVMMapper : SwapVMMapper {
         onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
         onAddressChange: (String) -> Unit,
         onSwapModeChange: (SwapMode) -> Unit,
-        onTextFieldChange: (NumberTextFieldInnerState) -> Unit
+        onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
+        onQrCodeScannerClick: () -> Unit
     ): SwapState {
         val state = ExactInputInternalState(internalState)
         val textFieldState =
@@ -80,6 +81,10 @@ internal class ExactInputVMMapper : SwapVMMapper {
             onBack = onBack,
             swapInfoButton = IconButtonState(R.drawable.ic_help, onClick = onSwapInfoClick),
             infoItems = createListItems(state),
+            qrScannerButton = IconButtonState(
+                icon = R.drawable.qr_code_icon,
+                onClick = onQrCodeScannerClick
+            )
         )
     }
 

@@ -37,6 +37,7 @@ import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanViewModel
+import co.electriccoin.zcash.ui.screen.scan.swap.ScanAddressVM
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
@@ -47,8 +48,8 @@ import co.electriccoin.zcash.ui.screen.settings.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.swap.SwapVM
-import co.electriccoin.zcash.ui.screen.swap.optin.SwapOptInViewModel
-import co.electriccoin.zcash.ui.screen.swap.optin.SwapUnsecureOptInViewModel
+import co.electriccoin.zcash.ui.screen.swap.optin.SwapOptInVM
+import co.electriccoin.zcash.ui.screen.swap.optin.SwapUnsecureOptInVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerVM
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteVM
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageVM
@@ -170,6 +171,7 @@ val viewModelModule =
         viewModelOf(::SwapSlippageVM)
         viewModelOf(::SwapVM)
         viewModelOf(::SwapQuoteVM)
-        viewModelOf(::SwapOptInViewModel)
-        viewModelOf(::SwapUnsecureOptInViewModel)
+        viewModelOf(::SwapOptInVM)
+        viewModelOf(::SwapUnsecureOptInVM)
+        viewModelOf(::ScanAddressVM)
     }

@@ -36,7 +36,8 @@ internal class ExactOutputVMMapper : SwapVMMapper {
         onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
         onAddressChange: (String) -> Unit,
         onSwapModeChange: (SwapMode) -> Unit,
-        onTextFieldChange: (NumberTextFieldInnerState) -> Unit
+        onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
+        onQrCodeScannerClick: () -> Unit
     ): SwapState {
         val state = ExactOutputInternalState(internalState)
         val textFieldState =
@@ -74,7 +75,11 @@ internal class ExactOutputVMMapper : SwapVMMapper {
             isAddressBookHintVisible = state.isAddressBookHintVisible,
             onBack = onBack,
             swapInfoButton = IconButtonState(R.drawable.ic_help, onClick = onSwapInfoClick),
-            infoItems = createListItems(state)
+            infoItems = createListItems(state),
+            qrScannerButton = IconButtonState(
+                icon = R.drawable.qr_code_icon,
+                onClick = onQrCodeScannerClick
+            )
         )
     }
 

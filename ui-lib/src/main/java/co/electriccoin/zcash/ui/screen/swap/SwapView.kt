@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -44,6 +45,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
+import co.electriccoin.zcash.ui.design.component.ZashiImageButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
@@ -234,21 +236,21 @@ private fun ColumnScope.AddressTextField(
                 color = ZashiColors.Inputs.Default.text
             )
         },
-        // suffix = {
-        //     Row(
-        //         verticalAlignment = Alignment.Top
-        //     ) {
-        //         ZashiImageButton(
-        //             modifier = Modifier.size(36.dp),
-        //             state = state.addressBookButton
-        //         )
-        //         androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(4.dp))
-        //         ZashiImageButton(
-        //             modifier = Modifier.size(36.dp),
-        //             state = state.qrScannerButton
-        //         )
-        //     }
-        // },
+        suffix = {
+            Row (
+                verticalAlignment = Alignment.Top
+            ) {
+                // ZashiImageButton(
+                //     modifier = Modifier.size(36.dp),
+                //     state = state.addressBookButton
+                // )
+                // androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(4.dp))
+                ZashiImageButton(
+                    modifier = Modifier.size(36.dp),
+                    state = state.qrScannerButton
+                )
+            }
+        },
         keyboardOptions =
             KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -328,7 +330,11 @@ private fun Preview() {
                             )
                         ),
                     address = TextFieldState(stringRes("")) {},
-                    isAddressBookHintVisible = true
+                    isAddressBookHintVisible = true,
+                    qrScannerButton = IconButtonState(
+                        icon = R.drawable.qr_code_icon,
+                        onClick = {}
+                    )
                 )
         )
     }

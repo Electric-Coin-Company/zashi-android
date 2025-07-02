@@ -8,7 +8,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SwapUnsecureOptInScreen() {
-    val vm = koinViewModel<SwapUnsecureOptInViewModel>()
+    val vm = koinViewModel<SwapUnsecureOptInVM>()
     val state by vm.state.collectAsStateWithLifecycle()
     SwapOptInView(state = state)
 }

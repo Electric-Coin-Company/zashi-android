@@ -13,9 +13,9 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapModeUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableBalanceUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableFiatBalanceUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZecSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToScanAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.RequestSwapQuoteUseCase
@@ -43,7 +43,6 @@ internal class SwapVM(
     getSwapMode: GetSwapModeUseCase,
     getSlippage: GetSlippageUseCase,
     getSelectedSwapAsset: GetSelectedSwapAssetUseCase,
-    getTotalSpendableFiatBalance: GetTotalSpendableFiatBalanceUseCase,
     getTotalSpendableBalance: GetTotalSpendableBalanceUseCase,
     getZecSwapAsset: GetZecSwapAssetUseCase,
     private val updateSwapMode: UpdateSwapModeUseCase,
@@ -51,10 +50,11 @@ internal class SwapVM(
     private val isABContactHintVisible: IsABContactHintVisibleUseCase,
     private val cancelSwap: CancelSwapUseCase,
     private val navigationRouter: NavigationRouter,
+    private val requestSwapQuote: RequestSwapQuoteUseCase,
+    private val navigateToSwapQuoteIfAvailable: NavigateToSwapQuoteIfAvailableUseCase,
     private val exactOutputVMMapper: ExactOutputVMMapper,
     private val exactInputVMMapper: ExactInputVMMapper,
-    private val requestSwapQuote: RequestSwapQuoteUseCase,
-    private val navigateToSwapQuoteIfAvailable: NavigateToSwapQuoteIfAvailableUseCase
+    private val navigateToScanAddress: NavigateToScanAddressUseCase
 ) : ViewModel() {
     private val defaultCurrencyType: CurrencyType = CurrencyType.TOKEN
 
@@ -165,8 +165,19 @@ internal class SwapVM(
             onRequestSwapQuoteClick = ::onRequestSwapQuoteClick,
             onAddressChange = ::onAddressChange,
             onSwapModeChange = ::onSwapModeChange,
-            onTextFieldChange = ::onTextFieldChange
+            onTextFieldChange = ::onTextFieldChange,
+            onQrCodeScannerClick = ::onQrCodeScannerClick
         )
+    }
+
+    private fun onQrCodeScannerClick() = viewModelScope.launch {
+        val result = navigateToScanAddress()
+        if (result != null) {
+            addressText.update { result.address }
+            if (result.amount != null) {
+                amountText.update { NumberTextFieldInnerState.fromAmount(result.amount) }
+            }
+        }
     }
 
     private fun onSlippageClick(fiatAmount: BigDecimal?) =

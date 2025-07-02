@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SwapOptInViewModel(
+class SwapOptInVM(
     private val navigationRouter: NavigationRouter,
     private val confirmSwapOptIn: ConfirmSwapOptInUseCase,
     private val skipSwapOptInUse: SkipSwapOptInUseCase

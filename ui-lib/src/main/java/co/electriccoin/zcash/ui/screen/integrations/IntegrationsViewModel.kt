@@ -91,7 +91,8 @@ class IntegrationsViewModel(
                     icon = imageRes(R.drawable.ic_integrations_near),
                     title = stringRes("Pay with NEAR"),
                     subtitle = stringRes("Send payments in any coin or token supported by Zashi's DEX integration."),
-                    onClick = ::onNearSwapClick
+                    onClick = ::onNearSwapClick,
+                    isEnabled = selectedAccount is ZashiAccount
                 ).takeIf { isDialog },
                 ListItemState(
                     // Set the wallet currency by app build is more future-proof, although we hide it from

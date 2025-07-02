@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.common.usecase.ConfirmSwapOptInUseCase
 import co.electriccoin.zcash.ui.common.usecase.ConfirmUnsecureSwapOptInUseCase
-import co.electriccoin.zcash.ui.common.usecase.SkipSwapOptInUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.CheckboxState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -18,7 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SwapUnsecureOptInViewModel(
+class SwapUnsecureOptInVM(
     private val navigationRouter: NavigationRouter,
     private val confirmUnsecureSwapOptIn: ConfirmUnsecureSwapOptInUseCase,
 ) : ViewModel() {

@@ -107,6 +107,8 @@ import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransactio
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanScreen
+import co.electriccoin.zcash.ui.screen.scan.swap.ScanAddressArgs
+import co.electriccoin.zcash.ui.screen.scan.swap.ScanAddressScreen
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.AndroidThirdPartyScan
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScan
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
@@ -379,6 +381,7 @@ internal fun MainActivity.Navigation() {
         dialogComposable<SwapQuoteArgs> { SwapQuoteScreen() }
         composable<SwapOptInArgs> { SwapOptInScreen() }
         composable<SwapUnsecureOptInArgs> { SwapUnsecureOptInScreen() }
+        composable<ScanAddressArgs> { ScanAddressScreen(it.toRoute()) }
     }
 }
 

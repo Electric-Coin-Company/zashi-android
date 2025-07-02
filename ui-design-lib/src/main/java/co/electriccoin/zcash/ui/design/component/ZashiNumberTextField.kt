@@ -30,6 +30,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import java.math.BigDecimal
 
 @Suppress("LongParameterList")
@@ -115,6 +116,14 @@ data class NumberTextFieldInnerState(
     val lastValidAmount: BigDecimal? = null,
 ) {
     val isError = amount == null && !text.isEmpty()
+
+    companion object {
+        fun fromAmount(amount: BigDecimal) = NumberTextFieldInnerState(
+            text = stringResByNumber(amount),
+            amount = amount,
+            lastValidAmount = amount
+        )
+    }
 }
 
 object ZashiNumberTextFieldDefaults {

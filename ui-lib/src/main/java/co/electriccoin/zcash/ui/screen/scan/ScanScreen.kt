@@ -41,7 +41,7 @@ internal fun ScanScreen(args: ScanArgs) {
         // TODO [#1146]: https://github.com/Electric-Coin-Company/zashi-android/issues/1146
         CircularScreenProgressIndicator()
     } else {
-        Scan(
+        ScanView(
             snackbarHostState = snackbarHostState,
             onBack = { navigationRouter.back() },
             onScan = {

@@ -40,7 +40,6 @@ import co.electriccoin.zcash.ui.common.usecase.GetSwapModeUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableBalanceUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableFiatBalanceUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionMetadataUseCase
@@ -61,6 +60,7 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToNearSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToScanAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
@@ -226,7 +226,6 @@ val useCaseModule =
         factoryOf(::FilterSwapAssetsUseCase)
         factoryOf(::SetSlippageUseCase)
         factoryOf(::GetSlippageUseCase)
-        factoryOf(::GetTotalSpendableFiatBalanceUseCase)
         factoryOf(::NavigateToSwapInfoUseCase)
         factoryOf(::GetSwapModeUseCase)
         factoryOf(::UpdateSwapModeUseCase)
@@ -240,4 +239,5 @@ val useCaseModule =
         factoryOf(::ConfirmSwapOptInUseCase)
         factoryOf(::ConfirmUnsecureSwapOptInUseCase)
         factoryOf(::SkipSwapOptInUseCase)
+        singleOf(::NavigateToScanAddressUseCase)
     }

@@ -8,7 +8,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SwapOptInScreen() {
-    val vm = koinViewModel<SwapOptInViewModel>()
+    val vm = koinViewModel<SwapOptInVM>()
     val state by vm.state.collectAsStateWithLifecycle()
     SwapOptInView(state = state)
 }
