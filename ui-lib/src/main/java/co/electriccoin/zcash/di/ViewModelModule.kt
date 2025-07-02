@@ -35,7 +35,7 @@ import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightViewModel
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
-import co.electriccoin.zcash.ui.screen.scan.Scan
+import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanViewModel
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
@@ -94,7 +94,7 @@ val viewModelModule =
         viewModelOf(::ReceiveViewModel)
         viewModelOf(::QrCodeViewModel)
         viewModelOf(::RequestViewModel)
-        viewModel { (args: Scan) ->
+        viewModel { (args: ScanArgs) ->
             ScanViewModel(
                 args = args,
                 getSynchronizer = get(),

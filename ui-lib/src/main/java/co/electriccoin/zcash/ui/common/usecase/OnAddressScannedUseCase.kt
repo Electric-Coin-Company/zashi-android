@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.common.usecase
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
-import co.electriccoin.zcash.ui.screen.scan.Scan
+import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import co.electriccoin.zcash.ui.screen.send.Send
 
@@ -14,7 +14,7 @@ class OnAddressScannedUseCase(
     operator fun invoke(
         address: String,
         addressType: AddressType,
-        scanArgs: Scan
+        scanArgs: ScanArgs
     ) {
         require(addressType is AddressType.Valid)
 

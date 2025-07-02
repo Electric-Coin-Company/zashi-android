@@ -41,7 +41,7 @@ import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
-import co.electriccoin.zcash.ui.screen.scan.Scan
+import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import co.electriccoin.zcash.ui.screen.send.Send
 import kotlinx.coroutines.flow.Flow
@@ -238,7 +238,7 @@ class HomeViewModel(
 
     private fun onReceiveButtonClick() = viewModelScope.launch { navigateToReceive() }
 
-    private fun onScanButtonClick() = navigationRouter.forward(Scan(ScanFlow.HOMEPAGE))
+    private fun onScanButtonClick() = navigationRouter.forward(ScanArgs(ScanFlow.HOMEPAGE))
 
     private fun onBuyClick() = viewModelScope.launch { navigateToCoinbase(replaceCurrentScreen = false) }
 

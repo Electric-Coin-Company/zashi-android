@@ -15,7 +15,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 internal class ScanViewModel(
-    private val args: Scan,
+    private val args: ScanArgs,
     private val getSynchronizer: GetSynchronizerUseCase,
     private val zip321ParseUriValidationUseCase: Zip321ParseUriValidationUseCase,
     private val onAddressScanned: OnAddressScannedUseCase,

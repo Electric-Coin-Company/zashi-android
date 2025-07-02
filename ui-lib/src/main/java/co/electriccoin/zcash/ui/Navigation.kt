@@ -10,6 +10,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.NavType
@@ -103,8 +105,8 @@ import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
-import co.electriccoin.zcash.ui.screen.scan.Scan
-import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
+import co.electriccoin.zcash.ui.screen.scan.ScanArgs
+import co.electriccoin.zcash.ui.screen.scan.ScanScreen
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.AndroidThirdPartyScan
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScan
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
@@ -208,12 +210,8 @@ internal fun MainActivity.Navigation() {
         popEnterTransition = { popEnterTransition() },
         popExitTransition = { popExitTransition() }
     ) {
-        composable<Home> {
-            NavigationHome(navController)
-        }
-        composable(SETTINGS) {
-            WrapSettings()
-        }
+        composable<Home> { NavigationHome(navController) }
+        composable(SETTINGS) { WrapSettings() }
         composable(ADVANCED_SETTINGS) {
             WrapAdvancedSettings(
                 goExportPrivateData = {
@@ -254,16 +252,9 @@ internal fun MainActivity.Navigation() {
                 }
             }
         }
-        composable(CHOOSE_SERVER) {
-            WrapChooseServer()
-        }
-        composable<WalletBackup> {
-            AndroidWalletBackup(it.toRoute())
-        }
-        composable(SUPPORT) {
-            // Pop back stack won't be right if we deep link into support
-            WrapFeedback()
-        }
+        composable(CHOOSE_SERVER) { WrapChooseServer() }
+        composable<WalletBackup> { AndroidWalletBackup(it.toRoute()) }
+        composable(SUPPORT) { WrapFeedback() }
         composable(DELETE_WALLET) {
             WrapDeleteWallet(
                 goBack = {
@@ -276,50 +267,18 @@ internal fun MainActivity.Navigation() {
                 }
             )
         }
-        composable(ABOUT) {
-            WrapAbout(
-                goBack = { navController.popBackStackJustOnce(ABOUT) },
-            )
-        }
-        composable(WHATS_NEW) {
-            WrapWhatsNew()
-        }
-        composable<Integrations> {
-            AndroidIntegrations()
-        }
-        dialog<DialogIntegrations> {
-            AndroidDialogIntegrations()
-        }
-        composable<ExchangeRateOptIn> {
-            AndroidExchangeRateOptIn()
-        }
-        composable<ExchangeRateSettings> {
-            AndroidExchangeRateSettings()
-        }
-        composable(CRASH_REPORTING_OPT_IN) {
-            AndroidCrashReportingOptIn()
-        }
-        composable<ScanKeystoneSignInRequest> {
-            WrapScanKeystoneSignInRequest()
-        }
-        composable<ScanKeystonePCZTRequest> {
-            WrapScanKeystonePCZTRequest()
-        }
-        composable<SignKeystoneTransaction> {
-            AndroidSignKeystoneTransaction()
-        }
-        dialog<AccountList>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false,
-                )
-        ) {
-            AndroidAccountList()
-        }
-        composable<Scan> {
-            WrapScanValidator(it.toRoute())
-        }
+        composable(ABOUT) { WrapAbout(goBack = { navController.popBackStackJustOnce(ABOUT) }) }
+        composable(WHATS_NEW) { WrapWhatsNew() }
+        composable<Integrations> { AndroidIntegrations() }
+        dialogComposable<DialogIntegrations> { AndroidDialogIntegrations() }
+        composable<ExchangeRateOptIn> { AndroidExchangeRateOptIn() }
+        composable<ExchangeRateSettings> { AndroidExchangeRateSettings() }
+        composable(CRASH_REPORTING_OPT_IN) { AndroidCrashReportingOptIn() }
+        composable<ScanKeystoneSignInRequest> { WrapScanKeystoneSignInRequest() }
+        composable<ScanKeystonePCZTRequest> { WrapScanKeystonePCZTRequest() }
+        composable<SignKeystoneTransaction> { AndroidSignKeystoneTransaction() }
+        dialogComposable<AccountList> { AndroidAccountList() }
+        composable<ScanArgs> { ScanScreen(it.toRoute()) }
         composable(EXPORT_PRIVATE_DATA) {
             WrapExportPrivateData(
                 goBack = {
@@ -389,162 +348,49 @@ internal fun MainActivity.Navigation() {
             val addressType = backStackEntry.arguments?.getInt(ADDRESS_TYPE) ?: ReceiveAddressType.Unified.ordinal
             WrapRequest(addressType)
         }
-        composable<ConnectKeystone> {
-            AndroidConnectKeystone()
-        }
-        composable<SelectKeystoneAccount> {
-            AndroidSelectKeystoneAccount(it.toRoute())
-        }
-        composable<ReviewTransaction> {
-            AndroidReviewTransaction()
-        }
-        composable<TransactionProgress> {
-            AndroidTransactionProgress(it.toRoute())
-        }
-        composable<TransactionHistory> {
-            AndroidTransactionHistory()
-        }
-        dialog<TransactionFilters>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidTransactionFiltersList()
-        }
-        composable<TransactionDetail> {
-            AndroidTransactionDetail(it.toRoute())
-        }
-        dialog<TransactionNote>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false,
-                )
-        ) {
-            AndroidTransactionNote(it.toRoute())
-        }
-        composable<TaxExport> {
-            AndroidTaxExport()
-        }
-        composable<Receive> {
-            AndroidReceive()
-        }
-        composable<Send> {
-            WrapSend(it.toRoute())
-        }
-        dialog<SeedInfo>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false,
-                )
-        ) {
-            AndroidSeedInfo()
-        }
-        composable<WalletBackupDetail> {
-            AndroidWalletBackupDetail(it.toRoute())
-        }
-        dialog<SeedBackupInfo>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidWalletBackupInfo()
-        }
-        dialog<ShieldFundsInfo>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidShieldFundsInfo()
-        }
-        dialog<WalletDisconnectedInfo>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidWalletDisconnectedInfo()
-        }
-        dialog<WalletRestoringInfo>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidWalletRestoringInfo()
-        }
-        dialog<WalletSyncingInfo>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidWalletSyncingInfo()
-        }
-        dialog<WalletUpdatingInfo>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidWalletUpdatingInfo()
-        }
-        dialog<ErrorDialog>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidErrorDialog()
-        }
-        dialog<ErrorBottomSheet>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidErrorBottomSheet()
-        }
-        dialog<SpendableBalance>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidSpendableBalance()
-        }
+        composable<ConnectKeystone> { AndroidConnectKeystone() }
+        composable<SelectKeystoneAccount> { AndroidSelectKeystoneAccount(it.toRoute()) }
+        composable<ReviewTransaction> { AndroidReviewTransaction() }
+        composable<TransactionProgress> { AndroidTransactionProgress(it.toRoute()) }
+        composable<TransactionHistory> { AndroidTransactionHistory() }
+        dialogComposable<TransactionFilters> { AndroidTransactionFiltersList() }
+        composable<TransactionDetail> { AndroidTransactionDetail(it.toRoute()) }
+        dialogComposable<TransactionNote> { AndroidTransactionNote(it.toRoute()) }
+        composable<TaxExport> { AndroidTaxExport() }
+        composable<Receive> { AndroidReceive() }
+        composable<Send> { WrapSend(it.toRoute()) }
+        dialogComposable<SeedInfo> { AndroidSeedInfo() }
+        composable<WalletBackupDetail> { AndroidWalletBackupDetail(it.toRoute()) }
+        dialogComposable<SeedBackupInfo> { AndroidWalletBackupInfo() }
+        dialogComposable<ShieldFundsInfo> { AndroidShieldFundsInfo() }
+        dialogComposable<WalletDisconnectedInfo> { AndroidWalletDisconnectedInfo() }
+        dialogComposable<WalletRestoringInfo> { AndroidWalletRestoringInfo() }
+        dialogComposable<WalletSyncingInfo> { AndroidWalletSyncingInfo() }
+        dialogComposable<WalletUpdatingInfo> { AndroidWalletUpdatingInfo() }
+        dialogComposable<ErrorDialog> { AndroidErrorDialog() }
+        dialogComposable<ErrorBottomSheet> { AndroidErrorBottomSheet() }
+        dialogComposable<SpendableBalance> { AndroidSpendableBalance() }
         composable<CrashReportOptIn> { AndroidCrashReportOptIn() }
         composable<ThirdPartyScan> { AndroidThirdPartyScan() }
-        dialog<SwapAssetPickerArgs>(
-            dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
-        ) { SwapAssetPickerScreen() }
+        dialogComposable<SwapAssetPickerArgs> { SwapAssetPickerScreen() }
         composable<SwapArgs> { SwapScreen() }
-        dialog<SwapSlippageArgs>(
-            dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
-        ) { SwapSlippageScreen(it.toRoute()) }
-        dialog<SwapInfoArgs>(
-            dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
-        ) { SwapInfoScreen() }
-        dialog<SwapQuoteArgs>(
-            dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
-        ) { SwapQuoteScreen() }
+        dialogComposable<SwapSlippageArgs> { SwapSlippageScreen(it.toRoute()) }
+        dialogComposable<SwapInfoArgs> { SwapInfoScreen() }
+        dialogComposable<SwapQuoteArgs> { SwapQuoteScreen() }
         composable<SwapOptInArgs> { SwapOptInScreen() }
         composable<SwapUnsecureOptInArgs> { SwapUnsecureOptInScreen() }
     }
+}
+
+private inline fun <reified T : Any> NavGraphBuilder.dialogComposable(
+    noinline content: @Composable (NavBackStackEntry) -> Unit
+) {
+    this.dialog<T>(
+        typeMap = emptyMap(),
+        deepLinks = emptyList(),
+        dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
+        content = content
+    )
 }
 
 /**

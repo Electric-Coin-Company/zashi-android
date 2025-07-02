@@ -15,7 +15,7 @@ import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookItem
 import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
-import co.electriccoin.zcash.ui.screen.scan.Scan
+import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -86,7 +86,7 @@ class AddressBookViewModel(
 
     private fun onAddContactManuallyClick() = navigationRouter.forward(AddContactArgs(null))
 
-    private fun onScanContactClick() = navigationRouter.forward(Scan(ScanFlow.ADDRESS_BOOK))
+    private fun onScanContactClick() = navigationRouter.forward(ScanArgs(ScanFlow.ADDRESS_BOOK))
 }
 
 internal const val ADDRESS_MAX_LENGTH = 20

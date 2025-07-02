@@ -21,7 +21,7 @@ import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun WrapScanValidator(args: Scan) {
+internal fun ScanScreen(args: ScanArgs) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -70,7 +70,7 @@ internal fun WrapScanValidator(args: Scan) {
 }
 
 @Serializable
-data class Scan(
+data class ScanArgs(
     val flow: ScanFlow,
     val isScanZip321Enabled: Boolean = true
 )
