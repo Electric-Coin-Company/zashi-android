@@ -17,7 +17,7 @@ import co.electriccoin.zcash.ui.screen.ExternalUrl
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListItem
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListState
 import co.electriccoin.zcash.ui.screen.accountlist.model.ZashiAccountListItemState
-import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
+import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed

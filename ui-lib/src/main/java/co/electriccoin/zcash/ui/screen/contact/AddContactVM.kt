@@ -1,17 +1,18 @@
-package co.electriccoin.zcash.ui.screen.contact.viewmodel
+package co.electriccoin.zcash.ui.screen.contact
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.usecase.ContactAddressValidationResult
 import co.electriccoin.zcash.ui.common.usecase.SaveContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameResult
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.contact.model.ContactState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,14 +23,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class AddContactViewModel(
-    address: String? = null,
+class AddContactVM(
+    args: AddContactArgs,
     private val validateContactAddress: ValidateContactAddressUseCase,
     private val validateContactName: ValidateContactNameUseCase,
     private val saveContact: SaveContactUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
-    private val contactAddress = MutableStateFlow(address.orEmpty())
+    private val contactAddress = MutableStateFlow(args.address.orEmpty())
     private val contactName = MutableStateFlow("")
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -40,13 +41,13 @@ class AddContactViewModel(
                     null
                 } else {
                     when (validateContactAddress(address)) {
-                        ValidateContactAddressUseCase.Result.Invalid ->
+                        ContactAddressValidationResult.Invalid ->
                             stringRes(R.string.contact_address_error_invalid)
 
-                        ValidateContactAddressUseCase.Result.NotUnique ->
+                        ContactAddressValidationResult.NotUnique ->
                             stringRes(R.string.contact_address_error_not_unique)
 
-                        ValidateContactAddressUseCase.Result.Valid -> null
+                        ContactAddressValidationResult.Valid -> null
                     }
                 }
             }.stateIn(
@@ -74,13 +75,13 @@ class AddContactViewModel(
                     null
                 } else {
                     when (validateContactName(name)) {
-                        ValidateContactNameUseCase.Result.TooLong ->
+                        ValidateContactNameResult.TooLong ->
                             stringRes(R.string.contact_name_error_too_long)
 
-                        ValidateContactNameUseCase.Result.NotUnique ->
+                        ValidateContactNameResult.NotUnique ->
                             stringRes(R.string.contact_name_error_not_unique)
 
-                        ValidateContactNameUseCase.Result.Valid ->
+                        ValidateContactNameResult.Valid ->
                             null
                     }
                 }
@@ -127,6 +128,8 @@ class AddContactViewModel(
                 negativeButton = null,
                 positiveButton = saveButton,
                 onBack = ::onBack,
+                chain = null,
+                info = null
             )
         }.stateIn(
             scope = viewModelScope,
@@ -139,10 +142,12 @@ class AddContactViewModel(
     private fun onSaveButtonClick() =
         viewModelScope.launch {
             if (isSavingContact.value) return@launch
-
             isSavingContact.update { true }
-            saveContact(name = contactName.value, address = contactAddress.value)
-            navigationRouter.back()
+            saveContact(
+                name = contactName.value,
+                address = contactAddress.value,
+                chain = null
+            )
             isSavingContact.update { false }
         }
 }

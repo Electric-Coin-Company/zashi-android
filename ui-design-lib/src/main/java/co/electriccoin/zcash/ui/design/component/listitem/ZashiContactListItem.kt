@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -38,30 +39,16 @@ fun ZashiContactListItem(
 ) {
     BaseListItem(
         modifier = modifier,
-        leading = {
-            ContactItemLeading(modifier = it, state = state)
-        },
-        content = {
-            ContactItemContent(modifier = it, state = state)
-        },
-        trailing = {
-            ZashiListItemDefaults.TrailingItem(
-                contentDescription = state.name.getValue(),
-                modifier = it
-            )
-        },
+        leading = { ContactItemLeading(modifier = it, state = state) },
+        content = { ContactItemContent(modifier = it, state = state) },
+        trailing = { ZashiListItemDefaults.TrailingItem(contentDescription = state.name.getValue(), modifier = it) },
         onClick = state.onClick,
         contentPadding =
             PaddingValues(
                 start = 20.dp,
                 top = 12.dp,
                 end = 20.dp,
-                bottom =
-                    if (state.isShielded) {
-                        8.dp
-                    } else {
-                        12.dp
-                    }
+                bottom = if (state.isShielded) 8.dp else 12.dp
             )
     )
 }
@@ -71,13 +58,26 @@ private fun ContactItemLeading(
     state: ContactListItemState,
     modifier: Modifier = Modifier,
 ) {
-    when (state.icon) {
+    when (state.bigIcon) {
         is ImageResource.ByDrawable ->
-            Image(
-                painter = painterResource(state.icon.resource),
-                contentDescription = null,
-                modifier = modifier.size(40.dp)
-            )
+            Box {
+                Image(
+                    painter = painterResource(state.bigIcon.resource),
+                    contentDescription = null,
+                    modifier = modifier.size(40.dp)
+                )
+                if (state.smallIcon is ImageResource.ByDrawable) {
+                    Image(
+                        modifier =
+                            Modifier
+                                .size(20.dp)
+                                .align(Alignment.BottomEnd)
+                                .offset(4.dp, 4.dp),
+                        painter = painterResource(state.smallIcon.resource),
+                        contentDescription = null,
+                    )
+                }
+            }
 
         is ImageResource.DisplayString ->
             Box(
@@ -90,7 +90,7 @@ private fun ContactItemLeading(
                             .size(40.dp)
                             .padding(top = 11.dp)
                             .align(Alignment.Center),
-                    text = state.icon.value,
+                    text = state.bigIcon.value,
                     style = ZashiTypography.textSm,
                     color = ZashiColors.Avatars.avatarTextFg,
                     textAlign = TextAlign.Center,
@@ -104,6 +104,17 @@ private fun ContactItemLeading(
                                 .size(24.dp),
                         painter = painterResource(id = R.drawable.ic_address_book_shielded),
                         contentDescription = null
+                    )
+                }
+                if (state.smallIcon is ImageResource.ByDrawable) {
+                    Image(
+                        modifier =
+                            Modifier
+                                .size(20.dp)
+                                .align(Alignment.BottomEnd)
+                                .offset(4.dp, 4.dp),
+                        painter = painterResource(state.smallIcon.resource),
+                        contentDescription = null,
                     )
                 }
             }
@@ -140,7 +151,8 @@ private fun ContactItemContent(
 }
 
 data class ContactListItemState(
-    val icon: ImageResource,
+    val bigIcon: ImageResource,
+    val smallIcon: ImageResource?,
     val isShielded: Boolean,
     val name: StringResource,
     val address: StringResource,
@@ -157,7 +169,8 @@ private fun Preview() =
                     ContactListItemState(
                         name = stringRes("Name Surname"),
                         address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                        icon = imageRes("NS"),
+                        bigIcon = imageRes("NS"),
+                        smallIcon = imageRes(R.drawable.ic_chain_zec),
                         isShielded = false,
                         onClick = {}
                     )

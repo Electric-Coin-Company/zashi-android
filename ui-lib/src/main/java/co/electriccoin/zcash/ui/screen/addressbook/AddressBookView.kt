@@ -1,6 +1,6 @@
 @file:Suppress("TooManyFunctions")
 
-package co.electriccoin.zcash.ui.screen.addressbook.view
+package co.electriccoin.zcash.ui.screen.addressbook
 
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.Image
@@ -43,9 +43,12 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.OldZashiBottomBar
+import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
+import co.electriccoin.zcash.ui.design.component.ZashiIconButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
@@ -60,9 +63,6 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.addressbook.AddressBookTag
-import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookItem
-import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
 
 @Composable
 fun AddressBookView(
@@ -328,6 +328,12 @@ private fun AddressBookTopAppBar(
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
         },
+        regularActions = {
+            state.info?.let {
+                ZashiIconButton(it)
+                Spacer(20.dp)
+            }
+        }
     )
 }
 
@@ -347,7 +353,8 @@ private fun AddressBookDataPreview() {
                                 ContactListItemState(
                                     name = stringRes("Name Surname"),
                                     address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                                    icon = imageRes("NS"),
+                                    bigIcon = imageRes("NS"),
+                                    smallIcon = null,
                                     isShielded = false,
                                     onClick = {}
                                 )
@@ -356,8 +363,9 @@ private fun AddressBookDataPreview() {
                                 ContactListItemState(
                                     name = stringRes("Name Surname"),
                                     address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                                    icon = imageRes("NS"),
+                                    bigIcon = imageRes("NS"),
                                     isShielded = false,
+                                    smallIcon = null,
                                     onClick = {}
                                 )
                             )
@@ -370,7 +378,8 @@ private fun AddressBookDataPreview() {
                         ButtonState(
                             text = stringRes("Manual"),
                         ),
-                    title = stringRes("Address book")
+                    title = stringRes("Address book"),
+                    info = null
                 ),
         )
     }
@@ -392,8 +401,9 @@ private fun SelectRecipientDataPreview() {
                                 ContactListItemState(
                                     name = stringRes("Name Surname"),
                                     address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                                    icon = imageRes("NS"),
+                                    bigIcon = imageRes("NS"),
                                     isShielded = false,
+                                    smallIcon = null,
                                     onClick = {}
                                 )
                             ),
@@ -401,8 +411,9 @@ private fun SelectRecipientDataPreview() {
                                 ContactListItemState(
                                     name = stringRes("Name Surname"),
                                     address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                                    icon = imageRes("NS"),
+                                    bigIcon = imageRes("NS"),
                                     isShielded = false,
+                                    smallIcon = null,
                                     onClick = {}
                                 )
                             ),
@@ -411,8 +422,9 @@ private fun SelectRecipientDataPreview() {
                                 ContactListItemState(
                                     name = stringRes("Name Surname"),
                                     address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                                    icon = imageRes("NS"),
+                                    bigIcon = imageRes("NS"),
                                     isShielded = false,
+                                    smallIcon = null,
                                     onClick = {}
                                 )
                             ),
@@ -420,8 +432,9 @@ private fun SelectRecipientDataPreview() {
                                 ContactListItemState(
                                     name = stringRes("Name Surname"),
                                     address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                                    icon = imageRes("NS"),
+                                    bigIcon = imageRes("NS"),
                                     isShielded = false,
+                                    smallIcon = null,
                                     onClick = {}
                                 )
                             )
@@ -434,7 +447,8 @@ private fun SelectRecipientDataPreview() {
                         ButtonState(
                             text = stringRes("Manual"),
                         ),
-                    title = stringRes("Select Recipient")
+                    title = stringRes("Select Recipient"),
+                    info = IconButtonState(R.drawable.ic_help) {},
                 ),
         )
     }
@@ -458,7 +472,8 @@ private fun LoadingPreview() {
                         ButtonState(
                             text = stringRes("Manual"),
                         ),
-                    title = stringRes("Select Recipient")
+                    title = stringRes("Select Recipient"),
+                    info = null
                 ),
         )
     }
@@ -482,7 +497,8 @@ private fun EmptyAddressBookPreview() {
                         ButtonState(
                             text = stringRes("Manual"),
                         ),
-                    title = stringRes("Address Book")
+                    title = stringRes("Address Book"),
+                    info = null
                 ),
         )
     }
@@ -504,8 +520,9 @@ private fun EmptySelectRecipientPreview() {
                                 ContactListItemState(
                                     name = stringRes("Name Surname"),
                                     address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
-                                    icon = imageRes("NS"),
+                                    bigIcon = imageRes("NS"),
                                     isShielded = false,
+                                    smallIcon = null,
                                     onClick = {}
                                 )
                             ),
@@ -519,7 +536,8 @@ private fun EmptySelectRecipientPreview() {
                         ButtonState(
                             text = stringRes("Manual"),
                         ),
-                    title = stringRes("Select Recipient")
+                    title = stringRes("Select Recipient"),
+                    info = IconButtonState(R.drawable.ic_help) {},
                 ),
         )
     }

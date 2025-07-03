@@ -13,7 +13,6 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,27 +35,27 @@ class SettingsViewModel(
                 listOfNotNull(
                     ListItemState(
                         title = stringRes(R.string.settings_address_book),
-                        icon = imageRes(R.drawable.ic_settings_address_book),
+                        bigIcon = imageRes(R.drawable.ic_settings_address_book),
                         onClick = ::onAddressBookClick
                     ),
                     ListItemState(
                         title = stringRes(R.string.settings_advanced_settings),
-                        icon = imageRes(R.drawable.ic_advanced_settings),
+                        bigIcon = imageRes(R.drawable.ic_advanced_settings),
                         onClick = ::onAdvancedSettingsClick
                     ),
                     ListItemState(
                         title = stringRes(R.string.settings_whats_new),
-                        icon = imageRes(R.drawable.ic_settings_whats_new),
+                        bigIcon = imageRes(R.drawable.ic_settings_whats_new),
                         onClick = ::onWhatsNewClick
                     ),
                     ListItemState(
                         title = stringRes(R.string.settings_about_us),
-                        icon = imageRes(R.drawable.ic_settings_info),
+                        bigIcon = imageRes(R.drawable.ic_settings_info),
                         onClick = ::onAboutUsClick
                     ),
                     ListItemState(
                         title = stringRes(R.string.settings_feedback),
-                        icon = imageRes(R.drawable.ic_settings_feedback),
+                        bigIcon = imageRes(R.drawable.ic_settings_feedback),
                         onClick = ::onSendUsFeedbackClick
                     ),
                 ).toImmutableList()
@@ -70,7 +69,7 @@ class SettingsViewModel(
 
     private fun onSendUsFeedbackClick() = navigationRouter.forward(SUPPORT)
 
-    private fun onAddressBookClick() = viewModelScope.launch { navigateToAddressBook(AddressBookArgs.DEFAULT) }
+    private fun onAddressBookClick() = viewModelScope.launch { navigateToAddressBook() }
 
     private fun onWhatsNewClick() = navigationRouter.forward(WHATS_NEW)
 }

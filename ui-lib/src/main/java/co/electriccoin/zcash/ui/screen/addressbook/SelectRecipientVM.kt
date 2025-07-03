@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.addressbook.viewmodel
+package co.electriccoin.zcash.ui.screen.addressbook
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,16 +9,14 @@ import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.usecase.GetAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookItem
-import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
@@ -30,14 +28,14 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class SelectRecipientViewModel(
-    observeAddressBookContacts: ObserveAddressBookContactsUseCase,
+class SelectRecipientVM(
+    getAddressBookContacts: GetAddressBookContactsUseCase,
     getWalletAccountsUseCase: GetWalletAccountsUseCase,
     private val observeContactPicked: ObserveContactPickedUseCase,
     private val navigationRouter: NavigationRouter
 ) : ViewModel() {
     val state =
-        combine(observeAddressBookContacts(), getWalletAccountsUseCase.observe()) { contacts, accounts ->
+        combine(getAddressBookContacts.observe(), getWalletAccountsUseCase.observe()) { contacts, accounts ->
             if (accounts != null && accounts.size > 1) {
                 createStateWithAccounts(contacts, accounts)
             } else {
@@ -62,15 +60,17 @@ class SelectRecipientViewModel(
                     .map { account ->
                         AddressBookItem.Contact(
                             ContactListItemState(
-                                icon =
+                                bigIcon =
                                     imageRes(
                                         when (account) {
                                             is KeystoneAccount ->
                                                 co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone
+
                                             is ZashiAccount ->
                                                 co.electriccoin.zcash.ui.design.R.drawable.ic_item_zashi
                                         }
                                     ),
+                                smallIcon = null,
                                 isShielded = false,
                                 name = account.name,
                                 address = stringRes("${account.unified.address.address.take(ADDRESS_MAX_LENGTH)}..."),
@@ -90,7 +90,8 @@ class SelectRecipientViewModel(
                         .map { contact ->
                             AddressBookItem.Contact(
                                 ContactListItemState(
-                                    icon = getContactInitials(contact),
+                                    bigIcon = getContactInitials(contact),
+                                    smallIcon = null,
                                     isShielded = false,
                                     name = stringRes(contact.name),
                                     address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
@@ -115,7 +116,8 @@ class SelectRecipientViewModel(
                     onClick = ::onScanContactClick,
                     text = stringRes(R.string.address_book_scan_btn)
                 ),
-            title = stringRes(R.string.address_book_select_recipient_title)
+            title = stringRes(R.string.address_book_select_recipient_title),
+            info = null
         )
     }
 
@@ -127,11 +129,12 @@ class SelectRecipientViewModel(
                     ?.map { contact ->
                         AddressBookItem.Contact(
                             ContactListItemState(
-                                icon = getContactInitials(contact),
+                                bigIcon = getContactInitials(contact),
+                                smallIcon = null,
                                 isShielded = false,
                                 name = stringRes(contact.name),
                                 address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
-                                onClick = { onContactClick(contact) }
+                                onClick = { onContactClick(contact) },
                             )
                         )
                     }.orEmpty(),
@@ -146,7 +149,8 @@ class SelectRecipientViewModel(
                     onClick = ::onScanContactClick,
                     text = stringRes(R.string.address_book_scan_btn)
                 ),
-            title = stringRes(R.string.address_book_select_recipient_title)
+            title = stringRes(R.string.address_book_select_recipient_title),
+            info = null
         )
 
     private fun onWalletAccountClick(account: WalletAccount) =

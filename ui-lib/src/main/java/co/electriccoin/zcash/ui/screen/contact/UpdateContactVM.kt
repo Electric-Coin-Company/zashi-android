@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.contact.viewmodel
+package co.electriccoin.zcash.ui.screen.contact
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,15 +6,16 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
+import co.electriccoin.zcash.ui.common.usecase.ContactAddressValidationResult
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetContactByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameResult
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.contact.model.ContactState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -24,13 +25,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class UpdateContactViewModel(
-    private val originalContactAddress: String,
+class UpdateContactVM(
+    private val args: UpdateContactArgs,
     private val validateContactAddress: ValidateContactAddressUseCase,
     private val validateContactName: ValidateContactNameUseCase,
     private val updateContact: UpdateContactUseCase,
     private val deleteContact: DeleteContactUseCase,
-    private val getContactByAddress: GetContactByAddressUseCase,
+    private val getContactByAddress: GetContactByIdUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     private var contact = MutableStateFlow<AddressBookContact?>(null)
@@ -47,13 +48,13 @@ class UpdateContactViewModel(
                 null
             } else {
                 when (validateContactAddress(address = address, exclude = contact)) {
-                    ValidateContactAddressUseCase.Result.Invalid ->
+                    ContactAddressValidationResult.Invalid ->
                         stringRes(R.string.contact_address_error_invalid)
 
-                    ValidateContactAddressUseCase.Result.NotUnique ->
+                    ContactAddressValidationResult.NotUnique ->
                         stringRes(R.string.contact_address_error_not_unique)
 
-                    ValidateContactAddressUseCase.Result.Valid -> null
+                    ContactAddressValidationResult.Valid -> null
                 }
             }
         }.stateIn(
@@ -79,13 +80,13 @@ class UpdateContactViewModel(
                 null
             } else {
                 when (validateContactName(name = name, exclude = contact)) {
-                    ValidateContactNameUseCase.Result.TooLong ->
+                    ValidateContactNameResult.TooLong ->
                         stringRes(R.string.contact_name_error_too_long)
 
-                    ValidateContactNameUseCase.Result.NotUnique ->
+                    ValidateContactNameResult.NotUnique ->
                         stringRes(R.string.contact_name_error_not_unique)
 
-                    ValidateContactNameUseCase.Result.Valid -> null
+                    ValidateContactNameResult.Valid -> null
                 }
             }
         }
@@ -146,6 +147,8 @@ class UpdateContactViewModel(
                 negativeButton = deleteButton,
                 positiveButton = saveButton,
                 onBack = ::onBack,
+                chain = null,
+                info = null
             )
         }.stateIn(
             scope = viewModelScope,
@@ -155,10 +158,13 @@ class UpdateContactViewModel(
 
     init {
         viewModelScope.launch {
-            getContactByAddress(originalContactAddress).let { contact ->
+            getContactByAddress(
+                address = args.address,
+                chain = args.chain
+            ).let { contact ->
                 contactAddress.update { contact?.address.orEmpty() }
                 contactName.update { contact?.name.orEmpty() }
-                this@UpdateContactViewModel.contact.update { contact }
+                this@UpdateContactVM.contact.update { contact }
             }
             isLoadingContact.update { false }
         }
@@ -171,7 +177,7 @@ class UpdateContactViewModel(
             if (isDeletingContact.value || isUpdatingContact.value) return@launch
             contact.value?.let {
                 isUpdatingContact.update { true }
-                updateContact(contact = it, name = contactName.value, address = contactAddress.value)
+                updateContact(contact = it, name = contactName.value, address = contactAddress.value, chain = null)
                 navigationRouter.back()
                 isUpdatingContact.update { false }
             }

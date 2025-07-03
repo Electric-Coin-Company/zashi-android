@@ -88,7 +88,7 @@ class IntegrationsViewModel(
         items =
             listOfNotNull(
                 ListItemState(
-                    icon = imageRes(R.drawable.ic_integrations_near),
+                    bigIcon = imageRes(R.drawable.ic_integrations_near),
                     title = stringRes("Pay with NEAR"),
                     subtitle = stringRes("Send payments in any coin or token supported by Zashi's DEX integration."),
                     onClick = ::onNearSwapClick,
@@ -97,7 +97,7 @@ class IntegrationsViewModel(
                 ListItemState(
                     // Set the wallet currency by app build is more future-proof, although we hide it from
                     // the UI in the Testnet build
-                    icon = imageRes(R.drawable.ic_integrations_coinbase),
+                    bigIcon = imageRes(R.drawable.ic_integrations_coinbase),
                     title = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
                     subtitle =
                         stringRes(
@@ -110,7 +110,7 @@ class IntegrationsViewModel(
                     // Set the wallet currency by app build is more future-proof, although we hide it from
                     // the UI in the Testnet build
                     isEnabled = isRestoring.not() && selectedAccount is ZashiAccount,
-                    icon =
+                    bigIcon =
                         imageRes(
                             when (flexaStatus) {
                                 ENABLED -> R.drawable.ic_integrations_flexa
@@ -125,7 +125,7 @@ class IntegrationsViewModel(
                 ListItemState(
                     title = stringRes(R.string.integrations_keystone),
                     subtitle = stringRes(R.string.integrations_keystone_subtitle),
-                    icon = imageRes(R.drawable.ic_integrations_keystone),
+                    bigIcon = imageRes(R.drawable.ic_integrations_keystone),
                     onClick = ::onConnectKeystoneClick
                 ).takeIf { keystoneStatus != UNAVAILABLE },
             ).toImmutableList(),

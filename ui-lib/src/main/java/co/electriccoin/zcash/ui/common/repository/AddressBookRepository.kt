@@ -27,20 +27,20 @@ interface AddressBookRepository {
 
     suspend fun saveContact(
         name: String,
-        address: String
+        address: String,
+        chain: String?,
     )
 
     suspend fun updateContact(
         contact: AddressBookContact,
         name: String,
-        address: String
+        address: String,
+        chain: String?,
     )
 
     suspend fun deleteContact(contact: AddressBookContact)
 
     suspend fun resetAddressBook()
-
-    suspend fun getContactByAddress(address: String): AddressBookContact?
 
     fun observeContactByAddress(address: String): Flow<AddressBookContact?>
 }
@@ -65,12 +65,14 @@ class AddressBookRepositoryImpl(
 
     override suspend fun saveContact(
         name: String,
-        address: String
+        address: String,
+        chain: String?,
     ) = mutateAddressBook {
         Twig.info { "Address Book: saving a contact" }
         localAddressBookDataSource.saveContact(
             name = name,
             address = address,
+            chain = chain,
             addressBookKey = getAddressBookKey()
         )
     }
@@ -78,13 +80,15 @@ class AddressBookRepositoryImpl(
     override suspend fun updateContact(
         contact: AddressBookContact,
         name: String,
-        address: String
+        address: String,
+        chain: String?,
     ) = mutateAddressBook {
         Twig.info { "Address Book: updating a contact" }
         localAddressBookDataSource.updateContact(
             contact = contact,
             name = name,
             address = address,
+            chain = chain,
             addressBookKey = getAddressBookKey()
         )
     }
@@ -103,9 +107,6 @@ class AddressBookRepositoryImpl(
             localAddressBookDataSource.resetAddressBook()
             addressBookCache.update { null }
         }
-
-    override suspend fun getContactByAddress(address: String): AddressBookContact? =
-        observeContactByAddress(address).first()
 
     override fun observeContactByAddress(address: String): Flow<AddressBookContact?> =
         addressBook

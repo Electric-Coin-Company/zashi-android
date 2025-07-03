@@ -13,8 +13,8 @@ abstract class BaseSerializer {
             .putLong(this)
             .array()
 
-    protected fun String.createByteArray(): ByteArray {
-        val byteArray = this.toByteArray()
+    protected fun String?.createByteArray(): ByteArray {
+        val byteArray = this?.toByteArray() ?: ByteArray(0)
         return byteArray.size.createByteArray() + byteArray
     }
 

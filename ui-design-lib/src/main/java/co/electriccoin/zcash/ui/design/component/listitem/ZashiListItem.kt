@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.isUnspecified
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -66,8 +68,8 @@ fun ZashiListItem(
                 subtitle = subtitle?.let { stringRes(it) },
                 isEnabled = isEnabled,
                 onClick = onClick,
-                icon = icon,
-                badge = badge,
+                bigIcon = icon,
+                smallIcon = badge,
                 titleIcons = titleIcons,
                 design = type
             ),
@@ -85,12 +87,12 @@ fun ZashiListItem(
             ZashiListItemDesignType.SECONDARY -> ZashiListItemDefaults.secondaryColors()
         },
     leading: (@Composable (Modifier) -> Unit)? =
-        state.icon?.let { icon ->
+        state.bigIcon?.let { icon ->
             {
                 ZashiListItemDefaults.LeadingItem(
                     modifier = it,
                     icon = icon,
-                    badge = state.badge,
+                    badge = state.smallIcon,
                     contentDescription = state.title.getValue()
                 )
             }
@@ -130,25 +132,27 @@ fun ZashiListItem(
 
 @Composable
 private fun ZashiListLeadingItem(
-    icon: ImageResource?,
-    badge: ImageResource?,
+    bigIcon: ImageResource?,
+    smallIcon: ImageResource?,
     contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
-    if (icon is ImageResource.ByDrawable) {
+    if (bigIcon is ImageResource.ByDrawable) {
         Box(modifier) {
             Image(
-                painter = painterResource(icon.resource),
+                modifier = Modifier.fillMaxSize(),
+                painter = painterResource(bigIcon.resource),
                 contentDescription = contentDescription,
+                contentScale = ContentScale.FillHeight
             )
-            if (badge is ImageResource.ByDrawable) {
+            if (smallIcon is ImageResource.ByDrawable) {
                 Image(
                     modifier =
                         Modifier
                             .size(20.dp)
                             .align(Alignment.BottomEnd)
                             .offset(3.dp, 3.dp),
-                    painter = painterResource(badge.resource),
+                    painter = painterResource(smallIcon.resource),
                     contentDescription = contentDescription,
                 )
             }
@@ -241,8 +245,8 @@ private fun ZashiListContentItem(
 @Immutable
 data class ListItemState(
     val title: StringResource,
-    val icon: ImageResource? = null,
-    val badge: ImageResource? = null,
+    val bigIcon: ImageResource? = null,
+    val smallIcon: ImageResource? = null,
     val design: ZashiListItemDesignType = ZashiListItemDesignType.PRIMARY,
     val subtitle: StringResource? = null,
     val titleIcons: ImmutableList<Int> = persistentListOf(),

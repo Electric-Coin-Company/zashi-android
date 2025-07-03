@@ -9,8 +9,9 @@ class UpdateContactUseCase(
     suspend operator fun invoke(
         contact: AddressBookContact,
         name: String,
-        address: String
+        address: String,
+        chain: String?,
     ) {
-        addressBookRepository.updateContact(contact = contact, name = name, address = address)
+        addressBookRepository.updateContact(contact = contact, name = name, address = address, chain = chain)
     }
 }

@@ -1,6 +1,8 @@
 package co.electriccoin.zcash.ui.screen.swap
 
+import androidx.annotation.DrawableRes
 import cash.z.ecc.android.sdk.model.Zatoshi
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.repository.SwapMode
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
@@ -18,7 +20,8 @@ internal interface SwapVMMapper {
         onAddressChange: (String) -> Unit,
         onSwapModeChange: (SwapMode) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
-        onQrCodeScannerClick: () -> Unit
+        onQrCodeScannerClick: () -> Unit,
+        onAddressBookClick: () -> Unit
     ): SwapState
 }
 
@@ -34,6 +37,13 @@ internal interface InternalState{
     val swapMode: SwapMode
     val isRequestingQuote: Boolean
 }
+
+// internal enum class AddressBookState(
+//     @DrawableRes val icon: Int
+// ) {
+//     PICK_FROM_ADDRESS_BOOK(R.drawable.send_address_book),
+//     ADD_TO_ADDRESS_BOOK(R.drawable.send_address_book_plus)
+// }
 
 internal data class InternalStateImpl(
     override val swapAsset: SwapAsset?,

@@ -10,6 +10,7 @@ import co.electriccoin.zcash.ui.screen.home.common.CommonErrorScreenState
 
 @Immutable
 data class SwapAssetPickerState(
+    val title: StringResource,
     val search: TextFieldState,
     val data: SwapAssetPickerDataState,
     override val onBack: () -> Unit,

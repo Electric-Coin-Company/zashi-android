@@ -6,7 +6,7 @@ import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.provider.AddressBookProvider
 import co.electriccoin.zcash.ui.common.provider.AddressBookStorageProvider
-import co.electriccoin.zcash.ui.common.serialization.ADDRESS_BOOK_SERIALIZATION_V1
+import co.electriccoin.zcash.ui.common.serialization.ADDRESS_BOOK_SERIALIZATION_V2
 import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,6 +18,7 @@ interface LocalAddressBookDataSource {
     suspend fun saveContact(
         name: String,
         address: String,
+        chain: String?,
         addressBookKey: AddressBookKey
     ): AddressBook
 
@@ -25,6 +26,7 @@ interface LocalAddressBookDataSource {
         contact: AddressBookContact,
         name: String,
         address: String,
+        chain: String?,
         addressBookKey: AddressBookKey
     ): AddressBook
 
@@ -57,7 +59,7 @@ class LocalAddressBookDataSourceImpl(
                     newAddressBook =
                         AddressBook(
                             lastUpdated = Clock.System.now(),
-                            version = ADDRESS_BOOK_SERIALIZATION_V1,
+                            version = ADDRESS_BOOK_SERIALIZATION_V2,
                             contacts = emptyList(),
                         ).also {
                             this@LocalAddressBookDataSourceImpl.addressBook = it
@@ -73,6 +75,7 @@ class LocalAddressBookDataSourceImpl(
     override suspend fun saveContact(
         name: String,
         address: String,
+        chain: String?,
         addressBookKey: AddressBookKey
     ): AddressBook =
         withContext(Dispatchers.IO) {
@@ -80,12 +83,13 @@ class LocalAddressBookDataSourceImpl(
             val newAddressBook =
                 AddressBook(
                     lastUpdated = lastUpdated,
-                    version = ADDRESS_BOOK_SERIALIZATION_V1,
+                    version = ADDRESS_BOOK_SERIALIZATION_V2,
                     contacts =
                         addressBook?.contacts.orEmpty() +
                             AddressBookContact(
-                                name = name,
-                                address = address,
+                                name = name.trim(),
+                                address = address.trim(),
+                                chain = chain?.trim(),
                                 lastUpdated = lastUpdated,
                             ),
                 ).also {
@@ -99,6 +103,7 @@ class LocalAddressBookDataSourceImpl(
         contact: AddressBookContact,
         name: String,
         address: String,
+        chain: String?,
         addressBookKey: AddressBookKey
     ): AddressBook =
         withContext(Dispatchers.IO) {
@@ -106,7 +111,7 @@ class LocalAddressBookDataSourceImpl(
             val newAddressBook =
                 AddressBook(
                     lastUpdated = lastUpdated,
-                    version = ADDRESS_BOOK_SERIALIZATION_V1,
+                    version = ADDRESS_BOOK_SERIALIZATION_V2,
                     contacts =
                         addressBook
                             ?.contacts
@@ -118,6 +123,7 @@ class LocalAddressBookDataSourceImpl(
                                     AddressBookContact(
                                         name = name.trim(),
                                         address = address.trim(),
+                                        chain = chain?.trim(),
                                         lastUpdated = Clock.System.now()
                                     )
                                 )
@@ -138,7 +144,7 @@ class LocalAddressBookDataSourceImpl(
             val newAddressBook =
                 AddressBook(
                     lastUpdated = lastUpdated,
-                    version = ADDRESS_BOOK_SERIALIZATION_V1,
+                    version = ADDRESS_BOOK_SERIALIZATION_V2,
                     contacts =
                         addressBook
                             ?.contacts
@@ -171,23 +177,23 @@ class LocalAddressBookDataSourceImpl(
         val encryptedFile = runCatching { addressBookStorageProvider.getStorageFile(addressBookKey) }.getOrNull()
         val unencryptedFile = runCatching { addressBookStorageProvider.getLegacyUnencryptedStorageFile() }.getOrNull()
 
-        if (encryptedFile != null) {
-            return runCatching {
-                addressBookProvider
-                    .readAddressBookFromFile(encryptedFile, addressBookKey)
-                    .also { unencryptedFile?.deleteSuspend() }
-            }.onFailure { e -> Twig.warn(e) { "Failed to decrypt address book" } }.getOrNull()
-        }
+        return when {
+            encryptedFile != null ->
+                runCatching {
+                    addressBookProvider
+                        .readAddressBookFromFile(encryptedFile, addressBookKey)
+                        .also { unencryptedFile?.deleteSuspend() }
+                }.onFailure { e -> Twig.warn(e) { "Failed to decrypt address book" } }.getOrNull()
 
-        return if (unencryptedFile != null) {
-            addressBookProvider
-                .readLegacyUnencryptedAddressBookFromFile(unencryptedFile)
-                .also { unencryptedAddressBook ->
-                    writeAddressBookToLocalStorage(unencryptedAddressBook, addressBookKey)
-                    unencryptedFile.deleteSuspend()
-                }
-        } else {
-            null
+            unencryptedFile != null ->
+                addressBookProvider
+                    .readLegacyUnencryptedAddressBookFromFile(unencryptedFile)
+                    .also { unencryptedAddressBook ->
+                        writeAddressBookToLocalStorage(unencryptedAddressBook, addressBookKey)
+                        unencryptedFile.deleteSuspend()
+                    }
+
+            else -> null
         }
     }
 

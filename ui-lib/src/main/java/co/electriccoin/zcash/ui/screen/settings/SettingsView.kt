@@ -88,22 +88,22 @@ private fun PreviewSettings() {
                         persistentListOf(
                             ListItemState(
                                 title = stringRes(R.string.settings_address_book),
-                                icon = imageRes(R.drawable.ic_settings_address_book),
+                                bigIcon = imageRes(R.drawable.ic_settings_address_book),
                                 onClick = { },
                             ),
                             ListItemState(
                                 title = stringRes(R.string.settings_advanced_settings),
-                                icon = imageRes(R.drawable.ic_advanced_settings),
+                                bigIcon = imageRes(R.drawable.ic_advanced_settings),
                                 onClick = { },
                             ),
                             ListItemState(
                                 title = stringRes(R.string.settings_about_us),
-                                icon = imageRes(R.drawable.ic_settings_info),
+                                bigIcon = imageRes(R.drawable.ic_settings_info),
                                 onClick = { },
                             ),
                             ListItemState(
                                 title = stringRes(R.string.settings_feedback),
-                                icon = imageRes(R.drawable.ic_settings_feedback),
+                                bigIcon = imageRes(R.drawable.ic_settings_feedback),
                                 onClick = { },
                             ),
                         ),
@@ -125,22 +125,22 @@ private fun IntegrationsDisabledPreview() {
                         persistentListOf(
                             ListItemState(
                                 title = stringRes(R.string.settings_address_book),
-                                icon = imageRes(R.drawable.ic_settings_address_book),
+                                bigIcon = imageRes(R.drawable.ic_settings_address_book),
                                 onClick = { },
                             ),
                             ListItemState(
                                 title = stringRes(R.string.settings_advanced_settings),
-                                icon = imageRes(R.drawable.ic_advanced_settings),
+                                bigIcon = imageRes(R.drawable.ic_advanced_settings),
                                 onClick = { },
                             ),
                             ListItemState(
                                 title = stringRes(R.string.settings_about_us),
-                                icon = imageRes(R.drawable.ic_settings_info),
+                                bigIcon = imageRes(R.drawable.ic_settings_info),
                                 onClick = { },
                             ),
                             ListItemState(
                                 title = stringRes(R.string.settings_feedback),
-                                icon = imageRes(R.drawable.ic_settings_feedback),
+                                bigIcon = imageRes(R.drawable.ic_settings_feedback),
                                 onClick = { },
                             ),
                         ),

@@ -31,7 +31,7 @@ interface SwapRepository {
 
     val quote: StateFlow<SwapQuoteData?>
 
-    fun select(asset: SwapAsset)
+    fun select(asset: SwapAsset?)
 
     fun setSlippage(amount: BigDecimal)
 
@@ -94,9 +94,13 @@ class NearSwapRepository(
 
     private var requestQuoteJob: Job? = null
 
-    override fun select(asset: SwapAsset) {
-        check(asset is NearSwapAsset)
-        selectedAsset.update { asset }
+    override fun select(asset: SwapAsset?) {
+        if (asset != null) {
+            check(asset is NearSwapAsset)
+            selectedAsset.update { asset }
+        } else {
+            selectedAsset.update { null }
+        }
     }
 
     override fun setSlippage(amount: BigDecimal) = slippage.update { amount }

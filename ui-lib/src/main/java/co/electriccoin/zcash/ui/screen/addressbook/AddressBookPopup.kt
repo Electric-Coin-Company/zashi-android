@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.addressbook.view
+package co.electriccoin.zcash.ui.screen.addressbook
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
@@ -38,7 +38,6 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.addressbook.model.AddressBookState
 
 @Composable
 internal fun AddressBookPopup(
@@ -155,7 +154,8 @@ private fun PopupContentPreview() =
                         ButtonState(
                             text = stringRes("Manual entry"),
                         ),
-                    title = stringRes("Address book")
+                    title = stringRes("Address book"),
+                    info = null
                 ),
             onDismissRequest = {}
         )

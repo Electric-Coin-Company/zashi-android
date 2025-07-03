@@ -13,7 +13,7 @@ import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
+import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState.ColorMode.DEFAULT
 import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState.ColorMode.KEYSTONE

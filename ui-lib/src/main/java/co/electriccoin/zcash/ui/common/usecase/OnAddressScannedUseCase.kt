@@ -4,7 +4,9 @@ import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
-import co.electriccoin.zcash.ui.screen.scan.ScanFlow
+import co.electriccoin.zcash.ui.screen.scan.ScanFlow.ADDRESS_BOOK
+import co.electriccoin.zcash.ui.screen.scan.ScanFlow.HOMEPAGE
+import co.electriccoin.zcash.ui.screen.scan.ScanFlow.SEND
 import co.electriccoin.zcash.ui.screen.send.Send
 
 class OnAddressScannedUseCase(
@@ -19,29 +21,25 @@ class OnAddressScannedUseCase(
         require(addressType is AddressType.Valid)
 
         when (scanArgs.flow) {
-            ScanFlow.SEND -> {
+            SEND -> {
                 prefillSend.request(PrefillSendData.FromAddressScan(address = address))
                 navigationRouter.back()
             }
 
-            ScanFlow.ADDRESS_BOOK -> {
-                navigationRouter.replace(AddContactArgs(address))
-            }
+            ADDRESS_BOOK -> navigationRouter.replace(AddContactArgs(address))
 
-            ScanFlow.HOMEPAGE -> {
-                navigationRouter.replace(
-                    Send(
-                        address,
-                        when (addressType) {
-                            AddressType.Shielded -> cash.z.ecc.sdk.model.AddressType.UNIFIED
-                            AddressType.Tex -> cash.z.ecc.sdk.model.AddressType.TEX
-                            AddressType.Transparent -> cash.z.ecc.sdk.model.AddressType.TRANSPARENT
-                            AddressType.Unified -> cash.z.ecc.sdk.model.AddressType.UNIFIED
-                            else -> cash.z.ecc.sdk.model.AddressType.UNIFIED
-                        }
-                    )
+            HOMEPAGE -> navigationRouter.replace(
+                Send(
+                    address,
+                    when (addressType) {
+                        AddressType.Shielded -> cash.z.ecc.sdk.model.AddressType.UNIFIED
+                        AddressType.Tex -> cash.z.ecc.sdk.model.AddressType.TEX
+                        AddressType.Transparent -> cash.z.ecc.sdk.model.AddressType.TRANSPARENT
+                        AddressType.Unified -> cash.z.ecc.sdk.model.AddressType.UNIFIED
+                        else -> cash.z.ecc.sdk.model.AddressType.UNIFIED
+                    }
                 )
-            }
+            )
         }
     }
 }

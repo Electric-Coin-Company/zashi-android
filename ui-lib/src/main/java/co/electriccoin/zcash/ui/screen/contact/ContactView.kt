@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.contact.view
+package co.electriccoin.zcash.ui.screen.contact
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,9 +18,14 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.design.component.IconButtonState
+import co.electriccoin.zcash.ui.design.component.PickerState
+import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
+import co.electriccoin.zcash.ui.design.component.ZashiIconButton
+import co.electriccoin.zcash.ui.design.component.ZashiPicker
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
@@ -29,10 +34,9 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.contact.ContactTag
-import co.electriccoin.zcash.ui.screen.contact.model.ContactState
 
 @Composable
 fun ContactView(
@@ -107,6 +111,18 @@ private fun ContactViewInternal(
             }
         )
 
+        if (state.chain != null) {
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = "Select Chain",
+                style = ZashiTypography.textSm,
+                fontWeight = FontWeight.Medium,
+                color = ZashiColors.Inputs.Filled.label
+            )
+            Spacer(6.dp)
+            ZashiPicker(state = state.chain)
+        }
+
         Spacer(modifier = Modifier.weight(1f))
 
         ZashiButton(
@@ -136,6 +152,12 @@ private fun ContactTopAppBar(
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
         },
+        regularActions = {
+            state.info?.let {
+                ZashiIconButton(it)
+                Spacer(20.dp)
+            }
+        }
     )
 }
 
@@ -158,7 +180,15 @@ private fun DataPreview() {
                     negativeButton =
                         ButtonState(
                             text = stringRes("Negative"),
-                        )
+                        ),
+                    chain = PickerState(
+                        bigIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone),
+                        smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone),
+                        text = stringRes("Text"),
+                        placeholder = stringRes("Placeholder"),
+                        onClick = {}
+                    ),
+                    info = IconButtonState(R.drawable.ic_help) {}
                 ),
         )
     }
@@ -183,7 +213,9 @@ private fun LoadingPreview() {
                     negativeButton =
                         ButtonState(
                             text = stringRes("Add New Contact"),
-                        )
+                        ),
+                    chain = null,
+                    info = null
                 ),
         )
     }

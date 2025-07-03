@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common.datasource
 
 import co.electriccoin.zcash.ui.common.model.NearSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapAsset
+import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
 import co.electriccoin.zcash.ui.common.model.near.QuoteRequest
 import co.electriccoin.zcash.ui.common.model.near.QuoteResponseDto
 import co.electriccoin.zcash.ui.common.model.near.RecipientType
@@ -16,7 +17,8 @@ import co.electriccoin.zcash.ui.common.provider.ResponseWithErrorException
 import co.electriccoin.zcash.ui.common.provider.TokenIconProvider
 import co.electriccoin.zcash.ui.common.provider.TokenNameProvider
 import co.electriccoin.zcash.ui.common.repository.SwapMode
-import co.electriccoin.zcash.ui.common.repository.SwapMode.*
+import co.electriccoin.zcash.ui.common.repository.SwapMode.PAY
+import co.electriccoin.zcash.ui.common.repository.SwapMode.SWAP
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -66,8 +68,11 @@ class SwapDataSourceImpl(
                     token = it,
                     tokenName = tokenNameProvider.getName(it.symbol),
                     tokenIcon = tokenIconProvider.getIcon(it.symbol),
-                    chainName = chainNameProvider.getName(it.blockchain),
-                    chainIcon = chainIconProvider.getIcon(it.blockchain)
+                    blockchain = SwapAssetBlockchain(
+                        chainTicker = it.blockchain,
+                        chainName = chainNameProvider.getName(it.blockchain),
+                        chainIcon = chainIconProvider.getIcon(it.blockchain)
+                    )
                 )
             }
         }
@@ -125,11 +130,13 @@ class SwapDataSourceImpl(
                         amountFormatted = errorAmount.movePointLeft(errorAsset.decimals)
                     )
                 }
+
                 e.error.message.startsWith("No quotes found") -> throw QuoteLowAmountException(
                     asset = originAsset,
                     amount = null,
                     amountFormatted = null
                 )
+
                 else -> {
                     throw e
                 }

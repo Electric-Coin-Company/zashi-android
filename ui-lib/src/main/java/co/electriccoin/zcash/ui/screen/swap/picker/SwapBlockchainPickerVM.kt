@@ -4,12 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.common.model.SwapAsset
-import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
+import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
-import co.electriccoin.zcash.ui.common.usecase.FilterSwapAssetsUseCase
+import co.electriccoin.zcash.ui.common.usecase.FilterSwapBlockchainsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SelectSwapAssetUseCase
+import co.electriccoin.zcash.ui.common.usecase.SwapBlockchainData
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
@@ -24,13 +25,13 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class SwapAssetPickerVM(
-    args: SwapAssetPickerArgs,
+class SwapBlockchainPickerVM(
+    private val args: SwapBlockchainPickerArgs,
     getSwapAssets: GetSwapAssetsUseCase,
-    private val selectSwapAsset: SelectSwapAssetUseCase,
-    private val navigationRouter: NavigationRouter,
-    private val filterSwapAssets: FilterSwapAssetsUseCase,
+    private val navigateToSelectSwapBlockchain: NavigateToSelectSwapBlockchainUseCase,
+    private val filterSwapBlockchains: FilterSwapBlockchainsUseCase,
     private val swapRepository: SwapRepository,
 ) : ViewModel() {
     private val searchText = MutableStateFlow("")
@@ -45,35 +46,30 @@ class SwapAssetPickerVM(
                 initialValue = createTextFieldState(searchText.value)
             )
 
-    private val filteredSwapAssets =
+    private val filteredSwapBlockchains =
         combine(getSwapAssets.observe(), searchText) { assets, text ->
-            filterSwapAssets(
-                assets = assets,
-                text = text,
-                chainTicker = args.chainTicker
-            )
+            filterSwapBlockchains(assets, text)
         }.flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(),
                 initialValue =
-                    filterSwapAssets(
+                    filterSwapBlockchains(
                         assets = getSwapAssets.observe().value,
-                        text = searchText.value,
-                        chainTicker = args.chainTicker
+                        text = searchText.value
                     )
             )
 
     val state: StateFlow<SwapAssetPickerState> =
-        combine(filteredSwapAssets, searchTextFieldState) { assets, search ->
+        combine(filteredSwapBlockchains, searchTextFieldState) { assets, search ->
             createState(assets, search)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = createState(filteredSwapAssets.value, searchTextFieldState.value)
+            initialValue = createState(filteredSwapBlockchains.value, searchTextFieldState.value)
         )
 
-    private fun createState(assets: SwapAssetsData, search: TextFieldState): SwapAssetPickerState =
+    private fun createState(assets: SwapBlockchainData, search: TextFieldState): SwapAssetPickerState =
         SwapAssetPickerState(
             data =
                 when {
@@ -81,13 +77,13 @@ class SwapAssetPickerVM(
                         SwapAssetPickerDataState.Success(
                             assets.data.map {
                                 ListItemState(
-                                    bigIcon = it.tokenIcon,
-                                    smallIcon = it.chainIcon,
-                                    title = stringRes(it.tokenTicker),
-                                    subtitle = it.chainName,
-                                    onClick = { onSwapAssetClick(it) },
-                                    contentType = "token",
-                                    key = "${it.tokenTicker}_${it.chainTicker}"
+                                    bigIcon = it.chainIcon,
+                                    smallIcon = null,
+                                    title = it.chainName,
+                                    subtitle = null,
+                                    onClick = { onBlockchainClick(it) },
+                                    contentType = "blockchain",
+                                    key = it.chainTicker
                                 )
                             }
                         )
@@ -105,7 +101,7 @@ class SwapAssetPickerVM(
                 },
             onBack = ::onBack,
             search = search,
-            title = stringRes("Select Token")
+            title = stringRes("Select Chain")
         )
 
     private fun createTextFieldState(it: String): TextFieldState =
@@ -116,9 +112,10 @@ class SwapAssetPickerVM(
 
     private fun onSearchTextChange(new: String) = searchText.update { new }
 
-    private fun onSwapAssetClick(asset: SwapAsset) = selectSwapAsset.select(asset)
+    private fun onBlockchainClick(asset: SwapAssetBlockchain) =
+        viewModelScope.launch { navigateToSelectSwapBlockchain.onSelected(asset, args) }
 
-    private fun onBack() = navigationRouter.back()
+    private fun onBack() = viewModelScope.launch { navigateToSelectSwapBlockchain.onSelectionCancelled(args) }
 
     private fun onRetry() = swapRepository.requestRefreshAssets()
 }

@@ -240,11 +240,11 @@ private fun ColumnScope.AddressTextField(
             Row (
                 verticalAlignment = Alignment.Top
             ) {
-                // ZashiImageButton(
-                //     modifier = Modifier.size(36.dp),
-                //     state = state.addressBookButton
-                // )
-                // androidx.compose.foundation.layout.Spacer(modifier = Modifier.width(4.dp))
+                ZashiImageButton(
+                    modifier = Modifier.size(36.dp),
+                    state = state.addressBookButton
+                )
+                Spacer(4.dp)
                 ZashiImageButton(
                     modifier = Modifier.size(36.dp),
                     state = state.qrScannerButton
@@ -269,7 +269,7 @@ private fun ColumnScope.AddressTextField(
 @PreviewScreens
 @Composable
 private fun Preview() {
-    var swapModeSwapMode by remember { mutableStateOf(SwapMode.SWAP) }
+    var swapModeSwapMode by remember { mutableStateOf(SWAP) }
 
     ZcashTheme {
         SwapView(
@@ -333,6 +333,10 @@ private fun Preview() {
                     isAddressBookHintVisible = true,
                     qrScannerButton = IconButtonState(
                         icon = R.drawable.qr_code_icon,
+                        onClick = {}
+                    ),
+                    addressBookButton = IconButtonState(
+                        icon = R.drawable.send_address_book,
                         onClick = {}
                     )
                 )

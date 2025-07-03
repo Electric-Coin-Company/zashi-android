@@ -24,6 +24,7 @@ internal data class SwapState(
     val address: TextFieldState,
     val isAddressBookHintVisible: Boolean,
     val qrScannerButton: IconButtonState,
+    val addressBookButton: IconButtonState,
     val onBack: () -> Unit
 ) {
 }

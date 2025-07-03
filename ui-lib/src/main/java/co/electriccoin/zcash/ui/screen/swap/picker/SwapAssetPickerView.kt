@@ -142,12 +142,12 @@ private fun Item(item: ListItemState) {
         state = item,
         modifier = Modifier.padding(horizontal = 4.dp),
         leading =
-            item.icon?.let { icon ->
+            item.bigIcon?.let { bigIcon ->
                 {
                     ZashiListItemDefaults.LeadingItem(
                         modifier = Modifier.size(40.dp),
-                        icon = icon,
-                        badge = item.badge,
+                        icon = bigIcon,
+                        badge = item.smallIcon,
                         contentDescription = item.title.getValue()
                     )
                 }
@@ -222,7 +222,8 @@ private fun SuccessPreview() =
                                     subtitle = stringRes("subtitle")
                                 )
                             )
-                        )
+                        ),
+                    title = stringRes("title")
                 )
         )
     }
@@ -236,7 +237,8 @@ private fun EmptyPreview() =
                 SwapAssetPickerState(
                     onBack = {},
                     search = TextFieldState(stringRes("")) {},
-                    data = SwapAssetPickerDataState.Success(listOf())
+                    data = SwapAssetPickerDataState.Success(listOf()),
+                    title = stringRes("title")
                 )
         )
     }
@@ -250,7 +252,8 @@ private fun LoadingPreview() =
                 SwapAssetPickerState(
                     onBack = {},
                     search = TextFieldState(stringRes("")) {},
-                    data = SwapAssetPickerDataState.Loading
+                    data = SwapAssetPickerDataState.Loading,
+                    title = stringRes("title")
                 )
         )
     }
@@ -269,7 +272,8 @@ private fun ErrorPreview() =
                             stringRes("title"),
                             stringRes("subtitle"),
                             ButtonState(stringRes("text"))
-                        )
+                        ),
+                    title = stringRes("title")
                 )
         )
     }

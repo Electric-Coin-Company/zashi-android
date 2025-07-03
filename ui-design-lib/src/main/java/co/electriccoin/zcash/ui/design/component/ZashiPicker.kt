@@ -43,21 +43,21 @@ fun ZashiPicker(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (state.icon is ImageResource.ByDrawable) {
+            if (state.bigIcon is ImageResource.ByDrawable) {
                 Box {
                     Image(
                         modifier = Modifier.size(24.dp),
-                        painter = painterResource(state.icon.resource),
+                        painter = painterResource(state.bigIcon.resource),
                         contentDescription = null,
                     )
-                    if (state.badge is ImageResource.ByDrawable) {
+                    if (state.smallIcon is ImageResource.ByDrawable) {
                         Image(
                             modifier =
                                 Modifier
                                     .size(14.dp)
                                     .align(Alignment.BottomEnd)
                                     .offset(3.dp, 3.dp),
-                            painter = painterResource(state.badge.resource),
+                            painter = painterResource(state.smallIcon.resource),
                             contentDescription = null,
                         )
                     }
@@ -92,8 +92,8 @@ fun ZashiPicker(
 
 @Immutable
 data class PickerState(
-    val icon: ImageResource?,
-    val badge: ImageResource?,
+    val bigIcon: ImageResource?,
+    val smallIcon: ImageResource?,
     val text: StringResource?,
     val placeholder: StringResource,
     val onClick: () -> Unit
@@ -107,8 +107,8 @@ private fun Preview() =
             ZashiPicker(
                 state =
                     PickerState(
-                        icon = imageRes(R.drawable.ic_item_keystone),
-                        badge = imageRes(R.drawable.ic_item_keystone),
+                        bigIcon = imageRes(R.drawable.ic_item_keystone),
+                        smallIcon = imageRes(R.drawable.ic_item_keystone),
                         text = stringRes("Text"),
                         placeholder = stringRes("Placeholder"),
                         onClick = {}
@@ -125,8 +125,8 @@ private fun PlaceholderPreview() =
             ZashiPicker(
                 state =
                     PickerState(
-                        icon = null,
-                        badge = null,
+                        bigIcon = null,
+                        smallIcon = null,
                         text = null,
                         placeholder = stringRes("Placeholder..."),
                         onClick = {}

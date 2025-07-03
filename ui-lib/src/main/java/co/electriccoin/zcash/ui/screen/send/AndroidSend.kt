@@ -21,7 +21,6 @@ import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarViewModel
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
-import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
@@ -114,15 +113,7 @@ internal fun WrapSend(
 ) {
     val scope = rememberCoroutineScope()
 
-    val navController = LocalNavController.current
-
     val viewModel = koinViewModel<SendViewModel>()
-
-    LaunchedEffect(Unit) {
-        viewModel.navigateCommand.collect {
-            navController.navigate(it)
-        }
-    }
 
     val sendAddressBookState by viewModel.sendAddressBookState.collectAsStateWithLifecycle()
 

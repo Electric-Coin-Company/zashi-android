@@ -46,12 +46,12 @@ fun BottomSheetContent(state: SendOptionsState) {
                 state = item,
                 modifier = Modifier.padding(horizontal = 4.dp),
                 leading =
-                    item.icon?.let { icon ->
+                    item.bigIcon?.let { icon ->
                         {
                             ZashiListItemDefaults.LeadingItem(
                                 modifier = Modifier.size(40.dp),
                                 icon = icon,
-                                badge = item.badge,
+                                badge = item.smallIcon,
                                 contentDescription = item.title.getValue()
                             )
                         }

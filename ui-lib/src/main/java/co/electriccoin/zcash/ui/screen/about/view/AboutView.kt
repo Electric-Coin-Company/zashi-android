@@ -164,7 +164,7 @@ fun AboutMainContent(
             modifier = Modifier.padding(horizontal = 4.dp),
             state =
                 ListItemState(
-                    icon = imageRes(R.drawable.ic_settings_info),
+                    bigIcon = imageRes(R.drawable.ic_settings_info),
                     title = stringRes(R.string.about_button_privacy_policy),
                     onClick = onPrivacyPolicy
                 )

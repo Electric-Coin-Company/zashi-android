@@ -7,12 +7,20 @@ import co.electriccoin.zcash.ui.design.util.getString
 class FilterSwapAssetsUseCase(
     private val context: Context
 ) {
-    operator fun invoke(assets: SwapAssetsData, text: String): SwapAssetsData {
+    operator fun invoke(assets: SwapAssetsData, text: String, chainTicker: String?): SwapAssetsData {
         val filtered =
             if (assets.data == null) {
                 null
             } else {
-                val sorted = assets.data.sortedBy { it.tokenTicker }
+                val sorted = assets.data
+                    .filter {
+                        if (chainTicker == null) {
+                            true
+                        } else {
+                            it.chainTicker.lowercase() == chainTicker.lowercase()
+                        }
+                    }
+                    .sortedBy { it.tokenTicker }
                 buildSet {
                     addAll(sorted.filter { it.tokenTicker.startsWith(text, ignoreCase = true) })
                     addAll(sorted.filter { it.tokenTicker.contains(text, ignoreCase = true) })

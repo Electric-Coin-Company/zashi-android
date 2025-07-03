@@ -104,12 +104,12 @@ fun IntegrationItems(
             state = item,
             modifier = Modifier.padding(horizontal = 4.dp),
             leading =
-                item.icon?.let { icon ->
+                item.bigIcon?.let { icon ->
                     {
                         ZashiListItemDefaults.LeadingItem(
                             modifier = Modifier.size(40.dp),
                             icon = icon,
-                            badge = item.badge,
+                            badge = item.smallIcon,
                             contentDescription = item.title.getValue()
                         )
                     }
@@ -173,7 +173,7 @@ private fun IntegrationSettings() =
                     items =
                         persistentListOf(
                             ListItemState(
-                                icon = imageRes(R.drawable.ic_integrations_coinbase),
+                                bigIcon = imageRes(R.drawable.ic_integrations_coinbase),
                                 title = stringRes("Coinbase"),
                                 subtitle = stringRes("subtitle"),
                                 onClick = {}
@@ -181,13 +181,13 @@ private fun IntegrationSettings() =
                             ListItemState(
                                 title = stringRes(R.string.integrations_flexa),
                                 subtitle = stringRes(R.string.integrations_flexa),
-                                icon = imageRes(R.drawable.ic_integrations_flexa),
+                                bigIcon = imageRes(R.drawable.ic_integrations_flexa),
                                 onClick = {}
                             ),
                             ListItemState(
                                 title = stringRes(R.string.integrations_keystone),
                                 subtitle = stringRes(R.string.integrations_keystone_subtitle),
-                                icon = imageRes(R.drawable.ic_integrations_keystone),
+                                bigIcon = imageRes(R.drawable.ic_integrations_keystone),
                                 onClick = {}
                             ),
                         ),

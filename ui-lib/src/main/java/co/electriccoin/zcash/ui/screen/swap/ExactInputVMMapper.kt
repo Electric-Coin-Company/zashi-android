@@ -39,7 +39,8 @@ internal class ExactInputVMMapper : SwapVMMapper {
         onAddressChange: (String) -> Unit,
         onSwapModeChange: (SwapMode) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
-        onQrCodeScannerClick: () -> Unit
+        onQrCodeScannerClick: () -> Unit,
+        onAddressBookClick: () -> Unit
     ): SwapState {
         val state = ExactInputInternalState(internalState)
         val textFieldState =
@@ -84,6 +85,10 @@ internal class ExactInputVMMapper : SwapVMMapper {
             qrScannerButton = IconButtonState(
                 icon = R.drawable.qr_code_icon,
                 onClick = onQrCodeScannerClick
+            ),
+            addressBookButton = IconButtonState(
+                icon = R.drawable.send_address_book,
+                onClick = onAddressBookClick
             )
         )
     }
@@ -254,7 +259,7 @@ internal data class ExactInputInternalState(
     override val isAddressBookHintVisible: Boolean,
     override val zecSwapAsset: SwapAsset?,
     override val swapMode: SwapMode,
-    override val isRequestingQuote: Boolean
+    override val isRequestingQuote: Boolean,
 ) : InternalState {
 
     constructor(original: InternalState) : this(
@@ -267,7 +272,7 @@ internal data class ExactInputInternalState(
         isAddressBookHintVisible = original.isAddressBookHintVisible,
         zecSwapAsset = original.zecSwapAsset,
         swapMode = original.swapMode,
-        isRequestingQuote = original.isRequestingQuote
+        isRequestingQuote = original.isRequestingQuote,
     )
 
     fun getOriginFiatAmount(): BigDecimal? {

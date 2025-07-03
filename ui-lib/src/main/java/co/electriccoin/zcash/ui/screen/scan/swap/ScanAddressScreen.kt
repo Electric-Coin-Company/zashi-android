@@ -50,5 +50,11 @@ fun ScanAddressScreen(args: ScanAddressArgs) {
 
 @Serializable
 data class ScanAddressArgs(
+    val mode: Mode,
     val requestId: String = UUID.randomUUID().toString(),
-)
+) {
+    enum class Mode {
+        SWAP_SCAN_DESTINATION_ADDRESS,
+        SWAP_SCAN_CONTACT_ADDRESS
+    }
+}

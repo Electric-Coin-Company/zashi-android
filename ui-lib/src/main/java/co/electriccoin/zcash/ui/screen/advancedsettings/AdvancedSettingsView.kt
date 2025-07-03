@@ -136,27 +136,27 @@ private fun AdvancedSettingsPreview() =
                         persistentListOf(
                             ListItemState(
                                 title = stringRes(R.string.advanced_settings_recovery),
-                                icon = imageRes(R.drawable.ic_advanced_settings_recovery),
+                                bigIcon = imageRes(R.drawable.ic_advanced_settings_recovery),
                                 onClick = {}
                             ),
                             ListItemState(
                                 title = stringRes(R.string.advanced_settings_export),
-                                icon = imageRes(R.drawable.ic_advanced_settings_export),
+                                bigIcon = imageRes(R.drawable.ic_advanced_settings_export),
                                 onClick = {}
                             ),
                             ListItemState(
                                 title = stringRes(R.string.advanced_settings_choose_server),
-                                icon = imageRes(R.drawable.ic_advanced_settings_choose_server),
+                                bigIcon = imageRes(R.drawable.ic_advanced_settings_choose_server),
                                 onClick = {}
                             ),
                             ListItemState(
                                 title = stringRes(R.string.advanced_settings_currency_conversion),
-                                icon = imageRes(R.drawable.ic_advanced_settings_currency_conversion),
+                                bigIcon = imageRes(R.drawable.ic_advanced_settings_currency_conversion),
                                 onClick = {}
                             ),
                             ListItemState(
                                 title = stringRes(R.string.advanced_settings_crash_reporting),
-                                icon = imageRes(R.drawable.ic_advanced_settings_crash_reporting),
+                                bigIcon = imageRes(R.drawable.ic_advanced_settings_crash_reporting),
                                 onClick = {}
                             )
                         ),

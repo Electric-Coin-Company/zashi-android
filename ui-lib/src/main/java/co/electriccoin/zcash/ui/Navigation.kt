@@ -21,7 +21,6 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
@@ -48,7 +47,11 @@ import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.accountlist.AccountList
 import co.electriccoin.zcash.ui.screen.accountlist.AndroidAccountList
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
-import co.electriccoin.zcash.ui.screen.addressbook.WrapAddressBook
+import co.electriccoin.zcash.ui.screen.addressbook.AddressBookScreen
+import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientArgs
+import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientScreen
+import co.electriccoin.zcash.ui.screen.addressbook.SelectSwapRecipientArgs
+import co.electriccoin.zcash.ui.screen.addressbook.SelectSwapRecipientScreen
 import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
@@ -58,9 +61,11 @@ import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
 import co.electriccoin.zcash.ui.screen.connectkeystone.AndroidConnectKeystone
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddContactScreen
+import co.electriccoin.zcash.ui.screen.contact.AddSwapContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddSwapContactScreen
 import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
-import co.electriccoin.zcash.ui.screen.contact.WrapAddContact
-import co.electriccoin.zcash.ui.screen.contact.WrapUpdateContact
+import co.electriccoin.zcash.ui.screen.contact.UpdateContactScreen
 import co.electriccoin.zcash.ui.screen.crashreporting.AndroidCrashReportingOptIn
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
 import co.electriccoin.zcash.ui.screen.error.AndroidErrorBottomSheet
@@ -130,10 +135,12 @@ import co.electriccoin.zcash.ui.screen.swap.optin.SwapOptInArgs
 import co.electriccoin.zcash.ui.screen.swap.optin.SwapOptInScreen
 import co.electriccoin.zcash.ui.screen.swap.optin.SwapUnsecureOptInArgs
 import co.electriccoin.zcash.ui.screen.swap.optin.SwapUnsecureOptInScreen
-import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteArgs
-import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteScreen
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerScreen
+import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerArgs
+import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerScreen
+import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteArgs
+import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteScreen
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageScreen
 import co.electriccoin.zcash.ui.screen.taxexport.AndroidTaxExport
@@ -299,43 +306,10 @@ internal fun MainActivity.Navigation() {
                 goSettings = { navController.navigateJustOnce(SETTINGS) }
             )
         }
-        composable(
-            route = AddressBookArgs.ROUTE,
-            arguments =
-                listOf(
-                    navArgument(AddressBookArgs.MODE) {
-                        defaultValue = AddressBookArgs.DEFAULT
-                        type = NavType.EnumType(AddressBookArgs::class.java)
-                    }
-                )
-        ) { backStackEntry ->
-            val args =
-                backStackEntry.arguments
-                    ?.getSerializableCompat<AddressBookArgs>(AddressBookArgs.MODE) ?: AddressBookArgs.DEFAULT
-
-            WrapAddressBook(args)
-        }
-        composable(
-            route = AddContactArgs.ROUTE,
-            arguments =
-                listOf(
-                    navArgument(AddContactArgs.ADDRESS) {
-                        nullable = true
-                        defaultValue = null
-                        type = NavType.StringType
-                    }
-                )
-        ) { backStackEntry ->
-            val address = backStackEntry.arguments?.getString(AddContactArgs.ADDRESS)
-            WrapAddContact(address)
-        }
-        composable(
-            route = UpdateContactArgs.ROUTE,
-            arguments = listOf(navArgument(UpdateContactArgs.CONTACT_ADDRESS) { type = NavType.StringType })
-        ) { backStackEntry ->
-            val contactAddress = backStackEntry.arguments?.getString(UpdateContactArgs.CONTACT_ADDRESS).orEmpty()
-            WrapUpdateContact(contactAddress)
-        }
+        composable<AddressBookArgs> { AddressBookScreen() }
+        composable<SelectRecipientArgs> { SelectRecipientScreen() }
+        composable<AddContactArgs> { AddContactScreen(it.toRoute()) }
+        composable<UpdateContactArgs> { UpdateContactScreen(it.toRoute()) }
         composable(
             route = "$QR_CODE/{$ADDRESS_TYPE}",
             arguments = listOf(navArgument(ADDRESS_TYPE) { type = NavType.IntType })
@@ -374,7 +348,8 @@ internal fun MainActivity.Navigation() {
         dialogComposable<SpendableBalance> { AndroidSpendableBalance() }
         composable<CrashReportOptIn> { AndroidCrashReportOptIn() }
         composable<ThirdPartyScan> { AndroidThirdPartyScan() }
-        dialogComposable<SwapAssetPickerArgs> { SwapAssetPickerScreen() }
+        dialogComposable<SwapAssetPickerArgs> { SwapAssetPickerScreen(it.toRoute()) }
+        dialogComposable<SwapBlockchainPickerArgs> { SwapBlockchainPickerScreen(it.toRoute()) }
         composable<SwapArgs> { SwapScreen() }
         dialogComposable<SwapSlippageArgs> { SwapSlippageScreen(it.toRoute()) }
         dialogComposable<SwapInfoArgs> { SwapInfoScreen() }
@@ -382,6 +357,8 @@ internal fun MainActivity.Navigation() {
         composable<SwapOptInArgs> { SwapOptInScreen() }
         composable<SwapUnsecureOptInArgs> { SwapUnsecureOptInScreen() }
         composable<ScanAddressArgs> { ScanAddressScreen(it.toRoute()) }
+        composable<SelectSwapRecipientArgs> { SelectSwapRecipientScreen(it.toRoute()) }
+        composable<AddSwapContactArgs> { AddSwapContactScreen(it.toRoute()) }
     }
 }
 

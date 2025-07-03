@@ -19,10 +19,11 @@ import co.electriccoin.zcash.ui.common.usecase.DeleteTransactionNoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ExportTaxUseCase
 import co.electriccoin.zcash.ui.common.usecase.FilterSwapAssetsUseCase
+import co.electriccoin.zcash.ui.common.usecase.FilterSwapBlockchainsUseCase
 import co.electriccoin.zcash.ui.common.usecase.FlipTransactionBookmarkUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCoinbaseStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetConfigurationUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetContactByAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetContactByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetFlexaStatusUseCase
@@ -61,11 +62,16 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToNearSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToWalletBackupUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveAddressBookContactsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetAddressBookContactsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetAddressBookSwapContactsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetBlockchainUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapBlockchainUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
@@ -112,6 +118,8 @@ import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateSeedUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateSwapContactAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateSwapContactNameUseCase
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionDetailAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
@@ -140,7 +148,7 @@ val useCaseModule =
         factoryOf(::SaveContactUseCase)
         factoryOf(::UpdateContactUseCase)
         factoryOf(::DeleteContactUseCase)
-        factoryOf(::GetContactByAddressUseCase)
+        factoryOf(::GetContactByIdUseCase)
         factoryOf(::ObserveContactByAddressUseCase)
         singleOf(::ObserveContactPickedUseCase)
         factoryOf(::CopyToClipboardUseCase)
@@ -189,10 +197,12 @@ val useCaseModule =
         factoryOf(::GetTransactionFiltersUseCase)
         factoryOf(::GetTransactionDetailByIdUseCase)
         factoryOf(::SendTransactionAgainUseCase)
-        factoryOf(::ObserveAddressBookContactsUseCase)
+        factoryOf(::GetAddressBookContactsUseCase)
+        factoryOf(::GetAddressBookSwapContactsUseCase)
         factoryOf(::ResetInMemoryDataUseCase)
         factoryOf(::ResetSharedPrefsDataUseCase)
         factoryOf(::NavigateToAddressBookUseCase)
+        factoryOf(::NavigateToSelectRecipientUseCase)
         factoryOf(::GetTransactionMetadataUseCase)
         factoryOf(::FlipTransactionBookmarkUseCase)
         factoryOf(::DeleteTransactionNoteUseCase)
@@ -224,6 +234,7 @@ val useCaseModule =
         factoryOf(::SelectSwapAssetUseCase)
         factoryOf(::GetSwapAssetsUseCase)
         factoryOf(::FilterSwapAssetsUseCase)
+        factoryOf(::FilterSwapBlockchainsUseCase)
         factoryOf(::SetSlippageUseCase)
         factoryOf(::GetSlippageUseCase)
         factoryOf(::NavigateToSwapInfoUseCase)
@@ -240,4 +251,9 @@ val useCaseModule =
         factoryOf(::ConfirmUnsecureSwapOptInUseCase)
         factoryOf(::SkipSwapOptInUseCase)
         singleOf(::NavigateToScanAddressUseCase)
+        singleOf(::NavigateToSelectSwapRecipientUseCase)
+        factoryOf(::GetSwapAssetBlockchainUseCase)
+        singleOf(::NavigateToSelectSwapBlockchainUseCase)
+        factoryOf(::ValidateSwapContactNameUseCase)
+        factoryOf(::ValidateSwapContactAddressUseCase)
     }
