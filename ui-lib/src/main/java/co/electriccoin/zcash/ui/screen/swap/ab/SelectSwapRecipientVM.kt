@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.addressbook
+package co.electriccoin.zcash.ui.screen.swap.ab
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.usecase.ContactWithSwapAsset
 import co.electriccoin.zcash.ui.common.usecase.GetAddressBookSwapContactsUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToScanAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToScanSwapAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapRecipientUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
@@ -16,8 +16,9 @@ import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
-import co.electriccoin.zcash.ui.screen.contact.AddSwapContactArgs
-import co.electriccoin.zcash.ui.screen.scan.swap.ScanAddressArgs
+import co.electriccoin.zcash.ui.screen.addressbook.AddressBookItem
+import co.electriccoin.zcash.ui.screen.addressbook.AddressBookState
+import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,7 +33,7 @@ class SelectSwapRecipientVM(
     private val args: SelectSwapRecipientArgs,
     private val navigateToSelectSwapRecipient: NavigateToSelectSwapRecipientUseCase,
     private val navigationRouter: NavigationRouter,
-    private val navigateToScanAddress: NavigateToScanAddressUseCase
+    private val navigateToScanAddress: NavigateToScanSwapAddressUseCase
 ) : ViewModel() {
     val state =
         getAddressBookSwapContacts.observe().map { contacts ->
@@ -102,5 +103,5 @@ class SelectSwapRecipientVM(
     )
 
     private fun onScanContactClick() =
-        viewModelScope.launch { navigateToScanAddress(ScanAddressArgs.Mode.SWAP_SCAN_CONTACT_ADDRESS) }
+        viewModelScope.launch { navigateToScanAddress(ScanSwapAddressArgs.Mode.SWAP_SCAN_CONTACT_ADDRESS) }
 }

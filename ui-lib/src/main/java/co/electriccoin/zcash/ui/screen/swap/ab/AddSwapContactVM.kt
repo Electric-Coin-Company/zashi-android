@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.contact
+package co.electriccoin.zcash.ui.screen.swap.ab
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +17,7 @@ import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.PickerState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.contact.ContactState
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow

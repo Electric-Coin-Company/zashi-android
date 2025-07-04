@@ -7,13 +7,13 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientVM
-import co.electriccoin.zcash.ui.screen.addressbook.SelectSwapRecipientVM
+import co.electriccoin.zcash.ui.screen.swap.ab.SelectSwapRecipientVM
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsViewModel
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.AddContactVM
-import co.electriccoin.zcash.ui.screen.contact.AddSwapContactVM
+import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapContactVM
 import co.electriccoin.zcash.ui.screen.contact.UpdateContactVM
 import co.electriccoin.zcash.ui.screen.crashreporting.viewmodel.CrashReportingViewModel
 import co.electriccoin.zcash.ui.screen.error.ErrorViewModel
@@ -38,7 +38,7 @@ import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
 import co.electriccoin.zcash.ui.screen.scan.ScanViewModel
-import co.electriccoin.zcash.ui.screen.scan.swap.ScanAddressVM
+import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressVM
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
@@ -129,7 +129,7 @@ val viewModelModule =
         viewModelOf(::SwapQuoteVM)
         viewModelOf(::SwapOptInVM)
         viewModelOf(::SwapUnsecureOptInVM)
-        viewModelOf(::ScanAddressVM)
+        viewModelOf(::ScanSwapAddressVM)
         viewModelOf(::SelectSwapRecipientVM)
         viewModelOf(::AddSwapContactVM)
         viewModelOf(::SwapBlockchainPickerVM)

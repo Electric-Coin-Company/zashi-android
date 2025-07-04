@@ -18,4 +18,4 @@ fun SwapScreen() {
 }
 
 @Serializable
-object SwapArgs
+data object SwapArgs

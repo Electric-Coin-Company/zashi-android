@@ -1,20 +1,20 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.screen.contact.AddSwapContactArgs
-import co.electriccoin.zcash.ui.screen.scan.swap.ScanAddressArgs
-import co.electriccoin.zcash.ui.screen.scan.swap.ScanAddressArgs.Mode.*
+import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapContactArgs
+import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs
+import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs.Mode.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import java.math.BigDecimal
 
-class NavigateToScanAddressUseCase(
+class NavigateToScanSwapAddressUseCase(
     private val navigationRouter: NavigationRouter
 ) {
     private val pipeline = MutableSharedFlow<ScanAddressPipelineResult>()
 
-    suspend operator fun invoke(mode: ScanAddressArgs.Mode): ScanResult? {
-        val args = ScanAddressArgs(mode)
+    suspend operator fun invoke(mode: ScanSwapAddressArgs.Mode): ScanResult? {
+        val args = ScanSwapAddressArgs(mode)
         navigationRouter.forward(args)
         val result = pipeline.first { it.args.requestId == args.requestId }
         return when (result) {
@@ -26,7 +26,7 @@ class NavigateToScanAddressUseCase(
         }
     }
 
-    suspend fun onScanCancelled(args: ScanAddressArgs) {
+    suspend fun onScanCancelled(args: ScanSwapAddressArgs) {
         pipeline.emit(ScanAddressPipelineResult.Cancelled(args))
         navigationRouter.back()
     }
@@ -34,7 +34,7 @@ class NavigateToScanAddressUseCase(
     suspend fun onScanned(
         address: String,
         amount: BigDecimal?,
-        args: ScanAddressArgs
+        args: ScanSwapAddressArgs
     ) {
         pipeline.emit(
             ScanAddressPipelineResult.Scanned(
@@ -60,16 +60,16 @@ class NavigateToScanAddressUseCase(
 
 private sealed interface ScanAddressPipelineResult {
 
-    val args: ScanAddressArgs
+    val args: ScanSwapAddressArgs
 
     data class Cancelled(
-        override val args: ScanAddressArgs
+        override val args: ScanSwapAddressArgs
     ) : ScanAddressPipelineResult
 
     data class Scanned(
         val address: String,
         val amount: BigDecimal?,
-        override val args: ScanAddressArgs
+        override val args: ScanSwapAddressArgs
     ) : ScanAddressPipelineResult
 }
 

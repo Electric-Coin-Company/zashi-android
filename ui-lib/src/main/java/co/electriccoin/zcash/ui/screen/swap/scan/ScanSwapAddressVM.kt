@@ -1,8 +1,8 @@
-package co.electriccoin.zcash.ui.screen.scan.swap
+package co.electriccoin.zcash.ui.screen.swap.scan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.electriccoin.zcash.ui.common.usecase.NavigateToScanAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToScanSwapAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase.Zip321ParseUriValidation
 import co.electriccoin.zcash.ui.screen.scan.ScanValidationState
@@ -12,10 +12,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-internal class ScanAddressVM(
-    private val args: ScanAddressArgs,
+internal class ScanSwapAddressVM(
+    private val args: ScanSwapAddressArgs,
     private val parseZip321: Zip321ParseUriValidationUseCase,
-    private val navigateToScanAddress: NavigateToScanAddressUseCase,
+    private val navigateToScanAddress: NavigateToScanSwapAddressUseCase,
 ) : ViewModel() {
     val state = MutableStateFlow(ScanValidationState.NONE)
 

@@ -2,9 +2,11 @@ package co.electriccoin.zcash.ui.screen.swap
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.repository.SwapMode
 import co.electriccoin.zcash.ui.common.repository.SwapMode.PAY
 import co.electriccoin.zcash.ui.common.repository.SwapMode.SWAP
@@ -16,7 +18,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSwapModeUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableBalanceUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZecSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToScanAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToScanSwapAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
@@ -27,7 +29,7 @@ import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
 import co.electriccoin.zcash.ui.design.util.combine
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.scan.swap.ScanAddressArgs
+import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -57,7 +59,7 @@ internal class SwapVM(
     private val navigateToSwapQuoteIfAvailable: NavigateToSwapQuoteIfAvailableUseCase,
     private val exactOutputVMMapper: ExactOutputVMMapper,
     private val exactInputVMMapper: ExactInputVMMapper,
-    private val navigateToScanAddress: NavigateToScanAddressUseCase,
+    private val navigateToScanAddress: NavigateToScanSwapAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectSwapRecipientUseCase
 ) : ViewModel() {
     private val defaultCurrencyType: CurrencyType = CurrencyType.TOKEN
@@ -187,7 +189,7 @@ internal class SwapVM(
     }
 
     private fun onQrCodeScannerClick() = viewModelScope.launch {
-        val result = navigateToScanAddress(ScanAddressArgs.Mode.SWAP_SCAN_DESTINATION_ADDRESS)
+        val result = navigateToScanAddress(ScanSwapAddressArgs.Mode.SWAP_SCAN_DESTINATION_ADDRESS)
         if (result != null) {
             selectedContact = null
             addressText.update { result.address }
@@ -268,3 +270,47 @@ internal class SwapVM(
 }
 
 internal enum class CurrencyType { TOKEN, FIAT }
+
+internal interface SwapVMMapper {
+    fun createState(
+        internalState: InternalState,
+        onBack: () -> Unit,
+        onSwapInfoClick: () -> Unit,
+        onSwapAssetPickerClick: () -> Unit,
+        onSwapCurrencyTypeClick: () -> Unit,
+        onSlippageClick: (BigDecimal?) -> Unit,
+        onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
+        onAddressChange: (String) -> Unit,
+        onSwapModeChange: (SwapMode) -> Unit,
+        onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
+        onQrCodeScannerClick: () -> Unit,
+        onAddressBookClick: () -> Unit
+    ): SwapState
+}
+
+internal interface InternalState {
+    val swapAsset: SwapAsset?
+    val currencyType: CurrencyType
+    val totalSpendableBalance: Zatoshi?
+    val amountTextState: NumberTextFieldInnerState
+    val addressText: String
+    val slippage: BigDecimal
+    val isAddressBookHintVisible: Boolean
+    val zecSwapAsset: SwapAsset?
+    val swapMode: SwapMode
+    val isRequestingQuote: Boolean
+}
+
+internal data class InternalStateImpl(
+    override val swapAsset: SwapAsset?,
+    override val currencyType: CurrencyType,
+    override val totalSpendableBalance: Zatoshi?,
+    override val amountTextState: NumberTextFieldInnerState,
+    override val addressText: String,
+    override val slippage: BigDecimal,
+    override val isAddressBookHintVisible: Boolean,
+    override val zecSwapAsset: SwapAsset?,
+    override val swapMode: SwapMode,
+    override val isRequestingQuote: Boolean,
+) : InternalState
+

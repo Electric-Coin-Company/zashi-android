@@ -255,7 +255,7 @@ internal class ExactOutputVMMapper : SwapVMMapper {
     }
 }
 
-internal data class ExactOutputInternalState(
+private data class ExactOutputInternalState(
     override val swapAsset: SwapAsset?,
     override val currencyType: CurrencyType,
     override val totalSpendableBalance: Zatoshi?,

@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
-import co.electriccoin.zcash.ui.screen.addressbook.SelectSwapRecipientArgs
+import co.electriccoin.zcash.ui.screen.swap.ab.SelectSwapRecipientArgs
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 

@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.scan.swap
+package co.electriccoin.zcash.ui.screen.swap.scan
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.SnackbarHostState
@@ -18,8 +18,8 @@ import org.koin.core.parameter.parametersOf
 import java.util.UUID
 
 @Composable
-fun ScanAddressScreen(args: ScanAddressArgs) {
-    val vm = koinViewModel<ScanAddressVM> { parametersOf(args) }
+fun ScanSwapAddressScreen(args: ScanSwapAddressArgs) {
+    val vm = koinViewModel<ScanSwapAddressVM> { parametersOf(args) }
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -49,7 +49,7 @@ fun ScanAddressScreen(args: ScanAddressArgs) {
 }
 
 @Serializable
-data class ScanAddressArgs(
+data class ScanSwapAddressArgs(
     val mode: Mode,
     val requestId: String = UUID.randomUUID().toString(),
 ) {

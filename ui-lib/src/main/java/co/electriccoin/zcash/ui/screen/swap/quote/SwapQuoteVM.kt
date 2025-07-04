@@ -2,9 +2,11 @@ package co.electriccoin.zcash.ui.screen.swap.quote
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.QuoteLowAmountException
+import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.model.NearSwapAsset
@@ -44,7 +46,7 @@ internal class SwapQuoteVM(
     getZecSwapAsset: GetZecSwapAssetUseCase,
     private val cancelSwapQuote: CancelSwapQuoteUseCase,
     private val cancelSwap: CancelSwapUseCase,
-    private val swapQuoteSuccessMapper: NearSwapQuoteVMMapper,
+    private val swapQuoteSuccessMapper: SwapQuoteVMMapper,
     private val confirmProposal: ConfirmProposalUseCase,
 ) : ViewModel() {
 
@@ -82,25 +84,23 @@ internal class SwapQuoteVM(
         destinationAsset: SwapAsset,
         mode: SwapMode
     ): SwapQuoteState.Success? {
+        val swapQuote = quote.quote
         return when {
-            quote.quote is NearSwapQuote &&
+            swapQuote is NearSwapQuote &&
                 proposal is SwapTransactionProposal &&
                 originAsset is NearSwapAsset &&
-                destinationAsset is NearSwapAsset -> {
-                val internalState = NearInternalState(
+                destinationAsset is NearSwapAsset -> swapQuoteSuccessMapper.createState(
+                state = NearSwapQuoteInternalState(
                     originAsset = originAsset,
-                    quote = quote.quote,
+                    quote = swapQuote,
                     proposal = proposal,
                     slippage = slippage,
                     destinationAsset = destinationAsset,
                     mode = mode,
-                )
-                swapQuoteSuccessMapper.createState(
-                    state = internalState,
-                    onBack = ::onBack,
-                    onSubmitQuoteClick = ::onSubmitQuoteClick,
-                )
-            }
+                ),
+                onBack = ::onBack,
+                onSubmitQuoteClick = ::onSubmitQuoteClick,
+            )
 
             else -> null
         }
@@ -109,15 +109,23 @@ internal class SwapQuoteVM(
     private fun createErrorState(quote: SwapQuoteData.Error): SwapQuoteState.Error {
         val message = when {
             quote.exception is QuoteLowAmountException &&
-                quote.exception.amountFormatted != null -> stringRes("Amount is too low " +
-                "for bridge, try at least ") +
-                stringResByDynamicCurrencyNumber(
+                quote.exception.amountFormatted != null ->
+                stringRes(
+                    "Amount is too low " +
+                        "for bridge, try at least "
+                ) + stringResByDynamicCurrencyNumber(
                     amount = quote.exception.amountFormatted,
                     ticker = quote.exception.asset.tokenTicker
                 )
-            quote.exception is QuoteLowAmountException -> stringRes("Amount is too low for bridge, try higher amount.")
-            quote.exception is ResponseWithErrorException -> stringRes(quote.exception.error.message)
-            else -> stringRes("We tried but couldn’t get a quote for a payment with your parameters. You can try to adjust the payment details or try again later.")
+
+            quote.exception is QuoteLowAmountException ->
+                stringRes("Amount is too low for bridge, try higher amount.")
+
+            quote.exception is ResponseWithErrorException ->
+                stringRes(quote.exception.error.message)
+
+            else ->
+                stringRes("We tried but couldn’t get a quote for a payment with your parameters. You can try to adjust the payment details or try again later.")
         }
 
         return SwapQuoteState.Error(
@@ -145,4 +153,34 @@ internal class SwapQuoteVM(
     private fun onSubmitQuoteClick() = viewModelScope.launch { confirmProposal() }
 
     private fun onCancelPaymentClick() = cancelSwap()
+}
+
+internal sealed interface SwapQuoteInternalState {
+    val mode: SwapMode
+    val originAsset: SwapAsset
+    val destinationAsset: SwapAsset
+    val slippage: BigDecimal
+    val proposal: SendTransactionProposal
+
+    val zecExchangeRate: BigDecimal
+    val zecFee: BigDecimal
+    val zecFeeUsd: BigDecimal
+
+    val recipient: String
+
+    val swapProviderFee: Zatoshi
+
+    val swapProviderFeeUsd: BigDecimal
+
+    val amountInZatoshi: Zatoshi
+    val amountInZec: BigDecimal
+    val amountInDecimals: Int
+    val amountInUsd: BigDecimal
+
+    val amountOutFormatted: BigDecimal
+    val amountOutDecimals: Int
+    val amountOutUsd: BigDecimal
+
+    val totalZec: BigDecimal
+    val totalUsd: BigDecimal
 }
