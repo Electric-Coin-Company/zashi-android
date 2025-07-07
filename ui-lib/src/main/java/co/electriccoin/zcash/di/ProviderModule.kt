@@ -2,10 +2,8 @@ package co.electriccoin.zcash.di
 
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProviderImpl
-import co.electriccoin.zcash.ui.common.provider.ChainIconProvider
-import co.electriccoin.zcash.ui.common.provider.ChainIconProviderImpl
-import co.electriccoin.zcash.ui.common.provider.ChainNameProvider
-import co.electriccoin.zcash.ui.common.provider.ChainNameProviderImpl
+import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
+import co.electriccoin.zcash.ui.common.provider.BlockchainProviderImpl
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.ExchangeRateOptInStorageProvider
@@ -70,8 +68,7 @@ val providerModule =
         singleOf(::PersistableWalletStorageProviderImpl) bind PersistableWalletStorageProvider::class
         singleOf(::ShieldFundsInfoProviderImpl) bind ShieldFundsInfoProvider::class
         singleOf(::ExchangeRateOptInStorageProviderImpl) bind ExchangeRateOptInStorageProvider::class
-        singleOf(::ChainIconProviderImpl) bind ChainIconProvider::class
-        singleOf(::ChainNameProviderImpl) bind ChainNameProvider::class
+        singleOf(::BlockchainProviderImpl) bind BlockchainProvider::class
         singleOf(::TokenIconProviderImpl) bind TokenIconProvider::class
         singleOf(::TokenNameProviderImpl) bind TokenNameProvider::class
         singleOf(::KtorNearApiProvider) bind NearApiProvider::class

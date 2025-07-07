@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.common.usecase
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 
-class SaveContactUseCase(
+class SaveABContactUseCase(
     private val addressBookRepository: AddressBookRepository,
     private val navigationRouter: NavigationRouter,
 ) {

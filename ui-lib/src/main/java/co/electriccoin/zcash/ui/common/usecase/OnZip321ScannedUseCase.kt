@@ -8,8 +8,8 @@ import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase.Zip321ParseUriValidation
-import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
-import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddABContactArgs
+import co.electriccoin.zcash.ui.screen.swap.ab.AddABSwapContactArgs
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow.ADDRESS_BOOK
@@ -44,7 +44,7 @@ class OnZip321ScannedUseCase(
 
     private fun swapAddressBookFlow(zip321: Zip321ParseUriValidation.Valid) {
         navigationRouter.replace(
-            AddSwapContactArgs(
+            AddABSwapContactArgs(
                 address = zip321.payment.payments[0].recipientAddress.value,
                 chain = null
             )
@@ -53,7 +53,7 @@ class OnZip321ScannedUseCase(
 
     private fun addressBookFlow(zip321: Zip321ParseUriValidation.Valid) {
         navigationRouter.replace(
-            AddContactArgs(
+            AddABContactArgs(
                 zip321.payment.payments[0]
                     .recipientAddress.value
             )

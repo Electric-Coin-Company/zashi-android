@@ -5,7 +5,9 @@ import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.LocalAddressBookDataSource
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
+import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
 import co.electriccoin.zcash.ui.common.provider.AddressBookKeyStorageProvider
+import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.serialization.addressbook.AddressBookKey
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +16,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.update
@@ -23,7 +24,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 interface AddressBookRepository {
-    val addressBook: Flow<AddressBook?>
+    val contacts: Flow<List<EnhancedABContact>?>
 
     suspend fun saveContact(
         name: String,
@@ -32,17 +33,26 @@ interface AddressBookRepository {
     )
 
     suspend fun updateContact(
-        contact: AddressBookContact,
+        contact: EnhancedABContact,
         name: String,
         address: String,
         chain: String?,
     )
 
-    suspend fun deleteContact(contact: AddressBookContact)
+    suspend fun deleteContact(contact: EnhancedABContact)
 
     suspend fun resetAddressBook()
 
-    fun observeContactByAddress(address: String): Flow<AddressBookContact?>
+    fun observeContactByAddress(address: String): Flow<EnhancedABContact?>
+}
+
+data class EnhancedABContact(
+    val contact: AddressBookContact,
+    val blockchain: SwapAssetBlockchain?
+) {
+    val name = contact.name
+    val address = contact.address
+    val lastUpdated = contact.lastUpdated
 }
 
 class AddressBookRepositoryImpl(
@@ -50,12 +60,13 @@ class AddressBookRepositoryImpl(
     private val addressBookKeyStorageProvider: AddressBookKeyStorageProvider,
     private val accountDataSource: AccountDataSource,
     private val persistableWalletProvider: PersistableWalletProvider,
+    private val blockchainProvider: BlockchainProvider
 ) : AddressBookRepository {
     private val semaphore = Mutex()
 
-    private val addressBookCache = MutableStateFlow<AddressBook?>(null)
+    private val addressBookCache = MutableStateFlow<List<EnhancedABContact>?>(null)
 
-    override val addressBook: Flow<AddressBook?> =
+    override val contacts: Flow<List<EnhancedABContact>?> =
         addressBookCache
             .onSubscription {
                 withNonCancellableSemaphore {
@@ -78,14 +89,14 @@ class AddressBookRepositoryImpl(
     }
 
     override suspend fun updateContact(
-        contact: AddressBookContact,
+        contact: EnhancedABContact,
         name: String,
         address: String,
         chain: String?,
     ) = mutateAddressBook {
         Twig.info { "Address Book: updating a contact" }
         localAddressBookDataSource.updateContact(
-            contact = contact,
+            contact = contact.contact,
             name = name,
             address = address,
             chain = chain,
@@ -93,11 +104,11 @@ class AddressBookRepositoryImpl(
         )
     }
 
-    override suspend fun deleteContact(contact: AddressBookContact) =
+    override suspend fun deleteContact(contact: EnhancedABContact) =
         mutateAddressBook {
             Twig.info { "Address Book: deleting a contact" }
             localAddressBookDataSource.deleteContact(
-                addressBookContact = contact,
+                addressBookContact = contact.contact,
                 addressBookKey = getAddressBookKey()
             )
         }
@@ -108,11 +119,11 @@ class AddressBookRepositoryImpl(
             addressBookCache.update { null }
         }
 
-    override fun observeContactByAddress(address: String): Flow<AddressBookContact?> =
-        addressBook
+    override fun observeContactByAddress(address: String): Flow<EnhancedABContact?> =
+        contacts
             .filterNotNull()
             .map {
-                it.contacts.find { contact -> contact.address == address }
+                it.find { contact -> contact.address == address }
             }.distinctUntilChanged()
 
     private suspend fun ensureSynchronization() {
@@ -125,7 +136,14 @@ class AddressBookRepositoryImpl(
                 addressBook = addressBook,
                 addressBookKey = getAddressBookKey()
             )
-            addressBookCache.update { addressBook }
+            val contacts = addressBook.contacts
+                .map { contact ->
+                    EnhancedABContact(
+                        contact = contact,
+                        blockchain = contact.chain?.let { blockchainProvider.getBlockchain(it) }
+                    )
+                }
+            addressBookCache.update { contacts }
         }
     }
 
@@ -133,7 +151,14 @@ class AddressBookRepositoryImpl(
         withNonCancellableSemaphore {
             ensureSynchronization()
             val newAddressBook = block()
-            addressBookCache.update { newAddressBook }
+            val contacts = newAddressBook.contacts
+                .map { contact ->
+                    EnhancedABContact(
+                        contact = contact,
+                        blockchain = contact.chain?.let { blockchainProvider.getBlockchain(it) }
+                    )
+                }
+            addressBookCache.update { contacts }
         }
 
     private suspend fun withNonCancellableSemaphore(block: suspend () -> Unit) =

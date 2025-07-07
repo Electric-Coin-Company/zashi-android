@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.common.datasource
 
 import co.electriccoin.zcash.ui.common.model.NearSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapAsset
-import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
 import co.electriccoin.zcash.ui.common.model.near.QuoteRequest
 import co.electriccoin.zcash.ui.common.model.near.QuoteResponseDto
 import co.electriccoin.zcash.ui.common.model.near.RecipientType
@@ -10,8 +9,7 @@ import co.electriccoin.zcash.ui.common.model.near.RefundType
 import co.electriccoin.zcash.ui.common.model.near.SubmitDepositTransactionRequest
 import co.electriccoin.zcash.ui.common.model.near.SwapStatusResponseDto
 import co.electriccoin.zcash.ui.common.model.near.SwapType
-import co.electriccoin.zcash.ui.common.provider.ChainIconProvider
-import co.electriccoin.zcash.ui.common.provider.ChainNameProvider
+import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
 import co.electriccoin.zcash.ui.common.provider.NearApiProvider
 import co.electriccoin.zcash.ui.common.provider.ResponseWithErrorException
 import co.electriccoin.zcash.ui.common.provider.TokenIconProvider
@@ -55,8 +53,7 @@ class QuoteLowAmountException(
 ) : Exception()
 
 class SwapDataSourceImpl(
-    private val chainIconProvider: ChainIconProvider,
-    private val chainNameProvider: ChainNameProvider,
+    private val blockchainProvider: BlockchainProvider,
     private val tokenIconProvider: TokenIconProvider,
     private val tokenNameProvider: TokenNameProvider,
     private val nearApiProvider: NearApiProvider,
@@ -68,11 +65,7 @@ class SwapDataSourceImpl(
                     token = it,
                     tokenName = tokenNameProvider.getName(it.symbol),
                     tokenIcon = tokenIconProvider.getIcon(it.symbol),
-                    blockchain = SwapAssetBlockchain(
-                        chainTicker = it.blockchain,
-                        chainName = chainNameProvider.getName(it.blockchain),
-                        chainIcon = chainIconProvider.getIcon(it.blockchain)
-                    )
+                    blockchain = blockchainProvider.getBlockchain(it.blockchain)
                 )
             }
         }

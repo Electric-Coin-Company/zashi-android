@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap.ab
+package co.electriccoin.zcash.ui.screen.contact
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,81 +6,64 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.usecase.ContactAddressValidationResult
-import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetBlockchainUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapBlockchainUseCase
-import co.electriccoin.zcash.ui.common.usecase.SaveContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.SaveABContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateABContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameResult
-import co.electriccoin.zcash.ui.common.usecase.ValidateSwapContactAddressUseCase
-import co.electriccoin.zcash.ui.common.usecase.ValidateSwapContactNameUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateABContactNameUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.IconButtonState
-import co.electriccoin.zcash.ui.design.component.PickerState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.contact.ContactState
-import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class AddSwapContactVM(
-    args: AddSwapContactArgs,
-    getSwapAssetBlockchain: GetSwapAssetBlockchainUseCase,
-    private val validateSwapContactAddress: ValidateSwapContactAddressUseCase,
-    private val validateSwapContactName: ValidateSwapContactNameUseCase,
-    private val saveContact: SaveContactUseCase,
+class AddABContactVM(
+    args: AddABContactArgs,
+    private val validateContactAddress: ValidateABContactAddressUseCase,
+    private val validateContactName: ValidateABContactNameUseCase,
+    private val saveContact: SaveABContactUseCase,
     private val navigationRouter: NavigationRouter,
-    private val navigateToSelectSwapBlockchain: NavigateToSelectSwapBlockchainUseCase
 ) : ViewModel() {
     private val contactAddress = MutableStateFlow(args.address.orEmpty())
     private val contactName = MutableStateFlow("")
-    private val selectedBlockchain = MutableStateFlow(getSwapAssetBlockchain(args.chain))
 
-    private val blockChainPickerState = selectedBlockchain
-        .map {
-            PickerState(
-                bigIcon = it?.chainIcon,
-                smallIcon = null,
-                text = it?.chainName,
-                placeholder = stringRes("Select..."),
-                onClick = ::onBlockchainClick
-            )
-        }
-
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val contactAddressError =
-        combine(contactAddress, selectedBlockchain) { address, blockchain ->
-            if (address.isEmpty()) {
-                null
-            } else {
-                when (validateSwapContactAddress(address, blockchain)) {
-                    ContactAddressValidationResult.Invalid ->
-                        stringRes(R.string.contact_address_error_invalid)
+        contactAddress
+            .mapLatest { address ->
+                if (address.isEmpty()) {
+                    null
+                } else {
+                    when (validateContactAddress(address)) {
+                        ContactAddressValidationResult.Invalid ->
+                            stringRes(R.string.contact_address_error_invalid)
 
-                    ContactAddressValidationResult.NotUnique ->
-                        stringRes(R.string.contact_address_error_not_unique)
+                        ContactAddressValidationResult.NotUnique ->
+                            stringRes(R.string.contact_address_error_not_unique)
 
-                    ContactAddressValidationResult.Valid -> null
+                        ContactAddressValidationResult.Valid -> null
+                    }
                 }
-            }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
+            )
 
     private val contactAddressState =
         combine(contactAddress, contactAddressError) { address, contactAddressError ->
             TextFieldState(
                 value = stringRes(address),
                 error = contactAddressError,
-                onValueChange = { newValue -> contactAddress.update { newValue.trim() } }
+                onValueChange = { newValue ->
+                    contactAddress.update { newValue }
+                }
             )
         }
 
@@ -91,7 +74,7 @@ class AddSwapContactVM(
                 if (name.isEmpty()) {
                     null
                 } else {
-                    when (validateSwapContactName(name)) {
+                    when (validateContactName(name)) {
                         ValidateContactNameResult.TooLong ->
                             stringRes(R.string.contact_name_error_too_long)
 
@@ -122,17 +105,11 @@ class AddSwapContactVM(
     private val isSavingContact = MutableStateFlow(false)
 
     private val saveButtonState =
-        combine(
-            contactAddressState,
-            contactNameState,
-            isSavingContact,
-            selectedBlockchain
-        ) { address, name, isSavingContact, blockchain ->
+        combine(contactAddressState, contactNameState, isSavingContact) { address, name, isSavingContact ->
             ButtonState(
                 text = stringRes(R.string.add_new_contact_primary_btn),
                 isEnabled =
-                    blockchain != null &&
-                        address.error == null &&
+                    address.error == null &&
                         name.error == null &&
                         contactAddress.value.isNotEmpty() &&
                         contactName.value.isNotEmpty(),
@@ -142,13 +119,8 @@ class AddSwapContactVM(
         }
 
     val state =
-        combine(
-            contactAddressState,
-            contactNameState,
-            saveButtonState,
-            blockChainPickerState,
-        ) { address, name, saveButton, picker ->
-            ContactState(
+        combine(contactAddressState, contactNameState, saveButtonState) { address, name, saveButton ->
+            ABContactState(
                 title = stringRes(R.string.add_new_contact_title),
                 isLoading = false,
                 walletAddress = address,
@@ -156,22 +128,14 @@ class AddSwapContactVM(
                 negativeButton = null,
                 positiveButton = saveButton,
                 onBack = ::onBack,
-                chain = picker,
-                info = IconButtonState(R.drawable.ic_help, onClick = ::onInfoClick)
+                chain = null,
+                info = null
             )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = null
         )
-
-    private fun onBlockchainClick() =
-        viewModelScope.launch {
-            val result = navigateToSelectSwapBlockchain()
-            if (result != null) {
-                selectedBlockchain.update { result }
-            }
-        }
 
     private fun onBack() = navigationRouter.back()
 
@@ -182,10 +146,8 @@ class AddSwapContactVM(
             saveContact(
                 name = contactName.value,
                 address = contactAddress.value,
-                chain = selectedBlockchain.value?.chainTicker
+                chain = null
             )
             isSavingContact.update { false }
         }
-
-    private fun onInfoClick() = navigationRouter.forward(SwapInfoArgs)
 }

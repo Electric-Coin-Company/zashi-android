@@ -6,21 +6,18 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.ui.screen.contact.ContactView
+import co.electriccoin.zcash.ui.screen.contact.ABContactView
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun AddSwapContactScreen(args: AddSwapContactArgs) {
-    val vm = koinViewModel<AddSwapContactVM> { parametersOf(args) }
-    val state by vm.state.collectAsStateWithLifecycle()
+internal fun UpdateABSwapContactScreen(args: UpdateABSwapContactArgs) {
+    val viewModel = koinViewModel<UpdateABSwapContactVM> { parametersOf(args) }
+    val state by viewModel.state.collectAsStateWithLifecycle()
     BackHandler(state != null) { state?.onBack?.invoke() }
-    state?.let { ContactView(state = it) }
+    state?.let { ABContactView(state = it) }
 }
 
 @Serializable
-data class AddSwapContactArgs(
-    val address: String?,
-    val chain: String?
-)
+data class UpdateABSwapContactArgs(val address: String, val chain: String)

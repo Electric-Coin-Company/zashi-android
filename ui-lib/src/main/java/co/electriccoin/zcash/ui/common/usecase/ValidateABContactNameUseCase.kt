@@ -1,23 +1,21 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 
-class ValidateSwapContactNameUseCase(
+class ValidateABContactNameUseCase(
     private val addressBookRepository: AddressBookRepository
 ) {
     suspend operator fun invoke(
         name: String,
-        exclude: AddressBookContact? = null
+        exclude: EnhancedABContact? = null
     ) = when {
         name.length > CONTACT_NAME_MAX_LENGTH -> ValidateContactNameResult.TooLong
-        addressBookRepository.addressBook
+        addressBookRepository.contacts
             .filterNotNull()
             .first()
-            .contacts
-            .filter { it.chain != null }
             .filter {
                 if (exclude == null) true else it != exclude
             }.any { it.name == name.trim() } -> ValidateContactNameResult.NotUnique
@@ -25,3 +23,13 @@ class ValidateSwapContactNameUseCase(
         else -> ValidateContactNameResult.Valid
     }
 }
+
+sealed interface ValidateContactNameResult {
+    data object Valid : ValidateContactNameResult
+
+    data object TooLong : ValidateContactNameResult
+
+    data object NotUnique : ValidateContactNameResult
+}
+
+internal const val CONTACT_NAME_MAX_LENGTH = 32

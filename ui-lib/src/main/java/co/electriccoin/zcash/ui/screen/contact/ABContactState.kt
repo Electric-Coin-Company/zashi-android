@@ -8,7 +8,7 @@ import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.StringResource
 
 @Immutable
-data class ContactState(
+data class ABContactState(
     val info: IconButtonState?,
     val title: StringResource,
     val isLoading: Boolean,

@@ -11,14 +11,14 @@ import org.koin.core.parameter.parametersOf
 import java.util.UUID
 
 @Composable
-fun SelectSwapRecipientScreen(args: SelectSwapRecipientArgs) {
-    val viewModel = koinViewModel<SelectSwapRecipientVM> { parametersOf(args) }
+fun SelectABSwapRecipientScreen(args: SelectABSwapRecipientArgs) {
+    val viewModel = koinViewModel<SelectABSwapRecipientVM> { parametersOf(args) }
     val state by viewModel.state.collectAsStateWithLifecycle()
     BackHandler { state.onBack() }
     AddressBookView(state = state)
 }
 
 @Serializable
-data class SelectSwapRecipientArgs(
+data class SelectABSwapRecipientArgs(
     val requestId: String = UUID.randomUUID().toString()
 )

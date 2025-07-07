@@ -6,9 +6,9 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.usecase.ContactWithSwapAsset
-import co.electriccoin.zcash.ui.common.usecase.GetAddressBookSwapContactsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetABSwapContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanSwapAddressUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapRecipientUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
@@ -28,17 +28,19 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class SelectSwapRecipientVM(
-    getAddressBookSwapContacts: GetAddressBookSwapContactsUseCase,
-    private val args: SelectSwapRecipientArgs,
-    private val navigateToSelectSwapRecipient: NavigateToSelectSwapRecipientUseCase,
+class SelectABSwapRecipientVM(
+    getAddressBookSwapContacts: GetABSwapContactsUseCase,
+    private val args: SelectABSwapRecipientArgs,
+    private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
     private val navigationRouter: NavigationRouter,
     private val navigateToScanAddress: NavigateToScanSwapAddressUseCase
 ) : ViewModel() {
     val state =
-        getAddressBookSwapContacts.observe().map { contacts ->
-            createState(contacts)
-        }.flowOn(Dispatchers.Default)
+        getAddressBookSwapContacts.observe()
+            .map { contacts ->
+                createState(contacts)
+            }
+            .flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -96,7 +98,7 @@ class SelectSwapRecipientVM(
         viewModelScope.launch { navigateToSelectSwapRecipient.onSelected(contact, args) }
 
     private fun onAddContactManuallyClick() = navigationRouter.forward(
-        AddSwapContactArgs(
+        AddABSwapContactArgs(
             address = null,
             chain = null
         )

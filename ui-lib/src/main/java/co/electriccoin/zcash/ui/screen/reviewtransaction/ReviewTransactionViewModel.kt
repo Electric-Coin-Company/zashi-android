@@ -8,10 +8,10 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
-import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
@@ -23,7 +23,7 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
-import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddABContactArgs
 import co.electriccoin.zcash.ui.util.Quadruple
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -96,7 +96,7 @@ class ReviewTransactionViewModel(
     private fun createState(
         selectedWallet: WalletAccount,
         transactionProposal: SendTransactionProposal,
-        addressBookContact: AddressBookContact?,
+        addressBookContact: EnhancedABContact?,
         exchangeRateState: ExchangeRateState
     ) = ReviewTransactionState(
         title =
@@ -162,7 +162,7 @@ class ReviewTransactionViewModel(
 
     private fun createZip321State(
         transactionProposal: SendTransactionProposal,
-        addressBookContact: AddressBookContact?,
+        addressBookContact: EnhancedABContact?,
         selectedWallet: WalletAccount,
         isReceiverExpanded: Boolean,
         exchangeRateState: ExchangeRateState
@@ -243,5 +243,5 @@ class ReviewTransactionViewModel(
 
     private fun onConfirmClick() = viewModelScope.launch { confirmProposal() }
 
-    private fun onAddContactClick(address: String) = navigationRouter.forward(AddContactArgs(address))
+    private fun onAddContactClick(address: String) = navigationRouter.forward(AddABContactArgs(address))
 }

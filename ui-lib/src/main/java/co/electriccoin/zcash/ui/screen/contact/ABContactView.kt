@@ -39,8 +39,8 @@ import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
-fun ContactView(
-    state: ContactState
+fun ABContactView(
+    state: ABContactState
 ) {
     BlankBgScaffold(
         topBar = {
@@ -63,7 +63,7 @@ fun ContactView(
 
 @Composable
 private fun ContactViewInternal(
-    state: ContactState,
+    state: ABContactState,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -143,11 +143,11 @@ private fun ContactViewInternal(
 @Composable
 private fun ContactTopAppBar(
     onBack: () -> Unit,
-    state: ContactState
+    state: ABContactState
 ) {
     ZashiSmallTopAppBar(
         title = state.title.getValue(),
-        modifier = Modifier.testTag(ContactTag.TOP_APP_BAR),
+        modifier = Modifier.testTag(ABContactTag.TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
@@ -165,9 +165,9 @@ private fun ContactTopAppBar(
 @Composable
 private fun DataPreview() {
     ZcashTheme {
-        ContactView(
+        ABContactView(
             state =
-                ContactState(
+                ABContactState(
                     isLoading = false,
                     onBack = {},
                     title = stringRes("Title"),
@@ -198,9 +198,9 @@ private fun DataPreview() {
 @Composable
 private fun LoadingPreview() {
     ZcashTheme {
-        ContactView(
+        ABContactView(
             state =
-                ContactState(
+                ABContactState(
                     isLoading = true,
                     onBack = {},
                     title = stringRes("Title"),

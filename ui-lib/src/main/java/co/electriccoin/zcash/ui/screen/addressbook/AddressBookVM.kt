@@ -5,16 +5,17 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.AddressBookContact
-import co.electriccoin.zcash.ui.common.usecase.GetAddressBookContactsUseCase
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
+import co.electriccoin.zcash.ui.common.usecase.GetABContactsUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
-import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddABContactArgs
+import co.electriccoin.zcash.ui.screen.contact.UpdateABContactArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
+import co.electriccoin.zcash.ui.screen.swap.ab.UpdateABSwapContactArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -23,11 +24,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class AddressBookViewModel(
-    getAddressBookContacts: GetAddressBookContactsUseCase,
+    getAddressBookContacts: GetABContactsUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     val state =
-        getAddressBookContacts.observe()
+        getAddressBookContacts.observe(zcashContactsOnly = false)
             .map { contacts -> createState(contacts = contacts) }
             .flowOn(Dispatchers.Default)
             .stateIn(
@@ -36,7 +37,7 @@ class AddressBookViewModel(
                 initialValue = createState(contacts = null)
             )
 
-    private fun createState(contacts: List<AddressBookContact>?) =
+    private fun createState(contacts: List<EnhancedABContact>?) =
         AddressBookState(
             isLoading = contacts == null,
             items =
@@ -68,7 +69,7 @@ class AddressBookViewModel(
             info = null
         )
 
-    private fun getContactInitials(contact: AddressBookContact) =
+    private fun getContactInitials(contact: EnhancedABContact) =
         imageRes(
             contact.name
                 .split(" ")
@@ -80,16 +81,20 @@ class AddressBookViewModel(
 
     private fun onBack() = navigationRouter.back()
 
-    private fun onContactClick(contact: AddressBookContact) {
-        navigationRouter.forward(
-            UpdateContactArgs(
-                address = contact.address,
-                chain = contact.chain
+    private fun onContactClick(contact: EnhancedABContact) {
+        if (contact.blockchain == null) {
+            navigationRouter.forward(UpdateABContactArgs(address = contact.address))
+        } else {
+            navigationRouter.forward(
+                UpdateABSwapContactArgs(
+                    address = contact.address,
+                    chain = contact.blockchain.chainTicker
+                )
             )
-        )
+        }
     }
 
-    private fun onAddContactManuallyClick() = navigationRouter.forward(AddContactArgs(null))
+    private fun onAddContactManuallyClick() = navigationRouter.forward(AddABContactArgs(null))
 
     private fun onScanContactClick() = navigationRouter.forward(ScanArgs(ScanFlow.ADDRESS_BOOK))
 }

@@ -7,14 +7,14 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientVM
-import co.electriccoin.zcash.ui.screen.swap.ab.SelectSwapRecipientVM
+import co.electriccoin.zcash.ui.screen.swap.ab.SelectABSwapRecipientVM
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsViewModel
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
-import co.electriccoin.zcash.ui.screen.contact.AddContactVM
-import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapContactVM
-import co.electriccoin.zcash.ui.screen.contact.UpdateContactVM
+import co.electriccoin.zcash.ui.screen.contact.AddABContactVM
+import co.electriccoin.zcash.ui.screen.swap.ab.AddABSwapContactVM
+import co.electriccoin.zcash.ui.screen.contact.UpdateABContactVM
 import co.electriccoin.zcash.ui.screen.crashreporting.viewmodel.CrashReportingViewModel
 import co.electriccoin.zcash.ui.screen.error.ErrorViewModel
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInViewModel
@@ -48,6 +48,7 @@ import co.electriccoin.zcash.ui.screen.settings.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.swap.SwapVM
+import co.electriccoin.zcash.ui.screen.swap.ab.UpdateABSwapContactVM
 import co.electriccoin.zcash.ui.screen.swap.optin.SwapOptInVM
 import co.electriccoin.zcash.ui.screen.swap.optin.SwapUnsecureOptInVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerVM
@@ -80,8 +81,8 @@ val viewModelModule =
         viewModelOf(::RestoreSuccessViewModel)
         viewModelOf(::WhatsNewViewModel)
         viewModelOf(::ChooseServerViewModel)
-        viewModelOf(::AddContactVM)
-        viewModelOf(::UpdateContactVM)
+        viewModelOf(::AddABContactVM)
+        viewModelOf(::UpdateABContactVM)
         viewModelOf(::ReceiveViewModel)
         viewModelOf(::QrCodeViewModel)
         viewModelOf(::RequestViewModel)
@@ -130,7 +131,8 @@ val viewModelModule =
         viewModelOf(::SwapOptInVM)
         viewModelOf(::SwapUnsecureOptInVM)
         viewModelOf(::ScanSwapAddressVM)
-        viewModelOf(::SelectSwapRecipientVM)
-        viewModelOf(::AddSwapContactVM)
+        viewModelOf(::SelectABSwapRecipientVM)
+        viewModelOf(::AddABSwapContactVM)
         viewModelOf(::SwapBlockchainPickerVM)
+        viewModelOf(::UpdateABSwapContactVM)
     }

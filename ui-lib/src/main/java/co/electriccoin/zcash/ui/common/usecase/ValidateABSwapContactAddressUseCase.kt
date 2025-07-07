@@ -1,30 +1,29 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 
-class ValidateSwapContactAddressUseCase(
+class ValidateABSwapContactAddressUseCase(
     private val addressBookRepository: AddressBookRepository,
 ) {
     suspend operator fun invoke(
         address: String,
         blockchain: SwapAssetBlockchain?,
-        exclude: AddressBookContact? = null
+        exclude: EnhancedABContact? = null
     ): ContactAddressValidationResult {
         return when {
-            addressBookRepository.addressBook
+            addressBookRepository.contacts
                 .filterNotNull()
                 .first()
-                .contacts
-                .filter { it.chain != null }
+                .filter { it.blockchain != null }
                 .filter {
                     if (exclude == null) true else it != exclude
                 }.any {
                     it.address == address.trim()
-                        && it.chain?.lowercase() == blockchain?.chainTicker?.lowercase()
+                        && it.blockchain?.chainTicker?.lowercase() == blockchain?.chainTicker?.lowercase()
                 } -> ContactAddressValidationResult.NotUnique
 
             else -> ContactAddressValidationResult.Valid

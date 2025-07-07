@@ -3,8 +3,8 @@ package co.electriccoin.zcash.ui.common.usecase
 import android.content.Context
 import cash.z.ecc.android.sdk.model.TransactionId
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
-import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.SendTransaction
 import co.electriccoin.zcash.ui.common.repository.ShieldTransaction
@@ -129,7 +129,7 @@ class GetCurrentFilteredTransactionsUseCase(
             }.distinctUntilChanged()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val result =
+    private val result =
         transactionFilterRepository.filters
             .flatMapLatest { filters ->
                 flow {
@@ -275,7 +275,7 @@ class GetCurrentFilteredTransactionsUseCase(
 
 private data class FilterTransactionData(
     val transaction: Transaction,
-    val contact: AddressBookContact?,
+    val contact: EnhancedABContact?,
     val recipientAddress: String?,
     val transactionMetadata: TransactionMetadata
 )

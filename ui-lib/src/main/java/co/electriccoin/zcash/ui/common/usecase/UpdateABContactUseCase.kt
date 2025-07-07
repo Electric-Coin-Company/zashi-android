@@ -1,13 +1,13 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 
-class UpdateContactUseCase(
+class UpdateABContactUseCase(
     private val addressBookRepository: AddressBookRepository
 ) {
     suspend operator fun invoke(
-        contact: AddressBookContact,
+        contact: EnhancedABContact,
         name: String,
         address: String,
         chain: String?,

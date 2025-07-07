@@ -5,14 +5,14 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.AddressBookContact
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.ContactAddressValidationResult
-import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetContactByIdUseCase
-import co.electriccoin.zcash.ui.common.usecase.UpdateContactUseCase
-import co.electriccoin.zcash.ui.common.usecase.ValidateContactAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.DeleteABContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetABContactByIdUseCase
+import co.electriccoin.zcash.ui.common.usecase.UpdateABContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateABContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameResult
-import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateABContactNameUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -25,16 +25,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class UpdateContactVM(
-    private val args: UpdateContactArgs,
-    private val validateContactAddress: ValidateContactAddressUseCase,
-    private val validateContactName: ValidateContactNameUseCase,
-    private val updateContact: UpdateContactUseCase,
-    private val deleteContact: DeleteContactUseCase,
-    private val getContactByAddress: GetContactByIdUseCase,
+class UpdateABContactVM(
+    private val args: UpdateABContactArgs,
+    private val validateContactAddress: ValidateABContactAddressUseCase,
+    private val validateContactName: ValidateABContactNameUseCase,
+    private val updateContact: UpdateABContactUseCase,
+    private val deleteContact: DeleteABContactUseCase,
+    private val getContactByAddress: GetABContactByIdUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
-    private var contact = MutableStateFlow<AddressBookContact?>(null)
+    private val contact = MutableStateFlow<EnhancedABContact?>(null)
     private val contactAddress = MutableStateFlow("")
     private val contactName = MutableStateFlow("")
 
@@ -139,7 +139,7 @@ class UpdateContactVM(
             deleteButtonState,
             isLoadingContact
         ) { address, name, saveButton, deleteButton, isLoadingContact ->
-            ContactState(
+            ABContactState(
                 title = stringRes(R.string.update_contact_title),
                 isLoading = isLoadingContact,
                 walletAddress = address,
@@ -160,11 +160,11 @@ class UpdateContactVM(
         viewModelScope.launch {
             getContactByAddress(
                 address = args.address,
-                chain = args.chain
+                chain = null
             ).let { contact ->
                 contactAddress.update { contact?.address.orEmpty() }
                 contactName.update { contact?.name.orEmpty() }
-                this@UpdateContactVM.contact.update { contact }
+                this@UpdateABContactVM.contact.update { contact }
             }
             isLoadingContact.update { false }
         }

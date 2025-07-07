@@ -19,7 +19,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableBalanceUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZecSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanSwapAddressUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapRecipientUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.RequestSwapQuoteUseCase
@@ -60,7 +60,7 @@ internal class SwapVM(
     private val exactOutputVMMapper: ExactOutputVMMapper,
     private val exactInputVMMapper: ExactInputVMMapper,
     private val navigateToScanAddress: NavigateToScanSwapAddressUseCase,
-    private val navigateToSelectSwapRecipient: NavigateToSelectSwapRecipientUseCase
+    private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase
 ) : ViewModel() {
     private val defaultCurrencyType: CurrencyType = CurrencyType.TOKEN
 

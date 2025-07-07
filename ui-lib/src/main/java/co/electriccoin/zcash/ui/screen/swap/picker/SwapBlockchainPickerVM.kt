@@ -28,8 +28,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SwapBlockchainPickerVM(
-    private val args: SwapBlockchainPickerArgs,
     getSwapAssets: GetSwapAssetsUseCase,
+    private val args: SwapBlockchainPickerArgs,
     private val navigateToSelectSwapBlockchain: NavigateToSelectSwapBlockchainUseCase,
     private val filterSwapBlockchains: FilterSwapBlockchainsUseCase,
     private val swapRepository: SwapRepository,

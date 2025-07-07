@@ -24,7 +24,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.design.util.stringResByDateTime
 import co.electriccoin.zcash.ui.design.util.stringResByTransactionId
-import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddABContactArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveShieldedState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveTransparentState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.SendShieldedState
@@ -302,7 +302,7 @@ class TransactionDetailViewModel(
 
     private fun onSaveAddressClick(transaction: DetailedTransactionData) {
         transaction.recipientAddress?.let {
-            navigationRouter.forward(AddContactArgs(it.address))
+            navigationRouter.forward(AddABContactArgs(it.address))
         }
     }
 

@@ -2,18 +2,18 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
-import co.electriccoin.zcash.ui.screen.swap.ab.SelectSwapRecipientArgs
+import co.electriccoin.zcash.ui.screen.swap.ab.SelectABSwapRecipientArgs
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 
-class NavigateToSelectSwapRecipientUseCase(
+class NavigateToSelectABSwapRecipientUseCase(
     private val navigationRouter: NavigationRouter,
     private val swapRepository: SwapRepository
 ) {
     private val pipeline = MutableSharedFlow<SelectSwapRecipientPipelineResult>()
 
     suspend operator fun invoke(): ContactWithSwapAsset? {
-        val args = SelectSwapRecipientArgs()
+        val args = SelectABSwapRecipientArgs()
         navigationRouter.forward(args)
         val result = pipeline.first { it.args.requestId == args.requestId }
         return when (result) {
@@ -22,12 +22,12 @@ class NavigateToSelectSwapRecipientUseCase(
         }
     }
 
-    suspend fun onSelectionCancelled(args: SelectSwapRecipientArgs) {
+    suspend fun onSelectionCancelled(args: SelectABSwapRecipientArgs) {
         pipeline.emit(SelectSwapRecipientPipelineResult.Cancelled(args))
         navigationRouter.back()
     }
 
-    suspend fun onSelected(contact: ContactWithSwapAsset, args: SelectSwapRecipientArgs) {
+    suspend fun onSelected(contact: ContactWithSwapAsset, args: SelectABSwapRecipientArgs) {
         when (contact.asset.blockchain.chainTicker.lowercase()) {
             "btc" -> getSwapAssetByBlockchainTicker("btc")?.let { swapRepository.select(it) }
             "doge" -> getSwapAssetByBlockchainTicker("doge")?.let { swapRepository.select(it) }
@@ -44,14 +44,14 @@ class NavigateToSelectSwapRecipientUseCase(
 
 private sealed interface SelectSwapRecipientPipelineResult {
 
-    val args: SelectSwapRecipientArgs
+    val args: SelectABSwapRecipientArgs
 
     data class Cancelled(
-        override val args: SelectSwapRecipientArgs
+        override val args: SelectABSwapRecipientArgs
     ) : SelectSwapRecipientPipelineResult
 
     data class Scanned(
         val contact: ContactWithSwapAsset,
-        override val args: SelectSwapRecipientArgs
+        override val args: SelectABSwapRecipientArgs
     ) : SelectSwapRecipientPipelineResult
 }

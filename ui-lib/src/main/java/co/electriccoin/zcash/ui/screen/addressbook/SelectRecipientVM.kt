@@ -5,19 +5,19 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
-import co.electriccoin.zcash.ui.common.usecase.GetAddressBookContactsUseCase
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
+import co.electriccoin.zcash.ui.common.usecase.GetABContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveABContactPickedUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddABContactArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import kotlinx.coroutines.Dispatchers
@@ -29,13 +29,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SelectRecipientVM(
-    getAddressBookContacts: GetAddressBookContactsUseCase,
+    getAddressBookContacts: GetABContactsUseCase,
     getWalletAccountsUseCase: GetWalletAccountsUseCase,
-    private val observeContactPicked: ObserveContactPickedUseCase,
+    private val observeContactPicked: ObserveABContactPickedUseCase,
     private val navigationRouter: NavigationRouter
 ) : ViewModel() {
     val state =
-        combine(getAddressBookContacts.observe(), getWalletAccountsUseCase.observe()) { contacts, accounts ->
+        combine(
+            getAddressBookContacts.observe(zcashContactsOnly = true),
+            getWalletAccountsUseCase.observe()
+        ) { contacts, accounts ->
             if (accounts != null && accounts.size > 1) {
                 createStateWithAccounts(contacts, accounts)
             } else {
@@ -50,7 +53,7 @@ class SelectRecipientVM(
 
     @Suppress("SpreadOperator")
     private fun createStateWithAccounts(
-        contacts: List<AddressBookContact>?,
+        contacts: List<EnhancedABContact>?,
         accounts: List<WalletAccount>
     ): AddressBookState {
         val accountItems =
@@ -121,7 +124,7 @@ class SelectRecipientVM(
         )
     }
 
-    private fun createStateWithoutAccounts(contacts: List<AddressBookContact>?): AddressBookState =
+    private fun createStateWithoutAccounts(contacts: List<EnhancedABContact>?): AddressBookState =
         AddressBookState(
             isLoading = contacts == null,
             items =
@@ -159,7 +162,7 @@ class SelectRecipientVM(
             navigationRouter.back()
         }
 
-    private fun getContactInitials(contact: AddressBookContact): ImageResource =
+    private fun getContactInitials(contact: EnhancedABContact): ImageResource =
         imageRes(
             contact.name
                 .split(" ")
@@ -171,13 +174,13 @@ class SelectRecipientVM(
 
     private fun onBack() = navigationRouter.back()
 
-    private fun onContactClick(contact: AddressBookContact) =
+    private fun onContactClick(contact: EnhancedABContact) =
         viewModelScope.launch {
             observeContactPicked.onContactPicked(contact)
             navigationRouter.back()
         }
 
-    private fun onAddContactManuallyClick() = navigationRouter.forward(AddContactArgs(null))
+    private fun onAddContactManuallyClick() = navigationRouter.forward(AddABContactArgs(null))
 
     private fun onScanContactClick() = navigationRouter.forward(ScanArgs(ScanFlow.ADDRESS_BOOK))
 }
