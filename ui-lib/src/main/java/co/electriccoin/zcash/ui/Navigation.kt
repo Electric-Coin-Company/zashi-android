@@ -97,9 +97,9 @@ import co.electriccoin.zcash.ui.screen.home.syncing.AndroidWalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.AndroidWalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
-import co.electriccoin.zcash.ui.screen.integrations.AndroidDialogIntegrations
+import co.electriccoin.zcash.ui.screen.integrations.IntegrationsScreen
 import co.electriccoin.zcash.ui.screen.integrations.AndroidIntegrations
-import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
+import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
 import co.electriccoin.zcash.ui.screen.integrations.Integrations
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.AndroidReceive
@@ -281,7 +281,7 @@ internal fun MainActivity.Navigation() {
         composable(ABOUT) { WrapAbout(goBack = { navController.popBackStackJustOnce(ABOUT) }) }
         composable(WHATS_NEW) { WrapWhatsNew() }
         composable<Integrations> { AndroidIntegrations() }
-        dialogComposable<DialogIntegrations> { AndroidDialogIntegrations() }
+        dialogComposable<IntegrationsArgs> { IntegrationsScreen() }
         composable<ExchangeRateOptIn> { AndroidExchangeRateOptIn() }
         composable<ExchangeRateSettings> { AndroidExchangeRateSettings() }
         composable(CRASH_REPORTING_OPT_IN) { AndroidCrashReportingOptIn() }

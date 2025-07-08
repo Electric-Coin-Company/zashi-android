@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class IntegrationsViewModel(
+class IntegrationsVM(
     getZcashCurrency: GetZcashCurrencyProvider,
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
@@ -89,8 +89,8 @@ class IntegrationsViewModel(
             listOfNotNull(
                 ListItemState(
                     bigIcon = imageRes(R.drawable.ic_integrations_near),
-                    title = stringRes("Pay with NEAR"),
-                    subtitle = stringRes("Send payments in any coin or token supported by Zashi's DEX integration."),
+                    title = stringRes("Swap or Pay with NEAR"),
+                    subtitle = stringRes("Send payments or swap for any coin or token supported by NEAR."),
                     onClick = ::onNearSwapClick,
                     isEnabled = selectedAccount is ZashiAccount
                 ).takeIf { isDialog },

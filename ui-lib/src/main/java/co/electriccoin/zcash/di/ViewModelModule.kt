@@ -27,7 +27,7 @@ import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptInViewModel
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoViewModel
-import co.electriccoin.zcash.ui.screen.integrations.IntegrationsViewModel
+import co.electriccoin.zcash.ui.screen.integrations.IntegrationsVM
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
 import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
@@ -89,7 +89,7 @@ val viewModelModule =
         viewModelOf(::ScanViewModel)
         viewModelOf(::ScanKeystoneSignInRequestViewModel)
         viewModelOf(::ScanKeystonePCZTViewModel)
-        viewModelOf(::IntegrationsViewModel)
+        viewModelOf(::IntegrationsVM)
         viewModelOf(::FlexaViewModel)
         viewModelOf(::SendViewModel)
         viewModelOf(::WalletBackupViewModel)

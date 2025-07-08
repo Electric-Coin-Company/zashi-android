@@ -40,7 +40,7 @@ import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
-import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
+import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import co.electriccoin.zcash.ui.screen.send.Send
@@ -232,7 +232,7 @@ class HomeViewModel(
 
     private fun onRestoreDialogSeenClick() = viewModelScope.launch { isRestoreSuccessDialogVisible.setSeen() }
 
-    private fun onMoreButtonClick() = navigationRouter.forward(DialogIntegrations)
+    private fun onMoreButtonClick() = navigationRouter.forward(IntegrationsArgs)
 
     private fun onSendButtonClick() = navigationRouter.forward(Send())
 

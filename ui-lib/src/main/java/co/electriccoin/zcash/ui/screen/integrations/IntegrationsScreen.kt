@@ -10,11 +10,11 @@ import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AndroidDialogIntegrations() {
-    val viewModel = koinViewModel<IntegrationsViewModel> { parametersOf(true) }
-    val state by viewModel.state.collectAsStateWithLifecycle()
+fun IntegrationsScreen() {
+    val vm = koinViewModel<IntegrationsVM> { parametersOf(true) }
+    val state by vm.state.collectAsStateWithLifecycle()
     IntegrationsDialogView(state)
 }
 
 @Serializable
-data object DialogIntegrations
+data object IntegrationsArgs
