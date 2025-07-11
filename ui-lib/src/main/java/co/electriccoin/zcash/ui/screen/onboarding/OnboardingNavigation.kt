@@ -24,8 +24,6 @@ import co.electriccoin.zcash.ui.NavigatorImpl
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.datasource.MessageAvailabilityDataSource
-import co.electriccoin.zcash.ui.common.model.OnboardingState
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.LocalKeyboardManager
@@ -124,8 +122,7 @@ fun MainActivity.OnboardingNavigation() {
                             )
                         )
                     } else {
-                        walletViewModel.persistOnboardingState(OnboardingState.READY)
-                        walletViewModel.persistNewWalletAndRestoringState(WalletRestoringState.INITIATING)
+                        walletViewModel.createNewWallet()
                     }
                 }
             )

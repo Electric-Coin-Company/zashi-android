@@ -22,6 +22,7 @@
 
     <string name="general_etc">…</string>
 
+    <string name="general_start">Start</string>
     <string name="general_ok">OK</string>
     <string name="general_remind_me_later">Remind me later</string>
     <string name="general_remind_me_in">Remind me in %s</string>

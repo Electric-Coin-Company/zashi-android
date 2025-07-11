@@ -54,13 +54,11 @@ class WalletBackupViewModel(
                 isRevealed && args.isOpenedFromSeedBackupInfo
             }
 
-    private val observableWallet = observePersistableWallet()
-
     val state =
         combine(
             isRevealed,
             isRemindMeLaterButtonVisible,
-            observableWallet,
+            observePersistableWallet(),
             lockoutDuration
         ) { isRevealed, isRemindMeLaterButtonVisible, wallet, lockoutDuration ->
             WalletBackupState(

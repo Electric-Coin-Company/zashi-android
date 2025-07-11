@@ -47,7 +47,7 @@ import co.electriccoin.zcash.ui.screen.accountlist.AccountList
 import co.electriccoin.zcash.ui.screen.accountlist.AndroidAccountList
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.addressbook.WrapAddressBook
-import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
+import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsScreen
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.balances.spendable.AndroidSpendableBalance
@@ -120,6 +120,10 @@ import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeysto
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.taxexport.AndroidTaxExport
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExport
+import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInArgs
+import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInScreen
+import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsArgs
+import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsScreen
 import co.electriccoin.zcash.ui.screen.transactiondetail.AndroidTransactionDetail
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
 import co.electriccoin.zcash.ui.screen.transactionfilters.AndroidTransactionFiltersList
@@ -201,7 +205,7 @@ internal fun MainActivity.Navigation() {
             WrapSettings()
         }
         composable(ADVANCED_SETTINGS) {
-            WrapAdvancedSettings(
+            AdvancedSettingsScreen(
                 goExportPrivateData = {
                     navController.checkProtectedDestination(
                         scope = lifecycleScope,
@@ -515,6 +519,8 @@ internal fun MainActivity.Navigation() {
         }
         composable<CrashReportOptIn> { AndroidCrashReportOptIn() }
         composable<ThirdPartyScan> { AndroidThirdPartyScan() }
+        composable<TorSettingsArgs> { TorSettingsScreen() }
+        composable<TorOptInArgs> { TorOptInScreen() }
     }
 }
 

@@ -37,12 +37,14 @@ import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringMessageStat
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsMessageState
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
+import co.electriccoin.zcash.ui.screen.home.tor.EnableTorMessageState
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
 import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import co.electriccoin.zcash.ui.screen.send.Send
+import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInArgs
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -224,6 +226,12 @@ class HomeViewModel(
                     onButtonClick = ::onCrashReportMessageClick
                 )
 
+            HomeMessageData.EnableTor ->
+                EnableTorMessageState(
+                    onClick = ::onEnableTorMessageClick,
+                    onButtonClick = ::onEnableTorMessageClick,
+                )
+
             null -> null
         }
 
@@ -263,4 +271,6 @@ class HomeViewModel(
 
     private fun onWalletErrorMessageClick(homeMessageData: HomeMessageData.Error) =
         navigateToError(ErrorArgs.SyncError(homeMessageData.synchronizerError))
+
+    private fun onEnableTorMessageClick() = navigationRouter.forward(TorOptInArgs)
 }

@@ -15,6 +15,7 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
 import co.electriccoin.zcash.ui.common.model.SubmitResult
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -24,7 +25,7 @@ import com.flexa.spend.Transaction
 import com.flexa.spend.buildSpend
 
 class CreateFlexaTransactionUseCase(
-    private val getSynchronizer: GetSynchronizerUseCase,
+    private val synchronizerProvider: SynchronizerProvider,
     private val getZashiAccount: GetZashiAccountUseCase,
     private val zashiSpendingKeyDataSource: ZashiSpendingKeyDataSource,
     private val biometricRepository: BiometricRepository,
@@ -36,7 +37,8 @@ class CreateFlexaTransactionUseCase(
                 BiometricRequest(message = stringRes(R.string.integrations_flexa_biometric_message))
             )
             Twig.debug { "Getting send transaction proposal" }
-            getSynchronizer()
+            synchronizerProvider
+                .getSynchronizer()
                 .proposeSend(
                     account = getZashiAccount().sdkAccount,
                     send = getZecSend(transaction.getOrNull())
@@ -85,14 +87,14 @@ class CreateFlexaTransactionUseCase(
 
         val result =
             runCreateTransactions(
-                synchronizer = getSynchronizer(),
+                synchronizer = synchronizerProvider.getSynchronizer(),
                 spendingKey = spendingKey,
                 proposal = proposal
             )
 
         // Triggering the transaction history and balances refresh to be notified immediately
         // about the wallet's updated state
-        (getSynchronizer() as SdkSynchronizer).run {
+        (synchronizerProvider.getSynchronizer() as SdkSynchronizer).run {
             refreshTransactions()
             refreshAllBalances()
         }
@@ -159,7 +161,7 @@ class CreateFlexaTransactionUseCase(
                 address = address,
                 // TODO [#342]: Verify Addresses without Synchronizer
                 // TODO [#342]: https://github.com/zcash/zcash-android-wallet-sdk/issues/342
-                type = getSynchronizer().validateAddress(address)
+                type = synchronizerProvider.getSynchronizer().validateAddress(address)
             )
 
         return when (

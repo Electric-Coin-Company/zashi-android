@@ -9,11 +9,11 @@ import kotlinx.collections.immutable.toImmutableList
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-internal fun WrapAdvancedSettings(
+internal fun AdvancedSettingsScreen(
     goDeleteWallet: () -> Unit,
     goExportPrivateData: () -> Unit,
 ) {
-    val viewModel = koinViewModel<AdvancedSettingsViewModel>()
+    val viewModel = koinViewModel<AdvancedSettingsVM>()
     val originalState = viewModel.state.collectAsStateWithLifecycle().value
     val state =
         originalState.copy(

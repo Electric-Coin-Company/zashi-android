@@ -22,6 +22,7 @@
 
     <string name="general_etc">…</string>
 
+    <string name="general_start">Iniciar</string>
     <string name="general_ok">OK</string>
     <string name="general_remind_me_later">Recordarme más tarde</string>
     <string name="general_remind_me_in">Recordarme en %s</string>

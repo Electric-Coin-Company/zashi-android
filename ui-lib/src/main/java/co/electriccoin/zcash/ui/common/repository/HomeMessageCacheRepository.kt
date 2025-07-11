@@ -71,6 +71,10 @@ sealed interface HomeMessageData {
 
     data object Updating : RuntimeMessage()
 
+    data object EnableTor : Prioritized {
+        override val priority: Int = 5
+    }
+
     data object Backup : Prioritized {
         override val priority: Int = 4
     }

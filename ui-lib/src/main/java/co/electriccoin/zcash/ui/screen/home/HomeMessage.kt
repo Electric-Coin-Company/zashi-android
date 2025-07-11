@@ -51,6 +51,8 @@ import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsMessage
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsMessageState
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessage
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
+import co.electriccoin.zcash.ui.screen.home.tor.EnableTorMessage
+import co.electriccoin.zcash.ui.screen.home.tor.EnableTorMessageState
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessage
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import kotlinx.coroutines.delay
@@ -173,13 +175,19 @@ fun HomeMessage(
                         contentPadding = contentPadding
                     )
 
-                is CrashReportMessageState -> {
+                is CrashReportMessageState ->
                     CrashReportMessage(
                         innerModifier = innerModifier,
                         state = normalizedState as CrashReportMessageState,
                         contentPadding = contentPadding
                     )
-                }
+
+                is EnableTorMessageState ->
+                    EnableTorMessage(
+                        innerModifier = innerModifier,
+                        state = normalizedState as EnableTorMessageState,
+                        contentPadding = contentPadding
+                    )
 
                 null -> {
                     // do nothing

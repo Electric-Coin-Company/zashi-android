@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.SelectRecipientViewModel
-import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsViewModel
+import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsVM
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
@@ -35,7 +35,6 @@ import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightViewModel
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
-import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.ScanViewModel
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
@@ -48,6 +47,8 @@ import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExportViewModel
+import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInVM
+import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsVM
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailViewModel
 import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersViewModel
@@ -72,7 +73,7 @@ val viewModelModule =
         viewModelOf(::RestoreSeedViewModel)
         viewModelOf(::ScreenBrightnessViewModel)
         viewModelOf(::SettingsViewModel)
-        viewModelOf(::AdvancedSettingsViewModel)
+        viewModelOf(::AdvancedSettingsVM)
         viewModelOf(::SupportViewModel)
         viewModelOf(::RestoreSuccessViewModel)
         viewModelOf(::WhatsNewViewModel)
@@ -90,15 +91,7 @@ val viewModelModule =
         viewModelOf(::ReceiveViewModel)
         viewModelOf(::QrCodeViewModel)
         viewModelOf(::RequestViewModel)
-        viewModel { (args: Scan) ->
-            ScanViewModel(
-                args = args,
-                getSynchronizer = get(),
-                zip321ParseUriValidationUseCase = get(),
-                onAddressScanned = get(),
-                zip321Scanned = get()
-            )
-        }
+        viewModelOf(::ScanViewModel)
         viewModelOf(::ScanKeystoneSignInRequestViewModel)
         viewModelOf(::ScanKeystonePCZTViewModel)
         viewModelOf(::IntegrationsViewModel)
@@ -162,4 +155,6 @@ val viewModelModule =
         viewModelOf(::CrashReportOptInViewModel)
         viewModelOf(::WalletRestoringInfoViewModel)
         viewModelOf(::ThirdPartyScanViewModel)
+        viewModelOf(::TorSettingsVM)
+        viewModelOf(::TorOptInVM)
     }

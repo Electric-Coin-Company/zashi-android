@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tor_settings_title">Enable Tor Connection</string>
+    <string name="tor_settings_subtitle">Once you enable Tor, Zashi will begin to fetch and submit all of your transactions over Tor. This protects your IP address from everyone, including Zcash servers.</string>
+    <string name="tor_settings_item_subtitle_1">Protect my IP address.</string>
+    <string name="tor_settings_item_subtitle_2">Don’t protect my IP address.</string>
+    <string name="tor_opt_in_item_title_1">IP Address Protection</string>
+    <string name="tor_opt_in_item_subtitle_1">"Use Tor connection to protect your IP address. "</string>
+    <string name="tor_opt_in_item_title_2">Stay Private</string>
+    <string name="tor_opt_in_item_subtitle_2">Do not leak your data to any servers.</string>
+</resources>

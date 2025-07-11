@@ -15,7 +15,7 @@ class RestoreWalletUseCase(
         seedPhrase: SeedPhrase,
         birthday: BlockHeight?
     ) {
-        walletRepository.persistExistingWalletWithSeedPhrase(
+        walletRepository.restoreWallet(
             network = ZcashNetwork.fromResources(context),
             seedPhrase = seedPhrase,
             birthday = birthday

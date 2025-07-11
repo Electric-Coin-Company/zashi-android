@@ -17,6 +17,7 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettings
+import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsArgs
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +26,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class AdvancedSettingsViewModel(
+class AdvancedSettingsVM(
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     private val navigationRouter: NavigationRouter,
     private val navigateToTaxExport: NavigateToTaxExportUseCase,
@@ -73,14 +74,17 @@ class AdvancedSettingsViewModel(
                     ),
                     ZashiListItemState(
                         title = stringRes(R.string.advanced_settings_choose_server),
-                        icon =
-                            R.drawable.ic_advanced_settings_choose_server,
+                        icon = R.drawable.ic_advanced_settings_choose_server,
                         onClick = ::onChooseServerClick
                     ),
                     ZashiListItemState(
+                        title = stringRes(R.string.advanced_settings_privacy),
+                        icon = R.drawable.ic_advanced_settings_privacy,
+                        onClick = ::onPrivacyClick
+                    ),
+                    ZashiListItemState(
                         title = stringRes(R.string.advanced_settings_currency_conversion),
-                        icon =
-                            R.drawable.ic_advanced_settings_currency_conversion,
+                        icon = R.drawable.ic_advanced_settings_currency_conversion,
                         onClick = ::onCurrencyConversionClick
                     ),
                 ).apply {
@@ -101,6 +105,8 @@ class AdvancedSettingsViewModel(
                     onClick = {}
                 ),
         )
+
+    private fun onPrivacyClick() = navigationRouter.forward(TorSettingsArgs)
 
     fun onBack() = navigationRouter.back()
 
