@@ -7,9 +7,9 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
-import co.electriccoin.zcash.ui.common.repository.SwapMode
-import co.electriccoin.zcash.ui.common.repository.SwapMode.PAY
-import co.electriccoin.zcash.ui.common.repository.SwapMode.SWAP
+import co.electriccoin.zcash.ui.common.model.SwapMode
+import co.electriccoin.zcash.ui.common.model.SwapMode.PAY
+import co.electriccoin.zcash.ui.common.model.SwapMode.SWAP
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.ContactWithSwapAsset
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
@@ -29,8 +29,10 @@ import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
 import co.electriccoin.zcash.ui.design.util.combine
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
+import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
+import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -62,9 +64,8 @@ internal class SwapVM(
     private val navigateToScanAddress: NavigateToScanSwapAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase
 ) : ViewModel() {
-    private val defaultCurrencyType: CurrencyType = CurrencyType.TOKEN
 
-    private val currencyType: MutableStateFlow<CurrencyType> = MutableStateFlow(defaultCurrencyType)
+    private val currencyType: MutableStateFlow<CurrencyType> = MutableStateFlow(CurrencyType.TOKEN)
 
     private val addressText: MutableStateFlow<String> = MutableStateFlow("")
 
@@ -141,14 +142,10 @@ internal class SwapVM(
             )
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     val state =
-        getSwapMode
-            .observe()
-            .flatMapLatest { mode ->
-                innerState.map { innerState ->
-                    createState(mode, innerState)
-                }
+        innerState
+            .map { innerState ->
+                createState(innerState)
             }
             .stateIn(
                 scope = viewModelScope,
@@ -156,9 +153,9 @@ internal class SwapVM(
                 initialValue = null
             )
 
-    private fun createState(mode: SwapMode, innerState: InternalStateImpl): SwapState {
+    private fun createState(innerState: InternalStateImpl): SwapState {
         val mapper =
-            when (mode) {
+            when (innerState.swapMode) {
                 SWAP -> exactInputVMMapper
                 PAY -> exactOutputVMMapper
             }
@@ -233,10 +230,19 @@ internal class SwapVM(
         delay(350)
     }
 
-    private fun onSwapCurrencyTypeClick() = currencyType.update {
-        when (it) {
-            CurrencyType.TOKEN -> CurrencyType.FIAT
-            CurrencyType.FIAT -> defaultCurrencyType
+    private fun onSwapCurrencyTypeClick(newTextFieldAmount: BigDecimal) {
+        amountText.update {
+            NumberTextFieldInnerState(
+                text = stringResByDynamicNumber(newTextFieldAmount),
+                amount = newTextFieldAmount,
+                lastValidAmount = newTextFieldAmount
+            )
+        }
+        currencyType.update {
+            when (it) {
+                CurrencyType.TOKEN -> CurrencyType.FIAT
+                CurrencyType.FIAT -> CurrencyType.TOKEN
+            }
         }
     }
 
@@ -277,7 +283,7 @@ internal interface SwapVMMapper {
         onBack: () -> Unit,
         onSwapInfoClick: () -> Unit,
         onSwapAssetPickerClick: () -> Unit,
-        onSwapCurrencyTypeClick: () -> Unit,
+        onSwapCurrencyTypeClick: (BigDecimal) -> Unit,
         onSlippageClick: (BigDecimal?) -> Unit,
         onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
         onAddressChange: (String) -> Unit,

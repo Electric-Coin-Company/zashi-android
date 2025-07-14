@@ -6,8 +6,8 @@ import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
-import co.electriccoin.zcash.ui.common.repository.SwapMode
-import co.electriccoin.zcash.ui.common.repository.SwapMode.SWAP
+import co.electriccoin.zcash.ui.common.model.SwapMode
+import co.electriccoin.zcash.ui.common.model.SwapMode.SWAP
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
@@ -21,6 +21,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
+import co.electriccoin.zcash.ui.screen.swap.CurrencyType.*
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapModeSelectorState
@@ -34,7 +35,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
         onBack: () -> Unit,
         onSwapInfoClick: () -> Unit,
         onSwapAssetPickerClick: () -> Unit,
-        onSwapCurrencyTypeClick: () -> Unit,
+        onSwapCurrencyTypeClick: (BigDecimal) -> Unit,
         onSlippageClick: (BigDecimal?) -> Unit,
         onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
         onAddressChange: (String) -> Unit,
@@ -96,7 +97,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
 
     private fun createAmountTextFieldState(
         state: ExactInputInternalState,
-        onSwapCurrencyTypeClick: () -> Unit,
+        onSwapCurrencyTypeClick: (BigDecimal) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
     ): SwapAmountTextFieldState {
         val amountFiat = state.getOriginFiatAmount()
@@ -120,8 +121,8 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 ),
             textFieldPrefix =
                 when (state.currencyType) {
-                    CurrencyType.TOKEN -> null
-                    CurrencyType.FIAT -> imageRes(R.drawable.ic_send_usd)
+                    TOKEN -> imageRes(R.drawable.ic_send_zashi)
+                    FIAT -> imageRes(R.drawable.ic_send_usd)
                 },
             textField =
                 NumberTextFieldState(
@@ -131,13 +132,13 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 ),
             secondaryText =
                 when (state.currencyType) {
-                    CurrencyType.TOKEN ->
+                    TOKEN ->
                         stringResByDynamicCurrencyNumber(
                             amount = amountFiat ?: BigDecimal(0),
                             ticker = FiatCurrency.USD.symbol,
                         )
 
-                    CurrencyType.FIAT -> stringResByDynamicCurrencyNumber(
+                    FIAT -> stringResByDynamicCurrencyNumber(
                         (zatoshiAmount ?: 0).convertZatoshiToZecBigDecimal(),
                         "ZEC"
                     )
@@ -146,7 +147,16 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 state.totalSpendableBalance?.let {
                     stringRes("Max: ") + stringRes(it, TickerLocation.HIDDEN)
                 },
-            onSwapChange = onSwapCurrencyTypeClick,
+            onSwapChange = {
+                when (state.currencyType) {
+                    TOKEN -> {
+                        onSwapCurrencyTypeClick(amountFiat ?: BigDecimal(0))
+                    }
+                    FIAT -> {
+                        onSwapCurrencyTypeClick((zatoshiAmount ?: 0).convertZatoshiToZecBigDecimal())
+                    }
+                }
+            },
             isSwapChangeEnabled = !state.isRequestingQuote
         )
     }
@@ -180,7 +190,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
     ): ButtonState {
         val amount = state.slippage
         return ButtonState(
-            text = stringResByNumber(amount) + stringRes("%"),
+            text = stringResByNumber(amount, minDecimals = 0) + stringRes("%"),
             icon = R.drawable.ic_swap_slippage,
             onClick = { onSlippageClick(state.getOriginFiatAmount()) },
             isEnabled = !state.isRequestingQuote
@@ -272,20 +282,20 @@ internal data class ExactInputInternalState(
 
     fun getOriginFiatAmount(): BigDecimal? {
         return when (currencyType) {
-            CurrencyType.TOKEN -> {
+            TOKEN -> {
                 val tokenAmount = amountTextState.amount
                 if (tokenAmount == null || zecSwapAsset == null) null else tokenAmount.multiply(zecSwapAsset.usdPrice)
             }
 
-            CurrencyType.FIAT -> amountTextState.amount
+            FIAT -> amountTextState.amount
         }
     }
 
     fun getOriginTokenAmount(): BigDecimal? {
         val fiatAmount = amountTextState.amount
         return when (currencyType) {
-            CurrencyType.TOKEN -> fiatAmount
-            CurrencyType.FIAT ->
+            TOKEN -> fiatAmount
+            FIAT ->
                 if (fiatAmount == null || zecSwapAsset == null) {
                     null
                 } else {

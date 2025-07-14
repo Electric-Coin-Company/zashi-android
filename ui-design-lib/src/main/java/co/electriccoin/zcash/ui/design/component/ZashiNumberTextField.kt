@@ -39,6 +39,8 @@ fun ZashiNumberTextField(
     state: NumberTextFieldState,
     modifier: Modifier = Modifier,
     innerModifier: Modifier = ZashiTextFieldDefaults.innerModifier,
+    textFieldState: TextFieldState = ZashiNumberTextFieldDefaults.createTextFieldState(state),
+    handle: ZashiTextFieldHandle = rememberZashiTextFieldHandle(textFieldState),
     textStyle: TextStyle = ZashiNumberTextFieldDefaults.textStyle,
     placeholder: @Composable (() -> Unit)? = { ZashiNumberTextFieldDefaults.Placeholder() },
     prefix: @Composable (() -> Unit)? = null,
@@ -58,26 +60,6 @@ fun ZashiNumberTextField(
         ),
     colors: ZashiTextFieldColors = ZashiTextFieldDefaults.defaultColors()
 ) {
-    val locale = LocalConfiguration.current.locales[0]
-    val textFieldState =
-        TextFieldState(
-            value = state.innerState.text,
-            isEnabled = state.isEnabled,
-            error = state.errorString.takeIf { state.innerState.isError },
-            onValueChange = { text ->
-                val normalized = UserInputNumberParser.normalizeInput(text, locale)
-                val amount = UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
-                val lastValidAmount = amount ?: state.innerState.lastValidAmount
-                val new =
-                    state.innerState.copy(
-                        text = stringRes(normalized),
-                        amount = amount,
-                        lastValidAmount = lastValidAmount
-                    )
-                state.onValueChange(new)
-            }
-        )
-    val handle: ZashiTextFieldHandle = rememberZashiTextFieldHandle(textFieldState)
     ZashiTextField(
         state = textFieldState,
         modifier = modifier,
@@ -144,6 +126,30 @@ object ZashiNumberTextFieldDefaults {
             fontWeight = fontWeight,
             textAlign = textAlign,
         )
+    }
+
+    @Composable
+    fun createTextFieldState(state: NumberTextFieldState): TextFieldState {
+        val locale = LocalConfiguration.current.locales[0]
+        val textFieldState =
+            TextFieldState(
+                value = state.innerState.text,
+                isEnabled = state.isEnabled,
+                error = state.errorString.takeIf { state.innerState.isError },
+                onValueChange = { text ->
+                    val normalized = UserInputNumberParser.normalizeInput(text, locale)
+                    val amount = UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
+                    val lastValidAmount = amount ?: state.innerState.lastValidAmount
+                    val new =
+                        state.innerState.copy(
+                            text = stringRes(normalized),
+                            amount = amount,
+                            lastValidAmount = lastValidAmount
+                        )
+                    state.onValueChange(new)
+                }
+            )
+        return textFieldState
     }
 }
 

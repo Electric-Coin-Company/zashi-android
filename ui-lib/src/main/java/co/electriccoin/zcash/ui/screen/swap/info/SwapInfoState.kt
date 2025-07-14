@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.swap.info
 
 import androidx.compose.runtime.Immutable
-import co.electriccoin.zcash.ui.common.repository.SwapMode
+import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.design.component.ModalBottomSheetState
 
 @Immutable

@@ -112,7 +112,7 @@ fun SlippagePicker(
             }
         ) {
             Button(
-                text = (stringResByNumber(BigDecimal("0.5")) + stringRes("%")).getValue(),
+                text = (stringResByNumber(BigDecimal("0.5"), minDecimals = 0) + stringRes("%")).getValue(),
                 isSelected = selection is Selection.ByButton1 && !isTextFieldFocused,
                 onClick = {
                     focusManager.clearFocus(true)
@@ -121,7 +121,7 @@ fun SlippagePicker(
                 }
             )
             Button(
-                text = (stringResByNumber(1) + stringRes("%")).getValue(),
+                text = (stringResByNumber(1, minDecimals = 0) + stringRes("%")).getValue(),
                 isSelected = selection is Selection.ByButton2 && !isTextFieldFocused,
                 onClick = {
                     focusManager.clearFocus(true)
@@ -130,7 +130,7 @@ fun SlippagePicker(
                 }
             )
             Button(
-                text = (stringResByNumber(2) + stringRes("%")).getValue(),
+                text = (stringResByNumber(2, minDecimals = 0) + stringRes("%")).getValue(),
                 isSelected = selection is Selection.ByButton3 && !isTextFieldFocused,
                 onClick = {
                     focusManager.clearFocus(true)

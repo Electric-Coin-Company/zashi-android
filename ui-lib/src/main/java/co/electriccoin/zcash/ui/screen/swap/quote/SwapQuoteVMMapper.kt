@@ -4,8 +4,8 @@ import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.FiatCurrency
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.NearSwapAsset
-import co.electriccoin.zcash.ui.common.repository.SwapMode.PAY
-import co.electriccoin.zcash.ui.common.repository.SwapMode.SWAP
+import co.electriccoin.zcash.ui.common.model.SwapMode.PAY
+import co.electriccoin.zcash.ui.common.model.SwapMode.SWAP
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.imageRes

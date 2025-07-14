@@ -6,7 +6,7 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.model.NearSwapAsset
 import co.electriccoin.zcash.ui.common.model.NearSwapQuote
-import co.electriccoin.zcash.ui.common.repository.SwapMode
+import co.electriccoin.zcash.ui.common.model.SwapMode
 import java.math.BigDecimal
 import java.math.MathContext
 

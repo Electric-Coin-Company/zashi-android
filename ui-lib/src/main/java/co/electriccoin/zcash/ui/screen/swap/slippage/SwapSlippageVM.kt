@@ -142,7 +142,3 @@ class SwapSlippageVM(
 
     private fun onBack() = navigationRouter.back()
 }
-
-private const val STEPS_IN_ONE_PERCENT = 10.0
-private const val STEPS = 30
-private const val TOTAL_STEPS = 40

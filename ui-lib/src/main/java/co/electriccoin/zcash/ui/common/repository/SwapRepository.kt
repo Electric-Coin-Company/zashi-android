@@ -5,6 +5,7 @@ import co.electriccoin.zcash.ui.common.datasource.SwapDataSource
 import co.electriccoin.zcash.ui.common.model.NearSwapAsset
 import co.electriccoin.zcash.ui.common.model.NearSwapQuote
 import co.electriccoin.zcash.ui.common.model.SwapAsset
+import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
@@ -48,13 +49,8 @@ interface SwapRepository {
     fun clearQuote()
 }
 
-enum class SwapMode { SWAP, PAY }
-
 sealed interface SwapQuoteData {
-    data class Success(
-        val quote: SwapQuote,
-    ) : SwapQuoteData
-
+    data class Success(val quote: SwapQuote) : SwapQuoteData
     data class Error(val exception: Exception) : SwapQuoteData
     data object Loading : SwapQuoteData
 }
