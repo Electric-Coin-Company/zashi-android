@@ -115,18 +115,16 @@ class SwapSlippageVM(
             percentString +
                 stringRes(" ") +
                 stringRes("(") +
-                stringResByDynamicCurrencyNumber(
-                    slippageFiat,
-                    FiatCurrency.USD.symbol
-                ) + stringRes(")")
+                stringResByDynamicCurrencyNumber(slippageFiat, FiatCurrency.USD.symbol) +
+                stringRes(")")
         }
 
         return SwapSlippageInfoState(
             title = result,
             mode =
                 when {
-                    percent < BigDecimal("1") -> SwapSlippageInfoState.Mode.LOW
-                    percent < BigDecimal("2") -> SwapSlippageInfoState.Mode.MEDIUM
+                    percent <= BigDecimal("1") -> SwapSlippageInfoState.Mode.LOW
+                    percent <= BigDecimal("2") -> SwapSlippageInfoState.Mode.MEDIUM
                     else -> SwapSlippageInfoState.Mode.HIGH
                 }
         )

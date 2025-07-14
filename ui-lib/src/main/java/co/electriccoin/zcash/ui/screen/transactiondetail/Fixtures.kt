@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.screen.transactiondetail
 
 import cash.z.ecc.android.sdk.model.Zatoshi
-import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation.HIDDEN
+import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress

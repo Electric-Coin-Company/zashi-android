@@ -26,7 +26,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation
+import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
@@ -111,7 +111,7 @@ private fun Preview() =
                     SwapTokenAmountState(
                         bigIcon = imageRes(R.drawable.ic_zec_round_full),
                         smallIcon = imageRes(R.drawable.ic_receive_shield),
-                        title = stringResByDynamicCurrencyNumber(2.4214, "", CurrencySymbolLocation.HIDDEN),
+                        title = stringResByDynamicCurrencyNumber(2.4214, "", TickerLocation.HIDDEN),
                         subtitle = stringResByDynamicCurrencyNumber(21312, "$")
                     )
             )

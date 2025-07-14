@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
 import java.math.BigDecimal
+import kotlin.time.Duration.Companion.seconds
 
 interface SwapRepository {
 
@@ -106,12 +108,23 @@ class NearSwapRepository(
     override fun setSlippage(amount: BigDecimal) = slippage.update { amount }
 
     override fun requestRefreshAssets() {
-        fun findZecSwapAsset(assets: List<SwapAsset>) =
+        refreshJob?.cancel()
+        refreshJob = scope.launch {
+            while (true) {
+                refreshAssetsInternal()
+                delay(30.seconds)
+            }
+        }
+    }
+
+    private suspend fun refreshAssetsInternal() {
+        suspend fun findZecSwapAsset(assets: List<SwapAsset>) = withContext(Dispatchers.Default) {
             assets.find { asset ->
                 asset.tokenTicker.lowercase() == "zec" && asset.chainTicker.lowercase() == "zec"
             }
+        }
 
-        fun filterSwapAssets(assets: List<SwapAsset>) =
+        suspend fun filterSwapAssets(assets: List<SwapAsset>) = withContext(Dispatchers.Default) {
             assets
                 .toMutableList()
                 .apply {
@@ -120,25 +133,24 @@ class NearSwapRepository(
                         it.tokenTicker.lowercase() == "zec" || usdPrice == null || usdPrice.toFloat() == 0f
                     }
                 }.toList()
+        }
 
-        scope.launch {
-            assets.update { it.copy(isLoading = true) }
-            try {
-                val tokens = swapDataSource.getSupportedTokens()
-                val filtered = withContext(Dispatchers.Default) { filterSwapAssets(tokens) }
-                val zecAsset = withContext(Dispatchers.Default) { findZecSwapAsset(tokens) }
-                assets.update {
-                    it.copy(
-                        data = filtered,
-                        zecAsset = zecAsset,
-                        isLoading = false
-                    )
-                }
-            } catch (_: ResponseException) {
-                assets.update { it.copy(isLoading = false) }
-            } catch (_: IOException) {
-                assets.update { it.copy(isLoading = false) }
+        assets.update { it.copy(isLoading = true) }
+        try {
+            val tokens = swapDataSource.getSupportedTokens()
+            val filtered = filterSwapAssets(tokens)
+            val zecAsset = findZecSwapAsset(tokens)
+            assets.update {
+                it.copy(
+                    data = filtered,
+                    zecAsset = zecAsset,
+                    isLoading = false
+                )
             }
+        } catch (_: ResponseException) {
+            assets.update { it.copy(isLoading = false) }
+        } catch (_: IOException) {
+            assets.update { it.copy(isLoading = false) }
         }
     }
 
@@ -162,9 +174,7 @@ class NearSwapRepository(
                     destinationAsset = destinationAsset,
                     slippage = slippage.value,
                 )
-                quote.update {
-                    SwapQuoteData.Success(quote = NearSwapQuote(quoteDto))
-                }
+                quote.update { SwapQuoteData.Success(quote = NearSwapQuote(quoteDto)) }
             } catch (e: Exception) {
                 quote.update { SwapQuoteData.Error(e) }
             }
@@ -187,6 +197,6 @@ class NearSwapRepository(
     }
 }
 
-private val DEFAULT_SLIPPAGE = BigDecimal("0.5")
+private val DEFAULT_SLIPPAGE = BigDecimal("1")
 
 private val DEFAULT_MODE = SwapMode.SWAP

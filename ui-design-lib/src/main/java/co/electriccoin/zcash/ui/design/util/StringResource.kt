@@ -7,7 +7,9 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.os.ConfigurationCompat
 import cash.z.ecc.android.sdk.ext.Conversions.ZEC_FORMATTER
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.currencyFormatter
@@ -15,69 +17,53 @@ import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.Zatoshi
 import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
+import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
 import java.text.DateFormat
+import java.text.NumberFormat
 import java.time.YearMonth
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
+import java.util.Locale
 
 @Immutable
 sealed interface StringResource {
     @Immutable
-    data class ByResource(
-        @StringRes val resource: Int,
-        val args: List<Any>
-    ) : StringResource
+    data class ByResource(@StringRes val resource: Int, val args: List<Any>) : StringResource
 
     @JvmInline
     @Immutable
-    value class ByString(
-        val value: String
-    ) : StringResource
+    value class ByString(val value: String) : StringResource
 
     @Immutable
-    data class ByZatoshi(
-        val zatoshi: Zatoshi,
-        val symbolLocation: CurrencySymbolLocation
-    ) : StringResource
+    data class ByZatoshi(val zatoshi: Zatoshi, val tickerLocation: TickerLocation) : StringResource
+
+    @Immutable
+    data class ByDateTime(val zonedDateTime: ZonedDateTime, val useFullFormat: Boolean) : StringResource
+
+    @Immutable
+    data class ByYearMonth(val yearMonth: YearMonth) : StringResource
+
+    @Immutable
+    data class ByTransactionId(val transactionId: String, val abbreviated: Boolean) : StringResource
+
+    @Immutable
+    data class ByAddress(val address: String, val abbreviated: Boolean) : StringResource
 
     @Immutable
     data class ByDynamicCurrencyNumber(
         val amount: Number,
         val ticker: String,
-        val symbolLocation: CurrencySymbolLocation,
-        val maxDecimals: Int,
-        val minDecimals: Int
+        val tickerLocation: TickerLocation
     ) : StringResource
 
     @Immutable
-    data class ByDateTime(
-        val zonedDateTime: ZonedDateTime,
-        val useFullFormat: Boolean
-    ) : StringResource
+    data class ByNumber(val number: Number, val maxDecimals: Int) : StringResource
 
     @Immutable
-    data class ByYearMonth(
-        val yearMonth: YearMonth
-    ) : StringResource
-
-    @Immutable
-    data class ByTransactionId(
-        val transactionId: String,
-        val abbreviated: Boolean
-    ) : StringResource
-
-    @Immutable
-    data class ByAddress(
-        val address: String,
-        val abbreviated: Boolean
-    ) : StringResource
-
-    @Immutable
-    data class ByNumber(
-        val number: Number,
-        val maxDecimals: Int
-    ) : StringResource
+    data class ByDynamicNumber(val number: Number) : StringResource
 
     operator fun plus(other: StringResource): StringResource = CompositeStringResource(listOf(this, other))
 
@@ -91,229 +77,228 @@ sealed interface StringResource {
 }
 
 @Immutable
-private data class CompositeStringResource(
-    val resources: List<StringResource>
-) : StringResource
+private data class CompositeStringResource(val resources: List<StringResource>) : StringResource
 
 @Stable
-fun stringRes(
-    @StringRes resource: Int,
-    vararg args: Any
-): StringResource = StringResource.ByResource(resource, args.toList())
+fun stringRes(@StringRes resource: Int, vararg args: Any): StringResource =
+    StringResource.ByResource(resource, args.toList())
 
 @Stable
-fun stringRes(value: String): StringResource = StringResource.ByString(value)
+fun stringRes(value: String): StringResource =
+    StringResource.ByString(value)
 
 @Stable
-fun stringRes(
-    zatoshi: Zatoshi,
-    symbolLocation: CurrencySymbolLocation = CurrencySymbolLocation.AFTER
-): StringResource = StringResource.ByZatoshi(zatoshi, symbolLocation)
+fun stringRes(zatoshi: Zatoshi, tickerLocation: TickerLocation = TickerLocation.AFTER): StringResource =
+    StringResource.ByZatoshi(zatoshi, tickerLocation)
 
 @Stable
 fun stringResByDynamicCurrencyNumber(
     amount: Number,
     ticker: String,
-    symbolLocation: CurrencySymbolLocation =
-        if (ticker == FiatCurrency.USD.symbol) {
-            CurrencySymbolLocation.BEFORE
-        } else {
-            CurrencySymbolLocation.AFTER
-        },
-    maxDecimals: Int = ZEC_FORMATTER.maximumFractionDigits,
-    minDecimals: Int = 2
+    tickerLocation: TickerLocation =
+        if (ticker == FiatCurrency.USD.symbol) TickerLocation.BEFORE else TickerLocation.AFTER
 ): StringResource =
     StringResource.ByDynamicCurrencyNumber(
         amount = amount,
         ticker = ticker,
-        symbolLocation = symbolLocation,
-        maxDecimals = maxDecimals,
-        minDecimals = minDecimals
+        tickerLocation = tickerLocation
     )
 
 @Stable
-fun stringResByDateTime(
-    zonedDateTime: ZonedDateTime,
-    useFullFormat: Boolean
-): StringResource =
-    StringResource.ByDateTime(
-        zonedDateTime = zonedDateTime,
-        useFullFormat = useFullFormat
-    )
+fun stringResByDateTime(zonedDateTime: ZonedDateTime, useFullFormat: Boolean): StringResource =
+    StringResource.ByDateTime(zonedDateTime, useFullFormat)
 
 @Stable
-fun stringRes(yearMonth: YearMonth): StringResource = StringResource.ByYearMonth(yearMonth)
+fun stringRes(yearMonth: YearMonth): StringResource =
+    StringResource.ByYearMonth(yearMonth)
 
 @Stable
-fun stringResByAddress(
-    value: String,
-    abbreviated: Boolean
-): StringResource =
-    StringResource.ByAddress(
-        value,
-        abbreviated
-    )
+fun stringResByAddress(value: String, abbreviated: Boolean): StringResource =
+    StringResource.ByAddress(value, abbreviated)
 
 @Stable
-fun stringResByTransactionId(
-    value: String,
-    abbreviated: Boolean
-): StringResource = StringResource.ByTransactionId(value, abbreviated)
+fun stringResByTransactionId(value: String, abbreviated: Boolean): StringResource =
+    StringResource.ByTransactionId(value, abbreviated)
 
 @Stable
-fun stringResByNumber(number: Number, maxDecimals: Int = 2): StringResource = StringResource.ByNumber(
-    number = number,
-    maxDecimals = maxDecimals
-)
+fun stringResByNumber(number: Number, maxDecimals: Int = 2): StringResource =
+    StringResource.ByNumber(number, maxDecimals)
 
-@Suppress("SpreadOperator")
+@Stable
+fun stringResByDynamicNumber(number: Number): StringResource =
+    StringResource.ByDynamicNumber(number)
+
 @Stable
 @Composable
-fun StringResource.getValue(
-    convertZatoshi: (StringResource.ByZatoshi) -> String = StringResourceDefaults::convertZatoshi,
-    convertCurrency: (StringResource.ByDynamicCurrencyNumber) -> String = StringResourceDefaults::convertCurrency,
-    convertDateTime: (StringResource.ByDateTime) -> String = StringResourceDefaults::convertDateTime,
-    convertYearMonth: (YearMonth) -> String = StringResourceDefaults::convertYearMonth,
-    convertAddress: (StringResource.ByAddress) -> String = StringResourceDefaults::convertAddress,
-    convertTransactionId: (StringResource.ByTransactionId) -> String = StringResourceDefaults::convertTransactionId,
-    convertNumber: (StringResource.ByNumber) -> String = StringResourceDefaults::convertNumber
-): String =
+fun StringResource.getValue(): String =
     getString(
         context = LocalContext.current,
-        convertZatoshi = convertZatoshi,
-        convertCurrency = convertCurrency,
-        convertDateTime = convertDateTime,
-        convertYearMonth = convertYearMonth,
-        convertAddress = convertAddress,
-        convertTransactionId = convertTransactionId,
-        convertNumber = convertNumber
+        locale = LocalConfiguration.current.locales[0] ?: Locale.getDefault()
     )
 
-@Suppress("SpreadOperator")
 fun StringResource.getString(
     context: Context,
-    convertZatoshi: (StringResource.ByZatoshi) -> String = StringResourceDefaults::convertZatoshi,
-    convertCurrency: (StringResource.ByDynamicCurrencyNumber) -> String = StringResourceDefaults::convertCurrency,
-    convertDateTime: (StringResource.ByDateTime) -> String = StringResourceDefaults::convertDateTime,
-    convertYearMonth: (YearMonth) -> String = StringResourceDefaults::convertYearMonth,
-    convertAddress: (StringResource.ByAddress) -> String = StringResourceDefaults::convertAddress,
-    convertTransactionId: (StringResource.ByTransactionId) -> String = StringResourceDefaults::convertTransactionId,
-    convertNumber: (StringResource.ByNumber) -> String = StringResourceDefaults::convertNumber
-): String =
-    when (this) {
-        is StringResource.ByResource -> context.getString(resource, *args.normalize(context).toTypedArray())
+    locale: Locale = ConfigurationCompat.getLocales(context.resources.configuration)[0] ?: Locale.getDefault(),
+): String {
+    return when (this) {
+        is StringResource.ByResource -> convertResource(context)
         is StringResource.ByString -> value
-        is StringResource.ByZatoshi -> convertZatoshi(this)
-        is StringResource.ByDynamicCurrencyNumber -> convertCurrency(this)
-        is StringResource.ByDateTime -> convertDateTime(this)
-        is StringResource.ByYearMonth -> convertYearMonth(yearMonth)
-        is StringResource.ByAddress -> convertAddress(this)
-        is StringResource.ByTransactionId -> convertTransactionId(this)
-        is StringResource.ByNumber -> convertNumber(this)
-        is CompositeStringResource ->
-            this.resources.joinToString(separator = "") {
-                it.getString(
-                    context = context,
-                    convertZatoshi = convertZatoshi,
-                    convertCurrency = convertCurrency,
-                    convertDateTime = convertDateTime,
-                    convertYearMonth = convertYearMonth,
-                    convertAddress = convertAddress,
-                    convertTransactionId = convertTransactionId,
+        is StringResource.ByZatoshi -> convertZatoshi()
+        is StringResource.ByDynamicCurrencyNumber -> convertDynamicCurrencyNumber(locale)
+        is StringResource.ByDateTime -> convertDateTime()
+        is StringResource.ByYearMonth -> convertYearMonth()
+        is StringResource.ByAddress -> convertAddress()
+        is StringResource.ByTransactionId -> convertTransactionId()
+        is StringResource.ByNumber -> convertNumber()
+        is StringResource.ByDynamicNumber -> convertDynamicNumber(locale)
+        is CompositeStringResource -> convertComposite(context, locale)
+    }
+}
+
+private fun CompositeStringResource.convertComposite(
+    context: Context,
+    locale: Locale
+) = this.resources.joinToString(separator = "") { it.getString(context, locale) }
+
+@Suppress("SpreadOperator")
+private fun StringResource.ByResource.convertResource(context: Context) =
+    context.getString(
+        resource,
+        *args.map { if (it is StringResource) it.getString(context) else it }.toTypedArray()
+    )
+
+private fun StringResource.ByNumber.convertNumber(): String {
+    return currencyFormatter(maxDecimals = maxDecimals, minDecimals = 0).format(number)
+}
+
+private fun StringResource.ByZatoshi.convertZatoshi(): String {
+    val amount = this.zatoshi.convertZatoshiToZecString()
+    return when (this.tickerLocation) {
+        TickerLocation.BEFORE -> "ZEC $amount"
+        TickerLocation.AFTER -> "$amount ZEC"
+        TickerLocation.HIDDEN -> amount
+    }
+}
+
+private fun StringResource.ByDynamicCurrencyNumber.convertDynamicCurrencyNumber(locale: Locale): String {
+    val amount = convertNumberToString(amount, locale)
+    return when (this.tickerLocation) {
+        TickerLocation.BEFORE -> "$ticker$amount"
+        TickerLocation.AFTER -> "$amount $ticker"
+        TickerLocation.HIDDEN -> amount
+    }
+}
+
+private fun StringResource.ByDynamicNumber.convertDynamicNumber(locale: Locale): String =
+    convertNumberToString(number, locale)
+
+private fun convertNumberToString(number: Number, locale: Locale): String {
+    val bigDecimalAmount = when (number) {
+        is BigDecimal -> number
+        is Int -> BigDecimal(number)
+        is Long -> BigDecimal(number)
+        is Float -> BigDecimal(number.toDouble())
+        is Double -> BigDecimal(number)
+        is Short -> BigDecimal(number.toInt())
+        else -> BigDecimal(number.toDouble())
+    }
+    val dynamicAmount = bigDecimalAmount.stripFractionsDynamically(2)
+    val maxDecimals = if (bigDecimalAmount.scale() > 0) bigDecimalAmount.scale() else 0
+    val formatter = NumberFormat.getInstance(locale).apply {
+        roundingMode = RoundingMode.HALF_EVEN
+        maximumFractionDigits = maxDecimals
+        minimumFractionDigits = 2
+        minimumIntegerDigits = 1
+    }
+    return formatter.format(dynamicAmount)
+}
+
+private fun StringResource.ByDateTime.convertDateTime(): String {
+    if (useFullFormat) {
+        return DateFormat
+            .getDateTimeInstance(
+                DateFormat.MEDIUM,
+                DateFormat.SHORT,
+            ).format(
+                Date.from(
+                    zonedDateTime
+                        .toInstant()
+                        .toKotlinInstant()
+                        .toJavaInstant()
                 )
-            }
-    }
-
-private fun List<Any>.normalize(context: Context): List<Any> =
-    this.map { if (it is StringResource) it.getString(context) else it }
-
-object StringResourceDefaults {
-    fun convertNumber(resource: StringResource.ByNumber): String =
-        currencyFormatter(maxDecimals = resource.maxDecimals, minDecimals = 0).format(resource.number)
-
-    fun convertZatoshi(res: StringResource.ByZatoshi): String {
-        val amount = res.zatoshi.convertZatoshiToZecString()
-        return when (res.symbolLocation) {
-            CurrencySymbolLocation.BEFORE -> "ZEC $amount"
-            CurrencySymbolLocation.AFTER -> "$amount ZEC"
-            CurrencySymbolLocation.HIDDEN -> amount
-        }
-    }
-
-    fun convertCurrency(res: StringResource.ByDynamicCurrencyNumber): String {
-        val amount =
-            currencyFormatter(maxDecimals = res.maxDecimals, minDecimals = res.minDecimals)
-                .format(res.amount)
-        return when (res.symbolLocation) {
-            CurrencySymbolLocation.BEFORE -> "${res.ticker}$amount"
-            CurrencySymbolLocation.AFTER -> "$amount ${res.ticker}"
-            CurrencySymbolLocation.HIDDEN -> amount
-        }
-    }
-
-    fun convertDateTime(res: StringResource.ByDateTime): String {
-        if (res.useFullFormat) {
-            return DateFormat
-                .getDateTimeInstance(
-                    DateFormat.MEDIUM,
-                    DateFormat.SHORT,
-                ).format(
+            )
+    } else {
+        val pattern = DateTimeFormatter.ofPattern("MMM dd")
+        val start = zonedDateTime.format(pattern).orEmpty()
+        val end =
+            DateFormat
+                .getTimeInstance(DateFormat.SHORT)
+                .format(
                     Date.from(
-                        res.zonedDateTime
+                        zonedDateTime
                             .toInstant()
                             .toKotlinInstant()
                             .toJavaInstant()
                     )
                 )
-        } else {
-            val pattern = DateTimeFormatter.ofPattern("MMM dd")
-            val start = res.zonedDateTime.format(pattern).orEmpty()
-            val end =
-                DateFormat
-                    .getTimeInstance(DateFormat.SHORT)
-                    .format(
-                        Date.from(
-                            res.zonedDateTime
-                                .toInstant()
-                                .toKotlinInstant()
-                                .toJavaInstant()
-                        )
-                    )
 
-            return "$start $end"
-        }
+        return "$start $end"
     }
-
-    fun convertYearMonth(yearMonth: YearMonth): String {
-        val pattern = DateTimeFormatter.ofPattern("MMMM yyyy")
-        return yearMonth.format(pattern).orEmpty()
-    }
-
-    fun convertAddress(res: StringResource.ByAddress): String =
-        if (res.abbreviated && res.address.isNotBlank()) {
-            "${res.address.take(ADDRESS_MAX_LENGTH_ABBREVIATED)}..."
-        } else {
-            res.address
-        }
-
-    fun convertTransactionId(res: StringResource.ByTransactionId): String =
-        if (res.abbreviated) {
-            "${res.transactionId.take(TRANSACTION_MAX_PREFIX_SUFFIX_LENGHT)}...${
-                res.transactionId.takeLast(
-                    TRANSACTION_MAX_PREFIX_SUFFIX_LENGHT
-                )
-            }"
-        } else {
-            res.transactionId
-        }
 }
+
+private fun StringResource.ByYearMonth.convertYearMonth(): String {
+    val pattern = DateTimeFormatter.ofPattern("MMMM yyyy")
+    return yearMonth.format(pattern).orEmpty()
+}
+
+private fun StringResource.ByAddress.convertAddress(): String =
+    if (abbreviated && address.isNotBlank()) {
+        "${address.take(ADDRESS_MAX_LENGTH_ABBREVIATED)}..."
+    } else {
+        address
+    }
+
+private fun StringResource.ByTransactionId.convertTransactionId(): String =
+    if (abbreviated) {
+        "${transactionId.take(TRANSACTION_MAX_PREFIX_SUFFIX_LENGHT)}...${
+            transactionId.takeLast(TRANSACTION_MAX_PREFIX_SUFFIX_LENGHT)
+        }"
+    } else {
+        transactionId
+    }
 
 private const val TRANSACTION_MAX_PREFIX_SUFFIX_LENGHT = 5
 
 private const val ADDRESS_MAX_LENGTH_ABBREVIATED = 20
 
-enum class CurrencySymbolLocation {
-    BEFORE,
-    AFTER,
-    HIDDEN
+enum class TickerLocation { BEFORE, AFTER, HIDDEN }
+
+private fun BigDecimal.stripFractionsDynamically(minDecimals: Int): BigDecimal {
+    val threshold = BigDecimal(".5")
+    val original = this
+    val stripped = this.stripTrailingZeros()
+    val scale = stripped.scale()
+
+    if (scale <= minDecimals) return this
+
+    println(stripped.toPlainString())
+    println(scale.toString())
+
+    var current = this
+
+    for (i in 1..scale - minDecimals) {
+        val next = original.setScale(original.scale() - i, RoundingMode.DOWN)
+
+        val diff = BigDecimal("100")
+            .minus(
+                next.divide(original, MathContext.DECIMAL128)
+                    .multiply(BigDecimal("100"), MathContext.DECIMAL128)
+            )
+
+        println(diff.toPlainString())
+
+        if (diff > threshold) return current else current = next
+    }
+
+    return current
 }

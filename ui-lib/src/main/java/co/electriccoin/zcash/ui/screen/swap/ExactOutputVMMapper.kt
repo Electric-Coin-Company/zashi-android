@@ -14,7 +14,7 @@ import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.listitem.SimpleListItemState
-import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation
+import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
@@ -24,6 +24,7 @@ import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapModeSelectorState
 import java.math.BigDecimal
 import java.math.MathContext
+import java.math.RoundingMode
 
 internal class ExactOutputVMMapper : SwapVMMapper {
     override fun createState(
@@ -131,7 +132,6 @@ internal class ExactOutputVMMapper : SwapVMMapper {
                         stringResByDynamicCurrencyNumber(
                             amount = amountFiat ?: BigDecimal(0),
                             ticker = FiatCurrency.USD.symbol,
-                            maxDecimals = 2
                         )
 
                     CurrencyType.FIAT -> {
@@ -142,9 +142,11 @@ internal class ExactOutputVMMapper : SwapVMMapper {
                                 amountFiat.divide(state.swapAsset.usdPrice, MathContext.DECIMAL128)
                             }
                         stringResByDynamicCurrencyNumber(
-                            amount = tokenAmount,
+                            amount = tokenAmount.setScale(
+                                state.swapAsset?.decimals ?: ZEC_FORMATTER.maximumFractionDigits,
+                                RoundingMode.DOWN
+                            ),
                             ticker = state.swapAsset?.tokenTicker.orEmpty(),
-                            maxDecimals = state.swapAsset?.decimals ?: ZEC_FORMATTER.maximumFractionDigits
                         )
                     }
                 },
@@ -166,14 +168,14 @@ internal class ExactOutputVMMapper : SwapVMMapper {
             title = stringRes("From"),
             subtitle =
                 internalState.totalSpendableBalance?.let {
-                    stringRes("Max: ") + stringRes(it, CurrencySymbolLocation.HIDDEN)
+                    stringRes("Max: ") + stringRes(it, TickerLocation.HIDDEN)
                 },
             text =
                 internalState.getZatoshi()?.let {
                     stringResByDynamicCurrencyNumber(
                         amount = it.convertZatoshiToZecBigDecimal(),
                         ticker = "",
-                        symbolLocation = CurrencySymbolLocation.HIDDEN
+                        tickerLocation = TickerLocation.HIDDEN
                     )
                 } ?: stringRes("0"),
             secondaryText =

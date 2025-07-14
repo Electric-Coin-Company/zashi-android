@@ -7,12 +7,14 @@ import co.electriccoin.zcash.ui.common.model.NearSwapAsset
 import co.electriccoin.zcash.ui.common.repository.SwapMode.PAY
 import co.electriccoin.zcash.ui.common.repository.SwapMode.SWAP
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation
+import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
+import java.math.RoundingMode
 
 internal class SwapQuoteVMMapper {
     fun createState(
@@ -63,9 +65,8 @@ internal class SwapQuoteVMMapper {
                 description = stringRes("ZEC transaction fee"),
                 title = stringRes(proposal.proposal.totalFeeRequired()),
                 subtitle = stringResByDynamicCurrencyNumber(
-                    zecFeeUsd,
+                    zecFeeUsd.setScale(amountInDecimals, RoundingMode.DOWN),
                     FiatCurrency.USD.symbol,
-                    maxDecimals = amountInDecimals
                 )
             ),
             SwapQuoteInfoItem(
@@ -93,7 +94,7 @@ internal class SwapQuoteVMMapper {
                 SwapTokenAmountState(
                     bigIcon = imageRes(R.drawable.ic_zec_round_full),
                     smallIcon = imageRes(R.drawable.ic_receive_shield),
-                    title = stringRes(amountInZatoshi, CurrencySymbolLocation.HIDDEN),
+                    title = stringRes(amountInZatoshi, TickerLocation.HIDDEN),
                     subtitle = stringResByDynamicCurrencyNumber(amountInUsd, FiatCurrency.USD.symbol)
                 )
             }
@@ -101,7 +102,7 @@ internal class SwapQuoteVMMapper {
             PAY -> SwapTokenAmountState(
                 bigIcon = destinationAsset.tokenIcon,
                 smallIcon = destinationAsset.chainIcon,
-                title = stringResByNumber(amountOutFormatted, amountOutDecimals),
+                title = stringResByDynamicNumber(amountOutFormatted.setScale(amountOutDecimals, RoundingMode.DOWN)),
                 subtitle = stringResByDynamicCurrencyNumber(amountOutUsd, FiatCurrency.USD.symbol)
             )
         }
@@ -112,14 +113,14 @@ internal class SwapQuoteVMMapper {
             SWAP -> SwapTokenAmountState(
                 bigIcon = destinationAsset.tokenIcon,
                 smallIcon = destinationAsset.chainIcon,
-                title = stringResByNumber(amountOutFormatted, amountOutDecimals),
+                title = stringResByDynamicNumber(amountOutFormatted.setScale(amountOutDecimals, RoundingMode.DOWN)),
                 subtitle = stringResByDynamicCurrencyNumber(amountOutUsd, FiatCurrency.USD.symbol)
             )
 
             PAY -> SwapTokenAmountState(
                 bigIcon = imageRes(R.drawable.ic_zec_round_full),
                 smallIcon = imageRes(R.drawable.ic_receive_shield),
-                title = stringRes(amountInZatoshi, CurrencySymbolLocation.HIDDEN),
+                title = stringRes(amountInZatoshi, TickerLocation.HIDDEN),
                 subtitle = stringResByDynamicCurrencyNumber(amountInUsd, FiatCurrency.USD.symbol)
             )
         }

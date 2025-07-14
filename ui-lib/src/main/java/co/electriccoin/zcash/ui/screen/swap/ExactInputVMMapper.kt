@@ -15,10 +15,11 @@ import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.listitem.SimpleListItemState
-import co.electriccoin.zcash.ui.design.util.CurrencySymbolLocation
+import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
@@ -134,7 +135,6 @@ internal class ExactInputVMMapper : SwapVMMapper {
                         stringResByDynamicCurrencyNumber(
                             amount = amountFiat ?: BigDecimal(0),
                             ticker = FiatCurrency.USD.symbol,
-                            maxDecimals = 2
                         )
 
                     CurrencyType.FIAT -> stringResByDynamicCurrencyNumber(
@@ -144,7 +144,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 },
             max =
                 state.totalSpendableBalance?.let {
-                    stringRes("Max: ") + stringRes(it, CurrencySymbolLocation.HIDDEN)
+                    stringRes("Max: ") + stringRes(it, TickerLocation.HIDDEN)
                 },
             onSwapChange = onSwapCurrencyTypeClick,
             isSwapChangeEnabled = !state.isRequestingQuote
@@ -166,12 +166,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 ),
             title = stringRes("To"),
             subtitle = null,
-            text =
-                stringResByDynamicCurrencyNumber(
-                    amount = state.getDestinationAssetAmount() ?: 0,
-                    ticker = state.swapAsset?.tokenTicker.orEmpty(),
-                    symbolLocation = CurrencySymbolLocation.HIDDEN
-                ),
+            text = stringResByDynamicNumber(state.getDestinationAssetAmount() ?: 0),
             secondaryText =
                 stringResByDynamicCurrencyNumber(
                     amount = state.getOriginFiatAmount() ?: 0,
