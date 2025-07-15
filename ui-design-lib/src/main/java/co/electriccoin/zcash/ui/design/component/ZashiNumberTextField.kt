@@ -18,6 +18,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -29,6 +31,7 @@ import cash.z.ecc.android.sdk.model.UserInputNumberParser
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import java.math.BigDecimal
@@ -39,8 +42,6 @@ fun ZashiNumberTextField(
     state: NumberTextFieldState,
     modifier: Modifier = Modifier,
     innerModifier: Modifier = ZashiTextFieldDefaults.innerModifier,
-    textFieldState: TextFieldState = ZashiNumberTextFieldDefaults.createTextFieldState(state),
-    handle: ZashiTextFieldHandle = rememberZashiTextFieldHandle(textFieldState),
     textStyle: TextStyle = ZashiNumberTextFieldDefaults.textStyle,
     placeholder: @Composable (() -> Unit)? = { ZashiNumberTextFieldDefaults.Placeholder() },
     prefix: @Composable (() -> Unit)? = null,
@@ -60,11 +61,11 @@ fun ZashiNumberTextField(
         ),
     colors: ZashiTextFieldColors = ZashiTextFieldDefaults.defaultColors()
 ) {
+    val textFieldState = createTextFieldState(state)
     ZashiTextField(
         state = textFieldState,
         modifier = modifier,
         innerModifier = innerModifier,
-        handle = handle,
         textStyle = textStyle,
         placeholder = placeholder,
         leadingIcon = leadingIcon,
@@ -84,6 +85,37 @@ fun ZashiNumberTextField(
     )
 }
 
+@Composable
+private fun createTextFieldState(state: NumberTextFieldState): EnhancedTextFieldState {
+    val context = LocalContext.current
+    val locale = LocalConfiguration.current.locales[0]
+    val textFieldState =
+        EnhancedTextFieldState(
+            innerState = state.innerState.innerTextFieldState,
+            isEnabled = state.isEnabled,
+            error = state.errorString.takeIf { state.innerState.isError },
+            onValueChange = { innerState ->
+                val normalized = UserInputNumberParser.normalizeInput(
+                    input = innerState.value.getString(context, locale),
+                    locale = locale
+                )
+                val amount = UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
+                val lastValidAmount = amount ?: state.innerState.lastValidAmount
+                val new =
+                    state.innerState.copy(
+                        innerTextFieldState = state.innerState.innerTextFieldState.copy(
+                            value = stringRes(normalized),
+                            selection = innerState.selection
+                        ),
+                        amount = amount,
+                        lastValidAmount = lastValidAmount
+                    )
+                state.onValueChange(new)
+            }
+        )
+    return textFieldState
+}
+
 @Immutable
 data class NumberTextFieldState(
     val innerState: NumberTextFieldInnerState = NumberTextFieldInnerState(),
@@ -93,15 +125,21 @@ data class NumberTextFieldState(
 )
 
 data class NumberTextFieldInnerState(
-    val text: StringResource = stringRes(""),
+    val innerTextFieldState: InnerTextFieldState = InnerTextFieldState(
+        value = stringRes(value = ""),
+        selection = TextSelection.Start
+    ),
     val amount: BigDecimal? = null,
     val lastValidAmount: BigDecimal? = null,
 ) {
-    val isError = amount == null && !text.isEmpty()
+    val isError = amount == null && !innerTextFieldState.value.isEmpty()
 
     companion object {
         fun fromAmount(amount: BigDecimal) = NumberTextFieldInnerState(
-            text = stringResByNumber(amount),
+            innerTextFieldState = InnerTextFieldState(
+                value = stringResByNumber(amount),
+                selection = TextSelection.Start
+            ),
             amount = amount,
             lastValidAmount = amount
         )
@@ -126,30 +164,6 @@ object ZashiNumberTextFieldDefaults {
             fontWeight = fontWeight,
             textAlign = textAlign,
         )
-    }
-
-    @Composable
-    fun createTextFieldState(state: NumberTextFieldState): TextFieldState {
-        val locale = LocalConfiguration.current.locales[0]
-        val textFieldState =
-            TextFieldState(
-                value = state.innerState.text,
-                isEnabled = state.isEnabled,
-                error = state.errorString.takeIf { state.innerState.isError },
-                onValueChange = { text ->
-                    val normalized = UserInputNumberParser.normalizeInput(text, locale)
-                    val amount = UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
-                    val lastValidAmount = amount ?: state.innerState.lastValidAmount
-                    val new =
-                        state.innerState.copy(
-                            text = stringRes(normalized),
-                            amount = amount,
-                            lastValidAmount = lastValidAmount
-                        )
-                    state.onValueChange(new)
-                }
-            )
-        return textFieldState
     }
 }
 

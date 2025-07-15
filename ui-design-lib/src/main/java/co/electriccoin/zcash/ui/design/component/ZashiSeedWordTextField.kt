@@ -16,12 +16,15 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
@@ -30,18 +33,12 @@ fun ZashiSeedWordTextField(
     state: SeedWordTextFieldState,
     modifier: Modifier = Modifier,
     innerModifier: Modifier = Modifier,
-    handle: ZashiTextFieldHandle =
-        rememberZashiTextFieldHandle(
-            TextFieldState(
-                value = stringRes(state.value),
-                onValueChange = state.onValueChange,
-                error = stringRes("").takeIf { state.isError }
-            )
-        ),
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
+    val context = LocalContext.current
+    val locale = LocalConfiguration.current.locales[0]
     ZashiTextField(
         modifier = modifier,
         innerModifier = innerModifier,
@@ -50,13 +47,22 @@ fun ZashiSeedWordTextField(
         keyboardActions = keyboardActions,
         singleLine = true,
         maxLines = 1,
-        handle = handle,
         interactionSource = interactionSource,
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
         state =
-            TextFieldState(
-                value = stringRes(state.value),
-                onValueChange = state.onValueChange,
+            EnhancedTextFieldState(
+                innerState = InnerTextFieldState(
+                    value = stringRes(state.innerState.value),
+                    selection = state.innerState.selection
+                ),
+                onValueChange = {
+                    state.onValueChange(
+                        SeedWordInnerTextFieldState(
+                            value = it.value.getString(context, locale),
+                            selection = it.selection
+                        )
+                    )
+                },
                 error = stringRes("").takeIf { state.isError }
             ),
         textStyle = ZashiTypography.textMd,
@@ -88,9 +94,15 @@ fun ZashiSeedWordTextField(
 
 @Immutable
 data class SeedWordTextFieldState(
-    val value: String,
+    val innerState: SeedWordInnerTextFieldState,
     val isError: Boolean,
-    val onValueChange: (String) -> Unit
+    val onValueChange: (SeedWordInnerTextFieldState) -> Unit
+)
+
+@Immutable
+data class SeedWordInnerTextFieldState(
+    val value: String,
+    val selection: TextSelection = TextSelection.Start,
 )
 
 @Composable
@@ -102,7 +114,10 @@ private fun Preview() =
                 prefix = "12",
                 state =
                     SeedWordTextFieldState(
-                        value = "asd",
+                        innerState = SeedWordInnerTextFieldState(
+                            value = "asd",
+                            selection = TextSelection.Start
+                        ),
                         isError = false,
                         onValueChange = {},
                     )

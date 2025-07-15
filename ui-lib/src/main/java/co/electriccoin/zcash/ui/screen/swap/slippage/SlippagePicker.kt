@@ -32,13 +32,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.InnerTextFieldState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
+import co.electriccoin.zcash.ui.design.component.TextSelection
 import co.electriccoin.zcash.ui.design.component.ZashiNumberTextField
 import co.electriccoin.zcash.ui.design.component.ZashiNumberTextFieldDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
@@ -82,7 +85,7 @@ fun SlippagePicker(
             NumberTextFieldState(
                 innerState = textFieldInnerState,
                 onValueChange = {
-                    val normalized = if (it.text.isEmpty()) {
+                    val normalized = if (it.innerTextFieldState.value.isEmpty()) {
                         it.copy(amount = BigDecimal(0))
                     } else {
                         it
@@ -204,7 +207,14 @@ private fun createTextFieldInnerState(amount: BigDecimal?): NumberTextFieldInner
         else -> amount
     }
 
-    return NumberTextFieldInnerState(text = text, amount = newAmount, lastValidAmount = newAmount)
+    return NumberTextFieldInnerState(
+        innerTextFieldState = InnerTextFieldState(
+            value = text,
+            selection = TextSelection.Start
+        ),
+        amount = newAmount,
+        lastValidAmount = newAmount
+    )
 }
 
 @Composable

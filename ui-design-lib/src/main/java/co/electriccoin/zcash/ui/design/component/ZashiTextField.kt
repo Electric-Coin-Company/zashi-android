@@ -24,7 +24,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -61,15 +61,6 @@ fun ZashiTextField(
     innerModifier: Modifier = ZashiTextFieldDefaults.innerModifier,
     error: String? = null,
     isEnabled: Boolean = true,
-    handle: ZashiTextFieldHandle =
-        rememberZashiTextFieldHandle(
-            TextFieldState(
-                value = stringRes(value),
-                error = error?.let { stringRes(it) },
-                isEnabled = isEnabled,
-                onValueChange = onValueChange,
-            )
-        ),
     textStyle: TextStyle = ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium),
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -87,16 +78,14 @@ fun ZashiTextField(
     colors: ZashiTextFieldColors = ZashiTextFieldDefaults.defaultColors()
 ) {
     ZashiTextField(
-        state =
-            TextFieldState(
-                value = stringRes(value),
-                error = error?.let { stringRes(it) },
-                isEnabled = isEnabled,
-                onValueChange = onValueChange,
-            ),
+        state = TextFieldState(
+            value = stringRes(value),
+            error = error?.let { stringRes(it) },
+            isEnabled = isEnabled,
+            onValueChange = onValueChange,
+        ),
         modifier = modifier,
         innerModifier = innerModifier,
-        handle = handle,
         textStyle = textStyle,
         placeholder = placeholder,
         leadingIcon = leadingIcon,
@@ -118,10 +107,9 @@ fun ZashiTextField(
 @Suppress("LongParameterList")
 @Composable
 fun ZashiTextField(
-    state: TextFieldState,
+    state: EnhancedTextFieldState,
     modifier: Modifier = Modifier,
     innerModifier: Modifier = ZashiTextFieldDefaults.innerModifier,
-    handle: ZashiTextFieldHandle = rememberZashiTextFieldHandle(state),
     textStyle: TextStyle = ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium),
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
@@ -157,7 +145,86 @@ fun ZashiTextField(
         shape = shape,
         colors = colors,
         contentPadding = contentPadding,
-        handle = handle,
+        modifier = modifier,
+        innerModifier = innerModifier
+    )
+}
+
+@Suppress("LongParameterList")
+@Composable
+fun ZashiTextField(
+    state: TextFieldState,
+    modifier: Modifier = Modifier,
+    innerModifier: Modifier = ZashiTextFieldDefaults.innerModifier,
+    textStyle: TextStyle = ZashiTypography.textMd.copy(fontWeight = FontWeight.Medium),
+    placeholder: @Composable (() -> Unit)? = null,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    prefix: @Composable (() -> Unit)? = null,
+    suffix: @Composable (() -> Unit)? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    singleLine: Boolean = false,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+    minLines: Int = 1,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    shape: Shape = ZashiTextFieldDefaults.shape,
+    contentPadding: PaddingValues = ZashiTextFieldDefaults.contentPadding(leadingIcon, suffix, trailingIcon, prefix),
+    colors: ZashiTextFieldColors = ZashiTextFieldDefaults.defaultColors()
+) {
+    var enhancedValueState by remember {
+        mutableStateOf(
+            EnhancedTextFieldState(
+                innerState = InnerTextFieldState(
+                    value = state.value,
+                    selection = TextSelection.Start,
+                ),
+                error = state.error,
+                isEnabled = state.isEnabled,
+                onValueChange = { _ -> },
+            )
+        )
+    }
+
+    val textFieldValue = enhancedValueState.copy(
+        innerState = enhancedValueState.innerState.copy(value = state.value),
+        error = state.error,
+        isEnabled = state.isEnabled
+    )
+
+    SideEffect {
+        if (textFieldValue != enhancedValueState) {
+            enhancedValueState = textFieldValue
+        }
+    }
+
+    val context = LocalContext.current
+    val locale = LocalConfiguration.current.locales[0]
+
+    TextFieldInternal(
+        state = enhancedValueState.copy(
+            onValueChange = { newInnerState ->
+                enhancedValueState = enhancedValueState.copy(innerState = newInnerState)
+                state.onValueChange(newInnerState.value.getString(context, locale))
+            }
+        ),
+        textStyle = textStyle,
+        placeholder = placeholder,
+        leadingIcon = leadingIcon,
+        trailingIcon = trailingIcon,
+        prefix = prefix,
+        suffix = suffix,
+        visualTransformation = visualTransformation,
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        singleLine = singleLine,
+        maxLines = maxLines,
+        minLines = minLines,
+        interactionSource = interactionSource,
+        shape = shape,
+        colors = colors,
+        contentPadding = contentPadding,
         modifier = modifier,
         innerModifier = innerModifier
     )
@@ -172,31 +239,11 @@ fun ZashiTextFieldPlaceholder(res: StringResource) {
     )
 }
 
-@Stable
-class ZashiTextFieldHandle(
-    text: String
-) {
-    var textFieldValueState by mutableStateOf(TextFieldValue(text = text))
-
-    fun moveCursorToEnd() {
-        textFieldValueState =
-            textFieldValueState.copy(
-                selection = TextRange(textFieldValueState.text.length),
-            )
-    }
-}
-
-@Composable
-fun rememberZashiTextFieldHandle(state: TextFieldState): ZashiTextFieldHandle {
-    val context = LocalContext.current
-    return remember { ZashiTextFieldHandle(state.value.getString(context)) }
-}
-
 @Suppress("LongParameterList", "LongMethod")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TextFieldInternal(
-    state: TextFieldState,
+    state: EnhancedTextFieldState,
     textStyle: TextStyle,
     placeholder: @Composable (() -> Unit)?,
     leadingIcon: @Composable (() -> Unit)?,
@@ -213,26 +260,31 @@ private fun TextFieldInternal(
     shape: Shape,
     colors: ZashiTextFieldColors,
     contentPadding: PaddingValues,
-    handle: ZashiTextFieldHandle,
     modifier: Modifier = Modifier,
     innerModifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    val value = remember(state.value) { state.value.getString(context) }
+    val value = state.innerState.value.getValue()
     // Holds the latest internal TextFieldValue state. We need to keep it to have the correct value
     // of the composition.
-    val textFieldValueState = handle.textFieldValueState
+    var textFieldValueState by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = value,
+                selection = state.innerState.getTextRange(value)
+            )
+        )
+    }
     // Holds the latest TextFieldValue that BasicTextField was recomposed with. We couldn't simply
     // pass `TextFieldValue(text = value)` to the CoreTextField because we need to preserve the
     // composition.
-    val textFieldValue = textFieldValueState.copy(text = value, selection = textFieldValueState.selection)
+    val textFieldValue = textFieldValueState.copy(text = value, selection = state.innerState.getTextRange(value))
 
     SideEffect {
         if (textFieldValue.text != textFieldValueState.text ||
             textFieldValue.selection != textFieldValueState.selection ||
             textFieldValue.composition != textFieldValueState.composition
         ) {
-            handle.textFieldValueState = textFieldValue
+            textFieldValueState = textFieldValue
         }
     }
 
@@ -246,7 +298,7 @@ private fun TextFieldInternal(
         }
     val mergedTextStyle = textStyle.merge(TextStyle(color = textColor))
 
-    var lastTextValue by remember(value) { mutableStateOf(value) }
+    var lastInnerState by remember(state.innerState) { mutableStateOf(state.innerState) }
 
     CompositionLocalProvider(LocalTextSelectionColors provides androidColors.selectionColors) {
         Column(
@@ -266,13 +318,18 @@ private fun TextFieldInternal(
                             )
                         },
                 onValueChange = { newTextFieldValueState ->
-                    handle.textFieldValueState = newTextFieldValueState
+                    textFieldValueState = newTextFieldValueState
 
-                    val stringChangedSinceLastInvocation = lastTextValue != newTextFieldValueState.text
-                    lastTextValue = newTextFieldValueState.text
+                    val stringChanged = value != newTextFieldValueState.text
+                    val selectionChanged = lastInnerState.getTextRange(value) != newTextFieldValueState.selection
 
-                    if (stringChangedSinceLastInvocation) {
-                        state.onValueChange(newTextFieldValueState.text)
+                    lastInnerState = InnerTextFieldState(
+                        value = stringRes(newTextFieldValueState.text),
+                        selection = TextSelection.ByTextRange(newTextFieldValueState.selection)
+                    )
+
+                    if (stringChanged || selectionChanged) {
+                        state.onValueChange(lastInnerState)
                     }
                 },
                 enabled = state.isEnabled,
@@ -289,7 +346,7 @@ private fun TextFieldInternal(
             ) { innerTextField: @Composable () -> Unit ->
                 // places leading icon, text field with label and placeholder, trailing icon
                 TextFieldDefaults.DecorationBox(
-                    value = state.value.getValue(),
+                    value = state.innerState.value.getValue(),
                     visualTransformation = visualTransformation,
                     innerTextField = {
                         DecorationBox(prefix = prefix, suffix = suffix, content = innerTextField)
@@ -384,7 +441,7 @@ data class ZashiTextFieldColors(
 ) {
     @Composable
     internal fun borderColor(
-        state: TextFieldState,
+        state: EnhancedTextFieldState,
         isFocused: Boolean
     ): State<Color> {
         val targetValue =
@@ -398,7 +455,7 @@ data class ZashiTextFieldColors(
     }
 
     @Composable
-    internal fun hintColor(state: TextFieldState): State<Color> {
+    internal fun hintColor(state: EnhancedTextFieldState): State<Color> {
         val targetValue =
             when {
                 !state.isEnabled -> disabledHintColor
@@ -529,6 +586,43 @@ data class TextFieldState(
     val onValueChange: (String) -> Unit,
 ) {
     val isError = error != null
+}
+
+@Immutable
+data class EnhancedTextFieldState(
+    val innerState: InnerTextFieldState,
+    val error: StringResource? = null,
+    val isEnabled: Boolean = true,
+    val onValueChange: (InnerTextFieldState) -> Unit,
+) {
+    val isError = error != null
+}
+
+@Immutable
+data class InnerTextFieldState(
+    val value: StringResource,
+    val selection: TextSelection = TextSelection.Start,
+) {
+    fun getTextRange(value: String): TextRange {
+        return when (selection) {
+            is TextSelection.ByTextRange -> return selection.range
+            TextSelection.End -> TextRange(value.length)
+            TextSelection.Start -> TextRange.Zero
+        }
+    }
+}
+
+@Immutable
+sealed interface TextSelection {
+
+    @Immutable
+    data object End: TextSelection
+
+    @Immutable
+    data object Start: TextSelection
+
+    @Immutable
+    data class ByTextRange(val range: TextRange): TextSelection
 }
 
 @PreviewScreens

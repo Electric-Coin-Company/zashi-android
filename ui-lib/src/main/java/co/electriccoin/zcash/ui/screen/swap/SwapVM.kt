@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.swap
 
+import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -25,7 +26,9 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUse
 import co.electriccoin.zcash.ui.common.usecase.RequestSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateSwapModeUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.InnerTextFieldState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
+import co.electriccoin.zcash.ui.design.component.TextSelection
 import co.electriccoin.zcash.ui.design.util.combine
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -233,7 +236,10 @@ internal class SwapVM(
     private fun onSwapCurrencyTypeClick(newTextFieldAmount: BigDecimal) {
         amountText.update {
             NumberTextFieldInnerState(
-                text = stringResByDynamicNumber(newTextFieldAmount),
+                innerTextFieldState = InnerTextFieldState(
+                    value = stringResByDynamicNumber(newTextFieldAmount),
+                    selection = TextSelection.End
+                ),
                 amount = newTextFieldAmount,
                 lastValidAmount = newTextFieldAmount
             )

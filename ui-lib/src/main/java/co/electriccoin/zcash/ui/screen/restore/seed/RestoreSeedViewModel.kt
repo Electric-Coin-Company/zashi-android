@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.common.usecase.ValidateSeedUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.SeedTextFieldState
+import co.electriccoin.zcash.ui.design.component.SeedWordInnerTextFieldState
 import co.electriccoin.zcash.ui.design.component.SeedWordTextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeight
@@ -50,7 +51,9 @@ class RestoreSeedViewModel(
         MutableStateFlow(
             (0..23).map { index ->
                 SeedWordTextFieldState(
-                    value = "",
+                    innerState = SeedWordInnerTextFieldState(
+                        ""
+                    ),
                     onValueChange = { onValueChange(index, it) },
                     isError = false
                 )
@@ -64,7 +67,7 @@ class RestoreSeedViewModel(
         }.mapLatest { (seedWords, suggestions) ->
             withContext(Dispatchers.Default) {
                 seedWords.map { field ->
-                    val trimmed = field.value.lowercase(Locale.US).trim()
+                    val trimmed = field.innerState.value.lowercase().trim()
                     val autocomplete = suggestions.filter { it.startsWith(trimmed) }
                     val validSuggestions =
                         when {
@@ -80,7 +83,7 @@ class RestoreSeedViewModel(
     private val validSeed =
         seedWords
             .map { fields ->
-                validateSeed(fields.map { it.value })
+                validateSeed(fields.map { it.innerState.value })
             }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -155,27 +158,27 @@ class RestoreSeedViewModel(
 
     private fun onValueChange(
         index: Int,
-        value: String
+        state: SeedWordInnerTextFieldState
     ) {
         if (BuildConfig.DEBUG) {
-            val seed = validateSeed(value.split(" "))
+            val seed = validateSeed(state.value.split(" "))
             if (seed != null) {
                 prefillSeed(seed)
             } else {
-                updateSeedWord(index, value)
+                updateSeedWord(index, state)
             }
         } else {
-            updateSeedWord(index, value)
+            updateSeedWord(index, state)
         }
     }
 
     private fun updateSeedWord(
         index: Int,
-        value: String
+        newState: SeedWordInnerTextFieldState
     ) {
         seedWords.update {
             val newSeedWords = it.toMutableList()
-            newSeedWords[index] = newSeedWords[index].copy(value = value.trim())
+            newSeedWords[index] = newSeedWords[index].copy(innerState = newState.copy(value = newState.value.trim()))
             newSeedWords.toList()
         }
     }
@@ -184,7 +187,8 @@ class RestoreSeedViewModel(
         seedWords.update {
             val newSeedWords = it.toMutableList()
             seed.split.forEachIndexed { index, word ->
-                newSeedWords[index] = newSeedWords[index].copy(value = word)
+                val oldState = newSeedWords[index]
+                newSeedWords[index] = oldState.copy(innerState = oldState.innerState.copy(value = word))
             }
             newSeedWords.toList()
         }

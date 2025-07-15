@@ -45,7 +45,9 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.SeedTextFieldHandle
 import co.electriccoin.zcash.ui.design.component.SeedTextFieldState
+import co.electriccoin.zcash.ui.design.component.SeedWordInnerTextFieldState
 import co.electriccoin.zcash.ui.design.component.SeedWordTextFieldState
+import co.electriccoin.zcash.ui.design.component.TextSelection
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiChipButton
 import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
@@ -182,7 +184,7 @@ private fun BottomBar(
                 state.seed.values
                     .withIndex()
                     .indexOfFirst { (index, field) ->
-                        index >= handle.selectedIndex && (field.value.isBlank() || field.isError)
+                        index >= handle.selectedIndex && (field.innerState.value.isBlank() || field.isError)
                     }
 
             handle.setSelectedIndex(nextIndex)
@@ -220,7 +222,12 @@ private fun BottomBar(
                                     text = stringRes(it),
                                     onClick = {
                                         if (handle.selectedIndex >= 0) {
-                                            state.seed.values[handle.selectedIndex].onValueChange(it)
+                                            state.seed.values[handle.selectedIndex].onValueChange(
+                                                SeedWordInnerTextFieldState(
+                                                    value = it,
+                                                    selection = TextSelection.End
+                                                )
+                                            )
                                         }
                                     }
                                 ),
@@ -290,7 +297,10 @@ private fun Preview() =
                             values =
                                 (1..24).map {
                                     SeedWordTextFieldState(
-                                        value = "Word",
+                                        innerState = SeedWordInnerTextFieldState(
+                                            value = "asd",
+                                            selection = TextSelection.Start
+                                        ),
                                         onValueChange = { },
                                         isError = false
                                     )

@@ -30,7 +30,6 @@ import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiAssetCard
 import co.electriccoin.zcash.ui.design.component.ZashiNumberTextField
 import co.electriccoin.zcash.ui.design.component.ZashiNumberTextFieldDefaults
-import co.electriccoin.zcash.ui.design.component.rememberZashiTextFieldHandle
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -77,9 +76,6 @@ private fun SwapTextFieldCard(
         modifier = modifier,
         color = ZashiColors.Surfaces.bgPrimary
     ) {
-        val textFieldState = ZashiNumberTextFieldDefaults.createTextFieldState(state.textField)
-        val handle = rememberZashiTextFieldHandle(textFieldState)
-
         Column {
             Row(
                 modifier = Modifier.fillMaxWidth()
@@ -117,8 +113,6 @@ private fun SwapTextFieldCard(
                 }
                 ZashiNumberTextField(
                     state = state.textField,
-                    textFieldState = textFieldState,
-                    handle = handle,
                     modifier = Modifier.weight(.55f),
                     textStyle =
                         ZashiTypography.header4.copy(
@@ -172,10 +166,7 @@ private fun SwapTextFieldCard(
                     modifier = if (state.isSwapChangeEnabled) {
                         Modifier
                             .clickable(
-                                onClick = {
-                                    state.onSwapChange()
-                                    handle.moveCursorToEnd()
-                                },
+                                onClick = state.onSwapChange,
                                 indication = null,
                                 interactionSource = remember { MutableInteractionSource() }
                             )
