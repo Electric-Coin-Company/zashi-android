@@ -292,7 +292,7 @@ private fun BigDecimal.stripFractionsDynamically(minDecimals: Int): BigDecimal {
     var current = this
 
     for (i in 1..scale - minDecimals) {
-        val next = original.setScale(original.scale() - i, RoundingMode.DOWN)
+        val next = original.setScale(original.scale() - i, RoundingMode.HALF_EVEN)
 
         val diff = BigDecimal("100")
             .minus(
