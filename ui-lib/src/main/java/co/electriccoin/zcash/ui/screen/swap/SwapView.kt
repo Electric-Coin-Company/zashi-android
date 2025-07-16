@@ -15,13 +15,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -71,6 +74,15 @@ import co.electriccoin.zcash.ui.screen.swap.ui.SwapModeSelectorState
 internal fun SwapView(
     state: SwapState,
 ) {
+    val focusRequester = remember { FocusRequester() }
+    var hasBeenAutofocused by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (!hasBeenAutofocused) {
+            focusRequester.requestFocus()
+            hasBeenAutofocused = true
+        }
+    }
+
     BlankBgScaffold(
         topBar = {
             TopAppBar(state)
@@ -83,7 +95,10 @@ internal fun SwapView(
                     .verticalScroll(rememberScrollState())
                     .scaffoldPadding(it)
         ) {
-            SwapAmountTextField(state = state.amountTextField)
+            SwapAmountTextField(
+                state = state.amountTextField,
+                focusRequester = focusRequester
+            )
 
             when (state.swapModeSelectorState.swapMode) {
                 SWAP -> {

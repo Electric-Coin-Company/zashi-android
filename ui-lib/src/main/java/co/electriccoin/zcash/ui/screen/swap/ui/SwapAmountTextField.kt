@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.swap.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,9 +15,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,10 +46,15 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 
 @Composable
-internal fun SwapAmountTextField(state: SwapAmountTextFieldState, modifier: Modifier = Modifier) {
+internal fun SwapAmountTextField(
+    state: SwapAmountTextFieldState,
+    modifier: Modifier = Modifier,
+    focusRequester: FocusRequester = remember { FocusRequester() },
+) {
     Column(modifier = modifier) {
         SwapTextFieldCard(
             modifier = Modifier.fillMaxWidth(),
+            focusRequester = focusRequester,
             state = state
         )
 
@@ -70,8 +79,12 @@ internal fun SwapAmountTextField(state: SwapAmountTextFieldState, modifier: Modi
 @Composable
 private fun SwapTextFieldCard(
     state: SwapAmountTextFieldState,
+    focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
+    val textFieldInteractionSource = remember { MutableInteractionSource() }
+    val isTextFieldFocused by textFieldInteractionSource.collectIsFocusedAsState()
+
     Surface(
         modifier = modifier,
         color = ZashiColors.Surfaces.bgPrimary
@@ -113,7 +126,10 @@ private fun SwapTextFieldCard(
                 }
                 ZashiNumberTextField(
                     state = state.textField,
-                    modifier = Modifier.weight(.55f),
+                    interactionSource = textFieldInteractionSource,
+                    modifier = Modifier
+                        .weight(.55f)
+                        .focusRequester(focusRequester),
                     textStyle =
                         ZashiTypography.header4.copy(
                             fontWeight = FontWeight.SemiBold,
@@ -121,17 +137,21 @@ private fun SwapTextFieldCard(
                         ),
                     contentPadding =
                         if (state.textFieldPrefix == null) {
-                            PaddingValues(horizontal = 12.dp, vertical = 4.5.dp)
+                            PaddingValues(horizontal = 12.dp, vertical = 4.6.dp)
                         } else {
                             PaddingValues(start = 8.dp, top = 4.dp, end = 12.dp, bottom = 4.dp)
                         },
-                    placeholder = {
-                        ZashiNumberTextFieldDefaults.Placeholder(
-                            modifier = Modifier.fillMaxWidth(),
-                            style = ZashiTypography.header4,
-                            fontWeight = FontWeight.SemiBold,
-                            textAlign = TextAlign.End
-                        )
+                    placeholder = if (!isTextFieldFocused) {
+                        {
+                            ZashiNumberTextFieldDefaults.Placeholder(
+                                modifier = Modifier.fillMaxWidth(),
+                                style = ZashiTypography.header4,
+                                fontWeight = FontWeight.SemiBold,
+                                textAlign = TextAlign.End
+                            )
+                        }
+                    } else {
+                        null
                     },
                     leadingIcon =
                         if (state.textFieldPrefix is ImageResource.ByDrawable) {

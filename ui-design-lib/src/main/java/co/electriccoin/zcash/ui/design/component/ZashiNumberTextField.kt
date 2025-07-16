@@ -32,7 +32,10 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getString
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import java.math.BigDecimal
 
@@ -158,7 +161,7 @@ object ZashiNumberTextFieldDefaults {
         textAlign: TextAlign = TextAlign.Start
     ) {
         Text(
-            text = "0",
+            text = stringResByDynamicNumber(0).getValue(),
             modifier = modifier,
             style = style,
             fontWeight = fontWeight,

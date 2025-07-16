@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -62,8 +61,8 @@ fun SlippagePicker(
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
-    val textFieldInteractionSource = remember { MutableInteractionSource() }
     var textFieldInnerState by remember { mutableStateOf(createTextFieldInnerState(state.amount)) }
+    val textFieldInteractionSource = remember { MutableInteractionSource() }
     val isTextFieldFocused by textFieldInteractionSource.collectIsFocusedAsState()
     val selection by remember(state.amount, isTextFieldFocused) {
         mutableStateOf(
@@ -158,30 +157,19 @@ fun SlippagePicker(
                     errorTextColor = ZashiColors.Inputs.ErrorDefault.stroke,
                     errorContainerColor = Color.Transparent,
                 ),
-                placeholder = {
-                    val color by animateColorAsState(
-                        if (isTextFieldFocused) ZashiColors.Switcher.selectedText else ZashiColors.Switcher.defaultText
-                    )
-
-                    if (!isTextFieldFocused) {
+                placeholder = if (!isTextFieldFocused) {
+                    {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
                             text = "Custom",
                             style = ZashiTypography.textMd,
                             fontWeight = FontWeight.Medium,
                             textAlign = TextAlign.Center,
-                            color = color
-                        )
-                    } else {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = "0%",
-                            style = ZashiTypography.textMd,
-                            fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.Center,
-                            color = color
+                            color = ZashiColors.Switcher.defaultText
                         )
                     }
+                } else {
+                    null
                 },
                 visualTransformation = SuffixVisualTransformation("%"),
                 contentPadding = PaddingValues(top = 16.dp),
