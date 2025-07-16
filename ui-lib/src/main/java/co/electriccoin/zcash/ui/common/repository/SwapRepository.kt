@@ -143,6 +143,14 @@ class NearSwapRepository(
                     isLoading = false
                 )
             }
+
+            if (selectedAsset.value == null) {
+                val usdc = filtered.find { it.tokenTicker.lowercase() == "usdc" && it.chainTicker == "eth"  }
+                if (usdc is NearSwapAsset) {
+                    selectedAsset.update { usdc }
+                }
+            }
+
         } catch (_: ResponseException) {
             assets.update { it.copy(isLoading = false) }
         } catch (_: IOException) {
