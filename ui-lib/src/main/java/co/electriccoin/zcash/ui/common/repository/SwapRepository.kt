@@ -77,7 +77,7 @@ class NearSwapRepository(
             SwapAssetsData(
                 data = null,
                 zecAsset = null,
-                isLoading = true,
+                isLoading = false,
                 type = SwapAssetsData.Type.NEAR
             )
         )
@@ -186,6 +186,14 @@ class NearSwapRepository(
     }
 
     override fun clear() {
+        assets.update {
+            SwapAssetsData(
+                data = null,
+                zecAsset = null,
+                isLoading = false,
+                type = SwapAssetsData.Type.NEAR
+            )
+        }
         refreshJob?.cancel()
         refreshJob = null
         selectedAsset.update { null }

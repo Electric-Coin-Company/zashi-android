@@ -293,7 +293,7 @@ private fun Preview() {
                         SwapAmountTextFieldState(
                             title = stringRes("From"),
                             error = null,
-                            token = AssetCardState(
+                            token = AssetCardState.Data(
                                 ticker = stringRes("USDT"),
                                 bigIcon = null,
                                 smallIcon = null,
@@ -313,7 +313,7 @@ private fun Preview() {
                     amountText =
                         SwapAmountTextState(
                             token =
-                                AssetCardState(
+                                AssetCardState.Data(
                                     ticker = stringRes("ZEC"),
                                     bigIcon = null,
                                     smallIcon = null,

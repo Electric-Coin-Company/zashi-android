@@ -31,12 +31,10 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
+import com.valentinilk.shimmer.shimmer
 
 @Composable
-fun ZashiAssetCard(
-    state: AssetCardState,
-    modifier: Modifier = Modifier
-) {
+fun ZashiAssetCard(state: AssetCardState, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
         onClick = state.onClick.takeIf { state.isEnabled }
@@ -47,14 +45,23 @@ fun ZashiAssetCard(
 
 @Composable
 private fun Content(state: AssetCardState) {
-    val clickModifier = if (state.onClick != null) Modifier.clickable(
-        onClick = state.onClick,
+    val onClick = state.onClick
+    val clickModifier = if (onClick != null) Modifier.clickable(
+        onClick = onClick,
         indication = null,
         interactionSource = remember { MutableInteractionSource() }
     ) else Modifier
+    when (state) {
+        is AssetCardState.Data -> Data(state, clickModifier)
+        is AssetCardState.Loading -> Loading(state, clickModifier)
+    }
+}
+
+@Composable
+private fun Data(state: AssetCardState.Data, modifier: Modifier = Modifier) {
     Row(
         modifier =
-            clickModifier then Modifier.padding(
+            modifier then Modifier.padding(
                 start = if (state.bigIcon is ImageResource.ByDrawable) 4.dp else 14.dp,
                 top = if (state.bigIcon is ImageResource.ByDrawable) 4.dp else 8.dp,
                 end = 12.dp,
@@ -101,6 +108,39 @@ private fun Content(state: AssetCardState) {
 }
 
 @Composable
+private fun Loading(
+    state: AssetCardState.Loading,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier =
+            modifier then Modifier.padding(
+                start = 4.dp,
+                top = 4.dp,
+                end = 12.dp,
+                bottom = 4.dp,
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            modifier = Modifier.shimmer(customShimmer = rememberZashiShimmer()),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ShimmerCircle()
+            Spacer(4.dp)
+            ShimmerRectangle()
+        }
+        Spacer(4.dp)
+        if (state.onClick != null && state.isEnabled) {
+            Image(
+                painter = painterResource(R.drawable.ic_chevron_down_small),
+                contentDescription = null
+            )
+        }
+    }
+}
+
+@Composable
 private fun Card(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)?,
@@ -128,13 +168,25 @@ private fun Card(
 }
 
 @Immutable
-data class AssetCardState(
-    val ticker: StringResource,
-    val bigIcon: ImageResource?,
-    val smallIcon: ImageResource?,
-    val isEnabled: Boolean = true,
+sealed interface AssetCardState {
+    val isEnabled: Boolean
     val onClick: (() -> Unit)?
-)
+
+    @Immutable
+    data class Data(
+        val ticker: StringResource,
+        val bigIcon: ImageResource?,
+        val smallIcon: ImageResource?,
+        override val isEnabled: Boolean = true,
+        override val onClick: (() -> Unit)?,
+    ) : AssetCardState
+
+    @Immutable
+    data class Loading(
+        override val isEnabled: Boolean = true,
+        override val onClick: (() -> Unit)?,
+    ): AssetCardState
+}
 
 @PreviewScreens
 @Composable
@@ -143,7 +195,7 @@ private fun ClickablePreview() =
         BlankSurface {
             ZashiAssetCard(
                 state =
-                    AssetCardState(
+                    AssetCardState.Data(
                         ticker = stringRes("USDT"),
                         bigIcon = imageRes(R.drawable.ic_token_zec),
                         smallIcon = imageRes(R.drawable.ic_chain_zec),
@@ -160,7 +212,7 @@ private fun UnclickablePreview() =
         BlankSurface {
             ZashiAssetCard(
                 state =
-                    AssetCardState(
+                    AssetCardState.Data(
                         ticker = stringRes("USDT"),
                         bigIcon = imageRes(R.drawable.ic_token_zec),
                         smallIcon = imageRes(R.drawable.ic_chain_zec),
@@ -169,3 +221,18 @@ private fun UnclickablePreview() =
             )
         }
     }
+
+@PreviewScreens
+@Composable
+private fun LoadingPreview() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiAssetCard(
+                state =
+                    AssetCardState.Loading(
+                        onClick = {}
+                    )
+            )
+        }
+    }
+

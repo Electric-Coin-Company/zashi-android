@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.swap
 
-import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -11,13 +10,14 @@ import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapMode.PAY
 import co.electriccoin.zcash.ui.common.model.SwapMode.SWAP
+import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.ContactWithSwapAsset
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapModeUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableBalanceUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetZecSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanSwapAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
@@ -33,7 +33,6 @@ import co.electriccoin.zcash.ui.design.util.combine
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
-import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
@@ -54,7 +53,7 @@ internal class SwapVM(
     getSlippage: GetSlippageUseCase,
     getSelectedSwapAsset: GetSelectedSwapAssetUseCase,
     getTotalSpendableBalance: GetTotalSpendableBalanceUseCase,
-    getZecSwapAsset: GetZecSwapAssetUseCase,
+    getSwapAssetsUseCase: GetSwapAssetsUseCase,
     private val updateSwapMode: UpdateSwapModeUseCase,
     private val navigateToSwapInfo: NavigateToSwapInfoUseCase,
     private val isABContactHintVisible: IsABContactHintVisibleUseCase,
@@ -117,7 +116,7 @@ internal class SwapVM(
             getSlippage.observe(),
             addressText.flatMapLatest { isABContactHintVisible.observe(it) },
             currencyType,
-            getZecSwapAsset.observe(),
+            getSwapAssetsUseCase.observe(),
             getSwapMode.observe(),
             isRequestingQuote
         ) { spendable,
@@ -127,7 +126,7 @@ internal class SwapVM(
             slippage,
             isAddressBookHintVisible,
             currencyType,
-            zecSwapAsset,
+            swapAssets,
             mode,
             isRequestingQuote
             ->
@@ -139,7 +138,7 @@ internal class SwapVM(
                 addressText = address,
                 slippage = slippage,
                 isAddressBookHintVisible = isAddressBookHintVisible,
-                zecSwapAsset = zecSwapAsset,
+                swapAssets = swapAssets,
                 swapMode = mode,
                 isRequestingQuote = isRequestingQuote
             )
@@ -308,7 +307,7 @@ internal interface InternalState {
     val addressText: String
     val slippage: BigDecimal
     val isAddressBookHintVisible: Boolean
-    val zecSwapAsset: SwapAsset?
+    val swapAssets: SwapAssetsData
     val swapMode: SwapMode
     val isRequestingQuote: Boolean
 }
@@ -321,7 +320,7 @@ internal data class InternalStateImpl(
     override val addressText: String,
     override val slippage: BigDecimal,
     override val isAddressBookHintVisible: Boolean,
-    override val zecSwapAsset: SwapAsset?,
+    override val swapAssets: SwapAssetsData,
     override val swapMode: SwapMode,
     override val isRequestingQuote: Boolean,
 ) : InternalState

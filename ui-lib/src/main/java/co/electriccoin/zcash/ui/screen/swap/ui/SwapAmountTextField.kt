@@ -227,7 +227,7 @@ private fun Preview() =
                         title = stringRes("From"),
                         error = null,
                         token =
-                            AssetCardState(
+                            AssetCardState.Data(
                                 ticker = stringRes("USDT"),
                                 bigIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
                                 smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
@@ -254,7 +254,7 @@ private fun ErrorPreview() =
                         title = stringRes("Recipient gets"),
                         error = stringRes("Error"),
                         token =
-                            AssetCardState(
+                            AssetCardState.Data(
                                 ticker = stringRes("USDT"),
                                 bigIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
                                 smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),

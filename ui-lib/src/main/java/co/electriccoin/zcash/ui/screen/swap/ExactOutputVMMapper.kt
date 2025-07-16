@@ -7,6 +7,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapMode.PAY
+import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
@@ -107,14 +108,20 @@ internal class ExactOutputVMMapper : SwapVMMapper {
             } else {
                 null
             },
-            token =
-                AssetCardState(
-                    ticker = state.swapAsset?.tokenTicker?.let { stringRes(it) } ?: stringRes("Select token"),
-                    bigIcon = state.swapAsset?.tokenIcon,
-                    smallIcon = state.swapAsset?.chainIcon,
+            token = if (state.swapAsset == null) {
+                AssetCardState.Loading(
                     onClick = onSwapAssetPickerClick,
                     isEnabled = !state.isRequestingQuote,
-                ),
+                )
+            } else {
+                AssetCardState.Data(
+                    ticker = state.swapAsset.tokenTicker.let { stringRes(it) },
+                    bigIcon = state.swapAsset.tokenIcon,
+                    smallIcon = state.swapAsset.chainIcon,
+                    onClick = onSwapAssetPickerClick,
+                    isEnabled = !state.isRequestingQuote,
+                )
+            },
             textFieldPrefix =
                 when (state.currencyType) {
                     CurrencyType.TOKEN -> null
@@ -176,7 +183,7 @@ internal class ExactOutputVMMapper : SwapVMMapper {
     private fun createAmountTextState(internalState: ExactOutputInternalState): SwapAmountTextState =
         SwapAmountTextState(
             token =
-                AssetCardState(
+                AssetCardState.Data(
                     stringRes(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
                     bigIcon = imageRes(R.drawable.ic_zec_round_full),
                     smallIcon = imageRes(R.drawable.ic_receive_shield),
@@ -222,20 +229,25 @@ internal class ExactOutputVMMapper : SwapVMMapper {
     ): ButtonState {
         val amount = textField.textField.innerState.amount
         return ButtonState(
-            text = stringRes("Confirm"),
+            text = if (state.swapAssets.isLoading && state.swapAssets.data == null) {
+                stringRes("Loading")
+            } else {
+                stringRes("Confirm")
+            },
             onClick = {
                 state.getOriginTokenAmount()?.let {
                     onRequestSwapQuoteClick(it, state.addressText)
                 }
             },
             isEnabled =
-                state.swapAsset != null &&
+                (!state.swapAssets.isLoading && state.swapAssets.data != null) &&
+                    state.swapAsset != null &&
                     !textField.isError &&
                     amount != null &&
                     amount > BigDecimal(0) &&
                     state.addressText.isNotBlank() &&
                     !state.isRequestingQuote,
-            isLoading = state.isRequestingQuote
+            isLoading = state.isRequestingQuote || (state.swapAssets.isLoading && state.swapAssets.data == null)
         )
     }
 
@@ -261,12 +273,17 @@ internal class ExactOutputVMMapper : SwapVMMapper {
         val zecToAssetExchangeRate = state.getZecToOriginAssetExchangeRate()
         val assetTokenTicker = state.swapAsset?.tokenTicker
         return if (zecToAssetExchangeRate == null || assetTokenTicker == null) {
-            emptyList()
+            listOf(
+                SimpleListItemState(
+                    title = stringRes("Rate"),
+                    text = null
+                )
+            )
         } else {
             listOf(
                 SimpleListItemState(
-                    stringRes("Rate"),
-                    stringRes("1 ZEC = ") +
+                    title = stringRes("Rate"),
+                    text = stringRes("1 ZEC = ") +
                         stringResByDynamicCurrencyNumber(zecToAssetExchangeRate, assetTokenTicker)
                 )
             )
@@ -282,7 +299,7 @@ private data class ExactOutputInternalState(
     override val addressText: String,
     override val slippage: BigDecimal,
     override val isAddressBookHintVisible: Boolean,
-    override val zecSwapAsset: SwapAsset?,
+    override val swapAssets: SwapAssetsData,
     override val swapMode: SwapMode,
     override val isRequestingQuote: Boolean
 ) : InternalState {
@@ -295,7 +312,7 @@ private data class ExactOutputInternalState(
         addressText = original.addressText,
         slippage = original.slippage,
         isAddressBookHintVisible = original.isAddressBookHintVisible,
-        zecSwapAsset = original.zecSwapAsset,
+        swapAssets = original.swapAssets,
         swapMode = original.swapMode,
         isRequestingQuote = original.isRequestingQuote
     )
@@ -325,7 +342,7 @@ private data class ExactOutputInternalState(
     }
 
     fun getZecToOriginAssetExchangeRate(): BigDecimal? {
-        val zecUsdPrice = zecSwapAsset?.usdPrice
+        val zecUsdPrice = swapAssets.zecAsset?.usdPrice
         val assetUsdPrice = swapAsset?.usdPrice
         if (zecUsdPrice == null || assetUsdPrice == null) return null
         return zecUsdPrice.divide(assetUsdPrice, MathContext.DECIMAL128)
@@ -333,12 +350,12 @@ private data class ExactOutputInternalState(
 
     fun getZatoshi(): Long? {
         val amountToken = getOriginTokenAmount()
-        return if (zecSwapAsset?.usdPrice == null || swapAsset?.usdPrice == null || amountToken == null) {
+        return if (swapAssets.zecAsset?.usdPrice == null || swapAsset?.usdPrice == null || amountToken == null) {
             null
         } else {
             amountToken
                 .multiply(swapAsset.usdPrice, MathContext.DECIMAL128)
-                .divide(zecSwapAsset.usdPrice, MathContext.DECIMAL128)
+                .divide(swapAssets.zecAsset.usdPrice, MathContext.DECIMAL128)
                 .convertZecToZatoshiLong()
         }
     }

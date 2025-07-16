@@ -8,6 +8,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapMode.SWAP
+import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
@@ -21,7 +22,8 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
-import co.electriccoin.zcash.ui.screen.swap.CurrencyType.*
+import co.electriccoin.zcash.ui.screen.swap.CurrencyType.FIAT
+import co.electriccoin.zcash.ui.screen.swap.CurrencyType.TOKEN
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapModeSelectorState
@@ -113,7 +115,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 null
             },
             token =
-                AssetCardState(
+                AssetCardState.Data(
                     ticker = stringRes(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
                     bigIcon = imageRes(R.drawable.ic_zec_round_full),
                     smallIcon = imageRes(R.drawable.ic_receive_shield),
@@ -152,6 +154,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
                     TOKEN -> {
                         onSwapCurrencyTypeClick(amountFiat ?: BigDecimal(0))
                     }
+
                     FIAT -> {
                         onSwapCurrencyTypeClick((zatoshiAmount ?: 0).convertZatoshiToZecBigDecimal())
                     }
@@ -166,14 +169,20 @@ internal class ExactInputVMMapper : SwapVMMapper {
         onSwapAssetPickerClick: (() -> Unit)?
     ): SwapAmountTextState =
         SwapAmountTextState(
-            token =
-                AssetCardState(
-                    ticker = state.swapAsset?.tokenTicker?.let { stringRes(it) } ?: stringRes("Select token"),
-                    bigIcon = state.swapAsset?.tokenIcon,
-                    smallIcon = state.swapAsset?.chainIcon,
+            token = if (state.swapAsset == null) {
+                AssetCardState.Loading(
                     onClick = onSwapAssetPickerClick,
                     isEnabled = !state.isRequestingQuote
-                ),
+                )
+            } else {
+                AssetCardState.Data(
+                    ticker = state.swapAsset.tokenTicker.let { stringRes(it) },
+                    bigIcon = state.swapAsset.tokenIcon,
+                    smallIcon = state.swapAsset.chainIcon,
+                    onClick = onSwapAssetPickerClick,
+                    isEnabled = !state.isRequestingQuote
+                )
+            },
             title = stringRes("To"),
             subtitle = null,
             text = stringResByDynamicNumber(state.getDestinationAssetAmount() ?: 0),
@@ -204,20 +213,25 @@ internal class ExactInputVMMapper : SwapVMMapper {
     ): ButtonState {
         val amount = textField.textField.innerState.amount
         return ButtonState(
-            text = stringRes("Confirm"),
+            text = if (state.swapAssets.isLoading && state.swapAssets.data == null) {
+                stringRes("Loading")
+            } else {
+                stringRes("Confirm")
+            },
             onClick = {
                 state.getOriginTokenAmount()?.let {
                     onRequestSwapQuoteClick(it, state.addressText)
                 }
             },
             isEnabled =
-                state.swapAsset != null &&
+                (!state.swapAssets.isLoading && state.swapAssets.data != null) &&
+                    state.swapAsset != null &&
                     !textField.isError &&
                     amount != null &&
                     amount > BigDecimal(0) &&
                     state.addressText.isNotBlank() &&
                     !state.isRequestingQuote,
-            isLoading = state.isRequestingQuote
+            isLoading = state.isRequestingQuote || (state.swapAssets.isLoading && state.swapAssets.data == null)
         )
     }
 
@@ -241,12 +255,17 @@ internal class ExactInputVMMapper : SwapVMMapper {
         val zecToAssetExchangeRate = state.getZecToDestinationAssetExchangeRate()
         val assetTokenTicker = state.swapAsset?.tokenTicker
         return if (zecToAssetExchangeRate == null || assetTokenTicker == null) {
-            emptyList()
+            listOf(
+                SimpleListItemState(
+                    title = stringRes("Rate"),
+                    text = null
+                )
+            )
         } else {
             listOf(
                 SimpleListItemState(
-                    stringRes("Rate"),
-                    stringRes("1 ZEC = ") +
+                    title = stringRes("Rate"),
+                    text = stringRes("1 ZEC = ") +
                         stringResByDynamicCurrencyNumber(zecToAssetExchangeRate, assetTokenTicker)
                 )
             )
@@ -262,7 +281,7 @@ internal data class ExactInputInternalState(
     override val addressText: String,
     override val slippage: BigDecimal,
     override val isAddressBookHintVisible: Boolean,
-    override val zecSwapAsset: SwapAsset?,
+    override val swapAssets: SwapAssetsData,
     override val swapMode: SwapMode,
     override val isRequestingQuote: Boolean,
 ) : InternalState {
@@ -275,7 +294,7 @@ internal data class ExactInputInternalState(
         addressText = original.addressText,
         slippage = original.slippage,
         isAddressBookHintVisible = original.isAddressBookHintVisible,
-        zecSwapAsset = original.zecSwapAsset,
+        swapAssets = original.swapAssets,
         swapMode = original.swapMode,
         isRequestingQuote = original.isRequestingQuote,
     )
@@ -284,7 +303,11 @@ internal data class ExactInputInternalState(
         return when (currencyType) {
             TOKEN -> {
                 val tokenAmount = amountTextState.amount
-                if (tokenAmount == null || zecSwapAsset == null) null else tokenAmount.multiply(zecSwapAsset.usdPrice)
+                if (tokenAmount == null || swapAssets.zecAsset == null) {
+                    null
+                } else {
+                    tokenAmount.multiply(swapAssets.zecAsset.usdPrice)
+                }
             }
 
             FIAT -> amountTextState.amount
@@ -296,27 +319,27 @@ internal data class ExactInputInternalState(
         return when (currencyType) {
             TOKEN -> fiatAmount
             FIAT ->
-                if (fiatAmount == null || zecSwapAsset == null) {
+                if (fiatAmount == null || swapAssets.zecAsset == null) {
                     null
                 } else {
-                    fiatAmount.divide(zecSwapAsset.usdPrice, MathContext.DECIMAL128)
+                    fiatAmount.divide(swapAssets.zecAsset.usdPrice, MathContext.DECIMAL128)
                 }
         }
     }
 
     fun getDestinationAssetAmount(): BigDecimal? {
         val amountToken = getOriginTokenAmount()
-        return if (zecSwapAsset?.usdPrice == null || swapAsset?.usdPrice == null || amountToken == null) {
+        return if (swapAssets.zecAsset?.usdPrice == null || swapAsset?.usdPrice == null || amountToken == null) {
             null
         } else {
             amountToken
-                .multiply(zecSwapAsset.usdPrice, MathContext.DECIMAL128)
+                .multiply(swapAssets.zecAsset.usdPrice, MathContext.DECIMAL128)
                 .divide(swapAsset.usdPrice, MathContext.DECIMAL128)
         }
     }
 
     fun getZecToDestinationAssetExchangeRate(): BigDecimal? {
-        val zecUsdPrice = zecSwapAsset?.usdPrice
+        val zecUsdPrice = swapAssets.zecAsset?.usdPrice
         val assetUsdPrice = swapAsset?.usdPrice
         if (zecUsdPrice == null || assetUsdPrice == null) return null
         return zecUsdPrice.divide(assetUsdPrice, MathContext.DECIMAL128)
