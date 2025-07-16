@@ -10,6 +10,6 @@ import org.koin.androidx.compose.koinViewModel
 internal fun WrapSettings() {
     val settingsViewModel = koinViewModel<SettingsViewModel>()
     val state by settingsViewModel.state.collectAsStateWithLifecycle()
-    BackHandler(state?.onBack != null) { state?.onBack?.invoke() }
-    state?.let { Settings(state = it) }
+    BackHandler { state.onBack() }
+    Settings(state = state)
 }

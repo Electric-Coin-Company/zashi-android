@@ -23,13 +23,11 @@ class SettingsViewModel(
     private val navigationRouter: NavigationRouter,
     private val navigateToAddressBook: NavigateToAddressBookUseCase,
 ) : ViewModel() {
-    private val versionInfo by lazy { getVersionInfo() }
-
-    val state: StateFlow<SettingsState?> = MutableStateFlow(createState())
+    val state: StateFlow<SettingsState> = MutableStateFlow(createState())
 
     private fun createState() =
         SettingsState(
-            version = stringRes(R.string.settings_version, versionInfo.versionName),
+            version = stringRes(R.string.settings_version, getVersionInfo().versionName),
             onBack = ::onBack,
             items =
                 listOfNotNull(
