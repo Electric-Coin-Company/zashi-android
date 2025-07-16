@@ -2,9 +2,12 @@ package co.electriccoin.zcash.ui.design.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.changedToDown
+import androidx.compose.ui.input.pointer.changedToDownIgnoreConsumed
 import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
@@ -44,8 +48,10 @@ fun ZashiBigIconButton(
     state: BigIconButtonState,
     modifier: Modifier = Modifier,
 ) {
-    var isPressed by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
     val shadowElevation by animateDpAsState(if (isPressed) 0.dp else (2.dp orDark 4.dp))
+    val borderWidth by animateDpAsState(if (isPressed) 0.dp else 0.5.dp, animationSpec = spring())
 
     val darkBgGradient =
         Brush.verticalGradient(
@@ -65,30 +71,15 @@ fun ZashiBigIconButton(
             Modifier.background(darkBgGradient)
 
     Surface(
-        modifier =
-            modifier
-                .pointerInput(Unit) {
-                    awaitPointerEventScope {
-                        while (true) {
-                            val event = awaitPointerEvent()
-                            event.changes.forEach { change ->
-                                if (change.changedToDown()) {
-                                    isPressed = true
-                                }
-                                if (change.changedToUp()) {
-                                    isPressed = false
-                                }
-                            }
-                        }
-                    }
-                },
+        modifier = modifier,
         onClick = state.onClick,
         color = ZashiColors.Surfaces.bgPrimary,
         shape = RoundedCornerShape(22.dp),
         border =
-            BorderStroke(.5.dp, ZashiColors.Utility.Gray.utilityGray100) orDark
-                BorderStroke(.5.dp, darkBorderGradient),
-        shadowElevation = shadowElevation
+            BorderStroke(borderWidth, ZashiColors.Utility.Gray.utilityGray100) orDark
+                BorderStroke(borderWidth, darkBorderGradient),
+        shadowElevation = shadowElevation,
+        interactionSource = interactionSource
     ) {
         Column(
             modifier = backgroundModifier,
