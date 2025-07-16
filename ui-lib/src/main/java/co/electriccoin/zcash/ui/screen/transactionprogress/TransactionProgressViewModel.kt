@@ -199,19 +199,11 @@ class TransactionProgressViewModel(
         return address?.let { "${it.take(ADDRESS_MAX_LENGTH)}..." }.orEmpty()
     }
 
-    private fun onBackToSendFormAndClear() {
-        cancelKeystoneProposalFlow(clearSendForm = true)
-    }
+    private fun onBackToSendFormAndClear() = viewModelScope.launch { cancelKeystoneProposalFlow(clearSendForm = true) }
 
-    private fun onBackToSendForm() {
-        cancelKeystoneProposalFlow(clearSendForm = false)
-    }
+    private fun onBackToSendForm() = viewModelScope.launch { cancelKeystoneProposalFlow(clearSendForm = false) }
 
-    private fun onViewTransactions() {
-        viewTransactionsAfterSuccessfulProposal()
-    }
+    private fun onViewTransactions() = viewTransactionsAfterSuccessfulProposal()
 
-    private fun onViewTransactionDetailClick(txId: String) {
-        viewTransactionDetailAfterSuccessfulProposal(txId)
-    }
+    private fun onViewTransactionDetailClick(txId: String) = viewTransactionDetailAfterSuccessfulProposal(txId)
 }

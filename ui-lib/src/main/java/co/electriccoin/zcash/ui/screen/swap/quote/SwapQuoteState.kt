@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResource
 
 @Immutable
-sealed interface SwapQuoteState : ModalBottomSheetState {
+internal sealed interface SwapQuoteState : ModalBottomSheetState {
 
     @Immutable
     data class Success(

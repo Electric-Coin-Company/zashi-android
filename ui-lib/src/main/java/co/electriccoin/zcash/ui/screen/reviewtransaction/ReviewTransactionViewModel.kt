@@ -237,9 +237,9 @@ class ReviewTransactionViewModel(
 
     private fun onExpandReceiverClick() = isReceiverExpanded.update { !it }
 
-    private fun onBack() = cancelProposalFlow(clearSendForm = false)
+    private fun onBack() = viewModelScope.launch { cancelProposalFlow(clearSendForm = false) }
 
-    private fun onCancelClick() = cancelProposalFlow(clearSendForm = false)
+    private fun onCancelClick() = viewModelScope.launch { cancelProposalFlow(clearSendForm = false) }
 
     private fun onConfirmClick() = viewModelScope.launch { confirmProposal() }
 

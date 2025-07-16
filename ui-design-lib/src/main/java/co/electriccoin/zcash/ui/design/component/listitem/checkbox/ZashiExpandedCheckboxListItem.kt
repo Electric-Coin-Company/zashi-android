@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
@@ -43,7 +45,7 @@ fun ZashiExpandedCheckboxListItem(
 ) {
     ExpandedBaseListItem(
         modifier = modifier,
-        contentPadding = PaddingValues(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 16.dp),
+        contentPadding = PaddingValues(16.dp),
         leading = {
             ZashiListItemDefaults.LeadingItem(
                 modifier = it,
@@ -138,8 +140,8 @@ private fun ExpandedBaseListItem(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                leading(Modifier)
-                Spacer(modifier = Modifier.width(16.dp))
+                leading(Modifier.size(32.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 content(Modifier.weight(1f))
                 Spacer(modifier = Modifier.width(16.dp))
                 trailing(Modifier)

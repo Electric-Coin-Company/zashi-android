@@ -46,7 +46,7 @@ import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SwapQuoteView(state: SwapQuoteState?) {
+internal fun SwapQuoteView(state: SwapQuoteState?) {
     ZashiScreenModalBottomSheet(
         state = state
     ) { innerState ->

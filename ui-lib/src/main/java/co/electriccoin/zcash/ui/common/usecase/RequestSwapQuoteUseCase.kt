@@ -6,11 +6,15 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.NearSwapQuote
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.model.near.SwapType
 import co.electriccoin.zcash.ui.common.model.near.SwapType.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.near.SwapType.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
+import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
@@ -22,6 +26,8 @@ import java.math.BigDecimal
 class RequestSwapQuoteUseCase(
     private val swapRepository: SwapRepository,
     private val zashiProposalRepository: ZashiProposalRepository,
+    private val keystoneProposalRepository: KeystoneProposalRepository,
+    private val accountDataSource: AccountDataSource,
     private val synchronizerProvider: SynchronizerProvider,
     private val navigationRouter: NavigationRouter,
     private val navigateToErrorUseCase: NavigateToErrorUseCase
@@ -44,28 +50,11 @@ class RequestSwapQuoteUseCase(
                     }
                 }
 
-                when (swapType) {
-                    EXACT_INPUT -> zashiProposalRepository.createExactInputSwapProposal(
-                        ZecSend(
-                            destination = destinationAddress,
-                            amount = destinationAmount,
-                            memo = Memo(""),
-                            proposal = null
-                        )
-                    )
-
-                    EXACT_OUTPUT -> zashiProposalRepository.createExactOutputSwapProposal(
-                        ZecSend(
-                            destination = destinationAddress,
-                            amount = destinationAmount,
-                            memo = Memo(""),
-                            proposal = null
-                        )
-                    )
-                }
+                createProposal(destinationAddress, destinationAmount, swapType)
             } catch (e: Exception) {
                 swapRepository.clearQuote()
                 zashiProposalRepository.clear()
+                keystoneProposalRepository.clear()
                 navigateToErrorUseCase(ErrorArgs.General(e))
                 return
             }
@@ -73,6 +62,40 @@ class RequestSwapQuoteUseCase(
 
         if (canNavigateToSwapQuote()) {
             navigationRouter.forward(SwapQuoteArgs)
+        }
+    }
+
+    private suspend fun createProposal(
+        destination: WalletAddress,
+        amount: Zatoshi,
+        swapType: SwapType,
+    ) {
+        try {
+            val zecSend = ZecSend(
+                destination = destination,
+                amount = amount,
+                memo = Memo(""),
+                proposal = null
+            )
+
+            when (accountDataSource.getSelectedAccount()) {
+                is KeystoneAccount -> {
+                    when (swapType) {
+                        EXACT_INPUT -> keystoneProposalRepository.createExactInputSwapProposal(zecSend)
+                        EXACT_OUTPUT -> keystoneProposalRepository.createExactOutputSwapProposal(zecSend)
+                    }
+
+                    keystoneProposalRepository.createPCZTFromProposal()
+                }
+                is ZashiAccount -> when (swapType) {
+                    EXACT_INPUT -> zashiProposalRepository.createExactInputSwapProposal(zecSend)
+                    EXACT_OUTPUT -> zashiProposalRepository.createExactOutputSwapProposal(zecSend)
+                }
+            }
+        } catch (e: Exception) {
+            keystoneProposalRepository.clear()
+            zashiProposalRepository.clear()
+            throw e
         }
     }
 

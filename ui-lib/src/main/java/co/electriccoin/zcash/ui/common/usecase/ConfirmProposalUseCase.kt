@@ -39,9 +39,9 @@ class ConfirmProposalUseCase(
                 is ZashiAccount -> {
                     zashiProposalRepository.submitTransaction()
                     navigationRouter.forward(TransactionProgress)
-                    swapRepository.clear()
                 }
             }
+            swapRepository.clear()
         } catch (_: BiometricsFailureException) {
             // do nothing
         } catch (_: BiometricsCancelledException) {
