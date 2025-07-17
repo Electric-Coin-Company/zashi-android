@@ -11,10 +11,9 @@ import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
-import co.electriccoin.zcash.ui.common.provider.IsTorExplicitlyEnabledProvider
+import co.electriccoin.zcash.ui.common.provider.IsTorExplicitlySetProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
-import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageData
 import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
@@ -22,14 +21,12 @@ import co.electriccoin.zcash.ui.common.repository.RuntimeMessage
 import co.electriccoin.zcash.ui.common.repository.ShieldFundsData
 import co.electriccoin.zcash.ui.common.repository.ShieldFundsRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
-import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.channelFlow
@@ -45,7 +42,6 @@ import kotlin.time.Duration.Companion.seconds
 
 class GetHomeMessageUseCase(
     walletBackupDataSource: WalletBackupDataSource,
-    exchangeRateRepository: ExchangeRateRepository,
     shieldFundsRepository: ShieldFundsRepository,
     transactionRepository: TransactionRepository,
     walletSnapshotDataSource: WalletSnapshotDataSource,
@@ -53,7 +49,7 @@ class GetHomeMessageUseCase(
     synchronizerProvider: SynchronizerProvider,
     accountDataSource: AccountDataSource,
     persistableWalletProvider: PersistableWalletProvider,
-    isTorExplicitlyEnabledProvider: IsTorExplicitlyEnabledProvider,
+    isTorExplicitlySetProvider: IsTorExplicitlySetProvider,
     private val messageAvailabilityDataSource: MessageAvailabilityDataSource,
     private val cache: HomeMessageCacheRepository,
 ) {
@@ -98,7 +94,7 @@ class GetHomeMessageUseCase(
                                         Synchronizer.Status.SYNCING,
                                         Synchronizer.Status.STOPPED
                                     )
-                                -> {
+                                    -> {
                                     val progress = walletSnapshot.progress.decimal * 100f
                                     if (walletSnapshot.restoringState == WalletRestoringState.RESTORING) {
                                         HomeMessageData.Restoring(
@@ -136,17 +132,6 @@ class GetHomeMessageUseCase(
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val isExchangeRateMessageVisible =
-        exchangeRateRepository.state
-            .flatMapLatest {
-                val isVisible = it == ExchangeRateState.OptIn
-
-                synchronizerProvider.synchronizer.map { synchronizer ->
-                    synchronizer != null && isVisible
-                }
-            }.distinctUntilChanged()
-
-    @OptIn(ExperimentalCoroutinesApi::class)
     private val isCrashReportMessageVisible =
         crashReportingStorageProvider
             .observe()
@@ -159,7 +144,7 @@ class GetHomeMessageUseCase(
     private val isTorEnabled =
         combine(
             persistableWalletProvider.persistableWallet,
-            isTorExplicitlyEnabledProvider.observe(),
+            isTorExplicitlySetProvider.observe(),
             synchronizerProvider.synchronizer.filterNotNull()
         ) { wallet, isTorExplicitlyEnabled, _ ->
             wallet?.isTorEnabled?.takeIf { isTorExplicitlyEnabled }
@@ -170,16 +155,14 @@ class GetHomeMessageUseCase(
         combine(
             runtimeMessage,
             backupFlow,
-            isExchangeRateMessageVisible,
             shieldFundsRepository.availability,
             isCrashReportMessageVisible,
             isTorEnabled
-        ) { runtimeMessage, backup, isCCAvailable, shieldFunds, isCrashReportingEnabled, isTorEnabled ->
+        ) { runtimeMessage, backup, shieldFunds, isCrashReportingEnabled, isTorEnabled ->
             createMessage(
                 runtimeMessage = runtimeMessage,
                 backup = backup,
                 shieldFunds = shieldFunds,
-                isCurrencyConversionEnabled = isCCAvailable,
                 isCrashReportingVisible = isCrashReportingEnabled,
                 isTorEnabled = isTorEnabled
             )
@@ -198,7 +181,6 @@ class GetHomeMessageUseCase(
         runtimeMessage: RuntimeMessage?,
         backup: WalletBackupData,
         shieldFunds: ShieldFundsData,
-        isCurrencyConversionEnabled: Boolean,
         isCrashReportingVisible: Boolean,
         isTorEnabled: Boolean?
     ) = when {
@@ -206,7 +188,6 @@ class GetHomeMessageUseCase(
         isTorEnabled == null -> HomeMessageData.EnableTor
         backup is WalletBackupData.Available -> HomeMessageData.Backup
         shieldFunds is ShieldFundsData.Available -> HomeMessageData.ShieldFunds(shieldFunds.amount)
-        isCurrencyConversionEnabled -> HomeMessageData.EnableCurrencyConversion
         isCrashReportingVisible -> HomeMessageData.CrashReport
         else -> null
     }
@@ -250,24 +231,3 @@ class GetHomeMessageUseCase(
         return result
     }
 }
-
-@Suppress("UNCHECKED_CAST", "MagicNumber")
-private fun <T1, T2, T3, T4, T5, T6, R> combine(
-    flow: Flow<T1>,
-    flow2: Flow<T2>,
-    flow3: Flow<T3>,
-    flow4: Flow<T4>,
-    flow5: Flow<T5>,
-    flow6: Flow<T6>,
-    transform: suspend (T1, T2, T3, T4, T5, T6) -> R
-): Flow<R> =
-    combine(flow, flow2, flow3, flow4, flow5, flow6) { args: Array<*> ->
-        transform(
-            args[0] as T1,
-            args[1] as T2,
-            args[2] as T3,
-            args[3] as T4,
-            args[4] as T5,
-            args[5] as T6
-        )
-    }

@@ -65,8 +65,6 @@ import co.electriccoin.zcash.ui.screen.error.AndroidErrorBottomSheet
 import co.electriccoin.zcash.ui.screen.error.AndroidErrorDialog
 import co.electriccoin.zcash.ui.screen.error.ErrorBottomSheet
 import co.electriccoin.zcash.ui.screen.error.ErrorDialog
-import co.electriccoin.zcash.ui.screen.exchangerate.optin.AndroidExchangeRateOptIn
-import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.AndroidExchangeRateSettings
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettings
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
@@ -279,9 +277,6 @@ internal fun MainActivity.Navigation() {
         }
         dialog<DialogIntegrations> {
             AndroidDialogIntegrations()
-        }
-        composable<ExchangeRateOptIn> {
-            AndroidExchangeRateOptIn()
         }
         composable<ExchangeRateSettings> {
             AndroidExchangeRateSettings()

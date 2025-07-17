@@ -22,11 +22,9 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.home.backup.SeedBackupInfo
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetail
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupMessageState
-import co.electriccoin.zcash.ui.screen.home.currency.EnableCurrencyConversionMessageState
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedInfo
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedMessageState
 import co.electriccoin.zcash.ui.screen.home.error.WalletErrorMessageState
@@ -175,12 +173,6 @@ class HomeViewModel(
                     onClick = ::onWalletDisconnectedMessageClick
                 )
 
-            HomeMessageData.EnableCurrencyConversion ->
-                EnableCurrencyConversionMessageState(
-                    onClick = ::onEnableCurrencyConversionClick,
-                    onButtonClick = ::onEnableCurrencyConversionClick
-                )
-
             is HomeMessageData.Error ->
                 WalletErrorMessageState(
                     onClick = { onWalletErrorMessageClick(it) }
@@ -256,8 +248,6 @@ class HomeViewModel(
     private fun onWalletSyncingMessageClick() = navigationRouter.forward(WalletSyncingInfo)
 
     private fun onWalletRestoringMessageClick() = navigationRouter.forward(WalletRestoringInfo)
-
-    private fun onEnableCurrencyConversionClick() = navigationRouter.forward(ExchangeRateOptIn)
 
     private fun onWalletDisconnectedMessageClick() = navigationRouter.forward(WalletDisconnectedInfo)
 

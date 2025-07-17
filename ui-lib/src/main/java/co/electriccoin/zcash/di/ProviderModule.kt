@@ -10,8 +10,8 @@ import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
-import co.electriccoin.zcash.ui.common.provider.IsTorExplicitlyEnabledProvider
-import co.electriccoin.zcash.ui.common.provider.IsTorExplicitlyEnabledProviderImpl
+import co.electriccoin.zcash.ui.common.provider.IsTorExplicitlySetProvider
+import co.electriccoin.zcash.ui.common.provider.IsTorExplicitlySetProviderImpl
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProviderImpl
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletStorageProvider
@@ -60,5 +60,5 @@ val providerModule =
         singleOf(::PersistableWalletStorageProviderImpl) bind PersistableWalletStorageProvider::class
         singleOf(::ShieldFundsInfoProviderImpl) bind ShieldFundsInfoProvider::class
         singleOf(::ExchangeRateOptInStorageProviderImpl) bind ExchangeRateOptInStorageProvider::class
-        singleOf(::IsTorExplicitlyEnabledProviderImpl) bind IsTorExplicitlyEnabledProvider::class
+        singleOf(::IsTorExplicitlySetProviderImpl) bind IsTorExplicitlySetProvider::class
     }

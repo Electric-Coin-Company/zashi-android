@@ -85,10 +85,6 @@ sealed interface HomeMessageData {
         override val priority: Int = 3
     }
 
-    data object EnableCurrencyConversion : Prioritized {
-        override val priority: Int = 2
-    }
-
     data object CrashReport : Prioritized {
         override val priority: Int = 1
     }
