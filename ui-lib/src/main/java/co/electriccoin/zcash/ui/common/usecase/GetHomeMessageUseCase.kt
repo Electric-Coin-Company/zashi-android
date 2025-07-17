@@ -11,8 +11,6 @@ import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
-import co.electriccoin.zcash.ui.common.provider.IsTorExplicitlySetProvider
-import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageData
@@ -33,8 +31,8 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -48,8 +46,6 @@ class GetHomeMessageUseCase(
     crashReportingStorageProvider: CrashReportingStorageProvider,
     synchronizerProvider: SynchronizerProvider,
     accountDataSource: AccountDataSource,
-    persistableWalletProvider: PersistableWalletProvider,
-    isTorExplicitlySetProvider: IsTorExplicitlySetProvider,
     private val messageAvailabilityDataSource: MessageAvailabilityDataSource,
     private val cache: HomeMessageCacheRepository,
 ) {
@@ -90,11 +86,9 @@ class GetHomeMessageUseCase(
 
                                 walletSnapshot.status in
                                     listOf(
-                                        Synchronizer.Status.INITIALIZING,
                                         Synchronizer.Status.SYNCING,
                                         Synchronizer.Status.STOPPED
-                                    )
-                                    -> {
+                                    ) -> {
                                     val progress = walletSnapshot.progress.decimal * 100f
                                     if (walletSnapshot.restoringState == WalletRestoringState.RESTORING) {
                                         HomeMessageData.Restoring(
@@ -136,18 +130,37 @@ class GetHomeMessageUseCase(
         crashReportingStorageProvider
             .observe()
             .flatMapLatest { isVisible ->
-                synchronizerProvider.synchronizer.map { synchronizer ->
-                    synchronizer != null && isVisible == null
+                synchronizerProvider.synchronizer.flatMapLatest { synchronizer ->
+                    synchronizer?.status
+                        ?.map {
+                            it != Synchronizer.Status.INITIALIZING && isVisible == null
+                        } ?: flowOf(false)
                 }
             }.distinctUntilChanged()
 
-    private val isTorEnabled =
-        combine(
-            persistableWalletProvider.persistableWallet,
-            isTorExplicitlySetProvider.observe(),
-            synchronizerProvider.synchronizer.filterNotNull()
-        ) { wallet, isTorExplicitlyEnabled, _ ->
-            wallet?.isTorEnabled?.takeIf { isTorExplicitlyEnabled }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val torState =
+        synchronizerProvider.synchronizer.flatMapLatest { synchronizer ->
+
+            if (synchronizer != null) {
+                combine(
+                    synchronizer.status,
+                    synchronizer.flags
+                ) { status, flags ->
+
+                    if (status == Synchronizer.Status.INITIALIZING) {
+                        return@combine null
+                    }
+
+                    when (flags.isTorEnabled) {
+                        true -> TorInternalState.EXPLICITLY_ENABLED
+                        false -> TorInternalState.EXPLICITLY_DISABLED
+                        null -> TorInternalState.IMPLICITLY_DISABLED
+                    }
+                }
+            } else {
+                flowOf(null)
+            }
         }.distinctUntilChanged()
 
     @OptIn(FlowPreview::class)
@@ -157,14 +170,14 @@ class GetHomeMessageUseCase(
             backupFlow,
             shieldFundsRepository.availability,
             isCrashReportMessageVisible,
-            isTorEnabled
-        ) { runtimeMessage, backup, shieldFunds, isCrashReportingEnabled, isTorEnabled ->
+            torState
+        ) { runtimeMessage, backup, shieldFunds, isCrashReportingEnabled, tor ->
             createMessage(
                 runtimeMessage = runtimeMessage,
                 backup = backup,
                 shieldFunds = shieldFunds,
                 isCrashReportingVisible = isCrashReportingEnabled,
-                isTorEnabled = isTorEnabled
+                tor = tor
             )
         }.distinctUntilChanged()
             .debounce(.5.seconds)
@@ -182,10 +195,10 @@ class GetHomeMessageUseCase(
         backup: WalletBackupData,
         shieldFunds: ShieldFundsData,
         isCrashReportingVisible: Boolean,
-        isTorEnabled: Boolean?
+        tor: TorInternalState?
     ) = when {
         runtimeMessage != null -> runtimeMessage
-        isTorEnabled == null -> HomeMessageData.EnableTor
+        tor == TorInternalState.IMPLICITLY_DISABLED -> HomeMessageData.EnableTor
         backup is WalletBackupData.Available -> HomeMessageData.Backup
         shieldFunds is ShieldFundsData.Available -> HomeMessageData.ShieldFunds(shieldFunds.amount)
         isCrashReportingVisible -> HomeMessageData.CrashReport
@@ -230,4 +243,10 @@ class GetHomeMessageUseCase(
 
         return result
     }
+}
+
+private enum class TorInternalState {
+    EXPLICITLY_ENABLED,
+    EXPLICITLY_DISABLED,
+    IMPLICITLY_DISABLED
 }

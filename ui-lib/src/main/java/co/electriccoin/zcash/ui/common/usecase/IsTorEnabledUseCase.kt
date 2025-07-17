@@ -1,18 +1,22 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import co.electriccoin.zcash.ui.common.provider.IsTorExplicitlySetProvider
-import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
-import kotlinx.coroutines.flow.combine
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 class IsTorEnabledUseCase(
-    private val persistableWalletProvider: PersistableWalletProvider,
-    private val isTorExplicitlySetProvider: IsTorExplicitlySetProvider
+    private val synchronizerProvider: SynchronizerProvider
 ) {
-    fun observe() =
-        combine(
-            persistableWalletProvider.persistableWallet,
-            isTorExplicitlySetProvider.observe()
-        ) { wallet, isTorExplicitlyEnabled -> wallet?.isTorEnabled?.takeIf { isTorExplicitlyEnabled } }
-            .distinctUntilChanged()
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun observe() = synchronizerProvider.synchronizer
+        .flatMapLatest {
+            it?.flags ?: flowOf(null)
+        }
+        .map {
+            it?.isTorEnabled == true
+        }
+        .distinctUntilChanged()
 }

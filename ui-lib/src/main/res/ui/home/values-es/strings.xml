@@ -26,8 +26,8 @@
     <string name="home_message_syncing_subtitle">Tu billetera se está actualizando</string>
     <string name="home_message_error_title">Error al sincronizar</string>
     <string name="home_message_error_subtitle">Intentando resolver</string>
-    <string name="home_message_tor_title">Protect your IP with Tor</string>
-    <string name="home_message_tor_subtitle">Enable Tor connection</string>
+    <string name="home_message_tor_title">Beta: Enable Tor Protection</string>
+    <string name="home_message_tor_subtitle">Protect your IP address</string>
     <string name="home_info_backup_title">Respaldo Requerido</string>
     <string name="home_info_backup_subtitle_1">Evita la pérdida de fondos respaldando tu billetera de forma segura.</string>
     <string name="home_info_backup_subtitle_2">Respalda el acceso a tus fondos respaldando:</string>

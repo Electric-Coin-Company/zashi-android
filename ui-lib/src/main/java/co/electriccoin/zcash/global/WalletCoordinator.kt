@@ -13,7 +13,5 @@ fun WalletCoordinator.Companion.newInstance(
         context = context,
         persistableWallet = persistableWalletProvider.persistableWallet,
         accountName = context.getString(R.string.zashi_wallet_name),
-        keySource = ZASHI_KEYSOURCE
+        keySource = "zashi"
     )
-
-private const val ZASHI_KEYSOURCE = "zashi"

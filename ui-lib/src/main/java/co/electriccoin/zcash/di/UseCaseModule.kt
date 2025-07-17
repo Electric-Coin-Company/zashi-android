@@ -49,9 +49,9 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedEndpointUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveTransactionSubmitStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveZashiAccountUseCase
@@ -98,7 +98,7 @@ import org.koin.dsl.onClose
 val useCaseModule =
     module {
         factoryOf(::ObserveFastestServersUseCase)
-        factoryOf(::ObserveSelectedEndpointUseCase)
+        factoryOf(::GetSelectedEndpointUseCase)
         factoryOf(::RefreshFastestServersUseCase)
         factoryOf(::PersistEndpointUseCase)
         factoryOf(::ValidateEndpointUseCase)
@@ -116,7 +116,7 @@ val useCaseModule =
         factoryOf(::ShareImageUseCase)
         factoryOf(::Zip321BuildUriUseCase)
         factoryOf(::Zip321ParseUriValidationUseCase)
-        factoryOf(::ObservePersistableWalletUseCase)
+        factoryOf(::GetPersistableWalletUseCase)
         factoryOf(::GetSupportUseCase)
         factoryOf(::SendEmailUseCase)
         factoryOf(::SendSupportEmailUseCase)

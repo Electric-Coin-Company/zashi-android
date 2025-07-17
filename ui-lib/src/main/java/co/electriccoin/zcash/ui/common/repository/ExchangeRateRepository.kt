@@ -49,7 +49,7 @@ class ExchangeRateRepositoryImpl(
             .observe()
             .stateIn(
                 scope = scope,
-                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                started = SharingStarted.WhileSubscribed(),
                 initialValue = null
             )
 

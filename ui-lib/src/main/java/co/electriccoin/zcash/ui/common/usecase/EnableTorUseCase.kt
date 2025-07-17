@@ -1,18 +1,14 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.common.provider.IsTorExplicitlySetProvider
-import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
+import co.electriccoin.zcash.ui.common.repository.WalletRepository
 
 class EnableTorUseCase(
-    private val persistableWalletProvider: PersistableWalletProvider,
-    private val isTorExplicitlySetProvider: IsTorExplicitlySetProvider,
     private val navigationRouter: NavigationRouter,
+    private val walletRepository: WalletRepository,
 ) {
     suspend operator fun invoke(enable: Boolean) {
-        val persistableWallet = persistableWalletProvider.getPersistableWallet() ?: return
-        persistableWalletProvider.store(persistableWallet.copy(isTorEnabled = enable))
-        isTorExplicitlySetProvider.store(true)
+        walletRepository.enableTor(enable)
         navigationRouter.back()
     }
 }

@@ -93,9 +93,8 @@ sealed interface HomeMessageData {
 /**
  * Message which always is shown.
  */
-@Suppress("MagicNumber")
 sealed class RuntimeMessage : HomeMessageData {
-    override val priority: Int = 5
+    override val priority: Int = Int.MAX_VALUE
 }
 
 /**

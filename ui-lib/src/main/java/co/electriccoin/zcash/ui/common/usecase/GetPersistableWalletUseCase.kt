@@ -4,8 +4,8 @@ import cash.z.ecc.android.sdk.model.PersistableWallet
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import kotlinx.coroutines.flow.Flow
 
-class ObservePersistableWalletUseCase(
+class GetPersistableWalletUseCase(
     private val persistableWalletProvider: PersistableWalletProvider,
 ) {
-    operator fun invoke(): Flow<PersistableWallet?> = persistableWalletProvider.persistableWallet
+    fun observe(): Flow<PersistableWallet?> = persistableWalletProvider.persistableWallet
 }

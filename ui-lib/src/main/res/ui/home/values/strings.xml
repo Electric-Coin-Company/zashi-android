@@ -26,8 +26,8 @@
     <string name="home_message_syncing_subtitle">Your wallet is updating</string>
     <string name="home_message_error_title">Error encountered while syncing</string>
     <string name="home_message_error_subtitle">Attempting to resolve</string>
-    <string name="home_message_tor_title">Protect your IP with Tor</string>
-    <string name="home_message_tor_subtitle">Enable Tor connection</string>
+    <string name="home_message_tor_title">Beta: Enable Tor Protection</string>
+    <string name="home_message_tor_subtitle">Protect your IP address</string>
     <string name="home_info_backup_title">Backup Required</string>
     <string name="home_info_backup_subtitle_1">Prevent potential loss of funds by securely backing up your wallet.</string>
     <string name="home_info_backup_subtitle_2">Back up access to your funds by backing up:</string>

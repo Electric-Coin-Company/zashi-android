@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
@@ -63,7 +64,7 @@ interface WalletRepository {
 
     fun updateWalletEndpoint(endpoint: LightWalletEndpoint)
 
-    fun enableTor(enable: Boolean)
+    suspend fun enableTor(enable: Boolean)
 
     fun refreshFastestServers()
 }
@@ -165,15 +166,15 @@ class WalletRepositoryImpl(
         }
     }
 
-    override fun enableTor(enable: Boolean) {
+    override suspend fun enableTor(enable: Boolean) {
         scope.launch {
             val selectedWallet = persistableWalletProvider.getPersistableWallet() ?: return@launch
             persistWalletInternal(selectedWallet.copy(isTorEnabled = enable))
-        }
+        }.join()
     }
 
     private suspend fun persistWalletInternal(persistableWallet: PersistableWallet) {
-        synchronizerProvider.synchronizer.value?.let { (it as? SdkSynchronizer)?.close() }
+        synchronizerProvider.synchronizer.firstOrNull()?.let { (it as? SdkSynchronizer)?.close() }
         persistableWalletProvider.store(persistableWallet)
     }
 
@@ -187,7 +188,7 @@ class WalletRepositoryImpl(
                     zcashNetwork = zcashNetwork,
                     endpoint = getAvailableServers().first(),
                     walletInitMode = WalletInitMode.NewWallet,
-                    isTorEnabled = false
+                    isTorEnabled = null
                 )
             persistWalletInternal(newWallet)
             walletRestoringStateProvider.store(WalletRestoringState.INITIATING)
@@ -222,7 +223,7 @@ class WalletRepositoryImpl(
                     endpoint = AvailableServerProvider.getDefaultServer(),
                     seedPhrase = seedPhrase,
                     walletInitMode = WalletInitMode.RestoreWallet,
-                    isTorEnabled = false
+                    isTorEnabled = null
                 )
             persistWalletInternal(restoredWallet)
             walletRestoringStateProvider.store(WalletRestoringState.RESTORING)

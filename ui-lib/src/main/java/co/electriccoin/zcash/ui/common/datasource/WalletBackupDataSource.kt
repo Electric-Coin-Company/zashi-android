@@ -1,10 +1,13 @@
 package co.electriccoin.zcash.ui.common.datasource
 
 import androidx.annotation.StringRes
+import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.provider.WalletBackupFlagStorageProvider
 import co.electriccoin.zcash.ui.common.provider.WalletBackupRemindMeCountStorageProvider
 import co.electriccoin.zcash.ui.common.provider.WalletBackupRemindMeTimestampStorageProvider
+import co.electriccoin.zcash.ui.util.Quadruple
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -25,6 +28,7 @@ interface WalletBackupDataSource {
 }
 
 class WalletBackupDataSourceImpl(
+    private val synchronizerProvider: SynchronizerProvider,
     private val walletBackupFlagStorageProvider: WalletBackupFlagStorageProvider,
     private val walletBackupRemindMeCountStorageProvider: WalletBackupRemindMeCountStorageProvider,
     private val walletBackupRemindMeTimestampStorageProvider: WalletBackupRemindMeTimestampStorageProvider
@@ -32,13 +36,15 @@ class WalletBackupDataSourceImpl(
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun observe(): Flow<WalletBackupData> =
         combine(
+            synchronizerProvider.synchronizer.flatMapLatest { it?.status ?: flowOf(null) },
             walletBackupFlagStorageProvider.observe(),
             walletBackupRemindMeCountStorageProvider.observe(),
             walletBackupRemindMeTimestampStorageProvider.observe()
-        ) { isBackedUp, count, timestamp ->
-            Triple(isBackedUp, count, timestamp)
-        }.flatMapLatest { (isBackedUp, count, timestamp) ->
+        ) { status, isBackedUp, count, timestamp ->
+            Quadruple(status, isBackedUp, count, timestamp)
+        }.flatMapLatest { (status, isBackedUp, count, timestamp) ->
             when {
+                status in listOf(null, Synchronizer.Status.INITIALIZING) -> flowOf(WalletBackupData.Unavailable)
                 isBackedUp -> flowOf(WalletBackupData.Unavailable)
                 timestamp == null -> flowOf(WalletBackupData.Available(WalletBackupLockoutDuration.TWO_DAYS))
                 count == 1 ->
