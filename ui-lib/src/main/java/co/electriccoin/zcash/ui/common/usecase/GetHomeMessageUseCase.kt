@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
+import co.electriccoin.zcash.ui.common.provider.TorState
 import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageData
 import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
@@ -139,29 +140,20 @@ class GetHomeMessageUseCase(
             }.distinctUntilChanged()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val torState =
-        synchronizerProvider.synchronizer.flatMapLatest { synchronizer ->
+    private val torState = synchronizerProvider.synchronizer.flatMapLatest {
+        if (it == null) return@flatMapLatest flowOf(null)
 
-            if (synchronizer != null) {
-                combine(
-                    synchronizer.status,
-                    synchronizer.flags
-                ) { status, flags ->
-
-                    if (status == Synchronizer.Status.INITIALIZING) {
-                        return@combine null
-                    }
-
-                    when (flags.isTorEnabled) {
-                        true -> TorInternalState.EXPLICITLY_ENABLED
-                        false -> TorInternalState.EXPLICITLY_DISABLED
-                        null -> TorInternalState.IMPLICITLY_DISABLED
-                    }
-                }
-            } else {
-                flowOf(null)
+        combine(it.status, it.flags) { status, flags ->
+            if (status == Synchronizer.Status.INITIALIZING) {
+                return@combine null
+            }
+            when (flags.isTorEnabled) {
+                true -> TorState.EXPLICITLY_ENABLED
+                false -> TorState.EXPLICITLY_DISABLED
+                null -> TorState.IMPLICITLY_DISABLED
             }
         }.distinctUntilChanged()
+    }
 
     @OptIn(FlowPreview::class)
     private val flow =
@@ -170,14 +162,14 @@ class GetHomeMessageUseCase(
             backupFlow,
             shieldFundsRepository.availability,
             isCrashReportMessageVisible,
-            torState
-        ) { runtimeMessage, backup, shieldFunds, isCrashReportingEnabled, tor ->
+            torState,
+        ) { runtimeMessage, backup, shieldFunds, isCrashReportingEnabled, torState ->
             createMessage(
                 runtimeMessage = runtimeMessage,
                 backup = backup,
                 shieldFunds = shieldFunds,
                 isCrashReportingVisible = isCrashReportingEnabled,
-                tor = tor
+                torState = torState
             )
         }.distinctUntilChanged()
             .debounce(.5.seconds)
@@ -195,10 +187,10 @@ class GetHomeMessageUseCase(
         backup: WalletBackupData,
         shieldFunds: ShieldFundsData,
         isCrashReportingVisible: Boolean,
-        tor: TorInternalState?
+        torState: TorState?
     ) = when {
         runtimeMessage != null -> runtimeMessage
-        tor == TorInternalState.IMPLICITLY_DISABLED -> HomeMessageData.EnableTor
+        torState == TorState.IMPLICITLY_DISABLED -> HomeMessageData.EnableTor
         backup is WalletBackupData.Available -> HomeMessageData.Backup
         shieldFunds is ShieldFundsData.Available -> HomeMessageData.ShieldFunds(shieldFunds.amount)
         isCrashReportingVisible -> HomeMessageData.CrashReport
@@ -243,10 +235,4 @@ class GetHomeMessageUseCase(
 
         return result
     }
-}
-
-private enum class TorInternalState {
-    EXPLICITLY_ENABLED,
-    EXPLICITLY_DISABLED,
-    IMPLICITLY_DISABLED
 }

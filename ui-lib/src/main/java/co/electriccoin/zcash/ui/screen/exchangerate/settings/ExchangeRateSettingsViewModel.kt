@@ -5,15 +5,18 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
+import co.electriccoin.zcash.ui.common.usecase.OptInExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class ExchangeRateSettingsViewModel(
-    private val exchangeRateRepository: ExchangeRateRepository,
+internal class ExchangeRateSettingsViewModel(
+    exchangeRateRepository: ExchangeRateRepository,
     private val navigationRouter: NavigationRouter,
+    private val optInExchangeRate: OptInExchangeRateUseCase
 ) : ViewModel() {
     val state =
         exchangeRateRepository.state
@@ -32,12 +35,8 @@ class ExchangeRateSettingsViewModel(
             onDismiss = ::onBack
         )
 
-    private fun onBack() {
-        navigationRouter.back()
-    }
+    private fun onBack() = navigationRouter.back()
 
-    private fun onOptInExchangeRateUsdClick(optInt: Boolean) {
-        exchangeRateRepository.optInExchangeRateUsd(optIn = optInt)
-        navigationRouter.back()
-    }
+    private fun onOptInExchangeRateUsdClick(optInt: Boolean) = viewModelScope.launch { optInExchangeRate(optInt) }
 }
+

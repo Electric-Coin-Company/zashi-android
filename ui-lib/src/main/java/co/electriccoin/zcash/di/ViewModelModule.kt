@@ -16,6 +16,7 @@ import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
 import co.electriccoin.zcash.ui.screen.crashreporting.viewmodel.CrashReportingViewModel
 import co.electriccoin.zcash.ui.screen.error.ErrorViewModel
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsViewModel
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateTorSettingsVM
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.home.HomeViewModel
@@ -155,4 +156,5 @@ val viewModelModule =
         viewModelOf(::ThirdPartyScanViewModel)
         viewModelOf(::TorSettingsVM)
         viewModelOf(::TorOptInVM)
+        viewModelOf(::ExchangeRateTorSettingsVM)
     }

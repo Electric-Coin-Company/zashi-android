@@ -16,7 +16,7 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToWalletBackupUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettings
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsArgs
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsArgs
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
@@ -112,7 +112,7 @@ class AdvancedSettingsVM(
 
     private fun onChooseServerClick() = navigationRouter.forward(NavigationTargets.CHOOSE_SERVER)
 
-    private fun onCurrencyConversionClick() = navigationRouter.forward(ExchangeRateSettings)
+    private fun onCurrencyConversionClick() = navigationRouter.forward(ExchangeRateSettingsArgs)
 
     private fun onCrashReportingClick() = navigationRouter.forward(NavigationTargets.CRASH_REPORTING_OPT_IN)
 

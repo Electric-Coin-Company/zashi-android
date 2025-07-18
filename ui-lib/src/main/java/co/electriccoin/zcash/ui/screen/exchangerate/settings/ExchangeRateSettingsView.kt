@@ -36,7 +36,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.screen.exchangerate.SecondaryCard
 
 @Composable
-fun ExchangeRateSettingsView(state: ExchangeRateSettingsState) {
+internal fun ExchangeRateSettingsView(state: ExchangeRateSettingsState) {
     var isOptInSelected by remember(state.isOptedIn) { mutableStateOf(state.isOptedIn) }
 
     val isButtonDisabled by remember {

@@ -6,6 +6,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -36,3 +37,6 @@ internal fun AdvancedSettingsScreen(
         state = state,
     )
 }
+
+@Serializable
+data object AdvancedSettingsArgs

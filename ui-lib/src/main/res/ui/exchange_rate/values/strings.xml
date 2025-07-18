@@ -28,4 +28,10 @@
     <string name="exchange_rate_opt_in_description_settings">Display your balance and payment amounts in USD.\n
         Zashi\’s currency conversion feature protects your IP address at all times.</string>
 
+    <string name="exchange_rate_tor_opt_in_title">Tor Required for Currency Conversion</string>
+    <string name="exchange_rate_tor_opt_in_description">Tor Protection is a beta feature that provides additional
+        protections for your IP address. USD exchange rates are only available when it is enabled.\n\nIf Tor is permitted in your region, we recommend enabling it. You can manage it in Advanced Settings.</string>
+    <string name="exchange_rate_tor_opt_in_positive">Enable</string>
+    <string name="exchange_rate_tor_opt_in_negative">Do it later</string>
+
 </resources>

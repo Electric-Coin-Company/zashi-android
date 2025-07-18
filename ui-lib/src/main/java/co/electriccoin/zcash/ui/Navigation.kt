@@ -22,7 +22,6 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
-import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.CRASH_REPORTING_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
@@ -47,6 +46,7 @@ import co.electriccoin.zcash.ui.screen.accountlist.AccountList
 import co.electriccoin.zcash.ui.screen.accountlist.AndroidAccountList
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.addressbook.WrapAddressBook
+import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsArgs
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsScreen
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
@@ -65,8 +65,10 @@ import co.electriccoin.zcash.ui.screen.error.AndroidErrorBottomSheet
 import co.electriccoin.zcash.ui.screen.error.AndroidErrorDialog
 import co.electriccoin.zcash.ui.screen.error.ErrorBottomSheet
 import co.electriccoin.zcash.ui.screen.error.ErrorDialog
-import co.electriccoin.zcash.ui.screen.exchangerate.settings.AndroidExchangeRateSettings
-import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettings
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsArgs
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsScreen
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateTorSettingsArgs
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateTorSettingsScreen
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
@@ -202,7 +204,7 @@ internal fun MainActivity.Navigation() {
         composable(SETTINGS) {
             WrapSettings()
         }
-        composable(ADVANCED_SETTINGS) {
+        composable<AdvancedSettingsArgs> {
             AdvancedSettingsScreen(
                 goExportPrivateData = {
                     navController.checkProtectedDestination(
@@ -278,8 +280,8 @@ internal fun MainActivity.Navigation() {
         dialog<DialogIntegrations> {
             AndroidDialogIntegrations()
         }
-        composable<ExchangeRateSettings> {
-            AndroidExchangeRateSettings()
+        composable<ExchangeRateSettingsArgs> {
+            ExchangeRateSettingsScreen()
         }
         composable(CRASH_REPORTING_OPT_IN) {
             AndroidCrashReportingOptIn()
@@ -516,6 +518,13 @@ internal fun MainActivity.Navigation() {
         composable<ThirdPartyScan> { AndroidThirdPartyScan() }
         composable<TorSettingsArgs> { TorSettingsScreen() }
         composable<TorOptInArgs> { TorOptInScreen() }
+        dialog<ExchangeRateTorSettingsArgs>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) { ExchangeRateTorSettingsScreen() }
     }
 }
 
@@ -609,7 +618,6 @@ fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: String) {
 
 object NavigationTargets {
     const val ABOUT = "about"
-    const val ADVANCED_SETTINGS = "advanced_settings"
     const val DELETE_WALLET = "delete_wallet"
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val CHOOSE_SERVER = "choose_server"

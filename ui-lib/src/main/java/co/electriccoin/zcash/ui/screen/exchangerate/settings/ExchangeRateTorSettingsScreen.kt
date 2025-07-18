@@ -8,12 +8,12 @@ import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AndroidExchangeRateSettings() {
-    val viewModel = koinViewModel<ExchangeRateSettingsViewModel>()
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    BackHandler { state.onDismiss() }
-    ExchangeRateSettingsView(state = state)
+fun ExchangeRateTorSettingsScreen() {
+    val vm = koinViewModel<ExchangeRateTorSettingsVM>()
+    val state by vm.state.collectAsStateWithLifecycle()
+    BackHandler { state.onBack() }
+    ExchangeRateTorView(state)
 }
 
 @Serializable
-object ExchangeRateSettings
+data object ExchangeRateTorSettingsArgs
