@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SubmitResult
+import co.electriccoin.zcash.ui.common.usecase.EnableTorUseCase
 import co.electriccoin.zcash.ui.common.usecase.ErrorArgs
 import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
@@ -23,6 +24,7 @@ class ErrorViewModel(
     private val navigateToErrorBottom: NavigateToErrorUseCase,
     private val navigationRouter: NavigationRouter,
     private val sendEmailUseCase: SendEmailUseCase,
+    private val enableTorUseCase: EnableTorUseCase,
 ) : ViewModel() {
     val state: StateFlow<ErrorState> = MutableStateFlow(createState(args)).asStateFlow()
 
@@ -39,7 +41,25 @@ class ErrorViewModel(
             is ErrorArgs.ShieldingError -> createShieldingErrorState(args)
             is ErrorArgs.General -> createGeneralErrorState(args)
             is ErrorArgs.ShieldingGeneralError -> createGeneralShieldingErrorState(args)
+            is ErrorArgs.SynchronizerTorError -> createSdkSynchronizerError()
         }
+
+    private fun createSdkSynchronizerError(): ErrorState =
+        ErrorState(
+            title = stringRes(R.string.error_tor_title),
+            message = stringRes(R.string.error_tor_message),
+            positive =
+                ButtonState(
+                    text = stringRes(R.string.error_tor_negative),
+                    onClick = { viewModelScope.launch { enableTorUseCase(false) }  }
+                ),
+            negative =
+                ButtonState(
+                    text = stringRes(R.string.error_tor_positive),
+                    onClick = { navigationRouter.back() }
+                ),
+            onBack = ::onBack,
+        )
 
     private fun createSyncErrorState(args: ErrorArgs.SyncError) =
         ErrorState(

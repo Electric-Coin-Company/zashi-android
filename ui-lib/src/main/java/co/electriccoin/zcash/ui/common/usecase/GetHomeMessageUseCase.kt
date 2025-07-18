@@ -140,14 +140,14 @@ class GetHomeMessageUseCase(
             }.distinctUntilChanged()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val torState = synchronizerProvider.synchronizer.flatMapLatest {
-        if (it == null) return@flatMapLatest flowOf(null)
+    private val torState = synchronizerProvider.synchronizer.flatMapLatest { synchronizer ->
+        if (synchronizer == null) return@flatMapLatest flowOf(null)
 
-        combine(it.status, it.flags) { status, flags ->
+        synchronizer.status.map { status ->
             if (status == Synchronizer.Status.INITIALIZING) {
-                return@combine null
+                return@map null
             }
-            when (flags.isTorEnabled) {
+            when (synchronizer.flags.isTorEnabled) {
                 true -> TorState.EXPLICITLY_ENABLED
                 false -> TorState.EXPLICITLY_DISABLED
                 null -> TorState.IMPLICITLY_DISABLED

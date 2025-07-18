@@ -9,14 +9,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 
@@ -70,9 +68,7 @@ class SynchronizerProviderImpl(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val synchronizerTorState: StateFlow<TorState?> = synchronizer
-        .flatMapLatest {
-            it?.torState ?: flowOf(null)
-        }
+        .mapLatest { it?.getTorState() }
         .stateIn(
             scope = scope,
             started = SharingStarted.WhileSubscribed(),
@@ -89,19 +85,10 @@ class SynchronizerProviderImpl(
         }
 }
 
-private suspend fun Synchronizer.getTorState(): TorState {
-    return when (flags.first().isTorEnabled) {
+private fun Synchronizer.getTorState(): TorState {
+    return when (flags.isTorEnabled) {
         true -> TorState.EXPLICITLY_ENABLED
         false -> TorState.EXPLICITLY_DISABLED
         null -> TorState.IMPLICITLY_DISABLED
     }
 }
-
-private val Synchronizer.torState
-    get() = combine(this.status, this.flags) { status, flags ->
-        when (flags.isTorEnabled) {
-            true -> TorState.EXPLICITLY_ENABLED
-            false -> TorState.EXPLICITLY_DISABLED
-            null -> TorState.IMPLICITLY_DISABLED
-        }
-    }.distinctUntilChanged()
