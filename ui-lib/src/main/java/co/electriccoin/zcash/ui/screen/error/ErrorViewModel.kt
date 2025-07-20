@@ -41,7 +41,7 @@ class ErrorViewModel(
             is ErrorArgs.ShieldingError -> createShieldingErrorState(args)
             is ErrorArgs.General -> createGeneralErrorState(args)
             is ErrorArgs.ShieldingGeneralError -> createGeneralShieldingErrorState(args)
-            is ErrorArgs.SynchronizerTorError -> createSdkSynchronizerError()
+            is ErrorArgs.SynchronizerTorInitError -> createSdkSynchronizerError()
         }
 
     private fun createSdkSynchronizerError(): ErrorState =

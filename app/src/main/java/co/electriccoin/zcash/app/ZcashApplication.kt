@@ -24,9 +24,7 @@ import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepository
 import co.electriccoin.zcash.ui.common.repository.WalletSnapshotRepository
 import co.electriccoin.zcash.ui.common.usecase.ErrorArgs
 import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -81,14 +79,13 @@ class ZcashApplication : CoroutineApplication() {
         observeSynchronizerError()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeSynchronizerError() {
         applicationScope.launch {
             synchronizerProvider.synchronizer
-                .flatMapLatest { it?.error ?: flowOf(null) }
+                .map { it?.initializationError }
                 .collect {
-                    if (it == Synchronizer.Error.TOR_NOT_AVAILABLE) {
-                        navigateToError(ErrorArgs.SynchronizerTorError)
+                    if (it == Synchronizer.InitializationError.TOR_NOT_AVAILABLE) {
+                        navigateToError(ErrorArgs.SynchronizerTorInitError)
                     }
                 }
         }

@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.model.ObserveFiatCurrencyResult
 import co.electriccoin.zcash.ui.common.provider.ExchangeRateOptInStorageProvider
+import co.electriccoin.zcash.ui.common.provider.PersistableWalletTorProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.provider.TorState
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
@@ -34,6 +35,7 @@ interface ExchangeRateRepository {
 }
 
 class ExchangeRateRepositoryImpl(
+    persistableWalletTorProvider: PersistableWalletTorProvider,
     private val synchronizerProvider: SynchronizerProvider,
     private val exchangeRateOptInStorageProvider: ExchangeRateOptInStorageProvider
 ) : ExchangeRateRepository {
@@ -42,14 +44,12 @@ class ExchangeRateRepositoryImpl(
     private val isExchangeRateOptedIn =
         combine(
             exchangeRateOptInStorageProvider.observe(),
-            synchronizerProvider.synchronizerTorState
-        ) { isOptedIn, synchronizerTorState ->
-            if (isOptedIn == null || synchronizerTorState == null) {
+            persistableWalletTorProvider.observe()
+        ) { isOptedIn, tor ->
+            if (isOptedIn == null || tor == null) {
                 null
             } else {
-                isOptedIn && synchronizerTorState !in listOf(
-                    TorState.IMPLICITLY_DISABLED, TorState.EXPLICITLY_DISABLED
-                )
+                isOptedIn && tor !in listOf(TorState.IMPLICITLY_DISABLED, TorState.EXPLICITLY_DISABLED)
             }
         }.stateIn(
                 scope = scope,

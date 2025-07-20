@@ -1,13 +1,13 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
+import co.electriccoin.zcash.ui.common.provider.PersistableWalletTorProvider
 import co.electriccoin.zcash.ui.common.provider.TorState
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateTorSettingsArgs
 
 class OptInExchangeRateUseCase(
-    private val synchronizerProvider: SynchronizerProvider,
+    private val persistableWalletTorProvider: PersistableWalletTorProvider,
     private val exchangeRateRepository: ExchangeRateRepository,
     private val navigationRouter: NavigationRouter
 ) {
@@ -21,7 +21,7 @@ class OptInExchangeRateUseCase(
     }
 
     private suspend fun optIn() {
-        val torState = synchronizerProvider.getTorState()
+        val torState = persistableWalletTorProvider.get()
         if (torState in listOf(TorState.EXPLICITLY_DISABLED, TorState.IMPLICITLY_DISABLED)) {
             navigationRouter.forward(ExchangeRateTorSettingsArgs)
         } else {

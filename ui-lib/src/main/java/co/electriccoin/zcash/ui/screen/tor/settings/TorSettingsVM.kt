@@ -22,7 +22,7 @@ class TorSettingsVM(
             .observe()
             .map { isEnabled ->
                 TorSettingsState(
-                    isOptedIn = isEnabled == true,
+                    isOptedIn = isEnabled,
                     onSaveClick = ::onOptInClick,
                     onDismiss = ::onBack
                 )

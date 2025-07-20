@@ -17,6 +17,7 @@ import co.electriccoin.zcash.ui.common.model.FastestServersState
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
+import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.provider.WalletRestoringStateProvider
@@ -79,6 +80,7 @@ class WalletRepositoryImpl(
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val walletRestoringStateProvider: WalletRestoringStateProvider,
+    private val isTorEnabledStorageProvider: IsTorEnabledStorageProvider,
 ) : WalletRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -166,12 +168,7 @@ class WalletRepositoryImpl(
         }
     }
 
-    override suspend fun enableTor(enable: Boolean) {
-        scope.launch {
-            val selectedWallet = persistableWalletProvider.getPersistableWallet() ?: return@launch
-            persistWalletInternal(selectedWallet.copy(isTorEnabled = enable))
-        }.join()
-    }
+    override suspend fun enableTor(enable: Boolean) = scope.launch { isTorEnabledStorageProvider.store(enable) }.join()
 
     private suspend fun persistWalletInternal(persistableWallet: PersistableWallet) {
         synchronizerProvider.synchronizer.firstOrNull()?.let { (it as? SdkSynchronizer)?.close() }
@@ -188,7 +185,6 @@ class WalletRepositoryImpl(
                     zcashNetwork = zcashNetwork,
                     endpoint = getAvailableServers().first(),
                     walletInitMode = WalletInitMode.NewWallet,
-                    isTorEnabled = null
                 )
             persistWalletInternal(newWallet)
             walletRestoringStateProvider.store(WalletRestoringState.INITIATING)
@@ -223,7 +219,6 @@ class WalletRepositoryImpl(
                     endpoint = AvailableServerProvider.getDefaultServer(),
                     seedPhrase = seedPhrase,
                     walletInitMode = WalletInitMode.RestoreWallet,
-                    isTorEnabled = null
                 )
             persistWalletInternal(restoredWallet)
             walletRestoringStateProvider.store(WalletRestoringState.RESTORING)

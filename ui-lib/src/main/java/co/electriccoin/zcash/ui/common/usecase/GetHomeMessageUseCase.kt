@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
+import co.electriccoin.zcash.ui.common.provider.PersistableWalletTorProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.provider.TorState
 import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepository
@@ -20,12 +21,15 @@ import co.electriccoin.zcash.ui.common.repository.RuntimeMessage
 import co.electriccoin.zcash.ui.common.repository.ShieldFundsData
 import co.electriccoin.zcash.ui.common.repository.ShieldFundsRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
+import co.electriccoin.zcash.ui.common.viewmodel.SynchronizerError
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.channelFlow
@@ -47,6 +51,7 @@ class GetHomeMessageUseCase(
     crashReportingStorageProvider: CrashReportingStorageProvider,
     synchronizerProvider: SynchronizerProvider,
     accountDataSource: AccountDataSource,
+    persistableWalletTorProvider: PersistableWalletTorProvider,
     private val messageAvailabilityDataSource: MessageAvailabilityDataSource,
     private val cache: HomeMessageCacheRepository,
 ) {
@@ -79,7 +84,10 @@ class GetHomeMessageUseCase(
                         val result =
                             when {
                                 walletSnapshot == null -> null
-                                walletSnapshot.synchronizerError != null ->
+                                walletSnapshot.synchronizerError != null && !(
+                                    walletSnapshot.synchronizerError is SynchronizerError.Processor &&
+                                        walletSnapshot.synchronizerError.error is CancellationException
+                                    ) ->
                                     HomeMessageData.Error(walletSnapshot.synchronizerError)
 
                                 walletSnapshot.status == Synchronizer.Status.DISCONNECTED ->
@@ -139,32 +147,18 @@ class GetHomeMessageUseCase(
                 }
             }.distinctUntilChanged()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private val torState = synchronizerProvider.synchronizer.flatMapLatest { synchronizer ->
-        if (synchronizer == null) return@flatMapLatest flowOf(null)
-
-        synchronizer.status.map { status ->
-            if (status == Synchronizer.Status.INITIALIZING) {
-                return@map null
-            }
-            when (synchronizer.flags.isTorEnabled) {
-                true -> TorState.EXPLICITLY_ENABLED
-                false -> TorState.EXPLICITLY_DISABLED
-                null -> TorState.IMPLICITLY_DISABLED
-            }
-        }.distinctUntilChanged()
-    }
-
-    @OptIn(FlowPreview::class)
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     private val flow =
         combine(
+            synchronizerProvider.synchronizer.flatMapLatest { it?.status ?: flowOf(null) },
             runtimeMessage,
             backupFlow,
             shieldFundsRepository.availability,
             isCrashReportMessageVisible,
-            torState,
-        ) { runtimeMessage, backup, shieldFunds, isCrashReportingEnabled, torState ->
+            persistableWalletTorProvider.observe(),
+        ) { status, runtimeMessage, backup, shieldFunds, isCrashReportingEnabled, torState ->
             createMessage(
+                status = status,
                 runtimeMessage = runtimeMessage,
                 backup = backup,
                 shieldFunds = shieldFunds,
@@ -183,12 +177,14 @@ class GetHomeMessageUseCase(
     fun observe(): StateFlow<HomeMessageData?> = flow
 
     private fun createMessage(
+        status: Synchronizer.Status?,
         runtimeMessage: RuntimeMessage?,
         backup: WalletBackupData,
         shieldFunds: ShieldFundsData,
         isCrashReportingVisible: Boolean,
         torState: TorState?
     ) = when {
+        status == null || status == Synchronizer.Status.INITIALIZING -> null
         runtimeMessage != null -> runtimeMessage
         torState == TorState.IMPLICITLY_DISABLED -> HomeMessageData.EnableTor
         backup is WalletBackupData.Available -> HomeMessageData.Backup
@@ -227,12 +223,31 @@ class GetHomeMessageUseCase(
             when {
                 message == null -> "Home message: no message to show"
                 result == null -> "Home message: ${message::class.simpleName} was filtered out"
-                else -> {
-                    "Home message: ${result::class.simpleName} shown"
-                }
+                else -> "Home message: ${result::class.simpleName} shown"
             }
         }
 
         return result
     }
 }
+
+@Suppress("UNCHECKED_CAST")
+private fun <T1, T2, T3, T4, T5, T6, R> combine(
+    flow: Flow<T1>,
+    flow2: Flow<T2>,
+    flow3: Flow<T3>,
+    flow4: Flow<T4>,
+    flow5: Flow<T5>,
+    flow6: Flow<T6>,
+    transform: suspend (T1, T2, T3, T4, T5, T6) -> R
+): Flow<R> = combine(flow, flow2, flow3, flow4, flow5, flow6) { args ->
+    transform(
+        args[0] as T1,
+        args[1] as T2,
+        args[2] as T3,
+        args[3] as T4,
+        args[4] as T5,
+        args[5] as T6
+    )
+}
+

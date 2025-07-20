@@ -5,16 +5,8 @@ import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.api.PreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.PreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.stateIn
 import org.json.JSONObject
-import kotlin.time.Duration
 
 interface PersistableWalletProvider {
     val persistableWallet: Flow<PersistableWallet?>
@@ -26,20 +18,11 @@ interface PersistableWalletProvider {
     suspend fun requirePersistableWallet(): PersistableWallet
 }
 
-class PersistableWalletProviderImpl(preferenceHolder: EncryptedPreferenceProvider): PersistableWalletProvider {
-
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+class PersistableWalletProviderImpl(preferenceHolder: EncryptedPreferenceProvider) : PersistableWalletProvider {
 
     private val persistableWalletStorageProvider = PersistableWalletStorageProviderImpl(preferenceHolder)
 
-    override val persistableWallet: Flow<PersistableWallet?> =
-        persistableWalletStorageProvider
-            .observe()
-            .shareIn(
-                scope = scope,
-                started = SharingStarted.WhileSubscribed(Duration.ZERO, Duration.ZERO),
-                replay = 1
-            )
+    override val persistableWallet: Flow<PersistableWallet?> = persistableWalletStorageProvider.observe()
 
     override suspend fun store(persistableWallet: PersistableWallet) {
         persistableWalletStorageProvider.store(persistableWallet)

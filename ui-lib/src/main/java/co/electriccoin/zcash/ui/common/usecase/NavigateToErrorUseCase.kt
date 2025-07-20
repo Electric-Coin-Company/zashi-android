@@ -18,7 +18,7 @@ class NavigateToErrorUseCase(
             is ErrorArgs.SyncError -> navigationRouter.forward(ErrorBottomSheet)
             is ErrorArgs.General -> navigationRouter.forward(ErrorDialog)
             is ErrorArgs.ShieldingGeneralError -> navigationRouter.forward(ErrorDialog)
-            is ErrorArgs.SynchronizerTorError -> navigationRouter.forward(ErrorDialog)
+            is ErrorArgs.SynchronizerTorInitError -> navigationRouter.forward(ErrorDialog)
         }
     }
 
@@ -46,5 +46,5 @@ sealed interface ErrorArgs {
         val exception: Exception
     ) : ErrorArgs
 
-    data object SynchronizerTorError :ErrorArgs
+    data object SynchronizerTorInitError :ErrorArgs
 }
