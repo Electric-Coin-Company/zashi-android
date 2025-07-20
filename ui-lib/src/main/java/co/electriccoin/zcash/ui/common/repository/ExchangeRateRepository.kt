@@ -52,10 +52,10 @@ class ExchangeRateRepositoryImpl(
                 isOptedIn && tor !in listOf(TorState.IMPLICITLY_DISABLED, TorState.EXPLICITLY_DISABLED)
             }
         }.stateIn(
-                scope = scope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = null
-            )
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = null
+        )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val exchangeRateUsdInternal =

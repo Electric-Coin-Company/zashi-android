@@ -33,6 +33,7 @@ class WalletBackupDataSourceImpl(
     private val walletBackupRemindMeCountStorageProvider: WalletBackupRemindMeCountStorageProvider,
     private val walletBackupRemindMeTimestampStorageProvider: WalletBackupRemindMeTimestampStorageProvider
 ) : WalletBackupDataSource {
+    @Suppress("DestructuringDeclarationWithTooManyEntries")
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun observe(): Flow<WalletBackupData> =
         combine(

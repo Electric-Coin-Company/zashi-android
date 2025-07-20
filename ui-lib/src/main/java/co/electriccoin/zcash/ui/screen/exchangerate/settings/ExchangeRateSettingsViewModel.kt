@@ -39,4 +39,3 @@ internal class ExchangeRateSettingsViewModel(
 
     private fun onOptInExchangeRateUsdClick(optInt: Boolean) = viewModelScope.launch { optInExchangeRate(optInt) }
 }
-

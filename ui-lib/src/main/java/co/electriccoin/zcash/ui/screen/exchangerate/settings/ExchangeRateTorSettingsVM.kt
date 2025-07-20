@@ -14,20 +14,23 @@ import kotlinx.coroutines.launch
 class ExchangeRateTorSettingsVM(
     private val navigationRouter: NavigationRouter,
     private val optInExchangeRateAndTor: OptInExchangeRateAndTorUseCase
-): ViewModel() {
-    val state: StateFlow<ExchangeRateTorState> = MutableStateFlow(
-        ExchangeRateTorState(
-            onBack = ::onBack,
-            positive = ButtonState(
-                stringRes(R.string.exchange_rate_tor_opt_in_positive),
-                onClick = ::onPositiveClick
-            ),
-            negative = ButtonState(
-                stringRes(R.string.exchange_rate_tor_opt_in_negative),
-                onClick = ::onNegativeClick
-            ),
+) : ViewModel() {
+    val state: StateFlow<ExchangeRateTorState> =
+        MutableStateFlow(
+            ExchangeRateTorState(
+                onBack = ::onBack,
+                positive =
+                    ButtonState(
+                        stringRes(R.string.exchange_rate_tor_opt_in_positive),
+                        onClick = ::onPositiveClick
+                    ),
+                negative =
+                    ButtonState(
+                        stringRes(R.string.exchange_rate_tor_opt_in_negative),
+                        onClick = ::onNegativeClick
+                    ),
+            )
         )
-    )
 
     private fun onNegativeClick() = navigationRouter.back()
 
@@ -35,4 +38,3 @@ class ExchangeRateTorSettingsVM(
 
     private fun onBack() = navigationRouter.back()
 }
-

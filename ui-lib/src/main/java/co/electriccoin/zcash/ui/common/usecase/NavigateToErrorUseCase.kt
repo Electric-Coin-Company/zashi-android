@@ -46,5 +46,5 @@ sealed interface ErrorArgs {
         val exception: Exception
     ) : ErrorArgs
 
-    data object SynchronizerTorInitError :ErrorArgs
+    data object SynchronizerTorInitError : ErrorArgs
 }

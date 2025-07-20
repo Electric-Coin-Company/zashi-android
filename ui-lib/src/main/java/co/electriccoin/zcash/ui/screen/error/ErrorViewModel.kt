@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@Suppress("TooManyFunctions")
 class ErrorViewModel(
     args: ErrorArgs,
     private val navigateToErrorBottom: NavigateToErrorUseCase,
@@ -51,7 +52,7 @@ class ErrorViewModel(
             positive =
                 ButtonState(
                     text = stringRes(R.string.error_tor_negative),
-                    onClick = { viewModelScope.launch { enableTorUseCase(false) }  }
+                    onClick = { viewModelScope.launch { enableTorUseCase(false) } }
                 ),
             negative =
                 ButtonState(

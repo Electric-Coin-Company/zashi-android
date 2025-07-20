@@ -9,4 +9,5 @@ class IsTorEnabledStorageProviderImpl(
     override val preferenceHolder: EncryptedPreferenceProvider,
 ) : BaseNullableBooleanStorageProvider(
         key = PreferenceKey("is_tor_Enabled"),
-    ), IsTorEnabledStorageProvider
+    ),
+    IsTorEnabledStorageProvider

@@ -9,9 +9,10 @@ import kotlinx.coroutines.flow.mapLatest
 class IsTorEnabledUseCase(
     private val persistableWalletTorProvider: PersistableWalletTorProvider
 ) {
-
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun observe() = persistableWalletTorProvider.observe()
-        .mapLatest { it == TorState.EXPLICITLY_ENABLED }
-        .distinctUntilChanged()
+    fun observe() =
+        persistableWalletTorProvider
+            .observe()
+            .mapLatest { it == TorState.EXPLICITLY_ENABLED }
+            .distinctUntilChanged()
 }

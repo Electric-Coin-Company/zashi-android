@@ -13,19 +13,19 @@ class PersistableWalletTorProviderImpl(
     private val synchronizerProvider: SynchronizerProvider,
     private val isTorEnabledStorageProvider: IsTorEnabledStorageProvider
 ) : PersistableWalletTorProvider {
+    override fun observe(): Flow<TorState?> =
+        combine(
+            synchronizerProvider.synchronizer,
+            isTorEnabledStorageProvider.observe()
+        ) { synchronizer, isTorEnabled ->
+            if (synchronizer == null) return@combine null
 
-    override fun observe(): Flow<TorState?> = combine(
-        synchronizerProvider.synchronizer,
-        isTorEnabledStorageProvider.observe()
-    ) { synchronizer, isTorEnabled ->
-        if (synchronizer == null) return@combine null
-
-        when (isTorEnabled) {
-            true -> TorState.EXPLICITLY_ENABLED
-            false -> TorState.EXPLICITLY_DISABLED
-            null -> TorState.IMPLICITLY_DISABLED
+            when (isTorEnabled) {
+                true -> TorState.EXPLICITLY_ENABLED
+                false -> TorState.EXPLICITLY_DISABLED
+                null -> TorState.IMPLICITLY_DISABLED
+            }
         }
-    }
 
     override suspend fun get(): TorState {
         val isTorEnabled = isTorEnabledStorageProvider.get()

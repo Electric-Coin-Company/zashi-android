@@ -26,7 +26,6 @@ interface SynchronizerProvider {
 class SynchronizerProviderImpl(
     walletCoordinator: WalletCoordinator
 ) : SynchronizerProvider {
-
     override val synchronizer: StateFlow<Synchronizer?> = walletCoordinator.synchronizer
 
     override suspend fun getSynchronizer(): Synchronizer =

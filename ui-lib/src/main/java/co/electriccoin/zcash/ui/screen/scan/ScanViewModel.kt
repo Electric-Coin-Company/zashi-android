@@ -67,9 +67,10 @@ internal class ScanViewModel(
     }
 
     private suspend fun onZip321SingleAddressScanned(zip321ValidationResult: Zip321ParseUriValidation.SingleAddress) {
-        val singleAddressValidation = synchronizerProvider
-            .getSynchronizer()
-            .validateAddress(zip321ValidationResult.address)
+        val singleAddressValidation =
+            synchronizerProvider
+                .getSynchronizer()
+                .validateAddress(zip321ValidationResult.address)
         if (singleAddressValidation is AddressType.Invalid) {
             state.update { ScanValidationState.INVALID }
         } else {

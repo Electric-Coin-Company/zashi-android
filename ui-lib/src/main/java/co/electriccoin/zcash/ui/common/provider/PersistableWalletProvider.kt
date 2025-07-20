@@ -18,8 +18,9 @@ interface PersistableWalletProvider {
     suspend fun requirePersistableWallet(): PersistableWallet
 }
 
-class PersistableWalletProviderImpl(preferenceHolder: EncryptedPreferenceProvider) : PersistableWalletProvider {
-
+class PersistableWalletProviderImpl(
+    preferenceHolder: EncryptedPreferenceProvider
+) : PersistableWalletProvider {
     private val persistableWalletStorageProvider = PersistableWalletStorageProviderImpl(preferenceHolder)
 
     override val persistableWallet: Flow<PersistableWallet?> = persistableWalletStorageProvider.observe()

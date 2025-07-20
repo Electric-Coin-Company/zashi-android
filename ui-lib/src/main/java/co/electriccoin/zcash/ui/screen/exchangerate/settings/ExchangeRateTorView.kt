@@ -73,12 +73,14 @@ fun ExchangeRateTorView(state: ExchangeRateTorState) {
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    ExchangeRateTorView(
-        state = ExchangeRateTorState(
-            positive = ButtonState(stringRes("Positive")),
-            negative = ButtonState(stringRes("Negative")),
-            onBack = {}
+private fun Preview() =
+    ZcashTheme {
+        ExchangeRateTorView(
+            state =
+                ExchangeRateTorState(
+                    positive = ButtonState(stringRes("Positive")),
+                    negative = ButtonState(stringRes("Negative")),
+                    onBack = {}
+                )
         )
-    )
-}
+    }

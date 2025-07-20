@@ -71,10 +71,11 @@ class NavigationRouterImpl : NavigationRouter {
             return // skip if already running
         }
         lastNavCommand = command
-        job = scope.launch {
-            channel.trySend(command)
-            delay(.5.seconds) // backoff
-        }
+        job =
+            scope.launch {
+                channel.trySend(command)
+                delay(.5.seconds) // backoff
+            }
     }
 }
 
