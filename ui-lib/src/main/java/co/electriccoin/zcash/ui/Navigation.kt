@@ -50,8 +50,6 @@ import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookScreen
 import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientArgs
 import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientScreen
-import co.electriccoin.zcash.ui.screen.swap.ab.SelectABSwapRecipientArgs
-import co.electriccoin.zcash.ui.screen.swap.ab.SelectABSwapRecipientScreen
 import co.electriccoin.zcash.ui.screen.advancedsettings.WrapAdvancedSettings
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
@@ -62,8 +60,6 @@ import co.electriccoin.zcash.ui.screen.connectkeystone.AndroidConnectKeystone
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import co.electriccoin.zcash.ui.screen.contact.AddABContactArgs
 import co.electriccoin.zcash.ui.screen.contact.AddABContactScreen
-import co.electriccoin.zcash.ui.screen.swap.ab.AddABSwapContactArgs
-import co.electriccoin.zcash.ui.screen.swap.ab.AddABSwapContactScreen
 import co.electriccoin.zcash.ui.screen.contact.UpdateABContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateABContactScreen
 import co.electriccoin.zcash.ui.screen.crashreporting.AndroidCrashReportingOptIn
@@ -97,10 +93,10 @@ import co.electriccoin.zcash.ui.screen.home.syncing.AndroidWalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.AndroidWalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
-import co.electriccoin.zcash.ui.screen.integrations.IntegrationsScreen
 import co.electriccoin.zcash.ui.screen.integrations.AndroidIntegrations
-import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
 import co.electriccoin.zcash.ui.screen.integrations.Integrations
+import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
+import co.electriccoin.zcash.ui.screen.integrations.IntegrationsScreen
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.AndroidReceive
 import co.electriccoin.zcash.ui.screen.receive.Receive
@@ -112,8 +108,6 @@ import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransactio
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanScreen
-import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs
-import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressScreen
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.AndroidThirdPartyScan
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScan
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
@@ -129,20 +123,22 @@ import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeysto
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.swap.SwapArgs
 import co.electriccoin.zcash.ui.screen.swap.SwapScreen
+import co.electriccoin.zcash.ui.screen.swap.ab.AddABSwapContactArgs
+import co.electriccoin.zcash.ui.screen.swap.ab.AddABSwapContactScreen
+import co.electriccoin.zcash.ui.screen.swap.ab.SelectABSwapRecipientArgs
+import co.electriccoin.zcash.ui.screen.swap.ab.SelectABSwapRecipientScreen
 import co.electriccoin.zcash.ui.screen.swap.ab.UpdateABSwapContactArgs
 import co.electriccoin.zcash.ui.screen.swap.ab.UpdateABSwapContactScreen
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoScreen
-import co.electriccoin.zcash.ui.screen.swap.optin.SwapOptInArgs
-import co.electriccoin.zcash.ui.screen.swap.optin.SwapOptInScreen
-import co.electriccoin.zcash.ui.screen.swap.optin.SwapUnsecureOptInArgs
-import co.electriccoin.zcash.ui.screen.swap.optin.SwapUnsecureOptInScreen
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerScreen
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerScreen
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteArgs
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteScreen
+import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs
+import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressScreen
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageScreen
 import co.electriccoin.zcash.ui.screen.taxexport.AndroidTaxExport
@@ -356,8 +352,6 @@ internal fun MainActivity.Navigation() {
         dialogComposable<SwapSlippageArgs> { SwapSlippageScreen(it.toRoute()) }
         dialogComposable<SwapInfoArgs> { SwapInfoScreen() }
         dialogComposable<SwapQuoteArgs> { SwapQuoteScreen() }
-        composable<SwapOptInArgs> { SwapOptInScreen() }
-        composable<SwapUnsecureOptInArgs> { SwapUnsecureOptInScreen() }
         composable<ScanSwapAddressArgs> { ScanSwapAddressScreen(it.toRoute()) }
         composable<SelectABSwapRecipientArgs> { SelectABSwapRecipientScreen(it.toRoute()) }
         composable<AddABSwapContactArgs> { AddABSwapContactScreen(it.toRoute()) }

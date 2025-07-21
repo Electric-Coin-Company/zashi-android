@@ -6,8 +6,6 @@ import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
-import co.electriccoin.zcash.ui.common.usecase.ConfirmSwapOptInUseCase
-import co.electriccoin.zcash.ui.common.usecase.ConfirmUnsecureSwapOptInUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateFlexaTransactionUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneAccountUseCase
@@ -21,9 +19,11 @@ import co.electriccoin.zcash.ui.common.usecase.ExportTaxUseCase
 import co.electriccoin.zcash.ui.common.usecase.FilterSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.FilterSwapBlockchainsUseCase
 import co.electriccoin.zcash.ui.common.usecase.FlipTransactionBookmarkUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetABContactByIdUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetABContactsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetABSwapContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCoinbaseStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetConfigurationUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetABContactByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetFlexaStatusUseCase
@@ -36,6 +36,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapModeUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapQuoteUseCase
@@ -62,19 +63,16 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToNearSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanSwapAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectRecipientUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToWalletBackupUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetABContactsUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetABSwapContactsUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetBlockchainUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapBlockchainUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveABContactPickedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveABContactPickedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
@@ -111,15 +109,14 @@ import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
-import co.electriccoin.zcash.ui.common.usecase.SkipSwapOptInUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateABContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateSwapModeUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateABContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateABContactNameUseCase
-import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
-import co.electriccoin.zcash.ui.common.usecase.ValidateSeedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateABSwapContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateABSwapContactNameUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateSeedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionDetailAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
@@ -247,9 +244,6 @@ val useCaseModule =
         factoryOf(::GetSwapQuoteUseCase)
         factoryOf(::CancelSwapQuoteUseCase)
         factoryOf(::NavigateToSwapQuoteIfAvailableUseCase)
-        factoryOf(::ConfirmSwapOptInUseCase)
-        factoryOf(::ConfirmUnsecureSwapOptInUseCase)
-        factoryOf(::SkipSwapOptInUseCase)
         singleOf(::NavigateToScanSwapAddressUseCase)
         singleOf(::NavigateToSelectABSwapRecipientUseCase)
         factoryOf(::GetSwapAssetBlockchainUseCase)

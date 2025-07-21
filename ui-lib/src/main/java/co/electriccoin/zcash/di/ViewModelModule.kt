@@ -7,13 +7,11 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientVM
-import co.electriccoin.zcash.ui.screen.swap.ab.SelectABSwapRecipientVM
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsViewModel
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.AddABContactVM
-import co.electriccoin.zcash.ui.screen.swap.ab.AddABSwapContactVM
 import co.electriccoin.zcash.ui.screen.contact.UpdateABContactVM
 import co.electriccoin.zcash.ui.screen.crashreporting.viewmodel.CrashReportingViewModel
 import co.electriccoin.zcash.ui.screen.error.ErrorViewModel
@@ -38,7 +36,6 @@ import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
 import co.electriccoin.zcash.ui.screen.scan.ScanViewModel
-import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressVM
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
@@ -48,12 +45,13 @@ import co.electriccoin.zcash.ui.screen.settings.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.swap.SwapVM
+import co.electriccoin.zcash.ui.screen.swap.ab.AddABSwapContactVM
+import co.electriccoin.zcash.ui.screen.swap.ab.SelectABSwapRecipientVM
 import co.electriccoin.zcash.ui.screen.swap.ab.UpdateABSwapContactVM
-import co.electriccoin.zcash.ui.screen.swap.optin.SwapOptInVM
-import co.electriccoin.zcash.ui.screen.swap.optin.SwapUnsecureOptInVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerVM
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteVM
+import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressVM
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageVM
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExportViewModel
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailViewModel
@@ -128,8 +126,6 @@ val viewModelModule =
         viewModelOf(::SwapSlippageVM)
         viewModelOf(::SwapVM)
         viewModelOf(::SwapQuoteVM)
-        viewModelOf(::SwapOptInVM)
-        viewModelOf(::SwapUnsecureOptInVM)
         viewModelOf(::ScanSwapAddressVM)
         viewModelOf(::SelectABSwapRecipientVM)
         viewModelOf(::AddABSwapContactVM)
