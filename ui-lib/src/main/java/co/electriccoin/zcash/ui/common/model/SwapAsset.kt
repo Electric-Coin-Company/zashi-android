@@ -8,7 +8,7 @@ import java.math.BigDecimal
 sealed interface SwapAsset {
     val tokenTicker: String
     val tokenName: StringResource
-    val tokenIcon: ImageResource?
+    val tokenIcon: ImageResource
     val usdPrice: BigDecimal?
     val assetId: String
     val decimals: Int
@@ -31,7 +31,7 @@ data class SwapAssetBlockchain(
 data class NearSwapAsset(
     val token: NearTokenDto,
     override val tokenName: StringResource,
-    override val tokenIcon: ImageResource?,
+    override val tokenIcon: ImageResource,
     override val blockchain: SwapAssetBlockchain
 ) : SwapAsset {
     override val tokenTicker: String = token.symbol

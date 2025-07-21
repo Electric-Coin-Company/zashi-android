@@ -1,7 +1,9 @@
 package co.electriccoin.zcash.ui.common.provider
 
+import android.content.Context
 import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
 import co.electriccoin.zcash.ui.design.R
+import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 
@@ -11,7 +13,9 @@ interface BlockchainProvider {
     fun getHardcodedBlockchains(): List<SwapAssetBlockchain>
 }
 
-class BlockchainProviderImpl: BlockchainProvider {
+class BlockchainProviderImpl(
+    private val context: Context
+): BlockchainProvider {
     override fun getBlockchain(ticker: String): SwapAssetBlockchain {
         return SwapAssetBlockchain(
             chainTicker = ticker,
@@ -29,16 +33,18 @@ class BlockchainProviderImpl: BlockchainProvider {
                 "xrp" -> stringRes("Ripple")
                 else -> stringRes(ticker)
             },
-            chainIcon = when (ticker.lowercase()) {
-                "arb" -> imageRes(R.drawable.ic_chain_arb)
-                "base" -> imageRes(R.drawable.ic_chain_base)
-                "near" -> imageRes(R.drawable.ic_chain_near)
-                "btc" -> imageRes(R.drawable.ic_chain_btc)
-                "eth" -> imageRes(R.drawable.ic_chain_eth)
-                "sol" -> imageRes(R.drawable.ic_chain_sol)
-                else -> null
-            }
+            chainIcon = getChainIcon(ticker)
         )
+    }
+
+    private fun getChainIcon(ticker: String): ImageResource {
+        val id = context.resources.getIdentifier(
+            "ic_chain_${ticker.lowercase()}",
+            "drawable",
+            context.packageName
+        )
+
+        return if (id == 0) imageRes(R.drawable.ic_chain_placeholder) else imageRes(id)
     }
 
     override fun getHardcodedBlockchains(): List<SwapAssetBlockchain> {

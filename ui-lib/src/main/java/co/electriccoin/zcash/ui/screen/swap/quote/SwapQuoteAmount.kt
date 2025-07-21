@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.swap.quote
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Surface
@@ -67,15 +69,32 @@ fun SwapQuoteAmount(
                         )
 
                         if (state.smallIcon is ImageResource.ByDrawable) {
-                            Image(
-                                modifier =
-                                    Modifier
-                                        .size(12.dp)
+                            if (state.smallIcon.resource == co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield) {
+                                Image(
+                                    modifier =
+                                        Modifier
+                                            .size(12.dp)
+                                            .align(Alignment.BottomEnd)
+                                            .offset(4.dp, 2.dp),
+                                    painter = painterResource(state.smallIcon.resource),
+                                    contentDescription = null,
+                                )
+                            } else {
+                                Surface(
+                                    modifier = Modifier
+                                        .size(14.dp)
                                         .align(Alignment.BottomEnd)
-                                        .offset(4.dp, 2.dp),
-                                painter = painterResource(state.smallIcon.resource),
-                                contentDescription = null,
-                            )
+                                        .offset(4.dp, 4.dp),
+                                    shape = CircleShape,
+                                    border = BorderStroke(1.dp, ZashiColors.Surfaces.bgPrimary)
+                                ) {
+                                    Image(
+                                        modifier = Modifier.size(14.dp),
+                                        painter = painterResource(state.smallIcon.resource),
+                                        contentDescription = null,
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -110,7 +129,7 @@ private fun Preview() =
                 state =
                     SwapTokenAmountState(
                         bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                        smallIcon = imageRes(R.drawable.ic_receive_shield),
+                        smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
                         title = stringResByDynamicCurrencyNumber(2.4214, "", TickerLocation.HIDDEN),
                         subtitle = stringResByDynamicCurrencyNumber(21312, "$")
                     )

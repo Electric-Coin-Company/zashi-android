@@ -1,26 +1,26 @@
 package co.electriccoin.zcash.ui.common.provider
 
+import android.content.Context
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.imageRes
 
 interface TokenIconProvider {
-    fun getIcon(ticker: String): ImageResource?
+    fun getIcon(ticker: String): ImageResource
 }
 
-class TokenIconProviderImpl : TokenIconProvider {
-    override fun getIcon(ticker: String): ImageResource? =
-        when (ticker.lowercase()) {
-            "arb" -> imageRes(R.drawable.ic_token_arb)
-            "base" -> imageRes(R.drawable.ic_token_base)
-            "cbbtc", "wbtc", "xbtc", "btc" -> imageRes(R.drawable.ic_token_btc)
-            "weth", "eth" -> imageRes(R.drawable.ic_token_eth)
-            "gnear" -> imageRes(R.drawable.ic_token_gnear)
-            "mpdao" -> imageRes(R.drawable.ic_token_mpdao)
-            "sol" -> imageRes(R.drawable.ic_token_sol)
-            "usdc" -> imageRes(R.drawable.ic_token_usdc)
-            "usdt" -> imageRes(R.drawable.ic_token_usdt)
-            "zec" -> imageRes(R.drawable.ic_token_zec)
-            else -> null
-        }
+class TokenIconProviderImpl(
+    private val context: Context
+) : TokenIconProvider {
+    override fun getIcon(ticker: String): ImageResource {
+        val normalized = ticker.removePrefix("$").lowercase()
+
+        val id = context.resources.getIdentifier(
+            "ic_token_$normalized",
+            "drawable",
+            context.packageName
+        )
+
+        return if (id == 0) imageRes(R.drawable.ic_token_placeholder) else imageRes(id)
+    }
 }

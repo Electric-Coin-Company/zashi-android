@@ -186,7 +186,7 @@ internal class ExactOutputVMMapper : SwapVMMapper {
                 AssetCardState.Data(
                     stringRes(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
                     bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                    smallIcon = imageRes(R.drawable.ic_receive_shield),
+                    smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
                     onClick = null
                 ),
             title = stringRes("From"),

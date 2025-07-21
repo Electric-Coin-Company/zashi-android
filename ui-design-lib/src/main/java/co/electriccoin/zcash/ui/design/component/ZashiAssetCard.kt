@@ -78,15 +78,32 @@ private fun Data(state: AssetCardState.Data, modifier: Modifier = Modifier) {
                 )
 
                 if (state.smallIcon is ImageResource.ByDrawable) {
-                    Image(
-                        modifier =
-                            Modifier
-                                .size(14.dp)
+                    if (state.smallIcon.resource == R.drawable.ic_receive_shield) {
+                        Image(
+                            modifier =
+                                Modifier
+                                    .size(14.dp)
+                                    .align(Alignment.BottomEnd)
+                                    .offset(4.dp, 4.dp),
+                            painter = painterResource(state.smallIcon.resource),
+                            contentDescription = null,
+                        )
+                    } else {
+                        Surface(
+                            modifier = Modifier
+                                .size(16.dp)
                                 .align(Alignment.BottomEnd)
-                                .offset(4.dp, 4.dp),
-                        painter = painterResource(state.smallIcon.resource),
-                        contentDescription = null,
-                    )
+                                .offset(6.dp, 2.dp),
+                            shape = CircleShape,
+                            border = BorderStroke(1.dp, ZashiColors.Surfaces.bgPrimary)
+                        ) {
+                            Image(
+                                modifier = Modifier.size(14.dp),
+                                painter = painterResource(state.smallIcon.resource),
+                                contentDescription = null,
+                            )
+                        }
+                    }
                 }
             }
             Spacer(8.dp)
@@ -185,7 +202,7 @@ sealed interface AssetCardState {
     data class Loading(
         override val isEnabled: Boolean = true,
         override val onClick: (() -> Unit)?,
-    ): AssetCardState
+    ) : AssetCardState
 }
 
 @PreviewScreens

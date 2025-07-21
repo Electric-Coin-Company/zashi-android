@@ -93,7 +93,7 @@ internal class SwapQuoteVMMapper {
             SWAP -> {
                 SwapTokenAmountState(
                     bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                    smallIcon = imageRes(R.drawable.ic_receive_shield),
+                    smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
                     title = stringRes(amountInZatoshi, TickerLocation.HIDDEN),
                     subtitle = stringResByDynamicCurrencyNumber(amountInUsd, FiatCurrency.USD.symbol)
                 )
@@ -119,7 +119,7 @@ internal class SwapQuoteVMMapper {
 
             PAY -> SwapTokenAmountState(
                 bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                smallIcon = imageRes(R.drawable.ic_receive_shield),
+                smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
                 title = stringRes(amountInZatoshi, TickerLocation.HIDDEN),
                 subtitle = stringResByDynamicCurrencyNumber(amountInUsd, FiatCurrency.USD.symbol)
             )

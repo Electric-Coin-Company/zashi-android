@@ -1,23 +1,30 @@
 package co.electriccoin.zcash.ui.screen.swap.picker
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -36,6 +43,8 @@ import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDefaults
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
@@ -118,7 +127,7 @@ private fun Success(
 
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(vertical = 20.dp),
+        contentPadding = PaddingValues(top = 20.dp, bottom = 72.dp),
         state = scrollState
     ) {
         itemsIndexed(
@@ -144,12 +153,34 @@ private fun Item(item: ListItemState) {
         leading =
             item.bigIcon?.let { bigIcon ->
                 {
-                    ZashiListItemDefaults.LeadingItem(
-                        modifier = Modifier.size(40.dp),
-                        icon = bigIcon,
-                        badge = item.smallIcon,
-                        contentDescription = item.title.getValue()
-                    )
+                    if (bigIcon is ImageResource.ByDrawable) {
+                        Box(Modifier.size(40.dp)) {
+                            Image(
+                                modifier = Modifier.fillMaxSize(),
+                                painter = painterResource(bigIcon.resource),
+                                contentDescription = null,
+                                contentScale = ContentScale.FillHeight
+                            )
+                            val smallIcon = item.smallIcon
+                            if (smallIcon is ImageResource.ByDrawable) {
+                                Surface(
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .align(Alignment.BottomEnd)
+                                        .offset(6.dp, 6.dp),
+                                    border = BorderStroke(2.dp, ZashiColors.Surfaces.bgPrimary),
+                                    shape = CircleShape
+                                ) {
+                                    Image(
+                                        modifier = Modifier.size(20.dp),
+                                        painter = painterResource(smallIcon.resource),
+                                        contentDescription = null,
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                 }
             },
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp)
