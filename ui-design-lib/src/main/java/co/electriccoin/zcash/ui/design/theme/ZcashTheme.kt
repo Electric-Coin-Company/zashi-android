@@ -1,5 +1,10 @@
 package co.electriccoin.zcash.ui.design.theme
 
+import android.graphics.Color
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.compose.LocalActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalContentColor
@@ -9,6 +14,7 @@ import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.RippleDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import co.electriccoin.zcash.ui.design.LocalKeyboardManager
 import co.electriccoin.zcash.ui.design.LocalSheetStateManager
 import co.electriccoin.zcash.ui.design.rememberKeyboardManager
@@ -48,6 +54,8 @@ fun ZcashTheme(
     val extendedColors = if (useDarkMode) DarkExtendedColorPalette else LightExtendedColorPalette
     val zashiColors = if (useDarkMode) DarkZashiColorsInternal else LightZashiColorsInternal
 
+    ZcashSystemBarTheme(useDarkMode)
+
     CompositionLocalProvider(
         LocalExtendedColors provides extendedColors,
         LocalZashiColors provides zashiColors,
@@ -63,6 +71,26 @@ fun ZcashTheme(
                 typography = PrimaryTypography,
                 content = content
             )
+        }
+    }
+}
+
+@Composable
+private fun ZcashSystemBarTheme(useDarkMode: Boolean) {
+    val activity = LocalActivity.current
+    LaunchedEffect(useDarkMode) {
+        if (activity is ComponentActivity) {
+            if (useDarkMode) {
+                activity.enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+                    navigationBarStyle = SystemBarStyle.dark(DefaultDarkScrim)
+                )
+            } else {
+                activity.enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT),
+                    navigationBarStyle = SystemBarStyle.light(DefaultLightScrim, DefaultDarkScrim)
+                )
+            }
         }
     }
 }
@@ -92,3 +120,7 @@ object ZcashTheme {
 private val MaterialRippleConfig: RippleConfiguration
     @Composable
     get() = RippleConfiguration(color = LocalContentColor.current, rippleAlpha = RippleDefaults.RippleAlpha)
+
+private val DefaultLightScrim = Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
+
+private val DefaultDarkScrim = Color.argb(0x80, 0x1b, 0x1b, 0x1b)
