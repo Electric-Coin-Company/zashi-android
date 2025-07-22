@@ -19,6 +19,7 @@ class TokenNameProviderImpl : TokenNameProvider {
             "zec" -> stringRes("Zcash")
             "op" -> stringRes("Optimism")
             "pol" -> stringRes("Polygon")
+            "\$wif" -> stringRes("dogwifhat")
             else -> stringRes(ticker)
         }
 }
