@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.interaction.FocusInteraction
