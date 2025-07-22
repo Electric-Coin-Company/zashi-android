@@ -1,6 +1,8 @@
 package co.electriccoin.zcash.ui.screen.swap
 
+import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
+import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.ModalBottomSheetState
@@ -10,11 +12,12 @@ import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
-import co.electriccoin.zcash.ui.screen.swap.ui.SwapModeSelectorState
 
 @Immutable
 internal data class SwapState(
-    val swapModeSelectorState: SwapModeSelectorState,
+    val appBarState: SwapAppBarState,
+    val changeModeButton: IconButtonState,
+    val mode: SwapMode,
     val swapInfoButton: IconButtonState,
     val amountTextField: SwapAmountTextFieldState,
     val slippage: ButtonState,
@@ -26,8 +29,13 @@ internal data class SwapState(
     val qrScannerButton: IconButtonState,
     val addressBookButton: IconButtonState,
     val onBack: () -> Unit
-) {
-}
+)
+
+@Immutable
+internal data class SwapAppBarState(
+    val title: StringResource,
+    @DrawableRes val icon: Int,
+)
 
 @Immutable
 internal data class SwapCancelState(

@@ -7,7 +7,6 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
-import co.electriccoin.zcash.ui.common.model.SwapMode.SWAP
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -26,7 +25,6 @@ import co.electriccoin.zcash.ui.screen.swap.CurrencyType.FIAT
 import co.electriccoin.zcash.ui.screen.swap.CurrencyType.TOKEN
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
-import co.electriccoin.zcash.ui.screen.swap.ui.SwapModeSelectorState
 import java.math.BigDecimal
 import java.math.MathContext
 import kotlin.math.absoluteValue
@@ -71,12 +69,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
                     state = state,
                     onRequestSwapQuoteClick = onRequestSwapQuoteClick
                 ),
-            swapModeSelectorState =
-                SwapModeSelectorState(
-                    swapMode = SWAP,
-                    onClick = onSwapModeChange,
-                    isEnabled = !state.isRequestingQuote
-                ),
+            mode = state.swapMode,
             address =
                 createAddressState(
                     state = state,
@@ -93,6 +86,14 @@ internal class ExactInputVMMapper : SwapVMMapper {
             addressBookButton = IconButtonState(
                 icon = R.drawable.send_address_book,
                 onClick = onAddressBookClick
+            ),
+            changeModeButton = IconButtonState(
+                icon = R.drawable.ic_swap_change_mode,
+                onClick = { onSwapModeChange(SwapMode.PAY) },
+            ),
+            appBarState = SwapAppBarState(
+                title = stringRes("Swap with"),
+                icon = R.drawable.ic_near_logo
             )
         )
     }

@@ -2,12 +2,14 @@ package co.electriccoin.zcash.ui.screen.swap
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -57,6 +59,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
@@ -67,8 +70,6 @@ import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountText
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextField
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
-import co.electriccoin.zcash.ui.screen.swap.ui.SwapModeSelector
-import co.electriccoin.zcash.ui.screen.swap.ui.SwapModeSelectorState
 
 @Composable
 internal fun SwapView(
@@ -100,10 +101,11 @@ internal fun SwapView(
                 focusRequester = focusRequester
             )
 
-            when (state.swapModeSelectorState.swapMode) {
+            when (state.mode) {
                 SWAP -> {
                     Spacer(16.dp)
                 }
+
                 PAY -> {
                     Spacer(10.dp)
                     AddressTextField(state = state)
@@ -111,16 +113,17 @@ internal fun SwapView(
                 }
             }
 
-            SlippageSeparator(state = state.swapModeSelectorState)
+            SlippageSeparator(state = state)
             Spacer(14.dp)
             SwapAmountText(state = state.amountText)
 
-            when (state.swapModeSelectorState.swapMode) {
+            when (state.mode) {
                 SWAP -> {
                     Spacer(10.dp)
                     AddressTextField(state = state)
                     Spacer(22.dp)
                 }
+
                 PAY -> {
                     Spacer(22.dp)
                 }
@@ -170,11 +173,11 @@ private fun SlippageButton(state: ButtonState, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SlippageSeparator(
-    state: SwapModeSelectorState,
+    state: SwapState,
     modifier: Modifier = Modifier
 ) {
     val rotation =
-        when (state.swapMode) {
+        when (state.mode) {
             SWAP -> 0f
             PAY -> 180f
         }
@@ -188,14 +191,7 @@ private fun SlippageSeparator(
             color = ZashiColors.Utility.Gray.utilityGray100
         )
 
-        Image(
-            modifier =
-                Modifier
-                    .padding(horizontal = 8.dp)
-                    .rotate(rotation),
-            painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_arrow_narrow_down),
-            contentDescription = null
-        )
+        ZashiImageButton(state.changeModeButton)
 
         ZashiHorizontalDivider(
             modifier = Modifier.weight(1f),
@@ -208,7 +204,25 @@ private fun SlippageSeparator(
 private fun TopAppBar(state: SwapState) {
     ZashiSmallTopAppBar(
         content = {
-            SwapModeSelector(state = state.swapModeSelectorState)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = state.appBarState.title.getValue(),
+                    style = ZashiTypography.textMd,
+                    fontWeight = FontWeight.SemiBold,
+                    color = ZashiColors.Text.textPrimary
+                )
+                Spacer(8.dp)
+                Image(
+                    modifier = Modifier.height(16.dp),
+                    painter = painterResource(state.appBarState.icon),
+                    contentDescription = null
+                )
+            }
+
         },
         navigationAction = {
             ZashiTopAppBarBackNavigation(
@@ -251,7 +265,7 @@ private fun ColumnScope.AddressTextField(
             )
         },
         suffix = {
-            Row (
+            Row(
                 verticalAlignment = Alignment.Top
             ) {
                 ZashiImageButton(
@@ -283,8 +297,6 @@ private fun ColumnScope.AddressTextField(
 @PreviewScreens
 @Composable
 private fun Preview() {
-    var swapModeSwapMode by remember { mutableStateOf(SWAP) }
-
     ZcashTheme {
         SwapView(
             state =
@@ -330,11 +342,7 @@ private fun Preview() {
                             stringRes("Get a quote")
                         ),
                     onBack = {},
-                    swapModeSelectorState =
-                        SwapModeSelectorState(
-                            swapMode = swapModeSwapMode,
-                            onClick = { swapModeSwapMode = it }
-                        ),
+                    mode = PAY,
                     swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     infoItems =
                         listOf(
@@ -352,6 +360,14 @@ private fun Preview() {
                     addressBookButton = IconButtonState(
                         icon = R.drawable.send_address_book,
                         onClick = {}
+                    ),
+                    changeModeButton = IconButtonState(
+                        icon = R.drawable.ic_swap_change_mode,
+                        onClick = { }
+                    ),
+                    appBarState = SwapAppBarState(
+                        title = stringRes("Swap with"),
+                        icon = R.drawable.ic_near_logo
                     )
                 )
         )

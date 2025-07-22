@@ -6,7 +6,6 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
-import co.electriccoin.zcash.ui.common.model.SwapMode.PAY
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -22,7 +21,6 @@ import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
-import co.electriccoin.zcash.ui.screen.swap.ui.SwapModeSelectorState
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
@@ -64,12 +62,7 @@ internal class ExactOutputVMMapper : SwapVMMapper {
                     state = state,
                     onRequestSwapQuoteClick = onRequestSwapQuoteClick
                 ),
-            swapModeSelectorState =
-                SwapModeSelectorState(
-                    swapMode = PAY,
-                    onClick = onSwapModeChange,
-                    isEnabled = !state.isRequestingQuote,
-                ),
+            mode = state.swapMode,
             address =
                 createAddressState(
                     state = state,
@@ -86,6 +79,14 @@ internal class ExactOutputVMMapper : SwapVMMapper {
             addressBookButton = IconButtonState(
                 icon = R.drawable.send_address_book,
                 onClick = onAddressBookClick
+            ),
+            changeModeButton = IconButtonState(
+                icon = R.drawable.ic_swap_change_mode,
+                onClick = { onSwapModeChange(SwapMode.SWAP) },
+            ),
+            appBarState = SwapAppBarState(
+                title = stringRes("Pay with"),
+                icon = R.drawable.ic_near_logo
             )
         )
     }
