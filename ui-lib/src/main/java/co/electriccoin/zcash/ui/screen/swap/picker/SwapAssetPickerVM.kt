@@ -87,7 +87,7 @@ class SwapAssetPickerVM(
                                     subtitle = it.chainName,
                                     onClick = { onSwapAssetClick(it) },
                                     contentType = "token",
-                                    key = "${it.tokenTicker}_${it.chainTicker}"
+                                    key = "${it.chainTicker}_${it.tokenTicker}_${it.assetId}"
                                 )
                             }
                         )
