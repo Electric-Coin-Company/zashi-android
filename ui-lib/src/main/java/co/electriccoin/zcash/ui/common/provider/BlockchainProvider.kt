@@ -31,6 +31,12 @@ class BlockchainProviderImpl(
                 "sol" -> stringRes("Solana")
                 "tron" -> stringRes("Tron")
                 "xrp" -> stringRes("Ripple")
+                "avax" -> stringRes("Avalanche")
+                "bsc" -> stringRes("BNB Chain")
+                "op" -> stringRes("Optimism")
+                "pol" -> stringRes("Polygon")
+                "ton" -> stringRes("TON")
+                "sui" -> stringRes("SUI")
                 else -> stringRes(ticker)
             },
             chainIcon = getChainIcon(ticker)

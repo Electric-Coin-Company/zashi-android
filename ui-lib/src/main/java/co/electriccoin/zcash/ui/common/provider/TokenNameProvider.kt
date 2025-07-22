@@ -17,6 +17,8 @@ class TokenNameProviderImpl : TokenNameProvider {
             "tron" -> stringRes("Tron")
             "xrp" -> stringRes("Ripple")
             "zec" -> stringRes("Zcash")
+            "op" -> stringRes("Optimism")
+            "pol" -> stringRes("Polygon")
             else -> stringRes(ticker)
         }
 }
