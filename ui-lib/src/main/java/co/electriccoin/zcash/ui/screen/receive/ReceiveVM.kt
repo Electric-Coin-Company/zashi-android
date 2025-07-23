@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.receive.viewmodel
+package co.electriccoin.zcash.ui.screen.receive
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
@@ -12,14 +12,17 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState.ColorMode.DEFAULT
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState.ColorMode.KEYSTONE
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState.ColorMode.ZASHI
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveState
+import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressState.ColorMode.DEFAULT
+import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressState.ColorMode.KEYSTONE
+import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressState.ColorMode.ZASHI
+import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType.Sapling
+import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType.Transparent
+import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType.Unified
+import co.electriccoin.zcash.ui.screen.receive.info.ShieldedAddressInfoArgs
+import co.electriccoin.zcash.ui.screen.receive.info.TransparentAddressInfoArgs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -27,7 +30,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
-class ReceiveViewModel(
+class ReceiveVM(
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val application: Application,
     private val copyToClipboard: CopyToClipboardUseCase,
@@ -43,14 +46,14 @@ class ReceiveViewModel(
                         createAddressState(
                             account = account,
                             address = account.unified.address.address,
-                            type = ReceiveAddressType.Unified,
+                            type = Unified,
                             isExpanded = expandedIndex == 0,
                             onClick = { onAddressClick(0) }
                         ),
                         createAddressState(
                             account = account,
                             address = account.transparent.address.address,
-                            type = ReceiveAddressType.Transparent,
+                            type = Transparent,
                             isExpanded = expandedIndex == 1,
                             onClick = { onAddressClick(1) }
                         ),
@@ -71,6 +74,7 @@ class ReceiveViewModel(
 
     private fun onBack() = navigationRouter.back()
 
+    @Suppress("CyclomaticComplexMethod")
     private fun createAddressState(
         account: WalletAccount,
         address: String,
@@ -86,21 +90,21 @@ class ReceiveViewModel(
         title =
             when (account) {
                 is KeystoneAccount ->
-                    if (type == ReceiveAddressType.Unified) {
+                    if (type == Unified) {
                         stringRes(R.string.receive_wallet_address_shielded_keystone)
                     } else {
                         stringRes(R.string.receive_wallet_address_transparent_keystone)
                     }
 
                 is ZashiAccount ->
-                    if (type == ReceiveAddressType.Unified) {
+                    if (type == Unified) {
                         stringRes(R.string.receive_wallet_address_shielded)
                     } else {
                         stringRes(R.string.receive_wallet_address_transparent)
                     }
             },
         subtitle = stringRes("${address.take(ADDRESS_MAX_LENGTH)}..."),
-        isShielded = type == ReceiveAddressType.Unified,
+        isShielded = type == Unified,
         onCopyClicked = {
             copyToClipboard(
                 tag = application.getString(R.string.receive_clipboard_tag),
@@ -113,9 +117,22 @@ class ReceiveViewModel(
         isExpanded = isExpanded,
         colorMode =
             when (account) {
-                is KeystoneAccount -> if (type == ReceiveAddressType.Unified) KEYSTONE else DEFAULT
-                is ZashiAccount -> if (type == ReceiveAddressType.Unified) ZASHI else DEFAULT
-            }
+                is KeystoneAccount -> if (type == Unified) KEYSTONE else DEFAULT
+                is ZashiAccount -> if (type == Unified) ZASHI else DEFAULT
+            },
+        infoIconButton =
+            IconButtonState(
+                when (type) {
+                    Sapling,
+                    Unified ->
+                        when (account) {
+                            is KeystoneAccount -> R.drawable.ic_receive_ks_shielded_info
+                            is ZashiAccount -> R.drawable.ic_receive_zashi_shielded_info
+                        }
+                    Transparent -> R.drawable.ic_receive_zcash_info
+                },
+                onClick = { onAddressInfoClick(type) }
+            )
     )
 
     private fun onRequestClick(addressType: ReceiveAddressType) =
@@ -126,5 +143,13 @@ class ReceiveViewModel(
 
     private fun onAddressClick(index: Int) {
         expandedIndex.update { index }
+    }
+
+    private fun onAddressInfoClick(type: ReceiveAddressType) {
+        when (type) {
+            Sapling,
+            Unified -> navigationRouter.forward(ShieldedAddressInfoArgs)
+            Transparent -> navigationRouter.forward(TransparentAddressInfoArgs)
+        }
     }
 }

@@ -21,7 +21,7 @@ import org.junit.Test
  * for that currently.  A future enhancement could take a screenshot and try to analyze the
  * screenshot contents.
  */
-class ReceiveViewTest {
+class ReceiveArgsViewTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 

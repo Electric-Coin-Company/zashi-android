@@ -7,8 +7,9 @@ import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveState
+import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressState
+import co.electriccoin.zcash.ui.screen.receive.ReceiveState
+import co.electriccoin.zcash.ui.screen.receive.ReceiveView
 import java.util.concurrent.atomic.AtomicInteger
 
 class ReceiveViewTestSetup(
@@ -42,7 +43,13 @@ class ReceiveViewTestSetup(
                                             onQrClicked = { },
                                             onRequestClicked = {},
                                             isExpanded = true,
-                                            onClick = {}
+                                            onClick = {},
+                                            colorMode = ReceiveAddressState.ColorMode.ZASHI,
+                                            infoIconButton =
+                                                IconButtonState(
+                                                    icon = R.drawable.ic_receive_zashi_shielded_info,
+                                                    onClick = {}
+                                                )
                                         )
                                     ),
                                 isLoading = false,

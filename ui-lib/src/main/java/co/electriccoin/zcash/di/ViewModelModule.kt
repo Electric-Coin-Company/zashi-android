@@ -27,7 +27,7 @@ import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfoViewMod
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoViewModel
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsViewModel
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
-import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
+import co.electriccoin.zcash.ui.screen.receive.ReceiveVM
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
 import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateViewModel
 import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationViewModel
@@ -88,7 +88,7 @@ val viewModelModule =
             )
         }
         viewModelOf(::UpdateContactViewModel)
-        viewModelOf(::ReceiveViewModel)
+        viewModelOf(::ReceiveVM)
         viewModelOf(::QrCodeViewModel)
         viewModelOf(::RequestViewModel)
         viewModelOf(::ScanViewModel)

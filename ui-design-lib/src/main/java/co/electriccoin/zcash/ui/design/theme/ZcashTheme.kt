@@ -121,6 +121,8 @@ private val MaterialRippleConfig: RippleConfiguration
     @Composable
     get() = RippleConfiguration(color = LocalContentColor.current, rippleAlpha = RippleDefaults.RippleAlpha)
 
+@Suppress("MagicNumber")
 private val DefaultLightScrim = Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
 
+@Suppress("MagicNumber")
 private val DefaultDarkScrim = Color.argb(0x80, 0x1b, 0x1b, 0x1b)

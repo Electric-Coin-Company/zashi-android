@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.receive.model
+package co.electriccoin.zcash.ui.screen.receive
 
 internal enum class ReceiveAddressType {
     Unified,

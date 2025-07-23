@@ -8,13 +8,12 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarViewModel
-import co.electriccoin.zcash.ui.screen.receive.view.ReceiveView
-import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
+import kotlinx.serialization.Serializable
 
 @Composable
-internal fun AndroidReceive() {
-    val receiveViewModel = koinActivityViewModel<ReceiveViewModel>()
-    val state by receiveViewModel.state.collectAsStateWithLifecycle()
+internal fun ReceiveScreen() {
+    val receiveVM = koinActivityViewModel<ReceiveVM>()
+    val state by receiveVM.state.collectAsStateWithLifecycle()
     val topAppBarViewModel = koinActivityViewModel<ZashiTopAppBarViewModel>()
     val appBarState by topAppBarViewModel.state.collectAsStateWithLifecycle()
 
@@ -27,3 +26,6 @@ internal fun AndroidReceive() {
         appBarState = appBarState,
     )
 }
+
+@Serializable
+data object ReceiveArgs

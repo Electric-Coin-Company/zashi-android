@@ -21,7 +21,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCa
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeType
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
+import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType
 import co.electriccoin.zcash.ui.util.FileShareUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose

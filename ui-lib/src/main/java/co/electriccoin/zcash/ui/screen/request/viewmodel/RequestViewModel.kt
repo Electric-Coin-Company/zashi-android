@@ -24,7 +24,7 @@ import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
 import co.electriccoin.zcash.ui.design.util.QrCodeColors
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
+import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
 import co.electriccoin.zcash.ui.screen.request.model.MemoState

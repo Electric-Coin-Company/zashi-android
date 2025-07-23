@@ -95,9 +95,13 @@ import co.electriccoin.zcash.ui.screen.integrations.AndroidIntegrations
 import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
 import co.electriccoin.zcash.ui.screen.integrations.Integrations
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
-import co.electriccoin.zcash.ui.screen.receive.AndroidReceive
-import co.electriccoin.zcash.ui.screen.receive.Receive
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressType
+import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType
+import co.electriccoin.zcash.ui.screen.receive.ReceiveArgs
+import co.electriccoin.zcash.ui.screen.receive.ReceiveScreen
+import co.electriccoin.zcash.ui.screen.receive.info.ShieldedAddressInfoArgs
+import co.electriccoin.zcash.ui.screen.receive.info.ShieldedAddressInfoScreen
+import co.electriccoin.zcash.ui.screen.receive.info.TransparentAddressInfoArgs
+import co.electriccoin.zcash.ui.screen.receive.info.TransparentAddressInfoScreen
 import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
@@ -415,8 +419,8 @@ internal fun MainActivity.Navigation() {
         composable<TaxExport> {
             AndroidTaxExport()
         }
-        composable<Receive> {
-            AndroidReceive()
+        composable<ReceiveArgs> {
+            ReceiveScreen()
         }
         composable<Send> {
             WrapSend(it.toRoute())
@@ -525,6 +529,24 @@ internal fun MainActivity.Navigation() {
                     dismissOnClickOutside = false
                 )
         ) { ExchangeRateTorSettingsScreen() }
+        dialog<ShieldedAddressInfoArgs>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) {
+            ShieldedAddressInfoScreen()
+        }
+        dialog<TransparentAddressInfoArgs>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) {
+            TransparentAddressInfoScreen()
+        }
     }
 }
 

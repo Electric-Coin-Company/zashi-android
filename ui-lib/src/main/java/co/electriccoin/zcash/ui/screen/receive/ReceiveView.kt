@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.receive.view
+package co.electriccoin.zcash.ui.screen.receive
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -38,7 +38,9 @@ import co.electriccoin.zcash.ui.common.appbar.ZashiMainTopAppBarState
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppbar
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.Spacer
+import co.electriccoin.zcash.ui.design.component.ZashiImageButton
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -48,11 +50,9 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState.ColorMode.DEFAULT
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState.ColorMode.KEYSTONE
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveAddressState.ColorMode.ZASHI
-import co.electriccoin.zcash.ui.screen.receive.model.ReceiveState
+import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressState.ColorMode.DEFAULT
+import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressState.ColorMode.KEYSTONE
+import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressState.ColorMode.ZASHI
 
 @Composable
 internal fun ReceiveView(
@@ -164,7 +164,7 @@ private fun AddressPanel(
                 .background(containerColor, RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
                 .clip(RoundedCornerShape(ZashiDimensions.Radius.radius3xl))
                 .clickable(onClick = state.onClick)
-                .padding(all = ZcashTheme.dimens.spacingLarge)
+                .padding(16.dp)
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Box {
@@ -206,6 +206,11 @@ private fun AddressPanel(
             Spacer(Modifier.width(ZcashTheme.dimens.spacingSmall))
 
             Spacer(modifier = Modifier.weight(1f))
+
+            ZashiImageButton(
+                modifier = Modifier.size(32.dp),
+                state = state.infoIconButton,
+            )
         }
 
         AnimatedVisibility(visible = state.isExpanded) {
@@ -319,7 +324,12 @@ private fun ZashiPreview() =
                                 onRequestClicked = {},
                                 isExpanded = true,
                                 onClick = {},
-                                colorMode = ZASHI
+                                colorMode = ZASHI,
+                                infoIconButton =
+                                    IconButtonState(
+                                        R.drawable.ic_receive_zashi_shielded_info,
+                                        onClick = {}
+                                    )
                             ),
                             ReceiveAddressState(
                                 icon = R.drawable.ic_zec_round_full,
@@ -331,7 +341,12 @@ private fun ZashiPreview() =
                                 onRequestClicked = { },
                                 isExpanded = true,
                                 onClick = {},
-                                colorMode = DEFAULT
+                                colorMode = DEFAULT,
+                                infoIconButton =
+                                    IconButtonState(
+                                        R.drawable.ic_receive_zashi_shielded_info,
+                                        onClick = {}
+                                    )
                             )
                         ),
                     isLoading = false,
@@ -360,7 +375,12 @@ private fun KeystonePreview() =
                                 onRequestClicked = {},
                                 isExpanded = true,
                                 onClick = {},
-                                colorMode = KEYSTONE
+                                colorMode = KEYSTONE,
+                                infoIconButton =
+                                    IconButtonState(
+                                        R.drawable.ic_receive_zashi_shielded_info,
+                                        onClick = {}
+                                    )
                             ),
                             ReceiveAddressState(
                                 icon = co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone,
@@ -372,7 +392,12 @@ private fun KeystonePreview() =
                                 onRequestClicked = { },
                                 isExpanded = true,
                                 onClick = {},
-                                colorMode = DEFAULT
+                                colorMode = DEFAULT,
+                                infoIconButton =
+                                    IconButtonState(
+                                        R.drawable.ic_receive_zashi_shielded_info,
+                                        onClick = {}
+                                    )
                             )
                         ),
                     isLoading = false,
