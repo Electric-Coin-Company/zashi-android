@@ -55,7 +55,7 @@ fun EnableTorMessage(
                 state =
                     ButtonState(
                         onClick = state.onButtonClick,
-                        text = stringRes(stringResource(R.string.general_start))
+                        text = stringRes(stringResource(R.string.general_review))
                     )
             )
         }
