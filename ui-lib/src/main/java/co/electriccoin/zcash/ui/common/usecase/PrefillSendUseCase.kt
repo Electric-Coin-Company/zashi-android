@@ -37,7 +37,7 @@ class PrefillSendUseCase {
                     amount = request?.nonNegativeAmount?.value?.convertZecToZatoshi() ?: Zatoshi(0),
                     address = request?.recipientAddress?.value,
                     fee = null,
-                    memos = request?.message?.let { listOf(it) }
+                    memos = value.payments.firstOrNull()?.memo?.data?.decodeToString()?.let { listOf(it) }
                 )
             )
         }
