@@ -109,7 +109,7 @@ class ExchangeRateRepositoryImpl(
         }.distinctUntilChanged()
             .stateIn(
                 scope = scope,
-                started = SharingStarted.WhileSubscribed(5.seconds, 5.seconds),
+                started = SharingStarted.WhileSubscribed(5.seconds),
                 initialValue =
                     createState(
                         isOptedIn = isExchangeRateOptedIn.value,

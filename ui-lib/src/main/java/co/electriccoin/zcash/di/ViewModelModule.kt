@@ -15,7 +15,7 @@ import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
 import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
 import co.electriccoin.zcash.ui.screen.crashreporting.viewmodel.CrashReportingViewModel
 import co.electriccoin.zcash.ui.screen.error.ErrorViewModel
-import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsViewModel
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsVM
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateTorSettingsVM
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
@@ -147,7 +147,7 @@ val viewModelModule =
         viewModelOf(::RestoreBDEstimationViewModel)
         viewModelOf(::ShieldFundsInfoViewModel)
         viewModelOf(::WalletBackupInfoViewModel)
-        viewModelOf(::ExchangeRateSettingsViewModel)
+        viewModelOf(::ExchangeRateSettingsVM)
         viewModelOf(::WalletBackupDetailViewModel)
         viewModelOf(::ErrorViewModel)
         viewModelOf(::SpendableBalanceViewModel)

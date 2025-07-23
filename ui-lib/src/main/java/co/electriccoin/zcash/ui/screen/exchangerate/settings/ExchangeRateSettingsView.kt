@@ -14,11 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -26,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiBaseSettingsOptIn
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
@@ -33,22 +30,15 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.exchangerate.SecondaryCard
 
 @Composable
 internal fun ExchangeRateSettingsView(state: ExchangeRateSettingsState) {
-    var isOptInSelected by remember(state.isOptedIn) { mutableStateOf(state.isOptedIn) }
-
-    val isButtonDisabled by remember {
-        derivedStateOf {
-            (state.isOptedIn && isOptInSelected) || (!state.isOptedIn && !isOptInSelected)
-        }
-    }
-
     ZashiBaseSettingsOptIn(
         header = stringResource(id = R.string.exchange_rate_opt_in_subtitle),
         image = R.drawable.exchange_rate,
-        onDismiss = state.onDismiss,
+        onDismiss = state.onBack,
         info = stringResource(R.string.exchange_rate_opt_in_note),
         content = {
             Spacer(modifier = Modifier.height(8.dp))
@@ -62,36 +52,34 @@ internal fun ExchangeRateSettingsView(state: ExchangeRateSettingsState) {
                 modifier = Modifier.fillMaxWidth(),
                 image = R.drawable.ic_opt_in,
                 selectionImage =
-                    if (isOptInSelected) {
+                    if (state.isOptedIn.isChecked) {
                         R.drawable.ic_checkbox_checked
                     } else {
                         R.drawable.ic_checkbox_unchecked
                     },
                 title = stringResource(R.string.exchange_rate_opt_in_option_title),
                 subtitle = stringResource(R.string.exchange_rate_opt_in_option_subtitle),
-                onClick = { isOptInSelected = true }
+                onClick = state.isOptedIn.onClick
             )
             Spacer(modifier = Modifier.height(12.dp))
             Option(
                 modifier = Modifier.fillMaxWidth(),
                 image = R.drawable.ic_opt_out,
                 selectionImage =
-                    if (!isOptInSelected) {
+                    if (state.isOptedOut.isChecked) {
                         R.drawable.ic_checkbox_checked
                     } else {
                         R.drawable.ic_checkbox_unchecked
                     },
                 title = stringResource(R.string.exchange_rate_opt_out_option_title),
                 subtitle = stringResource(R.string.exchange_rate_opt_out_option_subtitle),
-                onClick = { isOptInSelected = false }
+                onClick = state.isOptedOut.onClick
             )
         },
         footer = {
             ZashiButton(
-                text = stringResource(R.string.exchange_rate_opt_in_save),
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { state.onSaveClick(isOptInSelected) },
-                enabled = !isButtonDisabled,
+                state = state.saveButton,
                 colors = ZashiButtonDefaults.primaryColors()
             )
         },
@@ -158,9 +146,22 @@ private fun SettingsExchangeRateOptInPreview() =
             ExchangeRateSettingsView(
                 state =
                     ExchangeRateSettingsState(
-                        isOptedIn = true,
-                        onSaveClick = {},
-                        onDismiss = {}
+                        isOptedIn =
+                            SimpleCheckboxState(
+                                isChecked = true,
+                                onClick = {}
+                            ),
+                        isOptedOut =
+                            SimpleCheckboxState(
+                                isChecked = false,
+                                onClick = {}
+                            ),
+                        saveButton =
+                            ButtonState(
+                                text = stringRes(R.string.exchange_rate_opt_in_save),
+                                onClick = {}
+                            ),
+                        onBack = {}
                     )
             )
         }
