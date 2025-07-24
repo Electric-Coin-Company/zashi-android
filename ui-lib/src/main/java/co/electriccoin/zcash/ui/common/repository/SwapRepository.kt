@@ -8,7 +8,6 @@ import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import io.ktor.client.plugins.ResponseException
-import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -59,12 +58,10 @@ data class SwapAssetsData(
     val data: List<SwapAsset>?,
     val zecAsset: SwapAsset?,
     val isLoading: Boolean,
-    val error: Error?,
+    val error: Exception?,
     val type: Type
 ) {
     enum class Type { NEAR }
-
-    enum class Error { UNEXPECTED_ERROR, SERVICE_UNAVAILABLE }
 }
 
 class NearSwapRepository(
@@ -156,23 +153,17 @@ class NearSwapRepository(
                 }
             }
         } catch (e: ResponseException) {
-            assets.update {
-                it.copy(
+            assets.update { assets ->
+                assets.copy(
                     isLoading = false,
-                    error = when {
-                        it.data != null -> null
-                        e.response.status == HttpStatusCode.ServiceUnavailable ->
-                            SwapAssetsData.Error.SERVICE_UNAVAILABLE
-
-                        else -> SwapAssetsData.Error.UNEXPECTED_ERROR
-                    }
+                    error = e.takeIf { assets.data == null }
                 )
             }
-        } catch (_: Exception) {
-            assets.update {
-                it.copy(
+        } catch (e: Exception) {
+            assets.update { assets ->
+                assets.copy(
                     isLoading = false,
-                    error = if (it.data != null) null else SwapAssetsData.Error.UNEXPECTED_ERROR
+                    error = e.takeIf { assets.data == null }
                 )
             }
         }

@@ -8,7 +8,6 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
-import co.electriccoin.zcash.ui.common.repository.SwapAssetsData.Error.*
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ButtonStyle
@@ -27,6 +26,8 @@ import co.electriccoin.zcash.ui.screen.swap.CurrencyType.FIAT
 import co.electriccoin.zcash.ui.screen.swap.CurrencyType.TOKEN
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
+import io.ktor.client.plugins.ResponseException
+import io.ktor.http.HttpStatusCode
 import java.math.BigDecimal
 import java.math.MathContext
 import kotlin.math.absoluteValue
@@ -215,14 +216,19 @@ internal class ExactInputVMMapper : SwapVMMapper {
     private fun createErrorFooterState(state: ExactInputInternalState): ErrorFooter? {
         if (state.swapAssets.error == null) return null
 
+        val isServiceUnavailableError = state.swapAssets.error is ResponseException &&
+            state.swapAssets.error.response.status == HttpStatusCode.ServiceUnavailable
+
         return ErrorFooter(
-            title = when (state.swapAssets.error) {
-                UNEXPECTED_ERROR -> stringRes("Unexpected error")
-                SERVICE_UNAVAILABLE -> stringRes("The service is unavailable")
+            title = if (isServiceUnavailableError) {
+                stringRes("The service is unavailable")
+            } else {
+                stringRes("Unexpected error")
             },
-            subtitle = when(state.swapAssets.error) {
-                UNEXPECTED_ERROR -> stringRes("Please check your connection and try again.")
-                SERVICE_UNAVAILABLE -> stringRes("Please try again later.")
+            subtitle = if (isServiceUnavailableError) {
+                stringRes("Please try again later.")
+            } else {
+                stringRes("Please check your connection and try again.")
             }
         )
     }
@@ -233,7 +239,9 @@ internal class ExactInputVMMapper : SwapVMMapper {
         onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
         onTryAgainClick: () -> Unit
     ): ButtonState? {
-        if (state.swapAssets.error == SERVICE_UNAVAILABLE) return null
+        if (state.swapAssets.error is ResponseException &&
+            state.swapAssets.error.response.status == HttpStatusCode.ServiceUnavailable
+        ) return null
 
         val amount = textField.textField.innerState.amount
         return ButtonState(
