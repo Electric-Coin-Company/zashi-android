@@ -21,17 +21,16 @@ import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
-import kotlinx.io.IOException
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 import kotlin.time.Duration.Companion.minutes
 
 interface SwapDataSource {
-    @Throws(ResponseException::class, IOException::class)
+    @Throws(ResponseException::class)
     suspend fun getSupportedTokens(): List<NearSwapAsset>
 
-    @Throws(ResponseException::class, IOException::class, QuoteLowAmountException::class)
+    @Throws(ResponseException::class, QuoteLowAmountException::class)
     suspend fun requestQuote(
         swapMode: SwapMode,
         amount: BigDecimal,
@@ -42,7 +41,7 @@ interface SwapDataSource {
         slippage: BigDecimal,
     ): QuoteResponseDto
 
-    @Throws(ResponseException::class, IOException::class)
+    @Throws(ResponseException::class)
     suspend fun submitDepositTransaction(txHash: String, depositAddress: String): SwapStatusResponseDto
 }
 

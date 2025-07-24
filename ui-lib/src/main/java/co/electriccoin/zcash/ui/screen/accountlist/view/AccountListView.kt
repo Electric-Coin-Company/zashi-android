@@ -113,7 +113,7 @@ private fun BottomSheetContent(state: AccountListState) {
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp),
-                colors =
+                defaultPrimaryColors =
                     ZashiButtonDefaults.secondaryColors(
                         borderColor = ZashiColors.Btns.Secondary.btnSecondaryBorder
                     )

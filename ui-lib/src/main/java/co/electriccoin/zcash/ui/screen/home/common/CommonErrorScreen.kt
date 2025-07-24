@@ -92,7 +92,7 @@ fun CommonErrorScreen(
             Spacer(24.dp)
             ZashiButton(
                 state = state.buttonState,
-                colors = ZashiButtonDefaults.tertiaryColors()
+                defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
             )
         }
     }

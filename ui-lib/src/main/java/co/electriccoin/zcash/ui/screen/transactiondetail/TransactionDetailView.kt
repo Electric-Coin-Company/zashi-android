@@ -150,7 +150,7 @@ private fun BottomBar(
                 ZashiButton(
                     modifier = Modifier.weight(1f),
                     state = it,
-                    colors = ZashiButtonDefaults.tertiaryColors()
+                    defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
                 )
             }
             if (state.secondaryButton != null && state.primaryButton != null) {

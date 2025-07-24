@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapMode.PAY
 import co.electriccoin.zcash.ui.common.model.SwapMode.SWAP
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
+import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.ContactWithSwapAsset
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
@@ -54,6 +55,7 @@ internal class SwapVM(
     getSelectedSwapAsset: GetSelectedSwapAssetUseCase,
     getTotalSpendableBalance: GetTotalSpendableBalanceUseCase,
     getSwapAssetsUseCase: GetSwapAssetsUseCase,
+    private val swapRepository: SwapRepository,
     private val updateSwapMode: UpdateSwapModeUseCase,
     private val navigateToSwapInfo: NavigateToSwapInfoUseCase,
     private val isABContactHintVisible: IsABContactHintVisibleUseCase,
@@ -174,9 +176,12 @@ internal class SwapVM(
             onSwapModeChange = ::onSwapModeChange,
             onTextFieldChange = ::onTextFieldChange,
             onQrCodeScannerClick = ::onQrCodeScannerClick,
-            onAddressBookClick = ::onAddressBookClick
+            onAddressBookClick = ::onAddressBookClick,
+            onTryAgainClick = ::onTryAgainClick
         )
     }
+
+    private fun onTryAgainClick() = swapRepository.requestRefreshAssets()
 
     private fun onAddressBookClick() = viewModelScope.launch {
         val selected = navigateToSelectSwapRecipient()
@@ -291,6 +296,7 @@ internal interface SwapVMMapper {
         onSwapCurrencyTypeClick: (BigDecimal) -> Unit,
         onSlippageClick: (BigDecimal?) -> Unit,
         onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
+        onTryAgainClick: () -> Unit,
         onAddressChange: (String) -> Unit,
         onSwapModeChange: (SwapMode) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,

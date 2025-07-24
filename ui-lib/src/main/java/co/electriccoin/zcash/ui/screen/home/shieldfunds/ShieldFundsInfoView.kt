@@ -126,7 +126,7 @@ private fun Content(state: ShieldFundsInfoState) {
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
             state = state.secondaryButton,
-            colors = ZashiButtonDefaults.secondaryColors()
+            defaultPrimaryColors = ZashiButtonDefaults.secondaryColors()
         )
         Spacer(4.dp)
         ZashiButton(

@@ -359,7 +359,7 @@ private fun BottomBar(state: ReviewTransactionState) {
     OldZashiBottomBar {
         ZashiButton(
             state = state.negativeButton,
-            colors = ZashiButtonDefaults.secondaryColors(),
+            defaultPrimaryColors = ZashiButtonDefaults.secondaryColors(),
             modifier =
                 Modifier
                     .padding(horizontal = 24.dp)

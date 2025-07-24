@@ -72,7 +72,7 @@ fun BottomSheetContent(state: ErrorState, modifier: Modifier = Modifier) {
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
             state = state.negative,
-            colors = ZashiButtonDefaults.secondaryColors()
+            defaultPrimaryColors = ZashiButtonDefaults.secondaryColors()
         )
         Spacer(8.dp)
         ZashiButton(

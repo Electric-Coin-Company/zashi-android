@@ -125,7 +125,7 @@ private fun LazyListScope.transactionHistoryEmptyWidget(state: TransactionHistor
                     Spacer(Modifier.height(20.dp))
                     ZashiButton(
                         state = it,
-                        colors = ZashiButtonDefaults.tertiaryColors(),
+                        defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors(),
                     )
                 }
             }

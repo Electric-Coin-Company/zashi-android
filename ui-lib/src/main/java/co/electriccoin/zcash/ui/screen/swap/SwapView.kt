@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -25,14 +24,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
@@ -41,6 +41,7 @@ import co.electriccoin.zcash.ui.common.model.SwapMode.SWAP
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.ButtonStyle
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.Spacer
@@ -142,10 +143,43 @@ internal fun SwapView(
 
             Spacer(24.dp)
             Spacer(1f)
-            ZashiButton(
-                modifier = Modifier.fillMaxWidth(),
-                state = state.primaryButton
-            )
+
+            if (state.errorFooter != null) {
+                Image(
+                    modifier = Modifier
+                        .size(16.dp)
+                        .align(Alignment.CenterHorizontally),
+                    painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(ZashiColors.Text.textError)
+                )
+                Spacer(8.dp)
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = state.errorFooter.title.getValue(),
+                    style = ZashiTypography.textSm,
+                    fontWeight = FontWeight.Medium,
+                    color = ZashiColors.Text.textError,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(4.dp)
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = state.errorFooter.subtitle.getValue(),
+                    style = ZashiTypography.textSm,
+                    color = ZashiColors.Text.textError,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(32.dp)
+            }
+
+            if (state.primaryButton != null) {
+                ZashiButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = state.primaryButton
+                )
+            }
         }
     }
 }
@@ -166,7 +200,7 @@ private fun SlippageButton(state: ButtonState, modifier: Modifier = Modifier) {
         ZashiButton(
             state = state,
             contentPadding = PaddingValues(start = 10.dp, end = 12.dp),
-            colors = ZashiButtonDefaults.tertiaryColors()
+            defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
         )
     }
 }
@@ -176,12 +210,6 @@ private fun SlippageSeparator(
     state: SwapState,
     modifier: Modifier = Modifier
 ) {
-    val rotation =
-        when (state.mode) {
-            SWAP -> 0f
-            PAY -> 180f
-        }
-
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -243,9 +271,7 @@ private fun TopAppBar(state: SwapState) {
 }
 
 @Composable
-private fun ColumnScope.AddressTextField(
-    state: SwapState
-) {
+private fun ColumnScope.AddressTextField(state: SwapState) {
     Text(
         text = "Address",
         style = ZashiTypography.textSm,
@@ -368,8 +394,176 @@ private fun Preview() {
                     appBarState = SwapAppBarState(
                         title = stringRes("Swap with"),
                         icon = R.drawable.ic_near_logo
-                    )
+                    ),
+                    errorFooter = null
                 )
         )
     }
 }
+
+@PreviewScreens
+@Composable
+private fun UnexpectedErrorPreview() {
+    ZcashTheme {
+        SwapView(
+            state =
+                SwapState(
+                    amountTextField =
+                        SwapAmountTextFieldState(
+                            title = stringRes("From"),
+                            error = null,
+                            token = AssetCardState.Data(
+                                ticker = stringRes("USDT"),
+                                bigIcon = null,
+                                smallIcon = null,
+                                isEnabled = false,
+                                onClick = {}),
+                            textFieldPrefix = imageRes(R.drawable.ic_send_zashi),
+                            textField = NumberTextFieldState {},
+                            secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
+                            max = stringResByDynamicCurrencyNumber(100, "$"),
+                            onSwapChange = {}
+                        ),
+                    slippage =
+                        ButtonState(
+                            stringRes("1%"),
+                            trailingIcon = R.drawable.ic_swap_slippage
+                        ),
+                    amountText =
+                        SwapAmountTextState(
+                            token =
+                                AssetCardState.Data(
+                                    ticker = stringRes("ZEC"),
+                                    bigIcon = null,
+                                    smallIcon = null,
+                                    isEnabled = false,
+                                    onClick = {}
+                                ),
+                            title = stringRes("To"),
+                            text = stringResByDynamicCurrencyNumber(101, "$"),
+                            secondaryText = stringResByDynamicCurrencyNumber(2.47123, "ZEC"),
+                            subtitle = null
+                        ),
+                    onBack = {},
+                    mode = PAY,
+                    swapInfoButton = IconButtonState(R.drawable.ic_help) {},
+                    infoItems =
+                        listOf(
+                            SimpleListItemState(
+                                title = stringRes("Rate"),
+                                text = stringRes("1 ZEC = 51.74 USDC")
+                            )
+                        ),
+                    address = TextFieldState(stringRes("")) {},
+                    isAddressBookHintVisible = true,
+                    qrScannerButton = IconButtonState(
+                        icon = R.drawable.qr_code_icon,
+                        onClick = {}
+                    ),
+                    addressBookButton = IconButtonState(
+                        icon = R.drawable.send_address_book,
+                        onClick = {}
+                    ),
+                    changeModeButton = IconButtonState(
+                        icon = R.drawable.ic_swap_change_mode,
+                        onClick = { }
+                    ),
+                    appBarState = SwapAppBarState(
+                        title = stringRes("Swap with"),
+                        icon = R.drawable.ic_near_logo
+                    ),
+                    errorFooter = ErrorFooter(
+                        title = stringRes("Unexpected error"),
+                        subtitle = stringRes("Please check your connection and try again."),
+                    ),
+                    primaryButton =
+                        ButtonState(
+                            stringRes("Try again"),
+                            style = ButtonStyle.DESTRUCTIVE1
+                        ),
+                )
+        )
+    }
+}
+
+@PreviewScreens
+@Composable
+private fun ServiceUnavailableErrorPreview() {
+    ZcashTheme {
+        SwapView(
+            state =
+                SwapState(
+                    amountTextField =
+                        SwapAmountTextFieldState(
+                            title = stringRes("From"),
+                            error = null,
+                            token = AssetCardState.Data(
+                                ticker = stringRes("USDT"),
+                                bigIcon = null,
+                                smallIcon = null,
+                                isEnabled = false,
+                                onClick = {}),
+                            textFieldPrefix = imageRes(R.drawable.ic_send_zashi),
+                            textField = NumberTextFieldState {},
+                            secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
+                            max = stringResByDynamicCurrencyNumber(100, "$"),
+                            onSwapChange = {}
+                        ),
+                    slippage =
+                        ButtonState(
+                            stringRes("1%"),
+                            trailingIcon = R.drawable.ic_swap_slippage
+                        ),
+                    amountText =
+                        SwapAmountTextState(
+                            token =
+                                AssetCardState.Data(
+                                    ticker = stringRes("ZEC"),
+                                    bigIcon = null,
+                                    smallIcon = null,
+                                    isEnabled = false,
+                                    onClick = {}
+                                ),
+                            title = stringRes("To"),
+                            text = stringResByDynamicCurrencyNumber(101, "$"),
+                            secondaryText = stringResByDynamicCurrencyNumber(2.47123, "ZEC"),
+                            subtitle = null
+                        ),
+                    onBack = {},
+                    mode = PAY,
+                    swapInfoButton = IconButtonState(R.drawable.ic_help) {},
+                    infoItems =
+                        listOf(
+                            SimpleListItemState(
+                                title = stringRes("Rate"),
+                                text = stringRes("1 ZEC = 51.74 USDC")
+                            )
+                        ),
+                    address = TextFieldState(stringRes("")) {},
+                    isAddressBookHintVisible = true,
+                    qrScannerButton = IconButtonState(
+                        icon = R.drawable.qr_code_icon,
+                        onClick = {}
+                    ),
+                    addressBookButton = IconButtonState(
+                        icon = R.drawable.send_address_book,
+                        onClick = {}
+                    ),
+                    changeModeButton = IconButtonState(
+                        icon = R.drawable.ic_swap_change_mode,
+                        onClick = { }
+                    ),
+                    appBarState = SwapAppBarState(
+                        title = stringRes("Swap with"),
+                        icon = R.drawable.ic_near_logo
+                    ),
+                    errorFooter = ErrorFooter(
+                        title = stringRes("The service is unavailable"),
+                        subtitle = stringRes("Please try again later."),
+                    ),
+                    primaryButton = null
+                )
+        )
+    }
+}
+

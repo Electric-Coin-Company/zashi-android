@@ -8,8 +8,10 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
+import co.electriccoin.zcash.ui.common.repository.SwapAssetsData.Error.*
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.ButtonStyle
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
@@ -38,6 +40,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
         onSwapCurrencyTypeClick: (BigDecimal) -> Unit,
         onSlippageClick: (BigDecimal?) -> Unit,
         onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
+        onTryAgainClick: () -> Unit,
         onAddressChange: (String) -> Unit,
         onSwapModeChange: (SwapMode) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
@@ -62,12 +65,6 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 createAmountTextState(
                     state = state,
                     onSwapAssetPickerClick = onSwapAssetPickerClick
-                ),
-            primaryButton =
-                createPrimaryButtonState(
-                    textField = textFieldState,
-                    state = state,
-                    onRequestSwapQuoteClick = onRequestSwapQuoteClick
                 ),
             mode = state.swapMode,
             address =
@@ -94,7 +91,15 @@ internal class ExactInputVMMapper : SwapVMMapper {
             appBarState = SwapAppBarState(
                 title = stringRes("Swap with"),
                 icon = R.drawable.ic_near_logo
-            )
+            ),
+            errorFooter = createErrorFooterState(state),
+            primaryButton =
+                createPrimaryButtonState(
+                    textField = textFieldState,
+                    state = state,
+                    onRequestSwapQuoteClick = onRequestSwapQuoteClick,
+                    onTryAgainClick = onTryAgainClick
+                ),
         )
     }
 
@@ -207,31 +212,55 @@ internal class ExactInputVMMapper : SwapVMMapper {
         )
     }
 
+    private fun createErrorFooterState(state: ExactInputInternalState): ErrorFooter? {
+        if (state.swapAssets.error == null) return null
+
+        return ErrorFooter(
+            title = when (state.swapAssets.error) {
+                UNEXPECTED_ERROR -> stringRes("Unexpected error")
+                SERVICE_UNAVAILABLE -> stringRes("The service is unavailable")
+            },
+            subtitle = when(state.swapAssets.error) {
+                UNEXPECTED_ERROR -> stringRes("Please check your connection and try again.")
+                SERVICE_UNAVAILABLE -> stringRes("Please try again later.")
+            }
+        )
+    }
+
     private fun createPrimaryButtonState(
         textField: SwapAmountTextFieldState,
         state: ExactInputInternalState,
-        onRequestSwapQuoteClick: (BigDecimal, String) -> Unit
-    ): ButtonState {
+        onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
+        onTryAgainClick: () -> Unit
+    ): ButtonState? {
+        if (state.swapAssets.error == SERVICE_UNAVAILABLE) return null
+
         val amount = textField.textField.innerState.amount
         return ButtonState(
-            text = if (state.swapAssets.isLoading && state.swapAssets.data == null) {
-                stringRes("Loading")
-            } else {
-                stringRes("Confirm")
+            text = when {
+                state.swapAssets.error != null -> stringRes("Try again")
+                state.swapAssets.isLoading && state.swapAssets.data == null -> stringRes("Loading")
+                else -> stringRes("Confirm")
             },
+            style = if (state.swapAssets.error != null) ButtonStyle.DESTRUCTIVE1 else null,
             onClick = {
-                state.getOriginTokenAmount()?.let {
-                    onRequestSwapQuoteClick(it, state.addressText)
+                if (state.swapAssets.error != null) {
+                    onTryAgainClick()
+                } else {
+                    state.getOriginTokenAmount()?.let { onRequestSwapQuoteClick(it, state.addressText) }
                 }
             },
-            isEnabled =
+            isEnabled = if (state.swapAssets.error != null) {
+                !state.swapAssets.isLoading
+            } else {
                 (!state.swapAssets.isLoading && state.swapAssets.data != null) &&
                     state.swapAsset != null &&
                     !textField.isError &&
                     amount != null &&
                     amount > BigDecimal(0) &&
                     state.addressText.isNotBlank() &&
-                    !state.isRequestingQuote,
+                    !state.isRequestingQuote
+            },
             isLoading = state.isRequestingQuote || (state.swapAssets.isLoading && state.swapAssets.data == null)
         )
     }

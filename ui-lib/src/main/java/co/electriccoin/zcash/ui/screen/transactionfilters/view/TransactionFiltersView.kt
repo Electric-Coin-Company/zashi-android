@@ -138,7 +138,7 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
                 ZashiButton(
                     state = state.secondaryButton,
                     modifier = Modifier.weight(1f),
-                    colors =
+                    defaultPrimaryColors =
                         ZashiButtonDefaults.secondaryColors(
                             borderColor = ZashiColors.Btns.Secondary.btnSecondaryBorder
                         )
@@ -147,7 +147,7 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
                 ZashiButton(
                     state = state.primaryButton,
                     modifier = Modifier.weight(1f),
-                    colors = ZashiButtonDefaults.primaryColors()
+                    defaultPrimaryColors = ZashiButtonDefaults.primaryColors()
                 )
             }
         }

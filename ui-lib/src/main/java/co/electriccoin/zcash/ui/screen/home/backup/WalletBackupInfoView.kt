@@ -99,7 +99,7 @@ fun WalletBackupInfoView(
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 state = it.secondaryButton,
-                colors = ZashiButtonDefaults.secondaryColors()
+                defaultPrimaryColors = ZashiButtonDefaults.secondaryColors()
             )
             Spacer(4.dp)
             ZashiButton(

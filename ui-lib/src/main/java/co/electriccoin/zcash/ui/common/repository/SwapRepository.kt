@@ -8,6 +8,7 @@ import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import io.ktor.client.plugins.ResponseException
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -18,7 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.io.IOException
 import java.math.BigDecimal
 import kotlin.time.Duration.Companion.seconds
 
@@ -59,9 +59,12 @@ data class SwapAssetsData(
     val data: List<SwapAsset>?,
     val zecAsset: SwapAsset?,
     val isLoading: Boolean,
+    val error: Error?,
     val type: Type
 ) {
     enum class Type { NEAR }
+
+    enum class Error { UNEXPECTED_ERROR, SERVICE_UNAVAILABLE }
 }
 
 class NearSwapRepository(
@@ -78,6 +81,7 @@ class NearSwapRepository(
                 data = null,
                 zecAsset = null,
                 isLoading = false,
+                error = null,
                 type = SwapAssetsData.Type.NEAR
             )
         )
@@ -140,21 +144,37 @@ class NearSwapRepository(
                 it.copy(
                     data = filtered,
                     zecAsset = zecAsset,
+                    error = null,
                     isLoading = false
                 )
             }
 
             if (selectedAsset.value == null) {
-                val usdc = filtered.find { it.tokenTicker.lowercase() == "usdc" && it.chainTicker == "eth"  }
+                val usdc = filtered.find { it.tokenTicker.lowercase() == "usdc" && it.chainTicker == "eth" }
                 if (usdc is NearSwapAsset) {
                     selectedAsset.update { usdc }
                 }
             }
+        } catch (e: ResponseException) {
+            assets.update {
+                it.copy(
+                    isLoading = false,
+                    error = when {
+                        it.data != null -> null
+                        e.response.status == HttpStatusCode.ServiceUnavailable ->
+                            SwapAssetsData.Error.SERVICE_UNAVAILABLE
 
-        } catch (_: ResponseException) {
-            assets.update { it.copy(isLoading = false) }
-        } catch (_: IOException) {
-            assets.update { it.copy(isLoading = false) }
+                        else -> SwapAssetsData.Error.UNEXPECTED_ERROR
+                    }
+                )
+            }
+        } catch (_: Exception) {
+            assets.update {
+                it.copy(
+                    isLoading = false,
+                    error = if (it.data != null) null else SwapAssetsData.Error.UNEXPECTED_ERROR
+                )
+            }
         }
     }
 
@@ -191,6 +211,7 @@ class NearSwapRepository(
                 data = null,
                 zecAsset = null,
                 isLoading = false,
+                error = null,
                 type = SwapAssetsData.Type.NEAR
             )
         }

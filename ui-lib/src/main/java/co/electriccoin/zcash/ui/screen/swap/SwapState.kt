@@ -22,13 +22,20 @@ internal data class SwapState(
     val amountTextField: SwapAmountTextFieldState,
     val slippage: ButtonState,
     val amountText: SwapAmountTextState,
-    val primaryButton: ButtonState,
     val infoItems: List<SimpleListItemState>,
     val address: TextFieldState,
     val isAddressBookHintVisible: Boolean,
     val qrScannerButton: IconButtonState,
     val addressBookButton: IconButtonState,
+    val errorFooter: ErrorFooter?,
+    val primaryButton: ButtonState?,
     val onBack: () -> Unit
+)
+
+@Immutable
+data class ErrorFooter(
+    val title: StringResource,
+    val subtitle: StringResource,
 )
 
 @Immutable

@@ -70,7 +70,7 @@ fun SignKeystoneTransactionBottomSheet(
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 state = it.negativeButton,
-                colors = ZashiButtonDefaults.destructive2Colors()
+                defaultPrimaryColors = ZashiButtonDefaults.destructive2Colors()
             )
             Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
         }

@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
+import co.electriccoin.zcash.ui.design.component.ButtonStyle.*
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -36,34 +38,8 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColorsInternal
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.stringRes
 
-@Composable
-fun ZashiButton(
-    state: ButtonState,
-    modifier: Modifier = Modifier,
-    style: TextStyle = ZashiButtonDefaults.style,
-    shape: Shape = ZashiButtonDefaults.shape,
-    contentPadding: PaddingValues = ZashiButtonDefaults.contentPadding,
-    colors: ZashiButtonColors = LocalZashiButtonColors.current ?: ZashiButtonDefaults.primaryColors(),
-    content: @Composable RowScope.(ZashiButtonScope) -> Unit = ZashiButtonDefaults.content
-) {
-    ZashiButton(
-        text = state.text.getValue(),
-        icon = state.icon,
-        trailingIcon = state.trailingIcon,
-        onClick = state.onClick,
-        modifier = modifier,
-        style = style,
-        shape = shape,
-        contentPadding = contentPadding,
-        enabled = state.isEnabled,
-        isLoading = state.isLoading,
-        colors = colors,
-        content = content
-    )
-}
-
-@Suppress("LongParameterList")
 @Composable
 fun ZashiButton(
     text: String,
@@ -79,13 +55,50 @@ fun ZashiButton(
     colors: ZashiButtonColors = LocalZashiButtonColors.current ?: ZashiButtonDefaults.primaryColors(),
     content: @Composable RowScope.(ZashiButtonScope) -> Unit = ZashiButtonDefaults.content
 ) {
+    val state = remember(text, icon, trailingIcon, enabled, isLoading, onClick) {
+        ButtonState(
+            text = stringRes(text),
+            icon = icon,
+            trailingIcon = trailingIcon,
+            isEnabled = enabled,
+            isLoading = isLoading,
+            onClick = onClick,
+        )
+    }
+
+    ZashiButton(
+        state = state,
+        modifier = modifier,
+        style = style,
+        shape = shape,
+        contentPadding = contentPadding,
+        defaultPrimaryColors = colors,
+        content = content
+    )
+}
+
+@Suppress("LongParameterList")
+@Composable
+fun ZashiButton(
+    state: ButtonState,
+    modifier: Modifier = Modifier,
+    style: TextStyle = ZashiButtonDefaults.style,
+    shape: Shape = ZashiButtonDefaults.shape,
+    contentPadding: PaddingValues = ZashiButtonDefaults.contentPadding,
+    defaultPrimaryColors: ZashiButtonColors = LocalZashiButtonColors.current ?: ZashiButtonDefaults.primaryColors(),
+    defaultSecondaryColors: ZashiButtonColors = ZashiButtonDefaults.secondaryColors(),
+    defaultTertiaryColors: ZashiButtonColors = ZashiButtonDefaults.tertiaryColors(),
+    defaultDestructive1Colors: ZashiButtonColors = ZashiButtonDefaults.destructive1Colors(),
+    defaultDestructive2Colors: ZashiButtonColors = ZashiButtonDefaults.destructive2Colors(),
+    content: @Composable RowScope.(ZashiButtonScope) -> Unit = ZashiButtonDefaults.content
+) {
     val scope =
         object : ZashiButtonScope {
             @Composable
             override fun LeadingIcon() {
-                if (icon != null) {
+                if (state.icon != null) {
                     Image(
-                        painter = painterResource(icon),
+                        painter = painterResource(state.icon),
                         contentDescription = null,
                         modifier = Modifier.size(20.dp),
                         colorFilter = ColorFilter.tint(LocalContentColor.current)
@@ -95,9 +108,9 @@ fun ZashiButton(
 
             @Composable
             override fun TrailingIcon() {
-                if (trailingIcon != null) {
+                if (state.trailingIcon != null) {
                     Image(
-                        painter = painterResource(trailingIcon),
+                        painter = painterResource(state.trailingIcon),
                         contentDescription = null,
                         modifier = Modifier.size(20.dp),
                         colorFilter = ColorFilter.tint(LocalContentColor.current)
@@ -108,7 +121,7 @@ fun ZashiButton(
             @Composable
             override fun Text() {
                 Text(
-                    text = text,
+                    text = state.text.getValue(),
                     style = style,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center
@@ -117,7 +130,7 @@ fun ZashiButton(
 
             @Composable
             override fun Loading() {
-                if (isLoading) {
+                if (state.isLoading) {
                     LottieProgress(
                         loadingRes =
                             if (isSystemInDarkTheme()) {
@@ -130,19 +143,26 @@ fun ZashiButton(
             }
         }
 
-    val borderColor = if (enabled) colors.borderColor else colors.disabledBorderColor
+    val actualColors = when (state.style) {
+        PRIMARY -> defaultPrimaryColors
+        SECONDARY -> defaultSecondaryColors
+        TERTIARY -> defaultTertiaryColors
+        DESTRUCTIVE1 -> defaultDestructive1Colors
+        DESTRUCTIVE2 -> defaultDestructive2Colors
+        null -> defaultPrimaryColors
+    }
+
+    val borderColor = if (state.isEnabled) actualColors.borderColor else actualColors.disabledBorderColor
 
     Button(
-        onClick = onClick,
+        onClick = state.onClick,
         modifier = modifier,
         shape = shape,
         contentPadding = contentPadding,
-        enabled = enabled,
-        colors = colors.toButtonColors(),
+        enabled = state.isEnabled,
+        colors = actualColors.toButtonColors(),
         border = borderColor.takeIf { it != Color.Unspecified }?.let { BorderStroke(1.dp, it) },
-        content = {
-            content(scope)
-        }
+        content = { content(scope) }
     )
 }
 
@@ -274,15 +294,27 @@ data class ZashiButtonColors(
     val disabledBorderColor: Color,
 )
 
+/**
+ * @property style explicit button style
+ */
 @Immutable
 data class ButtonState(
     val text: StringResource,
+    val style: ButtonStyle? = null,
     @DrawableRes val icon: Int? = null,
     @DrawableRes val trailingIcon: Int? = null,
     val isEnabled: Boolean = true,
     val isLoading: Boolean = false,
     val onClick: () -> Unit = {},
 )
+
+enum class ButtonStyle {
+    PRIMARY,
+    SECONDARY,
+    TERTIARY,
+    DESTRUCTIVE1,
+    DESTRUCTIVE2,
+}
 
 @Composable
 fun ZashiButtonColors.toButtonColors() =

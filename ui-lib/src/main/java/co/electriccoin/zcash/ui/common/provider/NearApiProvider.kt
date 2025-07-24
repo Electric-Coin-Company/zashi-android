@@ -27,21 +27,20 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.io.IOException
 
 typealias GetNearSupportedTokensResponse = List<NearTokenDto>
 
 interface NearApiProvider {
-    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithErrorException::class)
     suspend fun getSupportedTokens(): GetNearSupportedTokensResponse
 
-    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithErrorException::class)
     suspend fun requestQuote(request: QuoteRequest): QuoteResponseDto
 
-    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithErrorException::class)
     suspend fun submitDepositTransaction(request: SubmitDepositTransactionRequest): SwapStatusResponseDto
 
-    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithErrorException::class)
     suspend fun checkSwapStatus(depositAddress: String): SwapStatusResponseDto
 }
 
@@ -85,22 +84,11 @@ class KtorNearApiProvider : NearApiProvider {
     @Throws(ResponseException::class)
     private suspend inline fun <T> execute(
         crossinline block: suspend HttpClient.() -> T
-    ): T =
-        withContext(Dispatchers.IO) {
-            try {
-                createHttpClient().use { block(it) }
-            } catch (e: ResponseException) {
-                throw e
-            } catch (e: Exception) {
-                throw IOException(e.message, e)
-            }
-        }
+    ): T = withContext(Dispatchers.IO) { createHttpClient().use { block(it) } }
 
     private fun createHttpClient() =
         HttpClient(OkHttp) {
-            install(ContentNegotiation) {
-                json()
-            }
+            install(ContentNegotiation) { json() }
             install(Logging) {
                 logger =
                     object : Logger {

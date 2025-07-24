@@ -106,7 +106,7 @@ private fun Error(
         ZashiButton(
             state = state.negativeButton,
             modifier = Modifier.fillMaxWidth(),
-            colors = ZashiButtonDefaults.destructive1Colors()
+            defaultPrimaryColors = ZashiButtonDefaults.destructive1Colors()
         )
         ZashiButton(
             state = state.positiveButton,

@@ -82,7 +82,7 @@ fun AdvancedSettings(
                     Modifier
                         .padding(horizontal = 24.dp)
                         .fillMaxWidth(),
-                colors = ZashiButtonDefaults.destructive1Colors(),
+                defaultPrimaryColors = ZashiButtonDefaults.destructive1Colors(),
                 state = state.deleteButton
             )
         }

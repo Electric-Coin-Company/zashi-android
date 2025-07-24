@@ -169,7 +169,7 @@ private fun ColumnScope.FailureTransactionBottomBar(state: FailureTransactionSta
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
-        colors = ZashiButtonDefaults.tertiaryColors()
+        defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
     )
     Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
     ZashiButton(
@@ -212,7 +212,7 @@ private fun ColumnScope.MultipleFailuresTransactionBottomBar(state: MultipleFail
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
-        colors = ZashiButtonDefaults.tertiaryColors()
+        defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
     )
     Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
     ZashiButton(
@@ -376,7 +376,7 @@ private fun SuccessfulTransaction(
                     ),
                 modifier =
                     Modifier.wrapContentWidth(),
-                colors = ZashiButtonDefaults.tertiaryColors()
+                defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
             )
         }
     }
@@ -459,7 +459,7 @@ private fun FailureTransaction(
                     ),
                 modifier =
                     Modifier.wrapContentWidth(),
-                colors = ZashiButtonDefaults.tertiaryColors()
+                defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
             )
         }
     }

@@ -134,7 +134,7 @@ private fun ContactViewInternal(
             ZashiButton(
                 state = it,
                 modifier = Modifier.fillMaxWidth(),
-                colors = ZashiButtonDefaults.destructive1Colors()
+                defaultPrimaryColors = ZashiButtonDefaults.destructive1Colors()
             )
         }
     }

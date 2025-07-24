@@ -41,7 +41,7 @@ fun TransactionHistoryWidgetHeader(
         state.button?.let {
             ZashiButton(
                 state = it,
-                colors = ZashiButtonDefaults.tertiaryColors(),
+                defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors(),
                 style = ZashiTypography.textSm,
                 contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
                 shape = CircleShape
