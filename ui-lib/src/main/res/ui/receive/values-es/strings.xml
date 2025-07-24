@@ -1,29 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="receive_title">Recibir ZEC</string>
-    <string name="receive_prioritize_shielded">Para privacidad, utilice siempre una dirección protegida.</string>
-    <string name="receive_wallet_address_shielded">Dirección Protegida de Zcash</string>
+    <string name="receive_prioritize_shielded">Para mayor privacidad, usa siempre una dirección protegida.</string>
+    <string name="receive_wallet_address_shielded">Dirección protegida de Zcash</string>
     <string name="receive_wallet_address_sapling">Dirección Sapling de Zcash</string>
-    <string name="receive_wallet_address_transparent">Dirección Transparente de Zcash</string>
+    <string name="receive_wallet_address_transparent">Dirección transparente de Zcash</string>
     <string name="receive_copy">Copiar</string>
     <string name="receive_qr_code">Código QR</string>
     <string name="receive_request">Solicitar</string>
-    <string name="receive_clipboard_tag">Dirección de Wallet Zcash</string>
-    <string name="receive_wallet_address_shielded_keystone">Dirección Protegida de Zcash</string>
+    <string name="receive_clipboard_tag">Dirección de billetera Zcash</string>
+    <string name="receive_wallet_address_shielded_keystone">Dirección protegida de Zcash</string>
     <string name="receive_wallet_address_sapling_keystone">Dirección Sapling de Zcash</string>
-    <string name="receive_wallet_address_transparent_keystone">Dirección Transparente de Zcash</string>
+    <string name="receive_wallet_address_transparent_keystone">Dirección transparente de Zcash</string>
 
-    <string name="receive_info_shielded_title">Zcash Shielded Address (Rotating)</string>
-    <string name="receive_info_shielded_bullet_1">Use this address to receive and store your ZEC privately. Transparent and shielded ZEC sent to this address will be received and stored as shielded ZEC.</string>
-    <string name="receive_info_shielded_bullet_2">A new Zcash Shielded Address is generated each time you open the Receive screen.</string>
-    <string name="receive_info_shielded_bullet_3">All transactions sent to your different rotating Shielded Addresses will remain part of one wallet balance under the same seed phrase.</string>
-    <string name="receive_info_shielded_bullet_4">While we recommend using a new address every time, each unique address can be reused.</string>
+    <string name="receive_info_shielded_title">Dirección protegida de Zcash (rotativa)</string>
+    <string name="receive_info_shielded_bullet_1">Usa esta dirección para recibir y almacenar tus ZEC de forma privada. Los ZEC transparentes y protegidos enviados a esta dirección se recibirán y almacenarán como ZEC protegidos.</string>
+    <string name="receive_info_shielded_bullet_2">Se genera una nueva dirección protegida de Zcash cada vez que abres la pantalla de "Recibir".</string>
+    <string name="receive_info_shielded_bullet_3">Todas las transacciones enviadas a tus diferentes direcciones protegidas rotativas formarán parte de un mismo saldo de billetera vinculado a tu frase semilla.</string>
+    <string name="receive_info_shielded_bullet_4">Aunque recomendamos usar una nueva dirección cada vez, cada dirección única se puede reutilizar.</string>
 
-    <string name="receive_info_transparent_title">Zcash Transparent Address (Static)</string>
-    <string name="receive_info_transparent_bullet_1">This addresses type works just like Bitcoin addresses and offers NO PRIVACY. The details of transactions sent to this address will be public and visible on the blockchain.</string>
-    <string name="receive_info_transparent_bullet_2">We don\'t recommend using this address type unless the wallet or
-        exchange from which ZEC is being sent doesn’t support sending funds to shielded Zcash addresses.</string>
-    <string name="receive_info_transparent_bullet_3">To protect your privacy, Zashi will guide you to shield any transparent ZEC you receive with just one click.</string>
-    <string name="receive_info_transparent_bullet_4">You won\'t be able to spend your transparent ZEC until you
-        shield it.</string>
+    <string name="receive_info_transparent_title">Dirección transparente de Zcash (estática)</string>
+    <string name="receive_info_transparent_bullet_1">Este tipo de dirección funciona como una dirección de Bitcoin y NO OFRECE PRIVACIDAD. Los detalles de las transacciones enviadas a esta dirección serán públicos y visibles en la blockchain.</string>
+    <string name="receive_info_transparent_bullet_2">No recomendamos usar este tipo de dirección a menos que la billetera o casa de cambio desde donde se envían los ZEC no admita direcciones protegidas de Zcash.</string>
+    <string name="receive_info_transparent_bullet_3">Para proteger tu privacidad, Zashi te guiará para proteger cualquier ZEC transparente que recibas con un solo clic.</string>
+    <string name="receive_info_transparent_bullet_4">No podrás gastar tus ZEC transparentes hasta que los protejas.</string>
 </resources>

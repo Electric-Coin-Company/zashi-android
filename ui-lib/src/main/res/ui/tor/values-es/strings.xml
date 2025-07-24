@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tor_settings_title">Enable Tor Connection</string>
-    <string name="tor_settings_subtitle">This beta feature provides additional protections for your IP address. If Tor is permitted in your region, we recommend enabling it. You can manage this in Advanced Settings.</string>
-    <string name="tor_settings_item_subtitle_1">Protect my IP address.</string>
-    <string name="tor_settings_item_subtitle_2">Don’t protect my IP address.</string>
-    <string name="tor_opt_in_item_title_1">Currency Conversion</string>
-    <string name="tor_opt_in_item_subtitle_1">Fetch exchange rates from third-party servers without revealing your IP address. (Only available with Tor enabled.)</string>
-    <string name="tor_opt_in_item_title_2">Transactions</string>
-    <string name="tor_opt_in_item_subtitle_2">Send and retrieve transaction data over Tor for added privacy.</string>
-    <string name="tor_opt_in_item_title_3">Integrations</string>
-    <string name="tor_opt_in_item_subtitle_3">Access third-party APIs (e.g. NEAR) over Tor for added privacy.</string>
+    <string name="tor_settings_title">Protección con Tor</string>
+    <string name="tor_settings_subtitle">Esta función beta ofrece protecciones adicionales para tu dirección IP. Utiliza Tor para obtener tasas de cambio, enviar transacciones, recuperar datos de transacciones y conectarse a APIs de terceros (por ejemplo, NEAR). Si Tor está permitido en tu región, recomendamos activarlo.\n\nNota: Las tasas de cambio solo están disponibles cuando esta función está activada.</string>
+    
+    <string name="tor_settings_item_subtitle_1">Conectarse a través de Tor</string>
+    <string name="tor_settings_item_subtitle_2">No conectarse a través de Tor</string>
 
-    <string name="tor_opt_in_btn">Opt in</string>
-    <string name="tor_opt_out_btn">Opt out</string>
+    <string name="tor_opt_in_item_title_1">Conversión de moneda</string>
+    <string name="tor_opt_in_item_subtitle_1">Obtener tasas de cambio desde servidores de terceros sin revelar tu dirección IP. (Solo disponible con Tor activado).</string>
+
+    <string name="tor_opt_in_item_title_2">Transacciones</string>
+    <string name="tor_opt_in_item_subtitle_2">Enviar y recuperar datos de transacciones a través de Tor para mayor privacidad.</string>
+
+    <string name="tor_opt_in_item_title_3">Integraciones</string>
+    <string name="tor_opt_in_item_subtitle_3">Acceder a APIs de terceros (por ejemplo, NEAR) mediante Tor para mayor privacidad.</string>
+
+    <string name="tor_opt_in_btn">Activar</string>
+    <string name="tor_opt_out_btn">Desactivar</string>
 </resources>
