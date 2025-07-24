@@ -34,7 +34,7 @@ class ExchangeRateTorSettingsVM(
 
     private fun onNegativeClick() = navigationRouter.back()
 
-    private fun onPositiveClick() = viewModelScope.launch { optInExchangeRateAndTor() }
+    private fun onPositiveClick() = viewModelScope.launch { optInExchangeRateAndTor(true) }
 
     private fun onBack() = navigationRouter.back()
 }

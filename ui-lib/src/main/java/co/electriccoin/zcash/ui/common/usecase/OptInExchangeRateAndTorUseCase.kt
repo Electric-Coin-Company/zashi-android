@@ -10,9 +10,12 @@ class OptInExchangeRateAndTorUseCase(
     private val navigationRouter: NavigationRouter,
     private val walletRepository: WalletRepository
 ) {
-    suspend operator fun invoke() {
-        exchangeRateRepository.optInExchangeRateUsd(true)
-        walletRepository.enableTor(true)
-        navigationRouter.backTo(AdvancedSettingsArgs::class)
+    suspend operator fun invoke(
+        optIn: Boolean,
+        onFinish: NavigationRouter.() -> Unit = { backTo(AdvancedSettingsArgs::class) }
+    ) {
+        exchangeRateRepository.optInExchangeRateUsd(optIn)
+        walletRepository.enableTor(optIn)
+        navigationRouter.onFinish()
     }
 }

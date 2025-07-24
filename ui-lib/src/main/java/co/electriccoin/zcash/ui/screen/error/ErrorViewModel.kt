@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SubmitResult
-import co.electriccoin.zcash.ui.common.usecase.EnableTorUseCase
 import co.electriccoin.zcash.ui.common.usecase.ErrorArgs
 import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
+import co.electriccoin.zcash.ui.common.usecase.OptInExchangeRateAndTorUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.STACKTRACE_LIMIT
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -25,7 +25,7 @@ class ErrorViewModel(
     private val navigateToErrorBottom: NavigateToErrorUseCase,
     private val navigationRouter: NavigationRouter,
     private val sendEmailUseCase: SendEmailUseCase,
-    private val enableTorUseCase: EnableTorUseCase,
+    private val optInExchangeRateAndTor: OptInExchangeRateAndTorUseCase
 ) : ViewModel() {
     val state: StateFlow<ErrorState> = MutableStateFlow(createState(args)).asStateFlow()
 
@@ -52,7 +52,7 @@ class ErrorViewModel(
             positive =
                 ButtonState(
                     text = stringRes(R.string.error_tor_negative),
-                    onClick = { viewModelScope.launch { enableTorUseCase(false) } }
+                    onClick = { viewModelScope.launch { optInExchangeRateAndTor(false) { back() } } }
                 ),
             negative =
                 ButtonState(

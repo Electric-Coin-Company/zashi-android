@@ -13,7 +13,6 @@ import co.electriccoin.zcash.ui.common.usecase.CreateProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeleteTransactionNoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddressUseCase
-import co.electriccoin.zcash.ui.common.usecase.EnableTorUseCase
 import co.electriccoin.zcash.ui.common.usecase.ExportTaxUseCase
 import co.electriccoin.zcash.ui.common.usecase.FlipTransactionBookmarkUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCoinbaseStatusUseCase
@@ -187,7 +186,6 @@ val useCaseModule =
         factoryOf(::NavigateToReceiveUseCase)
         factoryOf(::NavigateToRequestShieldedUseCase)
         factoryOf(::IsTorEnabledUseCase)
-        factoryOf(::EnableTorUseCase)
         factoryOf(::OptInExchangeRateUseCase)
         factoryOf(::OptInExchangeRateAndTorUseCase)
     }
