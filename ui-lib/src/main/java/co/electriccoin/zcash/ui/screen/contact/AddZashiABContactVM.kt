@@ -7,9 +7,9 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.usecase.ContactAddressValidationResult
 import co.electriccoin.zcash.ui.common.usecase.SaveABContactUseCase
-import co.electriccoin.zcash.ui.common.usecase.ValidateABContactAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateZashiABContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameResult
-import co.electriccoin.zcash.ui.common.usecase.ValidateABContactNameUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateGenericABContactNameUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -25,13 +25,14 @@ import kotlinx.coroutines.launch
 
 class AddZashiABContactVM(
     args: AddZashiABContactArgs,
-    private val validateContactAddress: ValidateABContactAddressUseCase,
-    private val validateContactName: ValidateABContactNameUseCase,
+    private val validateContactAddress: ValidateZashiABContactAddressUseCase,
+    private val validateContactName: ValidateGenericABContactNameUseCase,
     private val saveContact: SaveABContactUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     private val contactAddress = MutableStateFlow(args.address.orEmpty())
     private val contactName = MutableStateFlow("")
+    private val isSavingContact = MutableStateFlow(false)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val contactAddressError =
@@ -101,8 +102,6 @@ class AddZashiABContactVM(
                 }
             )
         }
-
-    private val isSavingContact = MutableStateFlow(false)
 
     private val saveButtonState =
         combine(contactAddressState, contactNameState, isSavingContact) { address, name, isSavingContact ->

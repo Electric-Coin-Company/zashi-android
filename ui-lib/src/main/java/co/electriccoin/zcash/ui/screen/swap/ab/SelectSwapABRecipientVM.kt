@@ -10,7 +10,6 @@ import co.electriccoin.zcash.ui.common.usecase.GetABSwapContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanSwapAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.imageRes
@@ -19,7 +18,6 @@ import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookItem
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookState
 import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs
-import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -76,10 +74,8 @@ class SelectSwapABRecipientVM(
                     text = stringRes(R.string.address_book_scan_btn)
                 ),
             title = stringRes(R.string.address_book_select_recipient_title),
-            info = IconButtonState(R.drawable.ic_help, onClick = ::onInfoClick)
+            info = null
         )
-
-    private fun onInfoClick() = navigationRouter.forward(SwapInfoArgs)
 
     private fun getContactInitials(contact: ContactWithSwapAsset): ImageResource =
         imageRes(

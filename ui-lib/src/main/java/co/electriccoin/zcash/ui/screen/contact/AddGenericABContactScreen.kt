@@ -11,12 +11,12 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun UpdateZashiABContactScreen(args: UpdateZashiABContactArgs) {
-    val viewModel = koinViewModel<UpdateZashiABContactVM> { parametersOf(args) }
-    val state by viewModel.state.collectAsStateWithLifecycle()
+internal fun AddGenericABContactScreen(args: AddGenericABContactArgs) {
+    val vm = koinViewModel<AddGenericABContactVM> { parametersOf(args) }
+    val state by vm.state.collectAsStateWithLifecycle()
     BackHandler(state != null) { state?.onBack?.invoke() }
     state?.let { ABContactView(state = it) }
 }
 
 @Serializable
-data class UpdateZashiABContactArgs(val address: String)
+data class AddGenericABContactArgs(val address: String?, val chain: String?)

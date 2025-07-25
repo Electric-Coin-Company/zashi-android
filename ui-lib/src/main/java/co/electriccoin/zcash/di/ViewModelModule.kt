@@ -11,8 +11,9 @@ import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsViewMode
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
+import co.electriccoin.zcash.ui.screen.contact.AddGenericABContactVM
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactVM
-import co.electriccoin.zcash.ui.screen.contact.UpdateZashiABContactVM
+import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactVM
 import co.electriccoin.zcash.ui.screen.crashreporting.viewmodel.CrashReportingViewModel
 import co.electriccoin.zcash.ui.screen.error.ErrorViewModel
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInViewModel
@@ -47,7 +48,6 @@ import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.swap.SwapVM
 import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactVM
 import co.electriccoin.zcash.ui.screen.swap.ab.SelectSwapABRecipientVM
-import co.electriccoin.zcash.ui.screen.swap.ab.UpdateSwapABContactVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerVM
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteVM
@@ -79,8 +79,6 @@ val viewModelModule =
         viewModelOf(::RestoreSuccessViewModel)
         viewModelOf(::WhatsNewViewModel)
         viewModelOf(::ChooseServerViewModel)
-        viewModelOf(::AddZashiABContactVM)
-        viewModelOf(::UpdateZashiABContactVM)
         viewModelOf(::ReceiveViewModel)
         viewModelOf(::QrCodeViewModel)
         viewModelOf(::RequestViewModel)
@@ -128,7 +126,9 @@ val viewModelModule =
         viewModelOf(::SwapQuoteVM)
         viewModelOf(::ScanSwapAddressVM)
         viewModelOf(::SelectSwapABRecipientVM)
-        viewModelOf(::AddSwapABContactVM)
         viewModelOf(::SwapBlockchainPickerVM)
-        viewModelOf(::UpdateSwapABContactVM)
+        viewModelOf(::AddZashiABContactVM)
+        viewModelOf(::AddSwapABContactVM)
+        viewModelOf(::AddGenericABContactVM)
+        viewModelOf(::UpdateGenericABContactVM)
     }

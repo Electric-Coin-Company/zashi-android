@@ -11,6 +11,8 @@ interface BlockchainProvider {
     fun getBlockchain(ticker: String): SwapAssetBlockchain
 
     fun getHardcodedBlockchains(): List<SwapAssetBlockchain>
+
+    fun getZcashBlockchain(): SwapAssetBlockchain
 }
 
 class BlockchainProviderImpl(
@@ -37,6 +39,7 @@ class BlockchainProviderImpl(
                 "pol" -> stringRes("Polygon")
                 "ton" -> stringRes("TON")
                 "sui" -> stringRes("SUI")
+                "zec" -> stringRes("ZEC")
                 else -> stringRes(ticker)
             },
             chainIcon = getChainIcon(ticker)
@@ -68,4 +71,6 @@ class BlockchainProviderImpl(
             "xrp",
         ).map { getBlockchain(it) }
     }
+
+    override fun getZcashBlockchain(): SwapAssetBlockchain = getBlockchain("zec")
 }

@@ -111,12 +111,11 @@ import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateABContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateSwapModeUseCase
-import co.electriccoin.zcash.ui.common.usecase.ValidateABContactAddressUseCase
-import co.electriccoin.zcash.ui.common.usecase.ValidateABContactNameUseCase
-import co.electriccoin.zcash.ui.common.usecase.ValidateABSwapContactAddressUseCase
-import co.electriccoin.zcash.ui.common.usecase.ValidateABSwapContactNameUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateGenericABContactNameUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateSeedUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateSwapABContactAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateZashiABContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionDetailAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
@@ -140,8 +139,8 @@ val useCaseModule =
         factoryOf(::GetConfigurationUseCase)
         factoryOf(::RescanBlockchainUseCase)
         factoryOf(::GetTransparentAddressUseCase)
-        factoryOf(::ValidateABContactAddressUseCase)
-        factoryOf(::ValidateABContactNameUseCase)
+        factoryOf(::ValidateZashiABContactAddressUseCase)
+        factoryOf(::ValidateGenericABContactNameUseCase)
         factoryOf(::SaveABContactUseCase)
         factoryOf(::UpdateABContactUseCase)
         factoryOf(::DeleteABContactUseCase)
@@ -248,6 +247,5 @@ val useCaseModule =
         singleOf(::NavigateToSelectABSwapRecipientUseCase)
         factoryOf(::GetSwapAssetBlockchainUseCase)
         singleOf(::NavigateToSelectSwapBlockchainUseCase)
-        factoryOf(::ValidateABSwapContactNameUseCase)
-        factoryOf(::ValidateABSwapContactAddressUseCase)
+        factoryOf(::ValidateSwapABContactAddressUseCase)
     }

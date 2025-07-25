@@ -5,17 +5,17 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.GetABContactsUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
-import co.electriccoin.zcash.ui.screen.contact.UpdateZashiABContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddGenericABContactArgs
+import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
-import co.electriccoin.zcash.ui.screen.swap.ab.UpdateSwapABContactArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -24,9 +24,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class AddressBookViewModel(
+    blockchainProvider: BlockchainProvider,
     getAddressBookContacts: GetABContactsUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
+
+    private val zcashBlockchain = blockchainProvider.getZcashBlockchain()
+
     val state =
         getAddressBookContacts.observe(zcashContactsOnly = false)
             .map { contacts -> createState(contacts = contacts) }
@@ -46,7 +50,7 @@ class AddressBookViewModel(
                         AddressBookItem.Contact(
                             ContactListItemState(
                                 bigIcon = getContactInitials(contact),
-                                smallIcon = null,
+                                smallIcon = contact.blockchain?.chainIcon ?: zcashBlockchain.chainIcon,
                                 isShielded = false,
                                 name = stringRes(contact.name),
                                 address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
@@ -82,19 +86,15 @@ class AddressBookViewModel(
     private fun onBack() = navigationRouter.back()
 
     private fun onContactClick(contact: EnhancedABContact) {
-        if (contact.blockchain == null) {
-            navigationRouter.forward(UpdateZashiABContactArgs(address = contact.address))
-        } else {
-            navigationRouter.forward(
-                UpdateSwapABContactArgs(
-                    address = contact.address,
-                    chain = contact.blockchain.chainTicker
-                )
+        navigationRouter.forward(
+            UpdateGenericABContactArgs(
+                address = contact.address,
+                chain = contact.blockchain?.chainTicker
             )
-        }
+        )
     }
 
-    private fun onAddContactManuallyClick() = navigationRouter.forward(AddZashiABContactArgs(null))
+    private fun onAddContactManuallyClick() = navigationRouter.forward(AddGenericABContactArgs(null, null))
 
     private fun onScanContactClick() = navigationRouter.forward(ScanArgs(ScanFlow.ADDRESS_BOOK))
 }

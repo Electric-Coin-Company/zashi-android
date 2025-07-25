@@ -5,7 +5,7 @@ import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 
-class ValidateABContactNameUseCase(
+class ValidateGenericABContactNameUseCase(
     private val addressBookRepository: AddressBookRepository
 ) {
     suspend operator fun invoke(

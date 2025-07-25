@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap.ab
+package co.electriccoin.zcash.ui.screen.contact
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,21 +6,22 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
+import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.ContactAddressValidationResult
 import co.electriccoin.zcash.ui.common.usecase.DeleteABContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABContactByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateABContactUseCase
-import co.electriccoin.zcash.ui.common.usecase.ValidateABSwapContactAddressUseCase
-import co.electriccoin.zcash.ui.common.usecase.ValidateABSwapContactNameUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateSwapABContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameResult
+import co.electriccoin.zcash.ui.common.usecase.ValidateGenericABContactNameUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateZashiABContactAddressUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.PickerState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.combine
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.contact.ABContactState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -30,16 +31,21 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class UpdateSwapABContactVM(
-    private val args: UpdateSwapABContactArgs,
-    private val validateSwapContactAddress: ValidateABSwapContactAddressUseCase,
-    private val validateSwapContactName: ValidateABSwapContactNameUseCase,
+class UpdateGenericABContactVM(
+    blockchainProvider: BlockchainProvider,
+    private val args: UpdateGenericABContactArgs,
+    private val validateGenericABContactName: ValidateGenericABContactNameUseCase,
     private val updateContact: UpdateABContactUseCase,
     private val deleteContact: DeleteABContactUseCase,
     private val getContactByAddress: GetABContactByIdUseCase,
     private val navigationRouter: NavigationRouter,
-    private val navigateToSelectSwapBlockchain: NavigateToSelectSwapBlockchainUseCase
+    private val navigateToSelectSwapBlockchain: NavigateToSelectSwapBlockchainUseCase,
+    private val validateZashiABContactAddress: ValidateZashiABContactAddressUseCase,
+    private val validateSwapABContactAddress: ValidateSwapABContactAddressUseCase,
 ) : ViewModel() {
+
+    private val zcashBlockchain = blockchainProvider.getZcashBlockchain()
+
     private val originalContact = MutableStateFlow<EnhancedABContact?>(null)
     private val contactAddress = MutableStateFlow("")
     private val contactName = MutableStateFlow("")
@@ -55,49 +61,60 @@ class UpdateSwapABContactVM(
                 bigIcon = it?.chainIcon,
                 smallIcon = null,
                 text = it?.chainName,
+                isEnabled = it != zcashBlockchain,
                 placeholder = stringRes("Select..."),
                 onClick = ::onBlockchainClick
             )
         }
 
-    private val contactAddressError =
-        combine(originalContact, contactAddress, selectedBlockchain) { contact, address, blockchain ->
-            if (address.isEmpty() || contact == null) {
-                null
+    private val addressZashiValidation = combine(contactAddress, originalContact) { address, contact ->
+        if (address.isEmpty()) null else validateZashiABContactAddress(address, contact)
+    }
+
+    private val addressSwapValidation = combine(
+        contactAddress,
+        selectedBlockchain,
+        originalContact
+    ) { address, blockchain, contact ->
+        if (address.isEmpty()) null else validateSwapABContactAddress(address, blockchain, contact)
+    }
+
+    private val addressValidation =
+        combine(
+            addressZashiValidation,
+            addressSwapValidation,
+            selectedBlockchain
+        ) { zashiValidation,
+            swapValidation,
+            blockchain ->
+            val validation = if (blockchain == null || blockchain == zcashBlockchain) {
+                zashiValidation
             } else {
-                when (validateSwapContactAddress(address, blockchain, contact)) {
-                    ContactAddressValidationResult.Invalid ->
-                        stringRes(R.string.contact_address_error_invalid)
-
-                    ContactAddressValidationResult.NotUnique ->
-                        stringRes(R.string.contact_address_error_not_unique)
-
-                    ContactAddressValidationResult.Valid -> null
-                }
+                swapValidation
             }
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
+            when (validation) {
+                ContactAddressValidationResult.Invalid -> stringRes(R.string.contact_address_error_invalid)
+                ContactAddressValidationResult.NotUnique -> stringRes(R.string.contact_address_error_not_unique)
+                ContactAddressValidationResult.Valid -> null
+                null -> null
+            }
+        }
 
-    private val contactAddressState =
-        combine(contactAddress, contactAddressError) { address, contactAddressError ->
+    private val addressState =
+        combine(contactAddress, addressValidation) { address, contactAddressError ->
             TextFieldState(
                 value = stringRes(address),
                 error = contactAddressError,
-                onValueChange = { newValue ->
-                    contactAddress.update { newValue }
-                }
+                onValueChange = ::onAddressChange
             )
         }
 
-    private val contactNameError =
+    private val nameError =
         combine(contactName, originalContact) { name, contact ->
             if (name.isEmpty() || contact == null) {
                 null
             } else {
-                when (validateSwapContactName(name = name, exclude = contact)) {
+                when (validateGenericABContactName(name = name, exclude = contact)) {
                     ValidateContactNameResult.TooLong ->
                         stringRes(R.string.contact_name_error_too_long)
 
@@ -109,8 +126,8 @@ class UpdateSwapABContactVM(
             }
         }
 
-    private val contactNameState =
-        combine(contactName, contactNameError) { name, contactNameError ->
+    private val nameState =
+        combine(contactName, nameError) { name, contactNameError ->
             TextFieldState(
                 value = stringRes(name),
                 error = contactNameError,
@@ -122,8 +139,8 @@ class UpdateSwapABContactVM(
 
     private val updateButtonState =
         combine(
-            contactAddressState,
-            contactNameState,
+            addressState,
+            nameState,
             isUpdatingContact,
             originalContact,
             selectedBlockchain
@@ -135,7 +152,11 @@ class UpdateSwapABContactVM(
             ->
             val nameChanged = contactName.value.trim() != contact?.name
             val addressChanged = contactAddress.value.trim() != contact?.address
-            val blockchainChanged = blockchain != contact?.blockchain
+            val blockchainChanged = if (contact?.blockchain == null) {
+                blockchain != zcashBlockchain
+            } else {
+                blockchain != contact.blockchain
+            }
             ButtonState(
                 text = stringRes(R.string.update_contact_primary_btn),
                 isEnabled =
@@ -160,8 +181,8 @@ class UpdateSwapABContactVM(
 
     val state =
         combine(
-            contactAddressState,
-            contactNameState,
+            addressState,
+            nameState,
             updateButtonState,
             deleteButtonState,
             isLoadingContact,
@@ -190,8 +211,21 @@ class UpdateSwapABContactVM(
             contactAddress.update { contact?.address.orEmpty() }
             contactName.update { contact?.name.orEmpty() }
             originalContact.update { contact }
-            selectedBlockchain.update { contact?.blockchain }
+            selectedBlockchain.update { contact?.blockchain ?: zcashBlockchain }
             isLoadingContact.update { false }
+        }
+    }
+
+    private fun onAddressChange(newValue: String) = viewModelScope.launch {
+        contactAddress.update { newValue.trim() }
+
+        val validation = validateZashiABContactAddress(newValue, originalContact.value)
+        if (validation == ContactAddressValidationResult.Valid ||
+            validation == ContactAddressValidationResult.NotUnique
+        ) {
+            selectedBlockchain.update { zcashBlockchain }
+        } else if (selectedBlockchain.value == zcashBlockchain) {
+            selectedBlockchain.update { null }
         }
     }
 
@@ -201,13 +235,13 @@ class UpdateSwapABContactVM(
         viewModelScope.launch {
             val selectedBlockchain = selectedBlockchain.value
             if (isDeletingContact.value || isUpdatingContact.value || selectedBlockchain == null) return@launch
-            originalContact.value?.let {
+            originalContact.value?.let { original ->
                 isUpdatingContact.update { true }
                 updateContact(
-                    contact = it,
+                    contact = original,
                     name = contactName.value,
                     address = contactAddress.value,
-                    chain = selectedBlockchain.chainTicker
+                    chain = selectedBlockchain.takeIf { it != zcashBlockchain }?.chainTicker
                 )
                 navigationRouter.back()
                 isUpdatingContact.update { false }

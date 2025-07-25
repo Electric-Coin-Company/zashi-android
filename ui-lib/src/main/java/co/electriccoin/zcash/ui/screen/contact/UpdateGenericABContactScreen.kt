@@ -1,23 +1,22 @@
 @file:Suppress("ktlint:standard:filename")
 
-package co.electriccoin.zcash.ui.screen.swap.ab
+package co.electriccoin.zcash.ui.screen.contact
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.ui.screen.contact.ABContactView
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun UpdateSwapABContactScreen(args: UpdateSwapABContactArgs) {
-    val viewModel = koinViewModel<UpdateSwapABContactVM> { parametersOf(args) }
+internal fun UpdateGenericABContactScreen(args: UpdateGenericABContactArgs) {
+    val viewModel = koinViewModel<UpdateGenericABContactVM> { parametersOf(args) }
     val state by viewModel.state.collectAsStateWithLifecycle()
     BackHandler(state != null) { state?.onBack?.invoke() }
     state?.let { ABContactView(state = it) }
 }
 
 @Serializable
-data class UpdateSwapABContactArgs(val address: String, val chain: String)
+data class UpdateGenericABContactArgs(val address: String, val chain: String?)
