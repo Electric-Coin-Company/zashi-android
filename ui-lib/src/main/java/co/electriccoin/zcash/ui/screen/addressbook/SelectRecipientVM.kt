@@ -17,7 +17,7 @@ import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.contact.AddABContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import kotlinx.coroutines.Dispatchers
@@ -180,7 +180,7 @@ class SelectRecipientVM(
             navigationRouter.back()
         }
 
-    private fun onAddContactManuallyClick() = navigationRouter.forward(AddABContactArgs(null))
+    private fun onAddContactManuallyClick() = navigationRouter.forward(AddZashiABContactArgs(null))
 
     private fun onScanContactClick() = navigationRouter.forward(ScanArgs(ScanFlow.ADDRESS_BOOK))
 }

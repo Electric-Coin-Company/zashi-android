@@ -11,11 +11,11 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.contact.AddABContactArgs
-import co.electriccoin.zcash.ui.screen.contact.UpdateABContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
+import co.electriccoin.zcash.ui.screen.contact.UpdateZashiABContactArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
-import co.electriccoin.zcash.ui.screen.swap.ab.UpdateABSwapContactArgs
+import co.electriccoin.zcash.ui.screen.swap.ab.UpdateSwapABContactArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -83,10 +83,10 @@ class AddressBookViewModel(
 
     private fun onContactClick(contact: EnhancedABContact) {
         if (contact.blockchain == null) {
-            navigationRouter.forward(UpdateABContactArgs(address = contact.address))
+            navigationRouter.forward(UpdateZashiABContactArgs(address = contact.address))
         } else {
             navigationRouter.forward(
-                UpdateABSwapContactArgs(
+                UpdateSwapABContactArgs(
                     address = contact.address,
                     chain = contact.blockchain.chainTicker
                 )
@@ -94,7 +94,7 @@ class AddressBookViewModel(
         }
     }
 
-    private fun onAddContactManuallyClick() = navigationRouter.forward(AddABContactArgs(null))
+    private fun onAddContactManuallyClick() = navigationRouter.forward(AddZashiABContactArgs(null))
 
     private fun onScanContactClick() = navigationRouter.forward(ScanArgs(ScanFlow.ADDRESS_BOOK))
 }

@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class SelectABSwapRecipientVM(
+class SelectSwapABRecipientVM(
     getAddressBookSwapContacts: GetABSwapContactsUseCase,
     private val args: SelectABSwapRecipientArgs,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
@@ -98,7 +98,7 @@ class SelectABSwapRecipientVM(
         viewModelScope.launch { navigateToSelectSwapRecipient.onSelected(contact, args) }
 
     private fun onAddContactManuallyClick() = navigationRouter.forward(
-        AddABSwapContactArgs(
+        AddSwapABContactArgs(
             address = null,
             chain = null
         )

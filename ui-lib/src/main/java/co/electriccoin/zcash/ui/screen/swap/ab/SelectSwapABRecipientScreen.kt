@@ -11,8 +11,8 @@ import org.koin.core.parameter.parametersOf
 import java.util.UUID
 
 @Composable
-fun SelectABSwapRecipientScreen(args: SelectABSwapRecipientArgs) {
-    val viewModel = koinViewModel<SelectABSwapRecipientVM> { parametersOf(args) }
+fun SelectSwapABRecipientScreen(args: SelectABSwapRecipientArgs) {
+    val viewModel = koinViewModel<SelectSwapABRecipientVM> { parametersOf(args) }
     val state by viewModel.state.collectAsStateWithLifecycle()
     BackHandler { state.onBack() }
     AddressBookView(state = state)

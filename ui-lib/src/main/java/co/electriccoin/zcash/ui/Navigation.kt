@@ -58,10 +58,10 @@ import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalance
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
 import co.electriccoin.zcash.ui.screen.connectkeystone.AndroidConnectKeystone
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
-import co.electriccoin.zcash.ui.screen.contact.AddABContactArgs
-import co.electriccoin.zcash.ui.screen.contact.AddABContactScreen
-import co.electriccoin.zcash.ui.screen.contact.UpdateABContactArgs
-import co.electriccoin.zcash.ui.screen.contact.UpdateABContactScreen
+import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactScreen
+import co.electriccoin.zcash.ui.screen.contact.UpdateZashiABContactArgs
+import co.electriccoin.zcash.ui.screen.contact.UpdateZashiABContactScreen
 import co.electriccoin.zcash.ui.screen.crashreporting.AndroidCrashReportingOptIn
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
 import co.electriccoin.zcash.ui.screen.error.AndroidErrorBottomSheet
@@ -123,12 +123,12 @@ import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeysto
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.swap.SwapArgs
 import co.electriccoin.zcash.ui.screen.swap.SwapScreen
-import co.electriccoin.zcash.ui.screen.swap.ab.AddABSwapContactArgs
-import co.electriccoin.zcash.ui.screen.swap.ab.AddABSwapContactScreen
+import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactArgs
+import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactScreen
 import co.electriccoin.zcash.ui.screen.swap.ab.SelectABSwapRecipientArgs
-import co.electriccoin.zcash.ui.screen.swap.ab.SelectABSwapRecipientScreen
-import co.electriccoin.zcash.ui.screen.swap.ab.UpdateABSwapContactArgs
-import co.electriccoin.zcash.ui.screen.swap.ab.UpdateABSwapContactScreen
+import co.electriccoin.zcash.ui.screen.swap.ab.SelectSwapABRecipientScreen
+import co.electriccoin.zcash.ui.screen.swap.ab.UpdateSwapABContactArgs
+import co.electriccoin.zcash.ui.screen.swap.ab.UpdateSwapABContactScreen
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoScreen
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
@@ -306,8 +306,8 @@ internal fun MainActivity.Navigation() {
         }
         composable<AddressBookArgs> { AddressBookScreen() }
         composable<SelectRecipientArgs> { SelectRecipientScreen() }
-        composable<AddABContactArgs> { AddABContactScreen(it.toRoute()) }
-        composable<UpdateABContactArgs> { UpdateABContactScreen(it.toRoute()) }
+        composable<AddZashiABContactArgs> { AddZashiABContactScreen(it.toRoute()) }
+        composable<UpdateZashiABContactArgs> { UpdateZashiABContactScreen(it.toRoute()) }
         composable(
             route = "$QR_CODE/{$ADDRESS_TYPE}",
             arguments = listOf(navArgument(ADDRESS_TYPE) { type = NavType.IntType })
@@ -353,9 +353,9 @@ internal fun MainActivity.Navigation() {
         dialogComposable<SwapInfoArgs> { SwapInfoScreen() }
         dialogComposable<SwapQuoteArgs> { SwapQuoteScreen() }
         composable<ScanSwapAddressArgs> { ScanSwapAddressScreen(it.toRoute()) }
-        composable<SelectABSwapRecipientArgs> { SelectABSwapRecipientScreen(it.toRoute()) }
-        composable<AddABSwapContactArgs> { AddABSwapContactScreen(it.toRoute()) }
-        composable<UpdateABSwapContactArgs> { UpdateABSwapContactScreen(it.toRoute()) }
+        composable<SelectABSwapRecipientArgs> { SelectSwapABRecipientScreen(it.toRoute()) }
+        composable<AddSwapABContactArgs> { AddSwapABContactScreen(it.toRoute()) }
+        composable<UpdateSwapABContactArgs> { UpdateSwapABContactScreen(it.toRoute()) }
     }
 }
 

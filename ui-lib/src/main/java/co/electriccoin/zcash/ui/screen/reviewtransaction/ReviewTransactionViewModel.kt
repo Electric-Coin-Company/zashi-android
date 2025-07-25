@@ -23,7 +23,7 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
-import co.electriccoin.zcash.ui.screen.contact.AddABContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
 import co.electriccoin.zcash.ui.util.Quadruple
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -243,5 +243,5 @@ class ReviewTransactionViewModel(
 
     private fun onConfirmClick() = viewModelScope.launch { confirmProposal() }
 
-    private fun onAddContactClick(address: String) = navigationRouter.forward(AddABContactArgs(address))
+    private fun onAddContactClick(address: String) = navigationRouter.forward(AddZashiABContactArgs(address))
 }

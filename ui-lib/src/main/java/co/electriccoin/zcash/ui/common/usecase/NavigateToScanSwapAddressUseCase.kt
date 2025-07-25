@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.screen.swap.ab.AddABSwapContactArgs
+import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactArgs
 import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs
 import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs.Mode.*
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -47,7 +47,7 @@ class NavigateToScanSwapAddressUseCase(
         when (args.mode) {
             SWAP_SCAN_DESTINATION_ADDRESS -> navigationRouter.back()
             SWAP_SCAN_CONTACT_ADDRESS -> navigationRouter.replace(
-                AddABSwapContactArgs(
+                AddSwapABContactArgs(
                     address = address,
                     chain = null
                 )

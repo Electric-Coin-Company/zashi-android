@@ -12,7 +12,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveABContactPickedUseCase
-import co.electriccoin.zcash.ui.screen.contact.AddABContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
 import co.electriccoin.zcash.ui.screen.send.model.AmountField
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
@@ -115,7 +115,7 @@ class SendViewModel(
     private fun onAddressBookButtonClicked(mode: SendAddressBookState.Mode, recipient: RecipientAddressState) {
         when (mode) {
             SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK -> viewModelScope.launch { navigateToSelectRecipient() }
-            SendAddressBookState.Mode.ADD_TO_ADDRESS_BOOK -> navigationRouter.forward(AddABContactArgs(recipient.address))
+            SendAddressBookState.Mode.ADD_TO_ADDRESS_BOOK -> navigationRouter.forward(AddZashiABContactArgs(recipient.address))
         }
     }
 

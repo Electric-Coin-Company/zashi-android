@@ -1,21 +1,26 @@
-package co.electriccoin.zcash.ui.screen.contact
+package co.electriccoin.zcash.ui.screen.swap.ab
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.ContactAddressValidationResult
 import co.electriccoin.zcash.ui.common.usecase.DeleteABContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABContactByIdUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateABContactUseCase
-import co.electriccoin.zcash.ui.common.usecase.ValidateABContactAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateABSwapContactAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateABSwapContactNameUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameResult
-import co.electriccoin.zcash.ui.common.usecase.ValidateABContactNameUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.PickerState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
+import co.electriccoin.zcash.ui.design.util.combine
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.contact.ABContactState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -25,29 +30,42 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class UpdateABContactVM(
-    private val args: UpdateABContactArgs,
-    private val validateContactAddress: ValidateABContactAddressUseCase,
-    private val validateContactName: ValidateABContactNameUseCase,
+class UpdateSwapABContactVM(
+    private val args: UpdateSwapABContactArgs,
+    private val validateSwapContactAddress: ValidateABSwapContactAddressUseCase,
+    private val validateSwapContactName: ValidateABSwapContactNameUseCase,
     private val updateContact: UpdateABContactUseCase,
     private val deleteContact: DeleteABContactUseCase,
     private val getContactByAddress: GetABContactByIdUseCase,
     private val navigationRouter: NavigationRouter,
+    private val navigateToSelectSwapBlockchain: NavigateToSelectSwapBlockchainUseCase
 ) : ViewModel() {
-    private val contact = MutableStateFlow<EnhancedABContact?>(null)
+    private val originalContact = MutableStateFlow<EnhancedABContact?>(null)
     private val contactAddress = MutableStateFlow("")
     private val contactName = MutableStateFlow("")
+    private val selectedBlockchain = MutableStateFlow<SwapAssetBlockchain?>(null)
 
     private val isUpdatingContact = MutableStateFlow(false)
     private val isDeletingContact = MutableStateFlow(false)
     private val isLoadingContact = MutableStateFlow(true)
 
+    private val blockChainPickerState = selectedBlockchain
+        .map {
+            PickerState(
+                bigIcon = it?.chainIcon,
+                smallIcon = null,
+                text = it?.chainName,
+                placeholder = stringRes("Select..."),
+                onClick = ::onBlockchainClick
+            )
+        }
+
     private val contactAddressError =
-        combine(contact, contactAddress) { contact, address ->
+        combine(originalContact, contactAddress, selectedBlockchain) { contact, address, blockchain ->
             if (address.isEmpty() || contact == null) {
                 null
             } else {
-                when (validateContactAddress(address = address, exclude = contact)) {
+                when (validateSwapContactAddress(address, blockchain, contact)) {
                     ContactAddressValidationResult.Invalid ->
                         stringRes(R.string.contact_address_error_invalid)
 
@@ -75,11 +93,11 @@ class UpdateABContactVM(
         }
 
     private val contactNameError =
-        combine(contactName, contact) { name, contact ->
+        combine(contactName, originalContact) { name, contact ->
             if (name.isEmpty() || contact == null) {
                 null
             } else {
-                when (validateContactName(name = name, exclude = contact)) {
+                when (validateSwapContactName(name = name, exclude = contact)) {
                     ValidateContactNameResult.TooLong ->
                         stringRes(R.string.contact_name_error_too_long)
 
@@ -103,12 +121,21 @@ class UpdateABContactVM(
         }
 
     private val updateButtonState =
-        combine(contactAddressState, contactNameState, isUpdatingContact, contact) {
-            address,
+        combine(
+            contactAddressState,
+            contactNameState,
+            isUpdatingContact,
+            originalContact,
+            selectedBlockchain
+        ) { address,
             name,
             isUpdatingContact,
-            contact
+            contact,
+            blockchain
             ->
+            val nameChanged = contactName.value.trim() != contact?.name
+            val addressChanged = contactAddress.value.trim() != contact?.address
+            val blockchainChanged = blockchain != contact?.blockchain
             ButtonState(
                 text = stringRes(R.string.update_contact_primary_btn),
                 isEnabled =
@@ -116,7 +143,7 @@ class UpdateABContactVM(
                         name.error == null &&
                         contactAddress.value.isNotEmpty() &&
                         contactName.value.isNotEmpty() &&
-                        (contactName.value.trim() != contact?.name || contactAddress.value.trim() != contact.address),
+                        (nameChanged || addressChanged || blockchainChanged),
                 onClick = ::onUpdateButtonClick,
                 isLoading = isUpdatingContact
             )
@@ -137,8 +164,9 @@ class UpdateABContactVM(
             contactNameState,
             updateButtonState,
             deleteButtonState,
-            isLoadingContact
-        ) { address, name, saveButton, deleteButton, isLoadingContact ->
+            isLoadingContact,
+            blockChainPickerState
+        ) { address, name, saveButton, deleteButton, isLoadingContact, blockchainPicker ->
             ABContactState(
                 title = stringRes(R.string.update_contact_title),
                 isLoading = isLoadingContact,
@@ -147,7 +175,7 @@ class UpdateABContactVM(
                 negativeButton = deleteButton,
                 positiveButton = saveButton,
                 onBack = ::onBack,
-                chain = null,
+                chain = blockchainPicker,
                 info = null
             )
         }.stateIn(
@@ -158,14 +186,11 @@ class UpdateABContactVM(
 
     init {
         viewModelScope.launch {
-            getContactByAddress(
-                address = args.address,
-                chain = null
-            ).let { contact ->
-                contactAddress.update { contact?.address.orEmpty() }
-                contactName.update { contact?.name.orEmpty() }
-                this@UpdateABContactVM.contact.update { contact }
-            }
+            val contact = getContactByAddress(address = args.address, chain = args.chain)
+            contactAddress.update { contact?.address.orEmpty() }
+            contactName.update { contact?.name.orEmpty() }
+            originalContact.update { contact }
+            selectedBlockchain.update { contact?.blockchain }
             isLoadingContact.update { false }
         }
     }
@@ -174,10 +199,16 @@ class UpdateABContactVM(
 
     private fun onUpdateButtonClick() =
         viewModelScope.launch {
-            if (isDeletingContact.value || isUpdatingContact.value) return@launch
-            contact.value?.let {
+            val selectedBlockchain = selectedBlockchain.value
+            if (isDeletingContact.value || isUpdatingContact.value || selectedBlockchain == null) return@launch
+            originalContact.value?.let {
                 isUpdatingContact.update { true }
-                updateContact(contact = it, name = contactName.value, address = contactAddress.value, chain = null)
+                updateContact(
+                    contact = it,
+                    name = contactName.value,
+                    address = contactAddress.value,
+                    chain = selectedBlockchain.chainTicker
+                )
                 navigationRouter.back()
                 isUpdatingContact.update { false }
             }
@@ -186,11 +217,19 @@ class UpdateABContactVM(
     private fun onDeleteButtonClick() =
         viewModelScope.launch {
             if (isDeletingContact.value || isUpdatingContact.value) return@launch
-            contact.value?.let {
+            originalContact.value?.let {
                 isDeletingContact.update { true }
                 deleteContact(it)
                 navigationRouter.back()
                 isDeletingContact.update { false }
+            }
+        }
+
+    private fun onBlockchainClick() =
+        viewModelScope.launch {
+            val result = navigateToSelectSwapBlockchain()
+            if (result != null) {
+                selectedBlockchain.update { result }
             }
         }
 }

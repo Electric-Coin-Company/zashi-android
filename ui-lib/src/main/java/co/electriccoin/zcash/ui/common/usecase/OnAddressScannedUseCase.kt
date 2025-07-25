@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.screen.contact.AddABContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow.ADDRESS_BOOK
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow.HOMEPAGE
@@ -26,7 +26,7 @@ class OnAddressScannedUseCase(
                 navigationRouter.back()
             }
 
-            ADDRESS_BOOK -> navigationRouter.replace(AddABContactArgs(address))
+            ADDRESS_BOOK -> navigationRouter.replace(AddZashiABContactArgs(address))
 
             HOMEPAGE -> navigationRouter.replace(
                 Send(
