@@ -59,7 +59,7 @@ import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionF
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryViewModel
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetViewModel
 import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNoteViewModel
-import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressViewModel
+import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressVM
 import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackupViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.screen.whatsnew.viewmodel.WhatsNewViewModel
@@ -96,7 +96,7 @@ val viewModelModule =
         viewModelOf(::SelectKeystoneAccountViewModel)
         viewModelOf(::ReviewTransactionViewModel)
         viewModelOf(::TransactionFiltersViewModel)
-        viewModelOf(::TransactionProgressViewModel)
+        viewModelOf(::TransactionProgressVM)
         viewModelOf(::TransactionHistoryWidgetViewModel)
         viewModelOf(::TransactionHistoryViewModel)
         viewModelOf(::TransactionDetailViewModel)

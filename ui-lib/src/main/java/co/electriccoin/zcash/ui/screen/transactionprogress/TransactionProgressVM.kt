@@ -20,6 +20,8 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveTransactionSubmitStateUseC
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionDetailAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
+import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.ButtonStyle
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +33,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class TransactionProgressViewModel(
+class TransactionProgressVM(
     observeTransactionProposal: ObserveProposalUseCase,
     observeTransactionSubmitState: ObserveTransactionSubmitStateUseCase,
     private val getTransactionProposal: GetProposalUseCase,
@@ -94,7 +96,7 @@ class TransactionProgressViewModel(
         onSupportClick = {
             viewModelScope.launch {
                 sendEmailUseCase(result)
-                this@TransactionProgressViewModel.supportContacted.update { true }
+                this@TransactionProgressVM.supportContacted.update { true }
             }
         },
         transactionIds = result.results.map { it.txIdString() }
@@ -111,24 +113,49 @@ class TransactionProgressViewModel(
         result: SubmitResult.Success
     ) = SuccessfulTransactionState(
         onBack = ::onViewTransactions,
-        onViewTransactionClick = {
-            val txId = result.txIds.firstOrNull()
-            if (txId == null) {
-                onViewTransactions()
-            } else {
-                onViewTransactionDetailClick(txId)
-            }
+        middleButton = when (proposal) {
+            is ExactInputSwapTransactionProposal,
+            is ExactOutputSwapTransactionProposal -> null
+
+            else -> ButtonState(
+                text = stringRes(R.string.send_confirmation_success_view_trx),
+                onClick = { onViewTransactionClick(result) }
+            )
         },
-        onCloseClick = ::onViewTransactions,
+        secondaryButton = when (proposal) {
+            is ExactInputSwapTransactionProposal,
+            is ExactOutputSwapTransactionProposal -> ButtonState(
+                text = stringRes(R.string.send_confirmation_success_btn_close),
+                onClick = ::onViewTransactions,
+                style = ButtonStyle.SECONDARY
+            )
+
+            else -> null
+        },
+        primaryButton = when (proposal) {
+            is ExactInputSwapTransactionProposal,
+            is ExactOutputSwapTransactionProposal -> ButtonState(
+                text = stringRes("Check status"),
+                onClick = { onViewTransactionClick(result) },
+                style = ButtonStyle.PRIMARY
+            )
+
+            else -> ButtonState(
+                text = stringRes(R.string.send_confirmation_success_btn_close),
+                onClick = ::onViewTransactions,
+                style = ButtonStyle.TERTIARY
+            )
+        },
         text =
             when (proposal) {
                 is ShieldTransactionProposal -> stringRes(R.string.send_confirmation_success_subtitle_transparent)
 
                 is ExactInputSwapTransactionProposal ->
-                    stringRes("You successfully initiated a swap. Follow its status on the transaction screen.")
+                    stringRes("You successfully initiated a swap.\nFollow its status on the transaction screen.")
 
                 is ExactOutputSwapTransactionProposal ->
-                    stringRes("You successfully initiated a cross-chain payment. Follow its status on the transaction screen.")
+                    stringRes("You successfully initiated a cross-chain payment.\nFollow its status on the " +
+                        "transaction screen.")
 
                 else -> stringRes(R.string.send_confirmation_success_subtitle, getAddressAbbreviated())
             },
@@ -139,6 +166,11 @@ class TransactionProgressViewModel(
                 stringRes(R.string.send_confirmation_success_title, getAddressAbbreviated())
             }
     )
+
+    private fun onViewTransactionClick(result: SubmitResult.Success) {
+        val txId = result.txIds.firstOrNull()
+        if (txId == null) onViewTransactions() else onViewTransactionDetailClick(txId)
+    }
 
     private fun createFailureTransactionState(
         proposal: TransactionProposal?,
@@ -156,7 +188,7 @@ class TransactionProgressViewModel(
         onReportClick = {
             viewModelScope.launch {
                 sendEmailUseCase(result)
-                this@TransactionProgressViewModel.supportContacted.update { true }
+                this@TransactionProgressVM.supportContacted.update { true }
             }
         },
         title =
@@ -166,10 +198,11 @@ class TransactionProgressViewModel(
                 stringRes(R.string.send_confirmation_failure_title)
             },
         text =
-            if (proposal is ShieldTransactionProposal) {
-                stringRes(R.string.send_confirmation_failure_subtitle_transparent)
-            } else {
-                stringRes(R.string.send_confirmation_failure_subtitle)
+            when (proposal) {
+                is ExactInputSwapTransactionProposal -> stringRes("There was an error initiating a swap.\nTry it again, please.")
+                is ExactOutputSwapTransactionProposal -> stringRes("There was an error initiating a cross-chain payment.\nTry it again, please.")
+                is ShieldTransactionProposal -> stringRes(R.string.send_confirmation_failure_subtitle_transparent)
+                else -> stringRes(R.string.send_confirmation_failure_subtitle)
             }
     )
 

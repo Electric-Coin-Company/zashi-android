@@ -151,8 +151,8 @@ import co.electriccoin.zcash.ui.screen.transactionhistory.AndroidTransactionHist
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
 import co.electriccoin.zcash.ui.screen.transactionnote.AndroidTransactionNote
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
-import co.electriccoin.zcash.ui.screen.transactionprogress.AndroidTransactionProgress
-import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgress
+import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressScreen
+import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressArgs
 import co.electriccoin.zcash.ui.screen.walletbackup.AndroidWalletBackup
 import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackup
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
@@ -324,7 +324,7 @@ internal fun MainActivity.Navigation() {
         composable<ConnectKeystone> { AndroidConnectKeystone() }
         composable<SelectKeystoneAccount> { AndroidSelectKeystoneAccount(it.toRoute()) }
         composable<ReviewTransaction> { AndroidReviewTransaction() }
-        composable<TransactionProgress> { AndroidTransactionProgress(it.toRoute()) }
+        composable<TransactionProgressArgs> { TransactionProgressScreen(it.toRoute()) }
         composable<TransactionHistory> { AndroidTransactionHistory() }
         dialogComposable<TransactionFilters> { AndroidTransactionFiltersList() }
         composable<TransactionDetail> { AndroidTransactionDetail(it.toRoute()) }

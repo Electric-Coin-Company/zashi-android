@@ -13,7 +13,7 @@ import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
-import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgress
+import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressArgs
 
 class ConfirmProposalUseCase(
     private val navigationRouter: NavigationRouter,
@@ -38,7 +38,7 @@ class ConfirmProposalUseCase(
                 is KeystoneAccount -> navigationRouter.forward(SignKeystoneTransaction)
                 is ZashiAccount -> {
                     zashiProposalRepository.submitTransaction()
-                    navigationRouter.forward(TransactionProgress)
+                    navigationRouter.forward(TransactionProgressArgs)
                 }
             }
             swapRepository.clear()
