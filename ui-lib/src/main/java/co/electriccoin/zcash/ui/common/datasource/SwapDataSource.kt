@@ -51,7 +51,7 @@ class QuoteLowAmountException(
     val amountFormatted: BigDecimal?
 ) : Exception()
 
-class SwapDataSourceImpl(
+class NearSwapDataSourceImpl(
     private val blockchainProvider: BlockchainProvider,
     private val tokenIconProvider: TokenIconProvider,
     private val tokenNameProvider: TokenNameProvider,

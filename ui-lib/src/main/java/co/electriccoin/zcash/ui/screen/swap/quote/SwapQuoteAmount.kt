@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -55,15 +56,17 @@ fun SwapQuoteAmount(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                ZashiAutoSizeText(
-                    modifier = Modifier.weight(1f, false),
-                    textAlign = TextAlign.Center,
-                    text = state.title.getValue(),
-                    style = ZashiTypography.textXl,
-                    fontWeight = FontWeight.SemiBold,
-                    color = ZashiColors.Text.textPrimary,
-                    maxLines = 1,
-                )
+                SelectionContainer {
+                    ZashiAutoSizeText(
+                        modifier = Modifier.weight(1f, false),
+                        textAlign = TextAlign.Center,
+                        text = state.title.getValue(),
+                        style = ZashiTypography.textXl,
+                        fontWeight = FontWeight.SemiBold,
+                        color = ZashiColors.Text.textPrimary,
+                        maxLines = 1,
+                    )
+                }
                 if (state.bigIcon is ImageResource.ByDrawable) {
                     Spacer(4.dp)
                     Box {
@@ -104,14 +107,16 @@ fun SwapQuoteAmount(
                     }
                 }
             }
-            ZashiAutoSizeText(
-                textAlign = TextAlign.Center,
-                text = state.subtitle.getValue(),
-                style = ZashiTypography.textSm,
-                fontWeight = FontWeight.Medium,
-                color = ZashiColors.Text.textTertiary,
-                maxLines = 1,
-            )
+            SelectionContainer {
+                ZashiAutoSizeText(
+                    textAlign = TextAlign.Center,
+                    text = state.subtitle.getValue(),
+                    style = ZashiTypography.textSm,
+                    fontWeight = FontWeight.Medium,
+                    color = ZashiColors.Text.textTertiary,
+                    maxLines = 1,
+                )
+            }
         }
     }
 }

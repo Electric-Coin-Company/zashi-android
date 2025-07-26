@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ShimmerRectangle
 import co.electriccoin.zcash.ui.design.component.Spacer
+import co.electriccoin.zcash.ui.design.component.ZashiAutoSizeText
 import co.electriccoin.zcash.ui.design.component.rememberZashiShimmer
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -39,13 +40,15 @@ fun ZashiSimpleListItem(
             color = ZashiColors.Text.textTertiary
         )
         Spacer(1f)
+        Spacer(4.dp)
         if (state.text != null) {
             SelectionContainer {
-                Text(
+                ZashiAutoSizeText(
                     text = state.text.getValue(),
                     style = ZashiTypography.textSm,
                     fontWeight = FontWeight.Medium,
-                    color = ZashiColors.Text.textPrimary
+                    color = ZashiColors.Text.textPrimary,
+                    maxLines = 1
                 )
             }
         } else {

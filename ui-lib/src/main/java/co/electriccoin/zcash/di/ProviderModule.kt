@@ -13,6 +13,8 @@ import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.provider.KtorNearApiProvider
+import co.electriccoin.zcash.ui.common.provider.LatestSwapAssetsProvider
+import co.electriccoin.zcash.ui.common.provider.LatestSwapAssetsProviderImpl
 import co.electriccoin.zcash.ui.common.provider.NearApiProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProviderImpl
@@ -70,4 +72,5 @@ val providerModule =
         singleOf(::TokenIconProviderImpl) bind TokenIconProvider::class
         singleOf(::TokenNameProviderImpl) bind TokenNameProvider::class
         singleOf(::KtorNearApiProvider) bind NearApiProvider::class
+        singleOf(::LatestSwapAssetsProviderImpl) bind LatestSwapAssetsProvider::class
     }

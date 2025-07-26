@@ -11,10 +11,12 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiAssetCard
+import co.electriccoin.zcash.ui.design.component.ZashiAutoSizeText
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -43,11 +45,12 @@ internal fun SwapAmountText(
                 if (state.subtitle != null) {
                     Spacer(1f)
                     SelectionContainer {
-                        Text(
+                        ZashiAutoSizeText(
                             text = state.subtitle.getValue(),
                             style = ZashiTypography.textSm,
                             fontWeight = FontWeight.Medium,
-                            color = ZashiColors.Text.textTertiary
+                            color = ZashiColors.Text.textTertiary,
+                            maxLines = 1
                         )
                     }
                 }
@@ -60,12 +63,14 @@ internal fun SwapAmountText(
                     state = state.token
                 )
                 Spacer(1f)
+                Spacer(4.dp)
                 SelectionContainer {
-                    Text(
+                    ZashiAutoSizeText(
                         text = state.text.getValue(),
                         style = ZashiTypography.header4,
                         fontWeight = FontWeight.SemiBold,
-                        color = ZashiColors.Text.textTertiary
+                        color = ZashiColors.Text.textTertiary,
+                        maxLines = 1
                     )
                 }
             }
@@ -73,11 +78,12 @@ internal fun SwapAmountText(
             Row {
                 Spacer(1f)
                 SelectionContainer {
-                    Text(
+                    ZashiAutoSizeText(
                         text = state.secondaryText?.getValue() ?: "",
                         style = ZashiTypography.textSm,
                         fontWeight = FontWeight.Medium,
-                        color = ZashiColors.Text.textTertiary
+                        color = ZashiColors.Text.textTertiary,
+                        maxLines = 1
                     )
                 }
             }

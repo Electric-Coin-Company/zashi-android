@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.model.SwapAsset
+import co.electriccoin.zcash.ui.common.provider.LatestSwapAssetsProvider
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.FilterSwapAssetsUseCase
@@ -28,6 +29,7 @@ import kotlinx.coroutines.flow.update
 class SwapAssetPickerVM(
     args: SwapAssetPickerArgs,
     getSwapAssets: GetSwapAssetsUseCase,
+    latestSwapAssetsProvider: LatestSwapAssetsProvider,
     private val selectSwapAsset: SelectSwapAssetUseCase,
     private val navigationRouter: NavigationRouter,
     private val filterSwapAssets: FilterSwapAssetsUseCase,
@@ -46,11 +48,16 @@ class SwapAssetPickerVM(
             )
 
     private val filteredSwapAssets =
-        combine(getSwapAssets.observe(), searchText) { assets, text ->
+        combine(
+            getSwapAssets.observe(),
+            latestSwapAssetsProvider.observe(),
+            searchText
+        ) { assets, latestAssets, text ->
             filterSwapAssets(
                 assets = assets,
+                latestAssets = latestAssets,
                 text = text,
-                chainTicker = args.chainTicker
+                onlyChainTicker = args.chainTicker
             )
         }.flowOn(Dispatchers.Default)
             .stateIn(
@@ -59,8 +66,9 @@ class SwapAssetPickerVM(
                 initialValue =
                     filterSwapAssets(
                         assets = getSwapAssets.observe().value,
+                        latestAssets = null,
                         text = searchText.value,
-                        chainTicker = args.chainTicker
+                        onlyChainTicker = args.chainTicker,
                     )
             )
 

@@ -27,6 +27,7 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.Spacer
+import co.electriccoin.zcash.ui.design.component.ZashiAutoSizeText
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
@@ -43,6 +44,7 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
+import kotlin.math.max
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -207,19 +209,21 @@ private fun Item(
             horizontalAlignment = Alignment.End
         ) {
             SelectionContainer {
-                Text(
+                ZashiAutoSizeText(
                     text = item.title.getValue(),
                     style = ZashiTypography.textSm,
                     fontWeight = FontWeight.Medium,
-                    color = ZashiColors.Text.textPrimary
+                    color = ZashiColors.Text.textPrimary,
+                    maxLines = 1
                 )
             }
             if (item.subtitle != null) {
                 SelectionContainer {
-                    Text(
+                    ZashiAutoSizeText(
                         text = item.subtitle.getValue(),
                         style = ZashiTypography.textXs,
-                        color = ZashiColors.Text.textTertiary
+                        color = ZashiColors.Text.textTertiary,
+                        maxLines = 1
                     )
                 }
             }

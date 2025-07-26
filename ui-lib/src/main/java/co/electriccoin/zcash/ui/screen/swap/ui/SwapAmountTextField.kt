@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiAssetCard
+import co.electriccoin.zcash.ui.design.component.ZashiAutoSizeText
 import co.electriccoin.zcash.ui.design.component.ZashiNumberTextField
 import co.electriccoin.zcash.ui.design.component.ZashiNumberTextFieldDefaults
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -102,11 +103,12 @@ private fun SwapTextFieldCard(
                 if (state.max != null) {
                     Spacer(1f)
                     SelectionContainer {
-                        Text(
+                        ZashiAutoSizeText(
                             text = state.max.getValue(),
                             style = ZashiTypography.textSm,
                             fontWeight = FontWeight.Medium,
-                            color = ZashiColors.Text.textTertiary
+                            color = ZashiColors.Text.textTertiary,
+                            maxLines = 1
                         )
                     }
                 }
@@ -174,11 +176,12 @@ private fun SwapTextFieldCard(
             ) {
                 Spacer(1f)
                 SelectionContainer {
-                    Text(
+                    ZashiAutoSizeText(
                         text = state.secondaryText.getValue(),
                         style = ZashiTypography.textSm,
                         fontWeight = FontWeight.Medium,
-                        color = ZashiColors.Text.textTertiary
+                        color = ZashiColors.Text.textTertiary,
+                        maxLines = 1
                     )
                 }
                 Spacer(4.dp)
