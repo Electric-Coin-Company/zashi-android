@@ -127,6 +127,7 @@ data class NumberTextFieldState(
     val onValueChange: (NumberTextFieldInnerState) -> Unit,
 )
 
+@Immutable
 data class NumberTextFieldInnerState(
     val innerTextFieldState: InnerTextFieldState = InnerTextFieldState(
         value = stringRes(value = ""),
