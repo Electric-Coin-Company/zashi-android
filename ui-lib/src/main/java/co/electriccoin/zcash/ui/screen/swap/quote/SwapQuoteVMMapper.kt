@@ -70,7 +70,7 @@ internal class SwapQuoteVMMapper {
                 )
             ),
             SwapQuoteInfoItem(
-                description = stringRes("Swap Provider fee"),
+                description = stringRes("Swap fee"),
                 title = stringRes(swapProviderFee),
                 subtitle = stringResByDynamicCurrencyNumber(swapProviderFeeUsd, FiatCurrency.USD.symbol)
             ),
