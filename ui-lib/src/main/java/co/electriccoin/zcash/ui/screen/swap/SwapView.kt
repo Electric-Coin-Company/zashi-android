@@ -46,6 +46,7 @@ import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.TextFieldState
+import co.electriccoin.zcash.ui.design.component.ZashiAddressTextField
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
@@ -278,10 +279,8 @@ private fun ColumnScope.AddressTextField(state: SwapState) {
         fontWeight = FontWeight.Medium
     )
     Spacer(6.dp)
-    ZashiTextField(
+    ZashiAddressTextField(
         state = state.address,
-        singleLine = true,
-        maxLines = 1,
         modifier = Modifier.fillMaxWidth(),
         placeholder = {
             Text(
