@@ -131,6 +131,16 @@ dependencyResolutionManagement {
                 }
             }
         }
+        maven("https://central.sonatype.com/repository/maven-snapshots") {
+            mavenContent {
+                snapshotsOnly()
+            }
+            if (isRepoRestrictionEnabled) {
+                content {
+                    includeGroup("cash.z.ecc.android")
+                }
+            }
+        }
         // start wtf maven
         maven("https://maven.emulator.wtf/releases/") {
             if (isRepoRestrictionEnabled) {
