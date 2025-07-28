@@ -98,7 +98,6 @@ fun TorSettingsView(state: TorSettingsState) {
     )
 }
 
-@Suppress("LongParameterList")
 @Composable
 private fun Option(
     @DrawableRes image: Int,
@@ -149,7 +148,6 @@ private fun Option(
     }
 }
 
-@Suppress("UnusedPrivateMember")
 @PreviewScreens
 @Composable
 private fun SettingsExchangeRateOptInPreview() =
