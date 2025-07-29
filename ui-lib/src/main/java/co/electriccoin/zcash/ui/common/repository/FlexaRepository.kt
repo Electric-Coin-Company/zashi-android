@@ -11,6 +11,7 @@ import com.flexa.core.shared.AvailableAsset
 import com.flexa.core.shared.CustodyModel
 import com.flexa.core.shared.FlexaClientConfiguration
 import com.flexa.core.theme.FlexaTheme
+import com.flexa.identity.buildIdentity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,6 +22,8 @@ import java.util.UUID
 
 interface FlexaRepository {
     fun init()
+
+    suspend fun disconnect()
 }
 
 class FlexaRepositoryImpl(
@@ -57,6 +60,12 @@ class FlexaRepositoryImpl(
                         Twig.info { "Flexa updated by total:$totalZec available:$availableZec" }
                     }
             }
+        }
+    }
+
+    override suspend fun disconnect() {
+        if (configurationRepository.isFlexaAvailable()) {
+            Flexa.buildIdentity().build().disconnect()
         }
     }
 

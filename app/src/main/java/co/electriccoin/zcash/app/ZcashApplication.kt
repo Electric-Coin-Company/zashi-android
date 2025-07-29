@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.app
 
 import androidx.lifecycle.ProcessLifecycleOwner
+import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.crash.android.GlobalCrashReporter
 import co.electriccoin.zcash.crash.android.di.CrashReportersProvider
 import co.electriccoin.zcash.crash.android.di.crashProviderModule
@@ -16,10 +17,14 @@ import co.electriccoin.zcash.di.viewModelModule
 import co.electriccoin.zcash.spackle.StrictModeCompat
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.ApplicationStateRepository
 import co.electriccoin.zcash.ui.common.repository.FlexaRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepository
 import co.electriccoin.zcash.ui.common.repository.WalletSnapshotRepository
+import co.electriccoin.zcash.ui.common.usecase.ErrorArgs
+import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -36,6 +41,8 @@ class ZcashApplication : CoroutineApplication() {
     private val applicationStateRepository: ApplicationStateRepository by inject {
         parametersOf(ProcessLifecycleOwner.get().lifecycle)
     }
+    private val synchronizerProvider: SynchronizerProvider by inject()
+    private val navigateToError: NavigateToErrorUseCase by inject()
 
     override fun onCreate() {
         super.onCreate()
@@ -69,6 +76,19 @@ class ZcashApplication : CoroutineApplication() {
         homeMessageCacheRepository.init()
         walletSnapshotRepository.init()
         applicationStateRepository.init()
+        observeSynchronizerError()
+    }
+
+    private fun observeSynchronizerError() {
+        applicationScope.launch {
+            synchronizerProvider.synchronizer
+                .map { it?.initializationError }
+                .collect {
+                    if (it == Synchronizer.InitializationError.TOR_NOT_AVAILABLE) {
+                        navigateToError(ErrorArgs.SynchronizerTorInitError)
+                    }
+                }
+        }
     }
 
     private fun configureLogging() {

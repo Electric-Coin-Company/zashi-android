@@ -71,6 +71,10 @@ sealed interface HomeMessageData {
 
     data object Updating : RuntimeMessage()
 
+    data object EnableTor : Prioritized {
+        override val priority: Int = 5
+    }
+
     data object Backup : Prioritized {
         override val priority: Int = 4
     }
@@ -81,10 +85,6 @@ sealed interface HomeMessageData {
         override val priority: Int = 3
     }
 
-    data object EnableCurrencyConversion : Prioritized {
-        override val priority: Int = 2
-    }
-
     data object CrashReport : Prioritized {
         override val priority: Int = 1
     }
@@ -93,9 +93,8 @@ sealed interface HomeMessageData {
 /**
  * Message which always is shown.
  */
-@Suppress("MagicNumber")
 sealed class RuntimeMessage : HomeMessageData {
-    override val priority: Int = 5
+    override val priority: Int = Int.MAX_VALUE
 }
 
 /**

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.flow
 interface StorageProvider<T : Any> {
     suspend fun get(): T
 
-    suspend fun store(amount: T)
+    suspend fun store(value: T)
 
     fun observe(): Flow<T>
 
@@ -34,7 +34,7 @@ abstract class BaseStorageProvider<T : Any> : StorageProvider<T> {
 
     final override suspend fun get(): T = default.getValue(getPreferenceProvider())
 
-    final override suspend fun store(amount: T) = default.putValue(getPreferenceProvider(), amount)
+    final override suspend fun store(value: T) = default.putValue(getPreferenceProvider(), value)
 
     final override fun observe(): Flow<T> = flow { emitAll(default.observe(getPreferenceProvider())) }
 

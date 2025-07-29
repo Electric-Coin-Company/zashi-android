@@ -7,7 +7,6 @@ import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
-import co.electriccoin.zcash.ui.NavigationTargets.ADVANCED_SETTINGS
 import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.R
@@ -24,6 +23,7 @@ import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
+import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsArgs
 import co.electriccoin.zcash.ui.screen.integrations.Integrations
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsState
 import co.electriccoin.zcash.ui.screen.settings.model.SettingsTroubleshootingState
@@ -200,7 +200,7 @@ class SettingsViewModel(
 
     private fun onIntegrationsClick() = navigationRouter.forward(Integrations)
 
-    private fun onAdvancedSettingsClick() = navigationRouter.forward(ADVANCED_SETTINGS)
+    private fun onAdvancedSettingsClick() = navigationRouter.forward(AdvancedSettingsArgs)
 
     private fun onAboutUsClick() = navigationRouter.forward(ABOUT)
 

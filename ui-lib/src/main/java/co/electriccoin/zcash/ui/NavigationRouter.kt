@@ -2,12 +2,15 @@ package co.electriccoin.zcash.ui
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlin.reflect.KClass
+import kotlin.time.Duration.Companion.seconds
 
 interface NavigationRouter {
     /**
@@ -41,47 +44,39 @@ interface NavigationRouter {
 }
 
 class NavigationRouterImpl : NavigationRouter {
-    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private var job: Job? = null
+
+    private var lastNavCommand: NavigationCommand? = null
+
+    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
     private val channel = Channel<NavigationCommand>()
 
-    override fun forward(vararg routes: Any) {
-        scope.launch {
-            channel.send(NavigationCommand.Forward(routes.toList()))
-        }
-    }
+    override fun forward(vararg routes: Any) = navigateWithBackoff(NavigationCommand.Forward(routes.toList()))
 
-    override fun replace(vararg routes: Any) {
-        scope.launch {
-            channel.send(NavigationCommand.Replace(routes.toList()))
-        }
-    }
+    override fun replace(vararg routes: Any) = navigateWithBackoff(NavigationCommand.Replace(routes.toList()))
 
-    override fun replaceAll(vararg routes: Any) {
-        scope.launch {
-            channel.send(NavigationCommand.ReplaceAll(routes.toList()))
-        }
-    }
+    override fun replaceAll(vararg routes: Any) = navigateWithBackoff(NavigationCommand.ReplaceAll(routes.toList()))
 
-    override fun back() {
-        scope.launch {
-            channel.send(NavigationCommand.Back)
-        }
-    }
+    override fun back() = navigateWithBackoff(NavigationCommand.Back)
 
-    override fun backTo(route: KClass<*>) {
-        scope.launch {
-            channel.send(NavigationCommand.BackTo(route))
-        }
-    }
+    override fun backTo(route: KClass<*>) = navigateWithBackoff(NavigationCommand.BackTo(route))
 
-    override fun backToRoot() {
-        scope.launch {
-            channel.send(NavigationCommand.BackToRoot)
-        }
-    }
+    override fun backToRoot() = navigateWithBackoff(NavigationCommand.BackToRoot)
 
     override fun observePipeline() = channel.receiveAsFlow()
+
+    private fun navigateWithBackoff(command: NavigationCommand) {
+        if (job?.isActive == true && command == lastNavCommand) {
+            return // skip if already running
+        }
+        lastNavCommand = command
+        job =
+            scope.launch {
+                channel.trySend(command)
+                delay(.5.seconds) // backoff
+            }
+    }
 }
 
 sealed interface NavigationCommand {

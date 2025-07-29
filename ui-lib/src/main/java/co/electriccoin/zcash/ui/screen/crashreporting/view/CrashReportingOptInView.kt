@@ -4,7 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -175,8 +174,13 @@ fun CrashReportingOptInOptions(
         Spacer(modifier = Modifier.height(24.dp))
         Option(
             modifier = Modifier.fillMaxWidth(),
-            image = OptIn,
-            selectionImage = if (isOptInSelected) Checked else Unchecked,
+            image = R.drawable.ic_opt_in,
+            selectionImage =
+                if (isOptInSelected) {
+                    R.drawable.ic_checkbox_checked
+                } else {
+                    R.drawable.ic_checkbox_unchecked
+                },
             title = stringResource(R.string.crash_reporting_opt_in_positive),
             subtitle = stringResource(R.string.crash_reporting_opt_in_positive_desc),
             onClick = { setOptInSelected(true) }
@@ -184,8 +188,13 @@ fun CrashReportingOptInOptions(
         Spacer(modifier = Modifier.height(12.dp))
         Option(
             modifier = Modifier.fillMaxWidth(),
-            image = OptOut,
-            selectionImage = if (!isOptInSelected) Checked else Unchecked,
+            image = R.drawable.ic_opt_out,
+            selectionImage =
+                if (!isOptInSelected) {
+                    R.drawable.ic_checkbox_checked
+                } else {
+                    R.drawable.ic_checkbox_unchecked
+                },
             title = stringResource(R.string.crash_reporting_opt_in_negative),
             subtitle = stringResource(R.string.crash_reporting_opt_in_negative_desc),
             onClick = { setOptInSelected(false) }
@@ -243,46 +252,6 @@ private fun Option(
         }
     }
 }
-
-private val OptIn: Int
-    @DrawableRes
-    @Composable
-    get() =
-        if (isSystemInDarkTheme()) {
-            R.drawable.ic_opt_in
-        } else {
-            R.drawable.ic_opt_in_light
-        }
-
-private val OptOut: Int
-    @DrawableRes
-    @Composable
-    get() =
-        if (isSystemInDarkTheme()) {
-            R.drawable.ic_opt_out
-        } else {
-            R.drawable.ic_opt_out_light
-        }
-
-private val Checked: Int
-    @DrawableRes
-    @Composable
-    get() =
-        if (isSystemInDarkTheme()) {
-            R.drawable.ic_checkbox_checked
-        } else {
-            R.drawable.ic_checkbox_checked_light
-        }
-
-private val Unchecked: Int
-    @DrawableRes
-    @Composable
-    get() =
-        if (isSystemInDarkTheme()) {
-            R.drawable.ic_checkbox_unchecked
-        } else {
-            R.drawable.ic_checkbox_unchecked_light
-        }
 
 @Suppress("UnusedPrivateMember")
 @PreviewScreens

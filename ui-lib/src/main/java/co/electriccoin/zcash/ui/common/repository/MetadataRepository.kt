@@ -25,8 +25,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 interface MetadataRepository {
-    val metadata: Flow<Metadata?>
-
     suspend fun flipTxBookmark(txId: String)
 
     suspend fun createOrUpdateTxNote(
@@ -51,7 +49,7 @@ class MetadataRepositoryImpl(
     private val command = Channel<Command>()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val metadata: Flow<Metadata?> =
+    private val metadata: Flow<Metadata?> =
         accountDataSource
             .selectedAccount
             .flatMapLatest { account ->

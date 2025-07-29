@@ -22,11 +22,9 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptIn
 import co.electriccoin.zcash.ui.screen.home.backup.SeedBackupInfo
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetail
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupMessageState
-import co.electriccoin.zcash.ui.screen.home.currency.EnableCurrencyConversionMessageState
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedInfo
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedMessageState
 import co.electriccoin.zcash.ui.screen.home.error.WalletErrorMessageState
@@ -37,12 +35,14 @@ import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringMessageStat
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsMessageState
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
+import co.electriccoin.zcash.ui.screen.home.tor.EnableTorMessageState
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
 import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import co.electriccoin.zcash.ui.screen.send.Send
+import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInArgs
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -173,12 +173,6 @@ class HomeViewModel(
                     onClick = ::onWalletDisconnectedMessageClick
                 )
 
-            HomeMessageData.EnableCurrencyConversion ->
-                EnableCurrencyConversionMessageState(
-                    onClick = ::onEnableCurrencyConversionClick,
-                    onButtonClick = ::onEnableCurrencyConversionClick
-                )
-
             is HomeMessageData.Error ->
                 WalletErrorMessageState(
                     onClick = { onWalletErrorMessageClick(it) }
@@ -224,6 +218,12 @@ class HomeViewModel(
                     onButtonClick = ::onCrashReportMessageClick
                 )
 
+            HomeMessageData.EnableTor ->
+                EnableTorMessageState(
+                    onClick = ::onEnableTorMessageClick,
+                    onButtonClick = ::onEnableTorMessageClick,
+                )
+
             null -> null
         }
 
@@ -249,8 +249,6 @@ class HomeViewModel(
 
     private fun onWalletRestoringMessageClick() = navigationRouter.forward(WalletRestoringInfo)
 
-    private fun onEnableCurrencyConversionClick() = navigationRouter.forward(ExchangeRateOptIn)
-
     private fun onWalletDisconnectedMessageClick() = navigationRouter.forward(WalletDisconnectedInfo)
 
     private fun onWalletBackupMessageClick() = navigationRouter.forward(SeedBackupInfo)
@@ -263,4 +261,6 @@ class HomeViewModel(
 
     private fun onWalletErrorMessageClick(homeMessageData: HomeMessageData.Error) =
         navigateToError(ErrorArgs.SyncError(homeMessageData.synchronizerError))
+
+    private fun onEnableTorMessageClick() = navigationRouter.forward(TorOptInArgs)
 }

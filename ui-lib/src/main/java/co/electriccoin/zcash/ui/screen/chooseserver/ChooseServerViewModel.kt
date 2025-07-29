@@ -7,8 +7,8 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
+import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointException
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 class ChooseServerViewModel(
     application: Application,
     observeFastestServers: ObserveFastestServersUseCase,
-    observeSelectedEndpoint: ObserveSelectedEndpointUseCase,
+    getSelectedEndpoint: GetSelectedEndpointUseCase,
     private val getAvailableServers: GetDefaultServersProvider,
     private val refreshFastestServersUseCase: RefreshFastestServersUseCase,
     private val persistEndpoint: PersistEndpointUseCase,
@@ -49,7 +49,7 @@ class ChooseServerViewModel(
 
     private val fastest =
         combine(
-            observeSelectedEndpoint(),
+            getSelectedEndpoint.observe(),
             observeFastestServers(),
             userEndpointSelection,
         ) { selectedEndpoint, fastestServers, userEndpointSelection ->
@@ -71,7 +71,7 @@ class ChooseServerViewModel(
 
     private val other =
         combine(
-            observeSelectedEndpoint(),
+            getSelectedEndpoint.observe(),
             observeFastestServers(),
             userCustomEndpointText,
             userEndpointSelection,
@@ -108,7 +108,7 @@ class ChooseServerViewModel(
 
     private val buttonState =
         combine(
-            observeSelectedEndpoint(),
+            getSelectedEndpoint.observe(),
             userEndpointSelection,
             isSaveInProgress,
             userCustomEndpointText,

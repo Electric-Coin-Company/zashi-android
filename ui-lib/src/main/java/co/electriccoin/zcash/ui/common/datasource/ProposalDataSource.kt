@@ -114,7 +114,7 @@ class ProposalDataSourceImpl(
                             .validateAddress(payment.recipientAddress.value)
                             .toWalletAddress(payment.recipientAddress.value),
                     amount = payment.nonNegativeAmount.value.convertZecToZatoshi(),
-                    memo = Memo(payment.memo?.let { String(it.data, Charsets.UTF_8) } ?: ""),
+                    memo = Memo(payment.memo?.data?.decodeToString() ?: ""),
                     proposal = synchronizer.proposeFulfillingPaymentUri(account = account.sdkAccount, uri = zip321Uri),
                 )
             }

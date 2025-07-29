@@ -1,27 +1,17 @@
 package co.electriccoin.zcash.ui.common.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.WalletCoordinator
-import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.model.BlockHeight
-import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
-import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.common.model.OnboardingState
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
-import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
-import co.electriccoin.zcash.ui.common.provider.WalletRestoringStateProvider
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
+import co.electriccoin.zcash.ui.common.repository.FlexaRepository
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
-import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
-import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetInMemoryDataUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetSharedPrefsDataUseCase
-import com.flexa.core.Flexa
-import com.flexa.identity.buildIdentity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -34,47 +24,20 @@ import kotlinx.coroutines.launch
 // for loading the preferences.
 // TODO [#292]: Should be moved to SDK-EXT-UI module.
 // TODO [#292]: https://github.com/Electric-Coin-Company/zashi-android/issues/292
-@Suppress("LongParameterList", "TooManyFunctions")
 class WalletViewModel(
-    application: Application,
     private val walletCoordinator: WalletCoordinator,
+    private val flexaRepository: FlexaRepository,
     private val walletRepository: WalletRepository,
-    private val getAvailableServers: GetDefaultServersProvider,
     private val resetInMemoryData: ResetInMemoryDataUseCase,
     private val resetSharedPrefsData: ResetSharedPrefsDataUseCase,
-    private val isFlexaAvailable: IsFlexaAvailableUseCase,
-    private val getSynchronizer: GetSynchronizerUseCase,
-    private val walletRestoringStateProvider: WalletRestoringStateProvider,
-) : AndroidViewModel(application) {
-    val synchronizer = walletRepository.synchronizer
+    private val synchronizerProvider: SynchronizerProvider,
+) : ViewModel() {
+    val synchronizer = synchronizerProvider.synchronizer
 
     val secretState: StateFlow<SecretState> = walletRepository.secretState
 
-    fun persistNewWalletAndRestoringState(state: WalletRestoringState) {
-        val application = getApplication<Application>()
-
-        viewModelScope.launch {
-            val zcashNetwork = ZcashNetwork.fromResources(application)
-            val newWallet =
-                PersistableWallet.new(
-                    application = application,
-                    zcashNetwork = zcashNetwork,
-                    endpoint = getAvailableServers().first(),
-                    walletInitMode = WalletInitMode.NewWallet
-                )
-            walletRepository.persistWallet(newWallet)
-
-            walletRestoringStateProvider.store(state)
-        }
-    }
-
-    /**
-     * Asynchronously notes that the user has completed the backup steps, which means the wallet
-     * is ready to use.  Clients observe [secretState] to see the side effects.  This would be used
-     * for a user creating a new wallet.
-     */
-    fun persistOnboardingState(onboardingState: OnboardingState) {
-        walletRepository.persistOnboardingState(onboardingState)
+    fun createNewWallet() {
+        walletRepository.createNewWallet()
     }
 
     fun persistExistingWalletWithSeedPhrase(
@@ -82,7 +45,7 @@ class WalletViewModel(
         seedPhrase: SeedPhrase,
         birthday: BlockHeight?
     ) {
-        walletRepository.persistExistingWalletWithSeedPhrase(network, seedPhrase, birthday)
+        walletRepository.restoreWallet(network, seedPhrase, birthday)
     }
 
     private fun clearAppStateFlow(): Flow<Boolean> =
@@ -103,9 +66,9 @@ class WalletViewModel(
         onSuccess: () -> Unit
     ) = viewModelScope.launch(Dispatchers.Main) {
         Twig.info { "Delete wallet: Requested" }
-        disconnectFlexa()
+        flexaRepository.disconnect()
 
-        getSynchronizer.getSdkSynchronizer()?.closeFlow()?.first()
+        synchronizerProvider.getSdkSynchronizer().closeFlow().first()
         Twig.info { "Delete wallet: SDK closed" }
         val isSdkErased = walletCoordinator.deleteSdkDataFlow().first()
         Twig.info { "Delete wallet: Erase SDK result: $isSdkErased" }
@@ -124,12 +87,6 @@ class WalletViewModel(
         } else {
             Twig.error { "Wallet deletion failed" }
             onError()
-        }
-    }
-
-    private suspend inline fun disconnectFlexa() {
-        if (isFlexaAvailable()) {
-            Flexa.buildIdentity().build().disconnect()
         }
     }
 }

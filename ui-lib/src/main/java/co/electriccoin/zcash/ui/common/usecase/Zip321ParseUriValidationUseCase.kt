@@ -3,11 +3,12 @@ package co.electriccoin.zcash.ui.common.usecase
 import PaymentRequest
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import kotlinx.coroutines.runBlocking
 import org.zecdev.zip321.ZIP321
 
 class Zip321ParseUriValidationUseCase(
-    private val getSynchronizerUseCase: GetSynchronizerUseCase
+    private val synchronizerProvider: SynchronizerProvider
 ) {
     operator fun invoke(zip321Uri: String) = validateZip321Uri(zip321Uri)
 
@@ -19,7 +20,7 @@ class Zip321ParseUriValidationUseCase(
                     validatingRecipients = { address ->
                         // We should be fine with the blocking implementation here
                         runBlocking {
-                            getSynchronizerUseCase().validateAddress(address).let { validation ->
+                            synchronizerProvider.getSynchronizer().validateAddress(address).let { validation ->
                                 when (validation) {
                                     is AddressType.Invalid -> {
                                         Twig.error { "Address from Zip321 validation failed: ${validation.reason}" }

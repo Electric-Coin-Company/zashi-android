@@ -6,6 +6,22 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Added
+- Tor opt-in message is now shown on homepage to prompt the user to use tor
+- Tor opt-in is now possible from settings
+- Enabling Tor enables currency conversion and vice versa
+- Receive screen now contains info about shielded and transparent addresses
+
+### Fixed
+- scanning zip321 now properly prefills memo
+- send again now correctly prefills amount based on previous amount and fee
+- status and navigation bar now correctly show colors in both light and dark themes
+- app startup startup time improved
+- fixed a bug where user could navigate to a screen twice if he tapped a button several times too fast
+
+### Changed
+- currency conversion now works only if tor is enabled
+
 ## [2.0.5 (974)] - 2025-06-25
 
 - `TorClient` initialization within `Synchronizer` now does not crash the application in case it fails 

@@ -25,8 +25,12 @@ class SheetStateManager {
     }
 
     suspend fun hide() {
-        withTimeoutOrNull(.5.seconds) {
-            sheetState?.hide()
+        try {
+            withTimeoutOrNull(.5.seconds) {
+                sheetState?.hide()
+            }
+        } catch (_: Exception) {
+            // ignore
         }
     }
 }
