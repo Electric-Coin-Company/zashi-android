@@ -6,6 +6,8 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.1.0 (996)] - 2025-07-29
+
 ### Added
 - Tor opt-in message is now shown on homepage to prompt the user to use tor
 - Tor opt-in is now possible from settings
@@ -13,14 +15,14 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - Receive screen now contains info about shielded and transparent addresses
 
 ### Fixed
-- scanning zip321 now properly prefills memo
-- send again now correctly prefills amount based on previous amount and fee
-- status and navigation bar now correctly show colors in both light and dark themes
-- app startup startup time improved
-- fixed a bug where user could navigate to a screen twice if he tapped a button several times too fast
+- Scanning zip321 now properly prefills memo
+- Send again now correctly prefills amount based on previous amount and fee
+- Status and navigation bar now correctly show colors in both light and dark themes
+- App startup startup time improved
+- Fixed a bug where user could navigate to a screen twice if he tapped a button several times too fast
 
 ### Changed
-- currency conversion now works only if tor is enabled
+- Currency conversion now works only if Tor is enabled
 
 ## [2.0.5 (974)] - 2025-06-25
 

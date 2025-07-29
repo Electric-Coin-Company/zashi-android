@@ -1,0 +1,12 @@
+Zashi’s built-in Tor client can now be used to:
+- Submit ZEC transactions
+- Fetch transaction data
+- Connect to third-party APIs (e.g. NEAR)
+- Fetch ZEC-USD exchange rates
+- If Tor is available in your region, we strongly recommend enabling it.
+- Note: Currency Conversion now only works with Tor enabled.
+
+Other Updates:
+- We added address explainers.
+- We improved app startup startup time.
+- We fixed bugs in ZIP 321 scanning, Send again flow, and other UI/UX issues.

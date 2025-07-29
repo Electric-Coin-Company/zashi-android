@@ -12,6 +12,22 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.1.0 (996)] - 2025-07-29
+
+### Added:
+- Zashi’s built-in Tor client can now be used to:
+- Submit ZEC transactions
+- Fetch transaction data
+- Connect to third-party APIs (e.g. NEAR)
+- Fetch ZEC-USD exchange rates
+- If Tor is available in your region, we strongly recommend enabling it.
+- Note: Currency Conversion now only works with Tor enabled.
+
+### Changed:
+- We added address explainers.
+- We improved app startup startup time.
+- We fixed bugs in ZIP 321 scanning, Send again flow, and other UI/UX issues.
+
 ## [2.0.5 (974)] - 2025-06-25
 
 ### Fixed:
