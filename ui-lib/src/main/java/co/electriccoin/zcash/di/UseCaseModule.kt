@@ -29,7 +29,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetFlexaStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetKeystoneStatusUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetMetadataUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
@@ -40,21 +40,18 @@ import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapModeUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapQuoteUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableBalanceUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionMetadataUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionsUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetTransparentAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZecSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
-import co.electriccoin.zcash.ui.common.usecase.IsCoinbaseAvailableUseCase
-import co.electriccoin.zcash.ui.common.usecase.IsFlexaAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
+import co.electriccoin.zcash.ui.common.usecase.IsTorEnabledUseCase
 import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
@@ -74,16 +71,15 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveABContactPickedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveClearSendUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveTransactionSubmitStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.OnAddressScannedUseCase
 import co.electriccoin.zcash.ui.common.usecase.OnUserSavedWalletBackupUseCase
 import co.electriccoin.zcash.ui.common.usecase.OnZip321ScannedUseCase
+import co.electriccoin.zcash.ui.common.usecase.OptInExchangeRateAndTorUseCase
+import co.electriccoin.zcash.ui.common.usecase.OptInExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.ParseKeystonePCZTUseCase
 import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneSignInRequestUseCase
 import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneUrToZashiAccountsUseCase
@@ -128,17 +124,13 @@ import org.koin.dsl.onClose
 
 val useCaseModule =
     module {
-        factoryOf(::ObserveSynchronizerUseCase)
-        factoryOf(::GetSynchronizerUseCase)
         factoryOf(::ObserveFastestServersUseCase)
-        factoryOf(::ObserveSelectedEndpointUseCase)
+        factoryOf(::GetSelectedEndpointUseCase)
         factoryOf(::RefreshFastestServersUseCase)
         factoryOf(::PersistEndpointUseCase)
         factoryOf(::ValidateEndpointUseCase)
-        factoryOf(::GetSelectedEndpointUseCase)
         factoryOf(::GetConfigurationUseCase)
         factoryOf(::RescanBlockchainUseCase)
-        factoryOf(::GetTransparentAddressUseCase)
         factoryOf(::ValidateZashiABContactAddressUseCase)
         factoryOf(::ValidateGenericABContactNameUseCase)
         factoryOf(::SaveABContactUseCase)
@@ -151,12 +143,10 @@ val useCaseModule =
         factoryOf(::ShareImageUseCase)
         factoryOf(::Zip321BuildUriUseCase)
         factoryOf(::Zip321ParseUriValidationUseCase)
-        factoryOf(::IsCoinbaseAvailableUseCase)
-        factoryOf(::ObservePersistableWalletUseCase)
+        factoryOf(::GetPersistableWalletUseCase)
         factoryOf(::GetSupportUseCase)
         factoryOf(::SendEmailUseCase)
         factoryOf(::SendSupportEmailUseCase)
-        factoryOf(::IsFlexaAvailableUseCase)
         factoryOf(::GetWalletAccountsUseCase)
         factoryOf(::SelectWalletAccountUseCase)
         factoryOf(::ObserveSelectedWalletAccountUseCase)
@@ -204,7 +194,6 @@ val useCaseModule =
         factoryOf(::DeleteTransactionNoteUseCase)
         factoryOf(::CreateOrUpdateTransactionNoteUseCase)
         factoryOf(::MarkTxMemoAsReadUseCase)
-        factoryOf(::GetMetadataUseCase)
         factoryOf(::ExportTaxUseCase)
         factoryOf(::NavigateToTaxExportUseCase)
         factoryOf(::CreateFlexaTransactionUseCase)
@@ -224,6 +213,9 @@ val useCaseModule =
         factoryOf(::ShieldFundsMessageUseCase)
         factoryOf(::NavigateToReceiveUseCase)
         factoryOf(::NavigateToRequestShieldedUseCase)
+        factoryOf(::IsTorEnabledUseCase)
+        factoryOf(::OptInExchangeRateUseCase)
+        factoryOf(::OptInExchangeRateAndTorUseCase)
         factoryOf(::NavigateToNearSwapUseCase)
         factoryOf(::CancelSwapUseCase)
         factoryOf(::GetSelectedSwapAssetUseCase)

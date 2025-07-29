@@ -11,7 +11,7 @@ import androidx.work.WorkerParameters
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.PercentDecimal
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.common.usecase.ObserveSynchronizerUseCase
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -45,13 +45,13 @@ class SyncWorker(
     workerParameters: WorkerParameters
 ) : CoroutineWorker(context, workerParameters),
     KoinComponent {
-    private val observeSynchronizer: ObserveSynchronizerUseCase by inject()
+    private val synchronizerProvider: SynchronizerProvider by inject()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override suspend fun doWork(): Result {
         Twig.debug { "BG Sync: starting..." }
 
-        observeSynchronizer()
+        synchronizerProvider.synchronizer
             .flatMapLatest {
                 Twig.debug { "BG Sync: synchronizer: $it" }
 

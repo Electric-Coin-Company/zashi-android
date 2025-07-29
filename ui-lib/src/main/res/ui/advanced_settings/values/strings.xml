@@ -4,6 +4,7 @@
     <string name="advanced_settings_recovery">Zashi Recovery Phrase</string>
     <string name="advanced_settings_export">Export Private Data</string>
     <string name="advanced_settings_choose_server">Choose a Server</string>
+    <string name="advanced_settings_privacy">Tor Protection</string>
     <string name="advanced_settings_currency_conversion">Currency Conversion</string>
     <string name="advanced_settings_crash_reporting">Crash Reporting</string>
     <string name="advanced_settings_info">You will be asked to confirm on the next screen</string>

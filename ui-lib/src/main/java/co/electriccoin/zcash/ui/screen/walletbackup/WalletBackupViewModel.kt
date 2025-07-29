@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.WalletBackupData
 import co.electriccoin.zcash.ui.common.datasource.WalletBackupDataSource
-import co.electriccoin.zcash.ui.common.usecase.ObservePersistableWalletUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.OnUserSavedWalletBackupUseCase
 import co.electriccoin.zcash.ui.common.usecase.RemindWalletBackupLaterUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 
 class WalletBackupViewModel(
     walletBackupDataSource: WalletBackupDataSource,
-    observePersistableWallet: ObservePersistableWalletUseCase,
+    getPersistableWallet: GetPersistableWalletUseCase,
     private val args: WalletBackup,
     private val navigationRouter: NavigationRouter,
     private val onUserSavedWalletBackup: OnUserSavedWalletBackupUseCase,
@@ -54,13 +54,11 @@ class WalletBackupViewModel(
                 isRevealed && args.isOpenedFromSeedBackupInfo
             }
 
-    private val observableWallet = observePersistableWallet()
-
     val state =
         combine(
             isRevealed,
             isRemindMeLaterButtonVisible,
-            observableWallet,
+            getPersistableWallet.observe(),
             lockoutDuration
         ) { isRevealed, isRemindMeLaterButtonVisible, wallet, lockoutDuration ->
             WalletBackupState(

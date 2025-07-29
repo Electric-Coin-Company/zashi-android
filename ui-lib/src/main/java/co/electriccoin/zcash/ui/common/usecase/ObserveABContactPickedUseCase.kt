@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 
 class ObserveABContactPickedUseCase(
-    private val getSynchronizer: GetSynchronizerUseCase
+    private val synchronizerProvider: SynchronizerProvider,
 ) {
     private val bus = MutableSharedFlow<String>()
 
@@ -21,7 +22,7 @@ class ObserveABContactPickedUseCase(
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke() =
         bus.mapLatest {
-            val synchronizer = getSynchronizer()
+            val synchronizer = synchronizerProvider.getSynchronizer()
             val type = synchronizer.validateAddress(it)
             RecipientAddressState.new(
                 address = it,

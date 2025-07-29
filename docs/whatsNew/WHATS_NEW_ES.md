@@ -12,6 +12,11 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.0.5 (974)] - 2025-06-25
+
+### Corregido:
+- Hemos solucionado un fallo que ocurría cuando fallaba la inicialización de Tor.
+
 ## [2.0.4 (973)] - 2025-06-16
 
 ### Añadido:

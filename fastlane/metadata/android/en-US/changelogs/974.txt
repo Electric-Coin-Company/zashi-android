@@ -1,0 +1,2 @@
+Fixed:
+- We have fixed a crash when Tor initialization fails

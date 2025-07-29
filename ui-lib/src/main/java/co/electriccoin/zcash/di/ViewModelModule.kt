@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientVM
-import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsViewModel
+import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsVM
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceViewModel
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
@@ -16,8 +16,8 @@ import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactVM
 import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactVM
 import co.electriccoin.zcash.ui.screen.crashreporting.viewmodel.CrashReportingViewModel
 import co.electriccoin.zcash.ui.screen.error.ErrorViewModel
-import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInViewModel
-import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsViewModel
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsVM
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateTorSettingsVM
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.home.HomeViewModel
@@ -28,7 +28,7 @@ import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfoViewMod
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoViewModel
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsVM
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
-import co.electriccoin.zcash.ui.screen.receive.viewmodel.ReceiveViewModel
+import co.electriccoin.zcash.ui.screen.receive.ReceiveVM
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
 import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateViewModel
 import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationViewModel
@@ -54,6 +54,8 @@ import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteVM
 import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressVM
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageVM
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExportViewModel
+import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInVM
+import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsVM
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailViewModel
 import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersViewModel
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryViewModel
@@ -74,12 +76,12 @@ val viewModelModule =
         viewModelOf(::StorageCheckViewModel)
         viewModelOf(::RestoreSeedViewModel)
         viewModelOf(::SettingsViewModel)
-        viewModelOf(::AdvancedSettingsViewModel)
+        viewModelOf(::AdvancedSettingsVM)
         viewModelOf(::SupportViewModel)
         viewModelOf(::RestoreSuccessViewModel)
         viewModelOf(::WhatsNewViewModel)
         viewModelOf(::ChooseServerViewModel)
-        viewModelOf(::ReceiveViewModel)
+        viewModelOf(::ReceiveVM)
         viewModelOf(::QrCodeViewModel)
         viewModelOf(::RequestViewModel)
         viewModelOf(::ScanViewModel)
@@ -112,14 +114,16 @@ val viewModelModule =
         viewModelOf(::RestoreBDEstimationViewModel)
         viewModelOf(::ShieldFundsInfoViewModel)
         viewModelOf(::WalletBackupInfoViewModel)
-        viewModelOf(::ExchangeRateOptInViewModel)
-        viewModelOf(::ExchangeRateSettingsViewModel)
+        viewModelOf(::ExchangeRateSettingsVM)
         viewModelOf(::WalletBackupDetailViewModel)
         viewModelOf(::ErrorViewModel)
         viewModelOf(::SpendableBalanceViewModel)
         viewModelOf(::CrashReportOptInViewModel)
         viewModelOf(::WalletRestoringInfoViewModel)
         viewModelOf(::ThirdPartyScanViewModel)
+        viewModelOf(::TorSettingsVM)
+        viewModelOf(::TorOptInVM)
+        viewModelOf(::ExchangeRateTorSettingsVM)
         viewModelOf(::SwapAssetPickerVM)
         viewModelOf(::SwapSlippageVM)
         viewModelOf(::SwapVM)

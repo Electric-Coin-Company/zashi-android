@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="exchange_rate_info_title_1">Protección de dirección IP</string>
-    <string name="exchange_rate_info_subtitle_1">La función de conversión de moneda de Zashi no compromete su dirección IP.</string>
-    <string name="exchange_rate_info_title_2">Actualización de tasas</string>
+    <string name="exchange_rate_info_subtitle_1">La función de conversión de moneda de Zashi no compromete tu dirección IP.</string>
+    <string name="exchange_rate_info_title_2">Actualización de tasa</string>
     <string name="exchange_rate_info_subtitle_2">La tasa se actualiza automáticamente y también se puede actualizar manualmente.</string>
 
     <string name="exchange_rate_unavailable_title">Tasa de cambio no disponible</string>
-    <string name="exchange_rate_unavailable_subtitle">Lo intentamos, pero no pudimos actualizar la tasa de cambio para usted. Verifique su conexión, reinicie la aplicación e intentaremos de nuevo.</string>
-    <string name="exchange_rate_opt_in_title">Nueva Función</string>
-    <string name="exchange_rate_opt_in_subtitle">Conversión de Moneda</string>
+    <string name="exchange_rate_unavailable_subtitle">Intentamos actualizar la tasa de cambio, pero no pudimos. Verifica tu conexión, reinicia la app e intentaremos nuevamente.</string>
+    <string name="exchange_rate_opt_in_title">Nueva función</string>
+    <string name="exchange_rate_opt_in_subtitle">Conversión de moneda</string>
     <string name="exchange_rate_opt_in_primary_btn">Revisar</string>
 
-    <string name="exchange_rate_opt_in_enable">Habilitar</string>
+    <string name="exchange_rate_opt_in_enable">Activar</string>
     <string name="exchange_rate_opt_in_save">Guardar cambios</string>
-    <string name="exchange_rate_opt_in_skip">Skip</string>
-    <string name="exchange_rate_opt_in_note">Nota para los más conscientes de la privacidad: Debido a que obtenemos la tasa de conversión de los intercambios, un intercambio podría ver que la tasa de cambio fue consultada antes de que ocurriera una transacción.</string>
+    <string name="exchange_rate_opt_in_skip">Omitir</string>
+    <string name="exchange_rate_opt_in_note">Nota para quienes valoran al máximo la privacidad: debido a que obtenemos la tasa de cambio desde casas de cambio, estas podrían ver que se consultó la tasa antes de que ocurriera una transacción.</string>
 
-    <string name="exchange_rate_opt_in_option_title">Habilitar</string>
+    <string name="exchange_rate_opt_in_option_title">Activar</string>
     <string name="exchange_rate_opt_in_option_subtitle">Mostrar la conversión de moneda.</string>
-    <string name="exchange_rate_opt_out_option_title">Deshabilitar</string>
+    <string name="exchange_rate_opt_out_option_title">Desactivar</string>
     <string name="exchange_rate_opt_out_option_subtitle">No mostrar la conversión de moneda.</string>
-    <string name="exchange_rate_opt_in_description">Muestra tu saldo y los montos de pago en USD.\nPuedes gestionar esta función en Configuración Avanzada.</string>
-    <string name="exchange_rate_opt_in_description_settings">Muestra tu saldo y los montos de pago en USD.\nLa función de conversión de moneda de Zashi protege tu dirección IP en todo momento.</string>
+    <string name="exchange_rate_opt_in_description">Muestra tu saldo y montos de pago en USD.\nPuedes administrar esta función en Configuración avanzada.</string>
+    <string name="exchange_rate_opt_in_description_settings">Muestra tu saldo y montos de pago en USD.\nLa función de conversión de moneda de Zashi protege tu dirección IP en todo momento.</string>
 
+    <string name="exchange_rate_tor_opt_in_title">Tor requerido para la conversión de moneda</string>
+    <string name="exchange_rate_tor_opt_in_description">La protección con Tor es una función beta que ofrece protecciones adicionales para tu dirección IP. Las tasas de cambio en USD solo están disponibles cuando esta opción está activada.\n\nSi Tor está permitido en tu región, te recomendamos activarlo. Puedes administrarlo en Configuración avanzada.</string>
+    <string name="exchange_rate_tor_opt_in_positive">Activar</string>
+    <string name="exchange_rate_tor_opt_in_negative">Hacerlo después</string>
 </resources>

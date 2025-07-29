@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.common.repository
 
+import android.app.Application
 import cash.z.ecc.android.sdk.SdkSynchronizer
-import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.WalletInitMode
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.FastestServersResult
@@ -9,15 +9,15 @@ import cash.z.ecc.android.sdk.model.PersistableWallet
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
-import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.model.FastestServersState
 import co.electriccoin.zcash.ui.common.model.OnboardingState
-import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
+import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.provider.WalletRestoringStateProvider
@@ -28,7 +28,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -37,8 +36,8 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
@@ -48,65 +47,46 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 interface WalletRepository {
-    /**
-     * Synchronizer that is retained long enough to survive configuration changes.
-     */
-    val synchronizer: StateFlow<Synchronizer?>
     val secretState: StateFlow<SecretState>
-    val fastestServers: StateFlow<FastestServersState>
-    val onboardingState: Flow<OnboardingState>
 
-    val allAccounts: Flow<List<WalletAccount>?>
-    val currentAccount: Flow<WalletAccount?>
+    val fastestEndpoints: StateFlow<FastestServersState>
 
-    /**
-     * A flow of the wallet block synchronization state.
-     */
     val walletRestoringState: StateFlow<WalletRestoringState>
 
-    fun persistWallet(persistableWallet: PersistableWallet)
+    fun createNewWallet()
 
-    fun persistOnboardingState(onboardingState: OnboardingState)
-
-    fun refreshFastestServers()
-
-    suspend fun getSelectedServer(): LightWalletEndpoint
-
-    suspend fun getAllServers(): List<LightWalletEndpoint>
-
-    suspend fun getSynchronizer(): Synchronizer
-
-    fun persistExistingWalletWithSeedPhrase(
+    fun restoreWallet(
         network: ZcashNetwork,
         seedPhrase: SeedPhrase,
         birthday: BlockHeight?
     )
+
+    fun updateWalletEndpoint(endpoint: LightWalletEndpoint)
+
+    suspend fun enableTor(enable: Boolean)
+
+    fun refreshFastestServers()
 }
 
 class WalletRepositoryImpl(
-    accountDataSource: AccountDataSource,
     configurationRepository: ConfigurationRepository,
+    private val application: Application,
+    private val getAvailableServers: GetDefaultServersProvider,
     private val persistableWalletProvider: PersistableWalletProvider,
     private val synchronizerProvider: SynchronizerProvider,
     private val getDefaultServers: GetDefaultServersProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val walletRestoringStateProvider: WalletRestoringStateProvider,
+    private val isTorEnabledStorageProvider: IsTorEnabledStorageProvider,
 ) : WalletRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    private val walletMutex = Mutex()
-
     private val refreshFastestServersRequest = MutableSharedFlow<Unit>(replay = 1)
 
-    /**
-     * A flow of the wallet onboarding state.
-     */
-    override val onboardingState =
+    private val onboardingState =
         flow {
             emitAll(
                 StandardPreferenceKeys.ONBOARDING_STATE.observe(standardPreferenceProvider()).map { persistedNumber ->
@@ -114,11 +94,6 @@ class WalletRepositoryImpl(
                 }
             )
         }
-    override val currentAccount: Flow<WalletAccount?> = accountDataSource.selectedAccount
-
-    override val synchronizer: StateFlow<Synchronizer?> = synchronizerProvider.synchronizer
-
-    override val allAccounts: StateFlow<List<WalletAccount>?> = accountDataSource.allAccounts
 
     override val secretState: StateFlow<SecretState> =
         combine(configurationRepository.configurationFlow, onboardingState) { config, onboardingState ->
@@ -140,13 +115,13 @@ class WalletRepositoryImpl(
         )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val fastestServers =
+    override val fastestEndpoints =
         channelFlow {
             var previousFastestServerState: FastestServersState? = null
 
             combine(
                 refreshFastestServersRequest.onStart { emit(Unit) },
-                synchronizer
+                synchronizerProvider.synchronizer
             ) { _, synchronizer -> synchronizer }
                 .withIndex()
                 .flatMapLatest { (_, synchronizer) ->
@@ -175,9 +150,6 @@ class WalletRepositoryImpl(
             initialValue = FastestServersState(servers = emptyList(), isLoading = true)
         )
 
-    /**
-     * A flow of the wallet block synchronization state.
-     */
     override val walletRestoringState: StateFlow<WalletRestoringState> =
         walletRestoringStateProvider
             .observe()
@@ -187,95 +159,71 @@ class WalletRepositoryImpl(
                 initialValue = WalletRestoringState.NONE
             )
 
-    /**
-     * Persists a wallet asynchronously.  Clients observe [secretState] to see the side effects.
-     */
-    override fun persistWallet(persistableWallet: PersistableWallet) {
+    override fun updateWalletEndpoint(endpoint: LightWalletEndpoint) {
         scope.launch {
-            walletMutex.withLock {
-                persistWalletInternal(persistableWallet)
-            }
+            val selectedWallet = persistableWalletProvider.getPersistableWallet() ?: return@launch
+            val selectedEndpoint = selectedWallet.endpoint
+            if (selectedEndpoint == endpoint) return@launch
+            persistWalletInternal(selectedWallet.copy(endpoint = endpoint))
         }
     }
 
+    override suspend fun enableTor(enable: Boolean) = scope.launch { isTorEnabledStorageProvider.store(enable) }.join()
+
     private suspend fun persistWalletInternal(persistableWallet: PersistableWallet) {
-        synchronizer.value?.let { (it as? SdkSynchronizer)?.close() }
+        synchronizerProvider.synchronizer.firstOrNull()?.let { (it as? SdkSynchronizer)?.close() }
         persistableWalletProvider.store(persistableWallet)
     }
 
-    /**
-     * Asynchronously notes that the user has completed the backup steps, which means the wallet
-     * is ready to use.  Clients observe [secretState] to see the side effects.  This would be used
-     * for a user creating a new wallet.
-     */
-    override fun persistOnboardingState(onboardingState: OnboardingState) {
+    override fun createNewWallet() {
         scope.launch {
-            // Use the Mutex here to avoid timing issues.  During wallet restore, persistOnboardingState()
-            // is called prior to persistExistingWallet().  Although persistOnboardingState() should
-            // complete quickly, it isn't guaranteed to complete before persistExistingWallet()
-            // unless a mutex is used here.
-            walletMutex.withLock {
-                persistOnboardingStateInternal(onboardingState)
-            }
+            persistOnboardingStateInternal(OnboardingState.READY)
+            val zcashNetwork = ZcashNetwork.fromResources(application)
+            val newWallet =
+                PersistableWallet.new(
+                    application = application,
+                    zcashNetwork = zcashNetwork,
+                    endpoint = getAvailableServers().first(),
+                    walletInitMode = WalletInitMode.NewWallet,
+                )
+            persistWalletInternal(newWallet)
+            walletRestoringStateProvider.store(WalletRestoringState.INITIATING)
         }
     }
 
-    private suspend fun WalletRepositoryImpl.persistOnboardingStateInternal(onboardingState: OnboardingState) {
+    private suspend fun persistOnboardingStateInternal(onboardingState: OnboardingState) {
         StandardPreferenceKeys.ONBOARDING_STATE.putValue(
-            standardPreferenceProvider(),
-            onboardingState
-                .toNumber()
+            preferenceProvider = standardPreferenceProvider(),
+            newValue = onboardingState.toNumber()
         )
     }
 
     override fun refreshFastestServers() {
         scope.launch {
-            if (!fastestServers.first().isLoading) {
+            if (!fastestEndpoints.first().isLoading) {
                 refreshFastestServersRequest.emit(Unit)
             }
         }
     }
 
-    override suspend fun getSelectedServer(): LightWalletEndpoint =
-        persistableWalletProvider.persistableWallet
-            .map {
-                it?.endpoint
-            }.filterNotNull()
-            .first()
-
-    override suspend fun getAllServers(): List<LightWalletEndpoint> {
-        val defaultServers = getDefaultServers()
-        val selectedServer = getSelectedServer()
-
-        return if (defaultServers.contains(selectedServer)) {
-            defaultServers
-        } else {
-            defaultServers + selectedServer
-        }
-    }
-
-    override suspend fun getSynchronizer(): Synchronizer = synchronizerProvider.getSynchronizer()
-
-    override fun persistExistingWalletWithSeedPhrase(
+    override fun restoreWallet(
         network: ZcashNetwork,
         seedPhrase: SeedPhrase,
         birthday: BlockHeight?
     ) {
         scope.launch {
-            walletMutex.withLock {
-                val restoredWallet =
-                    PersistableWallet(
-                        network = network,
-                        birthday = birthday,
-                        endpoint = AvailableServerProvider.getDefaultServer(),
-                        seedPhrase = seedPhrase,
-                        walletInitMode = WalletInitMode.RestoreWallet
-                    )
-                persistWalletInternal(restoredWallet)
-                walletRestoringStateProvider.store(WalletRestoringState.RESTORING)
-                restoreTimestampDataSource.getOrCreate()
-                persistOnboardingStateInternal(OnboardingState.READY)
-            }
+            val restoredWallet =
+                PersistableWallet(
+                    network = network,
+                    birthday = birthday,
+                    endpoint = AvailableServerProvider.getDefaultServer(),
+                    seedPhrase = seedPhrase,
+                    walletInitMode = WalletInitMode.RestoreWallet,
+                )
+            persistWalletInternal(restoredWallet)
+            walletRestoringStateProvider.store(WalletRestoringState.RESTORING)
+            restoreTimestampDataSource.getOrCreate()
+            persistOnboardingStateInternal(OnboardingState.READY)
         }
     }
 }

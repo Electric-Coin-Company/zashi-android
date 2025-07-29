@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.design.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,17 +16,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.input.pointer.changedToDown
-import androidx.compose.ui.input.pointer.changedToDownIgnoreConsumed
-import androidx.compose.ui.input.pointer.changedToUp
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,7 +45,6 @@ fun ZashiBigIconButton(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val shadowElevation by animateDpAsState(if (isPressed) 0.dp else (2.dp orDark 4.dp))
-    val borderWidth by animateDpAsState(if (isPressed) 0.dp else 0.5.dp, animationSpec = spring())
 
     val darkBgGradient =
         Brush.verticalGradient(
@@ -76,8 +69,8 @@ fun ZashiBigIconButton(
         color = ZashiColors.Surfaces.bgPrimary,
         shape = RoundedCornerShape(22.dp),
         border =
-            BorderStroke(borderWidth, ZashiColors.Utility.Gray.utilityGray100) orDark
-                BorderStroke(borderWidth, darkBorderGradient),
+            BorderStroke(.5.dp, ZashiColors.Utility.Gray.utilityGray100) orDark
+                BorderStroke(.5.dp, darkBorderGradient),
         shadowElevation = shadowElevation,
         interactionSource = interactionSource
     ) {
@@ -105,6 +98,7 @@ fun ZashiBigIconButton(
     }
 }
 
+@Immutable
 data class BigIconButtonState(
     val text: StringResource,
     @DrawableRes val icon: Int,

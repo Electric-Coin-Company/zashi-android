@@ -17,7 +17,8 @@ val coreModule =
         single {
             WalletCoordinator.newInstance(
                 context = get(),
-                persistableWalletProvider = get()
+                persistableWalletProvider = get(),
+                isTorEnabledStorageProvider = get()
             )
         }
         singleOf(::StandardPreferenceProvider)

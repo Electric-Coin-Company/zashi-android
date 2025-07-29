@@ -24,8 +24,6 @@ import co.electriccoin.zcash.ui.NavigatorImpl
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.datasource.MessageAvailabilityDataSource
-import co.electriccoin.zcash.ui.common.model.OnboardingState
-import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.design.LocalKeyboardManager
@@ -34,6 +32,10 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
+import co.electriccoin.zcash.ui.screen.error.AndroidErrorBottomSheet
+import co.electriccoin.zcash.ui.screen.error.AndroidErrorDialog
+import co.electriccoin.zcash.ui.screen.error.ErrorBottomSheet
+import co.electriccoin.zcash.ui.screen.error.ErrorDialog
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
 import co.electriccoin.zcash.ui.screen.restore.date.AndroidRestoreBDDate
@@ -124,8 +126,7 @@ fun MainActivity.OnboardingNavigation() {
                             )
                         )
                     } else {
-                        walletViewModel.persistOnboardingState(OnboardingState.READY)
-                        walletViewModel.persistNewWalletAndRestoringState(WalletRestoringState.INITIATING)
+                        walletViewModel.createNewWallet()
                     }
                 }
             )
@@ -152,6 +153,24 @@ fun MainActivity.OnboardingNavigation() {
             AndroidSeedInfo()
         }
         composable<ThirdPartyScan> { AndroidThirdPartyScan() }
+        dialog<ErrorDialog>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) {
+            AndroidErrorDialog()
+        }
+        dialog<ErrorBottomSheet>(
+            dialogProperties =
+                DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false
+                )
+        ) {
+            AndroidErrorBottomSheet()
+        }
     }
 }
 

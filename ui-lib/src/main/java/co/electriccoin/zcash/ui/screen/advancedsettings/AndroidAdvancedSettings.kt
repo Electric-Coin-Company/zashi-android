@@ -6,14 +6,15 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-internal fun WrapAdvancedSettings(
+internal fun AdvancedSettingsScreen(
     goDeleteWallet: () -> Unit,
     goExportPrivateData: () -> Unit,
 ) {
-    val viewModel = koinViewModel<AdvancedSettingsViewModel>()
+    val viewModel = koinViewModel<AdvancedSettingsVM>()
     val originalState = viewModel.state.collectAsStateWithLifecycle().value
     val state =
         originalState.copy(
@@ -36,3 +37,6 @@ internal fun WrapAdvancedSettings(
         state = state,
     )
 }
+
+@Serializable
+data object AdvancedSettingsArgs

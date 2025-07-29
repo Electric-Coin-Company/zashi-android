@@ -7,6 +7,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.usecase.ErrorArgs
 import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
+import co.electriccoin.zcash.ui.common.usecase.OptInExchangeRateAndTorUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.STACKTRACE_LIMIT
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -18,11 +19,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@Suppress("TooManyFunctions")
 class ErrorViewModel(
     args: ErrorArgs,
     private val navigateToErrorBottom: NavigateToErrorUseCase,
     private val navigationRouter: NavigationRouter,
     private val sendEmailUseCase: SendEmailUseCase,
+    private val optInExchangeRateAndTor: OptInExchangeRateAndTorUseCase
 ) : ViewModel() {
     val state: StateFlow<ErrorState> = MutableStateFlow(createState(args)).asStateFlow()
 
@@ -39,7 +42,25 @@ class ErrorViewModel(
             is ErrorArgs.ShieldingError -> createShieldingErrorState(args)
             is ErrorArgs.General -> createGeneralErrorState(args)
             is ErrorArgs.ShieldingGeneralError -> createGeneralShieldingErrorState(args)
+            is ErrorArgs.SynchronizerTorInitError -> createSdkSynchronizerError()
         }
+
+    private fun createSdkSynchronizerError(): ErrorState =
+        ErrorState(
+            title = stringRes(R.string.error_tor_title),
+            message = stringRes(R.string.error_tor_message),
+            positive =
+                ButtonState(
+                    text = stringRes(R.string.error_tor_negative),
+                    onClick = { viewModelScope.launch { optInExchangeRateAndTor(false) { back() } } }
+                ),
+            negative =
+                ButtonState(
+                    text = stringRes(R.string.error_tor_positive),
+                    onClick = { navigationRouter.back() }
+                ),
+            onBack = ::onBack,
+        )
 
     private fun createSyncErrorState(args: ErrorArgs.SyncError) =
         ErrorState(

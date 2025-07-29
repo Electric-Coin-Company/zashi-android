@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
-import co.electriccoin.zcash.ui.screen.receive.Receive
+import co.electriccoin.zcash.ui.screen.receive.ReceiveArgs
 
 class NavigateToReceiveUseCase(
     private val navigationRouter: NavigationRouter,
@@ -10,6 +10,6 @@ class NavigateToReceiveUseCase(
 ) {
     suspend operator fun invoke() {
         accountDataSource.requestNextShieldedAddress()
-        navigationRouter.forward(Receive)
+        navigationRouter.forward(ReceiveArgs)
     }
 }

@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.screen.scan
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.type.AddressType
-import co.electriccoin.zcash.ui.common.usecase.GetSynchronizerUseCase
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.usecase.OnAddressScannedUseCase
 import co.electriccoin.zcash.ui.common.usecase.OnZip321ScannedUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
@@ -16,7 +16,7 @@ import kotlinx.coroutines.sync.withLock
 
 internal class ScanViewModel(
     private val args: ScanArgs,
-    private val getSynchronizer: GetSynchronizerUseCase,
+    private val synchronizerProvider: SynchronizerProvider,
     private val zip321ParseUriValidationUseCase: Zip321ParseUriValidationUseCase,
     private val onAddressScanned: OnAddressScannedUseCase,
     private val zip321Scanned: OnZip321ScannedUseCase
@@ -33,7 +33,7 @@ internal class ScanViewModel(
                 if (!hasBeenScannedSuccessfully) {
                     runCatching {
                         val zip321ValidationResult = zip321ParseUriValidationUseCase(result)
-                        val addressValidationResult = getSynchronizer().validateAddress(result)
+                        val addressValidationResult = synchronizerProvider.getSynchronizer().validateAddress(result)
 
                         when {
                             zip321ValidationResult is Zip321ParseUriValidation.Valid ->
@@ -67,7 +67,10 @@ internal class ScanViewModel(
     }
 
     private suspend fun onZip321SingleAddressScanned(zip321ValidationResult: Zip321ParseUriValidation.SingleAddress) {
-        val singleAddressValidation = getSynchronizer().validateAddress(zip321ValidationResult.address)
+        val singleAddressValidation =
+            synchronizerProvider
+                .getSynchronizer()
+                .validateAddress(zip321ValidationResult.address)
         if (singleAddressValidation is AddressType.Invalid) {
             state.update { ScanValidationState.INVALID }
         } else {

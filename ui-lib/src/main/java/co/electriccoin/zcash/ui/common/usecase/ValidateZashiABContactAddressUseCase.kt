@@ -1,20 +1,20 @@
 package co.electriccoin.zcash.ui.common.usecase
 
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
-import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 
 class ValidateZashiABContactAddressUseCase(
     private val addressBookRepository: AddressBookRepository,
-    private val walletRepository: WalletRepository,
+    private val synchronizerProvider: SynchronizerProvider
 ) {
     suspend operator fun invoke(
         address: String,
         exclude: EnhancedABContact? = null
     ): ContactAddressValidationResult {
-        val result = walletRepository.getSynchronizer().validateAddress(address)
+        val result = synchronizerProvider.getSynchronizer().validateAddress(address)
         return when {
             result.isNotValid -> ContactAddressValidationResult.Invalid
             addressBookRepository.contacts

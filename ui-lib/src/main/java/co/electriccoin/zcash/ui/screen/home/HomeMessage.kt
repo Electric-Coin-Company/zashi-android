@@ -37,8 +37,6 @@ import androidx.compose.ui.zIndex
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupMessage
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupMessageState
-import co.electriccoin.zcash.ui.screen.home.currency.EnableCurrencyConversionMessage
-import co.electriccoin.zcash.ui.screen.home.currency.EnableCurrencyConversionMessageState
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedMessage
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedMessageState
 import co.electriccoin.zcash.ui.screen.home.error.WalletErrorMessage
@@ -51,6 +49,8 @@ import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsMessage
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsMessageState
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessage
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
+import co.electriccoin.zcash.ui.screen.home.tor.EnableTorMessage
+import co.electriccoin.zcash.ui.screen.home.tor.EnableTorMessageState
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessage
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import kotlinx.coroutines.delay
@@ -124,13 +124,6 @@ fun HomeMessage(
                         contentPadding = contentPadding
                     )
 
-                is EnableCurrencyConversionMessageState ->
-                    EnableCurrencyConversionMessage(
-                        innerModifier = innerModifier,
-                        state = normalizedState as EnableCurrencyConversionMessageState,
-                        contentPadding = contentPadding
-                    )
-
                 is ShieldFundsMessageState ->
                     ShieldFundsMessage(
                         innerModifier = innerModifier,
@@ -173,13 +166,19 @@ fun HomeMessage(
                         contentPadding = contentPadding
                     )
 
-                is CrashReportMessageState -> {
+                is CrashReportMessageState ->
                     CrashReportMessage(
                         innerModifier = innerModifier,
                         state = normalizedState as CrashReportMessageState,
                         contentPadding = contentPadding
                     )
-                }
+
+                is EnableTorMessageState ->
+                    EnableTorMessage(
+                        innerModifier = innerModifier,
+                        state = normalizedState as EnableTorMessageState,
+                        contentPadding = contentPadding
+                    )
 
                 null -> {
                     // do nothing
