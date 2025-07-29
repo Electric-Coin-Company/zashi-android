@@ -20,7 +20,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
+import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
@@ -190,7 +190,7 @@ class ReviewTransactionViewModel(
                             stringRes("${transactionProposal.destination.address.take(ADDRESS_MAX_LENGTH)}...")
                         },
                     showButton =
-                        ZashiChipButtonState(
+                        ChipButtonState(
                             startIcon =
                                 if (isReceiverExpanded) {
                                     R.drawable.ic_chevron_up
@@ -201,7 +201,7 @@ class ReviewTransactionViewModel(
                             onClick = ::onExpandReceiverClick
                         ),
                     saveButton =
-                        ZashiChipButtonState(
+                        ChipButtonState(
                             startIcon = R.drawable.ic_user_plus,
                             text = stringRes(R.string.payment_request_btn_save_contact),
                             onClick = { onAddContactClick(transactionProposal.destination.address) }

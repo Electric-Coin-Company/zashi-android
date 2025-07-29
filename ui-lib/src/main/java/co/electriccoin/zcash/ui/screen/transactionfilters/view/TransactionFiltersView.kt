@@ -31,7 +31,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiChipButton
 import co.electriccoin.zcash.ui.design.component.ZashiChipButtonDefaults
-import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
+import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
 import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
@@ -89,7 +89,7 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
                     state.filters.forEach { filter ->
                         ZashiChipButton(
                             state =
-                                ZashiChipButtonState(
+                                ChipButtonState(
                                     endIcon = if (filter.isSelected) R.drawable.ic_close_small else null,
                                     onClick = filter.onClick,
                                     text = filter.text,

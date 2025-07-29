@@ -7,6 +7,7 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.ModalBottomSheetState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
+import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.SimpleListItemState
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResource
@@ -23,6 +24,7 @@ internal data class SwapState(
     val slippage: ButtonState,
     val amountText: SwapAmountTextState,
     val infoItems: List<SimpleListItemState>,
+    val addressContact: ChipButtonState? = null,
     val address: TextFieldState,
     val isAddressBookHintVisible: Boolean,
     val qrScannerButton: IconButtonState,

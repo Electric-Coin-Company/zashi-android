@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.usecase.ContactWithSwapAsset
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.GetABSwapContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanSwapAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
@@ -45,7 +45,7 @@ class SelectSwapABRecipientVM(
                 initialValue = createState(contacts = null)
             )
 
-    private fun createState(contacts: List<ContactWithSwapAsset>?): AddressBookState =
+    private fun createState(contacts: List<EnhancedABContact>?): AddressBookState =
         AddressBookState(
             isLoading = contacts == null,
             items =
@@ -54,7 +54,7 @@ class SelectSwapABRecipientVM(
                         AddressBookItem.Contact(
                             ContactListItemState(
                                 bigIcon = getContactInitials(contact),
-                                smallIcon = contact.asset.chainIcon,
+                                smallIcon = contact.blockchain?.chainIcon,
                                 isShielded = false,
                                 name = stringRes(contact.contact.name),
                                 address = stringResByAddress(contact.contact.address, abbreviated = true),
@@ -77,7 +77,7 @@ class SelectSwapABRecipientVM(
             info = null
         )
 
-    private fun getContactInitials(contact: ContactWithSwapAsset): ImageResource =
+    private fun getContactInitials(contact: EnhancedABContact): ImageResource =
         imageRes(
             contact.contact.name
                 .split(" ")
@@ -90,7 +90,7 @@ class SelectSwapABRecipientVM(
 
     private fun onBack() = viewModelScope.launch { navigateToSelectSwapRecipient.onSelectionCancelled(args) }
 
-    private fun onContactClick(contact: ContactWithSwapAsset) =
+    private fun onContactClick(contact: EnhancedABContact) =
         viewModelScope.launch { navigateToSelectSwapRecipient.onSelected(contact, args) }
 
     private fun onAddContactManuallyClick() = navigationRouter.forward(

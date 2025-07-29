@@ -39,7 +39,7 @@ import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiChipButton
-import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
+import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
@@ -535,7 +535,7 @@ private fun Zip321Preview() =
                                 title = stringRes(co.electriccoin.zcash.ui.R.string.payment_request_requested_by),
                                 name = stringRes("Name"),
                                 address = stringRes("Address"),
-                                ZashiChipButtonState(
+                                ChipButtonState(
                                     startIcon = R.drawable.ic_chevron_down,
                                     text =
                                         stringRes(
@@ -543,7 +543,7 @@ private fun Zip321Preview() =
                                         ),
                                     onClick = {}
                                 ),
-                                ZashiChipButtonState(
+                                ChipButtonState(
                                     startIcon = co.electriccoin.zcash.ui.R.drawable.ic_user_plus,
                                     text =
                                         stringRes(

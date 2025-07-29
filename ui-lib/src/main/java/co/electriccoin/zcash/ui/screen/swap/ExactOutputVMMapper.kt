@@ -6,10 +6,12 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ButtonStyle
+import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
@@ -42,7 +44,8 @@ internal class ExactOutputVMMapper : SwapVMMapper {
         onSwapModeChange: (SwapMode) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
         onQrCodeScannerClick: () -> Unit,
-        onAddressBookClick: () -> Unit
+        onAddressBookClick: () -> Unit,
+        onDeleteSelectedContactClick: () -> Unit
     ): SwapState {
         val state = ExactOutputInternalState(internalState)
         val textFieldState =
@@ -61,6 +64,10 @@ internal class ExactOutputVMMapper : SwapVMMapper {
                 ),
             amountText = createAmountTextState(state),
             mode = state.swapMode,
+            addressContact = createAddressContactState(
+                state = state,
+                onDeleteSelectedContactClick = onDeleteSelectedContactClick
+            ),
             address =
                 createAddressState(
                     state = state,
@@ -94,6 +101,19 @@ internal class ExactOutputVMMapper : SwapVMMapper {
                     onRequestSwapQuoteClick = onRequestSwapQuoteClick,
                     onTryAgainClick = onTryAgainClick
                 ),
+        )
+    }
+
+    private fun createAddressContactState(
+        state: ExactOutputInternalState,
+        onDeleteSelectedContactClick: () -> Unit
+    ): ChipButtonState? {
+        if (state.selectedContact == null) return null
+
+        return ChipButtonState(
+            text = stringRes(state.selectedContact.contact.name),
+            onClick = onDeleteSelectedContactClick,
+            endIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chip_close
         )
     }
 
@@ -271,7 +291,8 @@ internal class ExactOutputVMMapper : SwapVMMapper {
                 if (state.swapAssets.error != null) {
                     onTryAgainClick()
                 } else {
-                    state.getOriginTokenAmount()?.let { onRequestSwapQuoteClick(it, state.addressText) }
+                    val address = state.selectedContact?.address ?: state.addressText
+                    state.getOriginTokenAmount()?.let { onRequestSwapQuoteClick(it, address) }
                 }
             },
             isEnabled =
@@ -340,7 +361,8 @@ private data class ExactOutputInternalState(
     override val isAddressBookHintVisible: Boolean,
     override val swapAssets: SwapAssetsData,
     override val swapMode: SwapMode,
-    override val isRequestingQuote: Boolean
+    override val isRequestingQuote: Boolean,
+    override val selectedContact: EnhancedABContact?
 ) : InternalState {
 
     constructor(original: InternalState) : this(
@@ -353,7 +375,8 @@ private data class ExactOutputInternalState(
         isAddressBookHintVisible = original.isAddressBookHintVisible,
         swapAssets = original.swapAssets,
         swapMode = original.swapMode,
-        isRequestingQuote = original.isRequestingQuote
+        isRequestingQuote = original.isRequestingQuote,
+        selectedContact = original.selectedContact
     )
 
     fun getOriginFiatAmount(): BigDecimal? {

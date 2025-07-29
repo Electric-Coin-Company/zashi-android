@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import kotlin.math.absoluteValue
 
@@ -35,7 +36,8 @@ fun ZashiAddressTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = ZashiTextFieldDefaults.shape,
-    contentPadding: PaddingValues = ZashiTextFieldDefaults.contentPadding(leadingIcon, suffix, trailingIcon, prefix),
+    contentPadding: PaddingValues = ZashiAddressTextFieldDefaults
+        .contentPadding(leadingIcon, suffix, trailingIcon, prefix),
     colors: ZashiTextFieldColors = ZashiTextFieldDefaults.defaultColors()
 ) {
     val isFocused by interactionSource.collectIsFocusedAsState()
@@ -100,5 +102,20 @@ private fun ellipsisVisualTransformation() = VisualTransformation { text ->
             }
         }.toAnnotatedString(),
         mapping
+    )
+}
+
+object ZashiAddressTextFieldDefaults {
+    @Composable
+    fun contentPadding(
+        leadingIcon: @Composable (() -> Unit)?,
+        suffix: @Composable (() -> Unit)?,
+        trailingIcon: @Composable (() -> Unit)?,
+        prefix: @Composable (() -> Unit)?
+    ) = PaddingValues(
+        start = if (leadingIcon != null || prefix != null) 8.dp else 14.dp,
+        end = if (suffix != null) 4.dp else 12.dp,
+        top = getVerticalPadding(trailingIcon, leadingIcon, suffix, prefix),
+        bottom = getVerticalPadding(trailingIcon, leadingIcon, suffix, prefix),
     )
 }

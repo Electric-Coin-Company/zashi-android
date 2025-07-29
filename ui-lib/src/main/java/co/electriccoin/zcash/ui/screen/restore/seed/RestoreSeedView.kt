@@ -50,7 +50,7 @@ import co.electriccoin.zcash.ui.design.component.SeedWordTextFieldState
 import co.electriccoin.zcash.ui.design.component.TextSelection
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiChipButton
-import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
+import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
 import co.electriccoin.zcash.ui.design.component.ZashiSeedTextField
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
@@ -218,7 +218,7 @@ private fun BottomBar(
                     items(suggestions) {
                         ZashiChipButton(
                             state =
-                                ZashiChipButtonState(
+                                ChipButtonState(
                                     text = stringRes(it),
                                     onClick = {
                                         if (handle.selectedIndex >= 0) {

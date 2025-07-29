@@ -1,17 +1,22 @@
 package co.electriccoin.zcash.ui.screen.swap
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -23,10 +28,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.key.NativeKeyEvent
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +50,7 @@ import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ButtonStyle
+import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.Spacer
@@ -49,6 +58,7 @@ import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiAddressTextField
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
+import co.electriccoin.zcash.ui.design.component.ZashiChipButton
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
 import co.electriccoin.zcash.ui.design.component.ZashiImageButton
@@ -87,9 +97,7 @@ internal fun SwapView(
     }
 
     BlankBgScaffold(
-        topBar = {
-            TopAppBar(state)
-        }
+        topBar = { TopAppBar(state) }
     ) {
         Column(
             modifier =
@@ -281,13 +289,50 @@ private fun ColumnScope.AddressTextField(state: SwapState) {
     Spacer(6.dp)
     ZashiAddressTextField(
         state = state.address,
-        modifier = Modifier.fillMaxWidth(),
-        placeholder = {
-            Text(
-                text = "Enter address...",
-                style = ZashiTypography.textMd,
-                color = ZashiColors.Inputs.Default.text
-            )
+        modifier = Modifier
+            .fillMaxWidth()
+            .onKeyEvent {
+                if (state.addressContact != null && it.nativeKeyEvent.keyCode == NativeKeyEvent.KEYCODE_DEL) {
+                    state.addressContact.onClick()
+                    true
+                } else {
+                    false
+                }
+            },
+        placeholder = if (state.addressContact == null) {
+            {
+                Text(
+                    text = "Enter address...",
+                    style = ZashiTypography.textMd,
+                    color = ZashiColors.Inputs.Default.text
+                )
+            }
+        } else {
+            null
+        },
+        prefix = if (state.addressContact == null) {
+            null
+        } else {
+            {
+                Box(
+                    modifier = Modifier.fillMaxHeight().padding(top = 3.5.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    ZashiChipButton(
+                        state.addressContact,
+                        contentPadding = PaddingValues(start = 10.dp, top = 4.5.dp, end = 4.5.dp, bottom = 4.5.dp),
+                        useTint = false,
+                        shape = RoundedCornerShape(6.dp),
+                        color = ZashiColors.Tags.surfacePrimary,
+                        border = BorderStroke(1.dp, ZashiColors.Tags.surfaceStroke),
+                        textStyle = ZashiTypography.textSm.copy(
+                            color = ZashiColors.Text.textPrimary,
+                            fontWeight = FontWeight.Medium
+                        )
+                    )
+                }
+
+            }
         },
         suffix = {
             Row(
@@ -347,6 +392,11 @@ private fun Preview() {
                             stringRes("1%"),
                             trailingIcon = R.drawable.ic_swap_slippage
                         ),
+                    addressContact = ChipButtonState(
+                        text = stringRes("Contact"),
+                        onClick = {},
+                        endIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chip_close
+                    ),
                     amountText =
                         SwapAmountTextState(
                             token =

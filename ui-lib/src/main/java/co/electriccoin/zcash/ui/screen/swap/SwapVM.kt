@@ -10,10 +10,10 @@ import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapMode.PAY
 import co.electriccoin.zcash.ui.common.model.SwapMode.SWAP
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
-import co.electriccoin.zcash.ui.common.usecase.ContactWithSwapAsset
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
@@ -79,7 +79,7 @@ internal class SwapVM(
 
     private val isCancelStateVisible = MutableStateFlow(false)
 
-    private var selectedContact: ContactWithSwapAsset? = null
+    private var selectedContact: MutableStateFlow<EnhancedABContact?> = MutableStateFlow(null)
 
     val cancelState = isCancelStateVisible
         .map { isVisible ->
@@ -120,7 +120,8 @@ internal class SwapVM(
             currencyType,
             getSwapAssetsUseCase.observe(),
             getSwapMode.observe(),
-            isRequestingQuote
+            isRequestingQuote,
+            selectedContact
         ) { spendable,
             address,
             amount,
@@ -130,7 +131,8 @@ internal class SwapVM(
             currencyType,
             swapAssets,
             mode,
-            isRequestingQuote
+            isRequestingQuote,
+            selectedContact
             ->
             InternalStateImpl(
                 swapAsset = asset,
@@ -142,7 +144,8 @@ internal class SwapVM(
                 isAddressBookHintVisible = isAddressBookHintVisible,
                 swapAssets = swapAssets,
                 swapMode = mode,
-                isRequestingQuote = isRequestingQuote
+                isRequestingQuote = isRequestingQuote,
+                selectedContact = selectedContact
             )
         }
 
@@ -172,13 +175,18 @@ internal class SwapVM(
             onSwapCurrencyTypeClick = ::onSwapCurrencyTypeClick,
             onSlippageClick = ::onSlippageClick,
             onRequestSwapQuoteClick = ::onRequestSwapQuoteClick,
+            onTryAgainClick = ::onTryAgainClick,
             onAddressChange = ::onAddressChange,
             onSwapModeChange = ::onSwapModeChange,
             onTextFieldChange = ::onTextFieldChange,
             onQrCodeScannerClick = ::onQrCodeScannerClick,
             onAddressBookClick = ::onAddressBookClick,
-            onTryAgainClick = ::onTryAgainClick
+            onDeleteSelectedContactClick = ::onDeleteSelectedContactClick
         )
+    }
+
+    private fun onDeleteSelectedContactClick() {
+        selectedContact.update { null }
     }
 
     private fun onTryAgainClick() = swapRepository.requestRefreshAssets()
@@ -187,15 +195,15 @@ internal class SwapVM(
         val selected = navigateToSelectSwapRecipient()
 
         if (selected != null) {
-            selectedContact = selected
-            addressText.update { selected.contact.address }
+            selectedContact.update { selected }
+            addressText.update { "" }
         }
     }
 
     private fun onQrCodeScannerClick() = viewModelScope.launch {
         val result = navigateToScanAddress(ScanSwapAddressArgs.Mode.SWAP_SCAN_DESTINATION_ADDRESS)
         if (result != null) {
-            selectedContact = null
+            selectedContact.update { null }
             addressText.update { result.address }
             if (result.amount != null) {
                 amountText.update { NumberTextFieldInnerState.fromAmount(result.amount) }
@@ -274,14 +282,12 @@ internal class SwapVM(
     private fun onSwapInfoClick() = navigateToSwapInfo()
 
     private fun onAddressChange(new: String) {
-        selectedContact = null
+        selectedContact.update { null }
         addressText.update { new }
     }
 
     private fun onSwapAssetPickerClick() = navigationRouter.forward(
-        SwapAssetPickerArgs(
-            chainTicker = selectedContact?.asset?.chainTicker
-        )
+        SwapAssetPickerArgs(chainTicker = selectedContact.value?.blockchain?.chainTicker)
     )
 }
 
@@ -301,7 +307,8 @@ internal interface SwapVMMapper {
         onSwapModeChange: (SwapMode) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
         onQrCodeScannerClick: () -> Unit,
-        onAddressBookClick: () -> Unit
+        onAddressBookClick: () -> Unit,
+        onDeleteSelectedContactClick: () -> Unit
     ): SwapState
 }
 
@@ -316,6 +323,7 @@ internal interface InternalState {
     val swapAssets: SwapAssetsData
     val swapMode: SwapMode
     val isRequestingQuote: Boolean
+    val selectedContact: EnhancedABContact?
 }
 
 internal data class InternalStateImpl(
@@ -329,5 +337,5 @@ internal data class InternalStateImpl(
     override val swapAssets: SwapAssetsData,
     override val swapMode: SwapMode,
     override val isRequestingQuote: Boolean,
+    override val selectedContact: EnhancedABContact?
 ) : InternalState
-
