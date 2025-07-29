@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -14,9 +15,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
@@ -95,7 +98,10 @@ private fun ContactViewInternal(
                     style = ZashiTypography.textMd,
                     color = ZashiColors.Inputs.Default.text
                 )
-            }
+            },
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
         )
         Spacer(modifier = Modifier.height(20.dp))
         Text(
@@ -112,6 +118,7 @@ private fun ContactViewInternal(
             state = state.contactName,
             keyboardOptions =
                 KeyboardOptions(
+                    imeAction = ImeAction.Done,
                     capitalization = KeyboardCapitalization.Words
                 ),
             placeholder = {
