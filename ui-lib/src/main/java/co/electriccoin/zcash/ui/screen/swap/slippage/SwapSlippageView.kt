@@ -111,7 +111,7 @@ private fun SlippageInfoCard(state: SwapSlippageInfoState) {
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp)
     ) {
         Text(
-            text = "You will pay up to " + state.title.getValue() + " for the swap.",
+            text = state.title.getValue(),
             style = ZashiTypography.textSm,
             fontWeight = FontWeight.SemiBold,
             color = titleColor
