@@ -36,7 +36,7 @@ internal class ExactOutputVMMapper : SwapVMMapper {
         onBack: () -> Unit,
         onSwapInfoClick: () -> Unit,
         onSwapAssetPickerClick: () -> Unit,
-        onSwapCurrencyTypeClick: (BigDecimal) -> Unit,
+        onSwapCurrencyTypeClick: (BigDecimal?) -> Unit,
         onSlippageClick: (BigDecimal?) -> Unit,
         onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
         onTryAgainClick: () -> Unit,
@@ -126,7 +126,7 @@ internal class ExactOutputVMMapper : SwapVMMapper {
     private fun createAmountTextFieldState(
         state: ExactOutputInternalState,
         onSwapAssetPickerClick: () -> Unit,
-        onSwapCurrencyTypeClick: (BigDecimal) -> Unit,
+        onSwapCurrencyTypeClick: (BigDecimal?) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
     ): SwapAmountTextFieldState {
         val amountFiat = state.getOriginFiatAmount()
@@ -197,21 +197,19 @@ internal class ExactOutputVMMapper : SwapVMMapper {
             onSwapChange = {
                 val newTextAmount =
                     when (state.currencyType) {
-                        CurrencyType.TOKEN -> amountFiat ?: BigDecimal(0)
+                        CurrencyType.TOKEN -> amountFiat
 
                         CurrencyType.FIAT -> {
                             if (amountFiat == null || state.swapAsset == null) {
-                                BigDecimal.valueOf(0)
+                                null
                             } else {
                                 amountFiat.divide(state.swapAsset.usdPrice, MathContext.DECIMAL128)
-                            }.setScale(
-                                state.swapAsset?.decimals ?: ZEC_FORMATTER.maximumFractionDigits,
-                                RoundingMode.DOWN
-                            )
+                                    .setScale(state.swapAsset.decimals, RoundingMode.DOWN)
+                            }
                         }
                     }
 
-                onSwapCurrencyTypeClick(newTextAmount)
+                onSwapCurrencyTypeClick(newTextAmount.takeIf { it != BigDecimal.ZERO })
             },
             isSwapChangeEnabled = !state.isRequestingQuote,
         )

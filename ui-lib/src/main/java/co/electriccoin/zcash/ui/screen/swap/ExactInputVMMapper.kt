@@ -40,7 +40,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
         onBack: () -> Unit,
         onSwapInfoClick: () -> Unit,
         onSwapAssetPickerClick: () -> Unit,
-        onSwapCurrencyTypeClick: (BigDecimal) -> Unit,
+        onSwapCurrencyTypeClick: (BigDecimal?) -> Unit,
         onSlippageClick: (BigDecimal?) -> Unit,
         onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
         onTryAgainClick: () -> Unit,
@@ -132,7 +132,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
     @Suppress("CyclomaticComplexMethod")
     private fun createAmountTextFieldState(
         state: ExactInputInternalState,
-        onSwapCurrencyTypeClick: (BigDecimal) -> Unit,
+        onSwapCurrencyTypeClick: (BigDecimal?) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
     ): SwapAmountTextFieldState {
         val amountFiat = state.getOriginFiatAmount()
@@ -186,8 +186,15 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 },
             onSwapChange = {
                 when (state.currencyType) {
-                    TOKEN -> onSwapCurrencyTypeClick(amountFiat ?: BigDecimal(0))
-                    FIAT -> onSwapCurrencyTypeClick((zatoshiAmount ?: 0).convertZatoshiToZecBigDecimal())
+                    TOKEN -> onSwapCurrencyTypeClick(amountFiat.takeIf { it != BigDecimal.ZERO })
+                    FIAT -> {
+                        if (zatoshiAmount == null) {
+                            onSwapCurrencyTypeClick(null)
+                        } else {
+                            onSwapCurrencyTypeClick(zatoshiAmount.convertZatoshiToZecBigDecimal())
+                        }
+
+                    }
                 }
             },
             isSwapChangeEnabled = !state.isRequestingQuote

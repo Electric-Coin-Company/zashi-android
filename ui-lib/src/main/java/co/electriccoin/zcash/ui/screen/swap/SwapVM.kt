@@ -253,12 +253,12 @@ internal class SwapVM(
         delay(350)
     }
 
-    private fun onSwapCurrencyTypeClick(newTextFieldAmount: BigDecimal) {
+    private fun onSwapCurrencyTypeClick(newTextFieldAmount: BigDecimal?) {
         amountText.update {
             NumberTextFieldInnerState(
                 innerTextFieldState =
                     InnerTextFieldState(
-                        value = stringResByDynamicNumber(newTextFieldAmount),
+                        value = newTextFieldAmount?.let { stringResByDynamicNumber(it) } ?: stringRes(""),
                         selection = TextSelection.End
                     ),
                 amount = newTextFieldAmount,
@@ -309,7 +309,7 @@ internal interface SwapVMMapper {
         onBack: () -> Unit,
         onSwapInfoClick: () -> Unit,
         onSwapAssetPickerClick: () -> Unit,
-        onSwapCurrencyTypeClick: (BigDecimal) -> Unit,
+        onSwapCurrencyTypeClick: (BigDecimal?) -> Unit,
         onSlippageClick: (BigDecimal?) -> Unit,
         onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
         onTryAgainClick: () -> Unit,
