@@ -78,12 +78,13 @@ fun ZashiTextField(
     colors: ZashiTextFieldColors = ZashiTextFieldDefaults.defaultColors()
 ) {
     ZashiTextField(
-        state = TextFieldState(
-            value = stringRes(value),
-            error = error?.let { stringRes(it) },
-            isEnabled = isEnabled,
-            onValueChange = onValueChange,
-        ),
+        state =
+            TextFieldState(
+                value = stringRes(value),
+                error = error?.let { stringRes(it) },
+                isEnabled = isEnabled,
+                onValueChange = onValueChange,
+            ),
         modifier = modifier,
         innerModifier = innerModifier,
         textStyle = textStyle,
@@ -176,10 +177,11 @@ fun ZashiTextField(
     var enhancedValueState by remember {
         mutableStateOf(
             EnhancedTextFieldState(
-                innerState = InnerTextFieldState(
-                    value = state.value,
-                    selection = TextSelection.Start,
-                ),
+                innerState =
+                    InnerTextFieldState(
+                        value = state.value,
+                        selection = TextSelection.Start,
+                    ),
                 error = state.error,
                 isEnabled = state.isEnabled,
                 onValueChange = { _ -> },
@@ -187,11 +189,12 @@ fun ZashiTextField(
         )
     }
 
-    val textFieldValue = enhancedValueState.copy(
-        innerState = enhancedValueState.innerState.copy(value = state.value),
-        error = state.error,
-        isEnabled = state.isEnabled
-    )
+    val textFieldValue =
+        enhancedValueState.copy(
+            innerState = enhancedValueState.innerState.copy(value = state.value),
+            error = state.error,
+            isEnabled = state.isEnabled
+        )
 
     SideEffect {
         if (textFieldValue != enhancedValueState) {
@@ -203,12 +206,13 @@ fun ZashiTextField(
     val locale = LocalConfiguration.current.locales[0]
 
     TextFieldInternal(
-        state = enhancedValueState.copy(
-            onValueChange = { newInnerState ->
-                enhancedValueState = enhancedValueState.copy(innerState = newInnerState)
-                state.onValueChange(newInnerState.value.getString(context, locale))
-            }
-        ),
+        state =
+            enhancedValueState.copy(
+                onValueChange = { newInnerState ->
+                    enhancedValueState = enhancedValueState.copy(innerState = newInnerState)
+                    state.onValueChange(newInnerState.value.getString(context, locale))
+                }
+            ),
         textStyle = textStyle,
         placeholder = placeholder,
         leadingIcon = leadingIcon,
@@ -323,10 +327,11 @@ private fun TextFieldInternal(
                     val stringChanged = value != newTextFieldValueState.text
                     val selectionChanged = lastInnerState.getTextRange(value) != newTextFieldValueState.selection
 
-                    lastInnerState = InnerTextFieldState(
-                        value = stringRes(newTextFieldValueState.text),
-                        selection = TextSelection.ByTextRange(newTextFieldValueState.selection)
-                    )
+                    lastInnerState =
+                        InnerTextFieldState(
+                            value = stringRes(newTextFieldValueState.text),
+                            selection = TextSelection.ByTextRange(newTextFieldValueState.selection)
+                        )
 
                     if (stringChanged || selectionChanged) {
                         state.onValueChange(lastInnerState)
@@ -614,15 +619,16 @@ data class InnerTextFieldState(
 
 @Immutable
 sealed interface TextSelection {
+    @Immutable
+    data object End : TextSelection
 
     @Immutable
-    data object End: TextSelection
+    data object Start : TextSelection
 
     @Immutable
-    data object Start: TextSelection
-
-    @Immutable
-    data class ByTextRange(val range: TextRange): TextSelection
+    data class ByTextRange(
+        val range: TextRange
+    ) : TextSelection
 }
 
 @PreviewScreens

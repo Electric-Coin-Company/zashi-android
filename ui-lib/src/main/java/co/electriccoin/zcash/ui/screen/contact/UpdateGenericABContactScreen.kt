@@ -19,4 +19,7 @@ internal fun UpdateGenericABContactScreen(args: UpdateGenericABContactArgs) {
 }
 
 @Serializable
-data class UpdateGenericABContactArgs(val address: String, val chain: String?)
+data class UpdateGenericABContactArgs(
+    val address: String,
+    val chain: String?
+)

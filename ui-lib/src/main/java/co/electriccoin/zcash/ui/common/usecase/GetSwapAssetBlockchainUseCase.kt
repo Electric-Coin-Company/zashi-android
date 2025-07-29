@@ -12,7 +12,8 @@ class GetSwapAssetBlockchainUseCase(
         if (chainTicker == null) return null
 
         return swapRepository.assets.value.data
-            ?.firstOrNull { it.chainTicker == chainTicker }?.blockchain ?: blockchainProvider
+            ?.firstOrNull { it.chainTicker == chainTicker }
+            ?.blockchain ?: blockchainProvider
             .getBlockchain(chainTicker)
     }
 }

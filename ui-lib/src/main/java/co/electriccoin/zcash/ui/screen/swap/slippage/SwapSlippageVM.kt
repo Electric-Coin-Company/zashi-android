@@ -29,7 +29,6 @@ class SwapSlippageVM(
     private val setSlippage: SetSlippageUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
-
     private val fiatAmount = swapSlippageArgs.fiatAmount?.toBigDecimal()
 
     private val slippageSelection: MutableStateFlow<BigDecimal?> = MutableStateFlow(getSlippage())
@@ -100,24 +99,27 @@ class SwapSlippageVM(
             onClick = ::onConfirmClick
         )
 
+    @Suppress("MagicNumber")
     private fun createSlippageInfoState(percent: BigDecimal?): SwapSlippageInfoState? {
         if (percent == null) return null
 
         val percentString = stringResByNumber(percent) + stringRes("%")
 
-        val result = if (fiatAmount == null) {
-            percentString
-        } else {
-            val slippageFiat = fiatAmount.multiply(
-                percent.divide(BigDecimal(100), MathContext.DECIMAL128),
-                MathContext.DECIMAL128
-            )
-            percentString +
-                stringRes(" ") +
-                stringRes("(") +
-                stringResByDynamicCurrencyNumber(slippageFiat, FiatCurrency.USD.symbol) +
-                stringRes(")")
-        }
+        val result =
+            if (fiatAmount == null) {
+                percentString
+            } else {
+                val slippageFiat =
+                    fiatAmount.multiply(
+                        percent.divide(BigDecimal(100), MathContext.DECIMAL128),
+                        MathContext.DECIMAL128
+                    )
+                percentString +
+                    stringRes(" ") +
+                    stringRes("(") +
+                    stringResByDynamicCurrencyNumber(slippageFiat, FiatCurrency.USD.symbol) +
+                    stringRes(")")
+            }
 
         return SwapSlippageInfoState(
             title = result,

@@ -37,14 +37,13 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.ImageResource
+import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
-import kotlin.math.max
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,18 +52,22 @@ internal fun SwapQuoteView(state: SwapQuoteState?) {
         state = state
     ) { innerState ->
         when (innerState) {
-            is SwapQuoteState.Success -> Success(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f, false),
-                state = innerState
-            )
-            is SwapQuoteState.Error -> Error(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f, false),
-                state = innerState
-            )
+            is SwapQuoteState.Success ->
+                Success(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f, false),
+                    state = innerState
+                )
+            is SwapQuoteState.Error ->
+                Error(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f, false),
+                    state = innerState
+                )
         }
     }
 }
@@ -117,6 +120,7 @@ private fun Error(
     }
 }
 
+@Suppress("MagicNumber")
 @Composable
 private fun Success(
     state: SwapQuoteState.Success,
@@ -242,8 +246,13 @@ private fun SuccessPreview() =
                         SwapTokenAmountState(
                             bigIcon = imageRes(R.drawable.ic_zec_round_full),
                             smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
-                            title = stringResByDynamicCurrencyNumber(0.0000000000000000000004214, "", TickerLocation
-                                .HIDDEN),
+                            title =
+                                stringResByDynamicCurrencyNumber(
+                                    0.0000000000000000000004214,
+                                    "",
+                                    TickerLocation
+                                        .HIDDEN
+                                ),
                             subtitle = stringResByDynamicCurrencyNumber(21312, "$")
                         ),
                     to =
@@ -319,4 +328,3 @@ private fun ErrorPreview() =
                 )
         )
     }
-

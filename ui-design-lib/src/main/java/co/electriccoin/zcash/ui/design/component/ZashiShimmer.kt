@@ -22,21 +22,22 @@ import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer
 
 @Composable
-fun rememberZashiShimmer() = rememberShimmer(
-    ShimmerBounds.View,
-    LocalShimmerTheme.current.copy(
-        animationSpec =
-            infiniteRepeatable(
-                animation =
-                    tween(
-                        durationMillis = 750,
-                        easing = LinearEasing,
-                        delayMillis = 450,
-                    ),
-                repeatMode = RepeatMode.Restart,
-            )
+fun rememberZashiShimmer() =
+    rememberShimmer(
+        ShimmerBounds.View,
+        LocalShimmerTheme.current.copy(
+            animationSpec =
+                infiniteRepeatable(
+                    animation =
+                        tween(
+                            durationMillis = 750,
+                            easing = LinearEasing,
+                            delayMillis = 450,
+                        ),
+                    repeatMode = RepeatMode.Restart,
+                )
+        )
     )
-)
 
 @Composable
 fun ShimmerCircle(size: Dp = 24.dp) {

@@ -128,23 +128,27 @@ fun ZashiCheckboxIndicator(isChecked: Boolean) {
 }
 
 @Immutable
-data class CheckboxTextStyles(val title: TextStyle, val subtitle: TextStyle)
+data class CheckboxTextStyles(
+    val title: TextStyle,
+    val subtitle: TextStyle
+)
 
 object ZashiCheckboxDefaults {
-
     val spacing = ZashiDimensions.Spacing.spacingMd
 
     val contentPadding = PaddingValues(vertical = 12.dp)
 
     @Composable
     fun textStyles(
-        title: TextStyle = ZashiTypography.textSm.copy(
-            fontWeight = FontWeight.Medium,
-            color = ZashiColors.Text.textPrimary
-        ),
-        subtitle: TextStyle = ZashiTypography.textSm.copy(
-            color = ZashiColors.Text.textTertiary
-        ),
+        title: TextStyle =
+            ZashiTypography.textSm.copy(
+                fontWeight = FontWeight.Medium,
+                color = ZashiColors.Text.textPrimary
+            ),
+        subtitle: TextStyle =
+            ZashiTypography.textSm.copy(
+                color = ZashiColors.Text.textTertiary
+            ),
     ) = CheckboxTextStyles(title = title, subtitle = subtitle)
 }
 

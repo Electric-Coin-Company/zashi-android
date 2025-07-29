@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,7 +33,6 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import java.math.BigDecimal
@@ -98,18 +96,20 @@ private fun createTextFieldState(state: NumberTextFieldState): EnhancedTextField
             isEnabled = state.isEnabled,
             error = state.errorString.takeIf { state.innerState.isError },
             onValueChange = { innerState ->
-                val normalized = UserInputNumberParser.normalizeInput(
-                    input = innerState.value.getString(context, locale),
-                    locale = locale
-                )
+                val normalized =
+                    UserInputNumberParser.normalizeInput(
+                        input = innerState.value.getString(context, locale),
+                        locale = locale
+                    )
                 val amount = UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
                 val lastValidAmount = amount ?: state.innerState.lastValidAmount
                 val new =
                     state.innerState.copy(
-                        innerTextFieldState = state.innerState.innerTextFieldState.copy(
-                            value = stringRes(normalized),
-                            selection = innerState.selection
-                        ),
+                        innerTextFieldState =
+                            state.innerState.innerTextFieldState.copy(
+                                value = stringRes(normalized),
+                                selection = innerState.selection
+                            ),
                         amount = amount,
                         lastValidAmount = lastValidAmount
                     )
@@ -129,24 +129,27 @@ data class NumberTextFieldState(
 
 @Immutable
 data class NumberTextFieldInnerState(
-    val innerTextFieldState: InnerTextFieldState = InnerTextFieldState(
-        value = stringRes(value = ""),
-        selection = TextSelection.Start
-    ),
+    val innerTextFieldState: InnerTextFieldState =
+        InnerTextFieldState(
+            value = stringRes(value = ""),
+            selection = TextSelection.Start
+        ),
     val amount: BigDecimal? = null,
     val lastValidAmount: BigDecimal? = null,
 ) {
     val isError = amount == null && !innerTextFieldState.value.isEmpty()
 
     companion object {
-        fun fromAmount(amount: BigDecimal) = NumberTextFieldInnerState(
-            innerTextFieldState = InnerTextFieldState(
-                value = stringResByNumber(amount),
-                selection = TextSelection.Start
-            ),
-            amount = amount,
-            lastValidAmount = amount
-        )
+        fun fromAmount(amount: BigDecimal) =
+            NumberTextFieldInnerState(
+                innerTextFieldState =
+                    InnerTextFieldState(
+                        value = stringResByNumber(amount),
+                        selection = TextSelection.Start
+                    ),
+                amount = amount,
+                lastValidAmount = amount
+            )
     }
 }
 

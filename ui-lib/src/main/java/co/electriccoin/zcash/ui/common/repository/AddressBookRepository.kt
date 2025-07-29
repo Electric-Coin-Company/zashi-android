@@ -136,13 +136,14 @@ class AddressBookRepositoryImpl(
                 addressBook = addressBook,
                 addressBookKey = getAddressBookKey()
             )
-            val contacts = addressBook.contacts
-                .map { contact ->
-                    EnhancedABContact(
-                        contact = contact,
-                        blockchain = contact.chain?.let { blockchainProvider.getBlockchain(it) }
-                    )
-                }
+            val contacts =
+                addressBook.contacts
+                    .map { contact ->
+                        EnhancedABContact(
+                            contact = contact,
+                            blockchain = contact.chain?.let { blockchainProvider.getBlockchain(it) }
+                        )
+                    }
             addressBookCache.update { contacts }
         }
     }
@@ -151,13 +152,14 @@ class AddressBookRepositoryImpl(
         withNonCancellableSemaphore {
             ensureSynchronization()
             val newAddressBook = block()
-            val contacts = newAddressBook.contacts
-                .map { contact ->
-                    EnhancedABContact(
-                        contact = contact,
-                        blockchain = contact.chain?.let { blockchainProvider.getBlockchain(it) }
-                    )
-                }
+            val contacts =
+                newAddressBook.contacts
+                    .map { contact ->
+                        EnhancedABContact(
+                            contact = contact,
+                            blockchain = contact.chain?.let { blockchainProvider.getBlockchain(it) }
+                        )
+                    }
             addressBookCache.update { contacts }
         }
 

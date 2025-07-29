@@ -51,10 +51,11 @@ fun ZashiSeedWordTextField(
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
         state =
             EnhancedTextFieldState(
-                innerState = InnerTextFieldState(
-                    value = stringRes(state.innerState.value),
-                    selection = state.innerState.selection
-                ),
+                innerState =
+                    InnerTextFieldState(
+                        value = stringRes(state.innerState.value),
+                        selection = state.innerState.selection
+                    ),
                 onValueChange = {
                     state.onValueChange(
                         SeedWordInnerTextFieldState(
@@ -114,10 +115,11 @@ private fun Preview() =
                 prefix = "12",
                 state =
                     SeedWordTextFieldState(
-                        innerState = SeedWordInnerTextFieldState(
-                            value = "asd",
-                            selection = TextSelection.Start
-                        ),
+                        innerState =
+                            SeedWordInnerTextFieldState(
+                                value = "asd",
+                                selection = TextSelection.Start
+                            ),
                         isError = false,
                         onValueChange = {},
                     )

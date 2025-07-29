@@ -6,4 +6,4 @@ sealed interface SwapQuote
 
 data class NearSwapQuote(
     val response: QuoteResponseDto
-): SwapQuote
+) : SwapQuote

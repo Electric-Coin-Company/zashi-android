@@ -27,30 +27,35 @@ fun ZashiCheckboxCard(state: CheckboxState, modifier: Modifier = Modifier) {
             state = state,
             spacing = 16.dp,
             contentPadding = PaddingValues(16.dp),
-            textStyles = ZashiCheckboxDefaults.textStyles(
-                title = ZashiTypography.textSm.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    color = ZashiColors.Text.textPrimary
-                ),
-                subtitle = ZashiTypography.textSm.copy(
-                    color = ZashiColors.Text.textTertiary
+            textStyles =
+                ZashiCheckboxDefaults.textStyles(
+                    title =
+                        ZashiTypography.textSm.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = ZashiColors.Text.textPrimary
+                        ),
+                    subtitle =
+                        ZashiTypography.textSm.copy(
+                            color = ZashiColors.Text.textTertiary
+                        )
                 )
-            )
         )
     }
 }
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        ZashiCheckboxCard(
-            state = CheckboxState(
-                title = stringRes("title"),
-                subtitle = stringRes("subtitle"),
-                isChecked = false,
-                onClick = {}
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiCheckboxCard(
+                state =
+                    CheckboxState(
+                        title = stringRes("title"),
+                        subtitle = stringRes("subtitle"),
+                        isChecked = false,
+                        onClick = {}
+                    )
             )
-        )
+        }
     }
-}

@@ -80,11 +80,12 @@ fun ZashiImageButton(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier.clickable(
-            onClick = state.onClick,
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-        )
+        modifier =
+            modifier.clickable(
+                onClick = state.onClick,
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+            )
     ) {
         Image(
             modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp),

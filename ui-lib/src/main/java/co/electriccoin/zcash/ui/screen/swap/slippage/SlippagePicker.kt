@@ -55,6 +55,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import java.math.BigDecimal
 
+@Suppress("CyclomaticComplexMethod")
 @Composable
 fun SlippagePicker(
     state: SlippagePickerState,
@@ -84,11 +85,12 @@ fun SlippagePicker(
             NumberTextFieldState(
                 innerState = textFieldInnerState,
                 onValueChange = {
-                    val normalized = if (it.innerTextFieldState.value.isEmpty()) {
-                        it.copy(amount = BigDecimal(0))
-                    } else {
-                        it
-                    }
+                    val normalized =
+                        if (it.innerTextFieldState.value.isEmpty()) {
+                            it.copy(amount = BigDecimal(0))
+                        } else {
+                            it
+                        }
                     textFieldInnerState = normalized
                     state.onAmountChange(normalized.amount)
                 }
@@ -104,12 +106,13 @@ fun SlippagePicker(
         RowWithSameWidthItems(
             modifier = Modifier.padding(2.dp),
             indicator = { height, width ->
-                val index = when {
-                    selection is Selection.ByButton1 && !isTextFieldFocused -> 0
-                    selection is Selection.ByButton2 && !isTextFieldFocused -> 1
-                    selection is Selection.ByButton3 && !isTextFieldFocused -> 2
-                    else -> 3
-                }
+                val index =
+                    when {
+                        selection is Selection.ByButton1 && !isTextFieldFocused -> 0
+                        selection is Selection.ByButton2 && !isTextFieldFocused -> 1
+                        selection is Selection.ByButton3 && !isTextFieldFocused -> 2
+                        else -> 3
+                    }
                 Indicator(height, width, index)
             }
         ) {
@@ -145,32 +148,34 @@ fun SlippagePicker(
                 state = textFieldState,
                 interactionSource = textFieldInteractionSource,
                 textStyle = ZashiNumberTextFieldDefaults.textStyle.copy(textAlign = TextAlign.Center),
-                colors = ZashiTextFieldDefaults.defaultColors(
-                    borderColor = Color.Transparent,
-                    focusedBorderColor = Color.Transparent,
-                    disabledBorderColor = Color.Transparent,
-                    containerColor = Color.Transparent,
-                    focusedContainerColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent,
-                    placeholderColor = ZashiColors.Switcher.defaultText,
-                    textColor = ZashiColors.Switcher.selectedText,
-                    errorTextColor = ZashiColors.Inputs.ErrorDefault.stroke,
-                    errorContainerColor = Color.Transparent,
-                ),
-                placeholder = if (!isTextFieldFocused) {
-                    {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = "Custom",
-                            style = ZashiTypography.textMd,
-                            fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.Center,
-                            color = ZashiColors.Switcher.defaultText
-                        )
-                    }
-                } else {
-                    null
-                },
+                colors =
+                    ZashiTextFieldDefaults.defaultColors(
+                        borderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent,
+                        disabledBorderColor = Color.Transparent,
+                        containerColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                        placeholderColor = ZashiColors.Switcher.defaultText,
+                        textColor = ZashiColors.Switcher.selectedText,
+                        errorTextColor = ZashiColors.Inputs.ErrorDefault.stroke,
+                        errorContainerColor = Color.Transparent,
+                    ),
+                placeholder =
+                    if (!isTextFieldFocused) {
+                        {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = "Custom",
+                                style = ZashiTypography.textMd,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center,
+                                color = ZashiColors.Switcher.defaultText
+                            )
+                        }
+                    } else {
+                        null
+                    },
                 visualTransformation = SuffixVisualTransformation("%"),
                 contentPadding = PaddingValues(top = 16.dp),
             )
@@ -179,27 +184,30 @@ fun SlippagePicker(
 }
 
 private fun createTextFieldInnerState(amount: BigDecimal?): NumberTextFieldInnerState {
-    val text = when (amount) {
-        null -> stringRes("")
-        BigDecimal("0.5") -> stringRes("")
-        BigDecimal(1) -> stringRes("")
-        BigDecimal(2) -> stringRes("")
-        else -> stringResByNumber(amount)
-    }
+    val text =
+        when (amount) {
+            null -> stringRes("")
+            BigDecimal("0.5") -> stringRes("")
+            BigDecimal(1) -> stringRes("")
+            BigDecimal(2) -> stringRes("")
+            else -> stringResByNumber(amount)
+        }
 
-    val newAmount = when (amount) {
-        null -> null
-        BigDecimal("0.5") -> null
-        BigDecimal(1) -> null
-        BigDecimal(2) -> null
-        else -> amount
-    }
+    val newAmount =
+        when (amount) {
+            null -> null
+            BigDecimal("0.5") -> null
+            BigDecimal(1) -> null
+            BigDecimal(2) -> null
+            else -> amount
+        }
 
     return NumberTextFieldInnerState(
-        innerTextFieldState = InnerTextFieldState(
-            value = text,
-            selection = TextSelection.Start
-        ),
+        innerTextFieldState =
+            InnerTextFieldState(
+                value = text,
+                selection = TextSelection.Start
+            ),
         amount = newAmount,
         lastValidAmount = newAmount
     )
@@ -207,24 +215,42 @@ private fun createTextFieldInnerState(amount: BigDecimal?): NumberTextFieldInner
 
 @Composable
 private fun RowWithSameWidthItems(
-    modifier: Modifier = Modifier,
     indicator: @Composable (Dp, Dp) -> Unit,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     SubcomposeLayout(modifier = modifier) { constraints ->
         val itemCount = subcompose("find_count", content).count()
         val maxWidth = constraints.maxWidth
         val itemWidth = maxWidth / itemCount
-        val maxHeight = subcompose("measure_height", content).map { measurable ->
-            measurable.measure(
-                constraints.copy(
-                    minWidth = itemWidth,
-                    maxWidth = itemWidth
+        val maxHeight =
+            subcompose("measure_height", content)
+                .map { measurable ->
+                    measurable.measure(
+                        constraints.copy(
+                            minWidth = itemWidth,
+                            maxWidth = itemWidth
+                        )
+                    )
+                }.maxOf { it.height }
+        val placeables =
+            subcompose("create_pleaceables", content).map { measurable ->
+                measurable.measure(
+                    constraints.copy(
+                        minWidth = itemWidth,
+                        maxWidth = itemWidth,
+                        minHeight = maxHeight,
+                        maxHeight = maxHeight
+                    )
                 )
-            )
-        }.maxOf { it.height }
-        val placeables = subcompose("create_pleaceables", content).map { measurable ->
-            measurable.measure(
+            }
+        val indicatorPlaceable =
+            subcompose("indicator") {
+                indicator(
+                    maxHeight.toDp(),
+                    itemWidth.toDp()
+                )
+            }[0].measure(
                 constraints.copy(
                     minWidth = itemWidth,
                     maxWidth = itemWidth,
@@ -232,20 +258,6 @@ private fun RowWithSameWidthItems(
                     maxHeight = maxHeight
                 )
             )
-        }
-        val indicatorPlaceable = subcompose("indicator") {
-            indicator(
-                maxHeight.toDp(),
-                itemWidth.toDp()
-            )
-        }[0].measure(
-            constraints.copy(
-                minWidth = itemWidth,
-                maxWidth = itemWidth,
-                minHeight = maxHeight,
-                maxHeight = maxHeight
-            )
-        )
 
         layout(width = constraints.maxWidth, height = maxHeight) {
             indicatorPlaceable.placeRelative(x = 0, y = 0, zIndex = .1f)
@@ -264,13 +276,13 @@ private fun Button(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .clickable(
-                onClick = onClick,
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            )
-            .padding(vertical = 8.dp),
+        modifier =
+            modifier
+                .clickable(
+                    onClick = onClick,
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ).padding(vertical = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
         val color by animateColorAsState(
@@ -312,8 +324,7 @@ private fun Indicator(
                     .background(
                         shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg),
                         color = ZashiColors.Switcher.selectedBg,
-                    )
-                    .border(
+                    ).border(
                         border = BorderStroke(1.dp, ZashiColors.Switcher.selectedStroke),
                         shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg)
                     )
@@ -333,7 +344,9 @@ private sealed interface Selection {
     data object ByButton3 : Selection
 
     @Immutable
-    data class ByTextField(val bigDecimal: BigDecimal?) : Selection
+    data class ByTextField(
+        val bigDecimal: BigDecimal?
+    ) : Selection
 }
 
 @Immutable
@@ -344,15 +357,17 @@ data class SlippagePickerState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    var amount: BigDecimal? by remember { mutableStateOf(BigDecimal("0.5")) }
-    BlankSurface {
-        SlippagePicker(
-            state = SlippagePickerState(
-                amount = amount,
-                onAmountChange = { amount = it }
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
+private fun Preview() =
+    ZcashTheme {
+        var amount: BigDecimal? by remember { mutableStateOf(BigDecimal("0.5")) }
+        BlankSurface {
+            SlippagePicker(
+                state =
+                    SlippagePickerState(
+                        amount = amount,
+                        onAmountChange = { amount = it }
+                    ),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
-}

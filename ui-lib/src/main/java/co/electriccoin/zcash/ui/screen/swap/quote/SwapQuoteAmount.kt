@@ -77,7 +77,9 @@ fun SwapQuoteAmount(
                         )
 
                         if (state.smallIcon is ImageResource.ByDrawable) {
-                            if (state.smallIcon.resource == co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield) {
+                            if (state.smallIcon.resource ==
+                                co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield
+                            ) {
                                 Image(
                                     modifier =
                                         Modifier
@@ -89,10 +91,11 @@ fun SwapQuoteAmount(
                                 )
                             } else {
                                 Surface(
-                                    modifier = Modifier
-                                        .size(14.dp)
-                                        .align(Alignment.BottomEnd)
-                                        .offset(4.dp, 4.dp),
+                                    modifier =
+                                        Modifier
+                                            .size(14.dp)
+                                            .align(Alignment.BottomEnd)
+                                            .offset(4.dp, 4.dp),
                                     shape = CircleShape,
                                     border = BorderStroke(1.dp, ZashiColors.Surfaces.bgPrimary)
                                 ) {

@@ -3,10 +3,10 @@ package co.electriccoin.zcash.ui.common.repository
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
-import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
-import co.electriccoin.zcash.ui.common.datasource.RegularTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ExactOutputSwapTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
+import co.electriccoin.zcash.ui.common.datasource.RegularTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.SwapDataSource
 import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
@@ -176,6 +176,7 @@ class ZashiProposalRepositoryImpl(
         return proposal
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private suspend fun submitDepositTransaction(txId: String, transactionProposal: SwapTransactionProposal) {
         try {
             swapDataSource.submitDepositTransaction(

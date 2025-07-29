@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@Suppress("TooManyFunctions")
 class TransactionProgressVM(
     observeTransactionProposal: ObserveProposalUseCase,
     observeTransactionSubmitState: ObserveTransactionSubmitStateUseCase,
@@ -113,39 +114,46 @@ class TransactionProgressVM(
         result: SubmitResult.Success
     ) = SuccessfulTransactionState(
         onBack = ::onViewTransactions,
-        middleButton = when (proposal) {
-            is ExactInputSwapTransactionProposal,
-            is ExactOutputSwapTransactionProposal -> null
+        middleButton =
+            when (proposal) {
+                is ExactInputSwapTransactionProposal,
+                is ExactOutputSwapTransactionProposal -> null
 
-            else -> ButtonState(
-                text = stringRes(R.string.send_confirmation_success_view_trx),
-                onClick = { onViewTransactionClick(result) }
-            )
-        },
-        secondaryButton = when (proposal) {
-            is ExactInputSwapTransactionProposal,
-            is ExactOutputSwapTransactionProposal -> ButtonState(
-                text = stringRes(R.string.send_confirmation_success_btn_close),
-                onClick = ::onViewTransactions,
-                style = ButtonStyle.SECONDARY
-            )
+                else ->
+                    ButtonState(
+                        text = stringRes(R.string.send_confirmation_success_view_trx),
+                        onClick = { onViewTransactionClick(result) }
+                    )
+            },
+        secondaryButton =
+            when (proposal) {
+                is ExactInputSwapTransactionProposal,
+                is ExactOutputSwapTransactionProposal ->
+                    ButtonState(
+                        text = stringRes(R.string.send_confirmation_success_btn_close),
+                        onClick = ::onViewTransactions,
+                        style = ButtonStyle.SECONDARY
+                    )
 
-            else -> null
-        },
-        primaryButton = when (proposal) {
-            is ExactInputSwapTransactionProposal,
-            is ExactOutputSwapTransactionProposal -> ButtonState(
-                text = stringRes("Check status"),
-                onClick = { onViewTransactionClick(result) },
-                style = ButtonStyle.PRIMARY
-            )
+                else -> null
+            },
+        primaryButton =
+            when (proposal) {
+                is ExactInputSwapTransactionProposal,
+                is ExactOutputSwapTransactionProposal ->
+                    ButtonState(
+                        text = stringRes("Check status"),
+                        onClick = { onViewTransactionClick(result) },
+                        style = ButtonStyle.PRIMARY
+                    )
 
-            else -> ButtonState(
-                text = stringRes(R.string.send_confirmation_success_btn_close),
-                onClick = ::onViewTransactions,
-                style = ButtonStyle.TERTIARY
-            )
-        },
+                else ->
+                    ButtonState(
+                        text = stringRes(R.string.send_confirmation_success_btn_close),
+                        onClick = ::onViewTransactions,
+                        style = ButtonStyle.TERTIARY
+                    )
+            },
         text =
             when (proposal) {
                 is ShieldTransactionProposal -> stringRes(R.string.send_confirmation_success_subtitle_transparent)
@@ -154,8 +162,10 @@ class TransactionProgressVM(
                     stringRes("You successfully initiated a swap.\nFollow its status on the transaction screen.")
 
                 is ExactOutputSwapTransactionProposal ->
-                    stringRes("You successfully initiated a cross-chain payment.\nFollow its status on the " +
-                        "transaction screen.")
+                    stringRes(
+                        "You successfully initiated a cross-chain payment.\nFollow its status on the " +
+                            "transaction screen."
+                    )
 
                 else -> stringRes(R.string.send_confirmation_success_subtitle, getAddressAbbreviated())
             },
@@ -200,7 +210,10 @@ class TransactionProgressVM(
         text =
             when (proposal) {
                 is ExactInputSwapTransactionProposal -> stringRes("There was an error initiating a swap.\nTry it again, please.")
-                is ExactOutputSwapTransactionProposal -> stringRes("There was an error initiating a cross-chain payment.\nTry it again, please.")
+                is ExactOutputSwapTransactionProposal ->
+                    stringRes(
+                        "There was an error initiating a cross-chain payment.\nTry it again, please."
+                    )
                 is ShieldTransactionProposal -> stringRes(R.string.send_confirmation_failure_subtitle_transparent)
                 else -> stringRes(R.string.send_confirmation_failure_subtitle)
             }

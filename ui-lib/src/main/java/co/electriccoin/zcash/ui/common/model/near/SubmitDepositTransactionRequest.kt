@@ -7,7 +7,6 @@ import kotlinx.serialization.Serializable
 data class SubmitDepositTransactionRequest(
     @SerialName("txHash")
     val txHash: String,
-
     @SerialName("depositAddress")
     val depositAddress: String
 )

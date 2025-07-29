@@ -23,16 +23,16 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
-class AddressBookViewModel(
+class AddressBookVM(
     blockchainProvider: BlockchainProvider,
     getAddressBookContacts: GetABContactsUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
-
     private val zcashBlockchain = blockchainProvider.getZcashBlockchain()
 
     val state =
-        getAddressBookContacts.observe(zcashContactsOnly = false)
+        getAddressBookContacts
+            .observe(zcashContactsOnly = false)
             .map { contacts -> createState(contacts = contacts) }
             .flowOn(Dispatchers.Default)
             .stateIn(

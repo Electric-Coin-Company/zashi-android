@@ -277,8 +277,7 @@ private fun SendingTransaction(
                         .graphicsLayer {
                             scaleX = LOTTIE_ANIM_SCALE
                             scaleY = LOTTIE_ANIM_SCALE
-                        }
-                        .offset(y = -ZashiDimensions.Spacing.spacing2xl),
+                        }.offset(y = -ZashiDimensions.Spacing.spacing2xl),
                 composition = composition,
                 progress = { progress },
                 maintainOriginalImageBounds = true
@@ -607,8 +606,7 @@ private fun MultipleFailureTransaction(
                                 .background(
                                     shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg),
                                     color = ZashiColors.Inputs.Default.bg
-                                )
-                                .padding(
+                                ).padding(
                                     horizontal = ZashiDimensions.Spacing.spacingLg,
                                     vertical = ZashiDimensions.Spacing.spacingMd
                                 )
@@ -662,16 +660,18 @@ private fun SuccessPreview() =
                 SuccessfulTransactionState(
                     title = stringRes(R.string.send_confirmation_success_title),
                     text = stringRes("Your tokens were successfully sent to <address>"),
-                    middleButton = ButtonState(
-                        text = stringRes(R.string.send_confirmation_success_view_trx),
-                        onClick = { }
-                    ),
+                    middleButton =
+                        ButtonState(
+                            text = stringRes(R.string.send_confirmation_success_view_trx),
+                            onClick = { }
+                        ),
                     secondaryButton = null,
-                    primaryButton = ButtonState(
-                        text = stringRes(R.string.send_confirmation_success_btn_close),
-                        onClick = {},
-                        style = ButtonStyle.TERTIARY
-                    ),
+                    primaryButton =
+                        ButtonState(
+                            text = stringRes(R.string.send_confirmation_success_btn_close),
+                            onClick = {},
+                            style = ButtonStyle.TERTIARY
+                        ),
                     onBack = {}
                 )
         )
@@ -685,21 +685,24 @@ private fun ExactInputPreview() =
             state =
                 SuccessfulTransactionState(
                     title = stringRes(R.string.send_confirmation_success_title),
-                    text = stringRes(
-                        "You successfully initiated a swap.\nFollow its status on the transaction " +
-                            "screen."
-                    ),
+                    text =
+                        stringRes(
+                            "You successfully initiated a swap.\nFollow its status on the transaction " +
+                                "screen."
+                        ),
                     middleButton = null,
-                    secondaryButton = ButtonState(
-                        text = stringRes(R.string.send_confirmation_success_btn_close),
-                        onClick = {},
-                        style = ButtonStyle.SECONDARY
-                    ),
-                    primaryButton = ButtonState(
-                        text = stringRes("Check status"),
-                        onClick = {},
-                        style = ButtonStyle.PRIMARY
-                    ),
+                    secondaryButton =
+                        ButtonState(
+                            text = stringRes(R.string.send_confirmation_success_btn_close),
+                            onClick = {},
+                            style = ButtonStyle.SECONDARY
+                        ),
+                    primaryButton =
+                        ButtonState(
+                            text = stringRes("Check status"),
+                            onClick = {},
+                            style = ButtonStyle.PRIMARY
+                        ),
                     onBack = {}
                 )
         )
@@ -714,16 +717,18 @@ private fun SuccessShieldingPreview() =
                 SuccessfulTransactionState(
                     title = stringRes(R.string.send_confirmation_success_title_transparent),
                     text = stringRes(R.string.send_confirmation_success_subtitle_transparent),
-                    middleButton = ButtonState(
-                        text = stringRes(R.string.send_confirmation_success_view_trx),
-                        onClick = { }
-                    ),
+                    middleButton =
+                        ButtonState(
+                            text = stringRes(R.string.send_confirmation_success_view_trx),
+                            onClick = { }
+                        ),
                     secondaryButton = null,
-                    primaryButton = ButtonState(
-                        text = stringRes(R.string.send_confirmation_success_btn_close),
-                        onClick = {},
-                        style = ButtonStyle.TERTIARY
-                    ),
+                    primaryButton =
+                        ButtonState(
+                            text = stringRes(R.string.send_confirmation_success_btn_close),
+                            onClick = {},
+                            style = ButtonStyle.TERTIARY
+                        ),
                     onBack = {}
                 )
         )

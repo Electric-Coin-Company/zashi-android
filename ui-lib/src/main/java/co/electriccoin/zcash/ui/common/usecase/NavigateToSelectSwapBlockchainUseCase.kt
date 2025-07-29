@@ -38,7 +38,6 @@ class NavigateToSelectSwapBlockchainUseCase(
 }
 
 private sealed interface SelectSwapBlockchainPipelineResult {
-
     val args: SwapBlockchainPickerArgs
 
     data class Cancelled(

@@ -32,6 +32,7 @@ class RequestSwapQuoteUseCase(
     private val navigationRouter: NavigationRouter,
     private val navigateToErrorUseCase: NavigateToErrorUseCase
 ) {
+    @Suppress("TooGenericExceptionCaught")
     suspend operator fun invoke(amount: BigDecimal, address: String, canNavigateToSwapQuote: () -> Boolean) {
         swapRepository.requestQuote(amount = amount, address = address)
         val result = swapRepository.quote.filter { it != null && it !is SwapQuoteData.Loading }.first()
@@ -44,7 +45,11 @@ class RequestSwapQuoteUseCase(
             try {
                 when (result.quote) {
                     is NearSwapQuote -> {
-                        destinationAmount = Zatoshi(result.quote.response.quote.amountIn.toLong())
+                        destinationAmount =
+                            Zatoshi(
+                                result.quote.response.quote.amountIn
+                                    .toLong()
+                            )
                         destinationAddress = getWalletAddress(result.quote.response.quote.depositAddress)
                         swapType = result.quote.response.quoteRequest.swapType
                     }
@@ -65,18 +70,20 @@ class RequestSwapQuoteUseCase(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private suspend fun createProposal(
         destination: WalletAddress,
         amount: Zatoshi,
         swapType: SwapType,
     ) {
         try {
-            val zecSend = ZecSend(
-                destination = destination,
-                amount = amount,
-                memo = Memo(""),
-                proposal = null
-            )
+            val zecSend =
+                ZecSend(
+                    destination = destination,
+                    amount = amount,
+                    memo = Memo(""),
+                    proposal = null
+                )
 
             when (accountDataSource.getSelectedAccount()) {
                 is KeystoneAccount -> {
@@ -87,10 +94,11 @@ class RequestSwapQuoteUseCase(
 
                     keystoneProposalRepository.createPCZTFromProposal()
                 }
-                is ZashiAccount -> when (swapType) {
-                    EXACT_INPUT -> zashiProposalRepository.createExactInputSwapProposal(zecSend)
-                    EXACT_OUTPUT -> zashiProposalRepository.createExactOutputSwapProposal(zecSend)
-                }
+                is ZashiAccount ->
+                    when (swapType) {
+                        EXACT_INPUT -> zashiProposalRepository.createExactInputSwapProposal(zecSend)
+                        EXACT_OUTPUT -> zashiProposalRepository.createExactOutputSwapProposal(zecSend)
+                    }
             }
         } catch (e: Exception) {
             keystoneProposalRepository.clear()
@@ -99,13 +107,12 @@ class RequestSwapQuoteUseCase(
         }
     }
 
-    private suspend fun getWalletAddress(address: String): WalletAddress {
-        return when (val result = synchronizerProvider.getSynchronizer().validateAddress(address)) {
+    private suspend fun getWalletAddress(address: String): WalletAddress =
+        when (val result = synchronizerProvider.getSynchronizer().validateAddress(address)) {
             AddressType.Shielded -> WalletAddress.Sapling.new(address)
             AddressType.Tex -> WalletAddress.Tex.new(address)
             AddressType.Transparent -> WalletAddress.Transparent.new(address)
             AddressType.Unified -> WalletAddress.Unified.new(address)
             is AddressType.Invalid -> throw IllegalStateException(result.reason)
         }
-    }
 }

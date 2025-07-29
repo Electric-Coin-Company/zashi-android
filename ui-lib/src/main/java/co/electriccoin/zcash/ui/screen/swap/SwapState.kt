@@ -4,10 +4,10 @@ import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.ModalBottomSheetState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
-import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.SimpleListItemState
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResource
@@ -54,4 +54,4 @@ internal data class SwapCancelState(
     val negativeButton: ButtonState,
     val positiveButton: ButtonState,
     override val onBack: () -> Unit,
-): ModalBottomSheetState
+) : ModalBottomSheetState

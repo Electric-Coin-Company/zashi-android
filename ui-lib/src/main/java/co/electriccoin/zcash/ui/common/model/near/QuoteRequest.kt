@@ -42,17 +42,23 @@ data class QuoteRequest(
     val quoteWaitingTimeMs: Int,
 )
 
-enum class RefundType(val apiValue: String) {
+enum class RefundType(
+    val apiValue: String
+) {
     ORIGIN_CHAIN("ORIGIN_CHAIN"),
     INTENTS("INTENTS")
 }
 
-enum class SwapType(val apiValue: String) {
+enum class SwapType(
+    val apiValue: String
+) {
     EXACT_INPUT("EXACT_INPUT"),
     EXACT_OUTPUT("EXACT_OUTPUT"),
 }
 
-enum class RecipientType(val apiValue: String) {
+enum class RecipientType(
+    val apiValue: String
+) {
     DESTINATION_CHAIN("DESTINATION_CHAIN"),
     INTENTS("INTENTS")
 }

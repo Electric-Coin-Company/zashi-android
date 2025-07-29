@@ -51,9 +51,10 @@ class RestoreSeedViewModel(
         MutableStateFlow(
             (0..23).map { index ->
                 SeedWordTextFieldState(
-                    innerState = SeedWordInnerTextFieldState(
-                        ""
-                    ),
+                    innerState =
+                        SeedWordInnerTextFieldState(
+                            ""
+                        ),
                     onValueChange = { onValueChange(index, it) },
                     isError = false
                 )
@@ -67,7 +68,10 @@ class RestoreSeedViewModel(
         }.mapLatest { (seedWords, suggestions) ->
             withContext(Dispatchers.Default) {
                 seedWords.map { field ->
-                    val trimmed = field.innerState.value.lowercase().trim()
+                    val trimmed =
+                        field.innerState.value
+                            .lowercase()
+                            .trim()
                     val autocomplete = suggestions.filter { it.startsWith(trimmed) }
                     val validSuggestions =
                         when {

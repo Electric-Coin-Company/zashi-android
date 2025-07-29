@@ -26,8 +26,8 @@ class AddressBookSerializer : BaseSerializer() {
         }
     }
 
-    fun deserializeAddressBook(inputStream: InputStream): AddressBook {
-        return when (val version = inputStream.readInt()) {
+    fun deserializeAddressBook(inputStream: InputStream): AddressBook =
+        when (val version = inputStream.readInt()) {
             ADDRESS_BOOK_SERIALIZATION_V1 -> {
                 AddressBook(
                     version = version,
@@ -68,5 +68,4 @@ class AddressBookSerializer : BaseSerializer() {
                 throw UnsupportedOperationException("Unknown version of address book")
             }
         }
-    }
 }

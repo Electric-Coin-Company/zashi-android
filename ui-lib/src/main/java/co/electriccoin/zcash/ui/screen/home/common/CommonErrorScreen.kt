@@ -70,9 +70,10 @@ fun CommonErrorScreen(
             )
             Spacer(20.dp)
             Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
                 textAlign = TextAlign.Center,
                 text = state.title.getValue(),
                 color = ZashiColors.Text.textPrimary,
@@ -81,9 +82,10 @@ fun CommonErrorScreen(
             )
             Spacer(8.dp)
             Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
                 textAlign = TextAlign.Center,
                 text = state.subtitle.getValue(),
                 color = ZashiColors.Text.textTertiary,

@@ -158,12 +158,14 @@ private fun RestoreSuccessContent(
             isChecked = state.isKeepScreenOnChecked,
             onClick = state.onCheckboxClick,
             text = stringRes(R.string.restoring_initial_dialog_checkbox),
-            textStyles = ZashiCheckboxDefaults.textStyles(
-                title = ZashiTypography.textMd.copy(
-                    fontWeight = FontWeight.Medium,
-                    color = ZashiColors.Text.textPrimary,
+            textStyles =
+                ZashiCheckboxDefaults.textStyles(
+                    title =
+                        ZashiTypography.textMd.copy(
+                            fontWeight = FontWeight.Medium,
+                            color = ZashiColors.Text.textPrimary,
+                        )
                 )
-            )
         )
 
         Spacer(Modifier.height(14.dp))

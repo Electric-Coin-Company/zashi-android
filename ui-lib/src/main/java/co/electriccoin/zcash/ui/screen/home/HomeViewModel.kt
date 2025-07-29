@@ -89,15 +89,15 @@ class HomeViewModel(
                 initialValue = null
             )
 
-    val state: StateFlow<HomeState?> = messageState
-        .map { messageState ->
-            createState(messageState)
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
+    val state: StateFlow<HomeState?> =
+        messageState
+            .map { messageState ->
+                createState(messageState)
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
+            )
 
     private fun createState(
         messageState: HomeMessageState?,
@@ -120,11 +120,12 @@ class HomeViewModel(
                 icon = R.drawable.ic_home_scan,
                 onClick = ::onScanButtonClick,
             ),
-        fourthButton = BigIconButtonState(
-            text = stringRes(R.string.home_button_more),
-            icon = R.drawable.ic_home_more,
-            onClick = ::onMoreButtonClick,
-        ),
+        fourthButton =
+            BigIconButtonState(
+                text = stringRes(R.string.home_button_more),
+                icon = R.drawable.ic_home_more,
+                onClick = ::onMoreButtonClick,
+            ),
         message = messageState
     )
 

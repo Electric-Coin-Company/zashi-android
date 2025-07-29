@@ -25,31 +25,49 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
-import kotlin.math.min
 
 @Immutable
 sealed interface StringResource {
     @Immutable
-    data class ByResource(@StringRes val resource: Int, val args: List<Any>) : StringResource
+    data class ByResource(
+        @StringRes val resource: Int,
+        val args: List<Any>
+    ) : StringResource
 
     @JvmInline
     @Immutable
-    value class ByString(val value: String) : StringResource
+    value class ByString(
+        val value: String
+    ) : StringResource
 
     @Immutable
-    data class ByZatoshi(val zatoshi: Zatoshi, val tickerLocation: TickerLocation) : StringResource
+    data class ByZatoshi(
+        val zatoshi: Zatoshi,
+        val tickerLocation: TickerLocation
+    ) : StringResource
 
     @Immutable
-    data class ByDateTime(val zonedDateTime: ZonedDateTime, val useFullFormat: Boolean) : StringResource
+    data class ByDateTime(
+        val zonedDateTime: ZonedDateTime,
+        val useFullFormat: Boolean
+    ) : StringResource
 
     @Immutable
-    data class ByYearMonth(val yearMonth: YearMonth) : StringResource
+    data class ByYearMonth(
+        val yearMonth: YearMonth
+    ) : StringResource
 
     @Immutable
-    data class ByTransactionId(val transactionId: String, val abbreviated: Boolean) : StringResource
+    data class ByTransactionId(
+        val transactionId: String,
+        val abbreviated: Boolean
+    ) : StringResource
 
     @Immutable
-    data class ByAddress(val address: String, val abbreviated: Boolean) : StringResource
+    data class ByAddress(
+        val address: String,
+        val abbreviated: Boolean
+    ) : StringResource
 
     @Immutable
     data class ByDynamicCurrencyNumber(
@@ -59,10 +77,15 @@ sealed interface StringResource {
     ) : StringResource
 
     @Immutable
-    data class ByNumber(val number: Number, val minDecimals: Int) : StringResource
+    data class ByNumber(
+        val number: Number,
+        val minDecimals: Int
+    ) : StringResource
 
     @Immutable
-    data class ByDynamicNumber(val number: Number) : StringResource
+    data class ByDynamicNumber(
+        val number: Number
+    ) : StringResource
 
     operator fun plus(other: StringResource): StringResource = CompositeStringResource(listOf(this, other))
 
@@ -76,10 +99,15 @@ sealed interface StringResource {
 }
 
 @Immutable
-private data class CompositeStringResource(val resources: List<StringResource>) : StringResource
+private data class CompositeStringResource(
+    val resources: List<StringResource>
+) : StringResource
 
 @Stable
-fun stringRes(@StringRes resource: Int, vararg args: Any): StringResource =
+fun stringRes(
+    @StringRes resource: Int,
+    vararg args: Any
+): StringResource =
     StringResource.ByResource(resource, args.toList())
 
 @Stable
@@ -138,8 +166,8 @@ fun StringResource.getValue(): String =
 fun StringResource.getString(
     context: Context,
     locale: Locale = ConfigurationCompat.getLocales(context.resources.configuration)[0] ?: Locale.getDefault(),
-): String {
-    return when (this) {
+): String =
+    when (this) {
         is StringResource.ByResource -> convertResource(context)
         is StringResource.ByString -> value
         is StringResource.ByZatoshi -> convertZatoshi()
@@ -152,7 +180,6 @@ fun StringResource.getString(
         is StringResource.ByDynamicNumber -> convertDynamicNumber(locale)
         is CompositeStringResource -> convertComposite(context, locale)
     }
-}
 
 private fun CompositeStringResource.convertComposite(
     context: Context,
@@ -169,12 +196,13 @@ private fun StringResource.ByResource.convertResource(context: Context) =
 private fun StringResource.ByNumber.convertNumber(locale: Locale): String {
     val bigDecimalAmount = number.toBigDecimal().stripTrailingZeros()
     val maxFractionDigits = bigDecimalAmount.scale().coerceAtLeast(minDecimals)
-    val formatter = NumberFormat.getInstance(locale).apply {
-        roundingMode = RoundingMode.HALF_EVEN
-        maximumFractionDigits = maxFractionDigits
-        minimumFractionDigits = minDecimals
-        minimumIntegerDigits = 1
-    }
+    val formatter =
+        NumberFormat.getInstance(locale).apply {
+            roundingMode = RoundingMode.HALF_EVEN
+            maximumFractionDigits = maxFractionDigits
+            minimumFractionDigits = minDecimals
+            minimumIntegerDigits = 1
+        }
     return formatter.format(bigDecimalAmount)
 }
 
@@ -203,24 +231,26 @@ private fun convertNumberToString(number: Number, locale: Locale): String {
     val bigDecimalAmount = number.toBigDecimal()
     val dynamicAmount = bigDecimalAmount.stripFractionsDynamically(2)
     val maxDecimals = if (bigDecimalAmount.scale() > 0) bigDecimalAmount.scale() else 0
-    val formatter = NumberFormat.getInstance(locale).apply {
-        roundingMode = RoundingMode.HALF_EVEN
-        maximumFractionDigits = maxDecimals.coerceAtLeast(2)
-        minimumFractionDigits = 2
-        minimumIntegerDigits = 1
-    }
+    val formatter =
+        NumberFormat.getInstance(locale).apply {
+            roundingMode = RoundingMode.HALF_EVEN
+            maximumFractionDigits = maxDecimals.coerceAtLeast(2)
+            minimumFractionDigits = 2
+            minimumIntegerDigits = 1
+        }
     return formatter.format(dynamicAmount)
 }
 
-private fun Number.toBigDecimal() = when (this) {
-    is BigDecimal -> this
-    is Int -> BigDecimal(this)
-    is Long -> BigDecimal(this)
-    is Float -> BigDecimal(this.toDouble())
-    is Double -> BigDecimal(this)
-    is Short -> BigDecimal(this.toInt())
-    else -> BigDecimal(this.toDouble())
-}
+private fun Number.toBigDecimal() =
+    when (this) {
+        is BigDecimal -> this
+        is Int -> BigDecimal(this)
+        is Long -> BigDecimal(this)
+        is Float -> BigDecimal(this.toDouble())
+        is Double -> BigDecimal(this)
+        is Short -> BigDecimal(this.toInt())
+        else -> BigDecimal(this.toDouble())
+    }
 
 private fun StringResource.ByDateTime.convertDateTime(): String {
     if (useFullFormat) {
@@ -282,6 +312,7 @@ private const val ADDRESS_MAX_LENGTH_ABBREVIATED = 20
 
 enum class TickerLocation { BEFORE, AFTER, HIDDEN }
 
+@Suppress("ReturnCount")
 private fun BigDecimal.stripFractionsDynamically(minDecimals: Int): BigDecimal {
     val threshold = BigDecimal(".5")
     val original = this.stripTrailingZeros()
@@ -294,11 +325,13 @@ private fun BigDecimal.stripFractionsDynamically(minDecimals: Int): BigDecimal {
     for (i in 1..scale - minDecimals) {
         val next = original.setScale(original.scale() - i, RoundingMode.HALF_EVEN)
 
-        val diff = BigDecimal("100")
-            .minus(
-                next.divide(original, MathContext.DECIMAL128)
-                    .multiply(BigDecimal("100"), MathContext.DECIMAL128)
-            )
+        val diff =
+            BigDecimal("100")
+                .minus(
+                    next
+                        .divide(original, MathContext.DECIMAL128)
+                        .multiply(BigDecimal("100"), MathContext.DECIMAL128)
+                )
 
         if (diff > threshold) return current else current = next
     }

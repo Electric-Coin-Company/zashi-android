@@ -45,8 +45,8 @@ fun ZashiSmallTopAppBar(
 @Composable
 @Suppress("LongParameterList")
 fun ZashiSmallTopAppBar(
-    modifier: Modifier = Modifier,
     content: (@Composable ColumnScope.() -> Unit)?,
+    modifier: Modifier = Modifier,
     colors: TopAppBarColors = ZcashTheme.colors.topAppBarColors,
     navigationAction: @Composable () -> Unit = {},
     hamburgerMenuActions: (@Composable RowScope.() -> Unit)? = null,

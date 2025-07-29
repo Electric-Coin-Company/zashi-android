@@ -77,6 +77,7 @@ internal fun SwapAmountTextField(
     }
 }
 
+@Suppress("MagicNumber")
 @Composable
 private fun SwapTextFieldCard(
     state: SwapAmountTextFieldState,
@@ -129,9 +130,10 @@ private fun SwapTextFieldCard(
                 ZashiNumberTextField(
                     state = state.textField,
                     interactionSource = textFieldInteractionSource,
-                    modifier = Modifier
-                        .weight(.55f)
-                        .focusRequester(focusRequester),
+                    modifier =
+                        Modifier
+                            .weight(.55f)
+                            .focusRequester(focusRequester),
                     textStyle =
                         ZashiTypography.header4.copy(
                             fontWeight = FontWeight.SemiBold,
@@ -143,18 +145,19 @@ private fun SwapTextFieldCard(
                         } else {
                             PaddingValues(start = 8.dp, top = 4.dp, end = 12.dp, bottom = 4.dp)
                         },
-                    placeholder = if (!isTextFieldFocused) {
-                        {
-                            ZashiNumberTextFieldDefaults.Placeholder(
-                                modifier = Modifier.fillMaxWidth(),
-                                style = ZashiTypography.header4,
-                                fontWeight = FontWeight.SemiBold,
-                                textAlign = TextAlign.End
-                            )
-                        }
-                    } else {
-                        null
-                    },
+                    placeholder =
+                        if (!isTextFieldFocused) {
+                            {
+                                ZashiNumberTextFieldDefaults.Placeholder(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    style = ZashiTypography.header4,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textAlign = TextAlign.End
+                                )
+                            }
+                        } else {
+                            null
+                        },
                     leadingIcon =
                         if (state.textFieldPrefix is ImageResource.ByDrawable) {
                             {
@@ -186,16 +189,17 @@ private fun SwapTextFieldCard(
                 }
                 Spacer(4.dp)
                 Image(
-                    modifier = if (state.isSwapChangeEnabled) {
-                        Modifier
-                            .clickable(
-                                onClick = state.onSwapChange,
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() }
-                            )
-                    } else {
-                        Modifier
-                    },
+                    modifier =
+                        if (state.isSwapChangeEnabled) {
+                            Modifier
+                                .clickable(
+                                    onClick = state.onSwapChange,
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                )
+                        } else {
+                            Modifier
+                        },
                     painter = painterResource(R.drawable.ic_swap_recipient),
                     contentDescription = null
                 )

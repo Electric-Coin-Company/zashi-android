@@ -42,6 +42,7 @@ import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
 import co.electriccoin.zcash.ui.design.LocalKeyboardManager
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.SeedTextFieldHandle
 import co.electriccoin.zcash.ui.design.component.SeedTextFieldState
@@ -50,7 +51,6 @@ import co.electriccoin.zcash.ui.design.component.SeedWordTextFieldState
 import co.electriccoin.zcash.ui.design.component.TextSelection
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiChipButton
-import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
 import co.electriccoin.zcash.ui.design.component.ZashiSeedTextField
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
@@ -297,10 +297,11 @@ private fun Preview() =
                             values =
                                 (1..24).map {
                                     SeedWordTextFieldState(
-                                        innerState = SeedWordInnerTextFieldState(
-                                            value = "asd",
-                                            selection = TextSelection.Start
-                                        ),
+                                        innerState =
+                                            SeedWordInnerTextFieldState(
+                                                value = "asd",
+                                                selection = TextSelection.Start
+                                            ),
                                         onValueChange = { },
                                         isError = false
                                     )

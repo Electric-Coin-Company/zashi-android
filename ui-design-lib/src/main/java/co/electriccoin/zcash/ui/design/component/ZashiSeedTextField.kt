@@ -272,10 +272,11 @@ fun rememberSeedTextFieldHandle(
         SeedTextFieldState(
             List(24) {
                 SeedWordTextFieldState(
-                    innerState = SeedWordInnerTextFieldState(
-                        value = "Word",
-                        selection = TextSelection.Start
-                    ),
+                    innerState =
+                        SeedWordInnerTextFieldState(
+                            value = "Word",
+                            selection = TextSelection.Start
+                        ),
                     onValueChange = {},
                     isError = false
                 )
@@ -303,10 +304,11 @@ private fun Preview() =
                         values =
                             (1..24).map {
                                 SeedWordTextFieldState(
-                                    innerState = SeedWordInnerTextFieldState(
-                                        value = "Word",
-                                        selection = TextSelection.Start
-                                    ),
+                                    innerState =
+                                        SeedWordInnerTextFieldState(
+                                            value = "Word",
+                                            selection = TextSelection.Start
+                                        ),
                                     onValueChange = { },
                                     isError = false
                                 )

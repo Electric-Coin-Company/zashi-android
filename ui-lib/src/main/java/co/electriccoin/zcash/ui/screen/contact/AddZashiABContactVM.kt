@@ -7,9 +7,9 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.usecase.ContactAddressValidationResult
 import co.electriccoin.zcash.ui.common.usecase.SaveABContactUseCase
-import co.electriccoin.zcash.ui.common.usecase.ValidateZashiABContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameResult
 import co.electriccoin.zcash.ui.common.usecase.ValidateGenericABContactNameUseCase
+import co.electriccoin.zcash.ui.common.usecase.ValidateZashiABContactAddressUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes

@@ -36,15 +36,17 @@ fun ZashiAddressTextField(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = ZashiTextFieldDefaults.shape,
-    contentPadding: PaddingValues = ZashiAddressTextFieldDefaults
-        .contentPadding(leadingIcon, suffix, trailingIcon, prefix),
+    contentPadding: PaddingValues =
+        ZashiAddressTextFieldDefaults
+            .contentPadding(leadingIcon, suffix, trailingIcon, prefix),
     colors: ZashiTextFieldColors = ZashiTextFieldDefaults.defaultColors()
 ) {
     val isFocused by interactionSource.collectIsFocusedAsState()
 
-    val visualTransformation = remember(isFocused) {
-        if (isFocused) VisualTransformation.None else ellipsisVisualTransformation()
-    }
+    val visualTransformation =
+        remember(isFocused) {
+            if (isFocused) VisualTransformation.None else ellipsisVisualTransformation()
+        }
 
     ZashiTextField(
         state = state,
@@ -68,42 +70,48 @@ fun ZashiAddressTextField(
     )
 }
 
-private fun ellipsisVisualTransformation() = VisualTransformation { text ->
-    val ellipsis = "..."
-    val maxLength = (text.length / 2)
-        .coerceAtMost(text.length / 3)
-        .coerceAtMost(8)
+@Suppress("MagicNumber")
+private fun ellipsisVisualTransformation() =
+    VisualTransformation { text ->
+        val ellipsis = "..."
+        val maxLength =
+            (text.length / 2)
+                .coerceAtMost(text.length / 3)
+                .coerceAtMost(8)
 
-    val mapping = object : OffsetMapping {
-        override fun originalToTransformed(offset: Int): Int = 0
-        override fun transformedToOriginal(offset: Int): Int {
-            return when {
-                text.length <= 16 -> offset
-                offset <= maxLength -> offset
-                offset in (maxLength + 1)..(maxLength + 2) -> maxLength
-                else -> {
-                    val whole = maxLength * 2 + 3
-                    val fromRight = (offset - whole).absoluteValue
-                    text.length - fromRight
-                }
-            }.coerceIn(0, text.length)
-        }
-    }
+        val mapping =
+            object : OffsetMapping {
+                override fun originalToTransformed(offset: Int): Int = 0
 
-    TransformedText(
-        AnnotatedString.Builder().apply {
-            when {
-                text.length <= 16 -> append(text)
-                text.isNotBlank() -> {
-                    append(text.take(maxLength))
-                    append(ellipsis)
-                    append(text.takeLast(maxLength))
-                }
+                override fun transformedToOriginal(offset: Int): Int =
+                    when {
+                        text.length <= 16 -> offset
+                        offset <= maxLength -> offset
+                        offset in (maxLength + 1)..(maxLength + 2) -> maxLength
+                        else -> {
+                            val whole = maxLength * 2 + 3
+                            val fromRight = (offset - whole).absoluteValue
+                            text.length - fromRight
+                        }
+                    }.coerceIn(0, text.length)
             }
-        }.toAnnotatedString(),
-        mapping
-    )
-}
+
+        TransformedText(
+            AnnotatedString
+                .Builder()
+                .apply {
+                    when {
+                        text.length <= 16 -> append(text)
+                        text.isNotBlank() -> {
+                            append(text.take(maxLength))
+                            append(ellipsis)
+                            append(text.takeLast(maxLength))
+                        }
+                    }
+                }.toAnnotatedString(),
+            mapping
+        )
+    }
 
 object ZashiAddressTextFieldDefaults {
     @Composable

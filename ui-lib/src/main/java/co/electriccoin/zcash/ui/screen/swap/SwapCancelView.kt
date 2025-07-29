@@ -31,9 +31,10 @@ internal fun SwapCancelView(state: SwapCancelState?) {
         state = state
     ) { innerState ->
         Error(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f, false),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f, false),
             state = innerState
         )
     }

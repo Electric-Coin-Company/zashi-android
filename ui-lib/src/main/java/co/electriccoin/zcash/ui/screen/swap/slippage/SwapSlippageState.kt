@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.swap.slippage
 import androidx.compose.runtime.Immutable
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ModalBottomSheetState
-import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.util.StringResource
 
 @Immutable

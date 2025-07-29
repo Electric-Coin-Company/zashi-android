@@ -46,11 +46,16 @@ fun ZashiAssetCard(state: AssetCardState, modifier: Modifier = Modifier) {
 @Composable
 private fun Content(state: AssetCardState) {
     val onClick = state.onClick
-    val clickModifier = if (onClick != null) Modifier.clickable(
-        onClick = onClick,
-        indication = null,
-        interactionSource = remember { MutableInteractionSource() }
-    ) else Modifier
+    val clickModifier =
+        if (onClick != null) {
+            Modifier.clickable(
+                onClick = onClick,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            )
+        } else {
+            Modifier
+        }
     when (state) {
         is AssetCardState.Data -> Data(state, clickModifier)
         is AssetCardState.Loading -> Loading(state, clickModifier)
@@ -61,12 +66,13 @@ private fun Content(state: AssetCardState) {
 private fun Data(state: AssetCardState.Data, modifier: Modifier = Modifier) {
     Row(
         modifier =
-            modifier then Modifier.padding(
-                start = if (state.bigIcon is ImageResource.ByDrawable) 4.dp else 14.dp,
-                top = if (state.bigIcon is ImageResource.ByDrawable) 4.dp else 8.dp,
-                end = 12.dp,
-                bottom = if (state.bigIcon is ImageResource.ByDrawable) 4.dp else 8.dp,
-            ),
+            modifier then
+                Modifier.padding(
+                    start = if (state.bigIcon is ImageResource.ByDrawable) 4.dp else 14.dp,
+                    top = if (state.bigIcon is ImageResource.ByDrawable) 4.dp else 8.dp,
+                    end = 12.dp,
+                    bottom = if (state.bigIcon is ImageResource.ByDrawable) 4.dp else 8.dp,
+                ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (state.bigIcon is ImageResource.ByDrawable) {
@@ -90,10 +96,11 @@ private fun Data(state: AssetCardState.Data, modifier: Modifier = Modifier) {
                         )
                     } else {
                         Surface(
-                            modifier = Modifier
-                                .size(16.dp)
-                                .align(Alignment.BottomEnd)
-                                .offset(6.dp, 2.dp),
+                            modifier =
+                                Modifier
+                                    .size(16.dp)
+                                    .align(Alignment.BottomEnd)
+                                    .offset(6.dp, 2.dp),
                             shape = CircleShape,
                             border = BorderStroke(1.dp, ZashiColors.Surfaces.bgPrimary)
                         ) {
@@ -131,12 +138,13 @@ private fun Loading(
 ) {
     Row(
         modifier =
-            modifier then Modifier.padding(
-                start = 4.dp,
-                top = 4.dp,
-                end = 12.dp,
-                bottom = 4.dp,
-            ),
+            modifier then
+                Modifier.padding(
+                    start = 4.dp,
+                    top = 4.dp,
+                    end = 12.dp,
+                    bottom = 4.dp,
+                ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
@@ -159,8 +167,8 @@ private fun Loading(
 
 @Composable
 private fun Card(
-    modifier: Modifier = Modifier,
     onClick: (() -> Unit)?,
+    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     if (onClick == null) {
@@ -252,4 +260,3 @@ private fun LoadingPreview() =
             )
         }
     }
-

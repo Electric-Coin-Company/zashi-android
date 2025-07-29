@@ -11,7 +11,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 internal fun AddressBookScreen() {
-    val viewModel = koinViewModel<AddressBookViewModel>()
+    val viewModel = koinViewModel<AddressBookVM>()
     val state by viewModel.state.collectAsStateWithLifecycle()
     BackHandler { state.onBack() }
     AddressBookView(state = state)

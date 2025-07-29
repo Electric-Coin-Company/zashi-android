@@ -49,6 +49,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
+@Suppress("TooManyFunctions")
 internal class SwapVM(
     getSwapMode: GetSwapModeUseCase,
     getSlippage: GetSlippageUseCase,
@@ -68,7 +69,6 @@ internal class SwapVM(
     private val navigateToScanAddress: NavigateToScanSwapAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase
 ) : ViewModel() {
-
     private val currencyType: MutableStateFlow<CurrencyType> = MutableStateFlow(CurrencyType.TOKEN)
 
     private val addressText: MutableStateFlow<String> = MutableStateFlow("")
@@ -81,32 +81,34 @@ internal class SwapVM(
 
     private var selectedContact: MutableStateFlow<EnhancedABContact?> = MutableStateFlow(null)
 
-    val cancelState = isCancelStateVisible
-        .map { isVisible ->
-            if (isVisible) {
-                SwapCancelState(
-                    icon = imageRes(R.drawable.ic_swap_quote_cancel),
-                    title = stringRes("Are you sure?"),
-                    subtitle = stringRes("If you leave this screen, all the information you entered will be lost. "),
-                    negativeButton = ButtonState(
-                        text = stringRes("Cancel swap"),
-                        onClick = ::onCancelSwapClick
-                    ),
-                    positiveButton = ButtonState(
-                        text = stringRes("Don’t cancel"),
-                        onClick = ::onDismissCancelClick
-                    ),
-                    onBack = ::onBack
-                )
-            } else {
-                null
-            }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
+    val cancelState =
+        isCancelStateVisible
+            .map { isVisible ->
+                if (isVisible) {
+                    SwapCancelState(
+                        icon = imageRes(R.drawable.ic_swap_quote_cancel),
+                        title = stringRes("Are you sure?"),
+                        subtitle = stringRes("If you leave this screen, all the information you entered will be lost. "),
+                        negativeButton =
+                            ButtonState(
+                                text = stringRes("Cancel swap"),
+                                onClick = ::onCancelSwapClick
+                            ),
+                        positiveButton =
+                            ButtonState(
+                                text = stringRes("Don’t cancel"),
+                                onClick = ::onDismissCancelClick
+                            ),
+                        onBack = ::onBack
+                    )
+                } else {
+                    null
+                }
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
+            )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val innerState =
@@ -122,7 +124,8 @@ internal class SwapVM(
             getSwapMode.observe(),
             isRequestingQuote,
             selectedContact
-        ) { spendable,
+        ) {
+            spendable,
             address,
             amount,
             asset,
@@ -153,8 +156,7 @@ internal class SwapVM(
         innerState
             .map { innerState ->
                 createState(innerState)
-            }
-            .stateIn(
+            }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = null
@@ -191,55 +193,61 @@ internal class SwapVM(
 
     private fun onTryAgainClick() = swapRepository.requestRefreshAssets()
 
-    private fun onAddressBookClick() = viewModelScope.launch {
-        val selected = navigateToSelectSwapRecipient()
+    private fun onAddressBookClick() =
+        viewModelScope.launch {
+            val selected = navigateToSelectSwapRecipient()
 
-        if (selected != null) {
-            selectedContact.update { selected }
-            addressText.update { "" }
-        }
-    }
-
-    private fun onQrCodeScannerClick() = viewModelScope.launch {
-        val result = navigateToScanAddress(ScanSwapAddressArgs.Mode.SWAP_SCAN_DESTINATION_ADDRESS)
-        if (result != null) {
-            selectedContact.update { null }
-            addressText.update { result.address }
-            if (result.amount != null) {
-                amountText.update { NumberTextFieldInnerState.fromAmount(result.amount) }
+            if (selected != null) {
+                selectedContact.update { selected }
+                addressText.update { "" }
             }
         }
-    }
+
+    private fun onQrCodeScannerClick() =
+        viewModelScope.launch {
+            val result = navigateToScanAddress(ScanSwapAddressArgs.Mode.SWAP_SCAN_DESTINATION_ADDRESS)
+            if (result != null) {
+                selectedContact.update { null }
+                addressText.update { result.address }
+                if (result.amount != null) {
+                    amountText.update { NumberTextFieldInnerState.fromAmount(result.amount) }
+                }
+            }
+        }
 
     private fun onSlippageClick(fiatAmount: BigDecimal?) =
         navigationRouter.forward(SwapSlippageArgs(fiatAmount = fiatAmount?.toPlainString()))
 
-    private fun onBack() = viewModelScope.launch {
-        if (isRequestingQuote.value) {
-            isCancelStateVisible.update { true }
-        } else if (isCancelStateVisible.value) {
-            isCancelStateVisible.update { false }
-            navigateToSwapQuoteIfAvailable { hideCancelBottomSheet() }
-        } else {
+    private fun onBack() =
+        viewModelScope.launch {
+            if (isRequestingQuote.value) {
+                isCancelStateVisible.update { true }
+            } else if (isCancelStateVisible.value) {
+                isCancelStateVisible.update { false }
+                navigateToSwapQuoteIfAvailable { hideCancelBottomSheet() }
+            } else {
+                if (isCancelStateVisible.value) {
+                    hideCancelBottomSheet()
+                }
+                cancelSwap()
+            }
+        }
+
+    private fun onCancelSwapClick() =
+        viewModelScope.launch {
             if (isCancelStateVisible.value) {
                 hideCancelBottomSheet()
             }
             cancelSwap()
         }
-    }
 
-    private fun onCancelSwapClick() = viewModelScope.launch {
-        if (isCancelStateVisible.value) {
-            hideCancelBottomSheet()
+    private fun onDismissCancelClick() =
+        viewModelScope.launch {
+            isCancelStateVisible.update { false }
+            navigateToSwapQuoteIfAvailable { hideCancelBottomSheet() }
         }
-        cancelSwap()
-    }
 
-    private fun onDismissCancelClick() = viewModelScope.launch {
-        isCancelStateVisible.update { false }
-        navigateToSwapQuoteIfAvailable { hideCancelBottomSheet() }
-    }
-
+    @Suppress("MagicNumber")
     private suspend fun hideCancelBottomSheet() {
         isCancelStateVisible.update { false }
         delay(350)
@@ -248,10 +256,11 @@ internal class SwapVM(
     private fun onSwapCurrencyTypeClick(newTextFieldAmount: BigDecimal) {
         amountText.update {
             NumberTextFieldInnerState(
-                innerTextFieldState = InnerTextFieldState(
-                    value = stringResByDynamicNumber(newTextFieldAmount),
-                    selection = TextSelection.End
-                ),
+                innerTextFieldState =
+                    InnerTextFieldState(
+                        value = stringResByDynamicNumber(newTextFieldAmount),
+                        selection = TextSelection.End
+                    ),
                 amount = newTextFieldAmount,
                 lastValidAmount = newTextFieldAmount
             )
@@ -286,9 +295,10 @@ internal class SwapVM(
         addressText.update { new }
     }
 
-    private fun onSwapAssetPickerClick() = navigationRouter.forward(
-        SwapAssetPickerArgs(chainTicker = selectedContact.value?.blockchain?.chainTicker)
-    )
+    private fun onSwapAssetPickerClick() =
+        navigationRouter.forward(
+            SwapAssetPickerArgs(chainTicker = selectedContact.value?.blockchain?.chainTicker)
+        )
 }
 
 internal enum class CurrencyType { TOKEN, FIAT }

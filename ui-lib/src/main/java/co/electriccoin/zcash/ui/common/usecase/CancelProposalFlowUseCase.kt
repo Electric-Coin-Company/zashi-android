@@ -18,10 +18,11 @@ class CancelProposalFlowUseCase(
     private val accountDataSource: AccountDataSource
 ) {
     suspend operator fun invoke(clearSendForm: Boolean = true) {
-        val proposal = when (accountDataSource.getSelectedAccount()) {
-            is ZashiAccount -> zashiProposalRepository.getTransactionProposal()
-            is KeystoneAccount -> keystoneProposalRepository.getTransactionProposal()
-        }
+        val proposal =
+            when (accountDataSource.getSelectedAccount()) {
+                is ZashiAccount -> zashiProposalRepository.getTransactionProposal()
+                is KeystoneAccount -> keystoneProposalRepository.getTransactionProposal()
+            }
 
         zashiProposalRepository.clear()
         keystoneProposalRepository.clear()

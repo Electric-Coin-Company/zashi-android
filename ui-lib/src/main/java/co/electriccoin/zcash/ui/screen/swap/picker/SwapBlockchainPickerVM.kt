@@ -3,13 +3,11 @@ package co.electriccoin.zcash.ui.screen.swap.picker
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.FilterSwapBlockchainsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapBlockchainUseCase
-import co.electriccoin.zcash.ui.common.usecase.SelectSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.SwapBlockchainData
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState

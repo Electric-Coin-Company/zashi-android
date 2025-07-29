@@ -8,7 +8,6 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 
 @Immutable
 internal sealed interface SwapQuoteState : ModalBottomSheetState {
-
     @Immutable
     data class Success(
         val title: StringResource,

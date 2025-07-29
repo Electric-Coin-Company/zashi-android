@@ -40,7 +40,6 @@ import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarCloseNavigation
 import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDefaults
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -164,10 +163,11 @@ private fun Item(item: ListItemState) {
                             val smallIcon = item.smallIcon
                             if (smallIcon is ImageResource.ByDrawable) {
                                 Surface(
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .align(Alignment.BottomEnd)
-                                        .offset(6.dp, 6.dp),
+                                    modifier =
+                                        Modifier
+                                            .size(24.dp)
+                                            .align(Alignment.BottomEnd)
+                                            .offset(6.dp, 6.dp),
                                     border = BorderStroke(2.dp, ZashiColors.Surfaces.bgPrimary),
                                     shape = CircleShape
                                 ) {
@@ -180,7 +180,6 @@ private fun Item(item: ListItemState) {
                             }
                         }
                     }
-
                 }
             },
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp)

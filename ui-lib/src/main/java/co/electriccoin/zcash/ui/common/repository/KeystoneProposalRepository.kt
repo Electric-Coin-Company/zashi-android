@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@Suppress("TooManyFunctions")
 interface KeystoneProposalRepository {
     val transactionProposal: Flow<TransactionProposal?>
 
@@ -123,6 +124,7 @@ class KeystoneProposalRepositoryImpl(
                 send = zecSend
             )
         }
+
     override suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal =
         createProposalInternal {
             proposalDataSource.createZip321Proposal(

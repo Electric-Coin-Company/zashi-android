@@ -60,11 +60,11 @@ private fun ContactItemLeading(
 ) {
     when (state.bigIcon) {
         is ImageResource.ByDrawable ->
-            Box {
+            Box(modifier) {
                 Image(
                     painter = painterResource(state.bigIcon.resource),
                     contentDescription = null,
-                    modifier = modifier.size(40.dp)
+                    modifier = Modifier.size(40.dp)
                 )
                 if (state.smallIcon is ImageResource.ByDrawable) {
                     Image(

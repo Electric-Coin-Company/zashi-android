@@ -63,7 +63,6 @@ import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
 import co.electriccoin.zcash.ui.design.component.ZashiImageButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.listitem.SimpleListItemState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiSimpleListItem
@@ -155,9 +154,10 @@ internal fun SwapView(
 
             if (state.errorFooter != null) {
                 Image(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .align(Alignment.CenterHorizontally),
+                    modifier =
+                        Modifier
+                            .size(16.dp)
+                            .align(Alignment.CenterHorizontally),
                     painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(ZashiColors.Text.textError)
@@ -259,7 +259,6 @@ private fun TopAppBar(state: SwapState) {
                     contentDescription = null
                 )
             }
-
         },
         navigationAction = {
             ZashiTopAppBarBackNavigation(
@@ -289,51 +288,54 @@ private fun ColumnScope.AddressTextField(state: SwapState) {
     Spacer(6.dp)
     ZashiAddressTextField(
         state = state.address,
-        modifier = Modifier
-            .fillMaxWidth()
-            .onKeyEvent {
-                if (state.addressContact != null && it.nativeKeyEvent.keyCode == NativeKeyEvent.KEYCODE_DEL) {
-                    state.addressContact.onClick()
-                    true
-                } else {
-                    false
-                }
-            },
-        placeholder = if (state.addressContact == null) {
-            {
-                Text(
-                    text = "Enter address...",
-                    style = ZashiTypography.textMd,
-                    color = ZashiColors.Inputs.Default.text
-                )
-            }
-        } else {
-            null
-        },
-        prefix = if (state.addressContact == null) {
-            null
-        } else {
-            {
-                Box(
-                    modifier = Modifier.fillMaxHeight().padding(top = 3.5.dp),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    ZashiChipButton(
-                        state.addressContact,
-                        contentPadding = PaddingValues(start = 10.dp, top = 4.5.dp, end = 4.5.dp, bottom = 4.5.dp),
-                        useTint = false,
-                        shape = RoundedCornerShape(6.dp),
-                        color = ZashiColors.Tags.surfacePrimary,
-                        border = BorderStroke(1.dp, ZashiColors.Tags.surfaceStroke),
-                        textStyle = ZashiTypography.textSm.copy(
-                            color = ZashiColors.Text.textPrimary,
-                            fontWeight = FontWeight.Medium
-                        )
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .onKeyEvent {
+                    if (state.addressContact != null && it.nativeKeyEvent.keyCode == NativeKeyEvent.KEYCODE_DEL) {
+                        state.addressContact.onClick()
+                        true
+                    } else {
+                        false
+                    }
+                },
+        placeholder =
+            if (state.addressContact == null) {
+                {
+                    Text(
+                        text = "Enter address...",
+                        style = ZashiTypography.textMd,
+                        color = ZashiColors.Inputs.Default.text
                     )
                 }
-
-            }
-        },
+            } else {
+                null
+            },
+        prefix =
+            if (state.addressContact == null) {
+                null
+            } else {
+                {
+                    Box(
+                        modifier = Modifier.fillMaxHeight().padding(top = 3.5.dp),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        ZashiChipButton(
+                            state.addressContact,
+                            contentPadding = PaddingValues(start = 10.dp, top = 4.5.dp, end = 4.5.dp, bottom = 4.5.dp),
+                            useTint = false,
+                            shape = RoundedCornerShape(6.dp),
+                            color = ZashiColors.Tags.surfacePrimary,
+                            border = BorderStroke(1.dp, ZashiColors.Tags.surfaceStroke),
+                            textStyle =
+                                ZashiTypography.textSm.copy(
+                                    color = ZashiColors.Text.textPrimary,
+                                    fontWeight = FontWeight.Medium
+                                )
+                        )
+                    }
+                }
+            },
         suffix = {
             Row(
                 verticalAlignment = Alignment.Top
@@ -375,12 +377,14 @@ private fun Preview() {
                         SwapAmountTextFieldState(
                             title = stringRes("From"),
                             error = null,
-                            token = AssetCardState.Data(
-                                ticker = stringRes("USDT"),
-                                bigIcon = null,
-                                smallIcon = null,
-                                isEnabled = false,
-                                onClick = {}),
+                            token =
+                                AssetCardState.Data(
+                                    ticker = stringRes("USDT"),
+                                    bigIcon = null,
+                                    smallIcon = null,
+                                    isEnabled = false,
+                                    onClick = {}
+                                ),
                             textFieldPrefix = imageRes(R.drawable.ic_send_zashi),
                             textField = NumberTextFieldState {},
                             secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
@@ -392,11 +396,12 @@ private fun Preview() {
                             stringRes("1%"),
                             trailingIcon = R.drawable.ic_swap_slippage
                         ),
-                    addressContact = ChipButtonState(
-                        text = stringRes("Contact"),
-                        onClick = {},
-                        endIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chip_close
-                    ),
+                    addressContact =
+                        ChipButtonState(
+                            text = stringRes("Contact"),
+                            onClick = {},
+                            endIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chip_close
+                        ),
                     amountText =
                         SwapAmountTextState(
                             token =
@@ -428,22 +433,26 @@ private fun Preview() {
                         ),
                     address = TextFieldState(stringRes("")) {},
                     isAddressBookHintVisible = true,
-                    qrScannerButton = IconButtonState(
-                        icon = R.drawable.qr_code_icon,
-                        onClick = {}
-                    ),
-                    addressBookButton = IconButtonState(
-                        icon = R.drawable.send_address_book,
-                        onClick = {}
-                    ),
-                    changeModeButton = IconButtonState(
-                        icon = R.drawable.ic_swap_change_mode,
-                        onClick = { }
-                    ),
-                    appBarState = SwapAppBarState(
-                        title = stringRes("Swap with"),
-                        icon = R.drawable.ic_near_logo
-                    ),
+                    qrScannerButton =
+                        IconButtonState(
+                            icon = R.drawable.qr_code_icon,
+                            onClick = {}
+                        ),
+                    addressBookButton =
+                        IconButtonState(
+                            icon = R.drawable.send_address_book,
+                            onClick = {}
+                        ),
+                    changeModeButton =
+                        IconButtonState(
+                            icon = R.drawable.ic_swap_change_mode,
+                            onClick = { }
+                        ),
+                    appBarState =
+                        SwapAppBarState(
+                            title = stringRes("Swap with"),
+                            icon = R.drawable.ic_near_logo
+                        ),
                     errorFooter = null
                 )
         )
@@ -461,12 +470,14 @@ private fun UnexpectedErrorPreview() {
                         SwapAmountTextFieldState(
                             title = stringRes("From"),
                             error = null,
-                            token = AssetCardState.Data(
-                                ticker = stringRes("USDT"),
-                                bigIcon = null,
-                                smallIcon = null,
-                                isEnabled = false,
-                                onClick = {}),
+                            token =
+                                AssetCardState.Data(
+                                    ticker = stringRes("USDT"),
+                                    bigIcon = null,
+                                    smallIcon = null,
+                                    isEnabled = false,
+                                    onClick = {}
+                                ),
                             textFieldPrefix = imageRes(R.drawable.ic_send_zashi),
                             textField = NumberTextFieldState {},
                             secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
@@ -505,26 +516,31 @@ private fun UnexpectedErrorPreview() {
                         ),
                     address = TextFieldState(stringRes("")) {},
                     isAddressBookHintVisible = true,
-                    qrScannerButton = IconButtonState(
-                        icon = R.drawable.qr_code_icon,
-                        onClick = {}
-                    ),
-                    addressBookButton = IconButtonState(
-                        icon = R.drawable.send_address_book,
-                        onClick = {}
-                    ),
-                    changeModeButton = IconButtonState(
-                        icon = R.drawable.ic_swap_change_mode,
-                        onClick = { }
-                    ),
-                    appBarState = SwapAppBarState(
-                        title = stringRes("Swap with"),
-                        icon = R.drawable.ic_near_logo
-                    ),
-                    errorFooter = ErrorFooter(
-                        title = stringRes("Unexpected error"),
-                        subtitle = stringRes("Please check your connection and try again."),
-                    ),
+                    qrScannerButton =
+                        IconButtonState(
+                            icon = R.drawable.qr_code_icon,
+                            onClick = {}
+                        ),
+                    addressBookButton =
+                        IconButtonState(
+                            icon = R.drawable.send_address_book,
+                            onClick = {}
+                        ),
+                    changeModeButton =
+                        IconButtonState(
+                            icon = R.drawable.ic_swap_change_mode,
+                            onClick = { }
+                        ),
+                    appBarState =
+                        SwapAppBarState(
+                            title = stringRes("Swap with"),
+                            icon = R.drawable.ic_near_logo
+                        ),
+                    errorFooter =
+                        ErrorFooter(
+                            title = stringRes("Unexpected error"),
+                            subtitle = stringRes("Please check your connection and try again."),
+                        ),
                     primaryButton =
                         ButtonState(
                             stringRes("Try again"),
@@ -546,12 +562,14 @@ private fun ServiceUnavailableErrorPreview() {
                         SwapAmountTextFieldState(
                             title = stringRes("From"),
                             error = null,
-                            token = AssetCardState.Data(
-                                ticker = stringRes("USDT"),
-                                bigIcon = null,
-                                smallIcon = null,
-                                isEnabled = false,
-                                onClick = {}),
+                            token =
+                                AssetCardState.Data(
+                                    ticker = stringRes("USDT"),
+                                    bigIcon = null,
+                                    smallIcon = null,
+                                    isEnabled = false,
+                                    onClick = {}
+                                ),
                             textFieldPrefix = imageRes(R.drawable.ic_send_zashi),
                             textField = NumberTextFieldState {},
                             secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
@@ -590,29 +608,33 @@ private fun ServiceUnavailableErrorPreview() {
                         ),
                     address = TextFieldState(stringRes("")) {},
                     isAddressBookHintVisible = true,
-                    qrScannerButton = IconButtonState(
-                        icon = R.drawable.qr_code_icon,
-                        onClick = {}
-                    ),
-                    addressBookButton = IconButtonState(
-                        icon = R.drawable.send_address_book,
-                        onClick = {}
-                    ),
-                    changeModeButton = IconButtonState(
-                        icon = R.drawable.ic_swap_change_mode,
-                        onClick = { }
-                    ),
-                    appBarState = SwapAppBarState(
-                        title = stringRes("Swap with"),
-                        icon = R.drawable.ic_near_logo
-                    ),
-                    errorFooter = ErrorFooter(
-                        title = stringRes("The service is unavailable"),
-                        subtitle = stringRes("Please try again later."),
-                    ),
+                    qrScannerButton =
+                        IconButtonState(
+                            icon = R.drawable.qr_code_icon,
+                            onClick = {}
+                        ),
+                    addressBookButton =
+                        IconButtonState(
+                            icon = R.drawable.send_address_book,
+                            onClick = {}
+                        ),
+                    changeModeButton =
+                        IconButtonState(
+                            icon = R.drawable.ic_swap_change_mode,
+                            onClick = { }
+                        ),
+                    appBarState =
+                        SwapAppBarState(
+                            title = stringRes("Swap with"),
+                            icon = R.drawable.ic_near_logo
+                        ),
+                    errorFooter =
+                        ErrorFooter(
+                            title = stringRes("The service is unavailable"),
+                            subtitle = stringRes("Please try again later."),
+                        ),
                     primaryButton = null
                 )
         )
     }
 }
-

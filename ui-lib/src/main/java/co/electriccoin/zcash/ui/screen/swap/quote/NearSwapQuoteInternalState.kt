@@ -24,9 +24,10 @@ internal data class NearSwapQuoteInternalState(
     override val zecFee: BigDecimal = proposal.proposal.totalFeeRequired().convertZatoshiToZec()
     override val zecFeeUsd: BigDecimal = zecExchangeRate.multiply(zecFee, MathContext.DECIMAL128)
 
-    override val swapProviderFee: Zatoshi = (data.amountInUsd - data.amountOutUsd)
-        .divide(zecExchangeRate, MathContext.DECIMAL128)
-        .convertZecToZatoshi()
+    override val swapProviderFee: Zatoshi =
+        (data.amountInUsd - data.amountOutUsd)
+            .divide(zecExchangeRate, MathContext.DECIMAL128)
+            .convertZecToZatoshi()
     override val swapProviderFeeUsd: BigDecimal = data.amountInUsd - data.amountOutUsd
 
     override val amountInZatoshi: Zatoshi = Zatoshi(data.amountIn.toLong())

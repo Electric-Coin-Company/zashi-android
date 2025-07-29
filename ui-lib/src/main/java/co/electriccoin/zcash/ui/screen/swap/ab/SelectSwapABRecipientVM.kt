@@ -34,11 +34,11 @@ class SelectSwapABRecipientVM(
     private val navigateToScanAddress: NavigateToScanSwapAddressUseCase
 ) : ViewModel() {
     val state =
-        getAddressBookSwapContacts.observe()
+        getAddressBookSwapContacts
+            .observe()
             .map { contacts ->
                 createState(contacts)
-            }
-            .flowOn(Dispatchers.Default)
+            }.flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -83,8 +83,7 @@ class SelectSwapABRecipientVM(
                 .split(" ")
                 .mapNotNull { part ->
                     part.takeIf { it.isNotEmpty() }?.first()?.toString()
-                }
-                .take(2)
+                }.take(2)
                 .joinToString(separator = "")
         )
 
@@ -93,12 +92,13 @@ class SelectSwapABRecipientVM(
     private fun onContactClick(contact: EnhancedABContact) =
         viewModelScope.launch { navigateToSelectSwapRecipient.onSelected(contact, args) }
 
-    private fun onAddContactManuallyClick() = navigationRouter.forward(
-        AddSwapABContactArgs(
-            address = null,
-            chain = null
+    private fun onAddContactManuallyClick() =
+        navigationRouter.forward(
+            AddSwapABContactArgs(
+                address = null,
+                chain = null
+            )
         )
-    )
 
     private fun onScanContactClick() =
         viewModelScope.launch { navigateToScanAddress(ScanSwapAddressArgs.Mode.SWAP_SCAN_CONTACT_ADDRESS) }

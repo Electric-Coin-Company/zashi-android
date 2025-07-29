@@ -181,13 +181,14 @@ private fun DataPreview() {
                         ButtonState(
                             text = stringRes("Negative"),
                         ),
-                    chain = PickerState(
-                        bigIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone),
-                        smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone),
-                        text = stringRes("Text"),
-                        placeholder = stringRes("Placeholder"),
-                        onClick = {}
-                    ),
+                    chain =
+                        PickerState(
+                            bigIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone),
+                            smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone),
+                            text = stringRes("Text"),
+                            placeholder = stringRes("Placeholder"),
+                            onClick = {}
+                        ),
                     info = IconButtonState(R.drawable.ic_help) {}
                 ),
         )

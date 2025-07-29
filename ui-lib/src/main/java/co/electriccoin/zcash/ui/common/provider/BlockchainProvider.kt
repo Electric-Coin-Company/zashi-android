@@ -17,47 +17,49 @@ interface BlockchainProvider {
 
 class BlockchainProviderImpl(
     private val context: Context
-): BlockchainProvider {
-    override fun getBlockchain(ticker: String): SwapAssetBlockchain {
-        return SwapAssetBlockchain(
+) : BlockchainProvider {
+    @Suppress("CyclomaticComplexMethod")
+    override fun getBlockchain(ticker: String): SwapAssetBlockchain =
+        SwapAssetBlockchain(
             chainTicker = ticker,
-            chainName = when (ticker.lowercase()) {
-                "arb" -> stringRes("Arbitrum")
-                "base" -> stringRes("Base")
-                "bera" -> stringRes("Bera")
-                "btc" -> stringRes("Bitcoin")
-                "doge" -> stringRes("Doge")
-                "eth" -> stringRes("Ethereum")
-                "gnosis" -> stringRes("Gnosis")
-                "near" -> stringRes("Near")
-                "sol" -> stringRes("Solana")
-                "tron" -> stringRes("Tron")
-                "xrp" -> stringRes("Ripple")
-                "avax" -> stringRes("Avalanche")
-                "bsc" -> stringRes("BNB Chain")
-                "op" -> stringRes("Optimism")
-                "pol" -> stringRes("Polygon")
-                "ton" -> stringRes("TON")
-                "sui" -> stringRes("SUI")
-                "zec" -> stringRes("ZEC")
-                else -> stringRes(ticker)
-            },
+            chainName =
+                when (ticker.lowercase()) {
+                    "arb" -> stringRes("Arbitrum")
+                    "base" -> stringRes("Base")
+                    "bera" -> stringRes("Bera")
+                    "btc" -> stringRes("Bitcoin")
+                    "doge" -> stringRes("Doge")
+                    "eth" -> stringRes("Ethereum")
+                    "gnosis" -> stringRes("Gnosis")
+                    "near" -> stringRes("Near")
+                    "sol" -> stringRes("Solana")
+                    "tron" -> stringRes("Tron")
+                    "xrp" -> stringRes("Ripple")
+                    "avax" -> stringRes("Avalanche")
+                    "bsc" -> stringRes("BNB Chain")
+                    "op" -> stringRes("Optimism")
+                    "pol" -> stringRes("Polygon")
+                    "ton" -> stringRes("TON")
+                    "sui" -> stringRes("SUI")
+                    "zec" -> stringRes("ZEC")
+                    else -> stringRes(ticker)
+                },
             chainIcon = getChainIcon(ticker)
         )
-    }
 
     private fun getChainIcon(ticker: String): ImageResource {
-        val id = context.resources.getIdentifier(
-            "ic_chain_${ticker.lowercase()}",
-            "drawable",
-            context.packageName
-        )
+        val id =
+            context.resources.getIdentifier(
+                "ic_chain_${ticker.lowercase()}",
+                "drawable",
+                context.packageName
+            )
 
         return if (id == 0) imageRes(R.drawable.ic_chain_placeholder) else imageRes(id)
     }
 
-    override fun getHardcodedBlockchains(): List<SwapAssetBlockchain> {
-        return listOf(
+    override fun getHardcodedBlockchains(): List<SwapAssetBlockchain> =
+        listOf(
             "arb",
             "base",
             "bera",
@@ -70,7 +72,6 @@ class BlockchainProviderImpl(
             "tron",
             "xrp",
         ).map { getBlockchain(it) }
-    }
 
     override fun getZcashBlockchain(): SwapAssetBlockchain = getBlockchain("zec")
 }

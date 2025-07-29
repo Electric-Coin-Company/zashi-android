@@ -41,7 +41,6 @@ class AddGenericABContactVM(
     private val navigationRouter: NavigationRouter,
     private val navigateToSelectSwapBlockchain: NavigateToSelectSwapBlockchainUseCase,
 ) : ViewModel() {
-
     private val zcashBlockchain = blockchainProvider.getZcashBlockchain()
 
     private val contactAddress = MutableStateFlow(args.address.orEmpty())
@@ -49,35 +48,39 @@ class AddGenericABContactVM(
     private val selectedBlockchain = MutableStateFlow(getSwapAssetBlockchain(args.chain))
     private val isSavingContact = MutableStateFlow(false)
 
-    private val addressZashiValidation = contactAddress
-        .map {
-            if (it.isEmpty()) null else validateZashiABContactAddress(it)
-        }
-        .onEach {
-            if (it == ContactAddressValidationResult.Valid || it == ContactAddressValidationResult.NotUnique) {
-                selectedBlockchain.update { zcashBlockchain }
-            } else if (selectedBlockchain.value == zcashBlockchain) {
-                selectedBlockchain.update { null }
+    private val addressZashiValidation =
+        contactAddress
+            .map {
+                if (it.isEmpty()) null else validateZashiABContactAddress(it)
+            }.onEach {
+                if (it == ContactAddressValidationResult.Valid || it == ContactAddressValidationResult.NotUnique) {
+                    selectedBlockchain.update { zcashBlockchain }
+                } else if (selectedBlockchain.value == zcashBlockchain) {
+                    selectedBlockchain.update { null }
+                }
             }
-        }
 
-    private val addressSwapValidation = combine(contactAddress, selectedBlockchain) { address, blockchain ->
-        if (address.isEmpty()) null else validateSwapABContactAddress(address, blockchain)
-    }
+    private val addressSwapValidation =
+        combine(contactAddress, selectedBlockchain) { address, blockchain ->
+            if (address.isEmpty()) null else validateSwapABContactAddress(address, blockchain)
+        }
 
     private val addressValidation =
         combine(
             addressZashiValidation,
             addressSwapValidation,
             selectedBlockchain
-        ) { zashiValidation,
+        ) {
+            zashiValidation,
             swapValidation,
-            blockchain ->
-            val validation = if (blockchain == null || blockchain == zcashBlockchain) {
-                zashiValidation
-            } else {
-                swapValidation
-            }
+            blockchain
+            ->
+            val validation =
+                if (blockchain == null || blockchain == zcashBlockchain) {
+                    zashiValidation
+                } else {
+                    swapValidation
+                }
 
             when (validation) {
                 ContactAddressValidationResult.Invalid -> stringRes(R.string.contact_address_error_invalid)
@@ -87,17 +90,18 @@ class AddGenericABContactVM(
             }
         }
 
-    private val blockChainPickerState = selectedBlockchain
-        .map {
-            PickerState(
-                bigIcon = it?.chainIcon,
-                smallIcon = null,
-                text = it?.chainName,
-                placeholder = stringRes("Select..."),
-                isEnabled = it != zcashBlockchain,
-                onClick = ::onBlockchainClick
-            )
-        }
+    private val blockChainPickerState =
+        selectedBlockchain
+            .map {
+                PickerState(
+                    bigIcon = it?.chainIcon,
+                    smallIcon = null,
+                    text = it?.chainName,
+                    placeholder = stringRes("Select..."),
+                    isEnabled = it != zcashBlockchain,
+                    onClick = ::onBlockchainClick
+                )
+            }
 
     private val addressState =
         combine(contactAddress, addressValidation) { address, contactAddressError ->

@@ -132,7 +132,10 @@ class ProposalDataSourceImpl(
             }
         }
 
-    override suspend fun createExactInputProposal(account: WalletAccount, send: ZecSend): ExactInputSwapTransactionProposal =
+    override suspend fun createExactInputProposal(
+        account: WalletAccount,
+        send: ZecSend
+    ): ExactInputSwapTransactionProposal =
         withContext(Dispatchers.IO) {
             getOrThrow {
                 ExactInputSwapTransactionProposal(
@@ -310,7 +313,7 @@ sealed interface SendTransactionProposal : TransactionProposal {
     val memo: Memo
 }
 
-sealed interface SwapTransactionProposal: SendTransactionProposal
+sealed interface SwapTransactionProposal : SendTransactionProposal
 
 data class ShieldTransactionProposal(
     override val proposal: Proposal,

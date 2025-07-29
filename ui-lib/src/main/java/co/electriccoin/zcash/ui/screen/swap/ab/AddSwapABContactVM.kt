@@ -42,16 +42,17 @@ class AddSwapABContactVM(
     private val selectedBlockchain = MutableStateFlow(getSwapAssetBlockchain(args.chain))
     private val isSavingContact = MutableStateFlow(false)
 
-    private val blockChainPickerState = selectedBlockchain
-        .map {
-            PickerState(
-                bigIcon = it?.chainIcon,
-                smallIcon = null,
-                text = it?.chainName,
-                placeholder = stringRes("Select..."),
-                onClick = ::onBlockchainClick
-            )
-        }
+    private val blockChainPickerState =
+        selectedBlockchain
+            .map {
+                PickerState(
+                    bigIcon = it?.chainIcon,
+                    smallIcon = null,
+                    text = it?.chainName,
+                    placeholder = stringRes("Select..."),
+                    onClick = ::onBlockchainClick
+                )
+            }
 
     private val contactAddressError =
         combine(contactAddress, selectedBlockchain) { address, blockchain ->

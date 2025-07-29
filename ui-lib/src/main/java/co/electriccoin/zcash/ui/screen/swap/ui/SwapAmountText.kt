@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Spacer
@@ -114,7 +113,8 @@ private fun Preview() =
                                 bigIcon = null,
                                 smallIcon = null,
                                 isEnabled = true,
-                                onClick = {}),
+                                onClick = {}
+                            ),
                         title = stringRes("To"),
                         subtitle = stringRes("Max"),
                         text = stringResByDynamicCurrencyNumber(101, "$"),

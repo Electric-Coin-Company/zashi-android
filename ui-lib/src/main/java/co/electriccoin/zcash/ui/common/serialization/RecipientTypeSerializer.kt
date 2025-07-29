@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.common.serialization
 
 import co.electriccoin.zcash.ui.common.model.near.RecipientType
-import co.electriccoin.zcash.ui.common.model.near.SwapType
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor

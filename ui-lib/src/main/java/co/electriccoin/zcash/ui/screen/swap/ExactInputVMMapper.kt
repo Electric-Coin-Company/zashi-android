@@ -71,10 +71,11 @@ internal class ExactInputVMMapper : SwapVMMapper {
                     onSwapAssetPickerClick = onSwapAssetPickerClick
                 ),
             mode = state.swapMode,
-            addressContact = createAddressContactState(
-                state = state,
-                onDeleteSelectedContactClick = onDeleteSelectedContactClick
-            ),
+            addressContact =
+                createAddressContactState(
+                    state = state,
+                    onDeleteSelectedContactClick = onDeleteSelectedContactClick
+                ),
             address =
                 createAddressState(
                     state = state,
@@ -84,22 +85,26 @@ internal class ExactInputVMMapper : SwapVMMapper {
             onBack = onBack,
             swapInfoButton = IconButtonState(R.drawable.ic_help, onClick = onSwapInfoClick),
             infoItems = createListItems(state),
-            qrScannerButton = IconButtonState(
-                icon = R.drawable.qr_code_icon,
-                onClick = onQrCodeScannerClick
-            ),
-            addressBookButton = IconButtonState(
-                icon = R.drawable.send_address_book,
-                onClick = onAddressBookClick
-            ),
-            changeModeButton = IconButtonState(
-                icon = R.drawable.ic_swap_change_mode,
-                onClick = { onSwapModeChange(SwapMode.PAY) },
-            ),
-            appBarState = SwapAppBarState(
-                title = stringRes("Swap with"),
-                icon = R.drawable.ic_near_logo
-            ),
+            qrScannerButton =
+                IconButtonState(
+                    icon = R.drawable.qr_code_icon,
+                    onClick = onQrCodeScannerClick
+                ),
+            addressBookButton =
+                IconButtonState(
+                    icon = R.drawable.send_address_book,
+                    onClick = onAddressBookClick
+                ),
+            changeModeButton =
+                IconButtonState(
+                    icon = R.drawable.ic_swap_change_mode,
+                    onClick = { onSwapModeChange(SwapMode.PAY) },
+                ),
+            appBarState =
+                SwapAppBarState(
+                    title = stringRes("Swap with"),
+                    icon = R.drawable.ic_near_logo
+                ),
             errorFooter = createErrorFooterState(state),
             primaryButton =
                 createPrimaryButtonState(
@@ -124,6 +129,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
         )
     }
 
+    @Suppress("CyclomaticComplexMethod")
     private fun createAmountTextFieldState(
         state: ExactInputInternalState,
         onSwapCurrencyTypeClick: (BigDecimal) -> Unit,
@@ -133,14 +139,15 @@ internal class ExactInputVMMapper : SwapVMMapper {
         val zatoshiAmount = state.getZatoshi()
         return SwapAmountTextFieldState(
             title = stringRes("From"),
-            error = if (state.totalSpendableBalance != null &&
-                zatoshiAmount != null &&
-                state.totalSpendableBalance.value < zatoshiAmount
-            ) {
-                stringRes("Insufficient funds")
-            } else {
-                null
-            },
+            error =
+                if (state.totalSpendableBalance != null &&
+                    zatoshiAmount != null &&
+                    state.totalSpendableBalance.value < zatoshiAmount
+                ) {
+                    stringRes("Insufficient funds")
+                } else {
+                    null
+                },
             token =
                 AssetCardState.Data(
                     ticker = stringRes(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
@@ -167,10 +174,11 @@ internal class ExactInputVMMapper : SwapVMMapper {
                             ticker = FiatCurrency.USD.symbol,
                         )
 
-                    FIAT -> stringResByDynamicCurrencyNumber(
-                        (zatoshiAmount ?: 0).convertZatoshiToZecBigDecimal(),
-                        "ZEC"
-                    )
+                    FIAT ->
+                        stringResByDynamicCurrencyNumber(
+                            (zatoshiAmount ?: 0).convertZatoshiToZecBigDecimal(),
+                            "ZEC"
+                        )
                 },
             max =
                 state.totalSpendableBalance?.let {
@@ -178,13 +186,8 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 },
             onSwapChange = {
                 when (state.currencyType) {
-                    TOKEN -> {
-                        onSwapCurrencyTypeClick(amountFiat ?: BigDecimal(0))
-                    }
-
-                    FIAT -> {
-                        onSwapCurrencyTypeClick((zatoshiAmount ?: 0).convertZatoshiToZecBigDecimal())
-                    }
+                    TOKEN -> onSwapCurrencyTypeClick(amountFiat ?: BigDecimal(0))
+                    FIAT -> onSwapCurrencyTypeClick((zatoshiAmount ?: 0).convertZatoshiToZecBigDecimal())
                 }
             },
             isSwapChangeEnabled = !state.isRequestingQuote
@@ -196,20 +199,21 @@ internal class ExactInputVMMapper : SwapVMMapper {
         onSwapAssetPickerClick: (() -> Unit)?
     ): SwapAmountTextState =
         SwapAmountTextState(
-            token = if (state.swapAsset == null) {
-                AssetCardState.Loading(
-                    onClick = onSwapAssetPickerClick,
-                    isEnabled = !state.isRequestingQuote
-                )
-            } else {
-                AssetCardState.Data(
-                    ticker = state.swapAsset.tokenTicker.let { stringRes(it) },
-                    bigIcon = state.swapAsset.tokenIcon,
-                    smallIcon = state.swapAsset.chainIcon,
-                    onClick = onSwapAssetPickerClick,
-                    isEnabled = !state.isRequestingQuote
-                )
-            },
+            token =
+                if (state.swapAsset == null) {
+                    AssetCardState.Loading(
+                        onClick = onSwapAssetPickerClick,
+                        isEnabled = !state.isRequestingQuote
+                    )
+                } else {
+                    AssetCardState.Data(
+                        ticker = state.swapAsset.tokenTicker.let { stringRes(it) },
+                        bigIcon = state.swapAsset.tokenIcon,
+                        smallIcon = state.swapAsset.chainIcon,
+                        onClick = onSwapAssetPickerClick,
+                        isEnabled = !state.isRequestingQuote
+                    )
+                },
             title = stringRes("To"),
             subtitle = null,
             text = stringResByDynamicNumber(state.getDestinationAssetAmount() ?: 0),
@@ -236,23 +240,27 @@ internal class ExactInputVMMapper : SwapVMMapper {
     private fun createErrorFooterState(state: ExactInputInternalState): ErrorFooter? {
         if (state.swapAssets.error == null) return null
 
-        val isServiceUnavailableError = state.swapAssets.error is ResponseException &&
-            state.swapAssets.error.response.status == HttpStatusCode.ServiceUnavailable
+        val isServiceUnavailableError =
+            state.swapAssets.error is ResponseException &&
+                state.swapAssets.error.response.status == HttpStatusCode.ServiceUnavailable
 
         return ErrorFooter(
-            title = if (isServiceUnavailableError) {
-                stringRes("The service is unavailable")
-            } else {
-                stringRes("Unexpected error")
-            },
-            subtitle = if (isServiceUnavailableError) {
-                stringRes("Please try again later.")
-            } else {
-                stringRes("Please check your connection and try again.")
-            }
+            title =
+                if (isServiceUnavailableError) {
+                    stringRes("The service is unavailable")
+                } else {
+                    stringRes("Unexpected error")
+                },
+            subtitle =
+                if (isServiceUnavailableError) {
+                    stringRes("Please try again later.")
+                } else {
+                    stringRes("Please check your connection and try again.")
+                }
         )
     }
 
+    @Suppress("CyclomaticComplexMethod")
     private fun createPrimaryButtonState(
         textField: SwapAmountTextFieldState,
         state: ExactInputInternalState,
@@ -261,15 +269,18 @@ internal class ExactInputVMMapper : SwapVMMapper {
     ): ButtonState? {
         if (state.swapAssets.error is ResponseException &&
             state.swapAssets.error.response.status == HttpStatusCode.ServiceUnavailable
-        ) return null
+        ) {
+            return null
+        }
 
         val amount = textField.textField.innerState.amount
         return ButtonState(
-            text = when {
-                state.swapAssets.error != null -> stringRes("Try again")
-                state.swapAssets.isLoading && state.swapAssets.data == null -> stringRes("Loading")
-                else -> stringRes("Confirm")
-            },
+            text =
+                when {
+                    state.swapAssets.error != null -> stringRes("Try again")
+                    state.swapAssets.isLoading && state.swapAssets.data == null -> stringRes("Loading")
+                    else -> stringRes("Confirm")
+                },
             style = if (state.swapAssets.error != null) ButtonStyle.DESTRUCTIVE1 else null,
             onClick = {
                 if (state.swapAssets.error != null) {
@@ -279,17 +290,18 @@ internal class ExactInputVMMapper : SwapVMMapper {
                     state.getOriginTokenAmount()?.let { onRequestSwapQuoteClick(it, address) }
                 }
             },
-            isEnabled = if (state.swapAssets.error != null) {
-                !state.swapAssets.isLoading
-            } else {
-                (!state.swapAssets.isLoading && state.swapAssets.data != null) &&
-                    state.swapAsset != null &&
-                    !textField.isError &&
-                    amount != null &&
-                    amount > BigDecimal(0) &&
-                    state.addressText.isNotBlank() &&
-                    !state.isRequestingQuote
-            },
+            isEnabled =
+                if (state.swapAssets.error != null) {
+                    !state.swapAssets.isLoading
+                } else {
+                    (!state.swapAssets.isLoading && state.swapAssets.data != null) &&
+                        state.swapAsset != null &&
+                        !textField.isError &&
+                        amount != null &&
+                        amount > BigDecimal(0) &&
+                        state.addressText.isNotBlank() &&
+                        !state.isRequestingQuote
+                },
             isLoading = state.isRequestingQuote || (state.swapAssets.isLoading && state.swapAssets.data == null)
         )
     }
@@ -324,8 +336,9 @@ internal class ExactInputVMMapper : SwapVMMapper {
             listOf(
                 SimpleListItemState(
                     title = stringRes("Rate"),
-                    text = stringRes("1 ZEC = ") +
-                        stringResByDynamicCurrencyNumber(zecToAssetExchangeRate, assetTokenTicker)
+                    text =
+                        stringRes("1 ZEC = ") +
+                            stringResByDynamicCurrencyNumber(zecToAssetExchangeRate, assetTokenTicker)
                 )
             )
         }
@@ -345,7 +358,6 @@ private data class ExactInputInternalState(
     override val isRequestingQuote: Boolean,
     override val selectedContact: EnhancedABContact?,
 ) : InternalState {
-
     constructor(original: InternalState) : this(
         swapAsset = original.swapAsset,
         currencyType = original.currencyType,
@@ -360,8 +372,8 @@ private data class ExactInputInternalState(
         selectedContact = original.selectedContact
     )
 
-    fun getOriginFiatAmount(): BigDecimal? {
-        return when (currencyType) {
+    fun getOriginFiatAmount(): BigDecimal? =
+        when (currencyType) {
             TOKEN -> {
                 val tokenAmount = amountTextState.amount
                 if (tokenAmount == null || swapAssets.zecAsset == null) {
@@ -373,7 +385,6 @@ private data class ExactInputInternalState(
 
             FIAT -> amountTextState.amount
         }
-    }
 
     fun getOriginTokenAmount(): BigDecimal? {
         val fiatAmount = amountTextState.amount
@@ -425,4 +436,3 @@ internal fun Long.convertZatoshiToZecBigDecimal(scale: Int = ZEC_FORMATTER.maxim
             Conversions.ONE_ZEC_IN_ZATOSHI,
             MathContext.DECIMAL128
         ).setScale(scale, ZEC_FORMATTER.roundingMode)
-

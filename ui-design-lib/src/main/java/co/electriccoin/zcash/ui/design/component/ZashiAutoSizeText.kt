@@ -86,12 +86,13 @@ fun ZashiAutoSizeText(
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current,
 ) {
-    val textAutoSize = remember(fontSize, style) {
-        TextAutoSize.StepBased(
-            minFontSize = (fontSize.takeIf { it.isSpecified } ?: style.fontSize) * .33f,
-            maxFontSize = fontSize.takeIf { it.isSpecified } ?: style.fontSize,
-        )
-    }
+    val textAutoSize =
+        remember(fontSize, style) {
+            TextAutoSize.StepBased(
+                minFontSize = (fontSize.takeIf { it.isSpecified } ?: style.fontSize) * .33f,
+                maxFontSize = fontSize.takeIf { it.isSpecified } ?: style.fontSize,
+            )
+        }
     val textColor = color.takeOrElse { style.color.takeOrElse { LocalContentColor.current } }
 
     BasicText(

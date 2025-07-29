@@ -28,18 +28,19 @@ class OnAddressScannedUseCase(
 
             ADDRESS_BOOK -> navigationRouter.replace(AddZashiABContactArgs(address))
 
-            HOMEPAGE -> navigationRouter.replace(
-                Send(
-                    address,
-                    when (addressType) {
-                        AddressType.Shielded -> cash.z.ecc.sdk.model.AddressType.UNIFIED
-                        AddressType.Tex -> cash.z.ecc.sdk.model.AddressType.TEX
-                        AddressType.Transparent -> cash.z.ecc.sdk.model.AddressType.TRANSPARENT
-                        AddressType.Unified -> cash.z.ecc.sdk.model.AddressType.UNIFIED
-                        else -> cash.z.ecc.sdk.model.AddressType.UNIFIED
-                    }
+            HOMEPAGE ->
+                navigationRouter.replace(
+                    Send(
+                        address,
+                        when (addressType) {
+                            AddressType.Shielded -> cash.z.ecc.sdk.model.AddressType.UNIFIED
+                            AddressType.Tex -> cash.z.ecc.sdk.model.AddressType.TEX
+                            AddressType.Transparent -> cash.z.ecc.sdk.model.AddressType.TRANSPARENT
+                            AddressType.Unified -> cash.z.ecc.sdk.model.AddressType.UNIFIED
+                            else -> cash.z.ecc.sdk.model.AddressType.UNIFIED
+                        }
+                    )
                 )
-            )
         }
     }
 }

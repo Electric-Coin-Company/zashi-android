@@ -69,6 +69,7 @@ class NearSwapDataSourceImpl(
             }
         }
 
+    @Suppress("MagicNumber")
     override suspend fun requestQuote(
         swapMode: SwapMode,
         amount: BigDecimal,
@@ -78,44 +79,52 @@ class NearSwapDataSourceImpl(
         destinationAsset: SwapAsset,
         slippage: BigDecimal,
     ): QuoteResponseDto {
-        val decimals = when (swapMode) {
-            SWAP -> originAsset.decimals
-            PAY -> destinationAsset.decimals
-        }
+        val decimals =
+            when (swapMode) {
+                SWAP -> originAsset.decimals
+                PAY -> destinationAsset.decimals
+            }
 
         val shifted = amount.movePointRight(decimals)
         val integer = shifted.toBigInteger().toBigDecimal()
         val normalizedAmount = shifted.round(MathContext(integer.precision(), RoundingMode.HALF_EVEN))
 
-        val request = QuoteRequest(
-            dry = false,
-            swapType = when (swapMode) {
-                SWAP -> SwapType.EXACT_INPUT
-                PAY -> SwapType.EXACT_OUTPUT
-            },
-            slippageTolerance = slippage.multiply(BigDecimal(100), MathContext.DECIMAL128).toInt(),
-            originAsset = originAsset.assetId,
-            depositType = RefundType.ORIGIN_CHAIN,
-            destinationAsset = destinationAsset.assetId,
-            amount = normalizedAmount,
-            refundTo = originAddress,
-            refundType = RefundType.ORIGIN_CHAIN,
-            recipient = destinationAddress,
-            recipientType = RecipientType.DESTINATION_CHAIN,
-            deadline = Clock.System.now() + 10.minutes,
-            quoteWaitingTimeMs = QUOTE_WAITING_TIME
-        )
+        val request =
+            QuoteRequest(
+                dry = false,
+                swapType =
+                    when (swapMode) {
+                        SWAP -> SwapType.EXACT_INPUT
+                        PAY -> SwapType.EXACT_OUTPUT
+                    },
+                slippageTolerance = slippage.multiply(BigDecimal(100), MathContext.DECIMAL128).toInt(),
+                originAsset = originAsset.assetId,
+                depositType = RefundType.ORIGIN_CHAIN,
+                destinationAsset = destinationAsset.assetId,
+                amount = normalizedAmount,
+                refundTo = originAddress,
+                refundType = RefundType.ORIGIN_CHAIN,
+                recipient = destinationAddress,
+                recipientType = RecipientType.DESTINATION_CHAIN,
+                deadline = Clock.System.now() + 10.minutes,
+                quoteWaitingTimeMs = QUOTE_WAITING_TIME
+            )
 
         return try {
             nearApiProvider.requestQuote(request)
         } catch (e: ResponseWithErrorException) {
             when {
                 e.error.message.startsWith("Amount is too low for bridge, try at least") -> {
-                    val errorAmount = e.error.message.split(" ").lastOrNull()?.toBigDecimalOrNull() ?: throw e
-                    val errorAsset = when (swapMode) {
-                        SWAP -> originAsset
-                        PAY -> destinationAsset
-                    }
+                    val errorAmount =
+                        e.error.message
+                            .split(" ")
+                            .lastOrNull()
+                            ?.toBigDecimalOrNull() ?: throw e
+                    val errorAsset =
+                        when (swapMode) {
+                            SWAP -> originAsset
+                            PAY -> destinationAsset
+                        }
                     throw QuoteLowAmountException(
                         asset = errorAsset,
                         amount = errorAmount,
@@ -136,14 +145,13 @@ class NearSwapDataSourceImpl(
         }
     }
 
-    override suspend fun submitDepositTransaction(txHash: String, depositAddress: String): SwapStatusResponseDto {
-        return nearApiProvider.submitDepositTransaction(
+    override suspend fun submitDepositTransaction(txHash: String, depositAddress: String): SwapStatusResponseDto =
+        nearApiProvider.submitDepositTransaction(
             SubmitDepositTransactionRequest(
                 txHash = txHash,
                 depositAddress = depositAddress
             )
         )
-    }
 }
 
 private const val QUOTE_WAITING_TIME = 3000

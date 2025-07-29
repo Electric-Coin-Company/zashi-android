@@ -17,37 +17,40 @@ class FilterSwapAssetsUseCase(
     ): SwapAssetsData {
         if (assets.data == null) return assets.copy(data = null)
 
-        val sorted = assets.data
-            .filter {
-                if (onlyChainTicker == null) true else it.chainTicker.lowercase() == onlyChainTicker.lowercase()
-            }
-            .sortedBy { it.tokenTicker.replace("$", "") }
-            .reorderByLatestAssets(latestAssets)
+        val sorted =
+            assets.data
+                .filter {
+                    if (onlyChainTicker == null) true else it.chainTicker.lowercase() == onlyChainTicker.lowercase()
+                }.sortedBy { it.tokenTicker.replace("$", "") }
+                .reorderByLatestAssets(latestAssets)
 
-        val filtered = buildSet {
-            addAll(sorted.filter { it.tokenTicker.startsWith(text, ignoreCase = true) })
-            addAll(sorted.filter { it.tokenTicker.contains(text, ignoreCase = true) })
-            addAll(sorted.filter { it.tokenName.getString(context).startsWith(text, ignoreCase = true) })
-            addAll(sorted.filter { it.tokenName.getString(context).contains(text, ignoreCase = true) })
-            addAll(sorted.filter { it.chainTicker.startsWith(text, ignoreCase = true) })
-            addAll(sorted.filter { it.chainTicker.contains(text, ignoreCase = true) })
-            addAll(sorted.filter { it.chainName.getString(context).startsWith(text, ignoreCase = true) })
-            addAll(sorted.filter { it.chainName.getString(context).contains(text, ignoreCase = true) })
-        }.toList()
+        val filtered =
+            buildSet {
+                addAll(sorted.filter { it.tokenTicker.startsWith(text, ignoreCase = true) })
+                addAll(sorted.filter { it.tokenTicker.contains(text, ignoreCase = true) })
+                addAll(sorted.filter { it.tokenName.getString(context).startsWith(text, ignoreCase = true) })
+                addAll(sorted.filter { it.tokenName.getString(context).contains(text, ignoreCase = true) })
+                addAll(sorted.filter { it.chainTicker.startsWith(text, ignoreCase = true) })
+                addAll(sorted.filter { it.chainTicker.contains(text, ignoreCase = true) })
+                addAll(sorted.filter { it.chainName.getString(context).startsWith(text, ignoreCase = true) })
+                addAll(sorted.filter { it.chainName.getString(context).contains(text, ignoreCase = true) })
+            }.toList()
 
         return assets.copy(data = filtered)
     }
 
+    @Suppress("ReturnCount")
     private fun List<SwapAsset>.reorderByLatestAssets(simpleAssets: Set<SimpleSwapAsset>?): List<SwapAsset> {
         if (simpleAssets.isNullOrEmpty()) return this
 
-        val foundSwapAssets = simpleAssets
-            .mapNotNull { latest ->
-                this.find { asset ->
-                    asset.tokenTicker.lowercase() == latest.tokenTicker.lowercase() &&
-                        asset.chainTicker.lowercase() == latest.chainTicker.lowercase()
+        val foundSwapAssets =
+            simpleAssets
+                .mapNotNull { latest ->
+                    this.find { asset ->
+                        asset.tokenTicker.lowercase() == latest.tokenTicker.lowercase() &&
+                            asset.chainTicker.lowercase() == latest.chainTicker.lowercase()
+                    }
                 }
-            }
 
         if (foundSwapAssets.isEmpty()) return this
 

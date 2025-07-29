@@ -15,11 +15,12 @@ class TokenIconProviderImpl(
     override fun getIcon(ticker: String): ImageResource {
         val normalized = ticker.removePrefix("$").lowercase()
 
-        val id = context.resources.getIdentifier(
-            "ic_token_$normalized",
-            "drawable",
-            context.packageName
-        )
+        val id =
+            context.resources.getIdentifier(
+                "ic_token_$normalized",
+                "drawable",
+                context.packageName
+            )
 
         return if (id == 0) imageRes(R.drawable.ic_token_placeholder) else imageRes(id)
     }

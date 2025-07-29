@@ -9,7 +9,6 @@ import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase.Zip321ParseUriValidation
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
-import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactArgs
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow.ADDRESS_BOOK
@@ -40,15 +39,6 @@ class OnZip321ScannedUseCase(
 
             HOMEPAGE -> homepageFlow(zip321)
         }
-    }
-
-    private fun swapAddressBookFlow(zip321: Zip321ParseUriValidation.Valid) {
-        navigationRouter.replace(
-            AddSwapABContactArgs(
-                address = zip321.payment.payments[0].recipientAddress.value,
-                chain = null
-            )
-        )
     }
 
     private fun addressBookFlow(zip321: Zip321ParseUriValidation.Valid) {

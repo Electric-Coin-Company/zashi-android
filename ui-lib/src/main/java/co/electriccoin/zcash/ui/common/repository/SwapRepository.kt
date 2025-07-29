@@ -22,7 +22,6 @@ import java.math.BigDecimal
 import kotlin.time.Duration.Companion.seconds
 
 interface SwapRepository {
-
     val mode: StateFlow<SwapMode>
 
     val assets: StateFlow<SwapAssetsData>
@@ -49,8 +48,14 @@ interface SwapRepository {
 }
 
 sealed interface SwapQuoteData {
-    data class Success(val quote: SwapQuote) : SwapQuoteData
-    data class Error(val exception: Exception) : SwapQuoteData
+    data class Success(
+        val quote: SwapQuote
+    ) : SwapQuoteData
+
+    data class Error(
+        val exception: Exception
+    ) : SwapQuoteData
+
     data object Loading : SwapQuoteData
 }
 
@@ -106,31 +111,35 @@ class NearSwapRepository(
 
     override fun requestRefreshAssets() {
         refreshJob?.cancel()
-        refreshJob = scope.launch {
-            while (true) {
-                refreshAssetsInternal()
-                delay(30.seconds)
+        refreshJob =
+            scope.launch {
+                while (true) {
+                    refreshAssetsInternal()
+                    delay(30.seconds)
+                }
             }
-        }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private suspend fun refreshAssetsInternal() {
-        suspend fun findZecSwapAsset(assets: List<SwapAsset>) = withContext(Dispatchers.Default) {
-            assets.find { asset ->
-                asset.tokenTicker.lowercase() == "zec" && asset.chainTicker.lowercase() == "zec"
+        suspend fun findZecSwapAsset(assets: List<SwapAsset>) =
+            withContext(Dispatchers.Default) {
+                assets.find { asset ->
+                    asset.tokenTicker.lowercase() == "zec" && asset.chainTicker.lowercase() == "zec"
+                }
             }
-        }
 
-        suspend fun filterSwapAssets(assets: List<SwapAsset>) = withContext(Dispatchers.Default) {
-            assets
-                .toMutableList()
-                .apply {
-                    removeIf {
-                        val usdPrice = it.usdPrice
-                        it.tokenTicker.lowercase() == "zec" || usdPrice == null || usdPrice.toFloat() == 0f
-                    }
-                }.toList()
-        }
+        suspend fun filterSwapAssets(assets: List<SwapAsset>) =
+            withContext(Dispatchers.Default) {
+                assets
+                    .toMutableList()
+                    .apply {
+                        removeIf {
+                            val usdPrice = it.usdPrice
+                            it.tokenTicker.lowercase() == "zec" || usdPrice == null || usdPrice.toFloat() == 0f
+                        }
+                    }.toList()
+            }
 
         assets.update { it.copy(isLoading = true) }
         try {
@@ -173,27 +182,30 @@ class NearSwapRepository(
         this.mode.update { mode }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     override fun requestQuote(amount: BigDecimal, address: String) {
-        requestQuoteJob = scope.launch {
-            quote.update { SwapQuoteData.Loading }
-            val originAsset = assets.value.zecAsset ?: return@launch
-            val destinationAsset = selectedAsset.value ?: return@launch
-            try {
-                val selectedAccount = accountDataSource.getSelectedAccount()
-                val quoteDto = swapDataSource.requestQuote(
-                    swapMode = mode.value,
-                    amount = amount,
-                    originAddress = selectedAccount.transparent.address.address,
-                    originAsset = originAsset,
-                    destinationAddress = address,
-                    destinationAsset = destinationAsset,
-                    slippage = slippage.value,
-                )
-                quote.update { SwapQuoteData.Success(quote = NearSwapQuote(quoteDto)) }
-            } catch (e: Exception) {
-                quote.update { SwapQuoteData.Error(e) }
+        requestQuoteJob =
+            scope.launch {
+                quote.update { SwapQuoteData.Loading }
+                val originAsset = assets.value.zecAsset ?: return@launch
+                val destinationAsset = selectedAsset.value ?: return@launch
+                try {
+                    val selectedAccount = accountDataSource.getSelectedAccount()
+                    val quoteDto =
+                        swapDataSource.requestQuote(
+                            swapMode = mode.value,
+                            amount = amount,
+                            originAddress = selectedAccount.transparent.address.address,
+                            originAsset = originAsset,
+                            destinationAddress = address,
+                            destinationAsset = destinationAsset,
+                            slippage = slippage.value,
+                        )
+                    quote.update { SwapQuoteData.Success(quote = NearSwapQuote(quoteDto)) }
+                } catch (e: Exception) {
+                    quote.update { SwapQuoteData.Error(e) }
+                }
             }
-        }
     }
 
     override fun clear() {

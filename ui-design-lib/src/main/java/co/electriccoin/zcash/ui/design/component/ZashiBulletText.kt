@@ -69,4 +69,3 @@ fun ZashiBulletText(
         color = color,
     )
 }
-

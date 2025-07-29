@@ -13,8 +13,8 @@ class ValidateSwapABContactAddressUseCase(
         address: String,
         blockchain: SwapAssetBlockchain?,
         exclude: EnhancedABContact? = null
-    ): ContactAddressValidationResult {
-        return when {
+    ): ContactAddressValidationResult =
+        when {
             addressBookRepository.contacts
                 .filterNotNull()
                 .first()
@@ -22,11 +22,10 @@ class ValidateSwapABContactAddressUseCase(
                 .filter {
                     if (exclude == null) true else it != exclude
                 }.any {
-                    it.address == address.trim()
-                        && it.blockchain?.chainTicker?.lowercase() == blockchain?.chainTicker?.lowercase()
+                    it.address == address.trim() &&
+                        it.blockchain?.chainTicker?.lowercase() == blockchain?.chainTicker?.lowercase()
                 } -> ContactAddressValidationResult.NotUnique
 
             else -> ContactAddressValidationResult.Valid
         }
-    }
 }

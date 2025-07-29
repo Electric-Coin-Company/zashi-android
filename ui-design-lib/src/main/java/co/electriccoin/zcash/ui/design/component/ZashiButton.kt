@@ -30,7 +30,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
-import co.electriccoin.zcash.ui.design.component.ButtonStyle.*
+import co.electriccoin.zcash.ui.design.component.ButtonStyle.DESTRUCTIVE1
+import co.electriccoin.zcash.ui.design.component.ButtonStyle.DESTRUCTIVE2
+import co.electriccoin.zcash.ui.design.component.ButtonStyle.PRIMARY
+import co.electriccoin.zcash.ui.design.component.ButtonStyle.SECONDARY
+import co.electriccoin.zcash.ui.design.component.ButtonStyle.TERTIARY
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -55,16 +59,17 @@ fun ZashiButton(
     colors: ZashiButtonColors = LocalZashiButtonColors.current ?: ZashiButtonDefaults.primaryColors(),
     content: @Composable RowScope.(ZashiButtonScope) -> Unit = ZashiButtonDefaults.content
 ) {
-    val state = remember(text, icon, trailingIcon, enabled, isLoading, onClick) {
-        ButtonState(
-            text = stringRes(text),
-            icon = icon,
-            trailingIcon = trailingIcon,
-            isEnabled = enabled,
-            isLoading = isLoading,
-            onClick = onClick,
-        )
-    }
+    val state =
+        remember(text, icon, trailingIcon, enabled, isLoading, onClick) {
+            ButtonState(
+                text = stringRes(text),
+                icon = icon,
+                trailingIcon = trailingIcon,
+                isEnabled = enabled,
+                isLoading = isLoading,
+                onClick = onClick,
+            )
+        }
 
     ZashiButton(
         state = state,
@@ -143,14 +148,15 @@ fun ZashiButton(
             }
         }
 
-    val actualColors = when (state.style) {
-        PRIMARY -> defaultPrimaryColors
-        SECONDARY -> defaultSecondaryColors
-        TERTIARY -> defaultTertiaryColors
-        DESTRUCTIVE1 -> defaultDestructive1Colors
-        DESTRUCTIVE2 -> defaultDestructive2Colors
-        null -> defaultPrimaryColors
-    }
+    val actualColors =
+        when (state.style) {
+            PRIMARY -> defaultPrimaryColors
+            SECONDARY -> defaultSecondaryColors
+            TERTIARY -> defaultTertiaryColors
+            DESTRUCTIVE1 -> defaultDestructive1Colors
+            DESTRUCTIVE2 -> defaultDestructive2Colors
+            null -> defaultPrimaryColors
+        }
 
     val borderColor = if (state.isEnabled) actualColors.borderColor else actualColors.disabledBorderColor
 

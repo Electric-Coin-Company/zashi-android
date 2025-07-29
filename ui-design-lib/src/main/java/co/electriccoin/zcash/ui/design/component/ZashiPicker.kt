@@ -113,7 +113,7 @@ fun ZashiPicker(
             Spacer(1f)
 
             val tintColor = if (state.isEnabled) Color.Unspecified else ZashiColors.Dropdowns.Disabled.icon
-            
+
             Image(
                 painter = painterResource(R.drawable.ic_chevron_down),
                 contentDescription = null,

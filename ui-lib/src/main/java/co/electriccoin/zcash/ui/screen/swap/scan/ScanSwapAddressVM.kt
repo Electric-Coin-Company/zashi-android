@@ -62,8 +62,12 @@ internal class ScanSwapAddressVM(
 
     private suspend fun onZip321Scanned(result: Zip321ParseUriValidation.Valid) {
         state.update { ScanValidationState.VALID }
-        val address = result.payment.payments[0].recipientAddress.value
-        val amount = result.payment.payments[0].nonNegativeAmount.value
+        val address =
+            result.payment.payments[0]
+                .recipientAddress.value
+        val amount =
+            result.payment.payments[0]
+                .nonNegativeAmount.value
         navigateToScanAddress.onScanned(
             address = address,
             amount = amount,
@@ -81,7 +85,8 @@ internal class ScanSwapAddressVM(
             }
         }
 
-    fun onBack() = viewModelScope.launch {
-        navigateToScanAddress.onScanCancelled(args)
-    }
+    fun onBack() =
+        viewModelScope.launch {
+            navigateToScanAddress.onScanCancelled(args)
+        }
 }
