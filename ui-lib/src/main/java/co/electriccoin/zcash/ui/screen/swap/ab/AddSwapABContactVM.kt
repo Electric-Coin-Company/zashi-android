@@ -147,15 +147,14 @@ class AddSwapABContactVM(
             blockChainPickerState,
         ) { address, name, saveButton, picker ->
             ABContactState(
+                info = null,
                 title = stringRes(R.string.add_new_contact_title),
-                isLoading = false,
                 walletAddress = address,
                 contactName = name,
+                chain = picker,
                 negativeButton = null,
                 positiveButton = saveButton,
-                onBack = ::onBack,
-                chain = picker,
-                info = null
+                onBack = ::onBack
             )
         }.stateIn(
             scope = viewModelScope,

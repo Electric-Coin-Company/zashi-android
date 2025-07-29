@@ -196,15 +196,14 @@ class UpdateGenericABContactVM(
             blockChainPickerState
         ) { address, name, saveButton, deleteButton, isLoadingContact, blockchainPicker ->
             ABContactState(
+                info = null,
                 title = stringRes(R.string.update_contact_title),
-                isLoading = isLoadingContact,
                 walletAddress = address,
                 contactName = name,
+                chain = blockchainPicker,
                 negativeButton = deleteButton,
                 positiveButton = saveButton,
-                onBack = ::onBack,
-                chain = blockchainPicker,
-                info = null
+                onBack = ::onBack
             )
         }.stateIn(
             scope = viewModelScope,

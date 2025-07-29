@@ -190,7 +190,7 @@ private fun createTextFieldInnerState(amount: BigDecimal?): NumberTextFieldInner
             BigDecimal("0.5") -> stringRes("")
             BigDecimal(1) -> stringRes("")
             BigDecimal(2) -> stringRes("")
-            else -> stringResByNumber(amount)
+            else -> stringResByNumber(amount, minDecimals = 0)
         }
 
     val newAmount =

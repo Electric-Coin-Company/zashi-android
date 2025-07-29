@@ -120,15 +120,14 @@ class AddZashiABContactVM(
     val state =
         combine(contactAddressState, contactNameState, saveButtonState) { address, name, saveButton ->
             ABContactState(
+                info = null,
                 title = stringRes(R.string.add_new_contact_title),
-                isLoading = false,
                 walletAddress = address,
                 contactName = name,
+                chain = null,
                 negativeButton = null,
                 positiveButton = saveButton,
-                onBack = ::onBack,
-                chain = null,
-                info = null
+                onBack = ::onBack
             )
         }.stateIn(
             scope = viewModelScope,

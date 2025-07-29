@@ -1,27 +1,49 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
+import co.electriccoin.zcash.ui.common.repository.BiometricRepository
+import co.electriccoin.zcash.ui.common.repository.BiometricRequest
+import co.electriccoin.zcash.ui.common.repository.BiometricsCancelledException
+import co.electriccoin.zcash.ui.common.repository.BiometricsFailureException
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.swap.ab.SelectABSwapRecipientArgs
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 
 class NavigateToSelectABSwapRecipientUseCase(
     private val navigationRouter: NavigationRouter,
-    private val swapRepository: SwapRepository
+    private val swapRepository: SwapRepository,
+    private val biometricRepository: BiometricRepository
 ) {
     private val pipeline = MutableSharedFlow<SelectSwapRecipientPipelineResult>()
 
     suspend operator fun invoke(): EnhancedABContact? {
-        val args = SelectABSwapRecipientArgs()
-        navigationRouter.forward(args)
-        val result = pipeline.first { it.args.requestId == args.requestId }
-        return when (result) {
-            is SelectSwapRecipientPipelineResult.Cancelled -> null
-            is SelectSwapRecipientPipelineResult.Scanned -> result.contact
+        return try {
+            biometricRepository.requestBiometrics(
+                BiometricRequest(
+                    message =
+                        stringRes(
+                            R.string.authentication_system_ui_subtitle,
+                            stringRes(R.string.authentication_use_case_adress_book)
+                        )
+                )
+            )
+            val args = SelectABSwapRecipientArgs()
+            navigationRouter.forward(args)
+            val result = pipeline.first { it.args.requestId == args.requestId }
+            when (result) {
+                is SelectSwapRecipientPipelineResult.Cancelled -> null
+                is SelectSwapRecipientPipelineResult.Scanned -> result.contact
+            }
+        } catch (_: BiometricsFailureException) {
+            null
+        } catch (_: BiometricsCancelledException) {
+            null
         }
     }
 

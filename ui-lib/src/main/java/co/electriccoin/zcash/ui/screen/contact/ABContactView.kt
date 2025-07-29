@@ -5,10 +5,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -17,11 +22,11 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.PickerState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.TextFieldState
+import co.electriccoin.zcash.ui.design.component.ZashiAddressTextField
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
@@ -40,24 +45,25 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
 fun ABContactView(
-    state: ABContactState
+    state: ABContactState,
+    addressFocusRequester: FocusRequester = remember { FocusRequester() },
+    nameFocusRequester: FocusRequester = remember { FocusRequester() }
 ) {
     BlankBgScaffold(
         topBar = {
             ContactTopAppBar(onBack = state.onBack, state = state)
         }
     ) { paddingValues ->
-        if (state.isLoading) {
-            CircularScreenProgressIndicator()
-        } else {
-            ContactViewInternal(
-                state = state,
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .scaffoldPadding(paddingValues)
-            )
-        }
+        ContactViewInternal(
+            state = state,
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .scaffoldPadding(paddingValues)
+                    .verticalScroll(rememberScrollState()),
+            addressFocusRequester = addressFocusRequester,
+            nameFocusRequester = nameFocusRequester
+        )
     }
 }
 
@@ -65,6 +71,8 @@ fun ABContactView(
 private fun ContactViewInternal(
     state: ABContactState,
     modifier: Modifier = Modifier,
+    addressFocusRequester: FocusRequester,
+    nameFocusRequester: FocusRequester
 ) {
     Column(
         modifier = modifier,
@@ -76,8 +84,10 @@ private fun ContactViewInternal(
             color = ZashiColors.Inputs.Filled.label
         )
         Spacer(modifier = Modifier.height(6.dp))
-        ZashiTextField(
-            modifier = Modifier.fillMaxWidth(),
+        ZashiAddressTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(addressFocusRequester),
             state = state.walletAddress,
             placeholder = {
                 Text(
@@ -96,7 +106,9 @@ private fun ContactViewInternal(
         )
         Spacer(modifier = Modifier.height(6.dp))
         ZashiTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(nameFocusRequester),
             state = state.contactName,
             keyboardOptions =
                 KeyboardOptions(
@@ -122,9 +134,8 @@ private fun ContactViewInternal(
             Spacer(6.dp)
             ZashiPicker(state = state.chain)
         }
-
-        Spacer(modifier = Modifier.weight(1f))
-
+        Spacer(1f)
+        Spacer(24.dp)
         ZashiButton(
             state = state.positiveButton,
             modifier = Modifier.fillMaxWidth()
@@ -168,19 +179,10 @@ private fun DataPreview() {
         ABContactView(
             state =
                 ABContactState(
-                    isLoading = false,
-                    onBack = {},
+                    info = IconButtonState(R.drawable.ic_help) {},
                     title = stringRes("Title"),
                     walletAddress = TextFieldState(stringRes("Address")) {},
                     contactName = TextFieldState(stringRes("Name")) {},
-                    positiveButton =
-                        ButtonState(
-                            text = stringRes("Positive"),
-                        ),
-                    negativeButton =
-                        ButtonState(
-                            text = stringRes("Negative"),
-                        ),
                     chain =
                         PickerState(
                             bigIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone),
@@ -189,7 +191,15 @@ private fun DataPreview() {
                             placeholder = stringRes("Placeholder"),
                             onClick = {}
                         ),
-                    info = IconButtonState(R.drawable.ic_help) {}
+                    negativeButton =
+                        ButtonState(
+                            text = stringRes("Negative"),
+                        ),
+                    positiveButton =
+                        ButtonState(
+                            text = stringRes("Positive"),
+                        ),
+                    onBack = {}
                 ),
         )
     }
@@ -202,21 +212,20 @@ private fun LoadingPreview() {
         ABContactView(
             state =
                 ABContactState(
-                    isLoading = true,
-                    onBack = {},
+                    info = null,
                     title = stringRes("Title"),
                     walletAddress = TextFieldState(stringRes("Address")) {},
                     contactName = TextFieldState(stringRes("Name")) {},
-                    positiveButton =
-                        ButtonState(
-                            text = stringRes("Add New Contact"),
-                        ),
+                    chain = null,
                     negativeButton =
                         ButtonState(
                             text = stringRes("Add New Contact"),
                         ),
-                    chain = null,
-                    info = null
+                    positiveButton =
+                        ButtonState(
+                            text = stringRes("Add New Contact"),
+                        ),
+                    onBack = {}
                 ),
         )
     }

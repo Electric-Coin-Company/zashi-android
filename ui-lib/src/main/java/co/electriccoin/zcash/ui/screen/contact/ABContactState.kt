@@ -11,7 +11,6 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 data class ABContactState(
     val info: IconButtonState?,
     val title: StringResource,
-    val isLoading: Boolean,
     val walletAddress: TextFieldState,
     val contactName: TextFieldState,
     val chain: PickerState?,
