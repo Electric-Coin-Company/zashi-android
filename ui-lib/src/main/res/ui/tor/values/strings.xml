@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tor_settings_title">Tor Protection</string>
+    <string name="tor_settings_title">Beta: Tor Protection</string>
     <string name="tor_settings_subtitle">This beta feature provides additional protections for your IP address. It
         uses Tor to fetch exchange rates, send transactions, retrieve transaction data, and connect to third-party
         APIs (e.g. NEAR). If Tor is permitted in your region, we recommend enabling it.\n\nNote: Exchange rates are

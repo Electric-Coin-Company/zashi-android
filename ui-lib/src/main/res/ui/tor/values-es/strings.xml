@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tor_settings_title">Protección con Tor</string>
+    <string name="tor_settings_title">Beta: Protección con Tor</string>
     <string name="tor_settings_subtitle">Esta función beta ofrece protecciones adicionales para tu dirección IP. Utiliza Tor para obtener tasas de cambio, enviar transacciones, recuperar datos de transacciones y conectarse a APIs de terceros (por ejemplo, NEAR). Si Tor está permitido en tu región, recomendamos activarlo.\n\nNota: Las tasas de cambio solo están disponibles cuando esta función está activada.</string>
     
     <string name="tor_settings_item_subtitle_1">Conectarse a través de Tor</string>
