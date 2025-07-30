@@ -6,6 +6,11 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.1.0 (997)] - 2025-07-30
+
+### Changed
+- Copies for Tor opt-in flow update
+
 ## [2.1.0 (996)] - 2025-07-29
 
 ### Added
