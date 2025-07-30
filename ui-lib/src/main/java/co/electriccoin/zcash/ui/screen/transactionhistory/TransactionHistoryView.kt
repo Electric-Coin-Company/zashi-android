@@ -27,8 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,6 +53,8 @@ import co.electriccoin.zcash.ui.design.util.asScaffoldScrollPaddingValues
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
+import co.electriccoin.zcash.ui.screen.home.common.CommonEmptyScreen
+import co.electriccoin.zcash.ui.screen.home.common.CommonShimmerLoadingScreen
 
 @Composable
 fun TransactionHistoryView(
@@ -125,7 +125,7 @@ fun TransactionHistoryView(
                                 .fillMaxWidth()
                     )
 
-                is TransactionHistoryState.Empty -> Empty(modifier = Modifier.fillMaxSize())
+                is TransactionHistoryState.Empty -> CommonEmptyScreen(modifier = Modifier.fillMaxSize())
                 is TransactionHistoryState.Loading ->
                     Loading(
                         modifier =
@@ -185,58 +185,10 @@ private fun Data(
 
 @Composable
 private fun Loading(modifier: Modifier = Modifier) {
-    TransactionShimmerLoading(
+    CommonShimmerLoadingScreen(
         modifier = modifier,
         shimmerItemsCount = 10,
     )
-}
-
-@Composable
-private fun Empty(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-    ) {
-        TransactionShimmerLoading(
-            modifier = Modifier.padding(top = 22.dp),
-            shimmerItemsCount = 3,
-            disableShimmer = true,
-            showDivider = false,
-            contentPaddingValues = PaddingValues(horizontal = 24.dp, vertical = 10.dp)
-        )
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush =
-                            Brush.verticalGradient(
-                                0f to Color.Transparent,
-                                EMPTY_GRADIENT_THRESHOLD to ZashiColors.Surfaces.bgPrimary,
-                                1f to ZashiColors.Surfaces.bgPrimary,
-                            )
-                    ),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(Modifier.height(118.dp))
-            Image(
-                painter = painterResource(R.drawable.ic_transaction_widget_empty),
-                contentDescription = null,
-            )
-            Spacer(Modifier.height(20.dp))
-            Text(
-                text = "No results",
-                color = ZashiColors.Text.textPrimary,
-                style = ZashiTypography.textLg,
-                fontWeight = FontWeight.SemiBold
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "We tried but couldn’t find anything.",
-                color = ZashiColors.Text.textTertiary,
-                style = ZashiTypography.textSm,
-            )
-        }
-    }
 }
 
 @Composable
@@ -358,7 +310,7 @@ private fun TransactionHistoryAppBar(
     )
 }
 
-private const val EMPTY_GRADIENT_THRESHOLD = .28f
+const val EMPTY_GRADIENT_THRESHOLD = .28f
 
 @PreviewScreens
 @Composable

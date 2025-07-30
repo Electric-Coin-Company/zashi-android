@@ -45,6 +45,7 @@ dependencies {
     implementation(projects.spackleAndroidLib)
     api(libs.lottie)
     implementation(libs.zxing)
+    api(libs.compose.shimmer)
 
     androidTestImplementation(libs.bundles.androidx.test)
     androidTestImplementation(libs.androidx.compose.test.junit)

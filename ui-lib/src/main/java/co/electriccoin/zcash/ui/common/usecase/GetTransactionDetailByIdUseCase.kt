@@ -2,9 +2,9 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.type.AddressType
-import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
@@ -98,7 +98,7 @@ class GetTransactionDetailByIdUseCase(
 data class DetailedTransactionData(
     val transaction: Transaction,
     val memos: List<String>?,
-    val contact: AddressBookContact?,
+    val contact: EnhancedABContact?,
     val recipientAddress: WalletAddress?,
     val metadata: TransactionMetadata
 )

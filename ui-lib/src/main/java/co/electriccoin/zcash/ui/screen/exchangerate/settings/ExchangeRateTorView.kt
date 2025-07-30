@@ -61,7 +61,7 @@ fun ExchangeRateTorView(state: ExchangeRateTorState) {
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 state = state.negative,
-                colors = ZashiButtonDefaults.secondaryColors()
+                defaultPrimaryColors = ZashiButtonDefaults.secondaryColors()
             )
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),

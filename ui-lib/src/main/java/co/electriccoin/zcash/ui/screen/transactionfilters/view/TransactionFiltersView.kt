@@ -26,12 +26,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiChipButton
 import co.electriccoin.zcash.ui.design.component.ZashiChipButtonDefaults
-import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
 import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
@@ -89,7 +89,7 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
                     state.filters.forEach { filter ->
                         ZashiChipButton(
                             state =
-                                ZashiChipButtonState(
+                                ChipButtonState(
                                     endIcon = if (filter.isSelected) R.drawable.ic_close_small else null,
                                     onClick = filter.onClick,
                                     text = filter.text,
@@ -138,7 +138,7 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
                 ZashiButton(
                     state = state.secondaryButton,
                     modifier = Modifier.weight(1f),
-                    colors =
+                    defaultPrimaryColors =
                         ZashiButtonDefaults.secondaryColors(
                             borderColor = ZashiColors.Btns.Secondary.btnSecondaryBorder
                         )
@@ -147,7 +147,7 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
                 ZashiButton(
                     state = state.primaryButton,
                     modifier = Modifier.weight(1f),
-                    colors = ZashiButtonDefaults.primaryColors()
+                    defaultPrimaryColors = ZashiButtonDefaults.primaryColors()
                 )
             }
         }

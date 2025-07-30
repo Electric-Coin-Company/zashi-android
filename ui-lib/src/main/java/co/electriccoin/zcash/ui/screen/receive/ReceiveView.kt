@@ -180,7 +180,7 @@ private fun AddressPanel(
                                 .size(14.dp)
                                 .align(Alignment.BottomEnd)
                                 .offset(1.5.dp, .5.dp),
-                        painter = painterResource(R.drawable.ic_receive_shield),
+                        painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
                         contentDescription = "",
                     )
                 }

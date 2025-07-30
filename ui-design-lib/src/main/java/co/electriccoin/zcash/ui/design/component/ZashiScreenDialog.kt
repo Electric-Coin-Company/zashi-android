@@ -55,7 +55,7 @@ private fun Dialog(
             ZashiButton(state = positive)
         },
         dismissButton = {
-            ZashiButton(state = negative, colors = ZashiButtonDefaults.secondaryColors())
+            ZashiButton(state = negative, defaultPrimaryColors = ZashiButtonDefaults.secondaryColors())
         },
         title = {
             Text(

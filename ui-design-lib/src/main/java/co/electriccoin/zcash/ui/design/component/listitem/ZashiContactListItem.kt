@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -20,60 +21,63 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
+import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
+import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.imageRes
+import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
 fun ZashiContactListItem(
-    state: ZashiContactListItemState,
+    state: ContactListItemState,
     modifier: Modifier = Modifier
 ) {
     BaseListItem(
         modifier = modifier,
-        leading = {
-            ContactItemLeading(modifier = it, state = state)
-        },
-        content = {
-            ContactItemContent(modifier = it, state = state)
-        },
-        trailing = {
-            ZashiListItemDefaults.TrailingItem(
-                modifier = it,
-                isEnabled = true,
-                contentDescription = state.name.getValue()
-            )
-        },
+        leading = { ContactItemLeading(modifier = it, state = state) },
+        content = { ContactItemContent(modifier = it, state = state) },
+        trailing = { ZashiListItemDefaults.TrailingItem(contentDescription = state.name.getValue(), modifier = it) },
         onClick = state.onClick,
         contentPadding =
             PaddingValues(
                 start = 20.dp,
                 top = 12.dp,
                 end = 20.dp,
-                bottom =
-                    if (state.isShielded) {
-                        8.dp
-                    } else {
-                        12.dp
-                    }
+                bottom = if (state.isShielded) 8.dp else 12.dp
             )
     )
 }
 
 @Composable
 private fun ContactItemLeading(
-    state: ZashiContactListItemState,
+    state: ContactListItemState,
     modifier: Modifier = Modifier,
 ) {
-    when (state.icon) {
+    when (state.bigIcon) {
         is ImageResource.ByDrawable ->
-            Image(
-                painter = painterResource(state.icon.resource),
-                contentDescription = null,
-                modifier = modifier.size(40.dp)
-            )
+            Box(modifier) {
+                Image(
+                    painter = painterResource(state.bigIcon.resource),
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp)
+                )
+                if (state.smallIcon is ImageResource.ByDrawable) {
+                    Image(
+                        modifier =
+                            Modifier
+                                .size(20.dp)
+                                .align(Alignment.BottomEnd)
+                                .offset(4.dp, 4.dp),
+                        painter = painterResource(state.smallIcon.resource),
+                        contentDescription = null,
+                    )
+                }
+            }
 
         is ImageResource.DisplayString ->
             Box(
@@ -86,7 +90,7 @@ private fun ContactItemLeading(
                             .size(40.dp)
                             .padding(top = 11.dp)
                             .align(Alignment.Center),
-                    text = state.icon.value,
+                    text = state.bigIcon.value,
                     style = ZashiTypography.textSm,
                     color = ZashiColors.Avatars.avatarTextFg,
                     textAlign = TextAlign.Center,
@@ -102,6 +106,17 @@ private fun ContactItemLeading(
                         contentDescription = null
                     )
                 }
+                if (state.smallIcon is ImageResource.ByDrawable) {
+                    Image(
+                        modifier =
+                            Modifier
+                                .size(20.dp)
+                                .align(Alignment.BottomEnd)
+                                .offset(4.dp, 4.dp),
+                        painter = painterResource(state.smallIcon.resource),
+                        contentDescription = null,
+                    )
+                }
             }
 
         ImageResource.Loading -> {
@@ -112,7 +127,7 @@ private fun ContactItemLeading(
 
 @Composable
 private fun ContactItemContent(
-    state: ZashiContactListItemState,
+    state: ContactListItemState,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -135,10 +150,30 @@ private fun ContactItemContent(
     }
 }
 
-data class ZashiContactListItemState(
-    val icon: ImageResource,
+data class ContactListItemState(
+    val bigIcon: ImageResource,
+    val smallIcon: ImageResource?,
     val isShielded: Boolean,
     val name: StringResource,
     val address: StringResource,
     val onClick: () -> Unit,
 )
+
+@PreviewScreens
+@Composable
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiContactListItem(
+                state =
+                    ContactListItemState(
+                        name = stringRes("Name Surname"),
+                        address = stringRes("3iY5ZSkRnevzSMu4hosasdasdasdasd12312312dasd9hw2"),
+                        bigIcon = imageRes("NS"),
+                        smallIcon = imageRes(R.drawable.ic_chain_zec),
+                        isShielded = false,
+                        onClick = {}
+                    )
+            )
+        }
+    }

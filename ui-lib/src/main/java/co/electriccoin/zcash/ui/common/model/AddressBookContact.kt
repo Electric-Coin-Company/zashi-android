@@ -5,5 +5,6 @@ import kotlinx.datetime.Instant
 data class AddressBookContact(
     val name: String,
     val address: String,
+    val chain: String?,
     val lastUpdated: Instant,
 )

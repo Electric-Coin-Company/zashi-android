@@ -19,11 +19,12 @@ import co.electriccoin.zcash.ui.common.usecase.SendTransactionAgainUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.design.util.stringResByDateTime
 import co.electriccoin.zcash.ui.design.util.stringResByTransactionId
-import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveShieldedState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveTransparentState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.SendShieldedState
@@ -243,7 +244,7 @@ class TransactionDetailViewModel(
         return if (feePaid.value < MIN_FEE_THRESHOLD) {
             stringRes(R.string.transaction_detail_fee_minimal)
         } else {
-            stringRes(R.string.transaction_detail_fee, stringRes(feePaid))
+            stringRes(R.string.transaction_detail_fee, stringRes(feePaid, HIDDEN))
         }
     }
 
@@ -301,7 +302,7 @@ class TransactionDetailViewModel(
 
     private fun onSaveAddressClick(transaction: DetailedTransactionData) {
         transaction.recipientAddress?.let {
-            navigationRouter.forward(AddContactArgs(it.address))
+            navigationRouter.forward(AddZashiABContactArgs(it.address))
         }
     }
 
@@ -324,7 +325,7 @@ class TransactionDetailViewModel(
                     is ShieldTransaction.Failed -> stringRes(R.string.transaction_detail_shielding_failed)
                 },
             amount =
-                stringRes(data.transaction.amount)
+                stringRes(data.transaction.amount, HIDDEN)
         )
 
     private fun onBack() {

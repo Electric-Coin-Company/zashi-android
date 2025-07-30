@@ -5,6 +5,8 @@ import cash.z.ecc.android.sdk.model.Pczt
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
+import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.ExactOutputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
@@ -27,6 +29,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@Suppress("TooManyFunctions")
 interface KeystoneProposalRepository {
     val transactionProposal: Flow<TransactionProposal?>
 
@@ -34,6 +37,12 @@ interface KeystoneProposalRepository {
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createProposal(zecSend: ZecSend)
+
+    @Throws(TransactionProposalNotCreatedException::class)
+    suspend fun createExactInputSwapProposal(zecSend: ZecSend): ExactInputSwapTransactionProposal
+
+    @Throws(TransactionProposalNotCreatedException::class)
+    suspend fun createExactOutputSwapProposal(zecSend: ZecSend): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal
@@ -99,6 +108,22 @@ class KeystoneProposalRepositoryImpl(
             )
         }
     }
+
+    override suspend fun createExactInputSwapProposal(zecSend: ZecSend): ExactInputSwapTransactionProposal =
+        createProposalInternal {
+            proposalDataSource.createExactInputProposal(
+                account = accountDataSource.getSelectedAccount(),
+                send = zecSend
+            )
+        }
+
+    override suspend fun createExactOutputSwapProposal(zecSend: ZecSend): ExactOutputSwapTransactionProposal =
+        createProposalInternal {
+            proposalDataSource.createExactOutputProposal(
+                account = accountDataSource.getSelectedAccount(),
+                send = zecSend
+            )
+        }
 
     override suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal =
         createProposalInternal {

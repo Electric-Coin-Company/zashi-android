@@ -5,6 +5,7 @@ package co.electriccoin.zcash.ui.design.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -455,6 +456,42 @@ fun SmallTopAppBar(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
+            }
+        },
+        navigationIcon = {
+            navigationAction()
+        },
+        actions = {
+            regularActions?.invoke(this)
+            hamburgerMenuActions?.invoke(this)
+        },
+        colors = colors.toMaterialTopAppBarColors(),
+        modifier =
+            Modifier
+                .testTag(CommonTag.TOP_APP_BAR)
+                .then(modifier)
+    )
+}
+
+@Composable
+@Suppress("LongParameterList")
+@OptIn(ExperimentalMaterial3Api::class)
+fun SmallTopAppBar(
+    modifier: Modifier = Modifier,
+    colors: TopAppBarColors = ZcashTheme.colors.topAppBarColors,
+    hamburgerMenuActions: (@Composable RowScope.() -> Unit)? = null,
+    navigationAction: @Composable () -> Unit = {},
+    regularActions: (@Composable RowScope.() -> Unit)? = null,
+    content: (@Composable ColumnScope.() -> Unit)? = null,
+    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
+) {
+    CenterAlignedTopAppBar(
+        windowInsets = windowInsets,
+        title = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (content != null) content()
             }
         },
         navigationIcon = {

@@ -21,7 +21,6 @@ import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarViewModel
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
-import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
@@ -34,7 +33,7 @@ import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetArgs
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
-import co.electriccoin.zcash.ui.screen.scan.Scan
+import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
@@ -85,7 +84,7 @@ internal fun WrapSend(args: Send) {
         exchangeRateState = exchangeRateState,
         goToQrScanner = {
             navigationRouter.forward(
-                Scan(
+                ScanArgs(
                     ScanFlow.SEND,
                     isScanZip321Enabled = args.isScanZip321Enabled
                 )
@@ -114,15 +113,7 @@ internal fun WrapSend(
 ) {
     val scope = rememberCoroutineScope()
 
-    val navController = LocalNavController.current
-
     val viewModel = koinViewModel<SendViewModel>()
-
-    LaunchedEffect(Unit) {
-        viewModel.navigateCommand.collect {
-            navController.navigate(it)
-        }
-    }
 
     val sendAddressBookState by viewModel.sendAddressBookState.collectAsStateWithLifecycle()
 

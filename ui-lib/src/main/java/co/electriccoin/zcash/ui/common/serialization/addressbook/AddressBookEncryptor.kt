@@ -7,7 +7,6 @@ import co.electriccoin.zcash.ui.common.serialization.BaseSerializer
 import co.electriccoin.zcash.ui.common.serialization.UnknownEncryptionVersionException
 import com.google.crypto.tink.subtle.ChaCha20Poly1305
 import com.google.crypto.tink.subtle.Random
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.OutputStream
@@ -42,7 +41,7 @@ class AddressBookEncryptorImpl(
         val cipherText =
             ByteArrayOutputStream()
                 .use { stream ->
-                    serialize(stream, data)
+                    addressBookSerializer.serializeAddressBook(stream, data)
                     stream.toByteArray()
                 }.let {
                     val derivedKey = key.deriveEncryptionKey(salt)
@@ -75,17 +74,7 @@ class AddressBookEncryptorImpl(
         val plaintext = cipher.decrypt(ciphertext, null)
 
         return plaintext.inputStream().use { stream ->
-            deserialize(stream)
+            addressBookSerializer.deserializeAddressBook(stream)
         }
     }
-
-    private fun serialize(
-        outputStream: ByteArrayOutputStream,
-        data: AddressBook
-    ) {
-        addressBookSerializer.serializeAddressBook(outputStream, data)
-    }
-
-    private fun deserialize(inputStream: ByteArrayInputStream): AddressBook =
-        addressBookSerializer.deserializeAddressBook(inputStream)
 }

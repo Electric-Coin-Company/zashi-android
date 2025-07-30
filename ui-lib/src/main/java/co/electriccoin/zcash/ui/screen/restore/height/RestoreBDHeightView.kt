@@ -125,7 +125,7 @@ private fun Content(
         ZashiButton(
             state.estimate,
             modifier = Modifier.fillMaxWidth(),
-            colors = ZashiButtonDefaults.secondaryColors()
+            defaultPrimaryColors = ZashiButtonDefaults.secondaryColors()
         )
 
         Spacer(Modifier.height(12.dp))

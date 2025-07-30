@@ -30,6 +30,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.asScaffoldPaddingValues
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
@@ -149,7 +150,7 @@ private fun BottomBar(
                 ZashiButton(
                     modifier = Modifier.weight(1f),
                     state = it,
-                    colors = ZashiButtonDefaults.tertiaryColors()
+                    defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
                 )
             }
             if (state.secondaryButton != null && state.primaryButton != null) {
@@ -238,7 +239,7 @@ private fun SendShieldPreview() =
                     header =
                         TransactionDetailHeaderState(
                             title = stringRes("Sent"),
-                            amount = stringRes(Zatoshi(1000000)),
+                            amount = stringRes(Zatoshi(1000000), HIDDEN),
                         ),
                     info = SendShieldStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary")),
@@ -260,7 +261,7 @@ private fun SendTransparentPreview() =
                     header =
                         TransactionDetailHeaderState(
                             title = stringRes("Sent"),
-                            amount = stringRes(Zatoshi(1000000)),
+                            amount = stringRes(Zatoshi(1000000), HIDDEN),
                         ),
                     info = SendTransparentStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary")),
@@ -282,7 +283,7 @@ private fun ReceiveShieldPreview() =
                     header =
                         TransactionDetailHeaderState(
                             title = stringRes("Sent"),
-                            amount = stringRes(Zatoshi(1000000)),
+                            amount = stringRes(Zatoshi(1000000), HIDDEN),
                         ),
                     info = ReceiveShieldedStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary")),
@@ -304,7 +305,7 @@ private fun ReceiveTransparentPreview() =
                     header =
                         TransactionDetailHeaderState(
                             title = stringRes("Sent"),
-                            amount = stringRes(Zatoshi(1000000)),
+                            amount = stringRes(Zatoshi(1000000), HIDDEN),
                         ),
                     info = ReceiveTransparentStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary")),
@@ -326,7 +327,7 @@ private fun ShieldingPreview() =
                     header =
                         TransactionDetailHeaderState(
                             title = stringRes("Sent"),
-                            amount = stringRes(Zatoshi(1000000)),
+                            amount = stringRes(Zatoshi(1000000), HIDDEN),
                         ),
                     info = ShieldingStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary")),
