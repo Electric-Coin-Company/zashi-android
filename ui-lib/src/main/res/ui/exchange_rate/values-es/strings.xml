@@ -21,7 +21,9 @@
     <string name="exchange_rate_opt_out_option_title">Desactivar</string>
     <string name="exchange_rate_opt_out_option_subtitle">No mostrar la conversión de moneda.</string>
     <string name="exchange_rate_opt_in_description">Muestra tu saldo y montos de pago en USD.\nPuedes administrar esta función en Configuración avanzada.</string>
-    <string name="exchange_rate_opt_in_description_settings">Muestra tu saldo y montos de pago en USD.\nLa función de conversión de moneda de Zashi protege tu dirección IP en todo momento.</string>
+    <string name="exchange_rate_opt_in_description_settings">View your balance and payment amounts in USD with added
+        privacy. Exchange rates are fetched over Tor to protect your IP address.\n\nCheck if Tor use is permitted in
+        your region before enabling.</string>
 
     <string name="exchange_rate_tor_opt_in_title">Tor requerido para la conversión de moneda</string>
     <string name="exchange_rate_tor_opt_in_description">La protección con Tor es una función beta que ofrece protecciones adicionales para tu dirección IP. Las tasas de cambio en USD solo están disponibles cuando esta opción está activada.\n\nSi Tor está permitido en tu región, te recomendamos activarlo. Puedes administrarlo en Configuración avanzada.</string>
