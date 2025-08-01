@@ -11,9 +11,8 @@ import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.WalletSnapshot
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
-import co.electriccoin.zcash.ui.common.provider.PersistableWalletTorProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
-import co.electriccoin.zcash.ui.common.provider.TorState
+import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageData
 import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
@@ -22,6 +21,7 @@ import co.electriccoin.zcash.ui.common.repository.ShieldFundsData
 import co.electriccoin.zcash.ui.common.repository.ShieldFundsRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import co.electriccoin.zcash.ui.common.viewmodel.SynchronizerError
+import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,13 +45,13 @@ import kotlin.time.Duration.Companion.seconds
 
 class GetHomeMessageUseCase(
     walletBackupDataSource: WalletBackupDataSource,
+    exchangeRateRepository: ExchangeRateRepository,
     shieldFundsRepository: ShieldFundsRepository,
     transactionRepository: TransactionRepository,
     walletSnapshotDataSource: WalletSnapshotDataSource,
     crashReportingStorageProvider: CrashReportingStorageProvider,
     synchronizerProvider: SynchronizerProvider,
     accountDataSource: AccountDataSource,
-    persistableWalletTorProvider: PersistableWalletTorProvider,
     private val messageAvailabilityDataSource: MessageAvailabilityDataSource,
     private val cache: HomeMessageCacheRepository,
 ) {
@@ -136,6 +136,17 @@ class GetHomeMessageUseCase(
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
+    private val isExchangeRateMessageVisible =
+        exchangeRateRepository.state
+            .flatMapLatest {
+                val isVisible = it == ExchangeRateState.OptIn
+
+                synchronizerProvider.synchronizer.map { synchronizer ->
+                    synchronizer != null && isVisible
+                }
+            }.distinctUntilChanged()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val isCrashReportMessageVisible =
         crashReportingStorageProvider
             .observe()
@@ -155,20 +166,20 @@ class GetHomeMessageUseCase(
             synchronizerProvider.synchronizer.flatMapLatest { it?.status ?: flowOf(null) },
             runtimeMessage,
             backupFlow,
+            isExchangeRateMessageVisible,
             shieldFundsRepository.availability,
             isCrashReportMessageVisible,
-            persistableWalletTorProvider.observe(),
-        ) { status, runtimeMessage, backup, shieldFunds, isCrashReportingEnabled, torState ->
+        ) { status, runtimeMessage, backup, isCCAvailable, shieldFunds, isCrashReportingEnabled ->
             createMessage(
                 status = status,
                 runtimeMessage = runtimeMessage,
                 backup = backup,
                 shieldFunds = shieldFunds,
+                isCurrencyConversionEnabled = isCCAvailable,
                 isCrashReportingVisible = isCrashReportingEnabled,
-                torState = torState
             )
         }.distinctUntilChanged()
-            .debounce(.5.seconds)
+            .debounce(1.seconds)
             .map { message -> prioritizeMessage(message) }
             .stateIn(
                 scope = scope,
@@ -183,14 +194,14 @@ class GetHomeMessageUseCase(
         runtimeMessage: RuntimeMessage?,
         backup: WalletBackupData,
         shieldFunds: ShieldFundsData,
+        isCurrencyConversionEnabled: Boolean,
         isCrashReportingVisible: Boolean,
-        torState: TorState?
     ) = when {
         status == null || status == Synchronizer.Status.INITIALIZING -> null
         runtimeMessage != null -> runtimeMessage
-        torState == TorState.IMPLICITLY_DISABLED -> HomeMessageData.EnableTor
         backup is WalletBackupData.Available -> HomeMessageData.Backup
         shieldFunds is ShieldFundsData.Available -> HomeMessageData.ShieldFunds(shieldFunds.amount)
+        isCurrencyConversionEnabled -> HomeMessageData.EnableCurrencyConversion
         isCrashReportingVisible -> HomeMessageData.CrashReport
         else -> null
     }

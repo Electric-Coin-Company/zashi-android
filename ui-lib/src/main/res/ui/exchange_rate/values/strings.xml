@@ -25,8 +25,9 @@
     <string name="exchange_rate_opt_out_option_subtitle">Don\’t show the currency conversion.</string>
     <string name="exchange_rate_opt_in_description">Display your balance and payment amounts in USD.\nYou can manage
         this feature in Advanced Settings.</string>
-    <string name="exchange_rate_opt_in_description_settings">Display your balance and payment amounts in USD.\n
-        Zashi\’s currency conversion feature protects your IP address at all times.</string>
+    <string name="exchange_rate_opt_in_description_settings">View your balance and payment amounts in USD with added
+        privacy. Exchange rates are fetched over Tor to protect your IP address.\n\nCheck if Tor use is permitted in
+        your region before enabling.</string>
 
     <string name="exchange_rate_tor_opt_in_title">Tor Required for Currency Conversion</string>
     <string name="exchange_rate_tor_opt_in_description">Tor Protection is a beta feature that provides additional

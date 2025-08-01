@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.exchangerate.settings
+package co.electriccoin.zcash.ui.screen.exchangerate.optin
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
@@ -8,12 +8,12 @@ import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ExchangeRateTorSettingsScreen() {
-    val vm = koinViewModel<ExchangeRateTorSettingsVM>()
-    val state by vm.state.collectAsStateWithLifecycle()
+fun ExchangeRateOptInScreen() {
+    val viewModel = koinViewModel<ExchangeRateOptInVM>()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     BackHandler { state.onBack() }
-    ExchangeRateTorView(state)
+    ExchangeRateOptInView(state = state)
 }
 
 @Serializable
-data object ExchangeRateTorSettingsArgs
+object ExchangeRateOptInArgs

@@ -88,6 +88,12 @@ fun TorSettingsView(state: TorSettingsState) {
         },
         footer = {
             ZashiButton(
+                text = stringResource(R.string.tor_settings_share_feedback),
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { state.onShareFeedbackClick() },
+                colors = ZashiButtonDefaults.secondaryColors()
+            )
+            ZashiButton(
                 text = stringResource(R.string.exchange_rate_opt_in_save),
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { state.onSaveClick(isOptInSelected) },
@@ -158,7 +164,8 @@ private fun SettingsExchangeRateOptInPreview() =
                     TorSettingsState(
                         isOptedIn = true,
                         onSaveClick = {},
-                        onDismiss = {}
+                        onDismiss = {},
+                        onShareFeedbackClick = {}
                     )
             )
         }

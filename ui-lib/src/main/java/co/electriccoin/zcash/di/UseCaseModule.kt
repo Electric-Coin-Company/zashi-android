@@ -57,8 +57,8 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.OnAddressScannedUseCase
 import co.electriccoin.zcash.ui.common.usecase.OnUserSavedWalletBackupUseCase
 import co.electriccoin.zcash.ui.common.usecase.OnZip321ScannedUseCase
-import co.electriccoin.zcash.ui.common.usecase.OptInExchangeRateAndTorUseCase
 import co.electriccoin.zcash.ui.common.usecase.OptInExchangeRateUseCase
+import co.electriccoin.zcash.ui.common.usecase.OptInTorUseCase
 import co.electriccoin.zcash.ui.common.usecase.ParseKeystonePCZTUseCase
 import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneSignInRequestUseCase
 import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneUrToZashiAccountsUseCase
@@ -187,5 +187,5 @@ val useCaseModule =
         factoryOf(::NavigateToRequestShieldedUseCase)
         factoryOf(::IsTorEnabledUseCase)
         factoryOf(::OptInExchangeRateUseCase)
-        factoryOf(::OptInExchangeRateAndTorUseCase)
+        factoryOf(::OptInTorUseCase)
     }

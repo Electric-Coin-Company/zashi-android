@@ -6,8 +6,6 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.ExchangeRateOptInStorageProvider
-import co.electriccoin.zcash.ui.common.provider.PersistableWalletTorProvider
-import co.electriccoin.zcash.ui.common.provider.TorState
 import co.electriccoin.zcash.ui.common.usecase.OptInExchangeRateUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -22,7 +20,6 @@ import kotlinx.coroutines.launch
 internal class ExchangeRateSettingsVM(
     private val navigationRouter: NavigationRouter,
     private val optInExchangeRate: OptInExchangeRateUseCase,
-    private val persistableWalletTorProvider: PersistableWalletTorProvider,
     private val exchangeRateOptInStorageProvider: ExchangeRateOptInStorageProvider
 ) : ViewModel() {
     private var isOptedInOriginal = false
@@ -61,15 +58,7 @@ internal class ExchangeRateSettingsVM(
 
     private fun onBack() = navigationRouter.back()
 
-    private fun onOptInClick() =
-        viewModelScope.launch {
-            val torState = persistableWalletTorProvider.get()
-            if (torState in listOf(TorState.EXPLICITLY_DISABLED, TorState.IMPLICITLY_DISABLED)) {
-                navigationRouter.forward(ExchangeRateTorSettingsArgs)
-            } else {
-                isOptedIn.update { true }
-            }
-        }
+    private fun onOptInClick() = isOptedIn.update { true }
 
     private fun onOptInExchangeRateUsdClick() = viewModelScope.launch { optInExchangeRate(isOptedIn.value) }
 

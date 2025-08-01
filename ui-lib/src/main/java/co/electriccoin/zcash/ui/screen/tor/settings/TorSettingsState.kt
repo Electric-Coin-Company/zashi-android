@@ -6,5 +6,6 @@ import androidx.compose.runtime.Immutable
 data class TorSettingsState(
     val isOptedIn: Boolean,
     val onSaveClick: (optIn: Boolean) -> Unit,
+    val onShareFeedbackClick: () -> Unit,
     val onDismiss: () -> Unit,
 )

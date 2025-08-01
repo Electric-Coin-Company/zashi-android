@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.usecase.ErrorArgs
 import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
-import co.electriccoin.zcash.ui.common.usecase.OptInExchangeRateAndTorUseCase
+import co.electriccoin.zcash.ui.common.usecase.OptInTorUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.STACKTRACE_LIMIT
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -25,7 +25,7 @@ class ErrorViewModel(
     private val navigateToErrorBottom: NavigateToErrorUseCase,
     private val navigationRouter: NavigationRouter,
     private val sendEmailUseCase: SendEmailUseCase,
-    private val optInExchangeRateAndTor: OptInExchangeRateAndTorUseCase
+    private val optInExchangeRateAndTor: OptInTorUseCase
 ) : ViewModel() {
     val state: StateFlow<ErrorState> = MutableStateFlow(createState(args)).asStateFlow()
 

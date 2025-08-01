@@ -37,6 +37,8 @@ import androidx.compose.ui.zIndex
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupMessage
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupMessageState
+import co.electriccoin.zcash.ui.screen.home.currency.EnableCurrencyConversionMessage
+import co.electriccoin.zcash.ui.screen.home.currency.EnableCurrencyConversionMessageState
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedMessage
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedMessageState
 import co.electriccoin.zcash.ui.screen.home.error.WalletErrorMessage
@@ -121,6 +123,13 @@ fun HomeMessage(
                     WalletBackupMessage(
                         innerModifier = innerModifier,
                         state = normalizedState as WalletBackupMessageState,
+                        contentPadding = contentPadding
+                    )
+
+                is EnableCurrencyConversionMessageState ->
+                    EnableCurrencyConversionMessage(
+                        innerModifier = innerModifier,
+                        state = normalizedState as EnableCurrencyConversionMessageState,
                         contentPadding = contentPadding
                     )
 
