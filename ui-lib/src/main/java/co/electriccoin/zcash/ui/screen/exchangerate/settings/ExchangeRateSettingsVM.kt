@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.provider.ExchangeRateOptInStorageProvider
+import co.electriccoin.zcash.ui.common.provider.IsExchangeRateEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.usecase.OptInExchangeRateUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 internal class ExchangeRateSettingsVM(
     private val navigationRouter: NavigationRouter,
     private val optInExchangeRate: OptInExchangeRateUseCase,
-    private val exchangeRateOptInStorageProvider: ExchangeRateOptInStorageProvider
+    private val isExchangeRateEnabledStorageProvider: IsExchangeRateEnabledStorageProvider
 ) : ViewModel() {
     private var isOptedInOriginal = false
 
@@ -38,7 +38,7 @@ internal class ExchangeRateSettingsVM(
 
     init {
         viewModelScope.launch {
-            isOptedInOriginal = exchangeRateOptInStorageProvider.get() == true
+            isOptedInOriginal = isExchangeRateEnabledStorageProvider.get() == true
             isOptedIn.update { isOptedInOriginal }
         }
     }

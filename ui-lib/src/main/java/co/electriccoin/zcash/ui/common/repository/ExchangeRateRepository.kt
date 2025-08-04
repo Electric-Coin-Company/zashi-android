@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.model.ObserveFiatCurrencyResult
-import co.electriccoin.zcash.ui.common.provider.ExchangeRateOptInStorageProvider
+import co.electriccoin.zcash.ui.common.provider.IsExchangeRateEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.common.wallet.RefreshLock
@@ -34,12 +34,12 @@ interface ExchangeRateRepository {
 
 class ExchangeRateRepositoryImpl(
     private val synchronizerProvider: SynchronizerProvider,
-    private val exchangeRateOptInStorageProvider: ExchangeRateOptInStorageProvider
+    private val isExchangeRateEnabledStorageProvider: IsExchangeRateEnabledStorageProvider
 ) : ExchangeRateRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private val isExchangeRateOptedIn =
-        exchangeRateOptInStorageProvider
+        isExchangeRateEnabledStorageProvider
             .observe()
             .stateIn(
                 scope = scope,
@@ -167,7 +167,7 @@ class ExchangeRateRepositoryImpl(
         }
 
     override fun optInExchangeRateUsd(optIn: Boolean) {
-        scope.launch { exchangeRateOptInStorageProvider.store(optIn) }
+        scope.launch { isExchangeRateEnabledStorageProvider.store(optIn) }
     }
 }
 
