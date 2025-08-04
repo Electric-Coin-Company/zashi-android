@@ -156,7 +156,7 @@ class NearSwapRepository(
             }
 
             if (selectedAsset.value == null) {
-                val usdc = filtered.find { it.tokenTicker.lowercase() == "usdc" && it.chainTicker == "eth" }
+                val usdc = filtered.find { it.tokenTicker.lowercase() == "usdc" && it.chainTicker == "near" }
                 if (usdc is NearSwapAsset) {
                     selectedAsset.update { usdc }
                 }
