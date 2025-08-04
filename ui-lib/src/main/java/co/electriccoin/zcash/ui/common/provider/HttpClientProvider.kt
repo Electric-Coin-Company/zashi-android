@@ -34,9 +34,7 @@ class HttpClientProviderImpl(
             configureHttpClient()
             install(HttpCallValidator) {
                 handleResponseExceptionWithRequest { exception, _ ->
-                    if (exception is RuntimeException) {
-                        throw IOException(exception.message, exception)
-                    } else if (exception is ResponseException) {
+                    if (exception is ResponseException) {
                         val response = exception.response
                         val error: ErrorDto? = runCatching { response.body<ErrorDto?>() }.getOrNull()
                         if (error != null) {
@@ -46,6 +44,8 @@ class HttpClientProviderImpl(
                                 error = error
                             )
                         }
+                    } else if (exception is RuntimeException) {
+                        throw IOException(exception.message, exception)
                     }
                 }
             }

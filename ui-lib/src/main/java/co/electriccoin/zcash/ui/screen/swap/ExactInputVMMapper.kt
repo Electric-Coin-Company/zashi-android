@@ -180,10 +180,17 @@ internal class ExactInputVMMapper : SwapVMMapper {
                             "ZEC"
                         )
                 },
-            max =
-                state.totalSpendableBalance?.let {
-                    stringRes("Max: ") + stringRes(it, TickerLocation.HIDDEN)
-                },
+            max = when (state.currencyType) {
+                TOKEN ->
+                    state.totalSpendableBalance?.let {
+                        stringRes("Max: ") + stringRes(it, TickerLocation.HIDDEN)
+                    }
+
+                FIAT ->
+                    state.getTotalSpendableFiatBalance()?.let {
+                        stringRes("Max: ") + stringResByDynamicCurrencyNumber(it, FiatCurrency.USD.symbol)
+                    }
+            },
             onSwapChange = {
                 when (state.currencyType) {
                     TOKEN -> onSwapCurrencyTypeClick(amountFiat.takeIf { it != BigDecimal.ZERO })
@@ -306,7 +313,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
                         !textField.isError &&
                         amount != null &&
                         amount > BigDecimal(0) &&
-                        state.addressText.isNotBlank() &&
+                        (state.addressText.isNotBlank() || state.selectedContact != null) &&
                         !state.isRequestingQuote
                 },
             isLoading = state.isRequestingQuote || (state.swapAssets.isLoading && state.swapAssets.data == null)
@@ -378,6 +385,11 @@ private data class ExactInputInternalState(
         isRequestingQuote = original.isRequestingQuote,
         selectedContact = original.selectedContact
     )
+
+    fun getTotalSpendableFiatBalance(): BigDecimal? {
+        if (totalSpendableBalance == null || swapAssets.zecAsset?.usdPrice == null) return null
+        return totalSpendableBalance.value.convertZatoshiToZecBigDecimal().multiply(swapAssets.zecAsset.usdPrice)
+    }
 
     fun getOriginFiatAmount(): BigDecimal? =
         when (currencyType) {

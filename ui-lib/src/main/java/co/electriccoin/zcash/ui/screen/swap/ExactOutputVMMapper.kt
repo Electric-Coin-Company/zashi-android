@@ -319,7 +319,7 @@ internal class ExactOutputVMMapper : SwapVMMapper {
                         !textField.isError &&
                         amount != null &&
                         amount > BigDecimal(0) &&
-                        state.addressText.isNotBlank() &&
+                        (state.addressText.isNotBlank() || state.selectedContact != null) &&
                         !state.isRequestingQuote
                 },
             isLoading = state.isRequestingQuote || (state.swapAssets.isLoading && state.swapAssets.data == null)
