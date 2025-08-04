@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -90,19 +91,51 @@ fun ZashiNumberTextField(
 private fun createTextFieldState(state: NumberTextFieldState): EnhancedTextFieldState {
     val context = LocalContext.current
     val locale = LocalConfiguration.current.locales[0]
+
+    val text =
+        state.innerState.innerTextFieldState.value
+            .getValue()
+            .replace(" ", "")
+    val selection =
+        when (val selection = state.innerState.innerTextFieldState.selection) {
+            is TextSelection.ByTextRange ->
+                TextSelection.ByTextRange(
+                    TextRange(selection.range.start, selection.range.end.coerceAtMost(text.length))
+                )
+
+            TextSelection.End -> selection
+            TextSelection.Start -> selection
+        }
+
     val textFieldState =
         EnhancedTextFieldState(
-            innerState = state.innerState.innerTextFieldState,
+            innerState =
+                state.innerState.innerTextFieldState.copy(
+                    value = stringRes(text),
+                    selection = selection
+                ),
             isEnabled = state.isEnabled,
             error = state.errorString.takeIf { state.innerState.isError },
             onValueChange = { innerState ->
-                val normalized =
-                    UserInputNumberParser.normalizeInput(
-                        input = innerState.value.getString(context, locale),
-                        locale = locale
-                    )
-                val amount = UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
-                val lastValidAmount = amount ?: state.innerState.lastValidAmount
+                val newText = innerState.value.getString(context, locale)
+                val normalized: String
+                val amount: BigDecimal?
+                val lastValidAmount: BigDecimal?
+
+                if (newText != text) {
+                    normalized =
+                        UserInputNumberParser.normalizeInput(
+                            input = innerState.value.getString(context, locale),
+                            locale = locale
+                        )
+                    amount = UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
+                    lastValidAmount = amount ?: state.innerState.lastValidAmount
+                } else {
+                    normalized = text
+                    amount = state.innerState.amount
+                    lastValidAmount = state.innerState.lastValidAmount
+                }
+
                 val new =
                     state.innerState.copy(
                         innerTextFieldState =

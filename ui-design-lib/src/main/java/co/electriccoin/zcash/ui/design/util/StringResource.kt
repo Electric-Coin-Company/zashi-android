@@ -19,6 +19,7 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 import java.text.DateFormat
+import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.time.YearMonth
 import java.time.ZonedDateTime
@@ -196,6 +197,7 @@ private fun StringResource.ByResource.convertResource(context: Context) =
 private fun StringResource.ByNumber.convertNumber(locale: Locale): String {
     val bigDecimalAmount = number.toBigDecimal().stripTrailingZeros()
     val maxFractionDigits = bigDecimalAmount.scale().coerceAtLeast(minDecimals)
+    val symbols = DecimalFormatSymbols(locale)
     val formatter =
         NumberFormat.getInstance(locale).apply {
             roundingMode = RoundingMode.HALF_EVEN
@@ -203,7 +205,7 @@ private fun StringResource.ByNumber.convertNumber(locale: Locale): String {
             minimumFractionDigits = minDecimals
             minimumIntegerDigits = 1
         }
-    return formatter.format(bigDecimalAmount)
+    return formatter.format(bigDecimalAmount).replace(symbols.groupingSeparator, ' ')
 }
 
 private fun StringResource.ByZatoshi.convertZatoshi(): String {
@@ -231,6 +233,7 @@ private fun convertNumberToString(number: Number, locale: Locale): String {
     val bigDecimalAmount = number.toBigDecimal()
     val dynamicAmount = bigDecimalAmount.stripFractionsDynamically(2)
     val maxDecimals = if (bigDecimalAmount.scale() > 0) bigDecimalAmount.scale() else 0
+    val symbols = DecimalFormatSymbols(locale)
     val formatter =
         NumberFormat.getInstance(locale).apply {
             roundingMode = RoundingMode.HALF_EVEN
@@ -238,7 +241,7 @@ private fun convertNumberToString(number: Number, locale: Locale): String {
             minimumFractionDigits = 2
             minimumIntegerDigits = 1
         }
-    return formatter.format(dynamicAmount)
+    return formatter.format(dynamicAmount).replace(symbols.groupingSeparator, ' ')
 }
 
 private fun Number.toBigDecimal() =

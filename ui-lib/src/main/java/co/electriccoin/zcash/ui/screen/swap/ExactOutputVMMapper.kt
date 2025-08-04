@@ -21,7 +21,10 @@ import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
+import co.electriccoin.zcash.ui.screen.swap.CurrencyType.FIAT
+import co.electriccoin.zcash.ui.screen.swap.CurrencyType.TOKEN
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
 import io.ktor.client.plugins.ResponseException
@@ -159,8 +162,8 @@ internal class ExactOutputVMMapper : SwapVMMapper {
                 },
             textFieldPrefix =
                 when (state.currencyType) {
-                    CurrencyType.TOKEN -> null
-                    CurrencyType.FIAT -> imageRes(R.drawable.ic_send_usd)
+                    TOKEN -> null
+                    FIAT -> imageRes(R.drawable.ic_send_usd)
                 },
             textField =
                 NumberTextFieldState(
@@ -170,13 +173,13 @@ internal class ExactOutputVMMapper : SwapVMMapper {
                 ),
             secondaryText =
                 when (state.currencyType) {
-                    CurrencyType.TOKEN ->
+                    TOKEN ->
                         stringResByDynamicCurrencyNumber(
                             amount = amountFiat ?: BigDecimal(0),
                             ticker = FiatCurrency.USD.symbol,
                         )
 
-                    CurrencyType.FIAT -> {
+                    FIAT -> {
                         val tokenAmount =
                             if (amountFiat == null || state.swapAsset == null) {
                                 BigDecimal.valueOf(0)
@@ -197,13 +200,14 @@ internal class ExactOutputVMMapper : SwapVMMapper {
             onSwapChange = {
                 val newTextAmount =
                     when (state.currencyType) {
-                        CurrencyType.TOKEN -> amountFiat
+                        TOKEN -> amountFiat
 
-                        CurrencyType.FIAT -> {
+                        FIAT -> {
                             if (amountFiat == null || state.swapAsset == null) {
                                 null
                             } else {
-                                amountFiat.divide(state.swapAsset.usdPrice, MathContext.DECIMAL128)
+                                amountFiat
+                                    .divide(state.swapAsset.usdPrice, MathContext.DECIMAL128)
                                     .setScale(state.swapAsset.decimals, RoundingMode.DOWN)
                             }
                         }
@@ -215,8 +219,14 @@ internal class ExactOutputVMMapper : SwapVMMapper {
         )
     }
 
-    private fun createAmountTextState(internalState: ExactOutputInternalState): SwapAmountTextState =
-        SwapAmountTextState(
+    private fun createAmountTextState(state: ExactOutputInternalState): SwapAmountTextState {
+        val fiatText =
+            stringResByDynamicCurrencyNumber(
+                amount = state.getOriginFiatAmount() ?: 0,
+                ticker = FiatCurrency.USD.symbol
+            )
+
+        return SwapAmountTextState(
             token =
                 AssetCardState.Data(
                     stringRes(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
@@ -226,23 +236,33 @@ internal class ExactOutputVMMapper : SwapVMMapper {
                 ),
             title = stringRes("From"),
             subtitle =
-                internalState.totalSpendableBalance?.let {
-                    stringRes("Max: ") + stringRes(it, TickerLocation.HIDDEN)
+                when (state.currencyType) {
+                    TOKEN ->
+                        state.totalSpendableBalance?.let {
+                            stringRes("Max: ") + stringRes(it, TickerLocation.HIDDEN)
+                        }
+
+                    FIAT ->
+                        state.getTotalSpendableFiatBalance()?.let {
+                            stringRes("Max: ") + stringResByDynamicCurrencyNumber(it, FiatCurrency.USD.symbol)
+                        }
                 },
             text =
-                internalState.getZatoshi()?.let {
-                    stringResByDynamicCurrencyNumber(
-                        amount = it.convertZatoshiToZecBigDecimal(),
-                        ticker = "",
-                        tickerLocation = TickerLocation.HIDDEN
-                    )
-                } ?: stringRes("0"),
+                when (state.currencyType) {
+                    TOKEN -> stringResByDynamicNumber(state.getZatoshi()?.convertZatoshiToZecBigDecimal() ?: 0)
+                    FIAT -> fiatText
+                },
             secondaryText =
-                stringResByDynamicCurrencyNumber(
-                    amount = internalState.getOriginFiatAmount() ?: 0,
-                    ticker = FiatCurrency.USD.symbol
-                ),
+                when (state.currencyType) {
+                    TOKEN -> fiatText
+                    FIAT ->
+                        stringResByDynamicCurrencyNumber(
+                            amount = state.getZatoshi()?.convertZatoshiToZecBigDecimal() ?: 0,
+                            ticker = "ZEC",
+                        )
+                },
         )
+    }
 
     private fun createSlippageState(
         state: ExactOutputInternalState,
@@ -394,21 +414,32 @@ private data class ExactOutputInternalState(
         selectedContact = original.selectedContact
     )
 
+    fun getTotalSpendableFiatBalance(): BigDecimal? {
+        if (totalSpendableBalance == null || swapAssets.zecAsset?.usdPrice == null) return null
+        return totalSpendableBalance.value
+            .convertZatoshiToZecBigDecimal()
+            .multiply(swapAssets.zecAsset.usdPrice, MathContext.DECIMAL128)
+    }
+
     fun getOriginFiatAmount(): BigDecimal? =
         when (currencyType) {
-            CurrencyType.TOKEN -> {
+            TOKEN -> {
                 val tokenAmount = amountTextState.amount
-                if (tokenAmount == null || swapAsset == null) null else tokenAmount.multiply(swapAsset.usdPrice)
+                if (tokenAmount == null || swapAsset == null) {
+                    null
+                } else {
+                    tokenAmount.multiply(swapAsset.usdPrice, MathContext.DECIMAL128)
+                }
             }
 
-            CurrencyType.FIAT -> amountTextState.amount
+            FIAT -> amountTextState.amount
         }
 
     fun getOriginTokenAmount(): BigDecimal? {
         val fiatAmount = amountTextState.amount
         return when (currencyType) {
-            CurrencyType.TOKEN -> fiatAmount
-            CurrencyType.FIAT ->
+            TOKEN -> fiatAmount
+            FIAT ->
                 if (fiatAmount == null || swapAsset == null) {
                     null
                 } else {

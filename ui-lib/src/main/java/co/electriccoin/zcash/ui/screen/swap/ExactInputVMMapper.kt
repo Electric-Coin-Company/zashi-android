@@ -180,17 +180,18 @@ internal class ExactInputVMMapper : SwapVMMapper {
                             "ZEC"
                         )
                 },
-            max = when (state.currencyType) {
-                TOKEN ->
-                    state.totalSpendableBalance?.let {
-                        stringRes("Max: ") + stringRes(it, TickerLocation.HIDDEN)
-                    }
+            max =
+                when (state.currencyType) {
+                    TOKEN ->
+                        state.totalSpendableBalance?.let {
+                            stringRes("Max: ") + stringRes(it, TickerLocation.HIDDEN)
+                        }
 
-                FIAT ->
-                    state.getTotalSpendableFiatBalance()?.let {
-                        stringRes("Max: ") + stringResByDynamicCurrencyNumber(it, FiatCurrency.USD.symbol)
-                    }
-            },
+                    FIAT ->
+                        state.getTotalSpendableFiatBalance()?.let {
+                            stringRes("Max: ") + stringResByDynamicCurrencyNumber(it, FiatCurrency.USD.symbol)
+                        }
+                },
             onSwapChange = {
                 when (state.currencyType) {
                     TOKEN -> onSwapCurrencyTypeClick(amountFiat.takeIf { it != BigDecimal.ZERO })
@@ -200,7 +201,6 @@ internal class ExactInputVMMapper : SwapVMMapper {
                         } else {
                             onSwapCurrencyTypeClick(zatoshiAmount.convertZatoshiToZecBigDecimal())
                         }
-
                     }
                 }
             },
@@ -211,8 +211,14 @@ internal class ExactInputVMMapper : SwapVMMapper {
     private fun createAmountTextState(
         state: ExactInputInternalState,
         onSwapAssetPickerClick: (() -> Unit)?
-    ): SwapAmountTextState =
-        SwapAmountTextState(
+    ): SwapAmountTextState {
+        val fiatText =
+            stringResByDynamicCurrencyNumber(
+                amount = state.getOriginFiatAmount() ?: 0,
+                ticker = FiatCurrency.USD.symbol
+            )
+
+        return SwapAmountTextState(
             token =
                 if (state.swapAsset == null) {
                     AssetCardState.Loading(
@@ -230,13 +236,27 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 },
             title = stringRes("To"),
             subtitle = null,
-            text = stringResByDynamicNumber(state.getDestinationAssetAmount() ?: 0),
+            text =
+                when (state.currencyType) {
+                    TOKEN -> stringResByDynamicNumber(state.getDestinationAssetAmount() ?: 0)
+                    FIAT -> fiatText
+                },
             secondaryText =
-                stringResByDynamicCurrencyNumber(
-                    amount = state.getOriginFiatAmount() ?: 0,
-                    ticker = FiatCurrency.USD.symbol
-                ),
+                when (state.currencyType) {
+                    TOKEN -> fiatText
+                    FIAT -> {
+                        if (state.swapAsset?.tokenTicker == null) {
+                            stringResByDynamicNumber(state.getDestinationAssetAmount() ?: 0)
+                        } else {
+                            stringResByDynamicCurrencyNumber(
+                                state.getDestinationAssetAmount() ?: 0,
+                                state.swapAsset.tokenTicker
+                            )
+                        }
+                    }
+                }
         )
+    }
 
     private fun createSlippageState(
         state: ExactInputInternalState,
@@ -388,7 +408,9 @@ private data class ExactInputInternalState(
 
     fun getTotalSpendableFiatBalance(): BigDecimal? {
         if (totalSpendableBalance == null || swapAssets.zecAsset?.usdPrice == null) return null
-        return totalSpendableBalance.value.convertZatoshiToZecBigDecimal().multiply(swapAssets.zecAsset.usdPrice)
+        return totalSpendableBalance.value
+            .convertZatoshiToZecBigDecimal()
+            .multiply(swapAssets.zecAsset.usdPrice, MathContext.DECIMAL128)
     }
 
     fun getOriginFiatAmount(): BigDecimal? =
@@ -398,7 +420,7 @@ private data class ExactInputInternalState(
                 if (tokenAmount == null || swapAssets.zecAsset == null) {
                     null
                 } else {
-                    tokenAmount.multiply(swapAssets.zecAsset.usdPrice)
+                    tokenAmount.multiply(swapAssets.zecAsset.usdPrice, MathContext.DECIMAL128)
                 }
             }
 

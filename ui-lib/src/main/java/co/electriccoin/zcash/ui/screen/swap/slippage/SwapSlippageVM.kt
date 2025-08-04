@@ -108,9 +108,10 @@ class SwapSlippageVM(
         val result =
             when {
                 percent > BigDecimal("30") -> stringRes("Please enter maximum slippage of 30%.")
-                fiatAmount == null -> stringRes("You will pay up to ") +
-                    percentString +
-                    stringRes(" for the swap.")
+                fiatAmount == null ->
+                    stringRes("You will pay up to ") +
+                        percentString +
+                        stringRes(" for the swap.")
                 else -> {
                     val slippageFiat =
                         fiatAmount.multiply(
@@ -118,7 +119,7 @@ class SwapSlippageVM(
                             MathContext.DECIMAL128
                         )
                     stringRes("You will pay up to ") +
-                    percentString +
+                        percentString +
                         stringRes(" ") +
                         stringRes("(") +
                         stringResByDynamicCurrencyNumber(slippageFiat, FiatCurrency.USD.symbol) +

@@ -28,9 +28,32 @@ class HttpClientProviderImpl(
     override suspend fun create(): HttpClient =
         if (isTorEnabledStorageProvider.get() == true) createTor() else createDefault()
 
-    private suspend fun createTor() = synchronizerProvider
-        .getSynchronizer()
-        .getTorHttpClient {
+    private suspend fun createTor() =
+        synchronizerProvider
+            .getSynchronizer()
+            .getTorHttpClient {
+                configureHttpClient()
+                install(HttpCallValidator) {
+                    handleResponseExceptionWithRequest { exception, _ ->
+                        if (exception is ResponseException) {
+                            val response = exception.response
+                            val error: ErrorDto? = runCatching { response.body<ErrorDto?>() }.getOrNull()
+                            if (error != null) {
+                                throw ResponseWithErrorException(
+                                    response = response,
+                                    cachedResponseText = "Code: ${response.status}, message: ${error.message}",
+                                    error = error
+                                )
+                            }
+                        } else if (exception is RuntimeException) {
+                            throw IOException(exception.message, exception)
+                        }
+                    }
+                }
+            }
+
+    private fun createDefault() =
+        HttpClient(OkHttp) {
             configureHttpClient()
             install(HttpCallValidator) {
                 handleResponseExceptionWithRequest { exception, _ ->
@@ -44,31 +67,10 @@ class HttpClientProviderImpl(
                                 error = error
                             )
                         }
-                    } else if (exception is RuntimeException) {
-                        throw IOException(exception.message, exception)
                     }
                 }
             }
         }
-
-    private fun createDefault() = HttpClient(OkHttp) {
-        configureHttpClient()
-        install(HttpCallValidator) {
-            handleResponseExceptionWithRequest { exception, _ ->
-                if (exception is ResponseException) {
-                    val response = exception.response
-                    val error: ErrorDto? = runCatching { response.body<ErrorDto?>() }.getOrNull()
-                    if (error != null) {
-                        throw ResponseWithErrorException(
-                            response = response,
-                            cachedResponseText = "Code: ${response.status}, message: ${error.message}",
-                            error = error
-                        )
-                    }
-                }
-            }
-        }
-    }
 
     private fun <T : HttpClientEngineConfig> HttpClientConfig<T>.configureHttpClient() {
         install(ContentNegotiation) { json() }

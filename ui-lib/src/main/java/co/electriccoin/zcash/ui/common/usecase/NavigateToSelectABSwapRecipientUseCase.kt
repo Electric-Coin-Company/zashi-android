@@ -22,8 +22,8 @@ class NavigateToSelectABSwapRecipientUseCase(
 ) {
     private val pipeline = MutableSharedFlow<SelectSwapRecipientPipelineResult>()
 
-    suspend operator fun invoke(): EnhancedABContact? {
-        return try {
+    suspend operator fun invoke(): EnhancedABContact? =
+        try {
             biometricRepository.requestBiometrics(
                 BiometricRequest(
                     message =
@@ -45,7 +45,6 @@ class NavigateToSelectABSwapRecipientUseCase(
         } catch (_: BiometricsCancelledException) {
             null
         }
-    }
 
     suspend fun onSelectionCancelled(args: SelectABSwapRecipientArgs) {
         pipeline.emit(SelectSwapRecipientPipelineResult.Cancelled(args))
