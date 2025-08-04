@@ -83,7 +83,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 ),
             isAddressBookHintVisible = state.isAddressBookHintVisible,
             onBack = onBack,
-            swapInfoButton = IconButtonState(R.drawable.ic_help, onClick = onSwapInfoClick),
+            swapInfoButton = IconButtonState(co.electriccoin.zcash.ui.design.R.drawable.ic_info, onClick = onSwapInfoClick),
             infoItems = createListItems(state),
             qrScannerButton =
                 IconButtonState(
