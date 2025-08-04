@@ -48,7 +48,7 @@ fun ExchangeRateOptInView(state: ExchangeRateOptInState) {
                 subtitle = stringResource(R.string.exchange_rate_info_subtitle_2),
             )
         },
-        info = stringResource(R.string.exchange_rate_opt_in_note),
+        info = null,
         footer = {
             ZashiTextButton(
                 modifier = Modifier.fillMaxWidth(),
