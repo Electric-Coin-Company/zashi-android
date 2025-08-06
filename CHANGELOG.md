@@ -6,6 +6,11 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.1.0 (999)] - 2025-08-06
+
+### Changed
+- Tor opt-in is now decoupled from Exchange rate opt-in
+
 ## [2.1.0 (997)] - 2025-07-30
 
 ### Changed
