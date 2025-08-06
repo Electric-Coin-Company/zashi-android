@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="tor_settings_title">Beta: Tor Protection</string>
-    <string name="tor_settings_subtitle">This beta feature provides additional protections for your IP address. It
-        uses Tor to fetch exchange rates, send transactions, retrieve transaction data, and connect to third-party
-        APIs (e.g. NEAR). If Tor is permitted in your region, we recommend enabling it.\n\nNote: Exchange rates are
-        only available when this feature is enabled.</string>
+    <string name="tor_settings_subtitle">Tor provides additional protections for your IP address. This feature uses
+        Tor network to fetch exchange rates, send transactions, retrieve transaction data, and connect to third party
+        APIs (e.g. NEAR coming soon).\n\nAs a beta feature, it may affect performance. If Tor is permitted in your
+        region, we recommend enabling it.</string>
     <string name="tor_settings_item_subtitle_1">Connect over Tor</string>
     <string name="tor_settings_item_subtitle_2">Don’t connect over Tor.</string>
     <string name="tor_opt_in_item_title_1">Currency Conversion</string>
@@ -16,4 +16,5 @@
 
     <string name="tor_opt_in_btn">Opt in</string>
     <string name="tor_opt_out_btn">Opt out</string>
+    <string name="tor_settings_share_feedback">Share feedback</string>
 </resources>

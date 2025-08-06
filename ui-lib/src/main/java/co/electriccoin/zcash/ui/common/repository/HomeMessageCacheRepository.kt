@@ -71,9 +71,9 @@ sealed interface HomeMessageData {
 
     data object Updating : RuntimeMessage()
 
-    data object EnableTor : Prioritized {
-        override val priority: Int = 5
-    }
+    // data object EnableTor : Prioritized {
+    //     override val priority: Int = 5
+    // }
 
     data object Backup : Prioritized {
         override val priority: Int = 4
@@ -83,6 +83,10 @@ sealed interface HomeMessageData {
         val zatoshi: Zatoshi
     ) : Prioritized {
         override val priority: Int = 3
+    }
+
+    data object EnableCurrencyConversion : Prioritized {
+        override val priority: Int = 2
     }
 
     data object CrashReport : Prioritized {

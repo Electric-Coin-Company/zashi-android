@@ -65,10 +65,10 @@ import co.electriccoin.zcash.ui.screen.error.AndroidErrorBottomSheet
 import co.electriccoin.zcash.ui.screen.error.AndroidErrorDialog
 import co.electriccoin.zcash.ui.screen.error.ErrorBottomSheet
 import co.electriccoin.zcash.ui.screen.error.ErrorDialog
+import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInArgs
+import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInScreen
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsArgs
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsScreen
-import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateTorSettingsArgs
-import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateTorSettingsScreen
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
@@ -522,13 +522,6 @@ internal fun MainActivity.Navigation() {
         composable<ThirdPartyScan> { AndroidThirdPartyScan() }
         composable<TorSettingsArgs> { TorSettingsScreen() }
         composable<TorOptInArgs> { TorOptInScreen() }
-        dialog<ExchangeRateTorSettingsArgs>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) { ExchangeRateTorSettingsScreen() }
         dialog<ShieldedAddressInfoArgs>(
             dialogProperties =
                 DialogProperties(
@@ -546,6 +539,9 @@ internal fun MainActivity.Navigation() {
                 )
         ) {
             TransparentAddressInfoScreen()
+        }
+        composable<ExchangeRateOptInArgs> {
+            ExchangeRateOptInScreen()
         }
     }
 }
