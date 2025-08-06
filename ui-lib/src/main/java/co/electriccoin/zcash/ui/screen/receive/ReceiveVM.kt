@@ -103,7 +103,12 @@ class ReceiveVM(
                         stringRes(R.string.receive_wallet_address_transparent)
                     }
             },
-        subtitle = stringRes("${address.take(ADDRESS_MAX_LENGTH)}..."),
+        subtitle =
+            if (type == Unified) {
+                stringRes(R.string.receive_wallet_address_unified_subtitle)
+            } else {
+                stringRes("${address.take(ADDRESS_MAX_LENGTH)}...")
+            },
         isShielded = type == Unified,
         onCopyClicked = {
             copyToClipboard(

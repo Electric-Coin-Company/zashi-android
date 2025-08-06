@@ -39,7 +39,7 @@ internal fun ExchangeRateSettingsView(state: ExchangeRateSettingsState) {
         header = stringResource(id = R.string.exchange_rate_opt_in_subtitle),
         image = R.drawable.exchange_rate,
         onDismiss = state.onBack,
-        info = stringResource(R.string.exchange_rate_opt_in_note),
+        info = null,
         content = {
             Spacer(modifier = Modifier.height(8.dp))
             Text(

@@ -1,10 +1,8 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.model.ObserveFiatCurrencyResult
-import co.electriccoin.zcash.ui.common.provider.ExchangeRateOptInStorageProvider
-import co.electriccoin.zcash.ui.common.provider.PersistableWalletTorProvider
+import co.electriccoin.zcash.ui.common.provider.IsExchangeRateEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
-import co.electriccoin.zcash.ui.common.provider.TorState
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.common.wallet.RefreshLock
 import co.electriccoin.zcash.ui.common.wallet.StaleLock
@@ -35,27 +33,19 @@ interface ExchangeRateRepository {
 }
 
 class ExchangeRateRepositoryImpl(
-    persistableWalletTorProvider: PersistableWalletTorProvider,
     private val synchronizerProvider: SynchronizerProvider,
-    private val exchangeRateOptInStorageProvider: ExchangeRateOptInStorageProvider
+    private val isExchangeRateEnabledStorageProvider: IsExchangeRateEnabledStorageProvider
 ) : ExchangeRateRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private val isExchangeRateOptedIn =
-        combine(
-            exchangeRateOptInStorageProvider.observe(),
-            persistableWalletTorProvider.observe()
-        ) { isOptedIn, tor ->
-            if (isOptedIn == null || tor == null) {
-                null
-            } else {
-                isOptedIn && tor !in listOf(TorState.IMPLICITLY_DISABLED, TorState.EXPLICITLY_DISABLED)
-            }
-        }.stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = null
-        )
+        isExchangeRateEnabledStorageProvider
+            .observe()
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = null
+            )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val exchangeRateUsdInternal =
@@ -177,7 +167,7 @@ class ExchangeRateRepositoryImpl(
         }
 
     override fun optInExchangeRateUsd(optIn: Boolean) {
-        scope.launch { exchangeRateOptInStorageProvider.store(optIn) }
+        scope.launch { isExchangeRateEnabledStorageProvider.store(optIn) }
     }
 }
 

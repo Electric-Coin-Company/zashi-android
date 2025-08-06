@@ -12,6 +12,7 @@
     <string name="receive_wallet_address_shielded_keystone">Dirección protegida de Zcash</string>
     <string name="receive_wallet_address_sapling_keystone">Dirección Sapling de Zcash</string>
     <string name="receive_wallet_address_transparent_keystone">Dirección transparente de Zcash</string>
+    <string name="receive_wallet_address_unified_subtitle">Rota cada vez que la usas</string>
 
     <string name="receive_info_shielded_title">Dirección protegida de Zcash (rotativa)</string>
     <string name="receive_info_shielded_bullet_1">Usa esta dirección para recibir y almacenar tus ZEC de forma privada. Los ZEC transparentes y protegidos enviados a esta dirección se recibirán y almacenarán como ZEC protegidos.</string>

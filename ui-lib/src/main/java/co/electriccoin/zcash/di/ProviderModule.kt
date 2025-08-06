@@ -6,14 +6,14 @@ import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
 import co.electriccoin.zcash.ui.common.provider.BlockchainProviderImpl
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProviderImpl
-import co.electriccoin.zcash.ui.common.provider.ExchangeRateOptInStorageProvider
-import co.electriccoin.zcash.ui.common.provider.ExchangeRateOptInStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.provider.HttpClientProvider
 import co.electriccoin.zcash.ui.common.provider.HttpClientProviderImpl
+import co.electriccoin.zcash.ui.common.provider.IsExchangeRateEnabledStorageProvider
+import co.electriccoin.zcash.ui.common.provider.IsExchangeRateEnabledStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.KtorNearApiProvider
@@ -71,7 +71,7 @@ val providerModule =
         singleOf(::WalletRestoringStateProviderImpl) bind WalletRestoringStateProvider::class
         singleOf(::CrashReportingStorageProviderImpl) bind CrashReportingStorageProvider::class
         singleOf(::ShieldFundsInfoProviderImpl) bind ShieldFundsInfoProvider::class
-        singleOf(::ExchangeRateOptInStorageProviderImpl) bind ExchangeRateOptInStorageProvider::class
+        singleOf(::IsExchangeRateEnabledStorageProviderImpl) bind IsExchangeRateEnabledStorageProvider::class
         singleOf(::IsTorEnabledStorageProviderImpl) bind IsTorEnabledStorageProvider::class
         singleOf(::PersistableWalletTorProviderImpl) bind PersistableWalletTorProvider::class
         singleOf(::BlockchainProviderImpl) bind BlockchainProvider::class

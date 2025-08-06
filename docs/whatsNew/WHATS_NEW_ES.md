@@ -12,6 +12,54 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.1.0 (999)] - 2025-08-06
+
+### Añadido:
+- El cliente Tor de Zashi ahora puede utilizarse para:
+- Enviar transacciones ZEC
+- Obtener datos de transacciones
+- Conectarse a APIs de terceros (ej. NEAR, pronto!)
+- Obtener tasas de cambio ZEC-USD
+- Si Tor está disponible en tu región, te recomendamos activarlo en la Configuración Avanzada.
+
+### Cambiado:
+- Agregamos explicadores de direcciones.
+- Mejoramos el tiempo de inicio de la app.
+- Corregimos errores en el escaneo ZIP 321, el flujo de reenviar y otros problemas de UI/UX.
+
+## [2.1.0 (997)] - 2025-07-30
+
+### Añadido:
+- El cliente Tor de Zashi ahora puede utilizarse para:
+- Enviar transacciones ZEC
+- Obtener datos de transacciones
+- Conectarse a APIs de terceros (ej. NEAR)
+- Obtener tasas de cambio ZEC-USD
+- Si Tor está disponible en tu región, te recomendamos activarlo.
+- La conversión de moneda ahora solo funciona con Tor habilitado.
+
+### Cambiado:
+- Agregamos explicadores de direcciones.
+- Mejoramos el tiempo de inicio de la app.
+- Corregimos errores en el escaneo ZIP 321, el flujo de reenviar y otros problemas de UI/UX.
+
+
+## [2.1.0 (996)] - 2025-07-29
+
+### Añadido:
+- El cliente Tor de Zashi ahora puede utilizarse para:
+- Enviar transacciones ZEC
+- Obtener datos de transacciones
+- Conectarse a APIs de terceros (ej. NEAR)
+- Obtener tasas de cambio ZEC-USD
+- Si Tor está disponible en tu región, te recomendamos activarlo.
+- La conversión de moneda ahora solo funciona con Tor habilitado.
+
+### Cambiado:
+- Agregamos explicadores de direcciones.
+- Mejoramos el tiempo de inicio de la app.
+- Corregimos errores en el escaneo ZIP 321, el flujo de reenviar y otros problemas de UI/UX.
+
 ## [2.0.5 (974)] - 2025-06-25
 
 ### Corregido:
