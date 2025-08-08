@@ -14,7 +14,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailArgs
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -82,7 +82,7 @@ class TransactionHistoryWidgetViewModel(
         )
 
     private fun onTransactionClick(transaction: Transaction) {
-        navigationRouter.forward(TransactionDetail(transaction.id.txIdString()))
+        navigationRouter.forward(TransactionDetailArgs(transaction.id.txIdString()))
     }
 
     private fun onSeeAllTransactionsClick() {

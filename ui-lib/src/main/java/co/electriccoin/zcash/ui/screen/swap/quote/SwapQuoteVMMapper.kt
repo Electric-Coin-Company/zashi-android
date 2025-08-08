@@ -3,10 +3,10 @@ package co.electriccoin.zcash.ui.screen.swap.quote
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.FiatCurrency
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.NearSwapAsset
-import co.electriccoin.zcash.ui.common.model.SwapMode.PAY
-import co.electriccoin.zcash.ui.common.model.SwapMode.SWAP
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
 import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -26,10 +26,10 @@ internal class SwapQuoteVMMapper {
             return SwapQuoteState.Success(
                 title =
                     when (mode) {
-                        SWAP -> stringRes("Swap Now")
-                        PAY -> stringRes("Pay now")
+                        EXACT_INPUT -> stringRes("Swap Now")
+                        EXACT_OUTPUT -> stringRes("Pay now")
                     },
-                rotateIcon = mode == PAY,
+                rotateIcon = mode == EXACT_OUTPUT,
                 from = createFromState(this),
                 to = createToState(this),
                 items = createItems(this),
@@ -53,8 +53,8 @@ internal class SwapQuoteVMMapper {
                 SwapQuoteInfoItem(
                     description =
                         when (mode) {
-                            SWAP -> stringRes("Swap from")
-                            PAY -> stringRes("Pay from")
+                            EXACT_INPUT -> stringRes("Swap from")
+                            EXACT_OUTPUT -> stringRes("Pay from")
                         },
                     title = stringRes("Zashi"),
                     subtitle = null
@@ -62,8 +62,8 @@ internal class SwapQuoteVMMapper {
                 SwapQuoteInfoItem(
                     description =
                         when (mode) {
-                            SWAP -> stringRes("Swap to")
-                            PAY -> stringRes("Pay to")
+                            EXACT_INPUT -> stringRes("Swap to")
+                            EXACT_OUTPUT -> stringRes("Pay to")
                         },
                     title = stringResByAddress(recipient, true),
                     subtitle = null
@@ -96,11 +96,8 @@ internal class SwapQuoteVMMapper {
 
     private fun createFromState(state: SwapQuoteInternalState): SwapTokenAmountState =
         with(state) {
-            require(originAsset is NearSwapAsset)
-            require(destinationAsset is NearSwapAsset)
-
             return when (mode) {
-                SWAP -> {
+                EXACT_INPUT -> {
                     SwapTokenAmountState(
                         bigIcon = imageRes(R.drawable.ic_zec_round_full),
                         smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
@@ -109,7 +106,7 @@ internal class SwapQuoteVMMapper {
                     )
                 }
 
-                PAY ->
+                EXACT_OUTPUT ->
                     SwapTokenAmountState(
                         bigIcon = destinationAsset.tokenIcon,
                         smallIcon = destinationAsset.chainIcon,
@@ -125,7 +122,7 @@ internal class SwapQuoteVMMapper {
     private fun createToState(state: SwapQuoteInternalState): SwapTokenAmountState =
         with(state) {
             return when (mode) {
-                SWAP ->
+                EXACT_INPUT ->
                     SwapTokenAmountState(
                         bigIcon = destinationAsset.tokenIcon,
                         smallIcon = destinationAsset.chainIcon,
@@ -136,7 +133,7 @@ internal class SwapQuoteVMMapper {
                         subtitle = stringResByDynamicCurrencyNumber(amountOutUsd, FiatCurrency.USD.symbol)
                     )
 
-                PAY ->
+                EXACT_OUTPUT ->
                     SwapTokenAmountState(
                         bigIcon = imageRes(R.drawable.ic_zec_round_full),
                         smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),

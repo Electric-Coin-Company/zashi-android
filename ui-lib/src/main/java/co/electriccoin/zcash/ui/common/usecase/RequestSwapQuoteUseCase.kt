@@ -2,17 +2,14 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.WalletAddress
-import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
-import co.electriccoin.zcash.ui.common.model.NearSwapQuote
+import co.electriccoin.zcash.ui.common.model.SwapMode
+import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
-import co.electriccoin.zcash.ui.common.model.near.SwapType
-import co.electriccoin.zcash.ui.common.model.near.SwapType.EXACT_INPUT
-import co.electriccoin.zcash.ui.common.model.near.SwapType.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
@@ -38,24 +35,8 @@ class RequestSwapQuoteUseCase(
         val result = swapRepository.quote.filter { it != null && it !is SwapQuoteData.Loading }.first()
 
         if (result is SwapQuoteData.Success) {
-            val destinationAmount: Zatoshi
-            val destinationAddress: WalletAddress
-            val swapType: SwapType
-
             try {
-                when (result.quote) {
-                    is NearSwapQuote -> {
-                        destinationAmount =
-                            Zatoshi(
-                                result.quote.response.quote.amountIn
-                                    .toLong()
-                            )
-                        destinationAddress = getWalletAddress(result.quote.response.quote.depositAddress)
-                        swapType = result.quote.response.quoteRequest.swapType
-                    }
-                }
-
-                createProposal(destinationAddress, destinationAmount, swapType)
+                createProposal(result.quote)
             } catch (e: Exception) {
                 swapRepository.clearQuote()
                 zashiProposalRepository.clear()
@@ -71,33 +52,34 @@ class RequestSwapQuoteUseCase(
     }
 
     @Suppress("TooGenericExceptionCaught")
-    private suspend fun createProposal(
-        destination: WalletAddress,
-        amount: Zatoshi,
-        swapType: SwapType,
-    ) {
+    private suspend fun createProposal(quote: SwapQuote) {
         try {
             val zecSend =
                 ZecSend(
-                    destination = destination,
-                    amount = amount,
+                    destination = getWalletAddress(quote.depositAddress),
+                    amount = quote.destinationAmount,
                     memo = Memo(""),
                     proposal = null
                 )
 
             when (accountDataSource.getSelectedAccount()) {
                 is KeystoneAccount -> {
-                    when (swapType) {
-                        EXACT_INPUT -> keystoneProposalRepository.createExactInputSwapProposal(zecSend)
-                        EXACT_OUTPUT -> keystoneProposalRepository.createExactOutputSwapProposal(zecSend)
+                    when (quote.type) {
+                        SwapMode.EXACT_INPUT ->
+                            keystoneProposalRepository.createExactInputSwapProposal(zecSend, quote.provider)
+                        SwapMode.EXACT_OUTPUT ->
+                            keystoneProposalRepository.createExactOutputSwapProposal(zecSend, quote.provider)
                     }
 
                     keystoneProposalRepository.createPCZTFromProposal()
                 }
+
                 is ZashiAccount ->
-                    when (swapType) {
-                        EXACT_INPUT -> zashiProposalRepository.createExactInputSwapProposal(zecSend)
-                        EXACT_OUTPUT -> zashiProposalRepository.createExactOutputSwapProposal(zecSend)
+                    when (quote.type) {
+                        SwapMode.EXACT_INPUT ->
+                            zashiProposalRepository.createExactInputSwapProposal(zecSend, quote.provider)
+                        SwapMode.EXACT_OUTPUT ->
+                            zashiProposalRepository.createExactOutputSwapProposal(zecSend, quote.provider)
                     }
             }
         } catch (e: Exception) {

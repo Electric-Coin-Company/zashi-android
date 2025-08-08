@@ -9,7 +9,6 @@ import co.electriccoin.zcash.ui.common.datasource.QuoteLowAmountException
 import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
-import co.electriccoin.zcash.ui.common.model.NearSwapAsset
 import co.electriccoin.zcash.ui.common.model.NearSwapQuote
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
@@ -88,9 +87,7 @@ internal class SwapQuoteVM(
         val swapQuote = quote.quote
         return when {
             swapQuote is NearSwapQuote &&
-                proposal is SwapTransactionProposal &&
-                originAsset is NearSwapAsset &&
-                destinationAsset is NearSwapAsset ->
+                proposal is SwapTransactionProposal ->
                 swapQuoteSuccessMapper.createState(
                     state =
                         NearSwapQuoteInternalState(

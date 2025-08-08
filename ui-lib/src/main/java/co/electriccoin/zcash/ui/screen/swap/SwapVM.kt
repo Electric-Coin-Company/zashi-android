@@ -8,8 +8,8 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
-import co.electriccoin.zcash.ui.common.model.SwapMode.PAY
-import co.electriccoin.zcash.ui.common.model.SwapMode.SWAP
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
@@ -165,8 +165,8 @@ internal class SwapVM(
     private fun createState(innerState: InternalStateImpl): SwapState {
         val mapper =
             when (innerState.swapMode) {
-                SWAP -> exactInputVMMapper
-                PAY -> exactOutputVMMapper
+                EXACT_INPUT -> exactInputVMMapper
+                EXACT_OUTPUT -> exactOutputVMMapper
             }
 
         return mapper.createState(

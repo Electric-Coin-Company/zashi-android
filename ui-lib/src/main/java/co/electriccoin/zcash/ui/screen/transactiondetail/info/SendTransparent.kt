@@ -21,10 +21,9 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactiondetail.SendTransparentStateFixture
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailHeader
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumn
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumnState
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoHeader
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoHeaderState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRow
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRowState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoShape
@@ -37,36 +36,25 @@ fun SendTransparent(
     Column(
         modifier = modifier
     ) {
-        TransactionDetailInfoHeader(
-            state =
-                TransactionDetailInfoHeaderState(
-                    title = stringRes(R.string.transaction_detail_info_transaction_details)
-                )
+        var isExpanded by rememberSaveable { mutableStateOf(false) }
+
+        TransactionDetailHeader(
+            title = stringRes(R.string.transaction_detail_info_transaction_details),
+            isExpanded = isExpanded,
+            onButtonClick = { isExpanded = !isExpanded }
         )
 
         Spacer(Modifier.height(8.dp))
-
-        var isExpanded by rememberSaveable { mutableStateOf(false) }
 
         TransactionDetailInfoRow(
             modifier = Modifier.fillMaxWidth(),
             state =
                 TransactionDetailInfoRowState(
                     title = stringRes(R.string.transaction_detail_info_sent_to),
-                    message =
-                        when {
-                            state.contact != null -> state.contact
-                            !isExpanded -> state.addressAbbreviated
-                            else -> null
-                        },
-                    trailingIcon =
-                        if (isExpanded) {
-                            co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_up_small
-                        } else {
-                            co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_down_small
-                        },
-                    shape = TransactionDetailInfoShape.FIRST,
-                    onClick = { isExpanded = !isExpanded }
+                    message = state.contact ?: state.addressAbbreviated,
+                    trailingIcon = R.drawable.ic_transaction_detail_info_copy,
+                    shape = if (isExpanded) TransactionDetailInfoShape.FIRST else TransactionDetailInfoShape.SINGLE,
+                    onClick = state.onTransactionAddressClick
                 )
         )
 
@@ -76,65 +64,50 @@ fun SendTransparent(
             exit = shrinkVertically()
         ) {
             Column {
-                TransactionDetailInfoColumn(
+                ZashiHorizontalDivider()
+                TransactionDetailInfoRow(
                     modifier = Modifier.fillMaxWidth(),
                     state =
-                        TransactionDetailInfoColumnState(
-                            title =
-                                if (state.contact == null) {
-                                    null
-                                } else {
-                                    stringRes(R.string.transaction_detail_info_address)
-                                },
-                            message = state.address,
+                        TransactionDetailInfoRowState(
+                            title = stringRes(R.string.transaction_detail_info_transaction_id),
+                            message = state.transactionId,
+                            trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                             shape = TransactionDetailInfoShape.MIDDLE,
-                            onClick = state.onTransactionAddressClick,
+                            onClick = state.onTransactionIdClick
+                        )
+                )
+                ZashiHorizontalDivider()
+                TransactionDetailInfoRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    state =
+                        TransactionDetailInfoRowState(
+                            title = stringRes(R.string.transaction_detail_info_transaction_fee),
+                            message = state.fee,
+                            shape = TransactionDetailInfoShape.MIDDLE,
+                        )
+                )
+                ZashiHorizontalDivider()
+                TransactionDetailInfoRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    state =
+                        TransactionDetailInfoRowState(
+                            title =
+                                if (state.isPending) {
+                                    stringRes(R.string.transaction_detail_info_transaction_status)
+                                } else {
+                                    stringRes(R.string.transaction_detail_info_transaction_completed)
+                                },
+                            message = state.completedTimestamp,
+                            shape =
+                                if (state.note != null) {
+                                    TransactionDetailInfoShape.MIDDLE
+                                } else {
+                                    TransactionDetailInfoShape.LAST
+                                },
                         )
                 )
             }
         }
-        ZashiHorizontalDivider()
-        TransactionDetailInfoRow(
-            modifier = Modifier.fillMaxWidth(),
-            state =
-                TransactionDetailInfoRowState(
-                    title = stringRes(R.string.transaction_detail_info_transaction_id),
-                    message = state.transactionId,
-                    trailingIcon = R.drawable.ic_transaction_detail_info_copy,
-                    shape = TransactionDetailInfoShape.MIDDLE,
-                    onClick = state.onTransactionIdClick
-                )
-        )
-        ZashiHorizontalDivider()
-        TransactionDetailInfoRow(
-            modifier = Modifier.fillMaxWidth(),
-            state =
-                TransactionDetailInfoRowState(
-                    title = stringRes(R.string.transaction_detail_info_transaction_fee),
-                    message = state.fee,
-                    shape = TransactionDetailInfoShape.MIDDLE,
-                )
-        )
-        ZashiHorizontalDivider()
-        TransactionDetailInfoRow(
-            modifier = Modifier.fillMaxWidth(),
-            state =
-                TransactionDetailInfoRowState(
-                    title =
-                        if (state.isPending) {
-                            stringRes(R.string.transaction_detail_info_transaction_status)
-                        } else {
-                            stringRes(R.string.transaction_detail_info_transaction_completed)
-                        },
-                    message = state.completedTimestamp,
-                    shape =
-                        if (state.note != null) {
-                            TransactionDetailInfoShape.MIDDLE
-                        } else {
-                            TransactionDetailInfoShape.LAST
-                        },
-                )
-        )
         if (state.note != null) {
             ZashiHorizontalDivider()
             TransactionDetailInfoColumn(

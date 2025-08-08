@@ -193,7 +193,7 @@ class ReviewTransactionViewModel(
                         ChipButtonState(
                             startIcon =
                                 if (isReceiverExpanded) {
-                                    R.drawable.ic_chevron_up
+                                    co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_up
                                 } else {
                                     co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_down
                                 },

@@ -27,7 +27,6 @@ class FilterSwapBlockchainsUseCase(
         return SwapBlockchainData(
             data = filtered,
             isLoading = assets.isLoading,
-            type = assets.type
         )
     }
 }
@@ -35,5 +34,4 @@ class FilterSwapBlockchainsUseCase(
 data class SwapBlockchainData(
     val data: List<SwapAssetBlockchain>?,
     val isLoading: Boolean,
-    val type: SwapAssetsData.Type
 )

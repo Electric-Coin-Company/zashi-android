@@ -20,8 +20,7 @@ object SendShieldStateFixture {
     fun new(contact: StringResource? = stringRes("Contact")) =
         SendShieldedState(
             contact = contact,
-            address = stringResByAddress(value = "Address", abbreviated = false),
-            addressAbbreviated = stringResByAddress(value = "Address", abbreviated = true),
+            address = stringResByAddress(value = "Address", abbreviated = true),
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
             onTransactionAddressClick = {},

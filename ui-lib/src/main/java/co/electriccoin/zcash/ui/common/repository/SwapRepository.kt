@@ -2,19 +2,22 @@ package co.electriccoin.zcash.ui.common.repository
 
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.SwapDataSource
-import co.electriccoin.zcash.ui.common.model.NearSwapAsset
-import co.electriccoin.zcash.ui.common.model.NearSwapQuote
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapQuote
+import co.electriccoin.zcash.ui.common.model.SwapQuoteStatus
+import co.electriccoin.zcash.ui.common.model.SwapStatus
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -40,6 +43,8 @@ interface SwapRepository {
 
     fun changeMode(mode: SwapMode)
 
+    fun observeSwapStatus(depositAddress: String): Flow<SwapQuoteStatusData>
+
     fun requestQuote(amount: BigDecimal, address: String)
 
     fun clear()
@@ -48,13 +53,9 @@ interface SwapRepository {
 }
 
 sealed interface SwapQuoteData {
-    data class Success(
-        val quote: SwapQuote
-    ) : SwapQuoteData
+    data class Success(val quote: SwapQuote) : SwapQuoteData
 
-    data class Error(
-        val exception: Exception
-    ) : SwapQuoteData
+    data class Error(val exception: Exception) : SwapQuoteData
 
     data object Loading : SwapQuoteData
 }
@@ -64,12 +65,16 @@ data class SwapAssetsData(
     val zecAsset: SwapAsset?,
     val isLoading: Boolean,
     val error: Exception?,
-    val type: Type
-) {
-    enum class Type { NEAR }
-}
+)
 
-class NearSwapRepository(
+data class SwapQuoteStatusData(
+    val data: SwapQuoteStatus?,
+    val destinationAsset: SwapAsset?,
+    val isLoading: Boolean,
+    val error: Exception?,
+)
+
+class SwapRepositoryImpl(
     private val swapDataSource: SwapDataSource,
     private val accountDataSource: AccountDataSource,
 ) : SwapRepository {
@@ -84,11 +89,10 @@ class NearSwapRepository(
                 zecAsset = null,
                 isLoading = false,
                 error = null,
-                type = SwapAssetsData.Type.NEAR
             )
         )
 
-    override val selectedAsset = MutableStateFlow<NearSwapAsset?>(null)
+    override val selectedAsset = MutableStateFlow<SwapAsset?>(null)
 
     override val slippage = MutableStateFlow(DEFAULT_SLIPPAGE)
 
@@ -98,14 +102,7 @@ class NearSwapRepository(
 
     private var requestQuoteJob: Job? = null
 
-    override fun select(asset: SwapAsset?) {
-        if (asset != null) {
-            check(asset is NearSwapAsset)
-            selectedAsset.update { asset }
-        } else {
-            selectedAsset.update { null }
-        }
-    }
+    override fun select(asset: SwapAsset?) = selectedAsset.update { asset }
 
     override fun setSlippage(amount: BigDecimal) = slippage.update { amount }
 
@@ -157,9 +154,7 @@ class NearSwapRepository(
 
             if (selectedAsset.value == null) {
                 val usdc = filtered.find { it.tokenTicker.lowercase() == "usdc" && it.chainTicker == "near" }
-                if (usdc is NearSwapAsset) {
-                    selectedAsset.update { usdc }
-                }
+                selectedAsset.update { usdc }
             }
         } catch (e: ResponseException) {
             assets.update { assets ->
@@ -182,6 +177,73 @@ class NearSwapRepository(
         this.mode.update { mode }
     }
 
+    override fun observeSwapStatus(depositAddress: String): Flow<SwapQuoteStatusData> {
+        return channelFlow {
+            val data = MutableStateFlow(
+                SwapQuoteStatusData(
+                    data = null,
+                    isLoading = true,
+                    destinationAsset = null,
+                    error = null
+                )
+            )
+
+            launch {
+                data.collect { send(it) }
+            }
+
+            launch {
+                val supportedTokens = try {
+                    swapDataSource.getSupportedTokens()
+                } catch (e: Exception) {
+                    data.update { it.copy(isLoading = false, error = e) }
+                    return@launch
+                }
+
+                while (true) {
+                    try {
+                        val result = swapDataSource.checkSwapStatus(depositAddress)
+                        val destinationAsset = supportedTokens.find { it.assetId == result.destinationAssetId }
+
+                        if (destinationAsset == null) {
+                            data.update {
+                                it.copy(
+                                    data = result,
+                                    isLoading = false,
+                                    destinationAsset = null,
+                                    error = IllegalStateException("No destination asset found")
+                                )
+                            }
+                            break
+                        } else {
+                            data.update {
+                                it.copy(
+                                    data = result,
+                                    isLoading = false,
+                                    destinationAsset = destinationAsset,
+                                    error = null
+                                )
+                            }
+                            if (result.status in listOf(SwapStatus.SUCCESS, SwapStatus.REFUNDED, SwapStatus.FAILED)) {
+                                break
+                            }
+                        }
+
+
+                    } catch (e: Exception) {
+                        data.update { it.copy(isLoading = false, error = e) }
+                        break
+                    }
+                    delay(30.seconds)
+                }
+            }
+
+            awaitClose {
+                // do nothing
+            }
+        }
+    }
+
     @Suppress("TooGenericExceptionCaught")
     override fun requestQuote(amount: BigDecimal, address: String) {
         requestQuoteJob =
@@ -191,7 +253,7 @@ class NearSwapRepository(
                 val destinationAsset = selectedAsset.value ?: return@launch
                 try {
                     val selectedAccount = accountDataSource.getSelectedAccount()
-                    val quoteDto =
+                    val result =
                         swapDataSource.requestQuote(
                             swapMode = mode.value,
                             amount = amount,
@@ -201,7 +263,7 @@ class NearSwapRepository(
                             destinationAsset = destinationAsset,
                             slippage = slippage.value,
                         )
-                    quote.update { SwapQuoteData.Success(quote = NearSwapQuote(quoteDto)) }
+                    quote.update { SwapQuoteData.Success(quote = result) }
                 } catch (e: Exception) {
                     quote.update { SwapQuoteData.Error(e) }
                 }
@@ -215,7 +277,6 @@ class NearSwapRepository(
                 zecAsset = null,
                 isLoading = false,
                 error = null,
-                type = SwapAssetsData.Type.NEAR
             )
         }
         refreshJob?.cancel()
@@ -235,4 +296,4 @@ class NearSwapRepository(
 
 private val DEFAULT_SLIPPAGE = BigDecimal("1")
 
-private val DEFAULT_MODE = SwapMode.SWAP
+private val DEFAULT_MODE = SwapMode.EXACT_INPUT

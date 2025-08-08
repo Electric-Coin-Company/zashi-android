@@ -19,7 +19,7 @@ import cash.z.ecc.android.sdk.model.toZecString
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarViewModel
+import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarVM
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.model.WalletAccount
@@ -117,7 +117,7 @@ internal fun WrapSend(
 
     val sendAddressBookState by viewModel.sendAddressBookState.collectAsStateWithLifecycle()
 
-    val topAppBarViewModel = koinActivityViewModel<ZashiTopAppBarViewModel>()
+    val topAppBarViewModel = koinActivityViewModel<ZashiTopAppBarVM>()
 
     val zashiMainTopAppBarState by topAppBarViewModel.state.collectAsStateWithLifecycle()
 

@@ -2,10 +2,13 @@
 
 package co.electriccoin.zcash.ui.common.model.near
 
+import co.electriccoin.zcash.ui.common.serialization.NearSwapStatusSerializer
+import co.electriccoin.zcash.ui.common.serialization.NullableBigDecimalSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonIgnoreUnknownKeys
+import java.math.BigDecimal
 
 @JsonIgnoreUnknownKeys
 @Serializable
@@ -13,11 +16,12 @@ data class SwapStatusResponseDto(
     @SerialName("quoteResponse")
     val quoteResponse: QuoteResponseDto,
     @SerialName("status")
-    val status: String,
+    @Serializable(with = NearSwapStatusSerializer::class)
+    val status: SwapStatus?,
     @SerialName("updatedAt")
     val updatedAt: String,
     @SerialName("swapDetails")
-    val swapDetails: SwapDetails
+    val swapDetails: SwapDetails?
 )
 
 @JsonIgnoreUnknownKeys
@@ -37,27 +41,45 @@ data class SwapDetails(
     @SerialName("nearTxHashes")
     val nearTxHashes: List<String>,
     @SerialName("amountIn")
-    val amountIn: String,
+    @Serializable(NullableBigDecimalSerializer::class)
+    val amountIn: BigDecimal?,
     @SerialName("amountInFormatted")
-    val amountInFormatted: String,
+    @Serializable(NullableBigDecimalSerializer::class)
+    val amountInFormatted: BigDecimal?,
     @SerialName("amountInUsd")
-    val amountInUsd: String,
+    @Serializable(NullableBigDecimalSerializer::class)
+    val amountInUsd: BigDecimal?,
     @SerialName("amountOut")
-    val amountOut: String,
+    @Serializable(NullableBigDecimalSerializer::class)
+    val amountOut: BigDecimal?,
     @SerialName("amountOutFormatted")
-    val amountOutFormatted: String,
+    @Serializable(NullableBigDecimalSerializer::class)
+    val amountOutFormatted: BigDecimal?,
     @SerialName("amountOutUsd")
-    val amountOutUsd: String,
+    @Serializable(NullableBigDecimalSerializer::class)
+    val amountOutUsd: BigDecimal?,
     @SerialName("slippage")
-    val slippage: Int,
+    val slippage: Int?,
     @SerialName("originChainTxHashes")
     val originChainTxHashes: List<TransactionChainHash>,
     @SerialName("destinationChainTxHashes")
     val destinationChainTxHashes: List<TransactionChainHash>,
     @SerialName("refundedAmount")
-    val refundedAmount: String,
+    @Serializable(NullableBigDecimalSerializer::class)
+    val refundedAmount: BigDecimal?,
     @SerialName("refundedAmountFormatted")
-    val refundedAmountFormatted: String,
+    @Serializable(NullableBigDecimalSerializer::class)
+    val refundedAmountFormatted: BigDecimal?,
     @SerialName("refundedAmountUsd")
-    val refundedAmountUsd: String
+    val refundedAmountUsd: String?
 )
+
+enum class SwapStatus(val apiValue: String) {
+    KNOWN_DEPOSIT_TX("KNOWN_DEPOSIT_TX"),
+    PENDING_DEPOSIT("PENDING_DEPOSIT"),
+    INCOMPLETE_DEPOSIT("INCOMPLETE_DEPOSIT"),
+    PROCESSING("PROCESSING"),
+    SUCCESS("SUCCESS"),
+    REFUNDED("REFUNDED"),
+    FAILED("FAILED")
+}

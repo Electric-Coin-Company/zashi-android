@@ -38,13 +38,15 @@ interface ProposalDataSource {
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactInputProposal(
         account: WalletAccount,
-        send: ZecSend
+        send: ZecSend,
+        provider: String
     ): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactOutputProposal(
         account: WalletAccount,
-        send: ZecSend
+        send: ZecSend,
+        provider: String
     ): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
@@ -134,7 +136,8 @@ class ProposalDataSourceImpl(
 
     override suspend fun createExactInputProposal(
         account: WalletAccount,
-        send: ZecSend
+        send: ZecSend,
+        provider: String
     ): ExactInputSwapTransactionProposal =
         withContext(Dispatchers.IO) {
             getOrThrow {
@@ -147,13 +150,15 @@ class ProposalDataSourceImpl(
                             account = account.sdkAccount,
                             send = send
                         ),
+                    provider = provider
                 )
             }
         }
 
     override suspend fun createExactOutputProposal(
         account: WalletAccount,
-        send: ZecSend
+        send: ZecSend,
+        provider: String
     ): ExactOutputSwapTransactionProposal =
         withContext(Dispatchers.IO) {
             getOrThrow {
@@ -166,6 +171,7 @@ class ProposalDataSourceImpl(
                             account = account.sdkAccount,
                             send = send
                         ),
+                    provider = provider
                 )
             }
         }
@@ -313,7 +319,9 @@ sealed interface SendTransactionProposal : TransactionProposal {
     val memo: Memo
 }
 
-sealed interface SwapTransactionProposal : SendTransactionProposal
+sealed interface SwapTransactionProposal : SendTransactionProposal {
+    val provider: String
+}
 
 data class ShieldTransactionProposal(
     override val proposal: Proposal,
@@ -337,14 +345,16 @@ data class ExactInputSwapTransactionProposal(
     override val destination: WalletAddress,
     override val amount: Zatoshi,
     override val memo: Memo,
-    override val proposal: Proposal
+    override val proposal: Proposal,
+    override val provider: String
 ) : SwapTransactionProposal
 
 data class ExactOutputSwapTransactionProposal(
     override val destination: WalletAddress,
     override val amount: Zatoshi,
     override val memo: Memo,
-    override val proposal: Proposal
+    override val proposal: Proposal,
+    override val provider: String
 ) : SwapTransactionProposal
 
 private const val DEFAULT_SHIELDING_THRESHOLD = 100000L

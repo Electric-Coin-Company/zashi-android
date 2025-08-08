@@ -15,8 +15,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.SwapMode.PAY
-import co.electriccoin.zcash.ui.common.model.SwapMode.SWAP
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -42,8 +42,8 @@ fun SwapInfoInfoView(state: SwapInfoState) {
                 Text(
                     text =
                         when (it.mode) {
-                            SWAP -> "Swap with"
-                            PAY -> "Pay with"
+                            EXACT_INPUT -> "Swap with"
+                            EXACT_OUTPUT -> "Pay with"
                         },
                     style = ZashiTypography.textXl,
                     fontWeight = FontWeight.SemiBold,
@@ -59,10 +59,10 @@ fun SwapInfoInfoView(state: SwapInfoState) {
             Text(
                 text =
                     when (it.mode) {
-                        SWAP ->
+                        EXACT_INPUT ->
                             "Swap from shielded ZEC to any NEAR-supported coin or token.\n\nZashi is a ZEC-only " +
                                 "wallet, so you’ll need a valid wallet address for the asset you’re swapping to."
-                        PAY ->
+                        EXACT_OUTPUT ->
                             "Make cross-chain payments in any NEAR-supported coin or token.\n\nIf a payment should " +
                                 "result in smaller output amount than you set, you will be refunded. "
                     },
@@ -89,7 +89,7 @@ private fun SwapPreview() =
         SwapInfoInfoView(
             state =
                 SwapInfoState(
-                    mode = SWAP,
+                    mode = EXACT_INPUT,
                     onBack = {}
                 )
         )
@@ -102,7 +102,7 @@ private fun PayPreview() =
         SwapInfoInfoView(
             state =
                 SwapInfoState(
-                    mode = PAY,
+                    mode = EXACT_OUTPUT,
                     onBack = {}
                 )
         )

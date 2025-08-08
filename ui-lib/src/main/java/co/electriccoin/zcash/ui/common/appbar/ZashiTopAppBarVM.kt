@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class ZashiTopAppBarViewModel(
+class ZashiTopAppBarVM(
     getWalletAccountUseCase: GetWalletAccountsUseCase,
     getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,

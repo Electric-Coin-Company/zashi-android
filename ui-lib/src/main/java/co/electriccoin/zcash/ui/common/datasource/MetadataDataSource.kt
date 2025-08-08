@@ -5,9 +5,10 @@ import co.electriccoin.zcash.ui.common.model.AccountMetadata
 import co.electriccoin.zcash.ui.common.model.AnnotationMetadata
 import co.electriccoin.zcash.ui.common.model.BookmarkMetadata
 import co.electriccoin.zcash.ui.common.model.Metadata
+import co.electriccoin.zcash.ui.common.model.SwapMetadata
 import co.electriccoin.zcash.ui.common.provider.MetadataProvider
 import co.electriccoin.zcash.ui.common.provider.MetadataStorageProvider
-import co.electriccoin.zcash.ui.common.serialization.METADATA_SERIALIZATION_V1
+import co.electriccoin.zcash.ui.common.serialization.METADATA_SERIALIZATION_V2
 import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
@@ -36,6 +37,12 @@ interface MetadataDataSource {
 
     suspend fun markTxMemoAsRead(
         txId: String,
+        key: MetadataKey
+    ): Metadata
+
+    suspend fun markTxAsSwap(
+        txId: String,
+        provider: String,
         key: MetadataKey
     ): Metadata
 
@@ -118,6 +125,14 @@ class MetadataDataSourceImpl(
             )
         }
 
+    override suspend fun markTxAsSwap(txId: String, provider: String, key: MetadataKey): Metadata = mutex.withLock {
+        addSwapMetadata(
+            txId = txId,
+            provider = provider,
+            key = key
+        )
+    }
+
     override suspend fun save(
         metadata: Metadata,
         key: MetadataKey
@@ -141,7 +156,7 @@ class MetadataDataSourceImpl(
             if (new == null) {
                 new =
                     Metadata(
-                        version = METADATA_SERIALIZATION_V1,
+                        version = METADATA_SERIALIZATION_V2,
                         lastUpdated = Instant.now(),
                         accountMetadata = defaultAccountMetadata(),
                     )
@@ -207,6 +222,31 @@ class MetadataDataSourceImpl(
             }
         )
 
+    private suspend fun addSwapMetadata(
+        txId: String,
+        provider: String,
+        key: MetadataKey
+    ): Metadata =
+        updateMetadata(
+            key = key,
+            transform = { metadata ->
+                metadata.copy(
+                    swaps =
+                        metadata.swaps
+                            .replaceOrAdd(
+                                predicate = { it.txId == txId },
+                                transform = {
+                                    it?.copy(
+                                        txId = txId,
+                                        provider = provider
+                                    ) ?: defaultSwapMetadata(txId, provider)
+                                }
+                            )
+                )
+            }
+        )
+
+
     private suspend fun updateMetadata(
         key: MetadataKey,
         transform: (AccountMetadata) -> AccountMetadata
@@ -233,6 +273,7 @@ private fun defaultAccountMetadata() =
         bookmarked = emptyList(),
         read = emptyList(),
         annotations = emptyList(),
+        swaps = emptyList()
     )
 
 private fun defaultBookmarkMetadata(txId: String) =
@@ -247,6 +288,13 @@ private fun defaultAnnotationMetadata(txId: String) =
         txId = txId,
         lastUpdated = Instant.now(),
         content = null
+    )
+
+private fun defaultSwapMetadata(txId: String, provider: String) =
+    SwapMetadata(
+        txId = txId,
+        provider = provider,
+        lastUpdated = Instant.now(),
     )
 
 private fun <T : Any> List<T>.replaceOrAdd(

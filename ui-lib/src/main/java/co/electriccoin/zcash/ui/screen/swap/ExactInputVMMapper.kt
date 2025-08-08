@@ -98,7 +98,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
             changeModeButton =
                 IconButtonState(
                     icon = R.drawable.ic_swap_change_mode,
-                    onClick = { onSwapModeChange(SwapMode.PAY) },
+                    onClick = { onSwapModeChange(SwapMode.EXACT_OUTPUT) },
                 ),
             appBarState =
                 SwapAppBarState(

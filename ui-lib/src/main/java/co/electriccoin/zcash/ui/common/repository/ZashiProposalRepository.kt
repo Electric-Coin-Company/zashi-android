@@ -37,10 +37,16 @@ interface ZashiProposalRepository {
     suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
-    suspend fun createExactInputSwapProposal(zecSend: ZecSend): ExactInputSwapTransactionProposal
+    suspend fun createExactInputSwapProposal(
+        zecSend: ZecSend,
+        provider: String
+    ): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
-    suspend fun createExactOutputSwapProposal(zecSend: ZecSend): ExactOutputSwapTransactionProposal
+    suspend fun createExactOutputSwapProposal(
+        zecSend: ZecSend,
+        provider: String
+    ): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createShieldProposal()
@@ -59,6 +65,7 @@ class ZashiProposalRepositoryImpl(
     private val proposalDataSource: ProposalDataSource,
     private val zashiSpendingKeyDataSource: ZashiSpendingKeyDataSource,
     private val swapDataSource: SwapDataSource,
+    private val metadataRepository: MetadataRepository
 ) : ZashiProposalRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -83,19 +90,27 @@ class ZashiProposalRepositoryImpl(
             )
         }
 
-    override suspend fun createExactInputSwapProposal(zecSend: ZecSend): ExactInputSwapTransactionProposal =
+    override suspend fun createExactInputSwapProposal(
+        zecSend: ZecSend,
+        provider: String
+    ): ExactInputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactInputProposal(
                 account = accountDataSource.getSelectedAccount(),
-                send = zecSend
+                send = zecSend,
+                provider = provider
             )
         }
 
-    override suspend fun createExactOutputSwapProposal(zecSend: ZecSend): ExactOutputSwapTransactionProposal =
+    override suspend fun createExactOutputSwapProposal(
+        zecSend: ZecSend,
+        provider: String
+    ): ExactOutputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactOutputProposal(
                 account = accountDataSource.getSelectedAccount(),
-                send = zecSend
+                send = zecSend,
+                provider
             )
         }
 
@@ -148,6 +163,7 @@ class ZashiProposalRepositoryImpl(
 
                     if (!txId.isNullOrEmpty()) {
                         submitDepositTransaction(txId, transactionProposal)
+                        metadataRepository.markTxAsSwap(txId, "near")
                     }
                 }
             }

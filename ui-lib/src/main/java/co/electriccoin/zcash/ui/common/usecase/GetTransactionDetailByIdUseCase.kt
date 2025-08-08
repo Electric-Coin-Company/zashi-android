@@ -6,32 +6,48 @@ import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
+import co.electriccoin.zcash.ui.common.repository.SwapQuoteStatusData
+import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
+import co.electriccoin.zcash.ui.design.util.combine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class GetTransactionDetailByIdUseCase(
     private val transactionRepository: TransactionRepository,
     private val addressBookRepository: AddressBookRepository,
     private val metadataRepository: MetadataRepository,
     private val synchronizerProvider: SynchronizerProvider,
+    private val swapRepository: SwapRepository,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun observe(txId: String) =
         channelFlow {
+            val requestSwipeReloadPipeline = MutableSharedFlow<Unit>()
+
+            val swapHandle = object : SwapHandle {
+                override fun requestReload() {
+                    launch {
+                        requestSwipeReloadPipeline.emit(Unit)
+                    }
+                }
+            }
+
             val transactionFlow =
                 transactionRepository
                     .observeTransaction(txId)
@@ -59,19 +75,37 @@ class GetTransactionDetailByIdUseCase(
                     .flatMapLatest { addressBookRepository.observeContactByAddress(it?.address.orEmpty()) }
                     .distinctUntilChanged()
 
+            val swapFlow = requestSwipeReloadPipeline
+                .onStart { emit(Unit) }
+                .flatMapLatest {
+                    metadataFlow
+                        .flatMapLatest { metadata ->
+                            if (metadata.swapProvider == null) {
+                                flowOf(null)
+                            } else {
+                                addressFlow
+                                    .filterNotNull()
+                                    .flatMapLatest { swapRepository.observeSwapStatus(it.address) }
+                            }
+                        }
+                }
+
             combine(
                 transactionFlow,
                 addressFlow,
                 memosFlow,
                 metadataFlow,
-                contactFlow
-            ) { transaction, address, memos, metadata, contact ->
+                contactFlow,
+                swapFlow
+            ) { transaction, address, memos, metadata, contact, swap ->
                 DetailedTransactionData(
                     transaction = transaction,
                     memos = memos,
                     contact = contact,
                     recipientAddress = address,
-                    metadata = metadata
+                    metadata = metadata,
+                    swap = swap,
+                    swapHandle = swapHandle
                 )
             }.collect {
                 send(it)
@@ -100,5 +134,11 @@ data class DetailedTransactionData(
     val memos: List<String>?,
     val contact: EnhancedABContact?,
     val recipientAddress: WalletAddress?,
-    val metadata: TransactionMetadata
+    val metadata: TransactionMetadata,
+    val swap: SwapQuoteStatusData?,
+    val swapHandle: SwapHandle
 )
+
+interface SwapHandle {
+    fun requestReload()
+}

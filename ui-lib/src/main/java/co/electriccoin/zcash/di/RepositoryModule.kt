@@ -14,7 +14,7 @@ import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepositoryImpl
-import co.electriccoin.zcash.ui.common.repository.NearSwapRepository
+import co.electriccoin.zcash.ui.common.repository.SwapRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.ShieldFundsRepository
 import co.electriccoin.zcash.ui.common.repository.ShieldFundsRepositoryImpl
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
@@ -47,5 +47,5 @@ val repositoryModule =
         singleOf(::HomeMessageCacheRepositoryImpl) bind HomeMessageCacheRepository::class
         singleOf(::WalletSnapshotRepositoryImpl) bind WalletSnapshotRepository::class
         singleOf(::ApplicationStateRepositoryImpl) bind ApplicationStateRepository::class
-        singleOf(::NearSwapRepository) bind SwapRepository::class
+        singleOf(::SwapRepositoryImpl) bind SwapRepository::class
     }

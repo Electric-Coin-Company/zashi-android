@@ -27,12 +27,16 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.Spacer
+import co.electriccoin.zcash.ui.design.component.SwapQuoteHeaderState
+import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
 import co.electriccoin.zcash.ui.design.component.ZashiAutoSizeText
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiInfoText
 import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
+import co.electriccoin.zcash.ui.design.component.ZashiSwapQuoteAmount
+import co.electriccoin.zcash.ui.design.component.ZashiSwapQuoteHeader
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -60,6 +64,7 @@ internal fun SwapQuoteView(state: SwapQuoteState?) {
                             .weight(1f, false),
                     state = innerState
                 )
+
             is SwapQuoteState.Error ->
                 Error(
                     modifier =
@@ -141,29 +146,14 @@ private fun Success(
             textAlign = TextAlign.Center
         )
         Spacer(24.dp)
-        Box {
-            Row {
-                SwapQuoteAmount(modifier = Modifier.weight(1f), state = state.from)
-                Spacer(8.dp)
-                SwapQuoteAmount(modifier = Modifier.weight(1f), state = state.to)
-            }
-            Surface(
-                modifier = Modifier.align(Alignment.Center),
-                shape = CircleShape,
-                color = ZashiColors.Surfaces.bgPrimary,
-                shadowElevation = 2.dp
-            ) {
-                Box(
-                    Modifier.padding(8.dp)
-                ) {
-                    Image(
-                        modifier = Modifier.rotate(if (state.rotateIcon) 180f else 0f),
-                        painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_arrow_right),
-                        contentDescription = null
-                    )
-                }
-            }
-        }
+        ZashiSwapQuoteHeader(
+            state =
+                SwapQuoteHeaderState(
+                    rotateIcon = state.rotateIcon,
+                    from = state.from,
+                    to = state.to
+                )
+        )
         Spacer(32.dp)
         state.items.forEachIndexed { index, item ->
             if (index != 0) {

@@ -21,9 +21,10 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactiondetail.SendShieldStateFixture
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailHeader
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumn
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumnState
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoHeader
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailTitleHeader
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoHeaderState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRow
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRowState
@@ -38,41 +39,29 @@ fun SendShielded(
     Column(
         modifier = modifier
     ) {
-        TransactionDetailInfoHeader(
-            state =
-                TransactionDetailInfoHeaderState(
-                    title = stringRes(R.string.transaction_detail_info_transaction_details)
-                )
-        )
-
-        Spacer(Modifier.height(8.dp))
-
         var isExpanded by rememberSaveable { mutableStateOf(false) }
+
+        TransactionDetailHeader(
+            title = stringRes(R.string.transaction_detail_info_transaction_details),
+            isExpanded = isExpanded,
+            onButtonClick = { isExpanded = !isExpanded }
+        )
+        Spacer(Modifier.height(8.dp))
 
         TransactionDetailInfoRow(
             modifier = Modifier.fillMaxWidth(),
             state =
                 TransactionDetailInfoRowState(
                     title = stringRes(R.string.transaction_detail_info_sent_to),
-                    message =
-                        when {
-                            state.contact != null -> state.contact
-                            !isExpanded -> state.addressAbbreviated
-                            else -> null
-                        },
-                    trailingIcon =
-                        if (isExpanded) {
-                            co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_up_small
-                        } else {
-                            co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_down_small
-                        },
+                    message = state.contact ?: state.address,
+                    trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                     shape =
                         when {
                             state.note != null -> TransactionDetailInfoShape.FIRST
                             isExpanded -> TransactionDetailInfoShape.FIRST
                             else -> TransactionDetailInfoShape.SINGLE
                         },
-                    onClick = { isExpanded = !isExpanded }
+                    onClick = state.onTransactionAddressClick
                 ),
         )
         AnimatedVisibility(
@@ -81,21 +70,6 @@ fun SendShielded(
             exit = shrinkVertically()
         ) {
             Column {
-                TransactionDetailInfoColumn(
-                    modifier = Modifier.fillMaxWidth(),
-                    state =
-                        TransactionDetailInfoColumnState(
-                            title =
-                                if (state.contact == null) {
-                                    null
-                                } else {
-                                    stringRes(R.string.transaction_detail_info_address)
-                                },
-                            message = state.address,
-                            shape = TransactionDetailInfoShape.MIDDLE,
-                            onClick = state.onTransactionAddressClick,
-                        )
-                )
                 ZashiHorizontalDivider()
                 TransactionDetailInfoRow(
                     modifier = Modifier.fillMaxWidth(),
@@ -155,7 +129,7 @@ fun SendShielded(
         }
         Spacer(Modifier.height(20.dp))
         state.memo?.let {
-            TransactionDetailInfoHeader(
+            TransactionDetailTitleHeader(
                 state =
                     TransactionDetailInfoHeaderState(
                         title = stringRes(R.string.transaction_detail_info_message)

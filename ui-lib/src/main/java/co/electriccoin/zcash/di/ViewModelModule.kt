@@ -1,6 +1,6 @@
 package co.electriccoin.zcash.di
 
-import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarViewModel
+import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarVM
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.OldHomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -56,7 +56,7 @@ import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageVM
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExportViewModel
 import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInVM
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsVM
-import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailViewModel
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailVM
 import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersViewModel
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryViewModel
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetViewModel
@@ -94,14 +94,14 @@ val viewModelModule =
         viewModelOf(::FeedbackViewModel)
         viewModelOf(::SignKeystoneTransactionViewModel)
         viewModelOf(::AccountListViewModel)
-        viewModelOf(::ZashiTopAppBarViewModel)
+        viewModelOf(::ZashiTopAppBarVM)
         viewModelOf(::SelectKeystoneAccountViewModel)
         viewModelOf(::ReviewTransactionViewModel)
         viewModelOf(::TransactionFiltersViewModel)
         viewModelOf(::TransactionProgressVM)
         viewModelOf(::TransactionHistoryWidgetViewModel)
         viewModelOf(::TransactionHistoryViewModel)
-        viewModelOf(::TransactionDetailViewModel)
+        viewModelOf(::TransactionDetailVM)
         viewModelOf(::AddressBookVM)
         viewModelOf(::SelectRecipientVM)
         viewModelOf(::TransactionNoteViewModel)

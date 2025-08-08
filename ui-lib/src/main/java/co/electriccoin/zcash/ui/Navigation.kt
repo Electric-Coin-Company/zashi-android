@@ -151,8 +151,8 @@ import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInArgs
 import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInScreen
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsArgs
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsScreen
-import co.electriccoin.zcash.ui.screen.transactiondetail.AndroidTransactionDetail
-import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailArgs
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailScreen
 import co.electriccoin.zcash.ui.screen.transactionfilters.AndroidTransactionFiltersList
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFilters
 import co.electriccoin.zcash.ui.screen.transactionhistory.AndroidTransactionHistory
@@ -334,7 +334,7 @@ internal fun MainActivity.Navigation() {
         composable<TransactionProgressArgs> { TransactionProgressScreen(it.toRoute()) }
         composable<TransactionHistory> { AndroidTransactionHistory() }
         dialogComposable<TransactionFilters> { AndroidTransactionFiltersList() }
-        composable<TransactionDetail> { AndroidTransactionDetail(it.toRoute()) }
+        composable<TransactionDetailArgs> { TransactionDetailScreen(it.toRoute()) }
         dialogComposable<TransactionNote> { AndroidTransactionNote(it.toRoute()) }
         composable<TaxExport> { AndroidTaxExport() }
         composable<ReceiveArgs> { ReceiveScreen() }
@@ -365,7 +365,6 @@ internal fun MainActivity.Navigation() {
         composable<UpdateGenericABContactArgs> { UpdateGenericABContactScreen(it.toRoute()) }
         composable<TorSettingsArgs> { TorSettingsScreen() }
         composable<TorOptInArgs> { TorOptInScreen() }
-        dialogComposable<ExchangeRateTorSettingsArgs> { ExchangeRateTorSettingsScreen() }
         dialogComposable<ShieldedAddressInfoArgs> { ShieldedAddressInfoScreen() }
         dialogComposable<TransparentAddressInfoArgs> { TransparentAddressInfoScreen() }
         composable<ExchangeRateOptInArgs> { ExchangeRateOptInScreen() }

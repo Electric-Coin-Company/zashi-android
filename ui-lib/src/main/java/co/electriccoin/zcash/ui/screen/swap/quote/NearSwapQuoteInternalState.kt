@@ -4,16 +4,16 @@ import cash.z.ecc.android.sdk.ext.convertZatoshiToZec
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
-import co.electriccoin.zcash.ui.common.model.NearSwapAsset
 import co.electriccoin.zcash.ui.common.model.NearSwapQuote
+import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import java.math.BigDecimal
 import java.math.MathContext
 
 internal data class NearSwapQuoteInternalState(
     override val mode: SwapMode,
-    override val originAsset: NearSwapAsset,
-    override val destinationAsset: NearSwapAsset,
+    override val originAsset: SwapAsset,
+    override val destinationAsset: SwapAsset,
     override val slippage: BigDecimal,
     override val proposal: SendTransactionProposal,
     val quote: NearSwapQuote,
@@ -32,11 +32,11 @@ internal data class NearSwapQuoteInternalState(
 
     override val amountInZatoshi: Zatoshi = Zatoshi(data.amountIn.toLong())
     override val amountInZec: BigDecimal = data.amountInFormatted
-    override val amountInDecimals: Int = originAsset.token.decimals
+    override val amountInDecimals: Int = originAsset.decimals
     override val amountInUsd: BigDecimal = data.amountInUsd
 
     override val amountOutFormatted: BigDecimal = data.amountOutFormatted
-    override val amountOutDecimals: Int = destinationAsset.token.decimals
+    override val amountOutDecimals: Int = destinationAsset.decimals
     override val amountOutUsd: BigDecimal = data.amountOutUsd
 
     override val recipient: String = quote.response.quoteRequest.recipient

@@ -43,8 +43,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
-import co.electriccoin.zcash.ui.common.model.SwapMode.PAY
-import co.electriccoin.zcash.ui.common.model.SwapMode.SWAP
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -109,11 +109,11 @@ internal fun SwapView(
             )
 
             when (state.mode) {
-                SWAP -> {
+                EXACT_INPUT -> {
                     Spacer(16.dp)
                 }
 
-                PAY -> {
+                EXACT_OUTPUT -> {
                     Spacer(10.dp)
                     AddressTextField(state = state)
                     Spacer(16.dp)
@@ -125,13 +125,13 @@ internal fun SwapView(
             SwapAmountText(state = state.amountText)
 
             when (state.mode) {
-                SWAP -> {
+                EXACT_INPUT -> {
                     Spacer(10.dp)
                     AddressTextField(state = state)
                     Spacer(22.dp)
                 }
 
-                PAY -> {
+                EXACT_OUTPUT -> {
                     Spacer(22.dp)
                 }
             }
@@ -415,7 +415,7 @@ private fun Preview() {
                             stringRes("Get a quote")
                         ),
                     onBack = {},
-                    mode = PAY,
+                    mode = EXACT_OUTPUT,
                     swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     infoItems =
                         listOf(
@@ -498,7 +498,7 @@ private fun UnexpectedErrorPreview() {
                             subtitle = null
                         ),
                     onBack = {},
-                    mode = PAY,
+                    mode = EXACT_OUTPUT,
                     swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     infoItems =
                         listOf(
@@ -590,7 +590,7 @@ private fun ServiceUnavailableErrorPreview() {
                             subtitle = null
                         ),
                     onBack = {},
-                    mode = PAY,
+                    mode = EXACT_OUTPUT,
                     swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     infoItems =
                         listOf(
