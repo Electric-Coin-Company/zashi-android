@@ -5,14 +5,14 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.usecase.CreateProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectRecipientUseCase
+import co.electriccoin.zcash.ui.common.usecase.ObserveABContactPickedUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
-import co.electriccoin.zcash.ui.common.usecase.ObserveContactPickedUseCase
-import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
-import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
 import co.electriccoin.zcash.ui.screen.send.model.AmountField
 import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
@@ -20,7 +20,6 @@ import co.electriccoin.zcash.ui.screen.send.model.SendAddressBookState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -35,14 +34,13 @@ import kotlin.time.Duration.Companion.seconds
 class SendViewModel(
     exchangeRateRepository: ExchangeRateRepository,
     private val observeContactByAddress: ObserveContactByAddressUseCase,
-    private val observeContactPicked: ObserveContactPickedUseCase,
+    private val observeContactPicked: ObserveABContactPickedUseCase,
     private val createProposal: CreateProposalUseCase,
     private val observeWalletAccounts: GetWalletAccountsUseCase,
-    private val navigateToAddressBook: NavigateToAddressBookUseCase,
+    private val navigateToSelectRecipient: NavigateToSelectRecipientUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     val recipientAddressState = MutableStateFlow(RecipientAddressState.new("", null))
-
-    val navigateCommand = MutableSharedFlow<String>()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val sendAddressBookState =
@@ -114,20 +112,11 @@ class SendViewModel(
         exchangeRateRepository.refreshExchangeRateUsd()
     }
 
-    private fun onAddressBookButtonClicked(
-        mode: SendAddressBookState.Mode,
-        recipient: RecipientAddressState
-    ) {
+    private fun onAddressBookButtonClicked(mode: SendAddressBookState.Mode, recipient: RecipientAddressState) {
         when (mode) {
-            SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK ->
-                viewModelScope.launch {
-                    navigateToAddressBook(AddressBookArgs.PICK_CONTACT)
-                }
-
+            SendAddressBookState.Mode.PICK_FROM_ADDRESS_BOOK -> viewModelScope.launch { navigateToSelectRecipient() }
             SendAddressBookState.Mode.ADD_TO_ADDRESS_BOOK ->
-                viewModelScope.launch {
-                    navigateCommand.emit(AddContactArgs(recipient.address))
-                }
+                navigationRouter.forward(AddZashiABContactArgs(recipient.address))
         }
     }
 

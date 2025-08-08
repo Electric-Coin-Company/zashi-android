@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,16 +19,17 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 fun ZashiCard(
     modifier: Modifier = Modifier,
     borderColor: Color = Color.Unspecified,
+    colors: CardColors =
+        CardDefaults.cardColors(
+            containerColor = ZashiColors.Surfaces.bgSecondary,
+            contentColor = ZashiColors.Text.textTertiary
+        ),
     contentPadding: PaddingValues = PaddingValues(24.dp),
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Card(
         modifier = modifier,
-        colors =
-            CardDefaults.cardColors(
-                containerColor = ZashiColors.Surfaces.bgSecondary,
-                contentColor = ZashiColors.Text.textTertiary
-            ),
+        colors = colors,
         border =
             if (borderColor.isSpecified) {
                 BorderStroke(1.dp, borderColor)

@@ -98,7 +98,7 @@ private fun BottomSheetContent(state: TransactionNoteState) {
                 ZashiButton(
                     state = it,
                     modifier = Modifier.weight(1f),
-                    colors = ZashiButtonDefaults.destructive1Colors()
+                    defaultPrimaryColors = ZashiButtonDefaults.destructive1Colors()
                 )
             }
 
@@ -106,7 +106,7 @@ private fun BottomSheetContent(state: TransactionNoteState) {
                 ZashiButton(
                     state = it,
                     modifier = Modifier.weight(1f),
-                    colors = ZashiButtonDefaults.tertiaryColors()
+                    defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
                 )
             }
 
@@ -114,7 +114,7 @@ private fun BottomSheetContent(state: TransactionNoteState) {
                 ZashiButton(
                     state = it,
                     modifier = Modifier.weight(1f),
-                    colors = ZashiButtonDefaults.primaryColors()
+                    defaultPrimaryColors = ZashiButtonDefaults.primaryColors()
                 )
             }
         }

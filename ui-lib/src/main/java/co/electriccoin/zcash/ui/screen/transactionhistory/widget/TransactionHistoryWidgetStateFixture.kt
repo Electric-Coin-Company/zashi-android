@@ -14,7 +14,7 @@ object TransactionHistoryWidgetStateFixture {
                     button =
                         ButtonState(
                             text = stringRes("See All"),
-                            trailingIcon = R.drawable.ic_chevron_right_small,
+                            trailingIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_right_small,
                             onClick = {}
                         )
                 ),

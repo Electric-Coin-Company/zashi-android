@@ -4,9 +4,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.ScanScreenState
 import co.electriccoin.zcash.ui.screen.scan.ScanValidationState
+import co.electriccoin.zcash.ui.screen.scan.ScanView
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
@@ -29,7 +29,7 @@ class ScanViewBasicTestSetup(
     @Composable
     @Suppress("TestFunctionName")
     fun DefaultContent() {
-        Scan(
+        ScanView(
             snackbarHostState = SnackbarHostState(),
             onBack = {
                 onBackCount.incrementAndGet()

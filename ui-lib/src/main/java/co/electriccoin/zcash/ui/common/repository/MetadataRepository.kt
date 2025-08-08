@@ -36,6 +36,8 @@ interface MetadataRepository {
 
     suspend fun markTxMemoAsRead(txId: String)
 
+    suspend fun markTxAsSwap(txId: String, provider: String)
+
     fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata>
 }
 
@@ -90,6 +92,13 @@ class MetadataRepositoryImpl(
                                             is Command.MarkTxMemoAsRead ->
                                                 metadataDataSource.markTxMemoAsRead(
                                                     txId = command.txId,
+                                                    key = metadataKey,
+                                                )
+
+                                            is Command.MarkTxAsSwap ->
+                                                metadataDataSource.markTxAsSwap(
+                                                    txId = command.txId,
+                                                    provider = command.provider,
                                                     key = metadataKey,
                                                 )
                                         }
@@ -157,6 +166,18 @@ class MetadataRepositoryImpl(
         }
     }
 
+    override suspend fun markTxAsSwap(txId: String, provider: String) {
+        scope.launch {
+            command.send(
+                Command.MarkTxAsSwap(
+                    txId = txId,
+                    provider = provider,
+                    account = accountDataSource.getSelectedAccount()
+                )
+            )
+        }
+    }
+
     override fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata> =
         metadata
             .map { metadata ->
@@ -166,6 +187,7 @@ class MetadataRepositoryImpl(
                     isBookmarked = accountMetadata?.bookmarked?.find { it.txId == txId }?.isBookmarked == true,
                     isRead = accountMetadata?.read?.any { it == txId } == true,
                     note = accountMetadata?.annotations?.find { it.txId == txId }?.content,
+                    swapProvider = accountMetadata?.swaps?.find { it.txId == txId }?.provider
                 )
             }.distinctUntilChanged()
 
@@ -193,7 +215,8 @@ class MetadataRepositoryImpl(
 data class TransactionMetadata(
     val isBookmarked: Boolean,
     val isRead: Boolean,
-    val note: String?
+    val note: String?,
+    val swapProvider: String?,
 )
 
 private sealed interface Command {
@@ -217,6 +240,12 @@ private sealed interface Command {
 
     data class MarkTxMemoAsRead(
         val txId: String,
+        override val account: WalletAccount
+    ) : Command
+
+    data class MarkTxAsSwap(
+        val txId: String,
+        val provider: String,
         override val account: WalletAccount
     ) : Command
 }

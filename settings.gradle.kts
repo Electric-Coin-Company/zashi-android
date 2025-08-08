@@ -205,6 +205,7 @@ dependencyResolutionManagement {
             val flexaVersion = extra["FLEXA_VERSION"].toString()
             val keystoneVersion = extra["KEYSTONE_VERSION"].toString()
             val shimmerVersion = extra["SHIMMER_VERSION"].toString()
+            val ktorVersion = extra["KTOR_VERSION"].toString()
 
             // Standalone versions
             version("flank", flankVersion)
@@ -273,6 +274,11 @@ dependencyResolutionManagement {
             library("flexa-spend", "co.flexa:spend:$flexaVersion")
             library("keystone", "com.github.KeystoneHQ:keystone-sdk-android:$keystoneVersion")
             library("compose-shimmer", "com.valentinilk.shimmer:compose-shimmer:$shimmerVersion")
+            library("ktor-core", "io.ktor:ktor-client-core:$ktorVersion")
+            library("ktor-okhttp", "io.ktor:ktor-client-okhttp:$ktorVersion")
+            library("ktor-negotiation", "io.ktor:ktor-client-content-negotiation:$ktorVersion")
+            library("ktor-json", "io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+            library("ktor-logging", "io.ktor:ktor-client-logging:$ktorVersion")
 
             // Test libraries
             library("androidx-compose-test-junit", "androidx.compose.ui:ui-test-junit4:$androidxComposeVersion")

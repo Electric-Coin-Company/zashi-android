@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
@@ -77,7 +78,7 @@ private fun Content(state: ShieldFundsInfoState) {
         Text(
             stringRes(
                 R.string.home_info_transparent_message,
-                stringRes(Zatoshi.typicalFee)
+                stringRes(Zatoshi.typicalFee, HIDDEN)
             ).getValue(),
             color = ZashiColors.Text.textTertiary,
             style = ZashiTypography.textMd
@@ -112,7 +113,7 @@ private fun Content(state: ShieldFundsInfoState) {
                 text =
                     stringResource(
                         R.string.home_message_transparent_balance_subtitle,
-                        stringRes(state.transparentAmount).getValue()
+                        stringRes(state.transparentAmount, HIDDEN).getValue()
                     ),
                 color = ZashiColors.Text.textPrimary,
                 style = ZashiTypography.textXl,
@@ -125,7 +126,7 @@ private fun Content(state: ShieldFundsInfoState) {
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
             state = state.secondaryButton,
-            colors = ZashiButtonDefaults.secondaryColors()
+            defaultPrimaryColors = ZashiButtonDefaults.secondaryColors()
         )
         Spacer(4.dp)
         ZashiButton(
@@ -157,7 +158,7 @@ private fun Preview() =
                     transparentAmount = Zatoshi(0),
                     checkbox =
                         CheckboxState(
-                            text = stringRes(R.string.home_info_transparent_checkbox),
+                            title = stringRes(R.string.home_info_transparent_checkbox),
                             onClick = {},
                             isChecked = false
                         )

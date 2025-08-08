@@ -37,6 +37,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.state.SignKeystoneTransactionState
@@ -101,7 +102,8 @@ private fun ZashiAccountInfoListItem(
         leading = {
             ZashiListItemDefaults.LeadingItem(
                 modifier = it,
-                icon = state.icon,
+                icon = imageRes(state.icon),
+                badge = null,
                 contentDescription = state.title.getValue()
             )
         },
@@ -158,13 +160,13 @@ private fun BottomSection(
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 state = state.shareButton,
-                colors = ZashiButtonDefaults.secondaryColors()
+                defaultPrimaryColors = ZashiButtonDefaults.secondaryColors()
             )
         }
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
             state = state.negativeButton,
-            colors = ZashiButtonDefaults.destructive1Colors()
+            defaultPrimaryColors = ZashiButtonDefaults.destructive1Colors()
         )
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),

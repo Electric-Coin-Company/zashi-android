@@ -102,7 +102,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 @Suppress("LongParameterList", "UnusedMaterial3ScaffoldPaddingParameter", "LongMethod")
-fun Scan(
+fun ScanView(
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
     onScan: (String) -> Unit,
@@ -728,7 +728,7 @@ private fun ScanPreview() =
             color = Color.Blue,
             shape = RectangleShape,
         ) {
-            Scan(
+            ScanView(
                 snackbarHostState = SnackbarHostState(),
                 onBack = {},
                 onScan = {},

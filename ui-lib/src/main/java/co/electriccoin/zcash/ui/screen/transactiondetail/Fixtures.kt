@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.transactiondetail
 
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.design.util.stringResByDateTime
@@ -19,12 +20,11 @@ object SendShieldStateFixture {
     fun new(contact: StringResource? = stringRes("Contact")) =
         SendShieldedState(
             contact = contact,
-            address = stringResByAddress(value = "Address", abbreviated = false),
-            addressAbbreviated = stringResByAddress(value = "Address", abbreviated = true),
+            address = stringResByAddress(value = "Address", abbreviated = true),
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
             onTransactionAddressClick = {},
-            fee = stringRes(Zatoshi(1011)),
+            fee = stringRes(Zatoshi(1011), HIDDEN),
             completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
             memo =
                 TransactionDetailMemosState(
@@ -48,7 +48,7 @@ object SendTransparentStateFixture {
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
             onTransactionAddressClick = {},
-            fee = stringRes(Zatoshi(1011)),
+            fee = stringRes(Zatoshi(1011), HIDDEN),
             completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
             note = stringRes("None"),
             isPending = false
@@ -94,7 +94,7 @@ object ShieldingStateFixture {
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
             completedTimestamp = stringResByDateTime(ZonedDateTime.now(), true),
-            fee = stringRes(Zatoshi(1011)),
+            fee = stringRes(Zatoshi(1011), HIDDEN),
             note = stringRes("None"),
             isPending = false
         )

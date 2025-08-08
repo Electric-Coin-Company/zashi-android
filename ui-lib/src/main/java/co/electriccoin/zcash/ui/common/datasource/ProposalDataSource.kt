@@ -36,6 +36,20 @@ interface ProposalDataSource {
     ): Zip321TransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
+    suspend fun createExactInputProposal(
+        account: WalletAccount,
+        send: ZecSend,
+        provider: String
+    ): ExactInputSwapTransactionProposal
+
+    @Throws(TransactionProposalNotCreatedException::class)
+    suspend fun createExactOutputProposal(
+        account: WalletAccount,
+        send: ZecSend,
+        provider: String
+    ): ExactOutputSwapTransactionProposal
+
+    @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createShieldProposal(account: WalletAccount): ShieldTransactionProposal
 
     @Throws(PcztException.CreatePcztFromProposalException::class)
@@ -116,6 +130,48 @@ class ProposalDataSourceImpl(
                     amount = payment.nonNegativeAmount.value.convertZecToZatoshi(),
                     memo = Memo(payment.memo?.data?.decodeToString() ?: ""),
                     proposal = synchronizer.proposeFulfillingPaymentUri(account = account.sdkAccount, uri = zip321Uri),
+                )
+            }
+        }
+
+    override suspend fun createExactInputProposal(
+        account: WalletAccount,
+        send: ZecSend,
+        provider: String
+    ): ExactInputSwapTransactionProposal =
+        withContext(Dispatchers.IO) {
+            getOrThrow {
+                ExactInputSwapTransactionProposal(
+                    destination = send.destination,
+                    amount = send.amount,
+                    memo = send.memo,
+                    proposal =
+                        synchronizerProvider.getSynchronizer().proposeSend(
+                            account = account.sdkAccount,
+                            send = send
+                        ),
+                    provider = provider
+                )
+            }
+        }
+
+    override suspend fun createExactOutputProposal(
+        account: WalletAccount,
+        send: ZecSend,
+        provider: String
+    ): ExactOutputSwapTransactionProposal =
+        withContext(Dispatchers.IO) {
+            getOrThrow {
+                ExactOutputSwapTransactionProposal(
+                    destination = send.destination,
+                    amount = send.amount,
+                    memo = send.memo,
+                    proposal =
+                        synchronizerProvider.getSynchronizer().proposeSend(
+                            account = account.sdkAccount,
+                            send = send
+                        ),
+                    provider = provider
                 )
             }
         }
@@ -263,6 +319,10 @@ sealed interface SendTransactionProposal : TransactionProposal {
     val memo: Memo
 }
 
+sealed interface SwapTransactionProposal : SendTransactionProposal {
+    val provider: String
+}
+
 data class ShieldTransactionProposal(
     override val proposal: Proposal,
 ) : TransactionProposal
@@ -280,5 +340,21 @@ data class Zip321TransactionProposal(
     override val memo: Memo,
     override val proposal: Proposal
 ) : SendTransactionProposal
+
+data class ExactInputSwapTransactionProposal(
+    override val destination: WalletAddress,
+    override val amount: Zatoshi,
+    override val memo: Memo,
+    override val proposal: Proposal,
+    override val provider: String
+) : SwapTransactionProposal
+
+data class ExactOutputSwapTransactionProposal(
+    override val destination: WalletAddress,
+    override val amount: Zatoshi,
+    override val memo: Memo,
+    override val proposal: Proposal,
+    override val provider: String
+) : SwapTransactionProposal
 
 private const val DEFAULT_SHIELDING_THRESHOLD = 100000L

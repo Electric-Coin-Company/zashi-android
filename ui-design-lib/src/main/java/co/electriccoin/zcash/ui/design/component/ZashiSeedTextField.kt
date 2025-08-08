@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.interaction.FocusInteraction
@@ -46,20 +48,21 @@ fun ZashiSeedTextField(
     state: SeedTextFieldState,
     modifier: Modifier = Modifier,
     wordModifier: (index: Int) -> Modifier = { Modifier },
-    handle: SeedTextFieldHandle = rememberSeedTextFieldHandle(),
+    handle: SeedTextFieldHandle = rememberSeedTextFieldHandle(state),
 ) {
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(state.values.map { it.value }) {
-        val newValues = state.values.map { it.value }
+    val values = remember(state.values) { state.values.map { it.innerState.value } }
+
+    LaunchedEffect(values) {
         handle.internalState =
             handle.internalState.copy(
-                texts = newValues,
+                texts = values,
                 selectedText =
                     if (handle.internalState.selectedIndex <= -1) {
                         null
                     } else {
-                        newValues[handle.internalState.selectedIndex]
+                        values[handle.internalState.selectedIndex]
                     }
             )
     }
@@ -90,11 +93,7 @@ fun ZashiSeedTextField(
         state.values.forEachIndexed { index, wordState ->
             val focusRequester = remember { handle.focusRequesters[index] }
             val interaction = remember { handle.interactions[index] }
-            val textFieldHandle = remember { handle.textFieldHandles[index] }
-            val previousHandle =
-                remember {
-                    if (index > 0) handle.textFieldHandles[index - 1] else null
-                }
+            val previousIndex = if (index > 0) index - 1 else null
             ZashiSeedWordTextField(
                 modifier =
                     Modifier
@@ -107,8 +106,8 @@ fun ZashiSeedTextField(
                                     true
                                 }
 
-                                event.key == Key.Backspace && wordState.value.isEmpty() -> {
-                                    previousHandle?.moveCursorToEnd()
+                                event.key == Key.Backspace && wordState.innerState.value.isEmpty() -> {
+                                    previousIndex?.let { handle.moveCursorToEnd(it) }
                                     handle.requestPreviousFocus()
                                     true
                                 }
@@ -118,7 +117,6 @@ fun ZashiSeedTextField(
                                 }
                             }
                         },
-                handle = textFieldHandle,
                 innerModifier = wordModifier(index),
                 prefix = (index + 1).toString(),
                 state = wordState,
@@ -189,7 +187,7 @@ class SeedTextFieldHandle(
     seedTextFieldState: SeedTextFieldState,
     selectedIndex: Int
 ) {
-    internal val textFieldHandles = seedTextFieldState.values.map { ZashiTextFieldHandle(it.value) }
+    private var state by mutableStateOf(seedTextFieldState)
 
     internal val interactions = List(24) { MutableInteractionSource() }
 
@@ -199,13 +197,20 @@ class SeedTextFieldHandle(
         SeedTextFieldInternalState(
             selectedIndex = selectedIndex,
             selectedText = null,
-            texts = seedTextFieldState.values.map { it.value }
+            texts = seedTextFieldState.values.map { it.innerState.value }
         )
     )
 
     val selectedText: String? by derivedStateOf { internalState.selectedText }
 
     val selectedIndex by derivedStateOf { internalState.selectedIndex }
+
+    internal fun updateState(new: SeedTextFieldState) {
+        if (state != new) {
+            state = new
+            internalState = internalState.copy(texts = new.values.map { it.innerState.value })
+        }
+    }
 
     @Suppress("MagicNumber")
     fun requestNextFocus() {
@@ -245,6 +250,13 @@ class SeedTextFieldHandle(
                 selectedText = if (index <= -1) null else internalState.texts[index]
             )
     }
+
+    fun moveCursorToEnd(index: Int) {
+        val seedWordTextFieldState = state.values[index]
+        seedWordTextFieldState.onValueChange(
+            seedWordTextFieldState.innerState.copy(selection = TextSelection.End)
+        )
+    }
 }
 
 internal data class SeedTextFieldInternalState(
@@ -260,14 +272,26 @@ fun rememberSeedTextFieldHandle(
         SeedTextFieldState(
             List(24) {
                 SeedWordTextFieldState(
-                    value = "",
+                    innerState =
+                        SeedWordInnerTextFieldState(
+                            value = "Word",
+                            selection = TextSelection.Start
+                        ),
                     onValueChange = {},
                     isError = false
                 )
             }
         ),
-    selectedIndex: Int = -1
-): SeedTextFieldHandle = remember { SeedTextFieldHandle(seedTextFieldState, selectedIndex) }
+    selectedIndex: Int = -1,
+): SeedTextFieldHandle {
+    val instance = remember { SeedTextFieldHandle(seedTextFieldState, selectedIndex) }
+
+    LaunchedEffect(seedTextFieldState) {
+        instance.updateState(seedTextFieldState)
+    }
+
+    return instance
+}
 
 @PreviewScreenSizes
 @Composable
@@ -280,7 +304,11 @@ private fun Preview() =
                         values =
                             (1..24).map {
                                 SeedWordTextFieldState(
-                                    value = "Word",
+                                    innerState =
+                                        SeedWordInnerTextFieldState(
+                                            value = "Word",
+                                            selection = TextSelection.Start
+                                        ),
                                     onValueChange = { },
                                     isError = false
                                 )

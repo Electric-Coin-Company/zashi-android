@@ -35,6 +35,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.ButtonStyle
 import co.electriccoin.zcash.ui.design.component.GradientBgScaffold
 import co.electriccoin.zcash.ui.design.component.OldZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -143,17 +144,22 @@ private fun Content(
 }
 
 @Composable
-private fun SuccessfulTransactionBottomBar(state: SuccessfulTransactionState) {
+private fun ColumnScope.SuccessfulTransactionBottomBar(state: SuccessfulTransactionState) {
+    if (state.secondaryButton != null) {
+        ZashiButton(
+            state = state.secondaryButton,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+        )
+    }
     ZashiButton(
-        state =
-            ButtonState(
-                text = stringRes(R.string.send_confirmation_success_btn_close),
-                onClick = state.onCloseClick
-            ),
+        state = state.primaryButton,
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl)
+                .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
     )
 }
 
@@ -169,7 +175,7 @@ private fun ColumnScope.FailureTransactionBottomBar(state: FailureTransactionSta
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
-        colors = ZashiButtonDefaults.tertiaryColors()
+        defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
     )
     Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingLg))
     ZashiButton(
@@ -212,7 +218,7 @@ private fun ColumnScope.MultipleFailuresTransactionBottomBar(state: MultipleFail
             Modifier
                 .fillMaxWidth()
                 .padding(horizontal = ZashiDimensions.Spacing.spacing2xl),
-        colors = ZashiButtonDefaults.tertiaryColors()
+        defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
     )
     Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingSm))
     ZashiButton(
@@ -368,16 +374,13 @@ private fun SuccessfulTransaction(
 
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
 
-            ZashiButton(
-                state =
-                    ButtonState(
-                        text = stringRes(R.string.send_confirmation_success_view_trx),
-                        onClick = state.onViewTransactionClick,
-                    ),
-                modifier =
-                    Modifier.wrapContentWidth(),
-                colors = ZashiButtonDefaults.tertiaryColors()
-            )
+            if (state.middleButton != null) {
+                ZashiButton(
+                    state = state.middleButton,
+                    modifier = Modifier.wrapContentWidth(),
+                    defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
+                )
+            }
         }
     }
 }
@@ -459,7 +462,7 @@ private fun FailureTransaction(
                     ),
                 modifier =
                     Modifier.wrapContentWidth(),
-                colors = ZashiButtonDefaults.tertiaryColors()
+                defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
             )
         }
     }
@@ -601,7 +604,7 @@ private fun MultipleFailureTransaction(
                             Modifier
                                 .fillMaxWidth()
                                 .background(
-                                    shape = RoundedCornerShape(ZashiDimensions.Radius.radiusIg),
+                                    shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg),
                                     color = ZashiColors.Inputs.Default.bg
                                 ).padding(
                                     horizontal = ZashiDimensions.Spacing.spacingLg,
@@ -657,8 +660,49 @@ private fun SuccessPreview() =
                 SuccessfulTransactionState(
                     title = stringRes(R.string.send_confirmation_success_title),
                     text = stringRes("Your tokens were successfully sent to <address>"),
-                    onViewTransactionClick = {},
-                    onCloseClick = {},
+                    middleButton =
+                        ButtonState(
+                            text = stringRes(R.string.send_confirmation_success_view_trx),
+                            onClick = { }
+                        ),
+                    secondaryButton = null,
+                    primaryButton =
+                        ButtonState(
+                            text = stringRes(R.string.send_confirmation_success_btn_close),
+                            onClick = {},
+                            style = ButtonStyle.TERTIARY
+                        ),
+                    onBack = {}
+                )
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun ExactInputPreview() =
+    ZcashTheme {
+        TransactionProgressView(
+            state =
+                SuccessfulTransactionState(
+                    title = stringRes(R.string.send_confirmation_success_title),
+                    text =
+                        stringRes(
+                            "You successfully initiated a swap.\nFollow its status on the transaction " +
+                                "screen."
+                        ),
+                    middleButton = null,
+                    secondaryButton =
+                        ButtonState(
+                            text = stringRes(R.string.send_confirmation_success_btn_close),
+                            onClick = {},
+                            style = ButtonStyle.SECONDARY
+                        ),
+                    primaryButton =
+                        ButtonState(
+                            text = stringRes("Check status"),
+                            onClick = {},
+                            style = ButtonStyle.PRIMARY
+                        ),
                     onBack = {}
                 )
         )
@@ -673,8 +717,18 @@ private fun SuccessShieldingPreview() =
                 SuccessfulTransactionState(
                     title = stringRes(R.string.send_confirmation_success_title_transparent),
                     text = stringRes(R.string.send_confirmation_success_subtitle_transparent),
-                    onViewTransactionClick = {},
-                    onCloseClick = {},
+                    middleButton =
+                        ButtonState(
+                            text = stringRes(R.string.send_confirmation_success_view_trx),
+                            onClick = { }
+                        ),
+                    secondaryButton = null,
+                    primaryButton =
+                        ButtonState(
+                            text = stringRes(R.string.send_confirmation_success_btn_close),
+                            onClick = {},
+                            style = ButtonStyle.TERTIARY
+                        ),
                     onBack = {}
                 )
         )

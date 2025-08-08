@@ -10,6 +10,7 @@ import co.electriccoin.zcash.ui.common.usecase.ListTransactionData
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
+import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDateTime
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionState
@@ -109,7 +110,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_minus,
-                        stringRes(data.transaction.amount)
+                        stringRes(data.transaction.amount, HIDDEN)
                     )
                 )
 
@@ -117,7 +118,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_minus,
-                        stringRes(data.transaction.amount)
+                        stringRes(data.transaction.amount, HIDDEN)
                     ),
                     StringResourceColor.NEGATIVE
                 )
@@ -126,7 +127,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(data.transaction.amount)
+                        stringRes(data.transaction.amount, HIDDEN)
                     ),
                     StringResourceColor.POSITIVE
                 )
@@ -135,7 +136,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(data.transaction.amount)
+                        stringRes(data.transaction.amount, HIDDEN)
                     ),
                 )
 
@@ -143,7 +144,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(data.transaction.amount)
+                        stringRes(data.transaction.amount, HIDDEN)
                     ),
                     StringResourceColor.NEGATIVE
                 )
@@ -153,7 +154,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(data.transaction.amount)
+                        stringRes(data.transaction.amount, HIDDEN)
                     )
                 )
 
@@ -161,7 +162,7 @@ class TransactionHistoryMapper {
                 StyledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
-                        stringRes(data.transaction.amount)
+                        stringRes(data.transaction.amount, HIDDEN)
                     ),
                     StringResourceColor.NEGATIVE
                 )

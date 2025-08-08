@@ -45,7 +45,7 @@ class ShieldFundsInfoViewModel(
                 transparentAmount = account?.transparent?.balance ?: Zatoshi(0),
                 checkbox =
                     CheckboxState(
-                        text = stringRes(R.string.home_info_transparent_checkbox),
+                        title = stringRes(R.string.home_info_transparent_checkbox),
                         onClick = ::onCheckboxClick,
                         isChecked = !infoEnabled
                     )

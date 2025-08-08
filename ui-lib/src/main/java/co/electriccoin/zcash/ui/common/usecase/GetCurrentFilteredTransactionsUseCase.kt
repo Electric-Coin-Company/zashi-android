@@ -3,8 +3,8 @@ package co.electriccoin.zcash.ui.common.usecase
 import android.content.Context
 import cash.z.ecc.android.sdk.model.TransactionId
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
-import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.SendTransaction
 import co.electriccoin.zcash.ui.common.repository.ShieldTransaction
@@ -13,6 +13,7 @@ import co.electriccoin.zcash.ui.common.repository.TransactionFilter
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
+import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.combineToFlow
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -128,7 +129,7 @@ class GetCurrentFilteredTransactionsUseCase(
             }.distinctUntilChanged()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val result =
+    private val result =
         transactionFilterRepository.filters
             .flatMapLatest { filters ->
                 flow {
@@ -252,7 +253,7 @@ class GetCurrentFilteredTransactionsUseCase(
         transaction: FilterTransactionData,
         fulltextFilter: String
     ): Boolean {
-        val text = stringRes(transaction.transaction.amount).getString(context)
+        val text = stringRes(transaction.transaction.amount, HIDDEN).getString(context)
         return text.contains(fulltextFilter, ignoreCase = true)
     }
 
@@ -274,7 +275,7 @@ class GetCurrentFilteredTransactionsUseCase(
 
 private data class FilterTransactionData(
     val transaction: Transaction,
-    val contact: AddressBookContact?,
+    val contact: EnhancedABContact?,
     val recipientAddress: String?,
     val transactionMetadata: TransactionMetadata
 )

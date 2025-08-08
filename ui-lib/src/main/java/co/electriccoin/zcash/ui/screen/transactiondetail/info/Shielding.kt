@@ -16,7 +16,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactiondetail.ShieldingStateFixture
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumn
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumnState
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoHeader
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailTitleHeader
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoHeaderState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRow
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRowState
@@ -31,7 +31,7 @@ fun Shielding(
         modifier = modifier
     ) {
         Spacer(Modifier.height(20.dp))
-        TransactionDetailInfoHeader(
+        TransactionDetailTitleHeader(
             state =
                 TransactionDetailInfoHeaderState(
                     title = stringRes(R.string.transaction_detail_info_transaction_details)

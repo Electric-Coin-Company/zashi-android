@@ -99,7 +99,7 @@ fun WalletBackupInfoView(
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 state = it.secondaryButton,
-                colors = ZashiButtonDefaults.secondaryColors()
+                defaultPrimaryColors = ZashiButtonDefaults.secondaryColors()
             )
             Spacer(4.dp)
             ZashiButton(
@@ -133,7 +133,7 @@ private fun Preview() =
                     CheckboxState(
                         isChecked = false,
                         onClick = {},
-                        text = stringRes(R.string.home_info_backup_checkbox)
+                        title = stringRes(R.string.home_info_backup_checkbox)
                     )
             )
         )

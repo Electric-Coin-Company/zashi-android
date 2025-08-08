@@ -10,7 +10,7 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun AndroidIntegrations() {
-    val viewModel = koinViewModel<IntegrationsViewModel> { parametersOf(false) }
+    val viewModel = koinViewModel<IntegrationsVM> { parametersOf(false) }
     val state by viewModel.state.collectAsStateWithLifecycle()
     BackHandler(enabled = state != null) { state?.onBack?.invoke() }
     state?.let { Integrations(state = it) }

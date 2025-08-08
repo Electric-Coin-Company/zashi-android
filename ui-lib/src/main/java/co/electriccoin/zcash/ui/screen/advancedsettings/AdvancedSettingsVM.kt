@@ -14,7 +14,8 @@ import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToWalletBackupUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
+import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsArgs
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsArgs
@@ -51,49 +52,50 @@ class AdvancedSettingsVM(
             onBack = ::onBack,
             items =
                 mutableStateListOf(
-                    ZashiListItemState(
+                    ListItemState(
                         title = stringRes(R.string.advanced_settings_recovery),
-                        icon = R.drawable.ic_advanced_settings_recovery,
+                        bigIcon = imageRes(R.drawable.ic_advanced_settings_recovery),
                         onClick = ::onSeedRecoveryClick
                     ),
-                    ZashiListItemState(
+                    ListItemState(
                         title = stringRes(R.string.advanced_settings_export),
-                        icon = R.drawable.ic_advanced_settings_export,
+                        bigIcon = imageRes(R.drawable.ic_advanced_settings_export),
                         onClick = {}
                     ),
-                    ZashiListItemState(
+                    ListItemState(
                         title = stringRes(R.string.advanced_settings_tax),
-                        icon =
-                            if (walletRestoringState == WalletRestoringState.RESTORING) {
-                                R.drawable.ic_advanced_settings_tax_disabled
-                            } else {
-                                R.drawable.ic_advanced_settings_tax
-                            },
+                        bigIcon =
+                            imageRes(
+                                if (walletRestoringState == WalletRestoringState.RESTORING) {
+                                    R.drawable.ic_advanced_settings_tax_disabled
+                                } else {
+                                    R.drawable.ic_advanced_settings_tax
+                                }
+                            ),
                         isEnabled = walletRestoringState != WalletRestoringState.RESTORING,
                         onClick = ::onTaxExportClick
                     ),
-                    ZashiListItemState(
+                    ListItemState(
                         title = stringRes(R.string.advanced_settings_choose_server),
-                        icon = R.drawable.ic_advanced_settings_choose_server,
+                        bigIcon = imageRes(R.drawable.ic_advanced_settings_choose_server),
                         onClick = ::onChooseServerClick
                     ),
-                    ZashiListItemState(
+                    ListItemState(
                         title = stringRes(R.string.advanced_settings_privacy),
-                        icon = R.drawable.ic_advanced_settings_privacy,
+                        bigIcon = imageRes(R.drawable.ic_advanced_settings_privacy),
                         onClick = ::onPrivacyClick
                     ),
-                    ZashiListItemState(
+                    ListItemState(
                         title = stringRes(R.string.advanced_settings_currency_conversion),
-                        icon = R.drawable.ic_advanced_settings_currency_conversion,
+                        bigIcon = imageRes(R.drawable.ic_advanced_settings_currency_conversion),
                         onClick = ::onCurrencyConversionClick
                     ),
                 ).apply {
                     if (versionInfo.distributionDimension == DistributionDimension.STORE) {
                         add(
-                            ZashiListItemState(
+                            ListItemState(
                                 title = stringRes(R.string.advanced_settings_crash_reporting),
-                                icon =
-                                    R.drawable.ic_advanced_settings_crash_reporting,
+                                bigIcon = imageRes(R.drawable.ic_advanced_settings_crash_reporting),
                                 onClick = ::onCrashReportingClick
                             )
                         )

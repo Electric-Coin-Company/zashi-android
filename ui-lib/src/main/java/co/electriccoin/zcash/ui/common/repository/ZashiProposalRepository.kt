@@ -3,7 +3,12 @@ package co.electriccoin.zcash.ui.common.repository
 import cash.z.ecc.android.sdk.model.ZecSend
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
+import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.ExactOutputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
+import co.electriccoin.zcash.ui.common.datasource.RegularTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.SwapDataSource
+import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
@@ -13,23 +18,35 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 interface ZashiProposalRepository {
-    val transactionProposal: Flow<TransactionProposal?>
+    val transactionProposal: StateFlow<TransactionProposal?>
 
-    val submitState: Flow<SubmitProposalState?>
+    val submitState: StateFlow<SubmitProposalState?>
 
     @Throws(TransactionProposalNotCreatedException::class)
-    suspend fun createProposal(zecSend: ZecSend)
+    suspend fun createProposal(zecSend: ZecSend): RegularTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal
+
+    @Throws(TransactionProposalNotCreatedException::class)
+    suspend fun createExactInputSwapProposal(
+        zecSend: ZecSend,
+        provider: String
+    ): ExactInputSwapTransactionProposal
+
+    @Throws(TransactionProposalNotCreatedException::class)
+    suspend fun createExactOutputSwapProposal(
+        zecSend: ZecSend,
+        provider: String
+    ): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createShieldProposal()
@@ -46,30 +63,54 @@ interface ZashiProposalRepository {
 class ZashiProposalRepositoryImpl(
     private val accountDataSource: AccountDataSource,
     private val proposalDataSource: ProposalDataSource,
-    private val zashiSpendingKeyDataSource: ZashiSpendingKeyDataSource
+    private val zashiSpendingKeyDataSource: ZashiSpendingKeyDataSource,
+    private val swapDataSource: SwapDataSource,
+    private val metadataRepository: MetadataRepository
 ) : ZashiProposalRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override val transactionProposal = MutableStateFlow<TransactionProposal?>(null)
 
     override val submitState = MutableStateFlow<SubmitProposalState?>(null)
-
     private var submitJob: Job? = null
 
-    override suspend fun createProposal(zecSend: ZecSend) {
+    override suspend fun createProposal(zecSend: ZecSend): RegularTransactionProposal =
         createProposalInternal {
             proposalDataSource.createProposal(
                 account = accountDataSource.getSelectedAccount(),
                 send = zecSend
             )
         }
-    }
 
     override suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal =
         createProposalInternal {
             proposalDataSource.createZip321Proposal(
                 account = accountDataSource.getSelectedAccount(),
                 zip321Uri = zip321Uri
+            )
+        }
+
+    override suspend fun createExactInputSwapProposal(
+        zecSend: ZecSend,
+        provider: String
+    ): ExactInputSwapTransactionProposal =
+        createProposalInternal {
+            proposalDataSource.createExactInputProposal(
+                account = accountDataSource.getSelectedAccount(),
+                send = zecSend,
+                provider = provider
+            )
+        }
+
+    override suspend fun createExactOutputSwapProposal(
+        zecSend: ZecSend,
+        provider: String
+    ): ExactOutputSwapTransactionProposal =
+        createProposalInternal {
+            proposalDataSource.createExactOutputProposal(
+                account = accountDataSource.getSelectedAccount(),
+                send = zecSend,
+                provider
             )
         }
 
@@ -90,7 +131,8 @@ class ZashiProposalRepositoryImpl(
         submitJob?.cancel()
         submitJob =
             scope.launch {
-                val proposal = transactionProposal.value?.proposal
+                val transactionProposal = transactionProposal.value
+                val proposal = transactionProposal?.proposal
 
                 if (proposal == null) {
                     submitState.update { createErrorState("proposal is null") }
@@ -115,6 +157,15 @@ class ZashiProposalRepositoryImpl(
                         usk = spendingKey
                     )
                 submitState.update { SubmitProposalState.Result(result) }
+
+                if (result is SubmitResult.Success && transactionProposal is SwapTransactionProposal) {
+                    val txId = result.txIds.firstOrNull()
+
+                    if (!txId.isNullOrEmpty()) {
+                        submitDepositTransaction(txId, transactionProposal)
+                        metadataRepository.markTxAsSwap(txId, "near")
+                    }
+                }
             }
     }
 
@@ -139,5 +190,17 @@ class ZashiProposalRepositoryImpl(
             }
         transactionProposal.update { proposal }
         return proposal
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    private suspend fun submitDepositTransaction(txId: String, transactionProposal: SwapTransactionProposal) {
+        try {
+            swapDataSource.submitDepositTransaction(
+                txHash = txId,
+                depositAddress = transactionProposal.destination.address
+            )
+        } catch (e: Exception) {
+            Twig.error(e) { "Unable to submit deposit transaction" }
+        }
     }
 }
