@@ -30,7 +30,7 @@ interface NearApiProvider {
     suspend fun requestQuote(request: QuoteRequest): QuoteResponseDto
 
     @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
-    suspend fun submitDepositTransaction(request: SubmitDepositTransactionRequest): SwapStatusResponseDto
+    suspend fun submitDepositTransaction(request: SubmitDepositTransactionRequest)
 
     @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
     suspend fun checkSwapStatus(depositAddress: String): SwapStatusResponseDto
@@ -58,13 +58,14 @@ class KtorNearApiProvider(
             }.body()
         }
 
-    override suspend fun submitDepositTransaction(request: SubmitDepositTransactionRequest): SwapStatusResponseDto =
+    override suspend fun submitDepositTransaction(request: SubmitDepositTransactionRequest) {
         execute {
             post("https://1click.chaindefuser.com/v0/deposit/submit") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
-            }.body()
+            }
         }
+    }
 
     override suspend fun checkSwapStatus(depositAddress: String): SwapStatusResponseDto =
         execute {

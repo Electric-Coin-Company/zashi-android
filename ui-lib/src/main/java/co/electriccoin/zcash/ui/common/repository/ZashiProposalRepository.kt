@@ -162,8 +162,10 @@ class ZashiProposalRepositoryImpl(
                     val txId = result.txIds.firstOrNull()
 
                     if (!txId.isNullOrEmpty()) {
-                        submitDepositTransaction(txId, transactionProposal)
-                        metadataRepository.markTxAsSwap(txId, "near")
+                        scope.launch {
+                            submitDepositTransaction(txId, transactionProposal)
+                            metadataRepository.markTxAsSwap(txId, "near")
+                        }
                     }
                 }
             }

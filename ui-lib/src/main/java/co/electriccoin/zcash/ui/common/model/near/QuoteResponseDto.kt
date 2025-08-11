@@ -32,9 +32,9 @@ data class QuoteDetails(
     @SerialName("amountInUsd")
     @Serializable(with = BigDecimalSerializer::class)
     val amountInUsd: BigDecimal,
-    @SerialName("minAmountIn")
-    @Serializable(with = BigDecimalSerializer::class)
-    val minAmountIn: BigDecimal,
+    // @SerialName("minAmountIn")
+    // @Serializable(with = BigDecimalSerializer::class)
+    // val minAmountIn: BigDecimal,
     @SerialName("amountOut")
     @Serializable(with = BigDecimalSerializer::class)
     val amountOut: BigDecimal,
@@ -44,7 +44,7 @@ data class QuoteDetails(
     @SerialName("amountOutUsd")
     @Serializable(with = BigDecimalSerializer::class)
     val amountOutUsd: BigDecimal,
-    @SerialName("minAmountOut")
-    @Serializable(with = BigDecimalSerializer::class)
-    val minAmountOut: BigDecimal,
+    // @SerialName("minAmountOut")
+    // @Serializable(with = BigDecimalSerializer::class)
+    // val minAmountOut: BigDecimal,
 )

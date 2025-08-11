@@ -20,6 +20,6 @@ object NearSwapStatusSerializer : KSerializer<SwapStatus?> {
         val decoded = decoder.decodeString()
         return SwapStatus
             .entries
-            .firstOrNull() { it.apiValue == decoded }
+            .firstOrNull { it.apiValue == decoded }
     }
 }

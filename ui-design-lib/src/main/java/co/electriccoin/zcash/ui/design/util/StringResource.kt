@@ -294,7 +294,7 @@ private fun StringResource.ByYearMonth.convertYearMonth(): String {
 }
 
 private fun StringResource.ByAddress.convertAddress(): String =
-    if (abbreviated && address.isNotBlank()) {
+    if (abbreviated && address.isNotBlank() && address.length > ADDRESS_MAX_LENGTH_ABBREVIATED) {
         "${address.take(ADDRESS_MAX_LENGTH_ABBREVIATED)}..."
     } else {
         address

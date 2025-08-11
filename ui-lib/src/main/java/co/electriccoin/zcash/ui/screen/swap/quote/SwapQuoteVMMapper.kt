@@ -37,7 +37,7 @@ internal class SwapQuoteVMMapper {
                 onBack = onBack,
                 infoText =
                     stringRes("Total amount includes max slippage of ") +
-                        stringResByNumber(slippage) +
+                        stringResByNumber(slippage, minDecimals = 0) +
                         stringRes("%"),
                 primaryButton =
                     ButtonState(

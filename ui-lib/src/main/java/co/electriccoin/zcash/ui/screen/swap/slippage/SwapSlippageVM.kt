@@ -103,7 +103,7 @@ class SwapSlippageVM(
     private fun createSlippageInfoState(percent: BigDecimal?): SwapSlippageInfoState? {
         if (percent == null) return null
 
-        val percentString = stringResByNumber(percent) + stringRes("%")
+        val percentString = stringResByNumber(percent, minDecimals = 0) + stringRes("%")
 
         val result =
             when {

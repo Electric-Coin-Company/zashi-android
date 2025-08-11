@@ -1,11 +1,13 @@
 package co.electriccoin.zcash.ui.screen.swap.info
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,8 +17,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
-import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -40,11 +40,7 @@ fun SwapInfoInfoView(state: SwapInfoState) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text =
-                        when (it.mode) {
-                            EXACT_INPUT -> "Swap with"
-                            EXACT_OUTPUT -> "Pay with"
-                        },
+                    text = "Swap or Pay with",
                     style = ZashiTypography.textXl,
                     fontWeight = FontWeight.SemiBold,
                     color = ZashiColors.Text.textPrimary
@@ -56,18 +52,17 @@ fun SwapInfoInfoView(state: SwapInfoState) {
                 )
             }
             Spacer(24.dp)
-            Text(
-                text =
-                    when (it.mode) {
-                        EXACT_INPUT ->
-                            "Swap from shielded ZEC to any NEAR-supported coin or token.\n\nZashi is a ZEC-only " +
-                                "wallet, so you’ll need a valid wallet address for the asset you’re swapping to."
-                        EXACT_OUTPUT ->
-                            "Make cross-chain payments in any NEAR-supported coin or token.\n\nIf a payment should " +
-                                "result in smaller output amount than you set, you will be refunded. "
-                    },
-                style = ZashiTypography.textSm,
-                color = ZashiColors.Text.textTertiary
+            ListItem(
+                bigIcon = R.drawable.ic_swap_info_item_1,
+                title = "Swap with NEAR",
+                subtitle = "Swap from shielded ZEC to any NEAR-supported coin or token." +
+                    "Zashi is a ZEC-only wallet, so you’ll need a valid wallet address for the asset you’re swapping to."
+            )
+            Spacer(20.dp)
+            ListItem(
+                bigIcon = R.drawable.ic_swap_info_item_2,
+                title = "Pay with NEAR",
+                subtitle = "Make cross-chain payments in any NEAR-supported coin or token.\n\nIf the actual slippage and network conditions result in your recipient receiving less than the promised amount, your transaction will be reversed. You will receive a full refund minus network fees."
             )
             Spacer(32.dp)
             ZashiButton(
@@ -82,28 +77,40 @@ fun SwapInfoInfoView(state: SwapInfoState) {
     }
 }
 
-@PreviewScreens
 @Composable
-private fun SwapPreview() =
-    ZcashTheme {
-        SwapInfoInfoView(
-            state =
-                SwapInfoState(
-                    mode = EXACT_INPUT,
-                    onBack = {}
-                )
+private fun ListItem(
+    title: String,
+    subtitle: String,
+    @DrawableRes bigIcon: Int,
+) {
+    Row {
+        Image(
+            modifier = Modifier.size(40.dp),
+            painter = painterResource(bigIcon),
+            contentDescription = null
         )
+        Spacer(16.dp)
+        Column {
+            Text(
+                text = title,
+                style = ZashiTypography.textSm,
+                fontWeight = FontWeight.SemiBold,
+                color = ZashiColors.Text.textPrimary
+            )
+            Spacer(4.dp)
+            Text(
+                text = subtitle,
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textTertiary
+            )
+        }
     }
+}
 
 @PreviewScreens
 @Composable
-private fun PayPreview() =
-    ZcashTheme {
-        SwapInfoInfoView(
-            state =
-                SwapInfoState(
-                    mode = EXACT_OUTPUT,
-                    onBack = {}
-                )
-        )
-    }
+private fun SwapPreview() = ZcashTheme { SwapInfoInfoView(state = SwapInfoState(onBack = {})) }
+
+@PreviewScreens
+@Composable
+private fun PayPreview() = ZcashTheme { SwapInfoInfoView(state = SwapInfoState(onBack = {})) }

@@ -17,61 +17,61 @@ data class SwapStatusResponseDto(
     val quoteResponse: QuoteResponseDto,
     @SerialName("status")
     @Serializable(with = NearSwapStatusSerializer::class)
-    val status: SwapStatus?,
+    val status: SwapStatus? = null,
     @SerialName("updatedAt")
     val updatedAt: String,
     @SerialName("swapDetails")
-    val swapDetails: SwapDetails?
+    val swapDetails: SwapDetails? = null
 )
 
-@JsonIgnoreUnknownKeys
-@Serializable
-data class TransactionChainHash(
-    @SerialName("hash")
-    val hash: String,
-    @SerialName("explorerUrl")
-    val explorerUrl: String
-)
+// @JsonIgnoreUnknownKeys
+// @Serializable
+// data class TransactionChainHash(
+//     @SerialName("hash")
+//     val hash: String,
+//     @SerialName("explorerUrl")
+//     val explorerUrl: String
+// )
 
 @JsonIgnoreUnknownKeys
 @Serializable
 data class SwapDetails(
-    @SerialName("intentHashes")
-    val intentHashes: List<String>,
-    @SerialName("nearTxHashes")
-    val nearTxHashes: List<String>,
+    // @SerialName("intentHashes")
+    // val intentHashes: List<String>,
+    // @SerialName("nearTxHashes")
+    // val nearTxHashes: List<String>,
     @SerialName("amountIn")
     @Serializable(NullableBigDecimalSerializer::class)
-    val amountIn: BigDecimal?,
+    val amountIn: BigDecimal? = null,
     @SerialName("amountInFormatted")
     @Serializable(NullableBigDecimalSerializer::class)
-    val amountInFormatted: BigDecimal?,
+    val amountInFormatted: BigDecimal? = null,
     @SerialName("amountInUsd")
     @Serializable(NullableBigDecimalSerializer::class)
-    val amountInUsd: BigDecimal?,
+    val amountInUsd: BigDecimal? = null,
     @SerialName("amountOut")
     @Serializable(NullableBigDecimalSerializer::class)
-    val amountOut: BigDecimal?,
+    val amountOut: BigDecimal? = null,
     @SerialName("amountOutFormatted")
     @Serializable(NullableBigDecimalSerializer::class)
-    val amountOutFormatted: BigDecimal?,
+    val amountOutFormatted: BigDecimal? = null,
     @SerialName("amountOutUsd")
     @Serializable(NullableBigDecimalSerializer::class)
-    val amountOutUsd: BigDecimal?,
+    val amountOutUsd: BigDecimal? = null,
     @SerialName("slippage")
-    val slippage: Int?,
-    @SerialName("originChainTxHashes")
-    val originChainTxHashes: List<TransactionChainHash>,
-    @SerialName("destinationChainTxHashes")
-    val destinationChainTxHashes: List<TransactionChainHash>,
+    val slippage: Int? = null,
+    // @SerialName("originChainTxHashes")
+    // val originChainTxHashes: List<TransactionChainHash>,
+    // @SerialName("destinationChainTxHashes")
+    // val destinationChainTxHashes: List<TransactionChainHash>,
     @SerialName("refundedAmount")
     @Serializable(NullableBigDecimalSerializer::class)
-    val refundedAmount: BigDecimal?,
+    val refundedAmount: BigDecimal? = null,
     @SerialName("refundedAmountFormatted")
     @Serializable(NullableBigDecimalSerializer::class)
-    val refundedAmountFormatted: BigDecimal?,
+    val refundedAmountFormatted: BigDecimal? = null,
     @SerialName("refundedAmountUsd")
-    val refundedAmountUsd: String?
+    val refundedAmountUsd: String? = null
 )
 
 enum class SwapStatus(val apiValue: String) {

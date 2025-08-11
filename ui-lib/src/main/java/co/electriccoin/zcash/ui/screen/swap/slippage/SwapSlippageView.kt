@@ -78,14 +78,6 @@ fun SwapSlippageView(state: SwapSlippageState?) {
                     Spacer(20.dp)
                     SlippageInfoCard(innerState.info)
                 }
-                Spacer(20.dp)
-                Text(
-                    text =
-                        "Any unused portion of the slippage fee will be refunded if the swap executes with lower " +
-                            "slippage than expected.",
-                    style = ZashiTypography.textXs,
-                    color = ZashiColors.Text.textTertiary
-                )
                 Spacer(24.dp)
                 Spacer(1f)
                 ZashiButton(

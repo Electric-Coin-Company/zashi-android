@@ -9,9 +9,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
@@ -55,7 +58,7 @@ fun TransactionDetailInfoRow(
         modifier = modifier,
     ) {
         Text(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.width(IntrinsicSize.Min),
             maxLines = 1,
             text = state.title.getValue(),
             style = ZashiTypography.textSm,
@@ -63,13 +66,17 @@ fun TransactionDetailInfoRow(
         )
         if (state.message != null) {
             Spacer(Modifier.width(16.dp))
-            SelectionContainer {
+            SelectionContainer(
+                modifier = Modifier.weight(1f),
+            ) {
                 Text(
+                    modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
                     text = state.message.getValue(),
                     style = ZashiTypography.textSm,
                     color = ZashiColors.Text.textPrimary,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.End
                 )
             }
         } else {

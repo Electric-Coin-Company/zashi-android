@@ -11,7 +11,7 @@ import java.math.BigDecimal
 
 object NullableBigDecimalSerializer : KSerializer<BigDecimal?> {
     override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("BigDecimal", PrimitiveKind.STRING)
+        PrimitiveSerialDescriptor("NullableBigDecimal", PrimitiveKind.STRING)
 
     @OptIn(ExperimentalSerializationApi::class)
     override fun serialize(
@@ -23,5 +23,5 @@ object NullableBigDecimalSerializer : KSerializer<BigDecimal?> {
 
     @OptIn(ExperimentalSerializationApi::class)
     override fun deserialize(decoder: Decoder): BigDecimal? =
-        if (decoder.decodeNotNullMark()) null else BigDecimal(decoder.decodeString())
+        if (decoder.decodeNotNullMark()) BigDecimal(decoder.decodeString()) else null
 }

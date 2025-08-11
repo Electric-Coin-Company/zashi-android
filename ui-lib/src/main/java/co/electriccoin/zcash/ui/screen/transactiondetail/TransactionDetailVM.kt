@@ -10,6 +10,7 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
+import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
 import co.electriccoin.zcash.ui.common.repository.SendTransaction
 import co.electriccoin.zcash.ui.common.repository.ShieldTransaction
@@ -21,6 +22,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendTransactionAgainUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.ButtonStyle
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.SwapQuoteHeaderState
 import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
@@ -132,7 +134,10 @@ class TransactionDetailVM(
                         SendSwapState(
                             status = transaction.swap.data?.status,
                             quoteHeader = createQuoteHeaderState(transaction.swap),
-                            depositAddress = createAddressStringRes(transaction),
+                            depositAddress = stringResByAddress(
+                                value = transaction.recipientAddress?.address.orEmpty(),
+                                abbreviated = true
+                            ),
                             recipientAddress = recipient?.let { stringResByAddress(it, abbreviated = true) },
                             transactionId = stringResByTransactionId(
                                 value = transaction.transaction.id.txIdString(),
@@ -157,6 +162,9 @@ class TransactionDetailVM(
                             refundedAmount = transaction.swap.data?.refundedFormatted
                                 ?.let {
                                     stringResByDynamicCurrencyNumber(amount = it, ticker = "ZEC")
+                                }
+                                ?.takeIf {
+                                    transaction.swap.data.status == SwapStatus.REFUNDED
                                 }
                         )
                     }
@@ -397,10 +405,13 @@ class TransactionDetailVM(
                 } else {
                     ButtonState(
                         text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_try_again),
-                        onClick = { data.swapHandle.requestReload() }
+                        onClick = { data.swapHandle.requestReload() },
+                        style = ButtonStyle.DESTRUCTIVE1
                     )
                 }
             }
+
+            data.swap != null -> null
 
             data.contact == null -> {
                 if (data.transaction is SendTransaction) {
@@ -427,9 +438,7 @@ class TransactionDetailVM(
     }
 
     private fun createSecondaryButtonState(transaction: DetailedTransactionData): ButtonState? {
-        if (transaction.swap != null) return null
-
-        return ButtonState(
+        fun createAddNoteButtonState() = ButtonState(
             text =
                 if (transaction.metadata.note != null) {
                     stringRes(R.string.transaction_detail_edit_note)
@@ -438,6 +447,12 @@ class TransactionDetailVM(
                 },
             onClick = ::onAddOrEditNoteClick
         )
+
+        return when {
+            transaction.swap != null && transaction.swap.error == null -> createAddNoteButtonState()
+            transaction.swap != null -> null
+            else -> createAddNoteButtonState()
+        }
     }
 
     private fun onSaveAddressClick(transaction: DetailedTransactionData) {
