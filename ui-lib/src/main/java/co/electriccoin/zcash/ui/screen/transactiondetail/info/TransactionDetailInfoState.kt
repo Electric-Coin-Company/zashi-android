@@ -36,6 +36,7 @@ data class SendSwapState(
     val fee: StringResource,
     val maxSlippage: StringResource?,
     val note: StringResource?,
+    val isSlippageRealized: Boolean,
 ) : TransactionDetailInfoState
 
 @Immutable

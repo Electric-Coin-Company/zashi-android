@@ -1,8 +1,8 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import android.content.Context
+import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapAsset
-import co.electriccoin.zcash.ui.common.provider.SimpleSwapAsset
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.design.util.getString
 

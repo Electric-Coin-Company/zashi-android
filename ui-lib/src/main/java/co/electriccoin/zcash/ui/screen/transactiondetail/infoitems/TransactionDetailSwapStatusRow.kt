@@ -82,7 +82,7 @@ private fun StatusChip(swapStatus: SwapStatus) {
             REFUNDED,
             FAILED -> ZashiBadgeDefaults.errorColors()
         },
-        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 2.dp)
+        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
     )
 }
 

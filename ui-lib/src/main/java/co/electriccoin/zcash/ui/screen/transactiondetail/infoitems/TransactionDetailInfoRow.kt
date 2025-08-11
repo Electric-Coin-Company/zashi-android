@@ -58,7 +58,6 @@ fun TransactionDetailInfoRow(
         modifier = modifier,
     ) {
         Text(
-            modifier = Modifier.width(IntrinsicSize.Min),
             maxLines = 1,
             text = state.title.getValue(),
             style = ZashiTypography.textSm,
@@ -70,7 +69,6 @@ fun TransactionDetailInfoRow(
                 modifier = Modifier.weight(1f),
             ) {
                 Text(
-                    modifier = Modifier.fillMaxWidth(),
                     maxLines = 1,
                     text = state.message.getValue(),
                     style = ZashiTypography.textSm,
@@ -82,7 +80,10 @@ fun TransactionDetailInfoRow(
         } else {
             Spacer(Modifier.width(16.dp))
             Box(
-                modifier = Modifier.shimmer(rememberZashiShimmer())
+                modifier = Modifier
+                    .weight(1f)
+                    .shimmer(rememberZashiShimmer()),
+                contentAlignment = Alignment.CenterEnd
             ) {
                 ShimmerRectangle(
                     width = 64.dp,

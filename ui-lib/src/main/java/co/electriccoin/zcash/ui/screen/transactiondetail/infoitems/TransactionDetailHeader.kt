@@ -77,7 +77,10 @@ fun TransactionDetailButtonHeader(
         text = if (state.isExpanded) stringResource(R.string.general_less) else stringResource(R.string.general_more),
         trailingIcon = if (state.isExpanded) R.drawable.ic_chevron_up else R.drawable.ic_chevron_down,
         colors = ZashiButtonDefaults.tertiaryColors(),
-        contentPadding = PaddingValues(start = 8.dp, end = 8.dp)
+        contentPadding = PaddingValues(start = 8.dp, end = 8.dp),
+        style = ZashiTypography.textSm.copy(
+            fontWeight = FontWeight.SemiBold,
+        )
     )
 }
 

@@ -17,6 +17,8 @@ interface SwapQuoteStatus {
     val destinationAssetId: String
 
     val status: SwapStatus
+
+    val isSlippageRealized: Boolean
     val maxSlippage: BigDecimal
     val recipient: String
     val swapMode: SwapMode?
@@ -50,8 +52,10 @@ data class NearSwapQuoteStatus(
         FAILED -> SwapStatus.FAILED
         null -> SwapStatus.PENDING
     }
-    override val maxSlippage: BigDecimal = response.swapDetails?.slippage?.let { BigDecimal(it.toDouble() / 100) }
-        ?: response.quoteResponse.quoteRequest.slippageTolerance.let { BigDecimal(it.toDouble() / 100) }
+    override val isSlippageRealized: Boolean = response.swapDetails?.slippage != null
+    override val maxSlippage: BigDecimal = (response.swapDetails?.slippage
+        ?: response.quoteResponse.quoteRequest.slippageTolerance
+        ).let { BigDecimal(it).divide(BigDecimal(100)) }
 
     override val recipient: String = response.quoteResponse.quoteRequest.recipient
 

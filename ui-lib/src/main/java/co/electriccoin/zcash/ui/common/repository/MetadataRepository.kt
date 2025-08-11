@@ -2,7 +2,9 @@ package co.electriccoin.zcash.ui.common.repository
 
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.MetadataDataSource
+import co.electriccoin.zcash.ui.common.datasource.toSimpleAssetSet
 import co.electriccoin.zcash.ui.common.model.Metadata
+import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.provider.MetadataKeyStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
@@ -25,20 +27,22 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 interface MetadataRepository {
-    suspend fun flipTxBookmark(txId: String)
 
-    suspend fun createOrUpdateTxNote(
-        txId: String,
-        note: String
-    )
+    fun flipTxBookmark(txId: String)
 
-    suspend fun deleteTxNote(txId: String)
+    fun createOrUpdateTxNote(txId: String, note: String)
 
-    suspend fun markTxMemoAsRead(txId: String)
+    fun deleteTxNote(txId: String)
 
-    suspend fun markTxAsSwap(txId: String, provider: String)
+    fun markTxMemoAsRead(txId: String)
+
+    fun markTxAsSwap(txId: String, provider: String)
+
+    fun addSwapAssetToHistory(tokenTicker: String, chainTicker: String)
 
     fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata>
+
+    fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?>
 }
 
 class MetadataRepositoryImpl(
@@ -101,6 +105,13 @@ class MetadataRepositoryImpl(
                                                     provider = command.provider,
                                                     key = metadataKey,
                                                 )
+
+                                            is Command.AddSwapAssetToHistory ->
+                                                metadataDataSource.addSwapAssetToHistory(
+                                                    tokenTicker = command.tokenTicker,
+                                                    chainTicker = command.chainTicker,
+                                                    key = metadataKey
+                                                )
                                         }
 
                                     send(new)
@@ -114,11 +125,11 @@ class MetadataRepositoryImpl(
                 }
             }.stateIn(
                 scope = scope,
-                started = SharingStarted.Lazily,
+                started = SharingStarted.Eagerly,
                 initialValue = null
             )
 
-    override suspend fun flipTxBookmark(txId: String) {
+    override fun flipTxBookmark(txId: String) {
         scope.launch {
             command.send(
                 Command.FlipTxBookmark(
@@ -129,7 +140,7 @@ class MetadataRepositoryImpl(
         }
     }
 
-    override suspend fun createOrUpdateTxNote(
+    override fun createOrUpdateTxNote(
         txId: String,
         note: String
     ) {
@@ -144,7 +155,7 @@ class MetadataRepositoryImpl(
         }
     }
 
-    override suspend fun deleteTxNote(txId: String) {
+    override fun deleteTxNote(txId: String) {
         scope.launch {
             command.send(
                 Command.DeleteTxNote(
@@ -155,7 +166,7 @@ class MetadataRepositoryImpl(
         }
     }
 
-    override suspend fun markTxMemoAsRead(txId: String) {
+    override fun markTxMemoAsRead(txId: String) {
         scope.launch {
             command.send(
                 Command.MarkTxMemoAsRead(
@@ -166,7 +177,7 @@ class MetadataRepositoryImpl(
         }
     }
 
-    override suspend fun markTxAsSwap(txId: String, provider: String) {
+    override fun markTxAsSwap(txId: String, provider: String) {
         scope.launch {
             command.send(
                 Command.MarkTxAsSwap(
@@ -178,18 +189,33 @@ class MetadataRepositoryImpl(
         }
     }
 
+    override fun addSwapAssetToHistory(tokenTicker: String, chainTicker: String) {
+        scope.launch {
+            command.send(
+                Command.AddSwapAssetToHistory(
+                    tokenTicker = tokenTicker,
+                    chainTicker = chainTicker,
+                    account = accountDataSource.getSelectedAccount()
+                )
+            )
+        }
+    }
+
     override fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata> =
         metadata
             .map { metadata ->
                 val accountMetadata = metadata?.accountMetadata
-
                 TransactionMetadata(
                     isBookmarked = accountMetadata?.bookmarked?.find { it.txId == txId }?.isBookmarked == true,
                     isRead = accountMetadata?.read?.any { it == txId } == true,
                     note = accountMetadata?.annotations?.find { it.txId == txId }?.content,
-                    swapProvider = accountMetadata?.swaps?.find { it.txId == txId }?.provider
+                    swapProvider = accountMetadata?.swaps?.swapIds?.find { it.txId == txId }?.provider
                 )
             }.distinctUntilChanged()
+
+    override fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?> = metadata.map {
+        it?.accountMetadata?.swaps?.lastUsedAssetHistory?.toSimpleAssetSet()
+    }
 
     private suspend fun getMetadataKey(selectedAccount: WalletAccount): MetadataKey {
         val key = metadataKeyStorageProvider.get(selectedAccount)
@@ -246,6 +272,12 @@ private sealed interface Command {
     data class MarkTxAsSwap(
         val txId: String,
         val provider: String,
+        override val account: WalletAccount
+    ) : Command
+
+    data class AddSwapAssetToHistory(
+        val tokenTicker: String,
+        val chainTicker: String,
         override val account: WalletAccount
     ) : Command
 }

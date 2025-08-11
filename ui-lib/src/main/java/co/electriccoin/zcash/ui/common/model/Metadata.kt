@@ -24,8 +24,8 @@ data class AccountMetadata(
     val read: List<String>,
     @SerialName("annotations")
     val annotations: List<AnnotationMetadata>,
-    @SerialName("swapIds")
-    val swaps: List<SwapMetadata> = emptyList()
+    @SerialName("swaps")
+    val swaps: SwapsMetadata
 )
 
 @Serializable
@@ -48,6 +48,13 @@ data class AnnotationMetadata(
     @SerialName("lastUpdated")
     @Serializable(InstantSerializer::class)
     val lastUpdated: Instant,
+)
+
+@Serializable
+data class SwapsMetadata(
+    @SerialName("swapIds")
+    val swapIds: List<SwapMetadata>,
+    val lastUsedAssetHistory: Set<String>
 )
 
 @Serializable

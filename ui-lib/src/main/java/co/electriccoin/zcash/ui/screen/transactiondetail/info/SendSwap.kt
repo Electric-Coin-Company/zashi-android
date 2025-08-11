@@ -136,7 +136,11 @@ fun SendSwap(
                     modifier = Modifier.fillMaxWidth(),
                     state =
                         TransactionDetailInfoRowState(
-                            title = stringRes("Max slippage"),
+                            title = if (state.isSlippageRealized) {
+                                stringRes("Realized slippage")
+                            } else {
+                                stringRes("Max slippage")
+                            },
                             message = state.maxSlippage,
                             shape = when {
                                 state.status == SwapStatus.REFUNDED -> MIDDLE
@@ -223,22 +227,23 @@ private fun Preview() =
         BlankSurface {
             SendSwap(
                 state = SendSwapState(
-                    depositAddress = stringResByAddress(value = "Address", abbreviated = true),
-                    transactionId = stringRes("Transaction ID"),
-                    onTransactionIdClick = {},
-                    onDepositAddressClick = {},
-                    onRecipientAddressClick = {},
-                    fee = stringRes(Zatoshi(1011), HIDDEN),
-                    note = stringRes("None"),
                     status = SwapStatus.REFUNDED,
                     quoteHeader = SwapQuoteHeaderState(
                         rotateIcon = false,
                         from = null,
                         to = null
                     ),
+                    depositAddress = stringResByAddress(value = "Address", abbreviated = true),
                     recipientAddress = null,
+                    transactionId = stringRes("Transaction ID"),
+                    refundedAmount = stringRes("Refunded amount"),
+                    onTransactionIdClick = {},
+                    onDepositAddressClick = {},
+                    onRecipientAddressClick = {},
+                    fee = stringRes(Zatoshi(1011), HIDDEN),
                     maxSlippage = null,
-                    refundedAmount = stringRes("Refunded amount")
+                    note = stringRes("None"),
+                    isSlippageRealized = false
                 ),
             )
         }

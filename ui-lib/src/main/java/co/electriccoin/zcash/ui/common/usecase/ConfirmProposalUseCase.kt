@@ -5,11 +5,11 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
-import co.electriccoin.zcash.ui.common.provider.LatestSwapAssetsProvider
 import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
 import co.electriccoin.zcash.ui.common.repository.BiometricsCancelledException
 import co.electriccoin.zcash.ui.common.repository.BiometricsFailureException
+import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -22,7 +22,7 @@ class ConfirmProposalUseCase(
     private val zashiProposalRepository: ZashiProposalRepository,
     private val biometricRepository: BiometricRepository,
     private val swapRepository: SwapRepository,
-    private val latestSwapAssetsProvider: LatestSwapAssetsProvider,
+    private val metadataRepository: MetadataRepository,
 ) {
     suspend operator fun invoke() {
         try {
@@ -39,7 +39,7 @@ class ConfirmProposalUseCase(
 
             val selectedSwapAsset = swapRepository.selectedAsset.value
             if (selectedSwapAsset != null) {
-                latestSwapAssetsProvider.add(
+                metadataRepository.addSwapAssetToHistory(
                     tokenTicker = selectedSwapAsset.tokenTicker,
                     chainTicker = selectedSwapAsset.chainTicker
                 )

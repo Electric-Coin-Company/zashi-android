@@ -5,7 +5,9 @@ import co.electriccoin.zcash.ui.common.model.AccountMetadata
 import co.electriccoin.zcash.ui.common.model.AnnotationMetadata
 import co.electriccoin.zcash.ui.common.model.BookmarkMetadata
 import co.electriccoin.zcash.ui.common.model.Metadata
+import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMetadata
+import co.electriccoin.zcash.ui.common.model.SwapsMetadata
 import co.electriccoin.zcash.ui.common.provider.MetadataProvider
 import co.electriccoin.zcash.ui.common.provider.MetadataStorageProvider
 import co.electriccoin.zcash.ui.common.serialization.METADATA_SERIALIZATION_V2
@@ -43,6 +45,12 @@ interface MetadataDataSource {
     suspend fun markTxAsSwap(
         txId: String,
         provider: String,
+        key: MetadataKey
+    ): Metadata
+
+    suspend fun addSwapAssetToHistory(
+        tokenTicker: String,
+        chainTicker: String,
         key: MetadataKey
     ): Metadata
 
@@ -129,6 +137,18 @@ class MetadataDataSourceImpl(
         addSwapMetadata(
             txId = txId,
             provider = provider,
+            key = key
+        )
+    }
+
+    override suspend fun addSwapAssetToHistory(
+        tokenTicker: String,
+        chainTicker: String,
+        key: MetadataKey
+    ): Metadata = mutex.withLock {
+        prependSwapAssetToHistory(
+            tokenTicker = tokenTicker,
+            chainTicker = chainTicker,
             key = key
         )
     }
@@ -232,20 +252,51 @@ class MetadataDataSourceImpl(
             transform = { metadata ->
                 metadata.copy(
                     swaps =
-                        metadata.swaps
-                            .replaceOrAdd(
-                                predicate = { it.txId == txId },
-                                transform = {
-                                    it?.copy(
-                                        txId = txId,
-                                        provider = provider
-                                    ) ?: defaultSwapMetadata(txId, provider)
-                                }
-                            )
+                        metadata.swaps.copy(
+                            swapIds = metadata.swaps.swapIds
+                                .replaceOrAdd(
+                                    predicate = { it.txId == txId },
+                                    transform = {
+                                        it?.copy(
+                                            txId = txId,
+                                            provider = provider
+                                        ) ?: defaultSwapMetadata(txId, provider)
+                                    }
+                                )
+                        )
                 )
             }
         )
 
+    private suspend fun prependSwapAssetToHistory(
+        tokenTicker: String,
+        chainTicker: String,
+        key: MetadataKey
+    ): Metadata {
+        return updateMetadata(key) { metadata ->
+            val current = metadata.swaps.lastUsedAssetHistory.toSimpleAssetSet()
+            val newAsset =
+                SimpleSwapAsset(
+                    tokenTicker = tokenTicker.lowercase(),
+                    chainTicker = chainTicker.lowercase()
+                )
+
+            val newList = current.toMutableList()
+            if (newList.contains(newAsset)) newList.remove(newAsset)
+            newList.add(0, newAsset)
+            val finalSet =
+                newList
+                    .take(10)
+                    .map {asset -> "${asset.tokenTicker}:${asset.chainTicker}" }
+                    .toSet()
+
+            metadata.copy(
+                swaps = metadata.swaps.copy(
+                    lastUsedAssetHistory = finalSet
+                )
+            )
+        }
+    }
 
     private suspend fun updateMetadata(
         key: MetadataKey,
@@ -273,7 +324,10 @@ private fun defaultAccountMetadata() =
         bookmarked = emptyList(),
         read = emptyList(),
         annotations = emptyList(),
-        swaps = emptyList()
+        swaps = SwapsMetadata(
+            swapIds = emptyList(),
+            lastUsedAssetHistory = emptySet()
+        )
     )
 
 private fun defaultBookmarkMetadata(txId: String) =
@@ -312,3 +366,14 @@ private fun <T : Any> List<T>.replaceOrAdd(
         this + transform(null)
     }
 }
+
+fun Set<String>.toSimpleAssetSet() =
+    this
+        .map {
+            val data = it.split(":")
+            SimpleSwapAsset(
+                tokenTicker = data[0],
+                chainTicker = data[1]
+            )
+        }
+        .toSet()

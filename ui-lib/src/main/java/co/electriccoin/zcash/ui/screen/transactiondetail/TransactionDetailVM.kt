@@ -155,6 +155,7 @@ class TransactionDetailVM(
                                 { onCopyToClipboard(recipient) }
                             },
                             fee = createFeeStringRes(transaction),
+                            isSlippageRealized = transaction.swap.data?.isSlippageRealized == true,
                             maxSlippage = transaction.swap.data?.maxSlippage?.let {
                                 stringResByNumber(it, 0) + stringRes("%")
                             },
