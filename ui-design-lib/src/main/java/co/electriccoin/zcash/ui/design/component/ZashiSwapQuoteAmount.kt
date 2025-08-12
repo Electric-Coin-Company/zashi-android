@@ -34,11 +34,13 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
+import co.electriccoin.zcash.ui.design.util.orHiddenString
+import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import com.valentinilk.shimmer.shimmer
 
 @Composable
-fun ZashiSwapQuoteAmount(
+internal fun ZashiSwapQuoteAmount(
     state: SwapTokenAmountState?,
     modifier: Modifier = Modifier
 ) {
@@ -111,7 +113,7 @@ private fun Data(state: SwapTokenAmountState) {
                 ZashiAutoSizeText(
                     modifier = Modifier.weight(1f, false),
                     textAlign = TextAlign.Center,
-                    text = state.title.getValue(),
+                    text = state.title orHiddenString stringRes(R.string.hide_balance_placeholder),
                     style = ZashiTypography.textXl,
                     fontWeight = FontWeight.SemiBold,
                     color = ZashiColors.Text.textPrimary,
@@ -164,7 +166,7 @@ private fun Data(state: SwapTokenAmountState) {
         SelectionContainer {
             ZashiAutoSizeText(
                 textAlign = TextAlign.Center,
-                text = state.subtitle.getValue(),
+                text = state.subtitle orHiddenString stringRes(R.string.hide_balance_placeholder),
                 style = ZashiTypography.textSm,
                 fontWeight = FontWeight.Medium,
                 color = ZashiColors.Text.textTertiary,

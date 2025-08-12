@@ -31,6 +31,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSwapQuoteHeader
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
@@ -57,7 +58,10 @@ fun SendSwap(
     ) {
         var isExpanded by rememberSaveable { mutableStateOf(false) }
 
-        ZashiSwapQuoteHeader(state = state.quoteHeader)
+        ZashiSwapQuoteHeader(
+            state = state.quoteHeader,
+            balancesAvailable = LocalBalancesAvailable.current
+        )
         Spacer(20.dp)
         TransactionDetailHeader(
             title = stringRes(R.string.transaction_detail_info_transaction_details),

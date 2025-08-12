@@ -83,22 +83,30 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 ),
             isAddressBookHintVisible = state.isAddressBookHintVisible,
             onBack = onBack,
-            swapInfoButton = IconButtonState(co.electriccoin.zcash.ui.design.R.drawable.ic_info, onClick = onSwapInfoClick),
+            swapInfoButton = IconButtonState(
+                co.electriccoin.zcash.ui.design.R.drawable.ic_info,
+                onClick = onSwapInfoClick
+            ),
             infoItems = createListItems(state),
             qrScannerButton =
                 IconButtonState(
                     icon = R.drawable.qr_code_icon,
-                    onClick = onQrCodeScannerClick
+                    onClick = onQrCodeScannerClick,
+                    isEnabled = !state.isRequestingQuote
+
                 ),
             addressBookButton =
                 IconButtonState(
                     icon = R.drawable.send_address_book,
-                    onClick = onAddressBookClick
+                    onClick = onAddressBookClick,
+                    isEnabled = !state.isRequestingQuote
+
                 ),
             changeModeButton =
                 IconButtonState(
                     icon = R.drawable.ic_swap_change_mode,
                     onClick = { onSwapModeChange(SwapMode.EXACT_OUTPUT) },
+                    isEnabled = !state.isRequestingQuote
                 ),
             appBarState =
                 SwapAppBarState(
@@ -125,7 +133,8 @@ internal class ExactInputVMMapper : SwapVMMapper {
         return ChipButtonState(
             text = stringRes(state.selectedContact.contact.name),
             onClick = onDeleteSelectedContactClick,
-            endIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chip_close
+            endIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chip_close,
+            isEnabled = !state.isRequestingQuote
         )
     }
 

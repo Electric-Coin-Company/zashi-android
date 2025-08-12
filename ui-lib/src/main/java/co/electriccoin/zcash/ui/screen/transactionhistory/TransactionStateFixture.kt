@@ -13,6 +13,7 @@ object TransactionStateFixture {
     fun new() =
         TransactionState(
             icon = R.drawable.ic_transaction_sent,
+            providerIcon = R.drawable.ic_transaction_provider_near,
             title = stringRes("Transaction Title"),
             subtitle = stringRes("Transaction subtitle"),
             isShielded = true,

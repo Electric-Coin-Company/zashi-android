@@ -51,7 +51,8 @@ fun ZashiChipButton(
         color = color,
     ) {
         Row(
-            modifier = Modifier.clickable(onClick = state.onClick) then Modifier.padding(contentPadding),
+            modifier = Modifier.clickable(onClick = state.onClick, enabled = state.isEnabled) then Modifier.padding
+                (contentPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (state.startIcon != null) {
@@ -80,9 +81,10 @@ fun ZashiChipButton(
 
 @Immutable
 data class ChipButtonState(
+    val text: StringResource,
     @DrawableRes val startIcon: Int? = null,
     @DrawableRes val endIcon: Int? = null,
-    val text: StringResource,
+    val isEnabled: Boolean = true,
     val onClick: () -> Unit,
 )
 

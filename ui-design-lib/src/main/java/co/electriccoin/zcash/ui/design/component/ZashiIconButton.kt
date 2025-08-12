@@ -85,6 +85,7 @@ fun ZashiImageButton(
                 onClick = state.onClick,
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
+                enabled = state.isEnabled
             )
     ) {
         Image(
@@ -105,6 +106,7 @@ data class IconButtonState(
     @DrawableRes val icon: Int,
     val contentDescription: StringResource? = null,
     val badge: StringResource? = null,
+    val isEnabled: Boolean = true,
     val onClick: () -> Unit,
 )
 

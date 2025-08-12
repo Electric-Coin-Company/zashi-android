@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -66,7 +67,8 @@ fun Transaction(
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = state.onClick,
                         role = Role.Button,
-                    ).padding(contentPadding),
+                    )
+                    .padding(contentPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box {
@@ -74,6 +76,15 @@ fun Transaction(
                     painter = painterResource(state.icon),
                     contentDescription = null
                 )
+                if (state.providerIcon != null) {
+                    Image(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .offset(8.dp, 8.dp),
+                        painter = painterResource(state.providerIcon),
+                        contentDescription = null
+                    )
+                }
                 if (state.isUnread) {
                     Box(
                         modifier =
@@ -134,6 +145,7 @@ fun Transaction(
 data class TransactionState(
     override val key: Any,
     @DrawableRes val icon: Int,
+    @DrawableRes val providerIcon: Int?,
     val title: StringResource,
     val subtitle: StringResource?,
     val isShielded: Boolean,

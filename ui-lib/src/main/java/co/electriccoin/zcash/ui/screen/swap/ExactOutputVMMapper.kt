@@ -87,17 +87,20 @@ internal class ExactOutputVMMapper : SwapVMMapper {
             qrScannerButton =
                 IconButtonState(
                     icon = R.drawable.qr_code_icon,
-                    onClick = onQrCodeScannerClick
+                    onClick = onQrCodeScannerClick,
+                    isEnabled = !state.isRequestingQuote
                 ),
             addressBookButton =
                 IconButtonState(
                     icon = R.drawable.send_address_book,
-                    onClick = onAddressBookClick
+                    onClick = onAddressBookClick,
+                    isEnabled = !state.isRequestingQuote
                 ),
             changeModeButton =
                 IconButtonState(
                     icon = R.drawable.ic_swap_change_mode,
                     onClick = { onSwapModeChange(SwapMode.EXACT_INPUT) },
+                    isEnabled = !state.isRequestingQuote
                 ),
             appBarState =
                 SwapAppBarState(
@@ -124,7 +127,8 @@ internal class ExactOutputVMMapper : SwapVMMapper {
         return ChipButtonState(
             text = stringRes(state.selectedContact.contact.name),
             onClick = onDeleteSelectedContactClick,
-            endIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chip_close
+            endIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chip_close,
+            isEnabled = !state.isRequestingQuote,
         )
     }
 
