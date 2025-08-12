@@ -1,49 +1,16 @@
 package co.electriccoin.zcash.ui.screen.swap.quote
 
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZec
-import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.Zatoshi
-import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
-import co.electriccoin.zcash.ui.common.model.NearSwapQuote
-import co.electriccoin.zcash.ui.common.model.SwapAsset
-import co.electriccoin.zcash.ui.common.model.SwapMode
+import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
+import co.electriccoin.zcash.ui.common.model.CompositeSwapQuote
 import java.math.BigDecimal
-import java.math.MathContext
 
 internal data class NearSwapQuoteInternalState(
-    override val mode: SwapMode,
-    override val originAsset: SwapAsset,
-    override val destinationAsset: SwapAsset,
-    override val slippage: BigDecimal,
-    override val proposal: SendTransactionProposal,
-    val quote: NearSwapQuote,
+    val proposal: SwapTransactionProposal,
+    override val quote: CompositeSwapQuote,
 ) : SwapQuoteInternalState {
-    private val data = quote.response.quote
-
-    override val zecExchangeRate: BigDecimal = data.amountInUsd.divide(data.amountInFormatted, MathContext.DECIMAL128)
-    override val zecFee: BigDecimal = proposal.proposal.totalFeeRequired().convertZatoshiToZec()
-    override val zecFeeUsd: BigDecimal = zecExchangeRate.multiply(zecFee, MathContext.DECIMAL128)
-
-    override val swapProviderFee: Zatoshi =
-        (data.amountInUsd - data.amountOutUsd).coerceAtLeast(BigDecimal(0))
-            .divide(zecExchangeRate, MathContext.DECIMAL128)
-            .convertZecToZatoshi()
-
-    override val swapProviderFeeUsd: BigDecimal = (data.amountInUsd - data.amountOutUsd)
-        .coerceAtLeast(BigDecimal(0))
-
-    override val amountInZatoshi: Zatoshi = Zatoshi(data.amountIn.toLong())
-    override val amountInZec: BigDecimal = data.amountInFormatted
-    override val amountInDecimals: Int = originAsset.decimals
-    override val amountInUsd: BigDecimal = data.amountInUsd
-
-    override val amountOutFormatted: BigDecimal = data.amountOutFormatted
-    override val amountOutDecimals: Int = destinationAsset.decimals
-    override val amountOutUsd: BigDecimal = data.amountOutUsd
-
-    override val recipient: String = quote.response.quoteRequest.recipient
-
-    override val totalZec: BigDecimal = amountInZec + zecFee
-
-    override val totalUsd: BigDecimal = data.amountInUsd + zecFeeUsd
+    override val zatoshiFee: Zatoshi = proposal.proposal.totalFeeRequired()
+    override val zecFeeUsd: BigDecimal = quote.getZecFeeUsd(proposal.proposal)
+    override val totalZec: BigDecimal = quote.getTotalZec(proposal.proposal)
+    override val totalUsd: BigDecimal = quote.getTotalUsd(proposal.proposal)
 }

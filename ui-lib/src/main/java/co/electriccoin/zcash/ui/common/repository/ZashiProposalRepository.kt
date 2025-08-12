@@ -13,6 +13,7 @@ import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
+import co.electriccoin.zcash.ui.common.model.CompositeSwapQuote
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,13 +40,13 @@ interface ZashiProposalRepository {
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactInputSwapProposal(
         zecSend: ZecSend,
-        provider: String
+        quote: CompositeSwapQuote
     ): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactOutputSwapProposal(
         zecSend: ZecSend,
-        provider: String
+        quote: CompositeSwapQuote
     ): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
@@ -92,25 +93,25 @@ class ZashiProposalRepositoryImpl(
 
     override suspend fun createExactInputSwapProposal(
         zecSend: ZecSend,
-        provider: String
+        quote: CompositeSwapQuote
     ): ExactInputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactInputProposal(
                 account = accountDataSource.getSelectedAccount(),
                 send = zecSend,
-                provider = provider
+                quote = quote
             )
         }
 
     override suspend fun createExactOutputSwapProposal(
         zecSend: ZecSend,
-        provider: String
+        quote: CompositeSwapQuote
     ): ExactOutputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactOutputProposal(
                 account = accountDataSource.getSelectedAccount(),
                 send = zecSend,
-                provider
+                quote = quote
             )
         }
 
@@ -164,7 +165,12 @@ class ZashiProposalRepositoryImpl(
                     if (!txId.isNullOrEmpty()) {
                         scope.launch {
                             submitDepositTransaction(txId, transactionProposal)
-                            metadataRepository.markTxAsSwap(txId, "near")
+                            metadataRepository.markTxAsSwap(
+                                txId = txId,
+                                provider = transactionProposal.quote.provider,
+                                totalFees = transactionProposal.totalFees,
+                                totalFeesUsd = transactionProposal.totalFeesUsd
+                            )
                         }
                     }
                 }

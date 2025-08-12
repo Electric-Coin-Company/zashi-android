@@ -166,7 +166,8 @@ class TransactionDetailVM(
                                 }
                                 ?.takeIf {
                                     transaction.swap.data.status == SwapStatus.REFUNDED
-                                }
+                                },
+                            totalFees = transaction.metadata.swapMetadata?.totalFees?.let { stringRes(it) }
                         )
                     }
 

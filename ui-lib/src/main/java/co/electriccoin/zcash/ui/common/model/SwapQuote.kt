@@ -1,9 +1,12 @@
 package co.electriccoin.zcash.ui.common.model
 
+import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.model.near.QuoteResponseDto
 import co.electriccoin.zcash.ui.common.model.near.SwapType.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.near.SwapType.EXACT_OUTPUT
+import java.math.BigDecimal
+import java.math.MathContext
 
 sealed interface SwapQuote {
     val destinationAmount: Zatoshi
@@ -12,10 +15,19 @@ sealed interface SwapQuote {
     val destination: String
     val provider: String
     val type: SwapMode
+    val amountInUsd: BigDecimal
+    val amountOutUsd: BigDecimal
+    val zecExchangeRate: BigDecimal
+    val swapProviderFee: Zatoshi
+    val swapProviderFeeUsd: BigDecimal
+    val amountInZec: BigDecimal
+    val amountInZatoshi: Zatoshi
+    val amountOutFormatted: BigDecimal
+    val recipient: String
 }
 
 data class NearSwapQuote(
-    val response: QuoteResponseDto
+    private val response: QuoteResponseDto,
 ) : SwapQuote {
     override val destinationAmount: Zatoshi = Zatoshi(response.quote.amountIn.toLong())
     override val depositAddress: String = response.quote.depositAddress
@@ -27,4 +39,21 @@ data class NearSwapQuote(
         EXACT_OUTPUT -> SwapMode.EXACT_OUTPUT
         null -> SwapMode.EXACT_INPUT
     }
+    override val zecExchangeRate: BigDecimal = response.quote.amountInUsd
+        .divide(response.quote.amountInFormatted, MathContext.DECIMAL128)
+    override val swapProviderFee: Zatoshi =
+        (response.quote.amountInUsd - response.quote.amountOutUsd).coerceAtLeast(BigDecimal(0))
+            .divide(zecExchangeRate, MathContext.DECIMAL128)
+            .convertZecToZatoshi()
+
+    override val swapProviderFeeUsd: BigDecimal = (response.quote.amountInUsd - response.quote.amountOutUsd)
+        .coerceAtLeast(BigDecimal(0))
+
+    override val amountInUsd: BigDecimal = response.quote.amountInUsd
+
+    override val amountInZec: BigDecimal = response.quote.amountInFormatted
+    override val amountInZatoshi: Zatoshi = Zatoshi(response.quote.amountIn.toLong())
+    override val amountOutUsd: BigDecimal = response.quote.amountOutUsd
+    override val amountOutFormatted: BigDecimal = response.quote.amountOutFormatted
+    override val recipient: String = response.quoteRequest.recipient
 }

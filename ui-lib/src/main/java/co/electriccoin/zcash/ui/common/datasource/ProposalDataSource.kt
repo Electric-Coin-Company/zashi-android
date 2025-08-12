@@ -14,6 +14,7 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.model.CompositeSwapQuote
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
@@ -21,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import org.zecdev.zip321.ZIP321
+import java.math.BigDecimal
 
 interface ProposalDataSource {
     @Throws(TransactionProposalNotCreatedException::class)
@@ -39,14 +41,14 @@ interface ProposalDataSource {
     suspend fun createExactInputProposal(
         account: WalletAccount,
         send: ZecSend,
-        provider: String
+        quote: CompositeSwapQuote
     ): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactOutputProposal(
         account: WalletAccount,
         send: ZecSend,
-        provider: String
+        quote: CompositeSwapQuote
     ): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
@@ -137,7 +139,7 @@ class ProposalDataSourceImpl(
     override suspend fun createExactInputProposal(
         account: WalletAccount,
         send: ZecSend,
-        provider: String
+        quote: CompositeSwapQuote
     ): ExactInputSwapTransactionProposal =
         withContext(Dispatchers.IO) {
             getOrThrow {
@@ -145,12 +147,8 @@ class ProposalDataSourceImpl(
                     destination = send.destination,
                     amount = send.amount,
                     memo = send.memo,
-                    proposal =
-                        synchronizerProvider.getSynchronizer().proposeSend(
-                            account = account.sdkAccount,
-                            send = send
-                        ),
-                    provider = provider
+                    proposal = synchronizerProvider.getSynchronizer().proposeSend(account.sdkAccount, send),
+                    quote = quote
                 )
             }
         }
@@ -158,7 +156,7 @@ class ProposalDataSourceImpl(
     override suspend fun createExactOutputProposal(
         account: WalletAccount,
         send: ZecSend,
-        provider: String
+        quote: CompositeSwapQuote
     ): ExactOutputSwapTransactionProposal =
         withContext(Dispatchers.IO) {
             getOrThrow {
@@ -166,12 +164,8 @@ class ProposalDataSourceImpl(
                     destination = send.destination,
                     amount = send.amount,
                     memo = send.memo,
-                    proposal =
-                        synchronizerProvider.getSynchronizer().proposeSend(
-                            account = account.sdkAccount,
-                            send = send
-                        ),
-                    provider = provider
+                    proposal = synchronizerProvider.getSynchronizer().proposeSend(account.sdkAccount, send),
+                    quote = quote
                 )
             }
         }
@@ -320,7 +314,12 @@ sealed interface SendTransactionProposal : TransactionProposal {
 }
 
 sealed interface SwapTransactionProposal : SendTransactionProposal {
-    val provider: String
+    val quote: CompositeSwapQuote
+
+    val totalFees: Zatoshi
+        get() = quote.getTotalFeesZatoshi(proposal)
+    val totalFeesUsd: BigDecimal
+        get() = quote.getTotalFeesUsd(proposal)
 }
 
 data class ShieldTransactionProposal(
@@ -346,7 +345,7 @@ data class ExactInputSwapTransactionProposal(
     override val amount: Zatoshi,
     override val memo: Memo,
     override val proposal: Proposal,
-    override val provider: String
+    override val quote: CompositeSwapQuote,
 ) : SwapTransactionProposal
 
 data class ExactOutputSwapTransactionProposal(
@@ -354,7 +353,7 @@ data class ExactOutputSwapTransactionProposal(
     override val amount: Zatoshi,
     override val memo: Memo,
     override val proposal: Proposal,
-    override val provider: String
+    override val quote: CompositeSwapQuote,
 ) : SwapTransactionProposal
 
 private const val DEFAULT_SHIELDING_THRESHOLD = 100000L

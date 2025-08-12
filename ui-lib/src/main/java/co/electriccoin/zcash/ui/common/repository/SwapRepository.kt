@@ -228,8 +228,6 @@ class SwapRepositoryImpl(
                                 break
                             }
                         }
-
-
                     } catch (e: Exception) {
                         data.update { it.copy(isLoading = false, error = e) }
                         break

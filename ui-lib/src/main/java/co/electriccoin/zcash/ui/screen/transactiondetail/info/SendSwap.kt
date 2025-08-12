@@ -121,16 +121,18 @@ fun SendSwap(
                             onClick = state.onTransactionIdClick
                         )
                 )
-                ZashiHorizontalDivider()
-                TransactionDetailInfoRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    state =
-                        TransactionDetailInfoRowState(
-                            title = stringRes(R.string.transaction_detail_info_transaction_fee),
-                            message = state.fee,
-                            shape = MIDDLE,
-                        )
-                )
+                if (state.totalFees != null) {
+                    ZashiHorizontalDivider()
+                    TransactionDetailInfoRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        state =
+                            TransactionDetailInfoRowState(
+                                title = stringRes("Total fees"),
+                                message = state.totalFees,
+                                shape = MIDDLE,
+                            )
+                    )
+                }
                 ZashiHorizontalDivider()
                 TransactionDetailInfoRow(
                     modifier = Modifier.fillMaxWidth(),
@@ -243,7 +245,8 @@ private fun Preview() =
                     fee = stringRes(Zatoshi(1011), HIDDEN),
                     maxSlippage = null,
                     note = stringRes("None"),
-                    isSlippageRealized = false
+                    isSlippageRealized = false,
+                    totalFees = stringRes(Zatoshi(0))
                 ),
             )
         }

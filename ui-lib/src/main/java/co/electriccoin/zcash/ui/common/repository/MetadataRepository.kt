@@ -1,10 +1,12 @@
 package co.electriccoin.zcash.ui.common.repository
 
+import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.MetadataDataSource
 import co.electriccoin.zcash.ui.common.datasource.toSimpleAssetSet
 import co.electriccoin.zcash.ui.common.model.Metadata
 import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
+import co.electriccoin.zcash.ui.common.model.SwapMetadata
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.provider.MetadataKeyStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
@@ -25,6 +27,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 interface MetadataRepository {
 
@@ -36,7 +39,7 @@ interface MetadataRepository {
 
     fun markTxMemoAsRead(txId: String)
 
-    fun markTxAsSwap(txId: String, provider: String)
+    fun markTxAsSwap(txId: String, provider: String, totalFees: Zatoshi, totalFeesUsd: BigDecimal)
 
     fun addSwapAssetToHistory(tokenTicker: String, chainTicker: String)
 
@@ -103,6 +106,8 @@ class MetadataRepositoryImpl(
                                                 metadataDataSource.markTxAsSwap(
                                                     txId = command.txId,
                                                     provider = command.provider,
+                                                    totalFees = command.totalFees,
+                                                    totalFeesUsd = command.totalFeesUsd,
                                                     key = metadataKey,
                                                 )
 
@@ -177,12 +182,19 @@ class MetadataRepositoryImpl(
         }
     }
 
-    override fun markTxAsSwap(txId: String, provider: String) {
+    override fun markTxAsSwap(
+        txId: String,
+        provider: String,
+        totalFees: Zatoshi,
+        totalFeesUsd: BigDecimal
+    ) {
         scope.launch {
             command.send(
                 Command.MarkTxAsSwap(
                     txId = txId,
                     provider = provider,
+                    totalFees = totalFees,
+                    totalFeesUsd = totalFeesUsd,
                     account = accountDataSource.getSelectedAccount()
                 )
             )
@@ -205,17 +217,21 @@ class MetadataRepositoryImpl(
         metadata
             .map { metadata ->
                 val accountMetadata = metadata?.accountMetadata
+                val providerMetadata = accountMetadata?.providers?.find { it.txId == txId }
                 TransactionMetadata(
                     isBookmarked = accountMetadata?.bookmarked?.find { it.txId == txId }?.isBookmarked == true,
                     isRead = accountMetadata?.read?.any { it == txId } == true,
                     note = accountMetadata?.annotations?.find { it.txId == txId }?.content,
-                    swapProvider = accountMetadata?.swaps?.swapIds?.find { it.txId == txId }?.provider
+                    provider = providerMetadata?.provider,
+                    swapMetadata = accountMetadata?.swaps?.swapIds?.find { it.txId == txId }
                 )
             }.distinctUntilChanged()
 
-    override fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?> = metadata.map {
-        it?.accountMetadata?.swaps?.lastUsedAssetHistory?.toSimpleAssetSet()
-    }
+    override fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?> = metadata
+        .map {
+            it?.accountMetadata?.swaps?.lastUsedAssetHistory?.toSimpleAssetSet()
+        }
+        .distinctUntilChanged()
 
     private suspend fun getMetadataKey(selectedAccount: WalletAccount): MetadataKey {
         val key = metadataKeyStorageProvider.get(selectedAccount)
@@ -242,7 +258,8 @@ data class TransactionMetadata(
     val isBookmarked: Boolean,
     val isRead: Boolean,
     val note: String?,
-    val swapProvider: String?,
+    val provider: String?,
+    val swapMetadata: SwapMetadata?
 )
 
 private sealed interface Command {
@@ -272,6 +289,8 @@ private sealed interface Command {
     data class MarkTxAsSwap(
         val txId: String,
         val provider: String,
+        val totalFees: Zatoshi,
+        val totalFeesUsd: BigDecimal,
         override val account: WalletAccount
     ) : Command
 

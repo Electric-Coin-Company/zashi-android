@@ -1,10 +1,12 @@
 package co.electriccoin.zcash.ui.common.datasource
 
+import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.AccountMetadata
 import co.electriccoin.zcash.ui.common.model.AnnotationMetadata
 import co.electriccoin.zcash.ui.common.model.BookmarkMetadata
 import co.electriccoin.zcash.ui.common.model.Metadata
+import co.electriccoin.zcash.ui.common.model.ProviderMetadata
 import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMetadata
 import co.electriccoin.zcash.ui.common.model.SwapsMetadata
@@ -16,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import java.math.BigDecimal
 import java.time.Instant
 
 interface MetadataDataSource {
@@ -45,6 +48,8 @@ interface MetadataDataSource {
     suspend fun markTxAsSwap(
         txId: String,
         provider: String,
+        totalFees: Zatoshi,
+        totalFeesUsd: BigDecimal,
         key: MetadataKey
     ): Metadata
 
@@ -133,10 +138,18 @@ class MetadataDataSourceImpl(
             )
         }
 
-    override suspend fun markTxAsSwap(txId: String, provider: String, key: MetadataKey): Metadata = mutex.withLock {
+    override suspend fun markTxAsSwap(
+        txId: String,
+        provider: String,
+        totalFees: Zatoshi,
+        totalFeesUsd: BigDecimal,
+        key: MetadataKey
+    ): Metadata = mutex.withLock {
         addSwapMetadata(
             txId = txId,
             provider = provider,
+            totalFees = totalFees,
+            totalFeesUsd = totalFeesUsd,
             key = key
         )
     }
@@ -245,6 +258,8 @@ class MetadataDataSourceImpl(
     private suspend fun addSwapMetadata(
         txId: String,
         provider: String,
+        totalFees: Zatoshi,
+        totalFeesUsd: BigDecimal,
         key: MetadataKey
     ): Metadata =
         updateMetadata(
@@ -253,17 +268,18 @@ class MetadataDataSourceImpl(
                 metadata.copy(
                     swaps =
                         metadata.swaps.copy(
-                            swapIds = metadata.swaps.swapIds
-                                .replaceOrAdd(
-                                    predicate = { it.txId == txId },
-                                    transform = {
-                                        it?.copy(
-                                            txId = txId,
-                                            provider = provider
-                                        ) ?: defaultSwapMetadata(txId, provider)
-                                    }
+                            swapIds = metadata.swaps.swapIds.replaceOrAdd(predicate = { it.txId == txId }) {
+                                SwapMetadata(
+                                    txId = txId,
+                                    lastUpdated = Instant.now(),
+                                    totalFees = totalFees,
+                                    totalFeesUsd = totalFeesUsd
                                 )
-                        )
+                            }
+                        ),
+                    providers = metadata.providers.replaceOrAdd(predicate = { it.txId == txId }) {
+                        ProviderMetadata(txId = txId, provider = provider)
+                    }
                 )
             }
         )
@@ -287,7 +303,7 @@ class MetadataDataSourceImpl(
             val finalSet =
                 newList
                     .take(10)
-                    .map {asset -> "${asset.tokenTicker}:${asset.chainTicker}" }
+                    .map { asset -> "${asset.tokenTicker}:${asset.chainTicker}" }
                     .toSet()
 
             metadata.copy(
@@ -327,7 +343,8 @@ private fun defaultAccountMetadata() =
         swaps = SwapsMetadata(
             swapIds = emptyList(),
             lastUsedAssetHistory = emptySet()
-        )
+        ),
+        providers = emptyList()
     )
 
 private fun defaultBookmarkMetadata(txId: String) =
@@ -342,13 +359,6 @@ private fun defaultAnnotationMetadata(txId: String) =
         txId = txId,
         lastUpdated = Instant.now(),
         content = null
-    )
-
-private fun defaultSwapMetadata(txId: String, provider: String) =
-    SwapMetadata(
-        txId = txId,
-        provider = provider,
-        lastUpdated = Instant.now(),
     )
 
 private fun <T : Any> List<T>.replaceOrAdd(

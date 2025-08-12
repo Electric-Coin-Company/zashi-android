@@ -27,6 +27,7 @@ data class SendSwapState(
     val status: SwapStatus?,
     val quoteHeader: SwapQuoteHeaderState,
     val depositAddress: StringResource,
+    val totalFees: StringResource?,
     val recipientAddress: StringResource?,
     val transactionId: StringResource,
     val refundedAmount: StringResource?,

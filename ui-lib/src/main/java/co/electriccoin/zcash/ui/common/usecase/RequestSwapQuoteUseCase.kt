@@ -6,13 +6,12 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
+import co.electriccoin.zcash.ui.common.model.CompositeSwapQuote
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.SwapMode
-import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
-import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteArgs
@@ -27,14 +26,15 @@ class RequestSwapQuoteUseCase(
     private val accountDataSource: AccountDataSource,
     private val synchronizerProvider: SynchronizerProvider,
     private val navigationRouter: NavigationRouter,
-    private val navigateToErrorUseCase: NavigateToErrorUseCase
+    private val navigateToErrorUseCase: NavigateToErrorUseCase,
+    private val getCompositeSwapQuoteUseCase: GetCompositeSwapQuoteUseCase
 ) {
     @Suppress("TooGenericExceptionCaught")
     suspend operator fun invoke(amount: BigDecimal, address: String, canNavigateToSwapQuote: () -> Boolean) {
         swapRepository.requestQuote(amount = amount, address = address)
-        val result = swapRepository.quote.filter { it != null && it !is SwapQuoteData.Loading }.first()
+        val result = getCompositeSwapQuoteUseCase.observe().filter { it !is SwapQuoteCompositeData.Loading }.first()
 
-        if (result is SwapQuoteData.Success) {
+        if (result is SwapQuoteCompositeData.Success) {
             try {
                 createProposal(result.quote)
             } catch (e: Exception) {
@@ -52,7 +52,7 @@ class RequestSwapQuoteUseCase(
     }
 
     @Suppress("TooGenericExceptionCaught")
-    private suspend fun createProposal(quote: SwapQuote) {
+    private suspend fun createProposal(quote: CompositeSwapQuote) {
         try {
             val zecSend =
                 ZecSend(
@@ -66,9 +66,16 @@ class RequestSwapQuoteUseCase(
                 is KeystoneAccount -> {
                     when (quote.type) {
                         SwapMode.EXACT_INPUT ->
-                            keystoneProposalRepository.createExactInputSwapProposal(zecSend, quote.provider)
+                            keystoneProposalRepository.createExactInputSwapProposal(
+                                zecSend = zecSend,
+                                quote = quote
+                            )
+
                         SwapMode.EXACT_OUTPUT ->
-                            keystoneProposalRepository.createExactOutputSwapProposal(zecSend, quote.provider)
+                            keystoneProposalRepository.createExactOutputSwapProposal(
+                                zecSend = zecSend,
+                                quote = quote
+                            )
                     }
 
                     keystoneProposalRepository.createPCZTFromProposal()
@@ -77,9 +84,16 @@ class RequestSwapQuoteUseCase(
                 is ZashiAccount ->
                     when (quote.type) {
                         SwapMode.EXACT_INPUT ->
-                            zashiProposalRepository.createExactInputSwapProposal(zecSend, quote.provider)
+                            zashiProposalRepository.createExactInputSwapProposal(
+                                zecSend = zecSend,
+                                quote = quote
+                            )
+
                         SwapMode.EXACT_OUTPUT ->
-                            zashiProposalRepository.createExactOutputSwapProposal(zecSend, quote.provider)
+                            zashiProposalRepository.createExactOutputSwapProposal(
+                                zecSend = zecSend,
+                                quote = quote
+                            )
                     }
             }
         } catch (e: Exception) {

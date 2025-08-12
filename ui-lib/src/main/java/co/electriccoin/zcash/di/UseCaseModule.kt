@@ -39,7 +39,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapModeUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetSwapQuoteUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetCompositeSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableBalanceUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
@@ -48,7 +48,6 @@ import co.electriccoin.zcash.ui.common.usecase.GetTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetZecSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsTorEnabledUseCase
@@ -229,10 +228,9 @@ val useCaseModule =
         factoryOf(::GetSwapModeUseCase)
         factoryOf(::UpdateSwapModeUseCase)
         factoryOf(::GetTotalSpendableBalanceUseCase)
-        factoryOf(::GetZecSwapAssetUseCase)
         factoryOf(::IsABContactHintVisibleUseCase)
         factoryOf(::RequestSwapQuoteUseCase)
-        factoryOf(::GetSwapQuoteUseCase)
+        factoryOf(::GetCompositeSwapQuoteUseCase)
         factoryOf(::CancelSwapQuoteUseCase)
         factoryOf(::NavigateToSwapQuoteIfAvailableUseCase)
         singleOf(::NavigateToScanSwapAddressUseCase)
