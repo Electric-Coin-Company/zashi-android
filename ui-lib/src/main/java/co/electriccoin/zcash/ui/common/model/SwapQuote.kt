@@ -41,6 +41,7 @@ data class NearSwapQuote(
     }
     override val zecExchangeRate: BigDecimal = response.quote.amountInUsd
         .divide(response.quote.amountInFormatted, MathContext.DECIMAL128)
+
     override val swapProviderFee: Zatoshi =
         (response.quote.amountInUsd - response.quote.amountOutUsd).coerceAtLeast(BigDecimal(0))
             .divide(zecExchangeRate, MathContext.DECIMAL128)

@@ -34,7 +34,6 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailHeader
@@ -162,7 +161,7 @@ fun SendSwap(
                         state =
                             TransactionDetailInfoRowState(
                                 title = stringRes("Refunded amount"),
-                                message = state.fee,
+                                message = state.refundedAmount,
                                 shape = if (state.note != null) MIDDLE else LAST,
                             )
                     )
@@ -240,17 +239,16 @@ private fun Preview() =
                         to = null
                     ),
                     depositAddress = stringResByAddress(value = "Address", abbreviated = true),
+                    totalFees = stringRes(Zatoshi(0)),
                     recipientAddress = null,
                     transactionId = stringRes("Transaction ID"),
                     refundedAmount = stringRes("Refunded amount"),
                     onTransactionIdClick = {},
                     onDepositAddressClick = {},
                     onRecipientAddressClick = {},
-                    fee = stringRes(Zatoshi(1011), HIDDEN),
                     maxSlippage = null,
                     note = stringRes("None"),
-                    isSlippageRealized = false,
-                    totalFees = stringRes(Zatoshi(0))
+                    isSlippageRealized = false
                 ),
             )
         }

@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.model
 
+import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.model.near.SwapStatus.FAILED
 import co.electriccoin.zcash.ui.common.model.near.SwapStatus.INCOMPLETE_DEPOSIT
@@ -12,6 +13,7 @@ import co.electriccoin.zcash.ui.common.model.near.SwapStatusResponseDto
 import co.electriccoin.zcash.ui.common.model.near.SwapType.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.near.SwapType.EXACT_OUTPUT
 import java.math.BigDecimal
+import java.math.MathContext
 
 interface SwapQuoteStatus {
     val destinationAssetId: String
@@ -35,6 +37,10 @@ interface SwapQuoteStatus {
 
     val refunded: BigDecimal?
     val refundedFormatted: BigDecimal?
+
+    val zecExchangeRate: BigDecimal
+    val swapProviderFee: Zatoshi
+    val swapProviderFeeUsd: BigDecimal
 }
 
 data class NearSwapQuoteStatus(
@@ -87,4 +93,18 @@ data class NearSwapQuoteStatus(
     override val refunded: BigDecimal? = response.swapDetails?.refundedAmount
 
     override val refundedFormatted: BigDecimal? = response.swapDetails?.refundedAmountFormatted
+
+    override val zecExchangeRate: BigDecimal = amountInUsd.divide(amountInFormatted, MathContext.DECIMAL128)
+
+    override val swapProviderFee: Zatoshi =
+        (amountInUsd - amountOutUsd).coerceAtLeast(BigDecimal(0))
+            .divide(zecExchangeRate, MathContext.DECIMAL128)
+            .convertZecToZatoshi()
+
+    override val swapProviderFeeUsd: BigDecimal = (amountInUsd - amountOutUsd).coerceAtLeast(BigDecimal(0))
+
+    // fun getZecFeeUsd(proposal: Proposal): BigDecimal =
+    //     zecExchangeRate.multiply(getZecFee(proposal), MathContext.DECIMAL128)
+
+    // private fun getZecFee(proposal: Proposal): BigDecimal = proposal.totalFeeRequired().convertZatoshiToZec()
 }

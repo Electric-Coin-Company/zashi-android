@@ -34,7 +34,6 @@ data class SendSwapState(
     val onTransactionIdClick: () -> Unit,
     val onDepositAddressClick: () -> Unit,
     val onRecipientAddressClick: (() -> Unit)?,
-    val fee: StringResource,
     val maxSlippage: StringResource?,
     val note: StringResource?,
     val isSlippageRealized: Boolean,

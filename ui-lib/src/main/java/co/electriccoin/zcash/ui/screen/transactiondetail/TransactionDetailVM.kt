@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.TransactionPool
 import cash.z.ecc.android.sdk.model.WalletAddress
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
@@ -138,11 +139,19 @@ class TransactionDetailVM(
                                 value = transaction.recipientAddress?.address.orEmpty(),
                                 abbreviated = true
                             ),
+                            totalFees = transaction.metadata.swapMetadata?.totalFees?.let { stringRes(it) },
                             recipientAddress = recipient?.let { stringResByAddress(it, abbreviated = true) },
                             transactionId = stringResByTransactionId(
                                 value = transaction.transaction.id.txIdString(),
                                 abbreviated = true
                             ),
+                            refundedAmount = transaction.swap.data?.refundedFormatted
+                                ?.let {
+                                    stringResByDynamicCurrencyNumber(amount = it, ticker = "ZEC")
+                                }
+                                ?.takeIf {
+                                    transaction.swap.data.status == SwapStatus.REFUNDED
+                                },
                             onTransactionIdClick = {
                                 onCopyToClipboard(transaction.transaction.id.txIdString())
                             },
@@ -154,20 +163,11 @@ class TransactionDetailVM(
                             } else {
                                 { onCopyToClipboard(recipient) }
                             },
-                            fee = createFeeStringRes(transaction),
-                            isSlippageRealized = transaction.swap.data?.isSlippageRealized == true,
                             maxSlippage = transaction.swap.data?.maxSlippage?.let {
                                 stringResByNumber(it, 0) + stringRes("%")
                             },
                             note = transaction.metadata.note?.let { stringRes(it) },
-                            refundedAmount = transaction.swap.data?.refundedFormatted
-                                ?.let {
-                                    stringResByDynamicCurrencyNumber(amount = it, ticker = "ZEC")
-                                }
-                                ?.takeIf {
-                                    transaction.swap.data.status == SwapStatus.REFUNDED
-                                },
-                            totalFees = transaction.metadata.swapMetadata?.totalFees?.let { stringRes(it) }
+                            isSlippageRealized = transaction.swap.data?.isSlippageRealized == true
                         )
                     }
 
@@ -277,6 +277,15 @@ class TransactionDetailVM(
                 )
             }
         }
+
+    // private fun createTotalFeesForSwap(
+    //     transaction: DetailedTransactionData,
+    //     swap: SwapQuoteStatusData,
+    // ) = if (swap.data?.swapProviderFee != null) {
+    //     stringRes(swap.data.swapProviderFee + (transaction.transaction.fee ?: Zatoshi(0)))
+    // } else {
+    //     transaction.metadata.swapMetadata?.totalFees?.let { stringRes(it) }
+    // }
 
     private fun createQuoteHeaderState(swap: SwapQuoteStatusData): SwapQuoteHeaderState {
         fun createFromState(): SwapTokenAmountState? =
