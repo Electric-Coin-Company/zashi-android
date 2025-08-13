@@ -7,6 +7,7 @@ import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
+import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -14,6 +15,7 @@ import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
+import java.math.BigDecimal
 import java.math.RoundingMode
 
 internal class SwapQuoteVMMapper {
@@ -35,10 +37,7 @@ internal class SwapQuoteVMMapper {
                 items = createItems(this),
                 amount = createTotalAmountState(this),
                 onBack = onBack,
-                infoText =
-                    stringRes("Total amount includes max slippage of ") +
-                        stringResByNumber(quote.slippage, minDecimals = 0) +
-                        stringRes("%"),
+                infoText = createInfoText(this),
                 primaryButton =
                     ButtonState(
                         text = stringRes("Confirm"),
@@ -47,9 +46,21 @@ internal class SwapQuoteVMMapper {
             )
         }
 
-    private fun createItems(state: SwapQuoteInternalState): List<SwapQuoteInfoItem> =
+    private fun createInfoText(state: SwapQuoteInternalState): StringResource? {
+        if (state.quote.quote.type == EXACT_OUTPUT) return null
+
+        val slippageUsd = state.quote.quote.amountOutUsd.multiply(state.quote.slippage.divide(BigDecimal(100)))
+
+        return stringRes("You could receive up to ") +
+            stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol) + // $2.50
+            stringRes(" less based on the ") +
+            stringResByNumber(state.quote.slippage, minDecimals = 0) + stringRes("%") +
+            stringRes(" slippage you set.")
+    }
+
+    private fun createItems(state: SwapQuoteInternalState): List<SwapQuoteInfoItem> {
         with(state) {
-            return listOf(
+            return listOfNotNull(
                 SwapQuoteInfoItem(
                     description =
                         when (quote.mode) {
@@ -82,8 +93,22 @@ internal class SwapQuoteVMMapper {
                     title = stringRes(quote.swapProviderFee),
                     subtitle = stringResByDynamicCurrencyNumber(quote.swapProviderFeeUsd, FiatCurrency.USD.symbol)
                 ),
+                if (state.quote.quote.type == EXACT_OUTPUT) {
+                    val slippage = state.quote.slippage.divide(BigDecimal(100))
+                    val slippageZatoshi = state.quote.amountInZec.multiply(slippage).convertZecToZatoshi()
+                    val slippageUsd = state.quote.quote.amountOutUsd.multiply(slippage)
+                    SwapQuoteInfoItem(
+                        description = stringRes("Max slippage ") +
+                            stringResByNumber(state.quote.slippage, minDecimals = 0) + stringRes("%"),
+                        title = stringRes(slippageZatoshi),
+                        subtitle = stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol)
+                    )
+                } else {
+                    null
+                }
             )
         }
+    }
 
     private fun createTotalAmountState(state: SwapQuoteInternalState): SwapQuoteInfoItem =
         with(state) {

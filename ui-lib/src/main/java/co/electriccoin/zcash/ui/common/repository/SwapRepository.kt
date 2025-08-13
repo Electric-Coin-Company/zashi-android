@@ -292,6 +292,6 @@ class SwapRepositoryImpl(
     }
 }
 
-private val DEFAULT_SLIPPAGE = BigDecimal("1")
+private val DEFAULT_SLIPPAGE = BigDecimal("0.5")
 
 private val DEFAULT_MODE = SwapMode.EXACT_INPUT

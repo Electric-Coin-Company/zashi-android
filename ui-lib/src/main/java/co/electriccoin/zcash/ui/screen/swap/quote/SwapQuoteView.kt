@@ -165,12 +165,14 @@ private fun Success(
             descriptionFontWeight = FontWeight.Medium,
             descriptionColor = ZashiColors.Text.textPrimary
         )
-        Spacer(48.dp)
-        ZashiInfoText(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textModifier = Modifier.padding(top = 4.dp),
-            text = state.infoText.getValue()
-        )
+        if (state.infoText != null) {
+            Spacer(48.dp)
+            ZashiInfoText(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                textModifier = Modifier.padding(top = 4.dp),
+                text = state.infoText.getValue()
+            )
+        }
         Spacer(24.dp)
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),

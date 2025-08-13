@@ -18,7 +18,7 @@ internal sealed interface SwapQuoteState : ModalBottomSheetState {
         val items: List<SwapQuoteInfoItem>,
         val amount: SwapQuoteInfoItem,
         val primaryButton: ButtonState,
-        val infoText: StringResource,
+        val infoText: StringResource?,
         override val onBack: () -> Unit,
     ) : SwapQuoteState
 
