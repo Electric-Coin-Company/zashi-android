@@ -54,8 +54,8 @@ fun TransactionDetailSwapStatusRow(
                 modifier = Modifier.shimmer(rememberZashiShimmer())
             ) {
                 ShimmerRectangle(
-                    width = 64.dp,
-                    height = 20.dp,
+                    width = 84.dp,
+                    height = 25.dp,
                     color = ZashiColors.Surfaces.bgTertiary
                 )
             }

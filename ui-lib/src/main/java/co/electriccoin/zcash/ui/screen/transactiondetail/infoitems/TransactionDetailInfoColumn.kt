@@ -32,47 +32,42 @@ fun TransactionDetailInfoColumn(
     state: TransactionDetailInfoColumnState,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    val clickModifier = if (state.onClick != null) {
+        Modifier.clickable(
+            indication = ripple(),
+            interactionSource = remember { MutableInteractionSource() },
+            onClick = state.onClick,
+            role = Role.Button,
+        )
+    } else {
+        Modifier
+    }
+    Column(
         modifier =
-            modifier then
-                if (state.onClick != null) {
-                    Modifier.clickable(
-                        indication = ripple(),
-                        interactionSource = remember { MutableInteractionSource() },
-                        onClick = state.onClick,
-                        role = Role.Button,
-                    )
-                } else {
-                    Modifier
-                },
+            modifier then clickModifier then Modifier.padding(
+                top = if (state.title != null) 14.dp else 0.dp,
+                start = 20.dp,
+                end = 20.dp,
+                bottom = 14.dp
+            )
     ) {
-        Column(
-            modifier =
-                Modifier.padding(
-                    top = if (state.title != null) 14.dp else 0.dp,
-                    start = 20.dp,
-                    end = 20.dp,
-                    bottom = 14.dp
-                )
-        ) {
-            state.title?.let {
-                Text(
-                    text = it.getValue(),
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Text.textTertiary,
-                    maxLines = 1,
-                )
-                Spacer(Modifier.width(4.dp))
-            }
+        state.title?.let {
+            Text(
+                text = it.getValue(),
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textTertiary,
+                maxLines = 1,
+            )
+            Spacer(Modifier.width(4.dp))
+        }
 
-            SelectionContainer {
-                Text(
-                    text = state.message.getValue(),
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Text.textPrimary,
-                    fontWeight = FontWeight.Medium
-                )
-            }
+        SelectionContainer {
+            Text(
+                text = state.message.getValue(),
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textPrimary,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }

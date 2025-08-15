@@ -97,26 +97,22 @@ fun TransactionDetailRowSurface(
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
-    Box (
-        modifier =
-            modifier then
-                if (onClick != null) {
-                    Modifier.clickable(
-                        indication = ripple(),
-                        interactionSource = remember { MutableInteractionSource() },
-                        onClick = onClick,
-                        role = Role.Button,
-                    )
-                } else {
-                    Modifier
-                },
+    val clickModifier = if (onClick != null) {
+        Modifier.clickable(
+            indication = ripple(),
+            interactionSource = remember { MutableInteractionSource() },
+            onClick = onClick,
+            role = Role.Button,
+        )
+    } else {
+        Modifier
+    }
+
+    Row(
+        modifier = modifier then clickModifier then Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            content()
-        }
+        content()
     }
 }
 
