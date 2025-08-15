@@ -27,7 +27,6 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoShape.FIRST
 import com.valentinilk.shimmer.shimmer
 
 @Composable
@@ -37,7 +36,6 @@ fun TransactionDetailSwapStatusRow(
 ) {
     TransactionDetailRowSurface(
         onClick = null,
-        shape = state.shape,
         modifier = modifier,
     ) {
         Text(
@@ -90,7 +88,6 @@ private fun StatusChip(swapStatus: SwapStatus) {
 data class TransactionDetailSwapStatusRowState(
     val title: StringResource,
     val status: SwapStatus?,
-    val shape: TransactionDetailInfoShape,
 )
 
 @PreviewScreens
@@ -103,7 +100,6 @@ private fun Preview() =
                     TransactionDetailSwapStatusRowState(
                         title = stringRes("Title"),
                         status = SUCCESS,
-                        shape = FIRST,
                     )
             )
         }
@@ -119,7 +115,6 @@ private fun LoadingPreview() =
                     TransactionDetailSwapStatusRowState(
                         title = stringRes("Title"),
                         status = null,
-                        shape = FIRST,
                     )
             )
         }

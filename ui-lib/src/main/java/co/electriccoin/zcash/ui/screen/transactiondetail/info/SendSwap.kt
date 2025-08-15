@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
@@ -39,11 +40,9 @@ import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailHeader
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumn
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumnState
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoContainer
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRow
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRowState
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoShape.FIRST
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoShape.LAST
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoShape.MIDDLE
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailSwapStatusRow
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailSwapStatusRowState
 
@@ -68,118 +67,103 @@ fun SendSwap(
             onButtonClick = { isExpanded = !isExpanded }
         )
         Spacer(8.dp)
-        TransactionDetailSwapStatusRow(
-            modifier = Modifier.fillMaxWidth(),
-            state =
-                TransactionDetailSwapStatusRowState(
-                    title = stringRes(R.string.transaction_detail_info_transaction_status),
-                    shape = FIRST,
-                    status = state.status
-                )
-        )
-        ZashiHorizontalDivider()
-        TransactionDetailInfoRow(
-            modifier = Modifier.fillMaxWidth(),
-            state =
-                TransactionDetailInfoRowState(
-                    title = stringRes(R.string.transaction_detail_info_sent_to),
-                    message = state.depositAddress,
-                    trailingIcon = R.drawable.ic_transaction_detail_info_copy,
-                    shape =
-                        when {
-                            state.note != null -> MIDDLE
-                            isExpanded -> MIDDLE
-                            else -> LAST
-                        },
-                    onClick = state.onDepositAddressClick
-                ),
-        )
-        AnimatedVisibility(
-            visible = isExpanded,
-            enter = expandVertically(),
-            exit = shrinkVertically()
-        ) {
-            Column {
-                ZashiHorizontalDivider()
-                TransactionDetailInfoRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    state =
-                        TransactionDetailInfoRowState(
-                            title = stringRes("Recipient"),
-                            message = state.recipientAddress,
-                            trailingIcon = R.drawable.ic_transaction_detail_info_copy,
-                            shape = MIDDLE,
-                            onClick = state.onRecipientAddressClick
-                        )
-                )
-                ZashiHorizontalDivider()
-                TransactionDetailInfoRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    state =
-                        TransactionDetailInfoRowState(
-                            title = stringRes(R.string.transaction_detail_info_transaction_id),
-                            message = state.transactionId,
-                            trailingIcon = R.drawable.ic_transaction_detail_info_copy,
-                            shape = MIDDLE,
-                            onClick = state.onTransactionIdClick
-                        )
-                )
-                if (state.totalFees != null) {
-                    ZashiHorizontalDivider()
-                    TransactionDetailInfoRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        state =
-                            TransactionDetailInfoRowState(
-                                title = stringRes("Total fees"),
-                                message = state.totalFees,
-                                shape = MIDDLE,
-                            )
-                    )
-                }
-                ZashiHorizontalDivider()
-                TransactionDetailInfoRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    state =
-                        TransactionDetailInfoRowState(
-                            title = if (state.isSlippageRealized) {
-                                stringRes("Realized slippage")
-                            } else {
-                                stringRes("Max slippage")
-                            },
-                            message = state.maxSlippage,
-                            shape = when {
-                                state.status == SwapStatus.REFUNDED -> MIDDLE
-                                state.note != null -> MIDDLE
-                                else -> LAST
-                            },
-                        )
-                )
-                if (state.status == SwapStatus.REFUNDED) {
-                    ZashiHorizontalDivider()
-                    TransactionDetailInfoRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        state =
-                            TransactionDetailInfoRowState(
-                                title = stringRes("Refunded amount"),
-                                message = state.refundedAmount,
-                                shape = if (state.note != null) MIDDLE else LAST,
-                            )
-                    )
-                }
-            }
-        }
-        if (state.note != null) {
-            ZashiHorizontalDivider()
-            TransactionDetailInfoColumn(
+        TransactionDetailInfoContainer {
+            TransactionDetailSwapStatusRow(
                 modifier = Modifier.fillMaxWidth(),
                 state =
-                    TransactionDetailInfoColumnState(
-                        title = stringRes(R.string.transaction_detail_info_note),
-                        message = state.note,
-                        shape = LAST,
-                        onClick = null
+                    TransactionDetailSwapStatusRowState(
+                        title = stringRes(R.string.transaction_detail_info_transaction_status),
+                        status = state.status
                     )
             )
+            ZashiHorizontalDivider()
+            TransactionDetailInfoRow(
+                modifier = Modifier.fillMaxWidth(),
+                state =
+                    TransactionDetailInfoRowState(
+                        title = stringRes(R.string.transaction_detail_info_sent_to),
+                        message = state.depositAddress,
+                        trailingIcon = R.drawable.ic_transaction_detail_info_copy,
+                        onClick = state.onDepositAddressClick
+                    ),
+            )
+            AnimatedVisibility(
+                visible = isExpanded,
+                enter = expandVertically(expandFrom = Alignment.Top),
+                exit = shrinkVertically(shrinkTowards = Alignment.Top)
+            ) {
+                Column {
+                    ZashiHorizontalDivider()
+                    TransactionDetailInfoRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        state =
+                            TransactionDetailInfoRowState(
+                                title = stringRes("Recipient"),
+                                message = state.recipientAddress,
+                                trailingIcon = R.drawable.ic_transaction_detail_info_copy,
+                                onClick = state.onRecipientAddressClick
+                            )
+                    )
+                    ZashiHorizontalDivider()
+                    TransactionDetailInfoRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        state =
+                            TransactionDetailInfoRowState(
+                                title = stringRes(R.string.transaction_detail_info_transaction_id),
+                                message = state.transactionId,
+                                trailingIcon = R.drawable.ic_transaction_detail_info_copy,
+                                onClick = state.onTransactionIdClick
+                            )
+                    )
+                    if (state.totalFees != null) {
+                        ZashiHorizontalDivider()
+                        TransactionDetailInfoRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            state =
+                                TransactionDetailInfoRowState(
+                                    title = stringRes("Total fees"),
+                                    message = state.totalFees,
+                                )
+                        )
+                    }
+                    ZashiHorizontalDivider()
+                    TransactionDetailInfoRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        state =
+                            TransactionDetailInfoRowState(
+                                title = if (state.isSlippageRealized) {
+                                    stringRes("Realized slippage")
+                                } else {
+                                    stringRes("Max slippage")
+                                },
+                                message = state.maxSlippage,
+                            )
+                    )
+                    if (state.status == SwapStatus.REFUNDED) {
+                        ZashiHorizontalDivider()
+                        TransactionDetailInfoRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            state =
+                                TransactionDetailInfoRowState(
+                                    title = stringRes("Refunded amount"),
+                                    message = state.refundedAmount,
+                                )
+                        )
+                    }
+                }
+            }
+            if (state.note != null) {
+                ZashiHorizontalDivider()
+                TransactionDetailInfoColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    state =
+                        TransactionDetailInfoColumnState(
+                            title = stringRes(R.string.transaction_detail_info_note),
+                            message = state.note,
+                            onClick = null
+                        )
+                )
+            }
         }
         if (state.status == SwapStatus.REFUNDED) {
             Spacer(8.dp)

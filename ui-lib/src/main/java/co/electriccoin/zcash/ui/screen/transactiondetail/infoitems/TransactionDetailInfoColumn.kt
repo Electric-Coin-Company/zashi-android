@@ -1,20 +1,18 @@
 package co.electriccoin.zcash.ui.screen.transactiondetail.infoitems
 
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
@@ -28,18 +26,13 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoShape.MIDDLE
 
 @Composable
 fun TransactionDetailInfoColumn(
     state: TransactionDetailInfoColumnState,
     modifier: Modifier = Modifier
 ) {
-    val topStart by animateDpAsState(state.shape.topStart)
-    val topEnd by animateDpAsState(state.shape.topEnd)
-    val bottomStart by animateDpAsState(state.shape.bottomStart)
-    val bottomEnd by animateDpAsState(state.shape.bottomEnd)
-    Surface(
+    Box(
         modifier =
             modifier then
                 if (state.onClick != null) {
@@ -52,13 +45,6 @@ fun TransactionDetailInfoColumn(
                 } else {
                     Modifier
                 },
-        shape = RoundedCornerShape(
-            topStart = topStart,
-            topEnd = topEnd,
-            bottomStart = bottomStart,
-            bottomEnd = bottomEnd
-        ),
-        color = ZashiColors.Surfaces.bgSecondary,
     ) {
         Column(
             modifier =
@@ -91,10 +77,10 @@ fun TransactionDetailInfoColumn(
     }
 }
 
+@Immutable
 data class TransactionDetailInfoColumnState(
     val title: StringResource?,
     val message: StringResource,
-    val shape: TransactionDetailInfoShape,
     val onClick: (() -> Unit)?,
 )
 
@@ -109,7 +95,6 @@ private fun Preview() =
                     TransactionDetailInfoColumnState(
                         title = stringRes("Title"),
                         message = stringRes("Message"),
-                        shape = MIDDLE,
                         onClick = {}
                     )
             )
@@ -127,7 +112,6 @@ private fun NoTitlePreview() =
                     TransactionDetailInfoColumnState(
                         title = null,
                         message = stringRes("Message"),
-                        shape = MIDDLE,
                         onClick = {}
                     )
             )
