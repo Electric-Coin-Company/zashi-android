@@ -40,7 +40,7 @@ fun SwapInfoInfoView(state: SwapInfoState) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Swap or Pay with",
+                    text = "Swap with",
                     style = ZashiTypography.textXl,
                     fontWeight = FontWeight.SemiBold,
                     color = ZashiColors.Text.textPrimary
@@ -58,12 +58,12 @@ fun SwapInfoInfoView(state: SwapInfoState) {
                 subtitle = "Swap from shielded ZEC to any NEAR-supported coin or token." +
                     "Zashi is a ZEC-only wallet, so you’ll need a valid wallet address for the asset you’re swapping to."
             )
-            Spacer(20.dp)
-            ListItem(
-                bigIcon = R.drawable.ic_swap_info_item_2,
-                title = "Pay with NEAR",
-                subtitle = "Make cross-chain payments in any NEAR-supported coin or token.\n\nIf the actual slippage and network conditions result in your recipient receiving less than the promised amount, your transaction will be reversed. You will receive a full refund minus network fees."
-            )
+            // Spacer(20.dp)
+            // ListItem(
+            //     bigIcon = R.drawable.ic_swap_info_item_2,
+            //     title = "Pay with NEAR",
+            //     subtitle = "Make cross-chain payments in any NEAR-supported coin or token.\n\nIf the actual slippage and network conditions result in your recipient receiving less than the promised amount, your transaction will be reversed. You will receive a full refund minus network fees."
+            // )
             Spacer(32.dp)
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),

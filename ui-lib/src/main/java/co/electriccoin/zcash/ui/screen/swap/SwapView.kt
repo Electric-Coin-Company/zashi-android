@@ -34,6 +34,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.key.NativeKeyEvent
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -226,7 +227,15 @@ private fun SlippageSeparator(
             color = ZashiColors.Utility.Gray.utilityGray100
         )
 
-        ZashiImageButton(state.changeModeButton)
+        // ZashiImageButton(state.changeModeButton)
+
+        Image(
+            modifier = Modifier.size(36.dp),
+            painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_arrow_narrow_down),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(ZashiColors.Text.textDisabled),
+            contentScale = ContentScale.Inside
+        )
 
         ZashiHorizontalDivider(
             modifier = Modifier.weight(1f),

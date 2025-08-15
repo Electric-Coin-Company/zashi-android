@@ -200,7 +200,7 @@ private fun RefundedInfo() {
                 )
                 Spacer(8.dp)
                 Text(
-                    text = "Your cross-chain payment was sent but the swap was unsuccessful. The payment amount has been refunded, minus transaction fees.",
+                    text = "Your deposit transaction was sent but the swap was unsuccessful. The payment amount has been refunded, minus transaction fees.",
                     style = ZashiTypography.textXs,
                     color = ZashiColors.Utility.WarningYellow.utilityOrange800
                 )
