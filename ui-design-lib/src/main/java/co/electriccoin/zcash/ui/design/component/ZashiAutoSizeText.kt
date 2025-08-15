@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.design.component
 
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.TextAutoSize
@@ -10,12 +11,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -95,9 +98,13 @@ fun ZashiAutoSizeText(
         }
     val textColor = color.takeOrElse { style.color.takeOrElse { LocalContentColor.current } }
 
+    val measurer = rememberTextMeasurer()
+    val minHeight = remember(style, measurer) { measurer.measure(text = text, style = style).size.height }
+    val bulletRestLine = with(LocalDensity.current) { minHeight.toDp() }
+
     BasicText(
         text = text,
-        modifier = modifier,
+        modifier = modifier then Modifier.heightIn(min = bulletRestLine),
         style =
             style.merge(
                 color = textColor,
@@ -116,6 +123,6 @@ fun ZashiAutoSizeText(
         maxLines = maxLines,
         minLines = minLines,
         inlineContent = inlineContent,
-        autoSize = textAutoSize
+        autoSize = textAutoSize,
     )
 }
