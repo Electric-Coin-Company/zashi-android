@@ -2,14 +2,17 @@ package co.electriccoin.zcash.ui.screen.swap.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.BlankSurface
@@ -75,14 +78,18 @@ internal fun SwapAmountText(
             }
             Spacer(8.dp)
             Row {
-                Spacer(1f)
-                SelectionContainer {
+                SelectionContainer(
+                    modifier = Modifier.weight(1f),
+                ) {
                     ZashiAutoSizeText(
+                        modifier = Modifier.fillMaxWidth(),
                         text = state.secondaryText?.getValue() ?: "",
                         style = ZashiTypography.textSm,
                         fontWeight = FontWeight.Medium,
                         color = ZashiColors.Text.textTertiary,
-                        maxLines = 1
+                        maxLines = 1,
+                        contentAlignment = Alignment.CenterEnd,
+                        textAlign = TextAlign.End
                     )
                 }
             }

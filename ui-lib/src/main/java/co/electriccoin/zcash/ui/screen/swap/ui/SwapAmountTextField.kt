@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -177,9 +178,13 @@ private fun SwapTextFieldCard(
             Row(
                 verticalAlignment = CenterVertically
             ) {
-                Spacer(1f)
-                SelectionContainer {
+                SelectionContainer(
+                    modifier = Modifier.weight(1f),
+                ) {
                     ZashiAutoSizeText(
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.End,
+                        contentAlignment = CenterEnd,
                         text = state.secondaryText.getValue(),
                         style = ZashiTypography.textSm,
                         fontWeight = FontWeight.Medium,
