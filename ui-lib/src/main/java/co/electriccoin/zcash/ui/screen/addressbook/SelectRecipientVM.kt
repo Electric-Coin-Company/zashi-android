@@ -17,6 +17,7 @@ import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
@@ -97,7 +98,7 @@ class SelectRecipientVM(
                                     smallIcon = null,
                                     isShielded = false,
                                     name = stringRes(contact.name),
-                                    address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
+                                    address = stringResByAddress(contact.address, abbreviated = true),
                                     onClick = { onContactClick(contact) }
                                 )
                             )
@@ -136,7 +137,7 @@ class SelectRecipientVM(
                                 smallIcon = null,
                                 isShielded = false,
                                 name = stringRes(contact.name),
-                                address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
+                                address = stringResByAddress(contact.address, abbreviated = true),
                                 onClick = { onContactClick(contact) },
                             )
                         )

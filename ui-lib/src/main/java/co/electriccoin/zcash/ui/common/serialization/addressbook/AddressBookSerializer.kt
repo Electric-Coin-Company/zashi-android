@@ -21,51 +21,45 @@ class AddressBookSerializer : BaseSerializer() {
         addressBook.contacts.forEach { contact ->
             outputStream.write(contact.lastUpdated.toEpochMilliseconds().createByteArray())
             outputStream.write(contact.address.createByteArray())
-            outputStream.write(contact.chain.createByteArray())
             outputStream.write(contact.name.createByteArray())
+            outputStream.write(contact.chain.createByteArray())
         }
     }
 
     fun deserializeAddressBook(inputStream: InputStream): AddressBook =
         when (val version = inputStream.readInt()) {
-            ADDRESS_BOOK_SERIALIZATION_V1 -> {
-                AddressBook(
-                    version = version,
-                    lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
-                    contacts =
-                        inputStream.readInt().let { contactsSize ->
-                            (0 until contactsSize).map { _ ->
-                                AddressBookContact(
-                                    lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
-                                    address = inputStream.readString(),
-                                    chain = null,
-                                    name = inputStream.readString(),
-                                )
-                            }
+            ADDRESS_BOOK_SERIALIZATION_V1 -> AddressBook(
+                version = version,
+                lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
+                contacts =
+                    inputStream.readInt().let { contactsSize ->
+                        (0 until contactsSize).map { _ ->
+                            AddressBookContact(
+                                lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
+                                address = inputStream.readString(),
+                                name = inputStream.readString(),
+                                chain = null,
+                            )
                         }
-                )
-            }
+                    }
+            )
 
-            ADDRESS_BOOK_SERIALIZATION_V2 -> {
-                AddressBook(
-                    version = version,
-                    lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
-                    contacts =
-                        inputStream.readInt().let { contactsSize ->
-                            (0 until contactsSize).map { _ ->
-                                AddressBookContact(
-                                    lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
-                                    address = inputStream.readString(),
-                                    chain = inputStream.readString().takeIf { it.isNotEmpty() },
-                                    name = inputStream.readString(),
-                                )
-                            }
+            ADDRESS_BOOK_SERIALIZATION_V2 -> AddressBook(
+                version = version,
+                lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
+                contacts =
+                    inputStream.readInt().let { contactsSize ->
+                        (0 until contactsSize).map { _ ->
+                            AddressBookContact(
+                                lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
+                                address = inputStream.readString(),
+                                name = inputStream.readString(),
+                                chain = inputStream.readString().takeIf { it.isNotEmpty() },
+                            )
                         }
-                )
-            }
+                    }
+            )
 
-            else -> {
-                throw UnsupportedOperationException("Unknown version of address book")
-            }
+            else -> throw UnsupportedOperationException("Unknown version of address book")
         }
 }

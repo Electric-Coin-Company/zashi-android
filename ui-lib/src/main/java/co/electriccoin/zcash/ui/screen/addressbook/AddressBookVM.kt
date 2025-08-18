@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.screen.contact.AddGenericABContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
@@ -53,7 +54,7 @@ class AddressBookVM(
                                 smallIcon = contact.blockchain?.chainIcon ?: zcashBlockchain.chainIcon,
                                 isShielded = false,
                                 name = stringRes(contact.name),
-                                address = stringRes("${contact.address.take(ADDRESS_MAX_LENGTH)}..."),
+                                address = stringResByAddress(value = contact.address, abbreviated = true),
                                 onClick = { onContactClick(contact) },
                             )
                         )

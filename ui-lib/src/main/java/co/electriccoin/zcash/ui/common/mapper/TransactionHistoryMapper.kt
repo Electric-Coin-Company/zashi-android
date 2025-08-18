@@ -28,7 +28,7 @@ class TransactionHistoryMapper {
         TransactionState(
             key = data.transaction.id.txIdString(),
             icon = getIcon(data),
-            providerIcon = if (data.metadata.provider?.startsWith("near") == true) {
+            providerIcon = if (data.metadata.swapMetadata?.provider?.startsWith("near") == true) {
                 R.drawable.ic_transaction_provider_near
             } else {
                 null

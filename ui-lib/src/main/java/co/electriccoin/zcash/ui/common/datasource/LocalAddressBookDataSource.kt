@@ -89,7 +89,7 @@ class LocalAddressBookDataSourceImpl(
                             AddressBookContact(
                                 name = name.trim(),
                                 address = address.trim(),
-                                chain = chain?.trim(),
+                                chain = chain?.trim()?.takeIf { it.isNotEmpty() },
                                 lastUpdated = lastUpdated,
                             ),
                 ).also {
@@ -123,8 +123,8 @@ class LocalAddressBookDataSourceImpl(
                                     AddressBookContact(
                                         name = name.trim(),
                                         address = address.trim(),
-                                        chain = chain?.trim(),
-                                        lastUpdated = Clock.System.now()
+                                        chain = chain?.trim()?.takeIf { it.isNotEmpty() },
+                                        lastUpdated = Clock.System.now(),
                                     )
                                 )
                             }.toList(),

@@ -36,8 +36,6 @@ data class AccountMetadata(
     val annotations: List<AnnotationMetadata>,
     @SerialName("swaps")
     val swaps: SwapsMetadata = SwapsMetadata(swapIds = emptyList(), lastUsedAssetHistory = emptySet()),
-    @SerialName("providers")
-    val providers: List<ProviderMetadata> = emptyList()
 )
 
 @JsonIgnoreUnknownKeys
@@ -85,14 +83,7 @@ data class SwapMetadata(
     val totalFees: Zatoshi,
     @SerialName("totalFeesUsd")
     @Serializable(BigDecimalSerializer::class)
-    val totalFeesUsd: BigDecimal
-)
-
-@JsonIgnoreUnknownKeys
-@Serializable
-data class ProviderMetadata(
-    @SerialName("txId")
-    val txId: String,
+    val totalFeesUsd: BigDecimal,
     @SerialName("provider")
     val provider: String,
 )

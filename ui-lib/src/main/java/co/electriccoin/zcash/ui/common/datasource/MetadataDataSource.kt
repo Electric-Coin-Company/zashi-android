@@ -6,7 +6,6 @@ import co.electriccoin.zcash.ui.common.model.AccountMetadata
 import co.electriccoin.zcash.ui.common.model.AnnotationMetadata
 import co.electriccoin.zcash.ui.common.model.BookmarkMetadata
 import co.electriccoin.zcash.ui.common.model.Metadata
-import co.electriccoin.zcash.ui.common.model.ProviderMetadata
 import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMetadata
 import co.electriccoin.zcash.ui.common.model.SwapsMetadata
@@ -273,13 +272,11 @@ class MetadataDataSourceImpl(
                                     txId = txId,
                                     lastUpdated = Instant.now(),
                                     totalFees = totalFees,
-                                    totalFeesUsd = totalFeesUsd
+                                    totalFeesUsd = totalFeesUsd,
+                                    provider = provider
                                 )
                             }
                         ),
-                    providers = metadata.providers.replaceOrAdd(predicate = { it.txId == txId }) {
-                        ProviderMetadata(txId = txId, provider = provider)
-                    }
                 )
             }
         )
@@ -344,7 +341,6 @@ private fun defaultAccountMetadata() =
             swapIds = emptyList(),
             lastUsedAssetHistory = emptySet()
         ),
-        providers = emptyList()
     )
 
 private fun defaultBookmarkMetadata(txId: String) =

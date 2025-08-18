@@ -217,13 +217,12 @@ class MetadataRepositoryImpl(
         metadata
             .map { metadata ->
                 val accountMetadata = metadata?.accountMetadata
-                val providerMetadata = accountMetadata?.providers?.find { it.txId == txId }
+                val swapMetadata = accountMetadata?.swaps?.swapIds?.find { it.txId == txId }
                 TransactionMetadata(
                     isBookmarked = accountMetadata?.bookmarked?.find { it.txId == txId }?.isBookmarked == true,
                     isRead = accountMetadata?.read?.any { it == txId } == true,
                     note = accountMetadata?.annotations?.find { it.txId == txId }?.content,
-                    provider = providerMetadata?.provider,
-                    swapMetadata = accountMetadata?.swaps?.swapIds?.find { it.txId == txId }
+                    swapMetadata = swapMetadata,
                 )
             }.distinctUntilChanged()
 
@@ -258,7 +257,6 @@ data class TransactionMetadata(
     val isBookmarked: Boolean,
     val isRead: Boolean,
     val note: String?,
-    val provider: String?,
     val swapMetadata: SwapMetadata?
 )
 
