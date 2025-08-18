@@ -157,12 +157,7 @@ fun SendSwap(
                         modifier = Modifier.fillMaxWidth(),
                         state =
                             TransactionDetailInfoRowState(
-                                title =
-                                    if (state.isPending) {
-                                        stringRes(R.string.transaction_detail_info_transaction_status)
-                                    } else {
-                                        stringRes(R.string.transaction_detail_info_transaction_completed)
-                                    },
+                                title = stringRes("Timestamp"),
                                 message = state.completedTimestamp,
                             )
                     )
