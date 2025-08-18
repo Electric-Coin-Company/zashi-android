@@ -93,17 +93,30 @@ fun SendSwap(
                 exit = shrinkVertically(shrinkTowards = Alignment.Top)
             ) {
                 Column {
-                    ZashiHorizontalDivider()
-                    TransactionDetailInfoRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        state =
-                            TransactionDetailInfoRowState(
-                                title = stringRes("Recipient"),
-                                message = state.recipientAddress,
-                                trailingIcon = R.drawable.ic_transaction_detail_info_copy,
-                                onClick = state.onRecipientAddressClick
-                            )
-                    )
+                    if (state.status == SwapStatus.REFUNDED) {
+                        ZashiHorizontalDivider()
+                        TransactionDetailInfoRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            state =
+                                TransactionDetailInfoRowState(
+                                    title = stringRes("Refunded amount"),
+                                    message = state.refundedAmount,
+                                )
+                        )
+                    }
+                    if (state.status != SwapStatus.REFUNDED) {
+                        ZashiHorizontalDivider()
+                        TransactionDetailInfoRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            state =
+                                TransactionDetailInfoRowState(
+                                    title = stringRes("Recipient"),
+                                    message = state.recipientAddress,
+                                    trailingIcon = R.drawable.ic_transaction_detail_info_copy,
+                                    onClick = state.onRecipientAddressClick
+                                )
+                        )
+                    }
                     ZashiHorizontalDivider()
                     TransactionDetailInfoRow(
                         modifier = Modifier.fillMaxWidth(),
@@ -139,17 +152,20 @@ fun SendSwap(
                                 message = state.maxSlippage,
                             )
                     )
-                    if (state.status == SwapStatus.REFUNDED) {
-                        ZashiHorizontalDivider()
-                        TransactionDetailInfoRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            state =
-                                TransactionDetailInfoRowState(
-                                    title = stringRes("Refunded amount"),
-                                    message = state.refundedAmount,
-                                )
-                        )
-                    }
+                    ZashiHorizontalDivider()
+                    TransactionDetailInfoRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        state =
+                            TransactionDetailInfoRowState(
+                                title =
+                                    if (state.isPending) {
+                                        stringRes(R.string.transaction_detail_info_transaction_status)
+                                    } else {
+                                        stringRes(R.string.transaction_detail_info_transaction_completed)
+                                    },
+                                message = state.completedTimestamp,
+                            )
+                    )
                 }
             }
             if (state.note != null) {
@@ -232,7 +248,9 @@ private fun Preview() =
                     onRecipientAddressClick = {},
                     maxSlippage = null,
                     note = stringRes("None"),
-                    isSlippageRealized = false
+                    isSlippageRealized = false,
+                    isPending = false,
+                    completedTimestamp = stringRes("Completed"),
                 ),
             )
         }

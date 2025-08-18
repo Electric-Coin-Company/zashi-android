@@ -167,7 +167,9 @@ class TransactionDetailVM(
                                 stringResByNumber(it, 0) + stringRes("%")
                             },
                             note = transaction.metadata.note?.let { stringRes(it) },
-                            isSlippageRealized = transaction.swap.data?.isSlippageRealized == true
+                            isSlippageRealized = transaction.swap.data?.isSlippageRealized == true,
+                            isPending = isPending(transaction),
+                            completedTimestamp = createTimestampStringRes(transaction),
                         )
                     }
 
@@ -186,8 +188,8 @@ class TransactionDetailVM(
                         onTransactionAddressClick = { onCopyToClipboard(transaction.recipientAddress.address) },
                         fee = createFeeStringRes(transaction),
                         completedTimestamp = createTimestampStringRes(transaction),
+                        isPending = isPending(transaction),
                         note = transaction.metadata.note?.let { stringRes(it) },
-                        isPending = isPending(transaction)
                     )
 
                     else -> SendShieldedState(
