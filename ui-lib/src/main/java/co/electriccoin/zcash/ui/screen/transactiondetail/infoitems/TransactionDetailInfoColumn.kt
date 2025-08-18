@@ -19,6 +19,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -58,7 +59,7 @@ fun TransactionDetailInfoColumn(
                 color = ZashiColors.Text.textTertiary,
                 maxLines = 1,
             )
-            Spacer(Modifier.width(4.dp))
+            Spacer(4.dp)
         }
 
         SelectionContainer {
