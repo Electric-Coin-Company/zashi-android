@@ -1,16 +1,6 @@
 package co.electriccoin.zcash.ui.screen.addressbook
 
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -18,18 +8,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.ZashiTooltipBox
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiTextButton
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -39,44 +30,24 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AddressBookPopup(
-    offset: IntOffset,
-    transitionState: MutableTransitionState<Boolean>,
-    onDismissRequest: () -> Unit,
+    tooltipState: TooltipState,
     state: AddressBookState,
+    modifier: Modifier = Modifier,
+    anchor: @Composable () -> Unit
 ) {
-    Popup(
-        alignment = Alignment.Center,
-        onDismissRequest = onDismissRequest,
-        offset = offset
-    ) {
-        AnimatedVisibility(
-            visibleState = transitionState,
-            enter =
-                fadeIn() +
-                    slideInVertically(
-                        spring(stiffness = Spring.StiffnessHigh),
-                        initialOffsetY = { it }
-                    ) +
-                    scaleIn(
-                        spring(
-                            stiffness = Spring.StiffnessMedium,
-                            dampingRatio = Spring.DampingRatioLowBouncy
-                        )
-                    ),
-            exit =
-                fadeOut() +
-                    scaleOut(animationSpec = spring(stiffness = Spring.StiffnessMedium)) +
-                    slideOutVertically(targetOffsetY = { it / 2 }),
-        ) {
-            PopupContent(state = state, onDismissRequest = onDismissRequest)
-        }
-    }
+    ZashiTooltipBox(
+        modifier = modifier,
+        state = tooltipState,
+        tooltip = { Tooltip(state = state, onDismissRequest = { tooltipState.dismiss() }) },
+        anchor = anchor
+    )
 }
 
 @Composable
-private fun PopupContent(
+private fun Tooltip(
     state: AddressBookState,
     onDismissRequest: () -> Unit
 ) {
@@ -140,7 +111,7 @@ private fun TextButton(
 @Composable
 private fun PopupContentPreview() =
     ZcashTheme {
-        PopupContent(
+        Tooltip(
             state =
                 AddressBookState(
                     onBack = {},

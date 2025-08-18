@@ -13,7 +13,7 @@
     <string name="transaction_detail_info_address">Dirección</string>
     <string name="transaction_detail_info_sent_to">Enviado a</string>
     <string name="transaction_detail_info_message">Mensaje</string>
-    <string name="transaction_detail_pending">Pendiente…</string>
+    <string name="transaction_detail_pending">Pendiente</string>
     <string name="transaction_detail_save_address">Guardar dirección</string>
     <string name="transaction_detail_send_again">Enviar de nuevo</string>
     <string name="transaction_detail_sent">Enviado</string>

@@ -2,7 +2,6 @@
 
 package co.electriccoin.zcash.ui.screen.addressbook
 
-import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,10 +15,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -37,7 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
@@ -63,6 +63,7 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
+import kotlinx.coroutines.launch
 
 @Composable
 fun AddressBookView(
@@ -230,13 +231,17 @@ private fun EmptyFullscreen(
             )
         }
 
-        AddContactButton(
-            state = state,
-            modifier =
-                Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-        )
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Spacer(1f)
+            AddContactButton(
+                state = state,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+            )
+        }
     }
 }
 
@@ -271,48 +276,42 @@ fun Modifier.dashedBorder(
     }
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddContactButton(
     state: AddressBookState,
     modifier: Modifier = Modifier
 ) {
-    val transitionState = remember { MutableTransitionState(false) }
+    val tooltipState = rememberTooltipState(isPersistent = true)
+    val scope = rememberCoroutineScope()
 
-    ZashiButton(
+    AddressBookPopup(
         modifier = modifier,
-        state =
-            ButtonState(
-                onClick = {
-                    if (transitionState.targetState && transitionState.currentState) {
-                        transitionState.targetState = false
-                    } else if (!transitionState.targetState && !transitionState.currentState) {
-                        transitionState.targetState = true
-                    }
-                },
-                text = stringRes(R.string.address_book_add)
+        tooltipState = tooltipState,
+        state = state,
+    ) {
+        ZashiButton(
+            modifier = Modifier.fillMaxWidth(),
+            state =
+                ButtonState(
+                    onClick = {
+                        scope.launch {
+                            if (tooltipState.isVisible) tooltipState.dismiss() else tooltipState.show()
+                        }
+                    },
+                    text = stringRes(R.string.address_book_add)
+                )
+        ) { scope ->
+            Image(
+                painter = painterResource(id = R.drawable.ic_address_book_plus),
+                colorFilter = ColorFilter.tint(ZashiColors.Btns.Primary.btnPrimaryFg),
+                contentDescription = null
             )
-    ) { scope ->
-        Image(
-            painter = painterResource(id = R.drawable.ic_address_book_plus),
-            colorFilter = ColorFilter.tint(ZashiColors.Btns.Primary.btnPrimaryFg),
-            contentDescription = null
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        scope.Text()
-        Spacer(modifier = Modifier.width(6.dp))
-        scope.Loading()
-    }
-
-    if (transitionState.currentState || transitionState.targetState || !transitionState.isIdle) {
-        val offset = with(LocalDensity.current) { 302.dp.toPx() }.toInt()
-        AddressBookPopup(
-            offset = IntOffset(0, offset),
-            transitionState = transitionState,
-            onDismissRequest = {
-                transitionState.targetState = false
-            },
-            state = state
-        )
+            Spacer(modifier = Modifier.width(8.dp))
+            scope.Text()
+            Spacer(modifier = Modifier.width(6.dp))
+            scope.Loading()
+        }
     }
 }
 
