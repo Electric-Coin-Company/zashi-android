@@ -12,7 +12,7 @@ fun SwapInfoScreen() {
         SwapInfoState(
             onBack = { navigationRouter.back() }
         )
-    SwapInfoInfoView(state)
+    SwapInfoView(state)
 }
 
 @Serializable

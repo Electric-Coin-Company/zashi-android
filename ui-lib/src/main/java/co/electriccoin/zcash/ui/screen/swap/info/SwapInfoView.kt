@@ -29,7 +29,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SwapInfoInfoView(state: SwapInfoState) {
+fun SwapInfoView(state: SwapInfoState) {
     ZashiScreenModalBottomSheet(state) {
         Column(
             modifier = Modifier.padding(horizontal = 24.dp)
@@ -54,9 +54,10 @@ fun SwapInfoInfoView(state: SwapInfoState) {
             Spacer(24.dp)
             ListItem(
                 bigIcon = R.drawable.ic_swap_info_item_1,
-                title = "Swap with NEAR",
+                // title = "Swap with NEAR",
                 subtitle = "Swap from shielded ZEC to any NEAR-supported coin or token." +
-                    "Zashi is a ZEC-only wallet, so you’ll need a valid wallet address for the asset you’re swapping to."
+                    "\nZashi is a ZEC-only wallet, so you’ll need a valid wallet address for the asset you’re " +
+                    "swapping to."
             )
             // Spacer(20.dp)
             // ListItem(
@@ -79,7 +80,7 @@ fun SwapInfoInfoView(state: SwapInfoState) {
 
 @Composable
 private fun ListItem(
-    title: String,
+    // title: String,
     subtitle: String,
     @DrawableRes bigIcon: Int,
 ) {
@@ -91,13 +92,13 @@ private fun ListItem(
         )
         Spacer(16.dp)
         Column {
-            Text(
-                text = title,
-                style = ZashiTypography.textSm,
-                fontWeight = FontWeight.SemiBold,
-                color = ZashiColors.Text.textPrimary
-            )
-            Spacer(4.dp)
+            // Text(
+            //     text = title,
+            //     style = ZashiTypography.textSm,
+            //     fontWeight = FontWeight.SemiBold,
+            //     color = ZashiColors.Text.textPrimary
+            // )
+            // Spacer(4.dp)
             Text(
                 text = subtitle,
                 style = ZashiTypography.textSm,
@@ -109,8 +110,8 @@ private fun ListItem(
 
 @PreviewScreens
 @Composable
-private fun SwapPreview() = ZcashTheme { SwapInfoInfoView(state = SwapInfoState(onBack = {})) }
+private fun SwapPreview() = ZcashTheme { SwapInfoView(state = SwapInfoState(onBack = {})) }
 
 @PreviewScreens
 @Composable
-private fun PayPreview() = ZcashTheme { SwapInfoInfoView(state = SwapInfoState(onBack = {})) }
+private fun PayPreview() = ZcashTheme { SwapInfoView(state = SwapInfoState(onBack = {})) }
