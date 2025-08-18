@@ -71,10 +71,14 @@ class TransactionRepositoryImpl(
                 .map { transactions ->
                     transactions
                         .map {
-                            it.copy(
-                                transactionState = createTransactionState(minedHeight = it.minedHeight)
-                                    ?: it.transactionState
-                            )
+                            if (it.isSentTransaction) {
+                                it.copy(
+                                    transactionState = createTransactionState(minedHeight = it.minedHeight)
+                                        ?: it.transactionState
+                                )
+                            } else {
+                                it
+                            }
                         } to synchronizer
                 }
         }
