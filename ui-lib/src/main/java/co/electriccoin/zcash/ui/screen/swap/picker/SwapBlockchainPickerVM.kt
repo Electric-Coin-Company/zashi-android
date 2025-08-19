@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.swap.picker
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.FilterSwapBlockchainsUseCase
@@ -89,17 +90,17 @@ class SwapBlockchainPickerVM(
                     assets.isLoading -> SwapAssetPickerDataState.Loading
                     else ->
                         SwapAssetPickerDataState.Error(
-                            stringRes("Something went wrong"),
-                            stringRes("We couldn’t load the assets. Please check your connection and try again."),
+                            stringRes(co.electriccoin.zcash.ui.design.R.string.general_error_title),
+                            stringRes(co.electriccoin.zcash.ui.design.R.string.general_error_message),
                             ButtonState(
-                                text = stringRes("Try again"),
+                                text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_try_again),
                                 onClick = ::onRetry
                             )
                         )
                 },
             onBack = ::onBack,
             search = search,
-            title = stringRes("Select Chain")
+            title = stringRes(R.string.swap_select_chain)
         )
 
     private fun createTextFieldState(it: String): TextFieldState =

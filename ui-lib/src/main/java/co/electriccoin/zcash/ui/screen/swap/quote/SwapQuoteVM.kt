@@ -40,7 +40,7 @@ internal class SwapQuoteVM(
         combine(
             getCompositeSwapQuote.observe(),
             observeProposal.observeNullable(),
-        ) { quote, proposal->
+        ) { quote, proposal ->
             when (quote) {
                 SwapQuoteCompositeData.Loading -> null
                 is SwapQuoteCompositeData.Error -> createErrorState(quote)
@@ -62,13 +62,9 @@ internal class SwapQuoteVM(
     ): SwapQuoteState.Success? {
         val swapQuote = quote.quote
         return when {
-                proposal is SwapTransactionProposal ->
+            proposal is SwapTransactionProposal ->
                 swapQuoteSuccessMapper.createState(
-                    state =
-                        NearSwapQuoteInternalState(
-                            quote = swapQuote,
-                            proposal = proposal,
-                        ),
+                    state = SwapQuoteInternalState(proposal, swapQuote),
                     onBack = ::onBack,
                     onSubmitQuoteClick = ::onSubmitQuoteClick,
                 )
@@ -83,38 +79,30 @@ internal class SwapQuoteVM(
                 quote.exception is QuoteLowAmountException &&
                     quote.exception.amountFormatted != null ->
                     stringRes(
-                        "Amount is too low " +
-                            "for bridge, try at least "
-                    ) +
+                        R.string.swap_quote_error_too_low_try_at_least,
                         stringResByDynamicCurrencyNumber(
                             amount = quote.exception.amountFormatted,
                             ticker = quote.exception.asset.tokenTicker
                         )
-
-                quote.exception is QuoteLowAmountException ->
-                    stringRes("Amount is too low for bridge, try higher amount.")
-
-                quote.exception is ResponseWithErrorException ->
-                    stringRes(quote.exception.error.message)
-
-                else ->
-                    stringRes(
-                        "We tried but couldn’t get a quote for a payment with your parameters. You can try to adjust the payment details or try again later."
                     )
+
+                quote.exception is QuoteLowAmountException -> stringRes(R.string.swap_quote_error_too_low_try_higher)
+                quote.exception is ResponseWithErrorException -> stringRes(quote.exception.error.message)
+                else -> stringRes(R.string.swap_quote_error_getting_quote)
             }
 
         return SwapQuoteState.Error(
             icon = imageRes(R.drawable.ic_swap_quote_error),
-            title = stringRes("Quote Unavailable"),
+            title = stringRes(R.string.swap_quote_unavailable),
             subtitle = message,
             negativeButton =
                 ButtonState(
-                    text = stringRes("Cancel payment"),
+                    text = stringRes(R.string.swap_quote_cancel_payment),
                     onClick = ::onCancelPaymentClick
                 ),
             positiveButton =
                 ButtonState(
-                    text = stringRes("Edit payment"),
+                    text = stringRes(R.string.swap_quote_edit_payment),
                     onClick = ::onEditPaymentClick
                 ),
             onBack = ::onBackDuringError
@@ -132,12 +120,14 @@ internal class SwapQuoteVM(
     private fun onCancelPaymentClick() = cancelSwap()
 }
 
-internal sealed interface SwapQuoteInternalState {
-    val zatoshiFee: Zatoshi
-    val zecFeeUsd: BigDecimal
-    val totalZec: BigDecimal
-    val totalUsd: BigDecimal
-    val quote: CompositeSwapQuote
-    val totalFeesZatoshi: Zatoshi
-    val totalFeesUsd: BigDecimal
+internal data class SwapQuoteInternalState(
+    val proposal: SwapTransactionProposal,
+    val quote: CompositeSwapQuote,
+) {
+    val zatoshiFee: Zatoshi = proposal.proposal.totalFeeRequired()
+    val zecFeeUsd: BigDecimal = quote.getZecFeeUsd(proposal.proposal)
+    val totalZec: BigDecimal = quote.getTotalZec(proposal.proposal)
+    val totalUsd: BigDecimal = quote.getTotalUsd(proposal.proposal)
+    val totalFeesZatoshi: Zatoshi = quote.getTotalFeesZatoshi(proposal.proposal)
+    val totalFeesUsd: BigDecimal = quote.getTotalFeesUsd(proposal.proposal)
 }

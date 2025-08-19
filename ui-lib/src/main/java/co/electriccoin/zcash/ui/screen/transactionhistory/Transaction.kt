@@ -67,8 +67,7 @@ fun Transaction(
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = state.onClick,
                         role = Role.Button,
-                    )
-                    .padding(contentPadding),
+                    ).padding(contentPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box {
@@ -78,9 +77,10 @@ fun Transaction(
                 )
                 if (state.providerIcon != null) {
                     Image(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .offset(8.dp, 8.dp),
+                        modifier =
+                            Modifier
+                                .align(Alignment.BottomEnd)
+                                .offset(8.dp, 8.dp),
                         painter = painterResource(state.providerIcon),
                         contentDescription = null
                     )

@@ -23,6 +23,7 @@ import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 
+@Suppress("MagicNumber")
 @Composable
 fun ZashiSwapQuoteHeader(
     state: SwapQuoteHeaderState,
@@ -68,39 +69,44 @@ data class SwapQuoteHeaderState(
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    BlankSurface {
-        ZashiSwapQuoteHeader(
-            state = SwapQuoteHeaderState(
-                rotateIcon = false,
-                from = SwapTokenAmountState(
-                    bigIcon = imageRes(R.drawable.ic_chain_placeholder),
-                    smallIcon = imageRes(R.drawable.ic_receive_shield),
-                    title = stringResByDynamicCurrencyNumber(0.000000421423154, "", TickerLocation.HIDDEN),
-                    subtitle = stringResByDynamicCurrencyNumber(0.0000000000000021312, "$")
-                ),
-                to = SwapTokenAmountState(
-                    bigIcon = imageRes(R.drawable.ic_chain_placeholder),
-                    smallIcon = imageRes(R.drawable.ic_receive_shield),
-                    title = stringResByDynamicCurrencyNumber(0.000000421423154, "", TickerLocation.HIDDEN),
-                    subtitle = stringResByDynamicCurrencyNumber(0.0000000000000021312, "$")
-                )
+private fun Preview() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiSwapQuoteHeader(
+                state =
+                    SwapQuoteHeaderState(
+                        rotateIcon = false,
+                        from =
+                            SwapTokenAmountState(
+                                bigIcon = imageRes(R.drawable.ic_chain_placeholder),
+                                smallIcon = imageRes(R.drawable.ic_receive_shield),
+                                title = stringResByDynamicCurrencyNumber(0.000000421423154, "", TickerLocation.HIDDEN),
+                                subtitle = stringResByDynamicCurrencyNumber(0.0000000000000021312, "$")
+                            ),
+                        to =
+                            SwapTokenAmountState(
+                                bigIcon = imageRes(R.drawable.ic_chain_placeholder),
+                                smallIcon = imageRes(R.drawable.ic_receive_shield),
+                                title = stringResByDynamicCurrencyNumber(0.000000421423154, "", TickerLocation.HIDDEN),
+                                subtitle = stringResByDynamicCurrencyNumber(0.0000000000000021312, "$")
+                            )
+                    )
             )
-        )
+        }
     }
-}
-
 
 @PreviewScreens
 @Composable
-private fun LoadingPreview() = ZcashTheme {
-    BlankSurface {
-        ZashiSwapQuoteHeader(
-            state = SwapQuoteHeaderState(
-                rotateIcon = false,
-                from = null,
-                to = null
+private fun LoadingPreview() =
+    ZcashTheme {
+        BlankSurface {
+            ZashiSwapQuoteHeader(
+                state =
+                    SwapQuoteHeaderState(
+                        rotateIcon = false,
+                        from = null,
+                        to = null
+                    )
             )
-        )
+        }
     }
-}

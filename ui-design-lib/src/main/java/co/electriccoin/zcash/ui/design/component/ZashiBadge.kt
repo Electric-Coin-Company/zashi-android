@@ -90,7 +90,6 @@ data class ZashiBadgeColors(
 )
 
 object ZashiBadgeDefaults {
-
     val contentPadding: PaddingValues
         get() = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
 
@@ -125,7 +124,7 @@ object ZashiBadgeDefaults {
         border = border,
         text = text,
         container = background,
-    )                             
+    )
 }
 
 @PreviewScreens

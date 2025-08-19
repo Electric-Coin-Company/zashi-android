@@ -74,7 +74,9 @@ data class SwapDetails(
     val refundedAmountUsd: String? = null
 )
 
-enum class SwapStatus(val apiValue: String) {
+enum class SwapStatus(
+    val apiValue: String
+) {
     KNOWN_DEPOSIT_TX("KNOWN_DEPOSIT_TX"),
     PENDING_DEPOSIT("PENDING_DEPOSIT"),
     INCOMPLETE_DEPOSIT("INCOMPLETE_DEPOSIT"),

@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
@@ -34,43 +35,17 @@ fun SwapInfoView(state: SwapInfoState) {
         Column(
             modifier = Modifier.padding(horizontal = 24.dp)
         ) {
-            // Row(
-            //     modifier = Modifier.fillMaxWidth(),
-            //     verticalAlignment = Alignment.CenterVertically,
-            //     horizontalArrangement = Arrangement.Center
-            // ) {
-            //     Text(
-            //         text = "Swap with",
-            //         style = ZashiTypography.textXl,
-            //         fontWeight = FontWeight.SemiBold,
-            //         color = ZashiColors.Text.textPrimary
-            //     )
-            //     Spacer(10.dp)
-            //     Image(
-            //         painter = painterResource(R.drawable.ic_near_logo),
-            //         contentDescription = null
-            //     )
-            // }
             Spacer(24.dp)
             ListItem(
                 bigIcon = R.drawable.ic_swap_info_item_1,
-                // title = "Swap with NEAR",
-                subtitle = "Swap from shielded ZEC to any NEAR-supported coin or token." +
-                    "\n\nZashi is a ZEC-only wallet, so you’ll need a valid wallet address for the asset you’re " +
-                    "swapping to."
+                subtitle = stringResource(R.string.swap_info_message)
             )
-            // Spacer(20.dp)
-            // ListItem(
-            //     bigIcon = R.drawable.ic_swap_info_item_2,
-            //     title = "Pay with NEAR",
-            //     subtitle = "Make cross-chain payments in any NEAR-supported coin or token.\n\nIf the actual slippage and network conditions result in your recipient receiving less than the promised amount, your transaction will be reversed. You will receive a full refund minus network fees."
-            // )
             Spacer(32.dp)
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 state =
                     ButtonState(
-                        text = stringRes(R.string.general_ok),
+                        text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_ok),
                         onClick = state.onBack
                     )
             )
@@ -97,7 +72,7 @@ private fun ListItem(
             horizontalArrangement = Arrangement.Start
         ) {
             Text(
-                text = "Swap with",
+                text = stringResource(R.string.swap_info_title),
                 style = ZashiTypography.textXl,
                 fontWeight = FontWeight.SemiBold,
                 color = ZashiColors.Text.textPrimary

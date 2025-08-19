@@ -71,7 +71,7 @@ fun ShimmerRectangle(
 
 @Composable
 fun ShimmerRectangle(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     color: Color = ZashiColors.Surfaces.bgSecondary
 ) {
     Box(
@@ -80,4 +80,3 @@ fun ShimmerRectangle(
                 .background(color, RoundedCornerShape(ZashiDimensions.Radius.radiusSm))
     )
 }
-

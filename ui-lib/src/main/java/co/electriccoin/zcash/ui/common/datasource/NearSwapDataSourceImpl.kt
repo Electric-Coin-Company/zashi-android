@@ -31,7 +31,6 @@ class NearSwapDataSourceImpl(
     private val tokenNameProvider: TokenNameProvider,
     private val nearApiProvider: NearApiProvider,
 ) : SwapDataSource {
-
     override suspend fun getSupportedTokens(): List<SwapAsset> =
         withContext(Dispatchers.Default) {
             nearApiProvider.getSupportedTokens().map {
@@ -86,12 +85,13 @@ class NearSwapDataSourceImpl(
                 recipientType = RecipientType.DESTINATION_CHAIN,
                 deadline = Clock.System.now() + 10.minutes,
                 quoteWaitingTimeMs = QUOTE_WAITING_TIME,
-                appFees = listOf(
-                    AppFee(
-                        recipient = "farryela.near",
-                        fee = 50
+                appFees =
+                    listOf(
+                        AppFee(
+                            recipient = "farryela.near",
+                            fee = 50
+                        )
                     )
-                )
             )
 
         return try {

@@ -23,6 +23,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetABContactByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABSwapContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCoinbaseStatusUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetCompositeSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
@@ -39,7 +40,6 @@ import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapModeUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetCompositeSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableBalanceUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase

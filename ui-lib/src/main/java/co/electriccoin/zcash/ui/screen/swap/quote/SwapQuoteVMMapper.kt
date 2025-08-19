@@ -28,7 +28,7 @@ internal class SwapQuoteVMMapper {
             return SwapQuoteState.Success(
                 title =
                     when (quote.mode) {
-                        EXACT_INPUT -> stringRes("Swap Now")
+                        EXACT_INPUT -> stringRes(R.string.swap_quote_title)
                         EXACT_OUTPUT -> stringRes("Pay now")
                     },
                 rotateIcon = quote.mode == EXACT_OUTPUT,
@@ -40,73 +40,76 @@ internal class SwapQuoteVMMapper {
                 infoText = createInfoText(),
                 primaryButton =
                     ButtonState(
-                        text = stringRes("Confirm"),
+                        text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_confirm),
                         onClick = onSubmitQuoteClick
                     )
             )
         }
 
+    @Suppress("MagicNumber")
     private fun SwapQuoteInternalState.createInfoText(): StringResource? {
         if (quote.quote.type == EXACT_OUTPUT) return null
-
         val slippageUsd = quote.quote.amountOutUsd.multiply(quote.slippage.divide(BigDecimal(100)))
-
-        return stringRes("You could receive up to ") +
-            stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol) + // $2.50
-            stringRes(" less based on the ") +
-            stringResByNumber(quote.slippage, minDecimals = 0) + stringRes("%") +
-            stringRes(" slippage you set.")
-    }
-
-    private fun SwapQuoteInternalState.createItems(): List<SwapQuoteInfoItem> = listOfNotNull(
-        SwapQuoteInfoItem(
-            description =
-                when (quote.mode) {
-                    EXACT_INPUT -> stringRes("Swap from")
-                    EXACT_OUTPUT -> stringRes("Pay from")
-                },
-            title = stringRes("Zashi"),
-            subtitle = null
-        ),
-        SwapQuoteInfoItem(
-            description =
-                when (quote.mode) {
-                    EXACT_INPUT -> stringRes("Swap to")
-                    EXACT_OUTPUT -> stringRes("Pay to")
-                },
-            title = stringResByAddress(quote.recipient, true),
-            subtitle = null
-        ),
-        SwapQuoteInfoItem(
-            description = stringRes("Total fees"),
-            title = stringRes(totalFeesZatoshi),
-            subtitle = stringResByDynamicCurrencyNumber(totalFeesUsd, FiatCurrency.USD.symbol)
-        ),
-        if (quote.quote.type == EXACT_OUTPUT) {
-            val slippage = quote.slippage.divide(BigDecimal(100))
-            val slippageZatoshi = quote.amountInZec.multiply(slippage).convertZecToZatoshi()
-            val slippageUsd = quote.quote.amountOutUsd.multiply(slippage)
-            SwapQuoteInfoItem(
-                description = stringRes("Max slippage ") +
-                    stringResByNumber(quote.slippage, minDecimals = 0) + stringRes("%"),
-                title = stringRes(slippageZatoshi),
-                subtitle = stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol)
-            )
-        } else {
-            null
-        }
-    )
-
-    private fun SwapQuoteInternalState.createTotalAmountState(): SwapQuoteInfoItem {
-        return SwapQuoteInfoItem(
-            description = stringRes("Total Amount"),
-            title = stringRes(totalZec.convertZecToZatoshi()),
-            subtitle = stringResByDynamicCurrencyNumber(totalUsd, FiatCurrency.USD.symbol)
+        return stringRes(
+            R.string.swap_quote_info,
+            stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol),
+            stringResByNumber(quote.slippage, minDecimals = 0) + stringRes("%")
         )
     }
 
-    private fun SwapQuoteInternalState.createFromState(): SwapTokenAmountState {
-        return when (quote.mode) {
+    @Suppress("MagicNumber")
+    private fun SwapQuoteInternalState.createItems(): List<SwapQuoteInfoItem> =
+        listOfNotNull(
+            SwapQuoteInfoItem(
+                description =
+                    when (quote.mode) {
+                        EXACT_INPUT -> stringRes(R.string.swap_quote_from)
+                        EXACT_OUTPUT -> stringRes("Pay from")
+                    },
+                title = stringRes(R.string.swap_quote_zashi),
+                subtitle = null
+            ),
+            SwapQuoteInfoItem(
+                description =
+                    when (quote.mode) {
+                        EXACT_INPUT -> stringRes(R.string.swap_quote_to)
+                        EXACT_OUTPUT -> stringRes("Pay to")
+                    },
+                title = stringResByAddress(quote.recipient, true),
+                subtitle = null
+            ),
+            SwapQuoteInfoItem(
+                description = stringRes(R.string.swap_quote_total_fees),
+                title = stringRes(totalFeesZatoshi),
+                subtitle = stringResByDynamicCurrencyNumber(totalFeesUsd, FiatCurrency.USD.symbol)
+            ),
+            if (quote.quote.type == EXACT_OUTPUT) {
+                val slippage = quote.slippage.divide(BigDecimal(100))
+                val slippageZatoshi = quote.amountInZec.multiply(slippage).convertZecToZatoshi()
+                val slippageUsd = quote.quote.amountOutUsd.multiply(slippage)
+                SwapQuoteInfoItem(
+                    description =
+                        stringRes(
+                            R.string.swap_quote_max_slippage,
+                            stringResByNumber(quote.slippage, minDecimals = 0) + stringRes("%")
+                        ),
+                    title = stringRes(slippageZatoshi),
+                    subtitle = stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol)
+                )
+            } else {
+                null
+            }
+        )
+
+    private fun SwapQuoteInternalState.createTotalAmountState(): SwapQuoteInfoItem =
+        SwapQuoteInfoItem(
+            description = stringRes(R.string.swap_quote_total_amount),
+            title = stringRes(totalZec.convertZecToZatoshi()),
+            subtitle = stringResByDynamicCurrencyNumber(totalUsd, FiatCurrency.USD.symbol)
+        )
+
+    private fun SwapQuoteInternalState.createFromState(): SwapTokenAmountState =
+        when (quote.mode) {
             EXACT_INPUT -> {
                 SwapTokenAmountState(
                     bigIcon = imageRes(R.drawable.ic_zec_round_full),
@@ -127,10 +130,9 @@ internal class SwapQuoteVMMapper {
                     subtitle = stringResByDynamicCurrencyNumber(quote.amountOutUsd, FiatCurrency.USD.symbol)
                 )
         }
-    }
 
-    private fun SwapQuoteInternalState.createToState(): SwapTokenAmountState {
-        return when (quote.mode) {
+    private fun SwapQuoteInternalState.createToState(): SwapTokenAmountState =
+        when (quote.mode) {
             EXACT_INPUT ->
                 SwapTokenAmountState(
                     bigIcon = quote.destinationAsset.tokenIcon,
@@ -150,5 +152,4 @@ internal class SwapQuoteVMMapper {
                     subtitle = stringResByDynamicCurrencyNumber(quote.amountInUsd, FiatCurrency.USD.symbol)
                 )
         }
-    }
 }

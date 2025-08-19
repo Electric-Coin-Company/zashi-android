@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.TransactionPool
 import cash.z.ecc.android.sdk.model.WalletAddress
-import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
@@ -135,37 +134,45 @@ class TransactionDetailVM(
                         SendSwapState(
                             status = transaction.swap.data?.status,
                             quoteHeader = createQuoteHeaderState(transaction.swap),
-                            depositAddress = stringResByAddress(
-                                value = transaction.recipientAddress?.address.orEmpty(),
-                                abbreviated = true
-                            ),
-                            totalFees = transaction.metadata.swapMetadata?.totalFees?.let { stringRes(it) },
+                            depositAddress =
+                                stringResByAddress(
+                                    value = transaction.recipientAddress?.address.orEmpty(),
+                                    abbreviated = true
+                                ),
+                            totalFees =
+                                transaction.metadata.swapMetadata
+                                    ?.totalFees
+                                    ?.let { stringRes(it) },
                             recipientAddress = recipient?.let { stringResByAddress(it, abbreviated = true) },
-                            transactionId = stringResByTransactionId(
-                                value = transaction.transaction.id.txIdString(),
-                                abbreviated = true
-                            ),
-                            refundedAmount = transaction.swap.data?.refundedFormatted
-                                ?.let {
-                                    stringResByDynamicCurrencyNumber(amount = it, ticker = "ZEC")
-                                }
-                                ?.takeIf {
-                                    transaction.swap.data.status == SwapStatus.REFUNDED
-                                },
+                            transactionId =
+                                stringResByTransactionId(
+                                    value = transaction.transaction.id.txIdString(),
+                                    abbreviated = true
+                                ),
+                            refundedAmount =
+                                transaction.swap.data
+                                    ?.refundedFormatted
+                                    ?.let {
+                                        stringResByDynamicCurrencyNumber(amount = it, ticker = "ZEC")
+                                    }?.takeIf {
+                                        transaction.swap.data.status == SwapStatus.REFUNDED
+                                    },
                             onTransactionIdClick = {
                                 onCopyToClipboard(transaction.transaction.id.txIdString())
                             },
                             onDepositAddressClick = {
                                 onCopyToClipboard(transaction.recipientAddress?.address.orEmpty())
                             },
-                            onRecipientAddressClick = if (recipient == null) {
-                                null
-                            } else {
-                                { onCopyToClipboard(recipient) }
-                            },
-                            maxSlippage = transaction.swap.data?.maxSlippage?.let {
-                                stringResByNumber(it, 0) + stringRes("%")
-                            },
+                            onRecipientAddressClick =
+                                if (recipient == null) {
+                                    null
+                                } else {
+                                    { onCopyToClipboard(recipient) }
+                                },
+                            maxSlippage =
+                                transaction.swap.data?.maxSlippage?.let {
+                                    stringResByNumber(it, 0) + stringRes("%")
+                                },
                             note = transaction.metadata.note?.let { stringRes(it) },
                             isSlippageRealized = transaction.swap.data?.isSlippageRealized == true,
                             isPending = isPending(transaction),
@@ -173,52 +180,55 @@ class TransactionDetailVM(
                         )
                     }
 
-                    transaction.recipientAddress is WalletAddress.Transparent -> SendTransparentState(
-                        contact = transaction.contact?.let { stringRes(it.name) },
-                        address = createAddressStringRes(transaction),
-                        addressAbbreviated = createAbbreviatedAddressStringRes(transaction),
-                        transactionId =
-                            stringResByTransactionId(
-                                value = transaction.transaction.id.txIdString(),
-                                abbreviated = true
-                            ),
-                        onTransactionIdClick = {
-                            onCopyToClipboard(transaction.transaction.id.txIdString())
-                        },
-                        onTransactionAddressClick = { onCopyToClipboard(transaction.recipientAddress.address) },
-                        fee = createFeeStringRes(transaction),
-                        completedTimestamp = createTimestampStringRes(transaction),
-                        isPending = isPending(transaction),
-                        note = transaction.metadata.note?.let { stringRes(it) },
-                    )
+                    transaction.recipientAddress is WalletAddress.Transparent ->
+                        SendTransparentState(
+                            contact = transaction.contact?.let { stringRes(it.name) },
+                            address = createAddressStringRes(transaction),
+                            addressAbbreviated = createAbbreviatedAddressStringRes(transaction),
+                            transactionId =
+                                stringResByTransactionId(
+                                    value = transaction.transaction.id.txIdString(),
+                                    abbreviated = true
+                                ),
+                            onTransactionIdClick = {
+                                onCopyToClipboard(transaction.transaction.id.txIdString())
+                            },
+                            onTransactionAddressClick = { onCopyToClipboard(transaction.recipientAddress.address) },
+                            fee = createFeeStringRes(transaction),
+                            completedTimestamp = createTimestampStringRes(transaction),
+                            isPending = isPending(transaction),
+                            note = transaction.metadata.note?.let { stringRes(it) },
+                        )
 
-                    else -> SendShieldedState(
-                        contact = transaction.contact?.let { stringRes(it.name) },
-                        address = createAbbreviatedAddressStringRes(transaction),
-                        transactionId =
-                            stringResByTransactionId(
-                                value = transaction.transaction.id.txIdString(),
-                                abbreviated = true
-                            ),
-                        onTransactionIdClick = {
-                            onCopyToClipboard(transaction.transaction.id.txIdString())
-                        },
-                        onTransactionAddressClick = {
-                            onCopyToClipboard(transaction.recipientAddress?.address.orEmpty())
-                        },
-                        fee = createFeeStringRes(transaction),
-                        completedTimestamp = createTimestampStringRes(transaction),
-                        memo = TransactionDetailMemosState(
-                            transaction.memos?.map { memo ->
-                                TransactionDetailMemoState(
-                                    content = stringRes(memo),
-                                    onClick = { onCopyToClipboard(memo) }
-                                )
-                            }
-                        ).takeIf { transaction.transaction.memoCount > 0 },
-                        note = transaction.metadata.note?.let { stringRes(it) },
-                        isPending = isPending(transaction)
-                    )
+                    else ->
+                        SendShieldedState(
+                            contact = transaction.contact?.let { stringRes(it.name) },
+                            address = createAbbreviatedAddressStringRes(transaction),
+                            transactionId =
+                                stringResByTransactionId(
+                                    value = transaction.transaction.id.txIdString(),
+                                    abbreviated = true
+                                ),
+                            onTransactionIdClick = {
+                                onCopyToClipboard(transaction.transaction.id.txIdString())
+                            },
+                            onTransactionAddressClick = {
+                                onCopyToClipboard(transaction.recipientAddress?.address.orEmpty())
+                            },
+                            fee = createFeeStringRes(transaction),
+                            completedTimestamp = createTimestampStringRes(transaction),
+                            memo =
+                                TransactionDetailMemosState(
+                                    transaction.memos?.map { memo ->
+                                        TransactionDetailMemoState(
+                                            content = stringRes(memo),
+                                            onClick = { onCopyToClipboard(memo) }
+                                        )
+                                    }
+                                ).takeIf { transaction.transaction.memoCount > 0 },
+                            note = transaction.metadata.note?.let { stringRes(it) },
+                            isPending = isPending(transaction)
+                        )
                 }
             }
 
@@ -248,14 +258,15 @@ class TransactionDetailVM(
                             onCopyToClipboard(transaction.transaction.id.txIdString())
                         },
                         completedTimestamp = createTimestampStringRes(transaction),
-                        memo = TransactionDetailMemosState(
-                            transaction.memos?.map { memo ->
-                                TransactionDetailMemoState(
-                                    content = stringRes(memo),
-                                    onClick = { onCopyToClipboard(memo) }
-                                )
-                            }
-                        ).takeIf { transaction.transaction.memoCount > 0 },
+                        memo =
+                            TransactionDetailMemosState(
+                                transaction.memos?.map { memo ->
+                                    TransactionDetailMemoState(
+                                        content = stringRes(memo),
+                                        onClick = { onCopyToClipboard(memo) }
+                                    )
+                                }
+                            ).takeIf { transaction.transaction.memoCount > 0 },
                         note = transaction.metadata.note?.let { stringRes(it) },
                         isPending = isPending(transaction)
                     )
@@ -406,8 +417,8 @@ class TransactionDetailVM(
         )
     }
 
-    private fun createPrimaryButtonState(data: DetailedTransactionData): ButtonState? {
-        return when {
+    private fun createPrimaryButtonState(data: DetailedTransactionData): ButtonState? =
+        when {
             data.swap?.error != null -> {
                 val isServiceUnavailableError =
                     data.swap.error is ResponseException &&
@@ -448,18 +459,18 @@ class TransactionDetailVM(
                 }
             }
         }
-    }
 
     private fun createSecondaryButtonState(transaction: DetailedTransactionData): ButtonState? {
-        fun createAddNoteButtonState() = ButtonState(
-            text =
-                if (transaction.metadata.note != null) {
-                    stringRes(R.string.transaction_detail_edit_note)
-                } else {
-                    stringRes(R.string.transaction_detail_add_a_note)
-                },
-            onClick = ::onAddOrEditNoteClick
-        )
+        fun createAddNoteButtonState() =
+            ButtonState(
+                text =
+                    if (transaction.metadata.note != null) {
+                        stringRes(R.string.transaction_detail_edit_note)
+                    } else {
+                        stringRes(R.string.transaction_detail_add_a_note)
+                    },
+                onClick = ::onAddOrEditNoteClick
+            )
 
         return when {
             transaction.swap != null && transaction.swap.error == null -> createAddNoteButtonState()

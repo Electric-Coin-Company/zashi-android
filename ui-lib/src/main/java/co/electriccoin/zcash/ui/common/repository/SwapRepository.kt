@@ -53,9 +53,13 @@ interface SwapRepository {
 }
 
 sealed interface SwapQuoteData {
-    data class Success(val quote: SwapQuote) : SwapQuoteData
+    data class Success(
+        val quote: SwapQuote
+    ) : SwapQuoteData
 
-    data class Error(val exception: Exception) : SwapQuoteData
+    data class Error(
+        val exception: Exception
+    ) : SwapQuoteData
 
     data object Loading : SwapQuoteData
 }
@@ -177,28 +181,31 @@ class SwapRepositoryImpl(
         this.mode.update { mode }
     }
 
+    @Suppress("TooGenericExceptionCaught", "LoopWithTooManyJumpStatements")
     override fun observeSwapStatus(depositAddress: String): Flow<SwapQuoteStatusData> {
         return channelFlow {
-            val data = MutableStateFlow(
-                SwapQuoteStatusData(
-                    data = null,
-                    isLoading = true,
-                    destinationAsset = null,
-                    error = null
+            val data =
+                MutableStateFlow(
+                    SwapQuoteStatusData(
+                        data = null,
+                        isLoading = true,
+                        destinationAsset = null,
+                        error = null
+                    )
                 )
-            )
 
             launch {
                 data.collect { send(it) }
             }
 
             launch {
-                val supportedTokens = try {
-                    swapDataSource.getSupportedTokens()
-                } catch (e: Exception) {
-                    data.update { it.copy(isLoading = false, error = e) }
-                    return@launch
-                }
+                val supportedTokens =
+                    try {
+                        swapDataSource.getSupportedTokens()
+                    } catch (e: Exception) {
+                        data.update { it.copy(isLoading = false, error = e) }
+                        return@launch
+                    }
 
                 while (true) {
                     try {

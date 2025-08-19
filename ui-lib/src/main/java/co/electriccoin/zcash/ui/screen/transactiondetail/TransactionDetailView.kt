@@ -136,7 +136,7 @@ fun TransactionDetailView(
                             state = state.info
                         )
 
-                    is SendSwapState -> 
+                    is SendSwapState ->
                         SendSwap(
                             modifier = Modifier.fillMaxWidth(),
                             state = state.info
@@ -300,10 +300,11 @@ private fun SendShieldPreview() =
                     primaryButton = ButtonState(stringRes("Primary"), ButtonStyle.DESTRUCTIVE1),
                     secondaryButton = null,
                     bookmarkButton = IconButtonState(R.drawable.ic_transaction_detail_no_bookmark) {},
-                    errorFooter = ErrorFooter(
-                        stringRes("Title"),
-                        stringRes("Subtitle"),
-                    )
+                    errorFooter =
+                        ErrorFooter(
+                            stringRes("Title"),
+                            stringRes("Subtitle"),
+                        )
                 ),
             mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
         )

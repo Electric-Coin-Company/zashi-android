@@ -13,4 +13,6 @@
     <string name="integrations_keystone_subtitle">Empareja tu billetera de hardware Keystone con Zashi para firmar transacciones.</string>
     <string name="integrations_disabled_info_flexa">Cambia de Keystone a Zashi para usar Flexa.</string>
     <string name="integrations_dialog_more_options">Más Opciones</string>
+    <string name="integrations_near_swap">Swap ZEC with NEAR Intents</string>
+    <string name="integrations_near_swap_message">Swap shielded ZEC to any supported cryptocurrency.</string>
 </resources>

@@ -80,7 +80,7 @@ private fun View(onDismissRequest: () -> Unit) {
             Spacer(32.dp)
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(R.string.general_ok),
+                text = stringResource(co.electriccoin.zcash.ui.design.R.string.general_ok),
                 onClick = onDismissRequest
             )
         }

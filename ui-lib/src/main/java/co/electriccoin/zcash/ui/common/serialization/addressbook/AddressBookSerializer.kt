@@ -28,37 +28,39 @@ class AddressBookSerializer : BaseSerializer() {
 
     fun deserializeAddressBook(inputStream: InputStream): AddressBook =
         when (val version = inputStream.readInt()) {
-            ADDRESS_BOOK_SERIALIZATION_V1 -> AddressBook(
-                version = version,
-                lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
-                contacts =
-                    inputStream.readInt().let { contactsSize ->
-                        (0 until contactsSize).map { _ ->
-                            AddressBookContact(
-                                lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
-                                address = inputStream.readString(),
-                                name = inputStream.readString(),
-                                chain = null,
-                            )
+            ADDRESS_BOOK_SERIALIZATION_V1 ->
+                AddressBook(
+                    version = version,
+                    lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
+                    contacts =
+                        inputStream.readInt().let { contactsSize ->
+                            (0 until contactsSize).map { _ ->
+                                AddressBookContact(
+                                    lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
+                                    address = inputStream.readString(),
+                                    name = inputStream.readString(),
+                                    chain = null,
+                                )
+                            }
                         }
-                    }
-            )
+                )
 
-            ADDRESS_BOOK_SERIALIZATION_V2 -> AddressBook(
-                version = version,
-                lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
-                contacts =
-                    inputStream.readInt().let { contactsSize ->
-                        (0 until contactsSize).map { _ ->
-                            AddressBookContact(
-                                lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
-                                address = inputStream.readString(),
-                                name = inputStream.readString(),
-                                chain = inputStream.readString().takeIf { it.isNotEmpty() },
-                            )
+            ADDRESS_BOOK_SERIALIZATION_V2 ->
+                AddressBook(
+                    version = version,
+                    lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
+                    contacts =
+                        inputStream.readInt().let { contactsSize ->
+                            (0 until contactsSize).map { _ ->
+                                AddressBookContact(
+                                    lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
+                                    address = inputStream.readString(),
+                                    name = inputStream.readString(),
+                                    chain = inputStream.readString().takeIf { it.isNotEmpty() },
+                                )
+                            }
                         }
-                    }
-            )
+                )
 
             else -> throw UnsupportedOperationException("Unknown version of address book")
         }

@@ -71,9 +71,9 @@ fun ABContactView(
 @Composable
 private fun ContactViewInternal(
     state: ABContactState,
-    modifier: Modifier = Modifier,
     addressFocusRequester: FocusRequester,
-    nameFocusRequester: FocusRequester
+    nameFocusRequester: FocusRequester,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,

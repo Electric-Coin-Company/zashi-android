@@ -41,13 +41,14 @@ class GetTransactionDetailByIdUseCase(
         channelFlow {
             val requestSwipeReloadPipeline = MutableSharedFlow<Unit>()
 
-            val swapHandle = object : SwapHandle {
-                override fun requestReload() {
-                    launch {
-                        requestSwipeReloadPipeline.emit(Unit)
+            val swapHandle =
+                object : SwapHandle {
+                    override fun requestReload() {
+                        launch {
+                            requestSwipeReloadPipeline.emit(Unit)
+                        }
                     }
                 }
-            }
 
             val transactionFlow =
                 transactionRepository
@@ -76,22 +77,23 @@ class GetTransactionDetailByIdUseCase(
                     .flatMapLatest { addressBookRepository.observeContactByAddress(it?.address.orEmpty()) }
                     .distinctUntilChanged()
 
-            val swapFlow = requestSwipeReloadPipeline
-                .onStart { emit(Unit) }
-                .flatMapLatest {
-                    metadataFlow
-                        .map { it.swapMetadata }
-                        .distinctUntilChanged()
-                        .flatMapLatest { swapMetadata ->
-                            if (swapMetadata == null) {
-                                flowOf(null)
-                            } else {
-                                addressFlow
-                                    .filterNotNull()
-                                    .flatMapLatest { swapRepository.observeSwapStatus(it.address) }
+            val swapFlow =
+                requestSwipeReloadPipeline
+                    .onStart { emit(Unit) }
+                    .flatMapLatest {
+                        metadataFlow
+                            .map { it.swapMetadata }
+                            .distinctUntilChanged()
+                            .flatMapLatest { swapMetadata ->
+                                if (swapMetadata == null) {
+                                    flowOf(null)
+                                } else {
+                                    addressFlow
+                                        .filterNotNull()
+                                        .flatMapLatest { swapRepository.observeSwapStatus(it.address) }
+                                }
                             }
-                        }
-                }
+                    }
 
             combine(
                 transactionFlow,

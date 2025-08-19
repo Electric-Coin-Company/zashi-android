@@ -9,9 +9,24 @@
     <string name ="general_unexpected_error">Unexpected error</string>
     <string name ="general_please_try_again">Please try again later.</string>
     <string name ="general_check_connection">Please check your connection and try again.</string>
+    <string name="general_error_title">Something went wrong</string>
+    <string name="general_error_message">We couldn\’t load the assets. Please check your connection and try again.</string>
     <string name="general_try_again">Try again</string>
     <string name="general_show">Mostrar</string>
     <string name="general_hide">Ocultar</string>
     <string name="general_more">More</string>
     <string name="general_less">Less</string>
+    <string name="general_loading">Loading</string>
+    <string name="general_review">Review</string>
+    <string name="general_ok">OK</string>
+    <string name="general_report">Report</string>
+    <string name="general_zec">%s ZEC</string>
+    <string name="general_dismiss">Dismiss</string>
+    <string name="general_select">Select…</string>
+    <string name="general_confirm">Confirm</string>
+    <string name="general_address">Address</string>
+    <string name="general_enter_address">Enter address…</string>
+
+    <string name="common_empty_screen_title">No results</string>
+    <string name="common_empty_screen_subtitle">We tried but couldn’t find anything.</string>
 </resources>

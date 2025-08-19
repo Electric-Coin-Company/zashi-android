@@ -58,20 +58,21 @@ fun TransactionDetailMemo(
             state.memos == null -> TransactionDetailLoadingMemo()
 
             state.memos.isEmpty() -> TransactionDetailInfoEmptyMemo(modifier = Modifier.fillMaxWidth())
-            else -> state.memos.forEachIndexed { index, memo ->
-                val fullMemo = memo.content.getValue()
-                val fullMemoTooBig = fullMemo.length > MAX_MEMO_LENGTH
+            else ->
+                state.memos.forEachIndexed { index, memo ->
+                    val fullMemo = memo.content.getValue()
+                    val fullMemoTooBig = fullMemo.length > MAX_MEMO_LENGTH
 
-                if (index > 0) {
-                    Spacer(Modifier.height(8.dp))
-                }
+                    if (index > 0) {
+                        Spacer(Modifier.height(8.dp))
+                    }
 
-                if (fullMemoTooBig) {
-                    ExpandableMemo(memo)
-                } else {
-                    NonExpandableMemo(memo)
+                    if (fullMemoTooBig) {
+                        ExpandableMemo(memo)
+                    } else {
+                        NonExpandableMemo(memo)
+                    }
                 }
-            }
         }
     }
 }
@@ -125,6 +126,7 @@ private fun NonExpandableMemo(state: TransactionDetailMemoState) {
     )
 }
 
+@Suppress("MagicNumber")
 @Composable
 private fun TransactionDetailLoadingMemo(
     modifier: Modifier = Modifier
@@ -135,22 +137,32 @@ private fun TransactionDetailLoadingMemo(
         color = ZashiColors.Surfaces.bgSecondary,
     ) {
         Column(
-            modifier = Modifier
-                .shimmer(rememberZashiShimmer())
-                .padding(12.dp)
+            modifier =
+                Modifier
+                    .shimmer(rememberZashiShimmer())
+                    .padding(12.dp)
         ) {
-            ShimmerRectangle(modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp), color = ZashiColors.Surfaces.bgTertiary)
-            Spacer(4.dp)
-            ShimmerRectangle(modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp), color = ZashiColors.Surfaces.bgTertiary)
+            ShimmerRectangle(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(20.dp),
+                color = ZashiColors.Surfaces.bgTertiary
+            )
             Spacer(4.dp)
             ShimmerRectangle(
-                modifier = Modifier
-                    .fillMaxWidth(.66f)
-                    .height(20.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(20.dp),
+                color = ZashiColors.Surfaces.bgTertiary
+            )
+            Spacer(4.dp)
+            ShimmerRectangle(
+                modifier =
+                    Modifier
+                        .fillMaxWidth(.66f)
+                        .height(20.dp),
                 color = ZashiColors.Surfaces.bgTertiary
             )
         }
@@ -205,8 +217,7 @@ private fun TransactionDetailInfoMemo(
                                 interactionSource = remember { MutableInteractionSource() },
                                 onClick = state.bottomButton.onClick,
                                 role = Role.Button,
-                            )
-                            .padding(12.dp),
+                            ).padding(12.dp),
                     verticalAlignment = CenterVertically
                 ) {
                     SelectionContainer {
@@ -271,4 +282,3 @@ private fun LoadingPreview() =
             )
         }
     }
-

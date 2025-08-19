@@ -34,21 +34,25 @@ data class NearSwapQuote(
     override val origin: String = response.quoteRequest.originAsset
     override val destination: String = response.quoteRequest.destinationAsset
     override val provider: String = "near.$origin.$destination"
-    override val type: SwapMode = when (response.quoteRequest.swapType) {
-        EXACT_INPUT -> SwapMode.EXACT_INPUT
-        EXACT_OUTPUT -> SwapMode.EXACT_OUTPUT
-        null -> SwapMode.EXACT_INPUT
-    }
-    override val zecExchangeRate: BigDecimal = response.quote.amountInUsd
-        .divide(response.quote.amountInFormatted, MathContext.DECIMAL128)
+    override val type: SwapMode =
+        when (response.quoteRequest.swapType) {
+            EXACT_INPUT -> SwapMode.EXACT_INPUT
+            EXACT_OUTPUT -> SwapMode.EXACT_OUTPUT
+            null -> SwapMode.EXACT_INPUT
+        }
+    override val zecExchangeRate: BigDecimal =
+        response.quote.amountInUsd
+            .divide(response.quote.amountInFormatted, MathContext.DECIMAL128)
 
     override val swapProviderFee: Zatoshi =
-        (response.quote.amountInUsd - response.quote.amountOutUsd).coerceAtLeast(BigDecimal(0))
+        (response.quote.amountInUsd - response.quote.amountOutUsd)
+            .coerceAtLeast(BigDecimal(0))
             .divide(zecExchangeRate, MathContext.DECIMAL128)
             .convertZecToZatoshi()
 
-    override val swapProviderFeeUsd: BigDecimal = (response.quote.amountInUsd - response.quote.amountOutUsd)
-        .coerceAtLeast(BigDecimal(0))
+    override val swapProviderFeeUsd: BigDecimal =
+        (response.quote.amountInUsd - response.quote.amountOutUsd)
+            .coerceAtLeast(BigDecimal(0))
 
     override val amountInUsd: BigDecimal = response.quote.amountInUsd
 

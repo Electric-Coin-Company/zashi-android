@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="connect_keystone_title">Connect Hardware Wallet</string>
-    <string name="connect_keystone_subtitle">"Scan your device’s QR code to connect. "</string>
+    <string name="connect_keystone_subtitle">Scan your device’s QR code to connect.</string>
     <string name="connect_keystone_subtitle_clickable">View Keystone tutorial</string>
     <string name="connect_keystone_item_1">Unlock your Keystone</string>
     <string name="connect_keystone_item_2">Tap the menu icon</string>

@@ -17,8 +17,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -61,14 +63,14 @@ fun SwapSlippageView(state: SwapSlippageState?) {
                         .padding(padding.asScaffoldPaddingValues())
             ) {
                 Text(
-                    text = "Slippage",
+                    text = stringResource(R.string.swap_slippage_title),
                     style = ZashiTypography.header6,
                     fontWeight = FontWeight.SemiBold,
                     color = ZashiColors.Text.textPrimary
                 )
                 Spacer(8.dp)
                 Text(
-                    text = "This setting determines the maximum allowable difference between the expected price of a swap and the actual price you pay, which is outside of Zashi's control.",
+                    text = stringResource(R.string.swap_slippage_subtitle),
                     style = ZashiTypography.textSm,
                     color = ZashiColors.Text.textTertiary
                 )

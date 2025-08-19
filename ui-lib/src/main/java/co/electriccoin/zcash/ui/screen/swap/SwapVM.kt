@@ -8,8 +8,8 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
-import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
@@ -87,16 +87,16 @@ internal class SwapVM(
                 if (isVisible) {
                     SwapCancelState(
                         icon = imageRes(R.drawable.ic_swap_quote_cancel),
-                        title = stringRes("Are you sure?"),
-                        subtitle = stringRes("If you leave this screen, all the information you entered will be lost. "),
+                        title = stringRes(R.string.swap_cancel_title),
+                        subtitle = stringRes(R.string.swap_cancel_subtitle),
                         negativeButton =
                             ButtonState(
-                                text = stringRes("Cancel swap"),
+                                text = stringRes(R.string.swap_cancel_negative),
                                 onClick = ::onCancelSwapClick
                             ),
                         positiveButton =
                             ButtonState(
-                                text = stringRes("Don’t cancel"),
+                                text = stringRes(R.string.swap_cancel_positive),
                                 onClick = ::onDismissCancelClick
                             ),
                         onBack = ::onBack
@@ -118,7 +118,7 @@ internal class SwapVM(
             amountText,
             getSelectedSwapAsset.observe(),
             getSlippage.observe(),
-            addressText.flatMapLatest { isABContactHintVisible.observe(it) },
+            addressText.flatMapLatest { isABContactHintVisible.observe() },
             currencyType,
             getSwapAssetsUseCase.observe(),
             getSwapMode.observe(),

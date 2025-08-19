@@ -17,20 +17,27 @@ class FilterSwapAssetsUseCase(
     ): SwapAssetsData {
         if (assets.data == null) return assets.copy(data = null)
 
-        val result = if (text.isEmpty()) {
-            assets.data
-                .filter {
-                    if (onlyChainTicker == null) true else it.chainTicker.lowercase() == onlyChainTicker.lowercase()
-                }
-                .reorderByLatestAssets(latestAssets)
-        } else {
-            val sorted =
+        val result =
+            if (text.isEmpty()) {
                 assets.data
                     .filter {
-                        if (onlyChainTicker == null) true else it.chainTicker.lowercase() == onlyChainTicker.lowercase()
-                    }
-                    .sortedBy { it.tokenTicker.replace("$", "") }
-                    .reorderByLatestAssets(latestAssets)
+                        if (onlyChainTicker == null) {
+                            true
+                        } else {
+                            it.chainTicker.lowercase() == onlyChainTicker.lowercase()
+                        }
+                    }.reorderByLatestAssets(latestAssets)
+            } else {
+                val sorted =
+                    assets.data
+                        .filter {
+                            if (onlyChainTicker == null) {
+                                true
+                            } else {
+                                it.chainTicker.lowercase() == onlyChainTicker.lowercase()
+                            }
+                        }.sortedBy { it.tokenTicker.replace("$", "") }
+                        .reorderByLatestAssets(latestAssets)
 
                 buildSet {
                     addAll(sorted.filter { it.tokenTicker.startsWith(text, ignoreCase = true) })
@@ -42,7 +49,7 @@ class FilterSwapAssetsUseCase(
                     addAll(sorted.filter { it.chainName.getString(context).startsWith(text, ignoreCase = true) })
                     addAll(sorted.filter { it.chainName.getString(context).contains(text, ignoreCase = true) })
                 }.toList()
-        }
+            }
 
         return assets.copy(data = result)
     }

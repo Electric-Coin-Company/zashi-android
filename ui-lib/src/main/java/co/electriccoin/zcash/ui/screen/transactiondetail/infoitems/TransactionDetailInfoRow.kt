@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -69,9 +68,10 @@ fun TransactionDetailInfoRow(
         } else {
             Spacer(Modifier.width(16.dp))
             Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .shimmer(rememberZashiShimmer()),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .shimmer(rememberZashiShimmer()),
                 contentAlignment = Alignment.CenterEnd
             ) {
                 ShimmerRectangle(
@@ -97,16 +97,17 @@ fun TransactionDetailRowSurface(
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
-    val clickModifier = if (onClick != null) {
-        Modifier.clickable(
-            indication = ripple(),
-            interactionSource = remember { MutableInteractionSource() },
-            onClick = onClick,
-            role = Role.Button,
-        )
-    } else {
-        Modifier
-    }
+    val clickModifier =
+        if (onClick != null) {
+            Modifier.clickable(
+                indication = ripple(),
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = onClick,
+                role = Role.Button,
+            )
+        } else {
+            Modifier
+        }
 
     Row(
         modifier = modifier then clickModifier then Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
@@ -157,4 +158,3 @@ private fun LoadingPreview() =
             )
         }
     }
-

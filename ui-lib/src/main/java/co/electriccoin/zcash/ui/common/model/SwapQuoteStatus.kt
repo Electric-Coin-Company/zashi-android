@@ -48,45 +48,57 @@ data class NearSwapQuoteStatus(
 ) : SwapQuoteStatus {
     override val destinationAssetId: String = response.quoteResponse.quoteRequest.destinationAsset
 
-    override val status: SwapStatus = when (response.status) {
-        KNOWN_DEPOSIT_TX -> SwapStatus.PENDING
-        PENDING_DEPOSIT -> SwapStatus.PENDING
-        INCOMPLETE_DEPOSIT -> SwapStatus.INCOMPLETE_DEPOSIT
-        PROCESSING -> SwapStatus.PENDING
-        SUCCESS -> SwapStatus.SUCCESS
-        REFUNDED -> SwapStatus.REFUNDED
-        FAILED -> SwapStatus.FAILED
-        null -> SwapStatus.PENDING
-    }
+    override val status: SwapStatus =
+        when (response.status) {
+            KNOWN_DEPOSIT_TX -> SwapStatus.PENDING
+            PENDING_DEPOSIT -> SwapStatus.PENDING
+            INCOMPLETE_DEPOSIT -> SwapStatus.INCOMPLETE_DEPOSIT
+            PROCESSING -> SwapStatus.PENDING
+            SUCCESS -> SwapStatus.SUCCESS
+            REFUNDED -> SwapStatus.REFUNDED
+            FAILED -> SwapStatus.FAILED
+            null -> SwapStatus.PENDING
+        }
     override val isSlippageRealized: Boolean = response.swapDetails?.slippage != null
-    override val maxSlippage: BigDecimal = (response.swapDetails?.slippage
-        ?: response.quoteResponse.quoteRequest.slippageTolerance
+
+    @Suppress("MagicNumber")
+    override val maxSlippage: BigDecimal =
+        (
+            response.swapDetails?.slippage
+                ?: response.quoteResponse.quoteRequest.slippageTolerance
         ).let { BigDecimal(it).divide(BigDecimal(100)) }
 
     override val recipient: String = response.quoteResponse.quoteRequest.recipient
 
-    override val swapMode: SwapMode = when (response.quoteResponse.quoteRequest.swapType) {
-        EXACT_INPUT -> SwapMode.EXACT_INPUT
-        EXACT_OUTPUT -> SwapMode.EXACT_OUTPUT
-        null -> SwapMode.EXACT_INPUT
-    }
-    override val amountIn: BigDecimal = response.swapDetails?.amountIn
-        ?: response.quoteResponse.quote.amountIn
+    override val swapMode: SwapMode =
+        when (response.quoteResponse.quoteRequest.swapType) {
+            EXACT_INPUT -> SwapMode.EXACT_INPUT
+            EXACT_OUTPUT -> SwapMode.EXACT_OUTPUT
+            null -> SwapMode.EXACT_INPUT
+        }
+    override val amountIn: BigDecimal =
+        response.swapDetails?.amountIn
+            ?: response.quoteResponse.quote.amountIn
 
-    override val amountInFormatted: BigDecimal = response.swapDetails?.amountInFormatted
-        ?: response.quoteResponse.quote.amountInFormatted
+    override val amountInFormatted: BigDecimal =
+        response.swapDetails?.amountInFormatted
+            ?: response.quoteResponse.quote.amountInFormatted
 
-    override val amountInUsd: BigDecimal = response.swapDetails?.amountInUsd
-        ?: response.quoteResponse.quote.amountInUsd
+    override val amountInUsd: BigDecimal =
+        response.swapDetails?.amountInUsd
+            ?: response.quoteResponse.quote.amountInUsd
 
-    override val amountOut: BigDecimal = response.swapDetails?.amountOut
-        ?: response.quoteResponse.quote.amountOut
+    override val amountOut: BigDecimal =
+        response.swapDetails?.amountOut
+            ?: response.quoteResponse.quote.amountOut
 
-    override val amountOutFormatted: BigDecimal = response.swapDetails?.amountOutFormatted
-        ?: response.quoteResponse.quote.amountOutFormatted
+    override val amountOutFormatted: BigDecimal =
+        response.swapDetails?.amountOutFormatted
+            ?: response.quoteResponse.quote.amountOutFormatted
 
-    override val amountOutUsd: BigDecimal = response.swapDetails?.amountOutUsd
-        ?: response.quoteResponse.quote.amountOutUsd
+    override val amountOutUsd: BigDecimal =
+        response.swapDetails?.amountOutUsd
+            ?: response.quoteResponse.quote.amountOutUsd
 
     override val amountInZatoshi: Zatoshi = Zatoshi(amountIn.toLong())
 
@@ -97,7 +109,8 @@ data class NearSwapQuoteStatus(
     override val zecExchangeRate: BigDecimal = amountInUsd.divide(amountInFormatted, MathContext.DECIMAL128)
 
     override val swapProviderFee: Zatoshi =
-        (amountInUsd - amountOutUsd).coerceAtLeast(BigDecimal(0))
+        (amountInUsd - amountOutUsd)
+            .coerceAtLeast(BigDecimal(0))
             .divide(zecExchangeRate, MathContext.DECIMAL128)
             .convertZecToZatoshi()
 

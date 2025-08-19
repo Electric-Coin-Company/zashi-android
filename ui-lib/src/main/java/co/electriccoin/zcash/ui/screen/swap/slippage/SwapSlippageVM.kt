@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.SetSlippageUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -94,7 +95,7 @@ class SwapSlippageVM(
 
     private fun createButtonState(amount: BigDecimal?) =
         ButtonState(
-            text = stringRes("Confirm"),
+            text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_confirm),
             isEnabled = amount != null,
             onClick = ::onConfirmClick
         )
@@ -102,29 +103,22 @@ class SwapSlippageVM(
     @Suppress("MagicNumber")
     private fun createSlippageInfoState(percent: BigDecimal?): SwapSlippageInfoState? {
         if (percent == null) return null
-
         val percentString = stringResByNumber(percent, minDecimals = 0) + stringRes("%")
-
         val result =
             when {
-                percent > BigDecimal("30") -> stringRes("Please enter maximum slippage of 30%.")
-                fiatAmount == null ->
-                    stringRes("You may receive up to ") +
-                        percentString +
-                        stringRes(" less than quoted.")
+                percent > BigDecimal("30") -> stringRes(R.string.swap_slippage_max_threshold)
+                fiatAmount == null -> stringRes(R.string.swap_slippage_info, percentString)
+
                 else -> {
                     val slippageFiat =
                         fiatAmount.multiply(
                             percent.divide(BigDecimal(100), MathContext.DECIMAL128),
                             MathContext.DECIMAL128
                         )
-                    stringRes("You may receive up to ") +
-                        percentString +
-                        stringRes(" ") +
-                        stringRes("(") +
-                        stringResByDynamicCurrencyNumber(slippageFiat, FiatCurrency.USD.symbol) +
-                        stringRes(")") +
-                        stringRes(" less than quoted.")
+
+                    val slippageFiatString = stringResByDynamicCurrencyNumber(slippageFiat, FiatCurrency.USD.symbol)
+                    val infoString = percentString + stringRes(" (") + slippageFiatString + stringRes(") ")
+                    stringRes(R.string.swap_slippage_info, infoString)
                 }
             }
 

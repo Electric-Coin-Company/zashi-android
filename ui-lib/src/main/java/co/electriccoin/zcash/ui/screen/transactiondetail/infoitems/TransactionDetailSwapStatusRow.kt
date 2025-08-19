@@ -8,7 +8,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.common.model.SwapStatus.FAILED
 import co.electriccoin.zcash.ui.common.model.SwapStatus.INCOMPLETE_DEPOSIT
@@ -66,20 +68,22 @@ fun TransactionDetailSwapStatusRow(
 @Composable
 private fun StatusChip(swapStatus: SwapStatus) {
     ZashiBadge(
-        text = when (swapStatus) {
-            INCOMPLETE_DEPOSIT -> "Incomplete deposit"
-            PENDING -> "Pending"
-            SUCCESS -> "Completed"
-            REFUNDED -> "Refunded"
-            FAILED -> "Failed"
-        },
-        colors = when (swapStatus) {
-            PENDING -> ZashiBadgeDefaults.hyperBlueColors()
-            SUCCESS -> ZashiBadgeDefaults.successColors()
-            INCOMPLETE_DEPOSIT,
-            REFUNDED,
-            FAILED -> ZashiBadgeDefaults.errorColors()
-        },
+        text =
+            when (swapStatus) {
+                INCOMPLETE_DEPOSIT -> stringResource(R.string.swap_detail_incomplete_deposit)
+                PENDING -> stringResource(R.string.swap_detail_pending)
+                SUCCESS -> stringResource(R.string.swap_detail_completed)
+                REFUNDED -> stringResource(R.string.swap_detail_refunded)
+                FAILED -> stringResource(R.string.swap_detail_failed)
+            },
+        colors =
+            when (swapStatus) {
+                PENDING -> ZashiBadgeDefaults.hyperBlueColors()
+                SUCCESS -> ZashiBadgeDefaults.successColors()
+                INCOMPLETE_DEPOSIT,
+                REFUNDED,
+                FAILED -> ZashiBadgeDefaults.errorColors()
+            },
         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
     )
 }
@@ -119,4 +123,3 @@ private fun LoadingPreview() =
             )
         }
     }
-

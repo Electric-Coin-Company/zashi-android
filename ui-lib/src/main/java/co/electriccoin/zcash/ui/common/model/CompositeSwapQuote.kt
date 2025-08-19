@@ -13,7 +13,6 @@ data class CompositeSwapQuote(
     val slippage: BigDecimal,
     val quote: SwapQuote
 ) : SwapQuote by quote {
-
     val amountInDecimals: Int = originAsset.decimals
 
     val amountOutDecimals: Int = destinationAsset.decimals

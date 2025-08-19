@@ -83,7 +83,7 @@ internal fun SwapAmountText(
                 ) {
                     ZashiAutoSizeText(
                         modifier = Modifier.fillMaxWidth(),
-                        text = state.secondaryText?.getValue() ?: "",
+                        text = state.secondaryText?.getValue().orEmpty(),
                         style = ZashiTypography.textSm,
                         fontWeight = FontWeight.Medium,
                         color = ZashiColors.Text.textTertiary,

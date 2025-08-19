@@ -83,24 +83,23 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 ),
             isAddressBookHintVisible = state.isAddressBookHintVisible,
             onBack = onBack,
-            swapInfoButton = IconButtonState(
-                co.electriccoin.zcash.ui.design.R.drawable.ic_info,
-                onClick = onSwapInfoClick
-            ),
+            swapInfoButton =
+                IconButtonState(
+                    co.electriccoin.zcash.ui.design.R.drawable.ic_info,
+                    onClick = onSwapInfoClick
+                ),
             infoItems = createListItems(state),
             qrScannerButton =
                 IconButtonState(
                     icon = R.drawable.qr_code_icon,
                     onClick = onQrCodeScannerClick,
                     isEnabled = !state.isRequestingQuote
-
                 ),
             addressBookButton =
                 IconButtonState(
                     icon = R.drawable.send_address_book,
                     onClick = onAddressBookClick,
                     isEnabled = !state.isRequestingQuote
-
                 ),
             changeModeButton =
                 IconButtonState(
@@ -110,7 +109,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 ),
             appBarState =
                 SwapAppBarState(
-                    title = stringRes("Swap with"),
+                    title = stringRes(R.string.swap_title),
                     icon = R.drawable.ic_near_logo
                 ),
             errorFooter = createErrorFooterState(state),
@@ -147,13 +146,13 @@ internal class ExactInputVMMapper : SwapVMMapper {
         val amountFiat = state.getOriginFiatAmount()
         val zatoshiAmount = state.getZatoshi()
         return SwapAmountTextFieldState(
-            title = stringRes("From"),
+            title = stringRes(R.string.swap_from),
             error =
                 if (state.totalSpendableBalance != null &&
                     zatoshiAmount != null &&
                     state.totalSpendableBalance.value < zatoshiAmount
                 ) {
-                    stringRes("Insufficient funds")
+                    stringRes(R.string.swap_insufficient_funds)
                 } else {
                     null
                 },
@@ -193,12 +192,12 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 when (state.currencyType) {
                     TOKEN ->
                         state.totalSpendableBalance?.let {
-                            stringRes("Max: ") + stringRes(it, TickerLocation.HIDDEN)
+                            stringRes(R.string.swap_max, stringRes(it, TickerLocation.HIDDEN))
                         }
 
                     FIAT ->
                         state.getTotalSpendableFiatBalance()?.let {
-                            stringRes("Max: ") + stringResByDynamicCurrencyNumber(it, FiatCurrency.USD.symbol)
+                            stringRes(R.string.swap_max, stringResByDynamicCurrencyNumber(it, FiatCurrency.USD.symbol))
                         }
                 },
             onSwapChange = {
@@ -243,7 +242,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
                         isEnabled = !state.isRequestingQuote
                     )
                 },
-            title = stringRes("To"),
+            title = stringRes(R.string.swap_to),
             subtitle = null,
             text =
                 when (state.currencyType) {
@@ -290,15 +289,15 @@ internal class ExactInputVMMapper : SwapVMMapper {
         return ErrorFooter(
             title =
                 if (isServiceUnavailableError) {
-                    stringRes("The service is unavailable")
+                    stringRes(co.electriccoin.zcash.ui.design.R.string.general_service_unavailable)
                 } else {
-                    stringRes("Unexpected error")
+                    stringRes(co.electriccoin.zcash.ui.design.R.string.general_unexpected_error)
                 },
             subtitle =
                 if (isServiceUnavailableError) {
-                    stringRes("Please try again later.")
+                    stringRes(co.electriccoin.zcash.ui.design.R.string.general_please_try_again)
                 } else {
-                    stringRes("Please check your connection and try again.")
+                    stringRes(co.electriccoin.zcash.ui.design.R.string.general_check_connection)
                 }
         )
     }
@@ -320,9 +319,11 @@ internal class ExactInputVMMapper : SwapVMMapper {
         return ButtonState(
             text =
                 when {
-                    state.swapAssets.error != null -> stringRes("Try again")
-                    state.swapAssets.isLoading && state.swapAssets.data == null -> stringRes("Loading")
-                    else -> stringRes("Confirm")
+                    state.swapAssets.error != null ->
+                        stringRes(co.electriccoin.zcash.ui.design.R.string.general_try_again)
+                    state.swapAssets.isLoading && state.swapAssets.data == null ->
+                        stringRes(co.electriccoin.zcash.ui.design.R.string.general_loading)
+                    else -> stringRes(co.electriccoin.zcash.ui.design.R.string.general_confirm)
                 },
             style = if (state.swapAssets.error != null) ButtonStyle.DESTRUCTIVE1 else null,
             onClick = {
@@ -371,17 +372,19 @@ internal class ExactInputVMMapper : SwapVMMapper {
         return if (zecToAssetExchangeRate == null || assetTokenTicker == null) {
             listOf(
                 SimpleListItemState(
-                    title = stringRes("Rate"),
+                    title = stringRes(R.string.swap_rate),
                     text = null
                 )
             )
         } else {
             listOf(
                 SimpleListItemState(
-                    title = stringRes("Rate"),
+                    title = stringRes(R.string.swap_rate),
                     text =
-                        stringRes("1 ZEC = ") +
+                        stringRes(
+                            R.string.swap_zec_exchange_rate,
                             stringResByDynamicCurrencyNumber(zecToAssetExchangeRate, assetTokenTicker)
+                        )
                 )
             )
         }
@@ -470,15 +473,12 @@ private data class ExactInputInternalState(
     fun getZatoshi() = getOriginTokenAmount()?.convertZecToZatoshiLong()
 }
 
-internal fun BigDecimal.convertZecToZatoshiLong(): Long {
-    if (this < BigDecimal.ZERO) {
-        throw IllegalArgumentException(
-            "Invalid ZEC value: $this. ZEC is represented by notes and" +
-                " cannot be negative"
-        )
-    }
-    return this.multiply(Conversions.ONE_ZEC_IN_ZATOSHI, MathContext.DECIMAL128).toLong().absoluteValue
-}
+internal fun BigDecimal.convertZecToZatoshiLong(): Long =
+    this
+        .coerceAtLeast(BigDecimal(0))
+        .multiply(Conversions.ONE_ZEC_IN_ZATOSHI, MathContext.DECIMAL128)
+        .toLong()
+        .absoluteValue
 
 internal fun Long.convertZatoshiToZecBigDecimal(scale: Int = ZEC_FORMATTER.maximumFractionDigits): BigDecimal =
     BigDecimal(this, MathContext.DECIMAL128)

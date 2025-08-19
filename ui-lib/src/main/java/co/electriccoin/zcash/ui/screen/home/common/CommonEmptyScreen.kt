@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
@@ -60,14 +61,14 @@ fun CommonEmptyScreen(modifier: Modifier = Modifier) {
             )
             Spacer(Modifier.height(20.dp))
             Text(
-                text = "No results",
+                text = stringResource(co.electriccoin.zcash.ui.design.R.string.common_empty_screen_title),
                 color = ZashiColors.Text.textPrimary,
                 style = ZashiTypography.textLg,
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "We tried but couldn’t find anything.",
+                text = stringResource(co.electriccoin.zcash.ui.design.R.string.common_empty_screen_subtitle),
                 color = ZashiColors.Text.textTertiary,
                 style = ZashiTypography.textSm,
             )

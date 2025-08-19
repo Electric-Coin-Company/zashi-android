@@ -95,9 +95,9 @@ class SpendableBalanceViewModel(
         ButtonState(
             text =
                 if (account.isShieldingAvailable) {
-                    stringRes(R.string.general_dismiss)
+                    stringRes(co.electriccoin.zcash.ui.design.R.string.general_dismiss)
                 } else {
-                    stringRes(R.string.general_ok)
+                    stringRes(co.electriccoin.zcash.ui.design.R.string.general_ok)
                 },
             onClick = ::onBack
         )
@@ -111,7 +111,10 @@ class SpendableBalanceViewModel(
             SpendableBalanceRowState(
                 title = stringRes(R.string.balance_action_info_shielded),
                 icon = imageRes(R.drawable.ic_balance_shield),
-                value = stringRes(R.string.general_zec, stringRes(account.spendableShieldedBalance, HIDDEN))
+                value = stringRes(
+                    co.electriccoin.zcash.ui.design.R.string.general_zec,
+                    stringRes(account.spendableShieldedBalance, HIDDEN)
+                )
             ),
             when {
                 account.totalShieldedBalance > account.spendableShieldedBalance &&
@@ -120,7 +123,11 @@ class SpendableBalanceViewModel(
                     SpendableBalanceRowState(
                         title = stringRes(R.string.balance_action_info_pending),
                         icon = loadingImageRes(),
-                        value = stringRes(R.string.general_zec, stringRes(account.pendingShieldedBalance), HIDDEN)
+                        value = stringRes(
+                            co.electriccoin.zcash.ui.design.R.string.general_zec,
+                            stringRes(account.pendingShieldedBalance),
+                            HIDDEN
+                        )
                     )
 
                 account.totalShieldedBalance > account.spendableShieldedBalance && hasPendingTransaction ->
@@ -129,7 +136,7 @@ class SpendableBalanceViewModel(
                         icon = loadingImageRes(),
                         value =
                             stringRes(
-                                R.string.general_zec,
+                                co.electriccoin.zcash.ui.design.R.string.general_zec,
                                 stringRes(account.totalShieldedBalance - account.spendableShieldedBalance, HIDDEN)
                             )
                     )

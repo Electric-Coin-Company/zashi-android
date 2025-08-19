@@ -56,9 +56,10 @@ internal fun ZashiSwapQuoteAmount(
 @Composable
 private fun Loading() {
     Column(
-        modifier = Modifier
-            .padding(start = 16.dp, top = 17.dp, end = 16.dp, bottom = 12.dp)
-            .shimmer(rememberZashiShimmer()),
+        modifier =
+            Modifier
+                .padding(start = 16.dp, top = 17.dp, end = 16.dp, bottom = 12.dp)
+                .shimmer(rememberZashiShimmer()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
@@ -211,4 +212,3 @@ private fun LoadingPreview() =
             )
         }
     }
-

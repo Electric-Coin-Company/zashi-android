@@ -30,7 +30,6 @@ import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
 interface MetadataRepository {
-
     fun flipTxBookmark(txId: String)
 
     fun createOrUpdateTxNote(txId: String, note: String)
@@ -226,11 +225,15 @@ class MetadataRepositoryImpl(
                 )
             }.distinctUntilChanged()
 
-    override fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?> = metadata
-        .map {
-            it?.accountMetadata?.swaps?.lastUsedAssetHistory?.toSimpleAssetSet()
-        }
-        .distinctUntilChanged()
+    override fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?> =
+        metadata
+            .map {
+                it
+                    ?.accountMetadata
+                    ?.swaps
+                    ?.lastUsedAssetHistory
+                    ?.toSimpleAssetSet()
+            }.distinctUntilChanged()
 
     private suspend fun getMetadataKey(selectedAccount: WalletAccount): MetadataKey {
         val key = metadataKeyStorageProvider.get(selectedAccount)

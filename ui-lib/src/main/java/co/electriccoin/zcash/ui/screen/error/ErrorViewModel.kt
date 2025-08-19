@@ -68,12 +68,12 @@ class ErrorViewModel(
             message = stringRes(args.synchronizerError.getStackTrace(STACKTRACE_LIMIT).orEmpty()),
             positive =
                 ButtonState(
-                    text = stringRes(R.string.general_ok),
+                    text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_ok),
                     onClick = { navigationRouter.back() }
                 ),
             negative =
                 ButtonState(
-                    text = stringRes(R.string.general_report),
+                    text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_report),
                     onClick = { sendReportClick(args) }
                 ),
             onBack = ::onBack,
@@ -93,12 +93,12 @@ class ErrorViewModel(
                 },
             positive =
                 ButtonState(
-                    text = stringRes(R.string.general_ok),
+                    text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_ok),
                     onClick = { navigationRouter.back() }
                 ),
             negative =
                 ButtonState(
-                    text = stringRes(R.string.general_report),
+                    text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_report),
                     onClick = { sendReportClick(args) }
                 ),
             onBack = ::onBack,
@@ -114,12 +114,12 @@ class ErrorViewModel(
                 ),
             positive =
                 ButtonState(
-                    text = stringRes(R.string.general_ok),
+                    text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_ok),
                     onClick = { navigationRouter.back() }
                 ),
             negative =
                 ButtonState(
-                    text = stringRes(R.string.general_report),
+                    text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_report),
                     onClick = { sendReportClick(args.exception) }
                 ),
             onBack = ::onBack,
@@ -135,12 +135,12 @@ class ErrorViewModel(
                 ),
             positive =
                 ButtonState(
-                    text = stringRes(R.string.general_ok),
+                    text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_ok),
                     onClick = { navigationRouter.back() }
                 ),
             negative =
                 ButtonState(
-                    text = stringRes(R.string.general_report),
+                    text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_report),
                     onClick = { sendReportClick(args.exception) }
                 ),
             onBack = ::onBack,

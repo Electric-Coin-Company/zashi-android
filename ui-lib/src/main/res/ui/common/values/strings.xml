@@ -22,14 +22,9 @@
 
     <string name="general_etc">…</string>
 
-    <string name="general_review">Review</string>
-    <string name="general_ok">OK</string>
     <string name="general_remind_me_later">Remind me later</string>
     <string name="general_remind_me_in">Remind me in %s</string>
-    <string name="general_report">Report</string>
     <string name="general_remind_me_in_two_days">two days</string>
     <string name="general_remind_me_in_two_weeks">two weeks</string>
     <string name="general_remind_me_in_two_months">two months</string>
-    <string name="general_zec">%s ZEC</string>
-    <string name="general_dismiss">Dismiss</string>
 </resources>

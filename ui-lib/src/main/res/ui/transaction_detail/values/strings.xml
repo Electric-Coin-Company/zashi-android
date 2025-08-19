@@ -28,4 +28,17 @@
     <string name="transaction_detail_edit_note">Edit note</string>
     <string name="transaction_detail_add_a_note">Add a note</string>
     <string name="transaction_detail_info_note">Note</string>
+    <string name="transaction_detail_info_refunded">Refunded amount</string>
+    <string name="transaction_detail_info_recipient">Recipient</string>
+    <string name="transaction_detail_info_total_fees">Total fees</string>
+    <string name="transaction_detail_info_realized_slippage">Realized slippage</string>
+    <string name="transaction_detail_info_max_slippage">Max slippage</string>
+    <string name="transaction_detail_info_timestamp">Timestamp</string>
+    <string name="transaction_detail_info_refunded_message">Your deposit transaction was sent but the swap was unsuccessful. The payment amount has been refunded, minus transaction fees.</string>
+    <string name="transaction_detail_info_refunded_title">Payment Refunded</string>
+    <string name="swap_detail_incomplete_deposit">Incomplete deposit</string>
+    <string name="swap_detail_pending">Pending</string>
+    <string name="swap_detail_completed">Completed</string>
+    <string name="swap_detail_refunded">Refunded</string>
+    <string name="swap_detail_failed">Failed</string>
 </resources>

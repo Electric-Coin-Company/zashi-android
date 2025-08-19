@@ -37,6 +37,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -44,8 +45,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
-import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -121,7 +122,9 @@ internal fun SwapView(
                 }
             }
 
-            SlippageSeparator(state = state)
+            SlippageSeparator(
+                // state = state
+            )
             Spacer(14.dp)
             SwapAmountText(state = state.amountText)
 
@@ -199,7 +202,7 @@ private fun SlippageButton(state: ButtonState, modifier: Modifier = Modifier) {
         verticalAlignment = CenterVertically
     ) {
         Text(
-            text = "Slippage tolerance",
+            text = stringResource(R.string.swap_slippage_tolerance),
             style = ZashiTypography.textSm,
             fontWeight = FontWeight.Medium,
             color = ZashiColors.Text.textTertiary
@@ -215,7 +218,7 @@ private fun SlippageButton(state: ButtonState, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SlippageSeparator(
-    state: SwapState,
+    // state: SwapState,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -283,7 +286,7 @@ private fun TopAppBar(state: SwapState) {
 @Composable
 private fun ColumnScope.AddressTextField(state: SwapState) {
     Text(
-        text = "Address",
+        text = stringResource(co.electriccoin.zcash.ui.design.R.string.general_address),
         style = ZashiTypography.textSm,
         fontWeight = FontWeight.Medium
     )
@@ -305,7 +308,7 @@ private fun ColumnScope.AddressTextField(state: SwapState) {
             if (state.addressContact == null) {
                 {
                     Text(
-                        text = "Enter address...",
+                        text = stringResource(co.electriccoin.zcash.ui.design.R.string.general_enter_address),
                         style = ZashiTypography.textMd,
                         color = ZashiColors.Inputs.Default.text
                     )
@@ -319,7 +322,10 @@ private fun ColumnScope.AddressTextField(state: SwapState) {
             } else {
                 {
                     Box(
-                        modifier = Modifier.fillMaxHeight().padding(top = 3.5.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxHeight()
+                                .padding(top = 3.5.dp),
                         contentAlignment = Alignment.CenterStart
                     ) {
                         ZashiChipButton(

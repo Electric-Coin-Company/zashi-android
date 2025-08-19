@@ -1,9 +1,7 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.TextAutoSize
@@ -105,21 +103,23 @@ fun ZashiAutoSizeText(
         }
     val textColor = color.takeOrElse { style.color.takeOrElse { LocalContentColor.current } }
 
-    val normalizedStyle = style.merge(
-        color = textColor,
-        fontSize = fontSize,
-        fontWeight = fontWeight,
-        textAlign = textAlign ?: TextAlign.Unspecified,
-        lineHeight = lineHeight,
-        fontFamily = fontFamily,
-        textDecoration = textDecoration,
-        fontStyle = fontStyle,
-        letterSpacing = letterSpacing
-    )
+    val normalizedStyle =
+        style.merge(
+            color = textColor,
+            fontSize = fontSize,
+            fontWeight = fontWeight,
+            textAlign = textAlign ?: TextAlign.Unspecified,
+            lineHeight = lineHeight,
+            fontFamily = fontFamily,
+            textDecoration = textDecoration,
+            fontStyle = fontStyle,
+            letterSpacing = letterSpacing
+        )
     val measurer = rememberTextMeasurer()
-    val minHeight = remember(normalizedStyle, measurer) {
-        measurer.measure(text = text, style = normalizedStyle).size.height
-    }
+    val minHeight =
+        remember(normalizedStyle, measurer) {
+            measurer.measure(text = text, style = normalizedStyle).size.height
+        }
     val bulletRestLine = with(LocalDensity.current) { minHeight.toDp() }
 
     Box(
@@ -138,5 +138,4 @@ fun ZashiAutoSizeText(
             autoSize = textAutoSize,
         )
     }
-
 }

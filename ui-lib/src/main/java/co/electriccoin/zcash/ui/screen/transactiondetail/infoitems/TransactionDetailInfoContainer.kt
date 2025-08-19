@@ -14,7 +14,7 @@ fun TransactionDetailInfoContainer(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Surface (
+    Surface(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
         color = ZashiColors.Surfaces.bgSecondary,

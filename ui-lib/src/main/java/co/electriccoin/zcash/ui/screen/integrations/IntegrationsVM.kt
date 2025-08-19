@@ -89,8 +89,8 @@ class IntegrationsVM(
             listOfNotNull(
                 ListItemState(
                     bigIcon = imageRes(R.drawable.ic_integrations_near),
-                    title = stringRes("Swap ZEC with NEAR Intents"),
-                    subtitle = stringRes("Swap shielded ZEC to any supported cryptocurrency."),
+                    title = stringRes(R.string.integrations_near_swap),
+                    subtitle = stringRes(R.string.integrations_near_swap_message),
                     onClick = ::onNearSwapClick,
                     isEnabled = selectedAccount is ZashiAccount
                 ).takeIf { isDialog },

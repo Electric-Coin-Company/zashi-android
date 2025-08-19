@@ -22,8 +22,9 @@ import co.electriccoin.zcash.ui.common.usecase.ViewTransactionDetailAfterSuccess
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ButtonStyle
+import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
+import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -142,7 +143,7 @@ class TransactionProgressVM(
                 is ExactInputSwapTransactionProposal,
                 is ExactOutputSwapTransactionProposal ->
                     ButtonState(
-                        text = stringRes("Check status"),
+                        text = stringRes(R.string.send_confirmation_success_btn_check_status),
                         onClick = { onViewTransactionClick(result) },
                         style = ButtonStyle.PRIMARY
                     )
@@ -159,7 +160,7 @@ class TransactionProgressVM(
                 is ShieldTransactionProposal -> stringRes(R.string.send_confirmation_success_subtitle_transparent)
 
                 is ExactInputSwapTransactionProposal ->
-                    stringRes("You successfully initiated a swap.\nFollow its status on the transaction screen.")
+                    stringRes(R.string.send_confirmation_success_swap_subtitle)
 
                 is ExactOutputSwapTransactionProposal ->
                     stringRes(
@@ -173,7 +174,7 @@ class TransactionProgressVM(
             if (proposal is ShieldTransactionProposal) {
                 stringRes(R.string.send_confirmation_success_title_transparent)
             } else {
-                stringRes(R.string.send_confirmation_success_title, getAddressAbbreviated())
+                stringRes(R.string.send_confirmation_success_title)
             }
     )
 
@@ -209,11 +210,14 @@ class TransactionProgressVM(
             },
         text =
             when (proposal) {
-                is ExactInputSwapTransactionProposal -> stringRes("There was an error initiating a swap.\nTry it again, please.")
+                is ExactInputSwapTransactionProposal ->
+                    stringRes(R.string.send_confirmation_error_swap_subtitle)
+
                 is ExactOutputSwapTransactionProposal ->
                     stringRes(
                         "There was an error initiating a cross-chain payment.\nTry it again, please."
                     )
+
                 is ShieldTransactionProposal -> stringRes(R.string.send_confirmation_failure_subtitle_transparent)
                 else -> stringRes(R.string.send_confirmation_failure_subtitle)
             }
@@ -228,7 +232,7 @@ class TransactionProgressVM(
                 when (proposal) {
                     is ShieldTransactionProposal -> stringRes(R.string.send_confirmation_sending_subtitle_transparent)
                     is SwapTransactionProposal ->
-                        stringRes("Your coins are being sent to the deposit address...")
+                        stringRes(R.string.send_confirmation_swapping_subtitle_transparent)
 
                     else -> stringRes(R.string.send_confirmation_sending_subtitle, getAddressAbbreviated())
                 },
@@ -240,9 +244,9 @@ class TransactionProgressVM(
                 }
         )
 
-    private suspend fun getAddressAbbreviated(): String {
+    private suspend fun getAddressAbbreviated(): StringResource {
         val address = (getTransactionProposal() as? SendTransactionProposal)?.destination?.address
-        return address?.let { "${it.take(ADDRESS_MAX_LENGTH)}..." }.orEmpty()
+        return address?.let { stringResByAddress(it, true) } ?: stringRes("")
     }
 
     private fun onBackToSendFormAndClear() = viewModelScope.launch { cancelKeystoneProposalFlow(clearSendForm = true) }

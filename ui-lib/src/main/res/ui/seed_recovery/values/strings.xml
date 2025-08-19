@@ -14,7 +14,7 @@
         a safe place.</string>
     <string name="wallet_backup_title">Wallet backup</string>
     <string name="wallet_backup_subtitle">Your Secret Recovery Phrase</string>
-    <string name="wallet_backup_message">"Your secret recovery phrase is a unique set of 24 words, appearing in a precise order. It protects access to your funds. "</string>
+    <string name="wallet_backup_message">Your secret recovery phrase is a unique set of 24 words, appearing in a precise order. It protects access to your funds.</string>
     <string name="wallet_backup_info">Keep this phrase securely hidden. Don’t take screenshots of it or store it on your phone!</string>
     <string name="wallet_backup_btn">Next</string>
     <string name="wallet_backup_item_1">Control your wallet</string>

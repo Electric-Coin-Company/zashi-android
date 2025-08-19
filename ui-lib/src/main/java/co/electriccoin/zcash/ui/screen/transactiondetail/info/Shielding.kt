@@ -17,10 +17,10 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.ShieldingStateFixture
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumn
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumnState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoContainer
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailTitleHeader
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoHeaderState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRow
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRowState
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailTitleHeader
 
 @Composable
 fun Shielding(

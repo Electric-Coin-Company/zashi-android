@@ -2,12 +2,10 @@ package co.electriccoin.zcash.ui.screen.transactiondetail.infoitems
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -33,24 +31,26 @@ fun TransactionDetailInfoColumn(
     state: TransactionDetailInfoColumnState,
     modifier: Modifier = Modifier
 ) {
-    val clickModifier = if (state.onClick != null) {
-        Modifier.clickable(
-            indication = ripple(),
-            interactionSource = remember { MutableInteractionSource() },
-            onClick = state.onClick,
-            role = Role.Button,
-        )
-    } else {
-        Modifier
-    }
+    val clickModifier =
+        if (state.onClick != null) {
+            Modifier.clickable(
+                indication = ripple(),
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = state.onClick,
+                role = Role.Button,
+            )
+        } else {
+            Modifier
+        }
     Column(
         modifier =
-            modifier then clickModifier then Modifier.padding(
-                top = if (state.title != null) 14.dp else 0.dp,
-                start = 20.dp,
-                end = 20.dp,
-                bottom = 14.dp
-            )
+            modifier then clickModifier then
+                Modifier.padding(
+                    top = if (state.title != null) 14.dp else 0.dp,
+                    start = 20.dp,
+                    end = 20.dp,
+                    bottom = 14.dp
+                )
     ) {
         state.title?.let {
             Text(

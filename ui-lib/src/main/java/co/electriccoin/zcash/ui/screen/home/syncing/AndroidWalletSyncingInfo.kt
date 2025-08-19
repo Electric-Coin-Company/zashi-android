@@ -67,7 +67,7 @@ private fun Content(
                 modifier = Modifier.fillMaxWidth(),
                 state =
                     ButtonState(
-                        text = stringRes(R.string.general_ok),
+                        text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_ok),
                         onClick = onBack
                     )
             )

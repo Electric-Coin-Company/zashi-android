@@ -62,7 +62,7 @@ class UpdateGenericABContactVM(
                     smallIcon = null,
                     text = it?.chainName,
                     isEnabled = it != zcashBlockchain,
-                    placeholder = stringRes("Select..."),
+                    placeholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_select),
                     onClick = ::onBlockchainClick
                 )
             }

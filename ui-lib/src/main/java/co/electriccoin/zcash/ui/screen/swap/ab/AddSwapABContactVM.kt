@@ -49,7 +49,7 @@ class AddSwapABContactVM(
                     bigIcon = it?.chainIcon,
                     smallIcon = null,
                     text = it?.chainName,
-                    placeholder = stringRes("Select..."),
+                    placeholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_select),
                     onClick = ::onBlockchainClick
                 )
             }

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="swap_info_message">Swap from shielded ZEC to any NEAR-supported coin or token.\n\nZashi is a ZEC-only wallet, so you’ll need a valid wallet address for the asset you’re swapping to.</string>
+    <string name="swap_info_title">Swap with</string>
+    <string name="swap_select_token">Select Token</string>
+    <string name="swap_select_chain">Select Chain</string>
+    <string name="swap_search_hint">Search by name or ticker…</string>
+    <string name="swap_slippage_title">Slippage</string>
+    <string name="swap_slippage_subtitle">This setting determines the maximum allowable difference between the expected price of a swap and the actual price you pay, which is outside of Zashi\'s control.</string>
+    <string name="swap_slippage_max_threshold">Please enter maximum slippage of 30%%.</string>
+    <string name="swap_slippage_info">You may receive up to %s less than quoted.</string>
+    <string name="swap_title">Swap with</string>
+    <string name="swap_from">From</string>
+    <string name="swap_insufficient_funds">Insufficient funds</string>
+    <string name="swap_max">Max: %s</string>
+    <string name="swap_to">To</string>
+    <string name="swap_rate">Rate</string>
+    <string name="swap_zec_exchange_rate">1 ZEC = %s</string>
+    <string name="swap_slippage_tolerance">Slippage tolerance</string>
+    <string name="swap_cancel_title">Are you sure?</string>
+    <string name="swap_cancel_subtitle">If you leave this screen, all the information you entered will be lost.</string>
+    <string name="swap_cancel_negative">Cancel swap</string>
+    <string name="swap_cancel_positive">Don\’t cancel</string>
+    <string name="swap_quote_error_too_low_try_at_least">Amount is too low for bridge, try at least %s</string>
+    <string name="swap_quote_error_too_low_try_higher">Amount is too low for bridge, try higher amount.</string>
+    <string name="swap_quote_error_getting_quote">We tried but couldn\’t get a quote for a payment with your
+        parameters. You can try to adjust the payment details or try again later.</string>
+    <string name="swap_quote_unavailable">Quote Unavailable</string>
+    <string name="swap_quote_cancel_payment">Cancel payment</string>
+    <string name="swap_quote_edit_payment">Edit payment</string>
+    <string name="swap_quote_title">Swap Now</string>
+    <string name="swap_quote_from">Swap from</string>
+    <string name="swap_quote_to">Swap to</string>
+    <string name="swap_quote_total_fees">Total fees</string>
+    <string name="swap_quote_max_slippage">Max slippage %s</string>
+    <string name="swap_quote_total_amount">Total Amount</string>
+    <string name="swap_quote_zashi">Zashi</string>
+    <string name="swap_quote_info">You could receive up to %s based on the %s slippage you set.</string>
+</resources>

@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -99,7 +100,7 @@ fun SendSwap(
                             modifier = Modifier.fillMaxWidth(),
                             state =
                                 TransactionDetailInfoRowState(
-                                    title = stringRes("Refunded amount"),
+                                    title = stringRes(R.string.transaction_detail_info_refunded),
                                     message = state.refundedAmount,
                                 )
                         )
@@ -110,7 +111,7 @@ fun SendSwap(
                             modifier = Modifier.fillMaxWidth(),
                             state =
                                 TransactionDetailInfoRowState(
-                                    title = stringRes("Recipient"),
+                                    title = stringRes(R.string.transaction_detail_info_recipient),
                                     message = state.recipientAddress,
                                     trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                                     onClick = state.onRecipientAddressClick
@@ -134,7 +135,7 @@ fun SendSwap(
                             modifier = Modifier.fillMaxWidth(),
                             state =
                                 TransactionDetailInfoRowState(
-                                    title = stringRes("Total fees"),
+                                    title = stringRes(R.string.transaction_detail_info_total_fees),
                                     message = state.totalFees,
                                 )
                         )
@@ -144,11 +145,12 @@ fun SendSwap(
                         modifier = Modifier.fillMaxWidth(),
                         state =
                             TransactionDetailInfoRowState(
-                                title = if (state.isSlippageRealized) {
-                                    stringRes("Realized slippage")
-                                } else {
-                                    stringRes("Max slippage")
-                                },
+                                title =
+                                    if (state.isSlippageRealized) {
+                                        stringRes(R.string.transaction_detail_info_realized_slippage)
+                                    } else {
+                                        stringRes(R.string.transaction_detail_info_max_slippage)
+                                    },
                                 message = state.maxSlippage,
                             )
                     )
@@ -157,7 +159,7 @@ fun SendSwap(
                         modifier = Modifier.fillMaxWidth(),
                         state =
                             TransactionDetailInfoRowState(
-                                title = stringRes("Timestamp"),
+                                title = stringRes(R.string.transaction_detail_info_timestamp),
                                 message = state.completedTimestamp,
                             )
                     )
@@ -204,14 +206,14 @@ private fun RefundedInfo() {
             Column {
                 Spacer(2.dp)
                 Text(
-                    text = "Payment Refunded",
+                    text = stringResource(R.string.transaction_detail_info_refunded_title),
                     style = ZashiTypography.textSm,
                     fontWeight = FontWeight.Medium,
                     color = ZashiColors.Utility.WarningYellow.utilityOrange700
                 )
                 Spacer(8.dp)
                 Text(
-                    text = "Your deposit transaction was sent but the swap was unsuccessful. The payment amount has been refunded, minus transaction fees.",
+                    text = stringResource(R.string.transaction_detail_info_refunded_message),
                     style = ZashiTypography.textXs,
                     color = ZashiColors.Utility.WarningYellow.utilityOrange800
                 )
@@ -226,27 +228,29 @@ private fun Preview() =
     ZcashTheme {
         BlankSurface {
             SendSwap(
-                state = SendSwapState(
-                    status = SwapStatus.REFUNDED,
-                    quoteHeader = SwapQuoteHeaderState(
-                        rotateIcon = false,
-                        from = null,
-                        to = null
+                state =
+                    SendSwapState(
+                        status = SwapStatus.REFUNDED,
+                        quoteHeader =
+                            SwapQuoteHeaderState(
+                                rotateIcon = false,
+                                from = null,
+                                to = null
+                            ),
+                        depositAddress = stringResByAddress(value = "Address", abbreviated = true),
+                        totalFees = stringRes(Zatoshi(0)),
+                        recipientAddress = null,
+                        transactionId = stringRes("Transaction ID"),
+                        refundedAmount = stringRes("Refunded amount"),
+                        onTransactionIdClick = {},
+                        onDepositAddressClick = {},
+                        onRecipientAddressClick = {},
+                        maxSlippage = null,
+                        note = stringRes("None"),
+                        isSlippageRealized = false,
+                        isPending = false,
+                        completedTimestamp = stringRes("Completed"),
                     ),
-                    depositAddress = stringResByAddress(value = "Address", abbreviated = true),
-                    totalFees = stringRes(Zatoshi(0)),
-                    recipientAddress = null,
-                    transactionId = stringRes("Transaction ID"),
-                    refundedAmount = stringRes("Refunded amount"),
-                    onTransactionIdClick = {},
-                    onDepositAddressClick = {},
-                    onRecipientAddressClick = {},
-                    maxSlippage = null,
-                    note = stringRes("None"),
-                    isSlippageRealized = false,
-                    isPending = false,
-                    completedTimestamp = stringRes("Completed"),
-                ),
             )
         }
     }

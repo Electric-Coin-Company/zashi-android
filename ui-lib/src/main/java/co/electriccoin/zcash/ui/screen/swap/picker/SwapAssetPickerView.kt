@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
@@ -201,7 +202,7 @@ private fun SearchTextField(innerState: SwapAssetPickerState) {
             )
         },
         placeholder = {
-            Text("Search by name or ticker...")
+            Text(stringResource(R.string.swap_search_hint))
         },
         singleLine = true,
         maxLines = 1
