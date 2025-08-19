@@ -6,6 +6,7 @@ import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.SwapQuoteStatus
+import co.electriccoin.zcash.ui.common.model.near.AppFee
 import co.electriccoin.zcash.ui.common.model.near.QuoteRequest
 import co.electriccoin.zcash.ui.common.model.near.RecipientType
 import co.electriccoin.zcash.ui.common.model.near.RefundType
@@ -84,7 +85,13 @@ class NearSwapDataSourceImpl(
                 recipient = destinationAddress,
                 recipientType = RecipientType.DESTINATION_CHAIN,
                 deadline = Clock.System.now() + 10.minutes,
-                quoteWaitingTimeMs = QUOTE_WAITING_TIME
+                quoteWaitingTimeMs = QUOTE_WAITING_TIME,
+                appFees = listOf(
+                    AppFee(
+                        recipient = "farryela.near",
+                        fee = 50
+                    )
+                )
             )
 
         return try {

@@ -47,6 +47,17 @@ data class QuoteRequest(
     val deadline: Instant,
     @SerialName("quoteWaitingTimeMs")
     val quoteWaitingTimeMs: Int? = null,
+    @SerialName("appFees")
+    val appFees: List<AppFee>
+)
+
+@JsonIgnoreUnknownKeys
+@Serializable
+data class AppFee(
+    @SerialName("recipient")
+    val recipient: String,
+    @SerialName("fee")
+    val fee: Int
 )
 
 enum class RefundType(val apiValue: String) {

@@ -138,4 +138,6 @@ internal sealed interface SwapQuoteInternalState {
     val totalZec: BigDecimal
     val totalUsd: BigDecimal
     val quote: CompositeSwapQuote
+    val totalFeesZatoshi: Zatoshi
+    val totalFeesUsd: BigDecimal
 }

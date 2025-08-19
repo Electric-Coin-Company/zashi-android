@@ -13,4 +13,6 @@ internal data class NearSwapQuoteInternalState(
     override val zecFeeUsd: BigDecimal = quote.getZecFeeUsd(proposal.proposal)
     override val totalZec: BigDecimal = quote.getTotalZec(proposal.proposal)
     override val totalUsd: BigDecimal = quote.getTotalUsd(proposal.proposal)
+    override val totalFeesZatoshi: Zatoshi = quote.getTotalFeesZatoshi(proposal.proposal)
+    override val totalFeesUsd: BigDecimal = quote.getTotalFeesUsd(proposal.proposal)
 }

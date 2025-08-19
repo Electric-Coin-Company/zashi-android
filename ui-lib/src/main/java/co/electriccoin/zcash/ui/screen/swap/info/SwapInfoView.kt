@@ -34,29 +34,29 @@ fun SwapInfoView(state: SwapInfoState) {
         Column(
             modifier = Modifier.padding(horizontal = 24.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "Swap with",
-                    style = ZashiTypography.textXl,
-                    fontWeight = FontWeight.SemiBold,
-                    color = ZashiColors.Text.textPrimary
-                )
-                Spacer(10.dp)
-                Image(
-                    painter = painterResource(R.drawable.ic_near_logo),
-                    contentDescription = null
-                )
-            }
+            // Row(
+            //     modifier = Modifier.fillMaxWidth(),
+            //     verticalAlignment = Alignment.CenterVertically,
+            //     horizontalArrangement = Arrangement.Center
+            // ) {
+            //     Text(
+            //         text = "Swap with",
+            //         style = ZashiTypography.textXl,
+            //         fontWeight = FontWeight.SemiBold,
+            //         color = ZashiColors.Text.textPrimary
+            //     )
+            //     Spacer(10.dp)
+            //     Image(
+            //         painter = painterResource(R.drawable.ic_near_logo),
+            //         contentDescription = null
+            //     )
+            // }
             Spacer(24.dp)
             ListItem(
                 bigIcon = R.drawable.ic_swap_info_item_1,
                 // title = "Swap with NEAR",
                 subtitle = "Swap from shielded ZEC to any NEAR-supported coin or token." +
-                    "\nZashi is a ZEC-only wallet, so you’ll need a valid wallet address for the asset you’re " +
+                    "\n\nZashi is a ZEC-only wallet, so you’ll need a valid wallet address for the asset you’re " +
                     "swapping to."
             )
             // Spacer(20.dp)
@@ -84,27 +84,43 @@ private fun ListItem(
     subtitle: String,
     @DrawableRes bigIcon: Int,
 ) {
-    Row {
+    Column {
         Image(
             modifier = Modifier.size(40.dp),
             painter = painterResource(bigIcon),
             contentDescription = null
         )
-        Spacer(16.dp)
-        Column {
-            // Text(
-            //     text = title,
-            //     style = ZashiTypography.textSm,
-            //     fontWeight = FontWeight.SemiBold,
-            //     color = ZashiColors.Text.textPrimary
-            // )
-            // Spacer(4.dp)
+        Spacer(12.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
             Text(
-                text = subtitle,
-                style = ZashiTypography.textSm,
-                color = ZashiColors.Text.textTertiary
+                text = "Swap with",
+                style = ZashiTypography.textXl,
+                fontWeight = FontWeight.SemiBold,
+                color = ZashiColors.Text.textPrimary
+            )
+            Spacer(10.dp)
+            Image(
+                painter = painterResource(R.drawable.ic_near_logo),
+                contentDescription = null
             )
         }
+        Spacer(12.dp)
+        // Text(
+        //     text = title,
+        //     style = ZashiTypography.textSm,
+        //     fontWeight = FontWeight.SemiBold,
+        //     color = ZashiColors.Text.textPrimary
+        // )
+        // Spacer(4.dp)
+        Text(
+            text = subtitle,
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Text.textTertiary
+        )
     }
 }
 
