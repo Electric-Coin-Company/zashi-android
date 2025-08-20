@@ -6,8 +6,8 @@ import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
+import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
 import co.electriccoin.zcash.ui.common.repository.SendTransaction
-import co.electriccoin.zcash.ui.common.repository.ShieldTransaction
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionFilter
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
@@ -139,7 +139,7 @@ class GetCurrentFilteredTransactionsUseCase(
                             .mapLatest { transactions ->
                                 transactions
                                     ?.filter { transaction ->
-                                        filterBySentReceived(filters, transaction)
+                                        filterBySentReceivedSwap(filters, transaction)
                                     }?.filter { transaction ->
                                         filterByGeneralFilters(
                                             filters = filters,
@@ -193,19 +193,18 @@ class GetCurrentFilteredTransactionsUseCase(
     }
 
     @Suppress
-    private fun filterBySentReceived(
+    private fun filterBySentReceivedSwap(
         filters: List<TransactionFilter>,
         transaction: FilterTransactionData
     ): Boolean =
-        if (filters.contains(TransactionFilter.SENT) || filters.contains(TransactionFilter.RECEIVED)) {
+        if (TransactionFilter.SENT in filters ||
+            TransactionFilter.RECEIVED in filters ||
+            TransactionFilter.SWAP in filters
+        ) {
             when {
-                filters.contains(TransactionFilter.SENT) &&
-                    transaction.transaction is SendTransaction -> true
-
-                filters.contains(TransactionFilter.RECEIVED) &&
-                    transaction.transaction !is SendTransaction &&
-                    transaction.transaction !is ShieldTransaction -> true
-
+                TransactionFilter.SENT in filters && transaction.transaction is SendTransaction -> true
+                TransactionFilter.RECEIVED in filters && transaction.transaction is ReceiveTransaction -> true
+                TransactionFilter.SWAP in filters && transaction.transactionMetadata.swapMetadata != null -> true
                 else -> false
             }
         } else {

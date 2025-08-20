@@ -57,7 +57,7 @@ import co.electriccoin.zcash.ui.screen.taxexport.TaxExportViewModel
 import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInVM
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsVM
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailVM
-import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersViewModel
+import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersVM
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryViewModel
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetViewModel
 import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNoteViewModel
@@ -97,7 +97,7 @@ val viewModelModule =
         viewModelOf(::ZashiTopAppBarVM)
         viewModelOf(::SelectKeystoneAccountViewModel)
         viewModelOf(::ReviewTransactionViewModel)
-        viewModelOf(::TransactionFiltersViewModel)
+        viewModelOf(::TransactionFiltersVM)
         viewModelOf(::TransactionProgressVM)
         viewModelOf(::TransactionHistoryWidgetViewModel)
         viewModelOf(::TransactionHistoryViewModel)

@@ -1,17 +1,22 @@
 package co.electriccoin.zcash.ui.screen.transactionfilters
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import co.electriccoin.zcash.ui.screen.transactionfilters.view.TransactionFiltersView
-import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersViewModel
+import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersVM
+import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AndroidTransactionFiltersList() {
-    val viewModel = koinViewModel<TransactionFiltersViewModel>()
-    val state by viewModel.state.collectAsStateWithLifecycle()
+fun TransactionFiltersScreen() {
+    val vm = koinViewModel<TransactionFiltersVM>()
+    val state by vm.state.collectAsStateWithLifecycle()
+    BackHandler(state != null) { state?.onBack?.invoke() }
     TransactionFiltersView(state = state)
 }
+
+@Serializable
+object TransactionFiltersArgs

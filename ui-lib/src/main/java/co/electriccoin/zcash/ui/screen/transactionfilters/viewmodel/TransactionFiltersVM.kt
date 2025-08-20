@@ -6,18 +6,13 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.repository.TransactionFilter
-import co.electriccoin.zcash.ui.common.repository.TransactionFilter.BOOKMARKED
-import co.electriccoin.zcash.ui.common.repository.TransactionFilter.MEMOS
-import co.electriccoin.zcash.ui.common.repository.TransactionFilter.NOTES
-import co.electriccoin.zcash.ui.common.repository.TransactionFilter.RECEIVED
-import co.electriccoin.zcash.ui.common.repository.TransactionFilter.SENT
-import co.electriccoin.zcash.ui.common.repository.TransactionFilter.UNREAD
+import co.electriccoin.zcash.ui.common.repository.TransactionFilter.*
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.transactionfilters.model.TransactionFilterState
-import co.electriccoin.zcash.ui.screen.transactionfilters.model.TransactionFiltersState
+import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFilterState
+import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,7 +22,7 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
-internal class TransactionFiltersViewModel(
+internal class TransactionFiltersVM(
     private val navigationRouter: NavigationRouter,
     getTransactionFilters: GetTransactionFiltersUseCase,
     private val applyTransactionFilters: ApplyTransactionFiltersUseCase,
@@ -78,6 +73,12 @@ internal class TransactionFiltersViewModel(
                                         isSelected = current.contains(NOTES),
                                         onClick = { onTransactionFilterClicked(it) }
                                     )
+
+                                SWAP -> TransactionFilterState(
+                                    text = stringRes(R.string.transaction_filters_swap),
+                                    isSelected = current.contains(SWAP),
+                                    onClick = { onTransactionFilterClicked(it) }
+                                )
                             }
                         },
                     onBack = ::onBack,
@@ -98,15 +99,8 @@ internal class TransactionFiltersViewModel(
                 initialValue = null
             )
 
-    private fun onTransactionFilterClicked(filter: TransactionFilter) {
-        selectedFilters.update {
-            if (it.contains(filter)) {
-                it - filter
-            } else {
-                it + filter
-            }
-        }
-    }
+    private fun onTransactionFilterClicked(filter: TransactionFilter) =
+        selectedFilters.update { if (it.contains(filter)) it - filter else it + filter }
 
     private fun onBack() = navigationRouter.back()
 

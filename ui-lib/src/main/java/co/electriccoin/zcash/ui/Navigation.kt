@@ -153,8 +153,8 @@ import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsArgs
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsScreen
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailScreen
-import co.electriccoin.zcash.ui.screen.transactionfilters.AndroidTransactionFiltersList
-import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFilters
+import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersScreen
+import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersArgs
 import co.electriccoin.zcash.ui.screen.transactionhistory.AndroidTransactionHistory
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
 import co.electriccoin.zcash.ui.screen.transactionnote.AndroidTransactionNote
@@ -333,7 +333,7 @@ internal fun MainActivity.Navigation() {
         composable<ReviewTransaction> { AndroidReviewTransaction() }
         composable<TransactionProgressArgs> { TransactionProgressScreen(it.toRoute()) }
         composable<TransactionHistory> { AndroidTransactionHistory() }
-        dialogComposable<TransactionFilters> { AndroidTransactionFiltersList() }
+        dialogComposable<TransactionFiltersArgs> { TransactionFiltersScreen() }
         composable<TransactionDetailArgs> { TransactionDetailScreen(it.toRoute()) }
         dialogComposable<TransactionNote> { AndroidTransactionNote(it.toRoute()) }
         composable<TaxExport> { AndroidTaxExport() }

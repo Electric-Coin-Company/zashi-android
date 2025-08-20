@@ -89,7 +89,7 @@ class NearSwapDataSourceImpl(
                     listOf(
                         AppFee(
                             recipient = "farryela.near",
-                            fee = 50
+                            fee = AFFILIATE_FEE_BPS
                         )
                     )
             )
@@ -142,4 +142,5 @@ class NearSwapDataSourceImpl(
     }
 }
 
+const val AFFILIATE_FEE_BPS = 50
 private const val QUOTE_WAITING_TIME = 3000

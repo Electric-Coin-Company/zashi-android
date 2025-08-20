@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.transactionfilters.model
+package co.electriccoin.zcash.ui.screen.transactionfilters
 
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ModalBottomSheetState

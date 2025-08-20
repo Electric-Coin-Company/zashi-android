@@ -1,11 +1,10 @@
-package co.electriccoin.zcash.ui.screen.transactionfilters.view
+package co.electriccoin.zcash.ui.screen.transactionfilters
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -40,7 +39,6 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.screen.transactionfilters.fixture.TransactionFiltersStateFixture
-import co.electriccoin.zcash.ui.screen.transactionfilters.model.TransactionFiltersState
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,12 +56,11 @@ internal fun TransactionFiltersView(
 }
 
 @Composable
-@OptIn(ExperimentalLayoutApi::class)
 private fun BottomSheetContent(state: TransactionFiltersState?) {
     Column {
         Text(
             modifier = Modifier.padding(horizontal = 24.dp),
-            text = stringResource(co.electriccoin.zcash.ui.R.string.transaction_filters_title),
+            text = stringResource(R.string.transaction_filters_title),
             style = ZashiTypography.textXl,
             fontWeight = FontWeight.SemiBold,
             color = ZashiColors.Text.textPrimary

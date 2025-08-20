@@ -13,7 +13,7 @@ data class CompositeSwapQuote(
     val slippage: BigDecimal,
     val quote: SwapQuote
 ) : SwapQuote by quote {
-    val amountInDecimals: Int = originAsset.decimals
+    // val amountInDecimals: Int = originAsset.decimals
 
     val amountOutDecimals: Int = destinationAsset.decimals
 
@@ -24,9 +24,9 @@ data class CompositeSwapQuote(
 
     fun getTotalUsd(proposal: Proposal): BigDecimal = quote.amountInUsd + getZecFeeUsd(proposal)
 
-    fun getTotalFeesUsd(proposal: Proposal): BigDecimal = quote.swapProviderFeeUsd + getZecFeeUsd(proposal)
+    fun getTotalFeesUsd(proposal: Proposal): BigDecimal = quote.affiliateFeeUsd + getZecFeeUsd(proposal)
 
-    fun getTotalFeesZatoshi(proposal: Proposal): Zatoshi = proposal.totalFeeRequired() + quote.swapProviderFee
+    fun getTotalFeesZatoshi(proposal: Proposal): Zatoshi = proposal.totalFeeRequired() + quote.affiliateFee
 
     private fun getZecFee(proposal: Proposal): BigDecimal = proposal.totalFeeRequired().convertZatoshiToZec()
 }
