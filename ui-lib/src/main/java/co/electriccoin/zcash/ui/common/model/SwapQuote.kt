@@ -72,8 +72,7 @@ data class NearSwapQuote(
             .multiply(
                 BigDecimal(AFFILIATE_FEE_BPS).divide(BigDecimal("10000"), MathContext.DECIMAL128),
                 MathContext.DECIMAL128
-            )
-            .divide(zecExchangeRate, MathContext.DECIMAL128)
+            ).divide(zecExchangeRate, MathContext.DECIMAL128)
             .convertZecToZatoshi()
 
     override val affiliateFeeUsd: BigDecimal =

@@ -153,8 +153,8 @@ import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsArgs
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsScreen
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailScreen
-import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersScreen
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersArgs
+import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersScreen
 import co.electriccoin.zcash.ui.screen.transactionhistory.AndroidTransactionHistory
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
 import co.electriccoin.zcash.ui.screen.transactionnote.AndroidTransactionNote

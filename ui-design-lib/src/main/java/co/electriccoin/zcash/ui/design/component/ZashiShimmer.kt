@@ -42,8 +42,8 @@ fun rememberZashiShimmer() =
 
 @Composable
 fun ShimmerCircle(
-    size: Dp = 24.dp,
     modifier: Modifier = Modifier,
+    size: Dp = 24.dp,
     color: Color = ZashiColors.Surfaces.bgSecondary
 ) {
     Box(

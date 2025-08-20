@@ -111,10 +111,11 @@ class SpendableBalanceViewModel(
             SpendableBalanceRowState(
                 title = stringRes(R.string.balance_action_info_shielded),
                 icon = imageRes(R.drawable.ic_balance_shield),
-                value = stringRes(
-                    co.electriccoin.zcash.ui.design.R.string.general_zec,
-                    stringRes(account.spendableShieldedBalance, HIDDEN)
-                )
+                value =
+                    stringRes(
+                        co.electriccoin.zcash.ui.design.R.string.general_zec,
+                        stringRes(account.spendableShieldedBalance, HIDDEN)
+                    )
             ),
             when {
                 account.totalShieldedBalance > account.spendableShieldedBalance &&
@@ -123,11 +124,12 @@ class SpendableBalanceViewModel(
                     SpendableBalanceRowState(
                         title = stringRes(R.string.balance_action_info_pending),
                         icon = loadingImageRes(),
-                        value = stringRes(
-                            co.electriccoin.zcash.ui.design.R.string.general_zec,
-                            stringRes(account.pendingShieldedBalance),
-                            HIDDEN
-                        )
+                        value =
+                            stringRes(
+                                co.electriccoin.zcash.ui.design.R.string.general_zec,
+                                stringRes(account.pendingShieldedBalance),
+                                HIDDEN
+                            )
                     )
 
                 account.totalShieldedBalance > account.spendableShieldedBalance && hasPendingTransaction ->

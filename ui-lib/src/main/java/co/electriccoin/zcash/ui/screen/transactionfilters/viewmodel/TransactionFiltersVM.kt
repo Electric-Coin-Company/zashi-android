@@ -6,7 +6,13 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.repository.TransactionFilter
-import co.electriccoin.zcash.ui.common.repository.TransactionFilter.*
+import co.electriccoin.zcash.ui.common.repository.TransactionFilter.BOOKMARKED
+import co.electriccoin.zcash.ui.common.repository.TransactionFilter.MEMOS
+import co.electriccoin.zcash.ui.common.repository.TransactionFilter.NOTES
+import co.electriccoin.zcash.ui.common.repository.TransactionFilter.RECEIVED
+import co.electriccoin.zcash.ui.common.repository.TransactionFilter.SENT
+import co.electriccoin.zcash.ui.common.repository.TransactionFilter.SWAP
+import co.electriccoin.zcash.ui.common.repository.TransactionFilter.UNREAD
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -74,11 +80,12 @@ internal class TransactionFiltersVM(
                                         onClick = { onTransactionFilterClicked(it) }
                                     )
 
-                                SWAP -> TransactionFilterState(
-                                    text = stringRes(R.string.transaction_filters_swap),
-                                    isSelected = current.contains(SWAP),
-                                    onClick = { onTransactionFilterClicked(it) }
-                                )
+                                SWAP ->
+                                    TransactionFilterState(
+                                        text = stringRes(R.string.transaction_filters_swap),
+                                        isSelected = current.contains(SWAP),
+                                        onClick = { onTransactionFilterClicked(it) }
+                                    )
                             }
                         },
                     onBack = ::onBack,
