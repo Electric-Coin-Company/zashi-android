@@ -166,7 +166,17 @@ private fun SwapTextFieldCard(
                                     modifier = Modifier.size(24.dp),
                                     painter = painterResource(state.textFieldPrefix.resource),
                                     contentDescription = null,
-                                    colorFilter = ColorFilter.tint(ZashiColors.Text.textPrimary)
+                                    colorFilter = ColorFilter.tint(
+                                        if (
+                                            state.textField.innerState.innerTextFieldState.value
+                                                .getValue()
+                                                .isNotEmpty()
+                                        ) {
+                                            ZashiColors.Text.textPrimary
+                                        } else {
+                                            ZashiColors.Text.textTertiary
+                                        }
+                                    )
                                 )
                             }
                         } else {

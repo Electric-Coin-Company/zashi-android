@@ -273,7 +273,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
         val amount = state.slippage
         return ButtonState(
             text = stringResByNumber(amount, minDecimals = 0) + stringRes("%"),
-            icon = R.drawable.ic_swap_slippage,
+            trailingIcon = R.drawable.ic_swap_slippage,
             onClick = { onSlippageClick(state.getOriginFiatAmount()) },
             isEnabled = !state.isRequestingQuote
         )
@@ -323,7 +323,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
                         stringRes(co.electriccoin.zcash.ui.design.R.string.general_try_again)
                     state.swapAssets.isLoading && state.swapAssets.data == null ->
                         stringRes(co.electriccoin.zcash.ui.design.R.string.general_loading)
-                    else -> stringRes(co.electriccoin.zcash.ui.design.R.string.general_confirm)
+                    else -> stringRes(R.string.swap_confirm)
                 },
             style = if (state.swapAssets.error != null) ButtonStyle.DESTRUCTIVE1 else null,
             onClick = {

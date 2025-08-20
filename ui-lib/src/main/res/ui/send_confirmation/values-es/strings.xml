@@ -71,6 +71,6 @@
     <string name="send_confirmation_multiple_trx_failure_copy_tag">IDs de Transacción</string>
     <string name="send_confirmation_success_swap_subtitle">You successfully initiated a swap.\nFollow its status on the transaction screen.</string>
     <string name="send_confirmation_error_swap_subtitle">There was an error initiating a swap.\nTry it again, please.</string>
-    <string name="send_confirmation_swapping_subtitle_transparent">Your coins are being sent to the deposit address...</string>
+    <string name="send_confirmation_swapping_subtitle_transparent">Your coins are being sent to the deposit address…</string>
     <string name="send_confirmation_success_btn_check_status">Check status</string>
 </resources>
