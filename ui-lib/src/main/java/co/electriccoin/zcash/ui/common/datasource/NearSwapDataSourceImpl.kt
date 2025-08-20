@@ -88,7 +88,7 @@ class NearSwapDataSourceImpl(
                 appFees =
                     listOf(
                         AppFee(
-                            recipient = "farryela.near",
+                            recipient = "electriccoinco.near",
                             fee = AFFILIATE_FEE_BPS
                         )
                     )
