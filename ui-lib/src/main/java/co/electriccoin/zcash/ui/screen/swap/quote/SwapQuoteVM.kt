@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import java.math.BigDecimal
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 internal class SwapQuoteVM(
@@ -71,7 +72,7 @@ internal class SwapQuoteVM(
             .onEach {
                 val quote = (swapRepository.quote.value as? SwapQuoteData.Success)?.quote ?: return@onEach
 
-                if ((Clock.System.now() - quote.timestamp) >= 10.seconds) {
+                if ((Clock.System.now() - quote.timestamp) >= 3.minutes) {
                     cancelSwapQuote()
                 }
             }.launchIn(viewModelScope)
