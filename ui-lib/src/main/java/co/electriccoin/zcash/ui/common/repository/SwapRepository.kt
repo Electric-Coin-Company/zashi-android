@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common.repository
 
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.SwapDataSource
+import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapQuote
@@ -18,6 +19,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -81,6 +84,7 @@ data class SwapQuoteStatusData(
 class SwapRepositoryImpl(
     private val swapDataSource: SwapDataSource,
     private val accountDataSource: AccountDataSource,
+    private val metadataRepository: MetadataRepository,
 ) : SwapRepository {
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
@@ -157,8 +161,19 @@ class SwapRepositoryImpl(
             }
 
             if (selectedAsset.value == null) {
-                val usdc = filtered.find { it.tokenTicker.lowercase() == "usdc" && it.chainTicker == "near" }
-                selectedAsset.update { usdc }
+                val assetToSelect = metadataRepository.observeLastUsedAssetHistory()
+                    .filterNotNull()
+                    .first()
+                    .firstOrNull() ?: SimpleSwapAsset(tokenTicker = "usdc", chainTicker = "near")
+                val foundAssetToSelect = filtered
+                    .find {
+                        it.tokenTicker.lowercase() == assetToSelect.tokenTicker &&
+                            it.chainTicker == assetToSelect.chainTicker
+                    }
+
+                if (foundAssetToSelect != null) {
+                    selectedAsset.update { foundAssetToSelect }
+                }
             }
         } catch (e: ResponseException) {
             assets.update { assets ->
