@@ -36,7 +36,7 @@ import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightViewModel
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
-import co.electriccoin.zcash.ui.screen.scan.ScanViewModel
+import co.electriccoin.zcash.ui.screen.scan.ScanZashiAddressVM
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
@@ -51,7 +51,7 @@ import co.electriccoin.zcash.ui.screen.swap.ab.SelectSwapABRecipientVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerVM
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteVM
-import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressVM
+import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressVM
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageVM
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExportViewModel
 import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInVM
@@ -84,7 +84,7 @@ val viewModelModule =
         viewModelOf(::ReceiveVM)
         viewModelOf(::QrCodeViewModel)
         viewModelOf(::RequestViewModel)
-        viewModelOf(::ScanViewModel)
+        viewModelOf(::ScanZashiAddressVM)
         viewModelOf(::ScanKeystoneSignInRequestViewModel)
         viewModelOf(::ScanKeystonePCZTViewModel)
         viewModelOf(::IntegrationsVM)
@@ -128,7 +128,7 @@ val viewModelModule =
         viewModelOf(::SwapSlippageVM)
         viewModelOf(::SwapVM)
         viewModelOf(::SwapQuoteVM)
-        viewModelOf(::ScanSwapAddressVM)
+        viewModelOf(::ScanGenericAddressVM)
         viewModelOf(::SelectSwapABRecipientVM)
         viewModelOf(::SwapBlockchainPickerVM)
         viewModelOf(::AddZashiABContactVM)

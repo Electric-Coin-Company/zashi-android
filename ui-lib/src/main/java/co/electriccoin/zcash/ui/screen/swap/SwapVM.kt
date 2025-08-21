@@ -20,7 +20,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapModeUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableBalanceUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToScanSwapAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
@@ -35,7 +35,7 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
-import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs
+import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -66,7 +66,7 @@ internal class SwapVM(
     private val navigateToSwapQuoteIfAvailable: NavigateToSwapQuoteIfAvailableUseCase,
     private val exactOutputVMMapper: ExactOutputVMMapper,
     private val exactInputVMMapper: ExactInputVMMapper,
-    private val navigateToScanAddress: NavigateToScanSwapAddressUseCase,
+    private val navigateToScanAddress: NavigateToScanGenericAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase
 ) : ViewModel() {
     private val currencyType: MutableStateFlow<CurrencyType> = MutableStateFlow(CurrencyType.TOKEN)
@@ -205,8 +205,9 @@ internal class SwapVM(
 
     private fun onQrCodeScannerClick() =
         viewModelScope.launch {
-            val result = navigateToScanAddress(ScanSwapAddressArgs.Mode.SWAP_SCAN_DESTINATION_ADDRESS)
+            val result = navigateToScanAddress()
             if (result != null) {
+                navigationRouter.back()
                 selectedContact.update { null }
                 addressText.update { result.address }
                 if (result.amount != null) {

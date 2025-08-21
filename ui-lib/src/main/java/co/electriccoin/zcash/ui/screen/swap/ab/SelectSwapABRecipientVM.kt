@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.GetABSwapContactsUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToScanSwapAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
@@ -17,7 +17,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookItem
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookState
-import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs
+import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -31,7 +31,7 @@ class SelectSwapABRecipientVM(
     private val args: SelectABSwapRecipientArgs,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
     private val navigationRouter: NavigationRouter,
-    private val navigateToScanAddress: NavigateToScanSwapAddressUseCase
+    private val navigateToScanAddress: NavigateToScanGenericAddressUseCase
 ) : ViewModel() {
     val state =
         getAddressBookSwapContacts
@@ -101,5 +101,10 @@ class SelectSwapABRecipientVM(
         )
 
     private fun onScanContactClick() =
-        viewModelScope.launch { navigateToScanAddress(ScanSwapAddressArgs.Mode.SWAP_SCAN_CONTACT_ADDRESS) }
+        viewModelScope.launch {
+            val contact = navigateToScanAddress()
+            if (contact != null) {
+                navigationRouter.replace(AddSwapABContactArgs(address = contact.address, chain = null))
+            }
+        }
 }

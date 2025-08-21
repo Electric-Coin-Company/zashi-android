@@ -113,7 +113,7 @@ import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
-import co.electriccoin.zcash.ui.screen.scan.ScanScreen
+import co.electriccoin.zcash.ui.screen.scan.ScanZashiAddressScreen
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.AndroidThirdPartyScan
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScan
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
@@ -141,8 +141,8 @@ import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerScreen
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteArgs
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteScreen
-import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs
-import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressScreen
+import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressArgs
+import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressScreen
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageScreen
 import co.electriccoin.zcash.ui.screen.taxexport.AndroidTaxExport
@@ -292,7 +292,7 @@ internal fun MainActivity.Navigation() {
         composable<ScanKeystonePCZTRequest> { WrapScanKeystonePCZTRequest() }
         composable<SignKeystoneTransaction> { AndroidSignKeystoneTransaction() }
         dialogComposable<AccountList> { AndroidAccountList() }
-        composable<ScanArgs> { ScanScreen(it.toRoute()) }
+        composable<ScanArgs> { ScanZashiAddressScreen(it.toRoute()) }
         composable(EXPORT_PRIVATE_DATA) {
             WrapExportPrivateData(
                 goBack = {
@@ -358,7 +358,7 @@ internal fun MainActivity.Navigation() {
         dialogComposable<SwapSlippageArgs> { SwapSlippageScreen(it.toRoute()) }
         dialogComposable<SwapInfoArgs> { SwapInfoScreen() }
         dialogComposable<SwapQuoteArgs> { SwapQuoteScreen() }
-        composable<ScanSwapAddressArgs> { ScanSwapAddressScreen(it.toRoute()) }
+        composable<ScanGenericAddressArgs> { ScanGenericAddressScreen(it.toRoute()) }
         composable<SelectABSwapRecipientArgs> { SelectSwapABRecipientScreen(it.toRoute()) }
         composable<AddSwapABContactArgs> { AddSwapABContactScreen(it.toRoute()) }
         composable<AddGenericABContactArgs> { AddGenericABContactScreen(it.toRoute()) }

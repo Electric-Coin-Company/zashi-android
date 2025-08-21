@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
@@ -119,11 +118,9 @@ private fun Success(
     state: SwapAssetPickerDataState.Success,
     modifier: Modifier = Modifier
 ) {
-    val scrollState = rememberLazyListState()
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(top = 20.dp, bottom = 72.dp),
-        state = scrollState
     ) {
         itemsIndexed(
             state.items,

@@ -8,6 +8,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.GetABContactsUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ContactListItemState
 import co.electriccoin.zcash.ui.design.util.imageRes
@@ -15,19 +16,19 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.screen.contact.AddGenericABContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactArgs
-import co.electriccoin.zcash.ui.screen.scan.ScanArgs
-import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class AddressBookVM(
     blockchainProvider: BlockchainProvider,
     getAddressBookContacts: GetABContactsUseCase,
     private val navigationRouter: NavigationRouter,
+    private val navigateToScanGenericAddressUseCase: NavigateToScanGenericAddressUseCase
 ) : ViewModel() {
     private val zcashBlockchain = blockchainProvider.getZcashBlockchain()
 
@@ -97,7 +98,12 @@ class AddressBookVM(
 
     private fun onAddContactManuallyClick() = navigationRouter.forward(AddGenericABContactArgs(null, null))
 
-    private fun onScanContactClick() = navigationRouter.forward(ScanArgs(ScanFlow.ADDRESS_BOOK))
+    private fun onScanContactClick() = viewModelScope.launch {
+        val contact = navigateToScanGenericAddressUseCase()
+        if (contact != null) {
+            navigationRouter.replace(AddGenericABContactArgs(address = contact.address, chain = null))
+        }
+    }
 }
 
 internal const val ADDRESS_MAX_LENGTH = 20

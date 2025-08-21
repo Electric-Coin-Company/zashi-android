@@ -21,12 +21,12 @@ import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
 
 @Composable
-internal fun ScanScreen(args: ScanArgs) {
+internal fun ScanZashiAddressScreen(args: ScanArgs) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
-    val viewModel = koinViewModel<ScanViewModel> { parametersOf(args) }
+    val viewModel = koinViewModel<ScanZashiAddressVM> { parametersOf(args) }
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
     val state by viewModel.state.collectAsStateWithLifecycle()
     val navigationRouter = koinInject<NavigationRouter>()

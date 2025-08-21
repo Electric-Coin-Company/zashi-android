@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-internal class ScanViewModel(
+internal class ScanZashiAddressVM(
     private val args: ScanArgs,
     private val synchronizerProvider: SynchronizerProvider,
     private val zip321ParseUriValidationUseCase: Zip321ParseUriValidationUseCase,

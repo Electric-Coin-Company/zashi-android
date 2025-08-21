@@ -16,13 +16,11 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -38,15 +36,7 @@ class SwapAssetPickerVM(
 ) : ViewModel() {
     private val searchText = MutableStateFlow("")
 
-    private val searchTextFieldState =
-        searchText
-            .map {
-                createTextFieldState(it)
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = createTextFieldState(searchText.value)
-            )
+    private val searchTextFieldState = searchText.map { createTextFieldState(it) }
 
     private val filteredSwapAssets =
         combine(
@@ -60,26 +50,15 @@ class SwapAssetPickerVM(
                 text = text,
                 onlyChainTicker = args.chainTicker
             )
-        }.flowOn(Dispatchers.Default)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue =
-                    filterSwapAssets(
-                        assets = getSwapAssets.observe().value,
-                        latestAssets = null,
-                        text = searchText.value,
-                        onlyChainTicker = args.chainTicker,
-                    )
-            )
+        }
 
-    val state: StateFlow<SwapAssetPickerState> =
+    val state: StateFlow<SwapAssetPickerState?> =
         combine(filteredSwapAssets, searchTextFieldState) { assets, search ->
             createState(assets, search)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = createState(filteredSwapAssets.value, searchTextFieldState.value)
+            initialValue = null
         )
 
     private fun createState(assets: SwapAssetsData, search: TextFieldState): SwapAssetPickerState =

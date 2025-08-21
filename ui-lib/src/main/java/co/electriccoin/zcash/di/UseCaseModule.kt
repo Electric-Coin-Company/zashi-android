@@ -58,7 +58,7 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToNearSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToScanSwapAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapBlockchainUseCase
@@ -233,7 +233,7 @@ val useCaseModule =
         factoryOf(::GetCompositeSwapQuoteUseCase)
         factoryOf(::CancelSwapQuoteUseCase)
         factoryOf(::NavigateToSwapQuoteIfAvailableUseCase)
-        singleOf(::NavigateToScanSwapAddressUseCase)
+        singleOf(::NavigateToScanGenericAddressUseCase)
         singleOf(::NavigateToSelectABSwapRecipientUseCase)
         factoryOf(::GetSwapAssetBlockchainUseCase)
         singleOf(::NavigateToSelectSwapBlockchainUseCase)

@@ -1,21 +1,18 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactArgs
-import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs
-import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs.Mode.SWAP_SCAN_CONTACT_ADDRESS
-import co.electriccoin.zcash.ui.screen.swap.scan.ScanSwapAddressArgs.Mode.SWAP_SCAN_DESTINATION_ADDRESS
+import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressArgs
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import java.math.BigDecimal
 
-class NavigateToScanSwapAddressUseCase(
+class NavigateToScanGenericAddressUseCase(
     private val navigationRouter: NavigationRouter
 ) {
     private val pipeline = MutableSharedFlow<ScanAddressPipelineResult>()
 
-    suspend operator fun invoke(mode: ScanSwapAddressArgs.Mode): ScanResult? {
-        val args = ScanSwapAddressArgs(mode)
+    suspend operator fun invoke(): ScanResult? {
+        val args = ScanGenericAddressArgs()
         navigationRouter.forward(args)
         val result = pipeline.first { it.args.requestId == args.requestId }
         return when (result) {
@@ -28,7 +25,7 @@ class NavigateToScanSwapAddressUseCase(
         }
     }
 
-    suspend fun onScanCancelled(args: ScanSwapAddressArgs) {
+    suspend fun onScanCancelled(args: ScanGenericAddressArgs) {
         pipeline.emit(ScanAddressPipelineResult.Cancelled(args))
         navigationRouter.back()
     }
@@ -36,7 +33,7 @@ class NavigateToScanSwapAddressUseCase(
     suspend fun onScanned(
         address: String,
         amount: BigDecimal?,
-        args: ScanSwapAddressArgs
+        args: ScanGenericAddressArgs
     ) {
         pipeline.emit(
             ScanAddressPipelineResult.Scanned(
@@ -45,33 +42,22 @@ class NavigateToScanSwapAddressUseCase(
                 args = args
             )
         )
-
-        when (args.mode) {
-            SWAP_SCAN_DESTINATION_ADDRESS -> navigationRouter.back()
-            SWAP_SCAN_CONTACT_ADDRESS ->
-                navigationRouter.replace(
-                    AddSwapABContactArgs(
-                        address = address,
-                        chain = null
-                    )
-                )
-        }
     }
 
     private fun String.normalizeAddress() = this.split(":").lastOrNull().orEmpty()
 }
 
 private sealed interface ScanAddressPipelineResult {
-    val args: ScanSwapAddressArgs
+    val args: ScanGenericAddressArgs
 
     data class Cancelled(
-        override val args: ScanSwapAddressArgs
+        override val args: ScanGenericAddressArgs
     ) : ScanAddressPipelineResult
 
     data class Scanned(
         val address: String,
         val amount: BigDecimal?,
-        override val args: ScanSwapAddressArgs
+        override val args: ScanGenericAddressArgs
     ) : ScanAddressPipelineResult
 }
 
