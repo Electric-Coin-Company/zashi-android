@@ -98,12 +98,13 @@ class AddressBookVM(
 
     private fun onAddContactManuallyClick() = navigationRouter.forward(AddGenericABContactArgs(null, null))
 
-    private fun onScanContactClick() = viewModelScope.launch {
-        val contact = navigateToScanGenericAddressUseCase()
-        if (contact != null) {
-            navigationRouter.replace(AddGenericABContactArgs(address = contact.address, chain = null))
+    private fun onScanContactClick() =
+        viewModelScope.launch {
+            val contact = navigateToScanGenericAddressUseCase()
+            if (contact != null) {
+                navigationRouter.replace(AddGenericABContactArgs(address = contact.address, chain = null))
+            }
         }
-    }
 }
 
 internal const val ADDRESS_MAX_LENGTH = 20

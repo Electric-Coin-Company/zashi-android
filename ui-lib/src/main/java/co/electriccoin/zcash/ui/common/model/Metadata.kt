@@ -67,6 +67,7 @@ data class AnnotationMetadata(
 data class SwapsMetadata(
     @SerialName("swapIds")
     val swapIds: List<SwapMetadata>,
+    @SerialName("lastUsedAssetHistory")
     val lastUsedAssetHistory: Set<String>
 )
 

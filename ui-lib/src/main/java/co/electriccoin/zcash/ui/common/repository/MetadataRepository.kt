@@ -233,8 +233,7 @@ class MetadataRepositoryImpl(
                     ?.swaps
                     ?.lastUsedAssetHistory
                     ?.toSimpleAssetSet()
-            }
-            .distinctUntilChanged()
+            }.distinctUntilChanged()
 
     private suspend fun getMetadataKey(selectedAccount: WalletAccount): MetadataKey {
         val key = metadataKeyStorageProvider.get(selectedAccount)

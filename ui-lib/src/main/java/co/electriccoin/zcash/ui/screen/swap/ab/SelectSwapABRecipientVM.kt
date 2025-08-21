@@ -17,7 +17,6 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookItem
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookState
-import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed

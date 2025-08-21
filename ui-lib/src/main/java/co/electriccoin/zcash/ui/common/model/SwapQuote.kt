@@ -6,6 +6,7 @@ import co.electriccoin.zcash.ui.common.datasource.AFFILIATE_FEE_BPS
 import co.electriccoin.zcash.ui.common.model.near.QuoteResponseDto
 import co.electriccoin.zcash.ui.common.model.near.SwapType.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.near.SwapType.EXACT_OUTPUT
+import kotlinx.datetime.Instant
 import java.math.BigDecimal
 import java.math.MathContext
 
@@ -28,6 +29,8 @@ sealed interface SwapQuote {
     val recipient: String
     val affiliateFee: Zatoshi
     val affiliateFeeUsd: BigDecimal
+
+    val timestamp: Instant
 }
 
 data class NearSwapQuote(
@@ -82,4 +85,6 @@ data class NearSwapQuote(
                 BigDecimal(AFFILIATE_FEE_BPS).divide(BigDecimal("10000"), MathContext.DECIMAL128),
                 MathContext.DECIMAL128
             )
+
+    override val timestamp: Instant = response.timestamp
 }

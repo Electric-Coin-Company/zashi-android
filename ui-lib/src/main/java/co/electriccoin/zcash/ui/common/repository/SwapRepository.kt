@@ -161,15 +161,18 @@ class SwapRepositoryImpl(
             }
 
             if (selectedAsset.value == null) {
-                val assetToSelect = metadataRepository.observeLastUsedAssetHistory()
-                    .filterNotNull()
-                    .first()
-                    .firstOrNull() ?: SimpleSwapAsset(tokenTicker = "usdc", chainTicker = "near")
-                val foundAssetToSelect = filtered
-                    .find {
-                        it.tokenTicker.lowercase() == assetToSelect.tokenTicker &&
-                            it.chainTicker == assetToSelect.chainTicker
-                    }
+                val assetToSelect =
+                    metadataRepository
+                        .observeLastUsedAssetHistory()
+                        .filterNotNull()
+                        .first()
+                        .firstOrNull() ?: SimpleSwapAsset(tokenTicker = "usdc", chainTicker = "near")
+                val foundAssetToSelect =
+                    filtered
+                        .find {
+                            it.tokenTicker.lowercase() == assetToSelect.tokenTicker &&
+                                it.chainTicker == assetToSelect.chainTicker
+                        }
 
                 if (foundAssetToSelect != null) {
                     selectedAsset.update { foundAssetToSelect }

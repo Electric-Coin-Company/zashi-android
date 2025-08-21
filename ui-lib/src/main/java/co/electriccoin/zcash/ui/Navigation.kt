@@ -113,6 +113,8 @@ import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
+import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressArgs
+import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressScreen
 import co.electriccoin.zcash.ui.screen.scan.ScanZashiAddressScreen
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.AndroidThirdPartyScan
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScan
@@ -141,8 +143,6 @@ import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerScreen
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteArgs
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteScreen
-import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressArgs
-import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressScreen
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageScreen
 import co.electriccoin.zcash.ui.screen.taxexport.AndroidTaxExport

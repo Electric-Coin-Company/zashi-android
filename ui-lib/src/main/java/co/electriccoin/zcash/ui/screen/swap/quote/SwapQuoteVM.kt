@@ -9,7 +9,10 @@ import co.electriccoin.zcash.ui.common.datasource.QuoteLowAmountException
 import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.model.CompositeSwapQuote
+import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.provider.ResponseWithErrorException
+import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
+import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
@@ -24,13 +27,19 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import java.math.BigDecimal
+import kotlin.time.Duration.Companion.seconds
 
 internal class SwapQuoteVM(
     observeProposal: ObserveProposalUseCase,
     getCompositeSwapQuote: GetCompositeSwapQuoteUseCase,
+    applicationStateProvider: ApplicationStateProvider,
+    private val swapRepository: SwapRepository,
     private val cancelSwapQuote: CancelSwapQuoteUseCase,
     private val cancelSwap: CancelSwapUseCase,
     private val swapQuoteSuccessMapper: SwapQuoteVMMapper,
@@ -55,6 +64,18 @@ internal class SwapQuoteVM(
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = null
         )
+
+    init {
+        applicationStateProvider
+            .observeOnForeground()
+            .onEach {
+                val quote = (swapRepository.quote.value as? SwapQuoteData.Success)?.quote ?: return@onEach
+
+                if ((Clock.System.now() - quote.timestamp) >= 10.seconds) {
+                    cancelSwapQuote()
+                }
+            }.launchIn(viewModelScope)
+    }
 
     private fun createState(
         proposal: TransactionProposal?,
