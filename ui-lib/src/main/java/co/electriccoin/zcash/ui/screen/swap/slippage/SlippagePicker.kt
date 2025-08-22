@@ -32,15 +32,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.InnerTextFieldState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.TextSelection
+import co.electriccoin.zcash.ui.design.component.ZashiAutoSizeText
 import co.electriccoin.zcash.ui.design.component.ZashiNumberTextField
 import co.electriccoin.zcash.ui.design.component.ZashiNumberTextFieldDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
@@ -164,13 +167,18 @@ fun SlippagePicker(
                 placeholder =
                     if (!isTextFieldFocused) {
                         {
-                            Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                text = "Custom",
+                            ZashiAutoSizeText(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 2.dp),
+                                text = stringResource(R.string.swap_slippage_custom),
                                 style = ZashiTypography.textMd,
                                 fontWeight = FontWeight.Medium,
                                 textAlign = TextAlign.Center,
-                                color = ZashiColors.Switcher.defaultText
+                                color = ZashiColors.Switcher.defaultText,
+                                contentAlignment = Alignment.Center,
+                                maxLines = 1
                             )
                         }
                     } else {
