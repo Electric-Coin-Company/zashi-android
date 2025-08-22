@@ -31,7 +31,7 @@ data class CompositeSwapQuote(
     private val tokenTicker = destinationAsset.tokenTicker.lowercase()
     private val chainTicker = destinationAsset.chainTicker.lowercase()
 
-    override val provider: String = "${quote.provider}:$tokenTicker:$chainTicker"
+    override val provider: String = "${quote.provider}.$tokenTicker.$chainTicker"
 
     private fun getZecFee(proposal: Proposal): BigDecimal = proposal.totalFeeRequired().convertZatoshiToZec()
 }
