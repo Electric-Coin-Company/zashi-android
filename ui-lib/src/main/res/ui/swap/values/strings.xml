@@ -37,4 +37,5 @@
     <string name="swap_quote_zashi">Zashi</string>
     <string name="swap_quote_info">You could receive up to %s based on the %s slippage you set.</string>
     <string name="swap_confirm">Get a quote</string>
+    <string name="swap_picker_select_chain">Select chain</string>
 </resources>

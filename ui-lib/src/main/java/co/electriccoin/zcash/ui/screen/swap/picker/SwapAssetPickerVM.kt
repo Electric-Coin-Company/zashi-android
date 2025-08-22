@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class SwapAssetPickerVM(
-    args: SwapAssetPickerArgs,
+    private val args: SwapAssetPickerArgs,
     getSwapAssets: GetSwapAssetsUseCase,
     metadataRepository: MetadataRepository,
     private val selectSwapAsset: SelectSwapAssetUseCase,

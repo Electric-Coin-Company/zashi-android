@@ -43,6 +43,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.util.ImageResource
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -208,7 +209,7 @@ private fun TopAppBar(
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
 ) {
     ZashiSmallTopAppBar(
-        title = "Select chain",
+        title = innerState.title.getValue(),
         navigationAction = {
             ZashiTopAppBarCloseNavigation(
                 onBack = innerState.onBack,
