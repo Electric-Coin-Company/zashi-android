@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sign_keystone_transaction_title">Сканируйте с помощью кошелька Keystone</string>
+    <string name="sign_keystone_transaction_subtitle">После того как вы подписали с Keystone, нажмите кнопку Получить подпись ниже.</string>
+    <string name="sign_keystone_transaction_bar_title">Подписать транзакцию</string>
+    <string name="sign_keystone_transaction_badge">Оборудование</string>
+    <string name="sign_keystone_transaction_positive">Получить подпись</string>
+    <string name="sign_keystone_transaction_negative">Отклонить</string>
+    <string name="sign_keystone_transaction_bottom_sheet_title">Вы уверены?</string>
+    <string name="sign_keystone_transaction_bottom_sheet_subtitle">Отказ от подписи отменит транзакцию, и вам нужно будет начать сначала если вы хотите продолжить. Это действие не может быть отменено.</string>
+    <string name="sign_keystone_transaction_bottom_sheet_go_back">Перейти назад</string>
+    <string name="sign_keystone_transaction_bottom_sheet_reject">Отказ от подписания</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="account_list_title">Кошельки и оборудование</string>
+    <string name="account_list_keystone_promo_title">Аппаратный кошелёк Keystone</string>
+    <string name="account_list_keystone_promo_subtitle">Скидка 5%% для аппаратного кошелька. Промо-код \"Zashi\".</string>
+    <string name="account_list_keystone_primary">Подключить аппаратный кошелёк</string>
+</resources>

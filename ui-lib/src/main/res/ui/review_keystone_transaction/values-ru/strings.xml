@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="review_keystone_transaction_title">Обзор</string>
+    <string name="review_keystone_transaction_positive">Подтвердить с Keystone</string>
+    <string name="review_keystone_transaction_negative">Отмена</string>
+</resources>

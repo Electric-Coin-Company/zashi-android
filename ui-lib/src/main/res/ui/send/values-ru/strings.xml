@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="send_stage_send_title">Отправить</string>
+    <string name="send_scan_content_description">Сканировать</string>
+    <string name="send_address_invalid">Недействительный адрес</string>
+    <string name="send_amount_label">Сумма</string>
+    <string name="send_memo_label">Сообщение</string>
+    <string name="send_fee">(Типичная комиссия &lt; <xliff:g id="fee_amount" example="0.001">%1$s</xliff:g>)</string>
+    <string name="send_dialog_error_btn">Ладно</string>
+    <string name="send_address_book_hint">Добавить контакт нажав на значок адресной книги.</string>
+</resources>
