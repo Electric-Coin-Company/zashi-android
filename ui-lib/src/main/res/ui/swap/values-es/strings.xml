@@ -12,7 +12,8 @@
     <string name="swap_title">Intercambiar con</string>
     <string name="swap_from">De</string>
     <string name="swap_insufficient_funds">Fondos insuficientes</string>
-    <string name="swap_max">Máx: %s</string>
+    <string name="swap_max_standalone">Gastable: </string>
+    <string name="swap_max">Gastable: %s</string>
     <string name="swap_to">A</string>
     <string name="swap_rate">Tasa</string>
     <string name="swap_zec_exchange_rate">1 ZEC = %s</string>
@@ -37,4 +38,5 @@
     <string name="swap_quote_info">Podrías recibir hasta %s según el %s de deslizamiento que configuraste.</string>
     <string name="swap_confirm">Obtener cotización</string>
     <string name="swap_picker_select_chain">Seleccionar Activo</string>
+    <string name="swap_slippage_custom">Personalizado</string>
 </resources>

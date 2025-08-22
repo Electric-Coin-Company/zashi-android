@@ -11,7 +11,7 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalance
+import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceArgs
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 
-class BalanceWidgetViewModel(
+class BalanceWidgetVM(
     private val args: BalanceWidgetArgs,
     accountDataSource: AccountDataSource,
     exchangeRateRepository: ExchangeRateRepository,
@@ -52,10 +52,9 @@ class BalanceWidgetViewModel(
                     account == null -> null
                     account.isAllShielded -> null
                     account.totalBalance > account.spendableShieldedBalance &&
-                        !account.isShieldedPending &&
+                        account.isShieldedPending &&
                         account.totalShieldedBalance > Zatoshi(0) &&
-                        account.spendableShieldedBalance == Zatoshi(0) &&
-                        account.totalTransparentBalance > Zatoshi(0) ->
+                        account.spendableShieldedBalance == Zatoshi(0) ->
                         BalanceButtonState(
                             icon = R.drawable.ic_balances_expand,
                             text = stringRes(R.string.widget_balances_button_spendable),
@@ -64,7 +63,7 @@ class BalanceWidgetViewModel(
                         )
 
                     account.totalBalance > account.spendableShieldedBalance &&
-                        account.isShieldedPending &&
+                        !account.isShieldedPending &&
                         account.totalShieldedBalance > Zatoshi(0) &&
                         account.spendableShieldedBalance == Zatoshi(0) &&
                         account.totalTransparentBalance == Zatoshi(0) ->
@@ -88,7 +87,7 @@ class BalanceWidgetViewModel(
             showDust = args.showDust
         )
 
-    private fun onBalanceButtonClick() = navigationRouter.forward(SpendableBalance)
+    private fun onBalanceButtonClick() = navigationRouter.forward(SpendableBalanceArgs)
 }
 
 data class BalanceWidgetArgs(

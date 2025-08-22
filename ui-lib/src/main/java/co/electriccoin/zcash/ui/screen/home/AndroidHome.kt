@@ -8,7 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarVM
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetArgs
-import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetVM
 import co.electriccoin.zcash.ui.screen.restoresuccess.WrapRestoreSuccess
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetViewModel
 import kotlinx.serialization.Serializable
@@ -18,8 +18,8 @@ import org.koin.core.parameter.parametersOf
 @Composable
 internal fun AndroidHome() {
     val topAppBarViewModel = koinActivityViewModel<ZashiTopAppBarVM>()
-    val balanceWidgetViewModel =
-        koinViewModel<BalanceWidgetViewModel> {
+    val balanceWidgetVM =
+        koinViewModel<BalanceWidgetVM> {
             parametersOf(
                 BalanceWidgetArgs(
                     isBalanceButtonEnabled = false,
@@ -32,7 +32,7 @@ internal fun AndroidHome() {
     val transactionHistoryWidgetViewModel = koinViewModel<TransactionHistoryWidgetViewModel>()
     val restoreDialogState by homeViewModel.restoreDialogState.collectAsStateWithLifecycle()
     val appBarState by topAppBarViewModel.state.collectAsStateWithLifecycle()
-    val balanceState by balanceWidgetViewModel.state.collectAsStateWithLifecycle()
+    val balanceState by balanceWidgetVM.state.collectAsStateWithLifecycle()
     val state by homeViewModel.state.collectAsStateWithLifecycle()
     val transactionWidgetState by transactionHistoryWidgetViewModel.state.collectAsStateWithLifecycle()
 

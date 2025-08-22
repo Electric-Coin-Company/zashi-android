@@ -7,6 +7,7 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
+import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.design.component.AssetCardState
@@ -49,14 +50,16 @@ internal class ExactInputVMMapper : SwapVMMapper {
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
         onQrCodeScannerClick: () -> Unit,
         onAddressBookClick: () -> Unit,
-        onDeleteSelectedContactClick: () -> Unit
+        onDeleteSelectedContactClick: () -> Unit,
+        onBalanceButtonClick: () -> Unit
     ): SwapState {
         val state = ExactInputInternalState(internalState)
         val textFieldState =
             createAmountTextFieldState(
                 state = state,
                 onSwapCurrencyTypeClick = onSwapCurrencyTypeClick,
-                onTextFieldChange = onTextFieldChange
+                onTextFieldChange = onTextFieldChange,
+                onBalanceButtonClick = onBalanceButtonClick
             )
         return SwapState(
             amountTextField = textFieldState,
@@ -142,14 +145,14 @@ internal class ExactInputVMMapper : SwapVMMapper {
         state: ExactInputInternalState,
         onSwapCurrencyTypeClick: (BigDecimal?) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
+        onBalanceButtonClick: () -> Unit
     ): SwapAmountTextFieldState {
         val amountFiat = state.getOriginFiatAmount()
         val zatoshiAmount = state.getZatoshi()
         return SwapAmountTextFieldState(
             title = stringRes(R.string.swap_from),
             error =
-                if (state.totalSpendableBalance != null &&
-                    zatoshiAmount != null &&
+                if (zatoshiAmount != null &&
                     state.totalSpendableBalance.value < zatoshiAmount
                 ) {
                     stringRes(R.string.swap_insufficient_funds)
@@ -188,18 +191,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
                             "ZEC"
                         )
                 },
-            max =
-                when (state.currencyType) {
-                    TOKEN ->
-                        state.totalSpendableBalance?.let {
-                            stringRes(R.string.swap_max, stringRes(it, TickerLocation.HIDDEN))
-                        }
-
-                    FIAT ->
-                        state.getTotalSpendableFiatBalance()?.let {
-                            stringRes(R.string.swap_max, stringResByDynamicCurrencyNumber(it, FiatCurrency.USD.symbol))
-                        }
-                },
+            max = createMaxState(state, onBalanceButtonClick),
             onSwapChange = {
                 when (state.currencyType) {
                     TOKEN -> onSwapCurrencyTypeClick(amountFiat.takeIf { it != BigDecimal.ZERO })
@@ -214,6 +206,56 @@ internal class ExactInputVMMapper : SwapVMMapper {
             },
             isSwapChangeEnabled = !state.isRequestingQuote
         )
+    }
+
+    private fun createMaxState(
+        state: ExactInputInternalState,
+        onBalanceButtonClick: () -> Unit
+    ): ButtonState {
+        val account = state.account
+
+        return when {
+            account.totalBalance > account.spendableShieldedBalance &&
+                account.isShieldedPending &&
+                account.totalShieldedBalance > Zatoshi(0) &&
+                account.spendableShieldedBalance == Zatoshi(0) ->
+                ButtonState(
+                    text = stringRes(R.string.swap_max_standalone),
+                    isLoading = true,
+                    onClick = onBalanceButtonClick
+                )
+
+            account.totalBalance > account.spendableShieldedBalance &&
+                !account.isShieldedPending &&
+                account.totalShieldedBalance > Zatoshi(0) &&
+                account.spendableShieldedBalance == Zatoshi(0) &&
+                account.totalTransparentBalance == Zatoshi(0) ->
+                ButtonState(
+                    text = stringRes(R.string.swap_max_standalone),
+                    isLoading = true,
+                    onClick = onBalanceButtonClick
+                )
+
+            else -> {
+                val amount =
+                    when (state.currencyType) {
+                        TOKEN -> stringRes(state.totalSpendableBalance, TickerLocation.HIDDEN)
+
+                        FIAT ->
+                            stringResByDynamicCurrencyNumber(
+                                state.getTotalSpendableFiatBalance(),
+                                FiatCurrency.USD.symbol
+                            )
+                    }
+
+                ButtonState(
+                    text = stringRes(R.string.swap_max, amount),
+                    // amount = account.spendableShieldedBalance,
+                    isLoading = false,
+                    onClick = onBalanceButtonClick
+                )
+            }
+        }
     }
 
     private fun createAmountTextState(
@@ -321,8 +363,10 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 when {
                     state.swapAssets.error != null ->
                         stringRes(co.electriccoin.zcash.ui.design.R.string.general_try_again)
+
                     state.swapAssets.isLoading && state.swapAssets.data == null ->
                         stringRes(co.electriccoin.zcash.ui.design.R.string.general_loading)
+
                     else -> stringRes(R.string.swap_confirm)
                 },
             style = if (state.swapAssets.error != null) ButtonStyle.DESTRUCTIVE1 else null,
@@ -392,9 +436,9 @@ internal class ExactInputVMMapper : SwapVMMapper {
 }
 
 private data class ExactInputInternalState(
+    override val account: WalletAccount,
     override val swapAsset: SwapAsset?,
     override val currencyType: CurrencyType,
-    override val totalSpendableBalance: Zatoshi?,
     override val amountTextState: NumberTextFieldInnerState,
     override val addressText: String,
     override val slippage: BigDecimal,
@@ -405,9 +449,9 @@ private data class ExactInputInternalState(
     override val selectedContact: EnhancedABContact?,
 ) : InternalState {
     constructor(original: InternalState) : this(
+        account = original.account,
         swapAsset = original.swapAsset,
         currencyType = original.currencyType,
-        totalSpendableBalance = original.totalSpendableBalance,
         amountTextState = original.amountTextState,
         addressText = original.addressText,
         slippage = original.slippage,
@@ -418,8 +462,8 @@ private data class ExactInputInternalState(
         selectedContact = original.selectedContact
     )
 
-    fun getTotalSpendableFiatBalance(): BigDecimal? {
-        if (totalSpendableBalance == null || swapAssets.zecAsset?.usdPrice == null) return null
+    fun getTotalSpendableFiatBalance(): BigDecimal {
+        if (swapAssets.zecAsset?.usdPrice == null) return BigDecimal(0)
         return totalSpendableBalance.value
             .convertZatoshiToZecBigDecimal()
             .multiply(swapAssets.zecAsset.usdPrice, MathContext.DECIMAL128)

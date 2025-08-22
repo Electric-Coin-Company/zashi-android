@@ -32,7 +32,7 @@ import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetArgs
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
-import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetVM
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import co.electriccoin.zcash.ui.screen.send.ext.Saver
@@ -54,8 +54,8 @@ internal fun WrapSend(args: Send) {
 
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
 
-    val balanceWidgetViewModel =
-        koinViewModel<BalanceWidgetViewModel> {
+    val balanceWidgetVM =
+        koinViewModel<BalanceWidgetVM> {
             parametersOf(
                 BalanceWidgetArgs(
                     isBalanceButtonEnabled = true,
@@ -75,7 +75,7 @@ internal fun WrapSend(args: Send) {
 
     val selectedAccount = accountDataSource.selectedAccount.collectAsStateWithLifecycle(null).value
 
-    val balanceState = balanceWidgetViewModel.state.collectAsStateWithLifecycle().value
+    val balanceState = balanceWidgetVM.state.collectAsStateWithLifecycle().value
 
     val exchangeRateState = exchangeRateRepository.state.collectAsStateWithLifecycle().value
 

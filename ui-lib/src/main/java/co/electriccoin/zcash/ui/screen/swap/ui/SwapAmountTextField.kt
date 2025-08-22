@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiAssetCard
@@ -102,18 +104,8 @@ private fun SwapTextFieldCard(
                     fontWeight = FontWeight.Medium,
                     color = ZashiColors.Text.textPrimary
                 )
-                if (state.max != null) {
-                    Spacer(1f)
-                    SelectionContainer {
-                        ZashiAutoSizeText(
-                            text = state.max.getValue(),
-                            style = ZashiTypography.textSm,
-                            fontWeight = FontWeight.Medium,
-                            color = ZashiColors.Text.textTertiary,
-                            maxLines = 1
-                        )
-                    }
-                }
+                Spacer(1f)
+                SpendableBalanceButton(state)
             }
 
             Spacer(8.dp)
@@ -224,10 +216,36 @@ private fun SwapTextFieldCard(
     }
 }
 
+@Composable
+private fun SpendableBalanceButton(
+    state: SwapAmountTextFieldState
+) {
+    Row(
+        modifier =
+            Modifier.clickable(
+                onClick = state.max.onClick,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            )
+    ) {
+        ZashiAutoSizeText(
+            text = state.max.text.getValue(),
+            style = ZashiTypography.textSm,
+            fontWeight = FontWeight.Medium,
+            color = if (state.isError) ZashiColors.Inputs.ErrorDefault.hint else ZashiColors.Text.textTertiary,
+            maxLines = 1
+        )
+        if (state.max.isLoading) {
+            Spacer(2.dp)
+            LottieProgress()
+        }
+    }
+}
+
 @Immutable
 data class SwapAmountTextFieldState(
     val title: StringResource,
-    val max: StringResource?,
+    val max: ButtonState,
     val error: StringResource?,
     val token: AssetCardState,
     val textFieldPrefix: ImageResource?,
@@ -259,7 +277,10 @@ private fun Preview() =
                         textFieldPrefix = imageRes(R.drawable.ic_send_zashi),
                         textField = NumberTextFieldState {},
                         secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
-                        max = stringResByDynamicCurrencyNumber(1000, "$"),
+                        max =
+                            ButtonState(
+                                stringResByDynamicCurrencyNumber(100, "$")
+                            ),
                         onSwapChange = {},
                     )
             )
@@ -286,7 +307,10 @@ private fun ErrorPreview() =
                         textFieldPrefix = imageRes(R.drawable.ic_send_zashi),
                         textField = NumberTextFieldState {},
                         secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
-                        max = stringResByDynamicCurrencyNumber(100, "$"),
+                        max =
+                            ButtonState(
+                                stringResByDynamicCurrencyNumber(100, "$")
+                            ),
                         onSwapChange = {},
                     )
             )

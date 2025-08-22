@@ -12,7 +12,8 @@
     <string name="swap_title">Swap with</string>
     <string name="swap_from">From</string>
     <string name="swap_insufficient_funds">Insufficient funds</string>
-    <string name="swap_max">Max: %s</string>
+    <string name="swap_max_standalone">Spendable: </string>
+    <string name="swap_max">Spendable: %s</string>
     <string name="swap_to">To</string>
     <string name="swap_rate">Rate</string>
     <string name="swap_zec_exchange_rate">1 ZEC = %s</string>
@@ -38,4 +39,5 @@
     <string name="swap_quote_info">You could receive up to %s based on the %s slippage you set.</string>
     <string name="swap_confirm">Get a quote</string>
     <string name="swap_picker_select_chain">Select chain</string>
+    <string name="swap_slippage_custom">Custom</string>
 </resources>

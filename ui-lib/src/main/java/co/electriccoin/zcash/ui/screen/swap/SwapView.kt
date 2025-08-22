@@ -396,7 +396,10 @@ private fun Preview() {
                             textFieldPrefix = imageRes(R.drawable.ic_send_zashi),
                             textField = NumberTextFieldState {},
                             secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
-                            max = stringResByDynamicCurrencyNumber(100, "$"),
+                            max =
+                                ButtonState(
+                                    stringResByDynamicCurrencyNumber(100, "$")
+                                ),
                             onSwapChange = {}
                         ),
                     slippage =
@@ -489,7 +492,10 @@ private fun UnexpectedErrorPreview() {
                             textFieldPrefix = imageRes(R.drawable.ic_send_zashi),
                             textField = NumberTextFieldState {},
                             secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
-                            max = stringResByDynamicCurrencyNumber(100, "$"),
+                            max =
+                                ButtonState(
+                                    stringResByDynamicCurrencyNumber(100, "$")
+                                ),
                             onSwapChange = {}
                         ),
                     slippage =
@@ -581,7 +587,10 @@ private fun ServiceUnavailableErrorPreview() {
                             textFieldPrefix = imageRes(R.drawable.ic_send_zashi),
                             textField = NumberTextFieldState {},
                             secondaryText = stringResByDynamicCurrencyNumber(100, "USDT"),
-                            max = stringResByDynamicCurrencyNumber(100, "$"),
+                            max =
+                                ButtonState(
+                                    stringResByDynamicCurrencyNumber(100, "$")
+                                ),
                             onSwapChange = {}
                         ),
                     slippage =

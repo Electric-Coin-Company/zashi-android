@@ -10,15 +10,16 @@ import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
+import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapModeUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableBalanceUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
@@ -34,6 +35,7 @@ import co.electriccoin.zcash.ui.design.util.combine
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
+import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceArgs
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -41,6 +43,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -53,8 +56,8 @@ internal class SwapVM(
     getSwapMode: GetSwapModeUseCase,
     getSlippage: GetSlippageUseCase,
     getSelectedSwapAsset: GetSelectedSwapAssetUseCase,
-    getTotalSpendableBalance: GetTotalSpendableBalanceUseCase,
     getSwapAssetsUseCase: GetSwapAssetsUseCase,
+    getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
     private val swapRepository: SwapRepository,
     private val updateSwapMode: UpdateSwapModeUseCase,
     private val navigateToSwapInfo: NavigateToSwapInfoUseCase,
@@ -63,7 +66,7 @@ internal class SwapVM(
     private val navigationRouter: NavigationRouter,
     private val requestSwapQuote: RequestSwapQuoteUseCase,
     private val navigateToSwapQuoteIfAvailable: NavigateToSwapQuoteIfAvailableUseCase,
-    private val exactOutputVMMapper: ExactOutputVMMapper,
+    // private val exactOutputVMMapper: ExactOutputVMMapper,
     private val exactInputVMMapper: ExactInputVMMapper,
     private val navigateToScanAddress: NavigateToScanGenericAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
@@ -112,7 +115,6 @@ internal class SwapVM(
     @OptIn(ExperimentalCoroutinesApi::class)
     private val innerState =
         combine(
-            getTotalSpendableBalance.observe(),
             addressText,
             amountText,
             getSelectedSwapAsset.observe(),
@@ -122,9 +124,9 @@ internal class SwapVM(
             getSwapAssetsUseCase.observe(),
             getSwapMode.observe(),
             isRequestingQuote,
-            selectedContact
+            selectedContact,
+            getSelectedWalletAccount.observe().filterNotNull()
         ) {
-            spendable,
             address,
             amount,
             asset,
@@ -134,12 +136,12 @@ internal class SwapVM(
             swapAssets,
             mode,
             isRequestingQuote,
-            selectedContact
+            selectedContact,
+            account
             ->
             InternalStateImpl(
                 swapAsset = asset,
                 currencyType = currencyType,
-                totalSpendableBalance = spendable,
                 amountTextState = amount,
                 addressText = address,
                 slippage = slippage,
@@ -147,7 +149,8 @@ internal class SwapVM(
                 swapAssets = swapAssets,
                 swapMode = mode,
                 isRequestingQuote = isRequestingQuote,
-                selectedContact = selectedContact
+                selectedContact = selectedContact,
+                account = account
             )
         }
 
@@ -165,7 +168,8 @@ internal class SwapVM(
         val mapper =
             when (innerState.swapMode) {
                 EXACT_INPUT -> exactInputVMMapper
-                EXACT_OUTPUT -> exactOutputVMMapper
+                // EXACT_OUTPUT -> exactOutputVMMapper
+                EXACT_OUTPUT -> error("EXACT_OUTPUT is disabled")
             }
 
         return mapper.createState(
@@ -182,13 +186,14 @@ internal class SwapVM(
             onTextFieldChange = ::onTextFieldChange,
             onQrCodeScannerClick = ::onQrCodeScannerClick,
             onAddressBookClick = ::onAddressBookClick,
-            onDeleteSelectedContactClick = ::onDeleteSelectedContactClick
+            onDeleteSelectedContactClick = ::onDeleteSelectedContactClick,
+            onBalanceButtonClick = ::onBalanceButtonClick
         )
     }
 
-    private fun onDeleteSelectedContactClick() {
-        selectedContact.update { null }
-    }
+    private fun onBalanceButtonClick() = navigationRouter.forward(SpendableBalanceArgs)
+
+    private fun onDeleteSelectedContactClick() = selectedContact.update { null }
 
     private fun onTryAgainClick() = swapRepository.requestRefreshAssets()
 
@@ -318,14 +323,15 @@ internal interface SwapVMMapper {
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
         onQrCodeScannerClick: () -> Unit,
         onAddressBookClick: () -> Unit,
-        onDeleteSelectedContactClick: () -> Unit
+        onDeleteSelectedContactClick: () -> Unit,
+        onBalanceButtonClick: () -> Unit
     ): SwapState
 }
 
 internal interface InternalState {
+    val account: WalletAccount
     val swapAsset: SwapAsset?
     val currencyType: CurrencyType
-    val totalSpendableBalance: Zatoshi?
     val amountTextState: NumberTextFieldInnerState
     val addressText: String
     val slippage: BigDecimal
@@ -334,12 +340,15 @@ internal interface InternalState {
     val swapMode: SwapMode
     val isRequestingQuote: Boolean
     val selectedContact: EnhancedABContact?
+
+    val totalSpendableBalance: Zatoshi
+        get() = account.spendableShieldedBalance
 }
 
 internal data class InternalStateImpl(
+    override val account: WalletAccount,
     override val swapAsset: SwapAsset?,
     override val currencyType: CurrencyType,
-    override val totalSpendableBalance: Zatoshi?,
     override val amountTextState: NumberTextFieldInnerState,
     override val addressText: String,
     override val slippage: BigDecimal,
@@ -347,5 +356,5 @@ internal data class InternalStateImpl(
     override val swapAssets: SwapAssetsData,
     override val swapMode: SwapMode,
     override val isRequestingQuote: Boolean,
-    override val selectedContact: EnhancedABContact?
+    override val selectedContact: EnhancedABContact?,
 ) : InternalState

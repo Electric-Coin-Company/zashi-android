@@ -34,7 +34,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import java.math.BigDecimal
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 
 internal class SwapQuoteVM(
     observeProposal: ObserveProposalUseCase,

@@ -8,8 +8,8 @@ import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewMode
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookVM
 import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientVM
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsVM
-import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
-import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceViewModel
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetVM
+import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceVM
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
 import co.electriccoin.zcash.ui.screen.contact.AddGenericABContactVM
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactVM
@@ -107,7 +107,7 @@ val viewModelModule =
         viewModelOf(::TransactionNoteViewModel)
         viewModelOf(::TaxExportViewModel)
         viewModelOf(::CrashReportingViewModel)
-        viewModelOf(::BalanceWidgetViewModel)
+        viewModelOf(::BalanceWidgetVM)
         viewModelOf(::HomeViewModel)
         viewModelOf(::RestoreBDHeightViewModel)
         viewModelOf(::RestoreBDDateViewModel)
@@ -117,7 +117,7 @@ val viewModelModule =
         viewModelOf(::ExchangeRateSettingsVM)
         viewModelOf(::WalletBackupDetailViewModel)
         viewModelOf(::ErrorViewModel)
-        viewModelOf(::SpendableBalanceViewModel)
+        viewModelOf(::SpendableBalanceVM)
         viewModelOf(::CrashReportOptInViewModel)
         viewModelOf(::WalletRestoringInfoViewModel)
         viewModelOf(::ThirdPartyScanViewModel)

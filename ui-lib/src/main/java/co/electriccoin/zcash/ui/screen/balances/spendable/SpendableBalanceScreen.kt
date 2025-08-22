@@ -9,11 +9,11 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AndroidSpendableBalance() {
-    val vm = koinViewModel<SpendableBalanceViewModel>()
+fun SpendableBalanceScreen() {
+    val vm = koinViewModel<SpendableBalanceVM>()
     val state by vm.state.collectAsStateWithLifecycle()
     SpendableBalanceView(state)
 }
 
 @Serializable
-data object SpendableBalance
+data object SpendableBalanceArgs
