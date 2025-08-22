@@ -191,7 +191,9 @@ internal class SwapVM(
         )
     }
 
-    private fun onBalanceButtonClick() = navigationRouter.forward(SpendableBalanceArgs)
+    private fun onBalanceButtonClick() {
+        // navigationRouter.forward(SpendableBalanceArgs)
+    }
 
     private fun onDeleteSelectedContactClick() = selectedContact.update { null }
 
