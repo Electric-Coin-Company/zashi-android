@@ -13,12 +13,9 @@ data class SwapAsset(
     val decimals: Int,
     val blockchain: SwapAssetBlockchain,
 ) {
-    val chainTicker: String
-        get() = blockchain.chainTicker
-    val chainName: StringResource
-        get() = blockchain.chainName
-    val chainIcon: ImageResource
-        get() = blockchain.chainIcon
+    val chainTicker: String = blockchain.chainTicker
+    val chainName: StringResource = blockchain.chainName
+    val chainIcon: ImageResource = blockchain.chainIcon
 }
 
 data class SwapAssetBlockchain(

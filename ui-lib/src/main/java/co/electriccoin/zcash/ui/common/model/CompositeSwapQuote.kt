@@ -22,11 +22,16 @@ data class CompositeSwapQuote(
 
     fun getTotalZec(proposal: Proposal): BigDecimal = amountInZec + getZecFee(proposal)
 
-    fun getTotalUsd(proposal: Proposal): BigDecimal = quote.amountInUsd + getZecFeeUsd(proposal)
+    fun getTotalUsd(proposal: Proposal): BigDecimal = amountInUsd + getZecFeeUsd(proposal)
 
-    fun getTotalFeesUsd(proposal: Proposal): BigDecimal = quote.affiliateFeeUsd + getZecFeeUsd(proposal)
+    fun getTotalFeesUsd(proposal: Proposal): BigDecimal = affiliateFeeUsd + getZecFeeUsd(proposal)
 
-    fun getTotalFeesZatoshi(proposal: Proposal): Zatoshi = proposal.totalFeeRequired() + quote.affiliateFee
+    fun getTotalFeesZatoshi(proposal: Proposal): Zatoshi = proposal.totalFeeRequired() + affiliateFee
+
+    private val tokenTicker = destinationAsset.tokenTicker.lowercase()
+    private val chainTicker = destinationAsset.chainTicker.lowercase()
+
+    override val provider: String = "${quote.provider}:$tokenTicker:$chainTicker"
 
     private fun getZecFee(proposal: Proposal): BigDecimal = proposal.totalFeeRequired().convertZatoshiToZec()
 }

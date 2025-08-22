@@ -40,7 +40,7 @@ data class NearSwapQuote(
     override val depositAddress: String = response.quote.depositAddress
     override val origin: String = response.quoteRequest.originAsset
     override val destination: String = response.quoteRequest.destinationAsset
-    override val provider: String = "near.$origin.$destination"
+    override val provider: String = "near"
     override val type: SwapMode =
         when (response.quoteRequest.swapType) {
             EXACT_INPUT -> SwapMode.EXACT_INPUT
