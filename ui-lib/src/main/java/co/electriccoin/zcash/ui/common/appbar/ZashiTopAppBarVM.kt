@@ -70,9 +70,9 @@ class ZashiTopAppBarVM(
             IconButtonState(
                 icon =
                     if (isHideBalances == true) {
-                        R.drawable.ic_app_bar_balances_show
-                    } else {
                         R.drawable.ic_app_bar_balances_hide
+                    } else {
+                        R.drawable.ic_app_bar_balances_show
                     },
                 onClick = ::onShowOrHideBalancesClicked,
                 contentDescription = stringRes(co.electriccoin.zcash.ui.R.string.hide_balances_content_description)
