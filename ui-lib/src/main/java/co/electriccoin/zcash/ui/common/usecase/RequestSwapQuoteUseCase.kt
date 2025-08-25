@@ -54,7 +54,7 @@ class RequestSwapQuoteUseCase(
     @Suppress("TooGenericExceptionCaught")
     private suspend fun createProposal(quote: CompositeSwapQuote) {
         try {
-            val zecSend =
+            val send =
                 ZecSend(
                     destination = getWalletAddress(quote.depositAddress),
                     amount = quote.destinationAmount,
@@ -65,35 +65,16 @@ class RequestSwapQuoteUseCase(
             when (accountDataSource.getSelectedAccount()) {
                 is KeystoneAccount -> {
                     when (quote.type) {
-                        SwapMode.EXACT_INPUT ->
-                            keystoneProposalRepository.createExactInputSwapProposal(
-                                zecSend = zecSend,
-                                quote = quote
-                            )
-
-                        SwapMode.EXACT_OUTPUT ->
-                            keystoneProposalRepository.createExactOutputSwapProposal(
-                                zecSend = zecSend,
-                                quote = quote
-                            )
+                        SwapMode.EXACT_INPUT -> keystoneProposalRepository.createExactInputSwapProposal(send, quote)
+                        SwapMode.EXACT_OUTPUT -> keystoneProposalRepository.createExactOutputSwapProposal(send, quote)
                     }
-
                     keystoneProposalRepository.createPCZTFromProposal()
                 }
 
                 is ZashiAccount ->
                     when (quote.type) {
-                        SwapMode.EXACT_INPUT ->
-                            zashiProposalRepository.createExactInputSwapProposal(
-                                zecSend = zecSend,
-                                quote = quote
-                            )
-
-                        SwapMode.EXACT_OUTPUT ->
-                            zashiProposalRepository.createExactOutputSwapProposal(
-                                zecSend = zecSend,
-                                quote = quote
-                            )
+                        SwapMode.EXACT_INPUT -> zashiProposalRepository.createExactInputSwapProposal(send, quote)
+                        SwapMode.EXACT_OUTPUT -> zashiProposalRepository.createExactOutputSwapProposal(send, quote)
                     }
             }
         } catch (e: Exception) {

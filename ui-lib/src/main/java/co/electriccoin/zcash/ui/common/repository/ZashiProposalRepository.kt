@@ -164,13 +164,13 @@ class ZashiProposalRepositoryImpl(
 
                     if (!txId.isNullOrEmpty()) {
                         scope.launch {
-                            submitDepositTransaction(txId, transactionProposal)
                             metadataRepository.markTxAsSwap(
                                 txId = txId,
                                 provider = transactionProposal.quote.provider,
                                 totalFees = transactionProposal.totalFees,
                                 totalFeesUsd = transactionProposal.totalFeesUsd
                             )
+                            submitDepositTransaction(txId, transactionProposal)
                         }
                     }
                 }

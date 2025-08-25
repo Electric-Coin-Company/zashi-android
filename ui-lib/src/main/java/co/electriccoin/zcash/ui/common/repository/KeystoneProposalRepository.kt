@@ -220,6 +220,7 @@ class KeystoneProposalRepositoryImpl(
         extractPCZTJob?.cancel()
         extractPCZTJob =
             scope.launch {
+                val transactionProposal = transactionProposal.value
                 val pcztWithSignatures = pcztWithSignatures
 
                 if (pcztWithSignatures == null) {
@@ -247,13 +248,15 @@ class KeystoneProposalRepositoryImpl(
                     val txId = result.txIds.firstOrNull()
 
                     if (!txId.isNullOrEmpty()) {
-                        submitDepositTransaction(txId, transactionProposal)
-                        metadataRepository.markTxAsSwap(
-                            txId = txId,
-                            provider = transactionProposal.quote.provider,
-                            totalFees = transactionProposal.totalFees,
-                            totalFeesUsd = transactionProposal.totalFeesUsd
-                        )
+                        scope.launch {
+                            metadataRepository.markTxAsSwap(
+                                txId = txId,
+                                provider = transactionProposal.quote.provider,
+                                totalFees = transactionProposal.totalFees,
+                                totalFeesUsd = transactionProposal.totalFeesUsd
+                            )
+                            submitDepositTransaction(txId, transactionProposal)
+                        }
                     }
                 }
             }
