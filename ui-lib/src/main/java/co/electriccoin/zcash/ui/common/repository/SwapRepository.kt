@@ -249,7 +249,7 @@ class SwapRepositoryImpl(
                                     error = null
                                 )
                             }
-                            if (result.status in listOf(SwapStatus.SUCCESS, SwapStatus.REFUNDED, SwapStatus.FAILED)) {
+                            if (result.status in listOf(SwapStatus.SUCCESS, SwapStatus.REFUNDED)) {
                                 break
                             }
                         }

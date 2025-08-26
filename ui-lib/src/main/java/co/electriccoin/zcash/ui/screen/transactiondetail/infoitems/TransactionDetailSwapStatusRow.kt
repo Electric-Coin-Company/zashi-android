@@ -12,8 +12,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapStatus
-import co.electriccoin.zcash.ui.common.model.SwapStatus.FAILED
-import co.electriccoin.zcash.ui.common.model.SwapStatus.INCOMPLETE_DEPOSIT
 import co.electriccoin.zcash.ui.common.model.SwapStatus.PENDING
 import co.electriccoin.zcash.ui.common.model.SwapStatus.REFUNDED
 import co.electriccoin.zcash.ui.common.model.SwapStatus.SUCCESS
@@ -70,19 +68,19 @@ private fun StatusChip(swapStatus: SwapStatus) {
     ZashiBadge(
         text =
             when (swapStatus) {
-                INCOMPLETE_DEPOSIT -> stringResource(R.string.swap_detail_incomplete_deposit)
+                // INCOMPLETE_DEPOSIT -> stringResource(R.string.swap_detail_incomplete_deposit)
                 PENDING -> stringResource(R.string.swap_detail_pending)
                 SUCCESS -> stringResource(R.string.swap_detail_completed)
                 REFUNDED -> stringResource(R.string.swap_detail_refunded)
-                FAILED -> stringResource(R.string.swap_detail_failed)
+                // FAILED -> stringResource(R.string.swap_detail_failed)
             },
         colors =
             when (swapStatus) {
                 PENDING -> ZashiBadgeDefaults.hyperBlueColors()
                 SUCCESS -> ZashiBadgeDefaults.successColors()
-                INCOMPLETE_DEPOSIT,
-                REFUNDED,
-                FAILED -> ZashiBadgeDefaults.errorColors()
+                // INCOMPLETE_DEPOSIT,
+                REFUNDED -> ZashiBadgeDefaults.errorColors()
+                // FAILED -> ZashiBadgeDefaults.errorColors()
             },
         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
     )

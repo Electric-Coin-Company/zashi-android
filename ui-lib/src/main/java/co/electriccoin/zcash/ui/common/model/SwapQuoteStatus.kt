@@ -52,11 +52,13 @@ data class NearSwapQuoteStatus(
         when (response.status) {
             KNOWN_DEPOSIT_TX -> SwapStatus.PENDING
             PENDING_DEPOSIT -> SwapStatus.PENDING
-            INCOMPLETE_DEPOSIT -> SwapStatus.INCOMPLETE_DEPOSIT
+            // INCOMPLETE_DEPOSIT -> SwapStatus.INCOMPLETE_DEPOSIT
+            INCOMPLETE_DEPOSIT -> SwapStatus.PENDING
             PROCESSING -> SwapStatus.PENDING
             SUCCESS -> SwapStatus.SUCCESS
             REFUNDED -> SwapStatus.REFUNDED
-            FAILED -> SwapStatus.FAILED
+            // FAILED -> SwapStatus.FAILED
+            FAILED -> SwapStatus.PENDING
             null -> SwapStatus.PENDING
         }
     override val isSlippageRealized: Boolean = response.swapDetails?.slippage != null
