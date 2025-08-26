@@ -1,18 +1,23 @@
 package co.electriccoin.zcash.ui.common.datasource
 
+import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.AccountMetadata
 import co.electriccoin.zcash.ui.common.model.AnnotationMetadata
 import co.electriccoin.zcash.ui.common.model.BookmarkMetadata
 import co.electriccoin.zcash.ui.common.model.Metadata
+import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
+import co.electriccoin.zcash.ui.common.model.SwapMetadata
+import co.electriccoin.zcash.ui.common.model.SwapsMetadata
 import co.electriccoin.zcash.ui.common.provider.MetadataProvider
 import co.electriccoin.zcash.ui.common.provider.MetadataStorageProvider
-import co.electriccoin.zcash.ui.common.serialization.METADATA_SERIALIZATION_V1
+import co.electriccoin.zcash.ui.common.serialization.METADATA_SERIALIZATION_V2
 import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import java.math.BigDecimal
 import java.time.Instant
 
 interface MetadataDataSource {
@@ -36,6 +41,20 @@ interface MetadataDataSource {
 
     suspend fun markTxMemoAsRead(
         txId: String,
+        key: MetadataKey
+    ): Metadata
+
+    suspend fun markTxAsSwap(
+        depositAddress: String,
+        provider: String,
+        totalFees: Zatoshi,
+        totalFeesUsd: BigDecimal,
+        key: MetadataKey
+    ): Metadata
+
+    suspend fun addSwapAssetToHistory(
+        tokenTicker: String,
+        chainTicker: String,
         key: MetadataKey
     ): Metadata
 
@@ -118,6 +137,36 @@ class MetadataDataSourceImpl(
             )
         }
 
+    override suspend fun markTxAsSwap(
+        depositAddress: String,
+        provider: String,
+        totalFees: Zatoshi,
+        totalFeesUsd: BigDecimal,
+        key: MetadataKey
+    ): Metadata =
+        mutex.withLock {
+            addSwapMetadata(
+                depositAddress = depositAddress,
+                provider = provider,
+                totalFees = totalFees,
+                totalFeesUsd = totalFeesUsd,
+                key = key
+            )
+        }
+
+    override suspend fun addSwapAssetToHistory(
+        tokenTicker: String,
+        chainTicker: String,
+        key: MetadataKey
+    ): Metadata =
+        mutex.withLock {
+            prependSwapAssetToHistory(
+                tokenTicker = tokenTicker,
+                chainTicker = chainTicker,
+                key = key
+            )
+        }
+
     override suspend fun save(
         metadata: Metadata,
         key: MetadataKey
@@ -141,7 +190,7 @@ class MetadataDataSourceImpl(
             if (new == null) {
                 new =
                     Metadata(
-                        version = METADATA_SERIALIZATION_V1,
+                        version = METADATA_SERIALIZATION_V2,
                         lastUpdated = Instant.now(),
                         accountMetadata = defaultAccountMetadata(),
                     )
@@ -207,6 +256,65 @@ class MetadataDataSourceImpl(
             }
         )
 
+    private suspend fun addSwapMetadata(
+        depositAddress: String,
+        provider: String,
+        totalFees: Zatoshi,
+        totalFeesUsd: BigDecimal,
+        key: MetadataKey
+    ): Metadata =
+        updateMetadata(
+            key = key,
+            transform = { metadata ->
+                metadata.copy(
+                    swaps =
+                        metadata.swaps.copy(
+                            swapIds =
+                                metadata.swaps.swapIds
+                                    .replaceOrAdd(predicate = { it.depositAddress == depositAddress }) {
+                                        SwapMetadata(
+                                            depositAddress = depositAddress,
+                                            lastUpdated = Instant.now(),
+                                            totalFees = totalFees,
+                                            totalFeesUsd = totalFeesUsd,
+                                            provider = provider
+                                        )
+                                    }
+                        ),
+                )
+            }
+        )
+
+    private suspend fun prependSwapAssetToHistory(
+        tokenTicker: String,
+        chainTicker: String,
+        key: MetadataKey
+    ): Metadata =
+        updateMetadata(key) { metadata ->
+            val current = metadata.swaps.lastUsedAssetHistory.toSimpleAssetSet()
+            val newAsset =
+                SimpleSwapAsset(
+                    tokenTicker = tokenTicker.lowercase(),
+                    chainTicker = chainTicker.lowercase()
+                )
+
+            val newList = current.toMutableList()
+            if (newList.contains(newAsset)) newList.remove(newAsset)
+            newList.add(0, newAsset)
+            val finalSet =
+                newList
+                    .take(MAX_SWAP_ASSETS_IN_HISTORY)
+                    .map { asset -> "${asset.tokenTicker}:${asset.chainTicker}" }
+                    .toSet()
+
+            metadata.copy(
+                swaps =
+                    metadata.swaps.copy(
+                        lastUsedAssetHistory = finalSet
+                    )
+            )
+        }
+
     private suspend fun updateMetadata(
         key: MetadataKey,
         transform: (AccountMetadata) -> AccountMetadata
@@ -233,6 +341,11 @@ private fun defaultAccountMetadata() =
         bookmarked = emptyList(),
         read = emptyList(),
         annotations = emptyList(),
+        swaps =
+            SwapsMetadata(
+                swapIds = emptyList(),
+                lastUsedAssetHistory = emptySet()
+            ),
     )
 
 private fun defaultBookmarkMetadata(txId: String) =
@@ -264,3 +377,15 @@ private fun <T : Any> List<T>.replaceOrAdd(
         this + transform(null)
     }
 }
+
+fun Set<String>.toSimpleAssetSet() =
+    this
+        .map {
+            val data = it.split(":")
+            SimpleSwapAsset(
+                tokenTicker = data[0],
+                chainTicker = data[1]
+            )
+        }.toSet()
+
+private const val MAX_SWAP_ASSETS_IN_HISTORY = 10

@@ -31,12 +31,13 @@ import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
+import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItem
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.collections.immutable.persistentListOf
@@ -81,7 +82,7 @@ fun AdvancedSettings(
                     Modifier
                         .padding(horizontal = 24.dp)
                         .fillMaxWidth(),
-                colors = ZashiButtonDefaults.destructive1Colors(),
+                defaultPrimaryColors = ZashiButtonDefaults.destructive1Colors(),
                 state = state.deleteButton
             )
         }
@@ -133,29 +134,29 @@ private fun AdvancedSettingsPreview() =
                     onBack = {},
                     items =
                         persistentListOf(
-                            ZashiListItemState(
+                            ListItemState(
                                 title = stringRes(R.string.advanced_settings_recovery),
-                                icon = R.drawable.ic_advanced_settings_recovery,
+                                bigIcon = imageRes(R.drawable.ic_advanced_settings_recovery),
                                 onClick = {}
                             ),
-                            ZashiListItemState(
+                            ListItemState(
                                 title = stringRes(R.string.advanced_settings_export),
-                                icon = R.drawable.ic_advanced_settings_export,
+                                bigIcon = imageRes(R.drawable.ic_advanced_settings_export),
                                 onClick = {}
                             ),
-                            ZashiListItemState(
+                            ListItemState(
                                 title = stringRes(R.string.advanced_settings_choose_server),
-                                icon = R.drawable.ic_advanced_settings_choose_server,
+                                bigIcon = imageRes(R.drawable.ic_advanced_settings_choose_server),
                                 onClick = {}
                             ),
-                            ZashiListItemState(
+                            ListItemState(
                                 title = stringRes(R.string.advanced_settings_currency_conversion),
-                                icon = R.drawable.ic_advanced_settings_currency_conversion,
+                                bigIcon = imageRes(R.drawable.ic_advanced_settings_currency_conversion),
                                 onClick = {}
                             ),
-                            ZashiListItemState(
+                            ListItemState(
                                 title = stringRes(R.string.advanced_settings_crash_reporting),
-                                icon = R.drawable.ic_advanced_settings_crash_reporting,
+                                bigIcon = imageRes(R.drawable.ic_advanced_settings_crash_reporting),
                                 onClick = {}
                             )
                         ),

@@ -24,6 +24,23 @@ fun ZashiBulletText(
     fontWeight: FontWeight = FontWeight.Normal,
     color: Color = ZashiColors.Text.textPrimary,
 ) {
+    ZashiBulletText(
+        bulletTexts = bulletText.toList(),
+        modifier = modifier,
+        style = style,
+        fontWeight = fontWeight,
+        color = color,
+    )
+}
+
+@Composable
+fun ZashiBulletText(
+    bulletTexts: List<String>,
+    modifier: Modifier = Modifier,
+    style: TextStyle = ZashiTypography.textSm,
+    fontWeight: FontWeight = FontWeight.Normal,
+    color: Color = ZashiColors.Text.textPrimary,
+) {
     val normalizedStyle = style.copy(fontWeight = fontWeight)
     val bulletString = remember { "\u2022  " }
     val bulletTextMeasurer = rememberTextMeasurer()
@@ -38,7 +55,7 @@ fun ZashiBulletText(
         text =
             buildAnnotatedString {
                 withStyle(style = bulletParagraphStyle) {
-                    bulletText.forEachIndexed { index, string ->
+                    bulletTexts.forEachIndexed { index, string ->
                         if (index != 0) {
                             appendLine()
                         }

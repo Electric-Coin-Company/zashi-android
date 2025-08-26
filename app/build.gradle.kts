@@ -260,15 +260,10 @@ androidComponents {
                 ResValue(value = hasFirebaseApiKeys.toString())
             )
 
-            if ((project.property("ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY").toString().isNotEmpty() &&
-                project.property("ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY").toString().isNotEmpty()) ||
-                variant.productFlavors.any { it.second == DistributionDimension.FOSS.value }
-            ) {
-                val defaultVersionName = project.property("ZCASH_VERSION_NAME").toString()
-                output.versionName.set(defaultVersionName)
-                val gitInfo = Git.newInfo(Git.MAIN, rootDir)
-                output.versionCode.set(gitInfo.commitCount)
-            }
+            val defaultVersionName = project.property("ZCASH_VERSION_NAME").toString()
+            output.versionName.set(defaultVersionName)
+            val gitInfo = Git.newInfo(Git.HEAD, rootDir)
+            output.versionCode.set(gitInfo.commitCount)
         }
 
         variant.packaging.resources.excludes.addAll(listOf(
@@ -365,7 +360,7 @@ fladle {
             testTimeout.set("3m")
 
             devices.addAll(
-                mapOf("model" to "Pixel2", "version" to minSdkVersion),
+                mapOf("model" to "Pixel2.arm", "version" to minSdkVersion),
                 mapOf("model" to "Pixel2.arm", "version" to targetSdkVersion)
             )
 

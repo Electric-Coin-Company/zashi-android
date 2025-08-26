@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,8 +34,9 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
 fun ZashiChipButton(
-    state: ZashiChipButtonState,
+    state: ChipButtonState,
     modifier: Modifier = Modifier,
+    useTint: Boolean = true,
     shape: RoundedCornerShape = ZashiChipButtonDefaults.shape,
     border: BorderStroke? = ZashiChipButtonDefaults.border,
     color: Color = ZashiChipButtonDefaults.color,
@@ -49,7 +51,10 @@ fun ZashiChipButton(
         color = color,
     ) {
         Row(
-            modifier = Modifier.clickable(onClick = state.onClick) then Modifier.padding(contentPadding),
+            modifier =
+                Modifier.clickable(onClick = state.onClick, enabled = state.isEnabled) then
+                    Modifier.padding
+                        (contentPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (state.startIcon != null) {
@@ -69,17 +74,19 @@ fun ZashiChipButton(
                 Image(
                     painterResource(state.endIcon),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(ZashiColors.Btns.Tertiary.btnTertiaryFg)
+                    colorFilter = ColorFilter.tint(ZashiColors.Btns.Tertiary.btnTertiaryFg).takeIf { useTint }
                 )
             }
         }
     }
 }
 
-data class ZashiChipButtonState(
+@Immutable
+data class ChipButtonState(
+    val text: StringResource,
     @DrawableRes val startIcon: Int? = null,
     @DrawableRes val endIcon: Int? = null,
-    val text: StringResource,
+    val isEnabled: Boolean = true,
     val onClick: () -> Unit,
 )
 
@@ -108,7 +115,7 @@ private fun ZashiChipButtonPreview() =
     ZcashTheme {
         ZashiChipButton(
             state =
-                ZashiChipButtonState(
+                ChipButtonState(
                     startIcon = R.drawable.ic_radio_button_checked,
                     text = stringRes("Test"),
                     onClick = {}
@@ -122,7 +129,7 @@ private fun ZashiChipButtonEndIconPreview() =
     ZcashTheme {
         ZashiChipButton(
             state =
-                ZashiChipButtonState(
+                ChipButtonState(
                     endIcon = R.drawable.ic_close,
                     text = stringRes("End Icon Chip"),
                     onClick = {}

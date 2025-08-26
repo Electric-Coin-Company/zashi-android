@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common.appbar
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -34,11 +33,9 @@ fun ZashiTopAppbar(
         },
         regularActions = {
             if (state?.balanceVisibilityButton != null && showHideBalances) {
-                Crossfade(state.balanceVisibilityButton, label = "BalanceVisibility") {
-                    ZashiIconButton(it, modifier = Modifier.size(40.dp))
-                }
+                ZashiIconButton(state.balanceVisibilityButton, modifier = Modifier.size(40.dp))
+                Spacer(Modifier.width(20.dp))
             }
-            Spacer(Modifier.width(20.dp))
         },
         colors =
             ZcashTheme.colors.topAppBarColors orDark

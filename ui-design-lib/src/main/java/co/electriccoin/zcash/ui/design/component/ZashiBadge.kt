@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -30,14 +31,16 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 fun ZashiBadge(
     text: String,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = ZashiBadgeDefaults.contentPadding,
     leadingIconVector: Painter? = null,
-    colors: ZashiBadgeColors = ZashiBadgeDefaults.successBadgeColors()
+    colors: ZashiBadgeColors = ZashiBadgeDefaults.successColors()
 ) {
     ZashiBadge(
         text = stringRes(text),
         leadingIconVector = leadingIconVector,
         modifier = modifier,
-        colors = colors
+        colors = colors,
+        contentPadding = contentPadding
     )
 }
 
@@ -45,8 +48,9 @@ fun ZashiBadge(
 fun ZashiBadge(
     text: StringResource,
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = ZashiBadgeDefaults.contentPadding,
     leadingIconVector: Painter? = null,
-    colors: ZashiBadgeColors = ZashiBadgeDefaults.successBadgeColors()
+    colors: ZashiBadgeColors = ZashiBadgeDefaults.successColors()
 ) {
     Surface(
         modifier = modifier,
@@ -56,7 +60,7 @@ fun ZashiBadge(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+            modifier = Modifier.padding(contentPadding)
         ) {
             if (leadingIconVector != null) {
                 Image(
@@ -86,8 +90,11 @@ data class ZashiBadgeColors(
 )
 
 object ZashiBadgeDefaults {
+    val contentPadding: PaddingValues
+        get() = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
+
     @Composable
-    fun successBadgeColors(
+    fun successColors(
         border: Color = ZashiColors.Utility.SuccessGreen.utilitySuccess200,
         text: Color = ZashiColors.Utility.SuccessGreen.utilitySuccess700,
         background: Color = ZashiColors.Utility.SuccessGreen.utilitySuccess50,
@@ -102,6 +109,17 @@ object ZashiBadgeDefaults {
         border: Color = ZashiColors.Utility.HyperBlue.utilityBlueDark200,
         text: Color = ZashiColors.Utility.HyperBlue.utilityBlueDark700,
         background: Color = ZashiColors.Utility.HyperBlue.utilityBlueDark50,
+    ) = ZashiBadgeColors(
+        border = border,
+        text = text,
+        container = background,
+    )
+
+    @Composable
+    fun errorColors(
+        border: Color = ZashiColors.Utility.ErrorRed.utilityError200,
+        text: Color = ZashiColors.Utility.ErrorRed.utilityError700,
+        background: Color = ZashiColors.Utility.ErrorRed.utilityError50,
     ) = ZashiBadgeColors(
         border = border,
         text = text,

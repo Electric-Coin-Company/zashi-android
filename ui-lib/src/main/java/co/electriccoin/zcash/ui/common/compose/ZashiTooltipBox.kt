@@ -35,7 +35,7 @@ fun ZashiTooltipBox(
     positionProvider: PopupPositionProvider = rememberTooltipPositionProvider(),
     focusable: Boolean = true,
     enableUserInput: Boolean = true,
-    content: @Composable () -> Unit,
+    anchor: @Composable () -> Unit,
 ) {
     TooltipBox(
         positionProvider = positionProvider,
@@ -44,7 +44,7 @@ fun ZashiTooltipBox(
         modifier = modifier,
         focusable = focusable,
         enableUserInput = enableUserInput,
-        content = content
+        content = anchor
     )
 }
 

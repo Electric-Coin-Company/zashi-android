@@ -13,7 +13,7 @@ class NavigateToAddressBookUseCase(
     private val navigationRouter: NavigationRouter,
     private val biometricRepository: BiometricRepository
 ) {
-    suspend operator fun invoke(mode: AddressBookArgs) {
+    suspend operator fun invoke() {
         try {
             biometricRepository.requestBiometrics(
                 BiometricRequest(
@@ -24,7 +24,7 @@ class NavigateToAddressBookUseCase(
                         )
                 )
             )
-            navigationRouter.forward(AddressBookArgs(mode))
+            navigationRouter.forward(AddressBookArgs)
         } catch (_: BiometricsFailureException) {
             // do nothing
         } catch (_: BiometricsCancelledException) {

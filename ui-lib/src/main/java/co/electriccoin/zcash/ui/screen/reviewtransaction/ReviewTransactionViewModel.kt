@@ -6,13 +6,12 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.datasource.RegularTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
-import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
@@ -21,10 +20,10 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
+import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.ADDRESS_MAX_LENGTH
-import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
+import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
+import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
 import co.electriccoin.zcash.ui.util.Quadruple
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -71,22 +70,21 @@ class ReviewTransactionViewModel(
             Quadruple(wallet, zecSend, isReceiverExpanded, exchangeRate)
         }.flatMapLatest { (selectedWallet, proposal, isReceiverExpanded, exchangeRate) ->
             observeContactByAddress(proposal.destination.address).map { addressBookContact ->
-                when (proposal) {
-                    is RegularTransactionProposal ->
-                        createState(
-                            transactionProposal = proposal,
-                            addressBookContact = addressBookContact,
-                            selectedWallet = selectedWallet,
-                            exchangeRateState = exchangeRate
-                        )
-                    is Zip321TransactionProposal ->
-                        createZip321State(
-                            transactionProposal = proposal,
-                            addressBookContact = addressBookContact,
-                            selectedWallet = selectedWallet,
-                            isReceiverExpanded = isReceiverExpanded,
-                            exchangeRateState = exchangeRate
-                        )
+                if (proposal is Zip321TransactionProposal) {
+                    createZip321State(
+                        transactionProposal = proposal,
+                        addressBookContact = addressBookContact,
+                        selectedWallet = selectedWallet,
+                        isReceiverExpanded = isReceiverExpanded,
+                        exchangeRateState = exchangeRate
+                    )
+                } else {
+                    createState(
+                        transactionProposal = proposal,
+                        addressBookContact = addressBookContact,
+                        selectedWallet = selectedWallet,
+                        exchangeRateState = exchangeRate
+                    )
                 }
             }
         }.stateIn(
@@ -98,7 +96,7 @@ class ReviewTransactionViewModel(
     private fun createState(
         selectedWallet: WalletAccount,
         transactionProposal: SendTransactionProposal,
-        addressBookContact: AddressBookContact?,
+        addressBookContact: EnhancedABContact?,
         exchangeRateState: ExchangeRateState
     ) = ReviewTransactionState(
         title =
@@ -164,7 +162,7 @@ class ReviewTransactionViewModel(
 
     private fun createZip321State(
         transactionProposal: SendTransactionProposal,
-        addressBookContact: AddressBookContact?,
+        addressBookContact: EnhancedABContact?,
         selectedWallet: WalletAccount,
         isReceiverExpanded: Boolean,
         exchangeRateState: ExchangeRateState
@@ -192,18 +190,18 @@ class ReviewTransactionViewModel(
                             stringRes("${transactionProposal.destination.address.take(ADDRESS_MAX_LENGTH)}...")
                         },
                     showButton =
-                        ZashiChipButtonState(
+                        ChipButtonState(
                             startIcon =
                                 if (isReceiverExpanded) {
-                                    R.drawable.ic_chevron_up
+                                    co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_up
                                 } else {
-                                    R.drawable.ic_chevron_down
+                                    co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_down
                                 },
                             text = stringRes(R.string.payment_request_btn_show_address),
                             onClick = ::onExpandReceiverClick
                         ),
                     saveButton =
-                        ZashiChipButtonState(
+                        ChipButtonState(
                             startIcon = R.drawable.ic_user_plus,
                             text = stringRes(R.string.payment_request_btn_save_contact),
                             onClick = { onAddContactClick(transactionProposal.destination.address) }
@@ -237,24 +235,13 @@ class ReviewTransactionViewModel(
         onBack = ::onBack,
     )
 
-    private fun onExpandReceiverClick() {
-        isReceiverExpanded.update { !it }
-    }
+    private fun onExpandReceiverClick() = isReceiverExpanded.update { !it }
 
-    private fun onBack() {
-        cancelProposalFlow(clearSendForm = false)
-    }
+    private fun onBack() = viewModelScope.launch { cancelProposalFlow(clearSendForm = false) }
 
-    private fun onCancelClick() {
-        cancelProposalFlow(clearSendForm = false)
-    }
+    private fun onCancelClick() = viewModelScope.launch { cancelProposalFlow(clearSendForm = false) }
 
-    private fun onConfirmClick() =
-        viewModelScope.launch {
-            confirmProposal()
-        }
+    private fun onConfirmClick() = viewModelScope.launch { confirmProposal() }
 
-    private fun onAddContactClick(address: String) {
-        navigationRouter.forward(AddContactArgs(address))
-    }
+    private fun onAddContactClick(address: String) = navigationRouter.forward(AddZashiABContactArgs(address))
 }

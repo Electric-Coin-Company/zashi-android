@@ -48,3 +48,5 @@
 # Keystone SDK
 # Note: we should keep only the necessary components
 -keep class com.keystone.module.** { *; }
+-keepnames class **.R$drawable { *; }
+-keepclassmembers class **.R$drawable { *; }

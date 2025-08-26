@@ -32,8 +32,8 @@ pluginManager.withPlugin("wtf.emulator.gradle") {
 
         devices.set(
             listOf(
-                mapOf("model" to "Pixel2", "version" to minSdkVersion),
-                mapOf("model" to "Pixel2", "version" to targetSdkVersion)
+                mapOf("model" to "Pixel2.arm", "version" to minSdkVersion),
+                mapOf("model" to "Pixel2.arm", "version" to targetSdkVersion)
             )
         )
     }

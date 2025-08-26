@@ -7,10 +7,7 @@ class CreateOrUpdateTransactionNoteUseCase(
     private val metadataRepository: MetadataRepository,
     private val navigationRouter: NavigationRouter
 ) {
-    suspend operator fun invoke(
-        txId: String,
-        note: String
-    ) {
+    operator fun invoke(txId: String, note: String) {
         metadataRepository.createOrUpdateTxNote(txId, note.trim())
         navigationRouter.back()
     }

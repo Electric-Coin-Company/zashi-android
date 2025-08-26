@@ -27,6 +27,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.screen.connectkeystone.model.ConnectKeystoneState
 
@@ -83,22 +84,22 @@ private fun HowToConnectSection() {
         ZashiListItem(
             title = stringResource(R.string.connect_keystone_item_1),
             contentPadding = listItemContentPadding,
-            icon = R.drawable.ic_connect_keystone_1
+            icon = imageRes(R.drawable.ic_connect_keystone_1)
         )
         ZashiListItem(
             title = stringResource(R.string.connect_keystone_item_2),
             contentPadding = listItemContentPadding,
-            icon = R.drawable.ic_connect_keystone_2
+            icon = imageRes(R.drawable.ic_connect_keystone_2)
         )
         ZashiListItem(
             title = stringResource(R.string.connect_keystone_item_3),
             contentPadding = listItemContentPadding,
-            icon = R.drawable.ic_connect_keystone_3
+            icon = imageRes(R.drawable.ic_connect_keystone_3)
         )
         ZashiListItem(
             title = stringResource(R.string.connect_keystone_item_4),
             contentPadding = listItemContentPadding,
-            icon = R.drawable.ic_connect_keystone_4
+            icon = imageRes(R.drawable.ic_connect_keystone_4)
         )
     }
 }

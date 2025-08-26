@@ -17,8 +17,8 @@ import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
-import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFilters
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailArgs
+import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -213,10 +213,10 @@ class TransactionHistoryViewModel(
     }
 
     private fun onTransactionClick(transaction: Transaction) {
-        navigationRouter.forward(TransactionDetail(transaction.id.txIdString()))
+        navigationRouter.forward(TransactionDetailArgs(transaction.id.txIdString()))
     }
 
-    private fun onTransactionFiltersClicked() = navigationRouter.forward(TransactionFilters)
+    private fun onTransactionFiltersClicked() = navigationRouter.forward(TransactionFiltersArgs)
 }
 
 private const val WEEK_THRESHOLD = 7L

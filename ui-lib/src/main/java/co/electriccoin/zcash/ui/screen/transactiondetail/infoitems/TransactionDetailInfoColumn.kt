@@ -6,18 +6,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.component.BlankSurface
+import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -25,64 +25,58 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoShape.MIDDLE
 
 @Composable
 fun TransactionDetailInfoColumn(
     state: TransactionDetailInfoColumnState,
     modifier: Modifier = Modifier
 ) {
-    Surface(
+    val clickModifier =
+        if (state.onClick != null) {
+            Modifier.clickable(
+                indication = ripple(),
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = state.onClick,
+                role = Role.Button,
+            )
+        } else {
+            Modifier
+        }
+    Column(
         modifier =
-            modifier then
-                if (state.onClick != null) {
-                    Modifier.clickable(
-                        indication = ripple(),
-                        interactionSource = remember { MutableInteractionSource() },
-                        onClick = state.onClick,
-                        role = Role.Button,
-                    )
-                } else {
-                    Modifier
-                },
-        shape = state.shape.shape,
-        color = ZashiColors.Surfaces.bgSecondary,
-    ) {
-        Column(
-            modifier =
+            modifier then clickModifier then
                 Modifier.padding(
                     top = if (state.title != null) 14.dp else 0.dp,
                     start = 20.dp,
                     end = 20.dp,
                     bottom = 14.dp
                 )
-        ) {
-            state.title?.let {
-                Text(
-                    text = it.getValue(),
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Text.textTertiary,
-                    maxLines = 1,
-                )
-                Spacer(Modifier.width(4.dp))
-            }
+    ) {
+        state.title?.let {
+            Text(
+                text = it.getValue(),
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textTertiary,
+                maxLines = 1,
+            )
+            Spacer(4.dp)
+        }
 
-            SelectionContainer {
-                Text(
-                    text = state.message.getValue(),
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Text.textPrimary,
-                    fontWeight = FontWeight.Medium
-                )
-            }
+        SelectionContainer {
+            Text(
+                text = state.message.getValue(),
+                style = ZashiTypography.textSm,
+                color = ZashiColors.Text.textPrimary,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }
 
+@Immutable
 data class TransactionDetailInfoColumnState(
     val title: StringResource?,
     val message: StringResource,
-    val shape: TransactionDetailInfoShape,
     val onClick: (() -> Unit)?,
 )
 
@@ -97,7 +91,6 @@ private fun Preview() =
                     TransactionDetailInfoColumnState(
                         title = stringRes("Title"),
                         message = stringRes("Message"),
-                        shape = MIDDLE,
                         onClick = {}
                     )
             )
@@ -115,7 +108,6 @@ private fun NoTitlePreview() =
                     TransactionDetailInfoColumnState(
                         title = null,
                         message = stringRes("Message"),
-                        shape = MIDDLE,
                         onClick = {}
                     )
             )

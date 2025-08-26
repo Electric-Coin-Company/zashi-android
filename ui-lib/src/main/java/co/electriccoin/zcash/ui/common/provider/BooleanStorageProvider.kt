@@ -26,5 +26,5 @@ abstract class BaseNullableBooleanStorageProvider(
     key: PreferenceKey
 ) : BaseNullableStorageProvider<Boolean>(),
     NullableBooleanStorageProvider {
-    override val default = NullableBooleanPreferenceDefault(key = key, defaultValue = null)
+    override val default = NullableBooleanPreferenceDefault(key = key)
 }

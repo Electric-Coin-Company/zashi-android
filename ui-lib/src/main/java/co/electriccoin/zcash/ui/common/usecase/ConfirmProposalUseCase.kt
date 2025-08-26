@@ -9,16 +9,20 @@ import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
 import co.electriccoin.zcash.ui.common.repository.BiometricsCancelledException
 import co.electriccoin.zcash.ui.common.repository.BiometricsFailureException
+import co.electriccoin.zcash.ui.common.repository.MetadataRepository
+import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
-import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgress
+import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressArgs
 
 class ConfirmProposalUseCase(
     private val navigationRouter: NavigationRouter,
     private val accountDataSource: AccountDataSource,
     private val zashiProposalRepository: ZashiProposalRepository,
     private val biometricRepository: BiometricRepository,
+    private val swapRepository: SwapRepository,
+    private val metadataRepository: MetadataRepository,
 ) {
     suspend operator fun invoke() {
         try {
@@ -32,13 +36,22 @@ class ConfirmProposalUseCase(
                             )
                     )
             )
+
+            val selectedSwapAsset = swapRepository.selectedAsset.value
+            if (selectedSwapAsset != null) {
+                metadataRepository.addSwapAssetToHistory(
+                    tokenTicker = selectedSwapAsset.tokenTicker,
+                    chainTicker = selectedSwapAsset.chainTicker
+                )
+            }
             when (accountDataSource.getSelectedAccount()) {
                 is KeystoneAccount -> navigationRouter.forward(SignKeystoneTransaction)
                 is ZashiAccount -> {
                     zashiProposalRepository.submitTransaction()
-                    navigationRouter.forward(TransactionProgress)
+                    navigationRouter.forward(TransactionProgressArgs)
                 }
             }
+            swapRepository.clear()
         } catch (_: BiometricsFailureException) {
             // do nothing
         } catch (_: BiometricsCancelledException) {

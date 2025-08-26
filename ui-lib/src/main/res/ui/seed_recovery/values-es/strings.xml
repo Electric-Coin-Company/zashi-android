@@ -12,7 +12,7 @@
     <string name="seed_recovery_bday_tooltip_message">La Altura de Cumpleaños de la Billetera determina la altura (cadena) de nacimiento de tu billetera y facilita un proceso de restauración más rápido. Guarda este número junto con tu frase de recuperación en un lugar seguro.</string>
     <string name="wallet_backup_title">Respaldo de la Billetera</string>
     <string name="wallet_backup_subtitle">Tu Frase Secreta de Recuperación</string>
-    <string name="wallet_backup_message">"Tu frase secreta de recuperación es un conjunto único de 24 palabras, que aparecen en un orden preciso. Protege el acceso a tus fondos."</string>
+    <string name="wallet_backup_message">Tu frase secreta de recuperación es un conjunto único de 24 palabras, que aparecen en un orden preciso. Protege el acceso a tus fondos.</string>
     <string name="wallet_backup_info">¡Mantén esta frase de forma segura! No tomes capturas de pantalla ni la guardes en tu teléfono.</string>
     <string name="wallet_backup_btn">Siguiente</string>
     <string name="wallet_backup_item_1">Controla tu billetera</string>

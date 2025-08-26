@@ -3,16 +3,17 @@ package co.electriccoin.zcash.ui.common.usecase
 import android.content.Context
 import cash.z.ecc.android.sdk.model.TransactionId
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
-import co.electriccoin.zcash.ui.common.model.AddressBookContact
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
+import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
+import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
 import co.electriccoin.zcash.ui.common.repository.SendTransaction
-import co.electriccoin.zcash.ui.common.repository.ShieldTransaction
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionFilter
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
+import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.combineToFlow
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -55,31 +56,26 @@ class GetCurrentFilteredTransactionsUseCase(
                 val enhancedTransactions =
                     transactions
                         ?.map { transaction ->
-                            val recipient = transactionRepository.getRecipients(transaction)
+                            val recipient = transaction.recipient
 
                             if (recipient == null) {
                                 metadataRepository
-                                    .observeTransactionMetadataByTxId(
-                                        transaction.id.txIdString()
-                                    ).map {
+                                    .observeTransactionMetadata(transaction)
+                                    .map {
                                         FilterTransactionData(
                                             transaction = transaction,
                                             contact = null,
-                                            recipientAddress = null,
                                             transactionMetadata = it
                                         )
                                     }
                             } else {
                                 combine(
-                                    addressBookRepository.observeContactByAddress(recipient),
-                                    metadataRepository.observeTransactionMetadataByTxId(
-                                        txId = transaction.id.txIdString(),
-                                    )
+                                    addressBookRepository.observeContactByAddress(recipient.address),
+                                    metadataRepository.observeTransactionMetadata(transaction)
                                 ) { contact, transactionMetadata ->
                                     FilterTransactionData(
                                         transaction = transaction,
                                         contact = contact,
-                                        recipientAddress = recipient,
                                         transactionMetadata = transactionMetadata
                                     )
                                 }
@@ -128,7 +124,7 @@ class GetCurrentFilteredTransactionsUseCase(
             }.distinctUntilChanged()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val result =
+    private val result =
         transactionFilterRepository.filters
             .flatMapLatest { filters ->
                 flow {
@@ -138,7 +134,7 @@ class GetCurrentFilteredTransactionsUseCase(
                             .mapLatest { transactions ->
                                 transactions
                                     ?.filter { transaction ->
-                                        filterBySentReceived(filters, transaction)
+                                        filterBySentReceivedSwap(filters, transaction)
                                     }?.filter { transaction ->
                                         filterByGeneralFilters(
                                             filters = filters,
@@ -192,19 +188,18 @@ class GetCurrentFilteredTransactionsUseCase(
     }
 
     @Suppress
-    private fun filterBySentReceived(
+    private fun filterBySentReceivedSwap(
         filters: List<TransactionFilter>,
         transaction: FilterTransactionData
     ): Boolean =
-        if (filters.contains(TransactionFilter.SENT) || filters.contains(TransactionFilter.RECEIVED)) {
+        if (TransactionFilter.SENT in filters ||
+            TransactionFilter.RECEIVED in filters ||
+            TransactionFilter.SWAP in filters
+        ) {
             when {
-                filters.contains(TransactionFilter.SENT) &&
-                    transaction.transaction is SendTransaction -> true
-
-                filters.contains(TransactionFilter.RECEIVED) &&
-                    transaction.transaction !is SendTransaction &&
-                    transaction.transaction !is ShieldTransaction -> true
-
+                TransactionFilter.SENT in filters && transaction.transaction is SendTransaction -> true
+                TransactionFilter.RECEIVED in filters && transaction.transaction is ReceiveTransaction -> true
+                TransactionFilter.SWAP in filters && transaction.transactionMetadata.swapMetadata != null -> true
                 else -> false
             }
         } else {
@@ -252,7 +247,7 @@ class GetCurrentFilteredTransactionsUseCase(
         transaction: FilterTransactionData,
         fulltextFilter: String
     ): Boolean {
-        val text = stringRes(transaction.transaction.amount).getString(context)
+        val text = stringRes(transaction.transaction.amount, HIDDEN).getString(context)
         return text.contains(fulltextFilter, ignoreCase = true)
     }
 
@@ -274,9 +269,10 @@ class GetCurrentFilteredTransactionsUseCase(
 
 private data class FilterTransactionData(
     val transaction: Transaction,
-    val contact: AddressBookContact?,
-    val recipientAddress: String?,
+    val contact: EnhancedABContact?,
     val transactionMetadata: TransactionMetadata
-)
+) {
+    val recipientAddress = transaction.recipient?.address
+}
 
 private const val MIN_TEXT_FILTER_LENGTH = 3

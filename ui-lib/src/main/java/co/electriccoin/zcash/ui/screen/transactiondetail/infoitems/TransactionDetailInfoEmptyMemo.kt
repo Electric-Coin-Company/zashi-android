@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +28,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 fun TransactionDetailInfoEmptyMemo(modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier,
-        shape = TransactionDetailInfoShape.SINGLE.shape,
+        shape = RoundedCornerShape(12.dp),
         color = ZashiColors.Surfaces.bgPrimary,
         border = BorderStroke(1.dp, ZashiColors.Surfaces.strokeSecondary)
     ) {

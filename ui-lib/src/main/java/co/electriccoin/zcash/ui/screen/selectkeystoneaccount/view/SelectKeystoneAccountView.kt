@@ -100,7 +100,7 @@ private fun BottomSection(
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
             state = state.negativeButtonState,
-            colors = ZashiButtonDefaults.secondaryColors()
+            defaultPrimaryColors = ZashiButtonDefaults.secondaryColors()
         )
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),

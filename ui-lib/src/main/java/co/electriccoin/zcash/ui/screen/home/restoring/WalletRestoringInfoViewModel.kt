@@ -30,7 +30,7 @@ class WalletRestoringInfoViewModel(
     private fun createState(snapshot: WalletSnapshot?) =
         WalletRestoringInfoState(
             onBack = ::onBack,
-            info = stringRes(R.string.home_info_restoring_note).takeIf { snapshot?.isSpendable == false }
+            info = stringRes(R.string.home_info_restoring_note).takeIf { snapshot?.isSpendable in listOf(null, false) }
         )
 
     private fun onBack() = navigationRouter.back()

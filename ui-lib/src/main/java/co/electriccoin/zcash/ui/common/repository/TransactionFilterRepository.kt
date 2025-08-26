@@ -46,5 +46,6 @@ enum class TransactionFilter {
     MEMOS,
     UNREAD,
     BOOKMARKED,
-    NOTES
+    NOTES,
+    SWAP
 }

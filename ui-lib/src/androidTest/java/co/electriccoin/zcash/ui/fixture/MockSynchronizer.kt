@@ -19,6 +19,7 @@ import cash.z.ecc.android.sdk.model.TransactionOutput
 import cash.z.ecc.android.sdk.model.TransactionOverview
 import cash.z.ecc.android.sdk.model.TransactionRecipient
 import cash.z.ecc.android.sdk.model.TransactionSubmitResult
+import cash.z.ecc.android.sdk.model.UnifiedAddressRequest
 import cash.z.ecc.android.sdk.model.UnifiedSpendingKey
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZcashNetwork
@@ -44,10 +45,17 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 
+    override suspend fun getCustomUnifiedAddress(account: Account, request: UnifiedAddressRequest): String {
+        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+    }
+
     override val accountsFlow: Flow<List<Account>?>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override val allTransactions: Flow<List<TransactionOverview>>
+        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
+
+    override val areFundsSpendable: Flow<Boolean>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
     override suspend fun importAccountByUfvk(setup: AccountImportSetup): Account {

@@ -22,7 +22,7 @@ class PrefillSendUseCase {
             bus.send(
                 PrefillSendData.All(
                     amount = value.transaction.amount,
-                    address = value.recipientAddress?.address,
+                    address = value.recipient?.address,
                     fee = value.transaction.fee,
                     memos = value.memos
                 )

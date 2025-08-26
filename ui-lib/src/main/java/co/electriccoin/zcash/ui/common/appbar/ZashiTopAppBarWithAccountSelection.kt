@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common.appbar
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -43,9 +42,7 @@ fun ZashiTopAppBarWithAccountSelection(
             windowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
             hamburgerMenuActions = {
                 if (showHideBalances) {
-                    Crossfade(state.balanceVisibilityButton, label = "BalanceVisibility") {
-                        ZashiIconButton(it, modifier = Modifier.size(40.dp))
-                    }
+                    ZashiIconButton(state.balanceVisibilityButton, modifier = Modifier.size(40.dp))
                     Spacer(Modifier.width(4.dp))
                 }
                 ZashiIconButton(state.settingsButton, modifier = Modifier.size(40.dp))

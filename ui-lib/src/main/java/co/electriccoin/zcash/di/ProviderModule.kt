@@ -2,16 +2,22 @@ package co.electriccoin.zcash.di
 
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProviderImpl
+import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
+import co.electriccoin.zcash.ui.common.provider.BlockchainProviderImpl
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
+import co.electriccoin.zcash.ui.common.provider.HttpClientProvider
+import co.electriccoin.zcash.ui.common.provider.HttpClientProviderImpl
 import co.electriccoin.zcash.ui.common.provider.IsExchangeRateEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.provider.IsExchangeRateEnabledStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProviderImpl
+import co.electriccoin.zcash.ui.common.provider.KtorNearApiProvider
+import co.electriccoin.zcash.ui.common.provider.NearApiProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProviderImpl
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletTorProvider
@@ -24,6 +30,10 @@ import co.electriccoin.zcash.ui.common.provider.ShieldFundsInfoProvider
 import co.electriccoin.zcash.ui.common.provider.ShieldFundsInfoProviderImpl
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProviderImpl
+import co.electriccoin.zcash.ui.common.provider.TokenIconProvider
+import co.electriccoin.zcash.ui.common.provider.TokenIconProviderImpl
+import co.electriccoin.zcash.ui.common.provider.TokenNameProvider
+import co.electriccoin.zcash.ui.common.provider.TokenNameProviderImpl
 import co.electriccoin.zcash.ui.common.provider.WalletBackupConsentStorageProvider
 import co.electriccoin.zcash.ui.common.provider.WalletBackupConsentStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.WalletBackupFlagStorageProvider
@@ -34,6 +44,7 @@ import co.electriccoin.zcash.ui.common.provider.WalletBackupRemindMeTimestampSto
 import co.electriccoin.zcash.ui.common.provider.WalletBackupRemindMeTimestampStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.WalletRestoringStateProvider
 import co.electriccoin.zcash.ui.common.provider.WalletRestoringStateProviderImpl
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -61,4 +72,9 @@ val providerModule =
         singleOf(::IsExchangeRateEnabledStorageProviderImpl) bind IsExchangeRateEnabledStorageProvider::class
         singleOf(::IsTorEnabledStorageProviderImpl) bind IsTorEnabledStorageProvider::class
         singleOf(::PersistableWalletTorProviderImpl) bind PersistableWalletTorProvider::class
+        singleOf(::BlockchainProviderImpl) bind BlockchainProvider::class
+        singleOf(::TokenIconProviderImpl) bind TokenIconProvider::class
+        singleOf(::TokenNameProviderImpl) bind TokenNameProvider::class
+        singleOf(::KtorNearApiProvider) bind NearApiProvider::class
+        factoryOf(::HttpClientProviderImpl) bind HttpClientProvider::class
     }

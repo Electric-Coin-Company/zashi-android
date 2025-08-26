@@ -2,8 +2,8 @@ package co.electriccoin.zcash.ui.screen.transactionfilters.fixture
 
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.StringResource
-import co.electriccoin.zcash.ui.screen.transactionfilters.model.TransactionFilterState
-import co.electriccoin.zcash.ui.screen.transactionfilters.model.TransactionFiltersState
+import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFilterState
+import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersState
 import kotlinx.collections.immutable.persistentListOf
 
 object TransactionFiltersStateFixture {

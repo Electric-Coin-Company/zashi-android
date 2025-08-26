@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
 import co.electriccoin.zcash.ui.common.repository.SendTransaction
 import co.electriccoin.zcash.ui.common.repository.ShieldTransaction
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
+import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.util.FileShareUtil
@@ -138,9 +139,9 @@ class ExportTaxUseCase(
 
                         val sentQuantity =
                             if (fee != null) {
-                                stringRes(transaction.amount - fee)
+                                stringRes(transaction.amount - fee, HIDDEN)
                             } else {
-                                stringRes(transaction.amount)
+                                stringRes(transaction.amount, HIDDEN)
                             }
 
                         CsvEntry(
@@ -149,7 +150,7 @@ class ExportTaxUseCase(
                             receivedCurrency = "",
                             sentQuantity = sentQuantity.getString(context),
                             sentCurrency = ZEC_SYMBOL,
-                            feeAmount = stringRes(fee ?: Zatoshi(0)).getString(context),
+                            feeAmount = stringRes(fee ?: Zatoshi(0), HIDDEN).getString(context),
                             feeCurrency = ZEC_SYMBOL,
                             tag = ""
                         )
@@ -160,7 +161,7 @@ class ExportTaxUseCase(
                     is ReceiveTransaction.Pending -> {
                         CsvEntry(
                             date = dateString,
-                            receivedQuantity = stringRes(transaction.amount).getString(context),
+                            receivedQuantity = stringRes(transaction.amount, HIDDEN).getString(context),
                             receivedCurrency = ZEC_SYMBOL,
                             sentQuantity = "",
                             sentCurrency = "",

@@ -10,7 +10,7 @@ object ZashiDimensions {
         val radiusXs = 4.dp
         val radiusSm = 6.dp
         val radiusMd = 8.dp
-        val radiusIg = 10.dp
+        val radiusLg = 10.dp
         val radiusXl = 12.dp
         val radius2xl = 16.dp
         val radius3xl = 20.dp

@@ -1,7 +1,32 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="amount_with_fiat_currency_symbol" formatted="true"><xliff:g id="fiat_currency_symbol" example="$">%1$s</xliff:g><xliff:g id="amount" example="123">%2$s</xliff:g></string>
+    <string name="amount_with_fiat_currency_symbol" formatted="true"><xliff:g example="$" id="fiat_currency_symbol">%1$s</xliff:g><xliff:g example="123" id="amount">%2$s</xliff:g></string>
     <string name="hide_balance_placeholder">-----</string>
     <string name="back_navigation_content_description">Atrás</string>
     <string name="triple_dots">…</string>
-    <string name="seed_recovery_reveal">Mostrar frase de recuperación</string>
+    <string name="seed_recovery_reveal">Revelar frase de recuperación</string>
+
+    <string name="general_service_unavailable">El servicio no está disponible</string>
+    <string name="general_unexpected_error">Error inesperado</string>
+    <string name="general_please_try_again">Por favor, inténtalo más tarde.</string>
+    <string name="general_check_connection">Por favor, revisa tu conexión e inténtalo de nuevo.</string>
+    <string name="general_error_title">Algo salió mal</string>
+    <string name="general_error_message">No pudimos cargar los activos. Por favor, revisa tu conexión e inténtalo de nuevo.</string>
+    <string name="general_try_again">Intentar de nuevo</string>
+    <string name="general_show">Mostrar</string>
+    <string name="general_hide">Ocultar</string>
+    <string name="general_more">Más</string>
+    <string name="general_less">Menos</string>
+    <string name="general_loading">Cargando</string>
+    <string name="general_review">Revisar</string>
+    <string name="general_ok">OK</string>
+    <string name="general_report">Reportar</string>
+    <string name="general_zec">%s ZEC</string>
+    <string name="general_dismiss">Cerrar</string>
+    <string name="general_select">Seleccionar…</string>
+    <string name="general_confirm">Confirmar</string>
+    <string name="general_address">Dirección</string>
+    <string name="general_enter_address">Ingresa la dirección…</string>
+
+    <string name="common_empty_screen_title">Sin resultados</string>
+    <string name="common_empty_screen_subtitle">Lo intentamos pero no pudimos encontrar nada.</string>
 </resources>

@@ -1,0 +1,108 @@
+package co.electriccoin.zcash.ui.screen.swap.info
+
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.Spacer
+import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
+import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
+import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
+import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.stringRes
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SwapInfoView(state: SwapInfoState) {
+    ZashiScreenModalBottomSheet(state) {
+        Column(
+            modifier = Modifier.padding(horizontal = 24.dp)
+        ) {
+            Spacer(24.dp)
+            ListItem(
+                bigIcon = R.drawable.ic_swap_info_item_1,
+                subtitle = stringResource(R.string.swap_info_message)
+            )
+            Spacer(32.dp)
+            ZashiButton(
+                modifier = Modifier.fillMaxWidth(),
+                state =
+                    ButtonState(
+                        text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_ok),
+                        onClick = state.onBack
+                    )
+            )
+        }
+    }
+}
+
+@Composable
+private fun ListItem(
+    // title: String,
+    subtitle: String,
+    @DrawableRes bigIcon: Int,
+) {
+    Column {
+        Image(
+            modifier = Modifier.size(40.dp),
+            painter = painterResource(bigIcon),
+            contentDescription = null
+        )
+        Spacer(12.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Text(
+                text = stringResource(R.string.swap_info_title),
+                style = ZashiTypography.textXl,
+                fontWeight = FontWeight.SemiBold,
+                color = ZashiColors.Text.textPrimary
+            )
+            Spacer(10.dp)
+            Image(
+                painter = painterResource(R.drawable.ic_near_logo),
+                contentDescription = null
+            )
+        }
+        Spacer(12.dp)
+        // Text(
+        //     text = title,
+        //     style = ZashiTypography.textSm,
+        //     fontWeight = FontWeight.SemiBold,
+        //     color = ZashiColors.Text.textPrimary
+        // )
+        // Spacer(4.dp)
+        Text(
+            text = subtitle,
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Text.textTertiary
+        )
+    }
+}
+
+@PreviewScreens
+@Composable
+private fun SwapPreview() = ZcashTheme { SwapInfoView(state = SwapInfoState(onBack = {})) }
+
+@PreviewScreens
+@Composable
+private fun PayPreview() = ZcashTheme { SwapInfoView(state = SwapInfoState(onBack = {})) }

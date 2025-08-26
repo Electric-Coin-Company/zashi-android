@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.ZashiChipButtonState
+import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.util.StringResource
 
 data class ReviewTransactionState(
@@ -33,8 +33,8 @@ data class ReceiverExpandedState(
     val title: StringResource,
     val name: StringResource?,
     val address: StringResource,
-    val showButton: ZashiChipButtonState,
-    val saveButton: ZashiChipButtonState?
+    val showButton: ChipButtonState,
+    val saveButton: ChipButtonState?
 ) : ReviewTransactionItemState
 
 data class SenderState(

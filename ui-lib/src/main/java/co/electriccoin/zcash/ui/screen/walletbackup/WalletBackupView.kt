@@ -142,7 +142,7 @@ private fun SeedRecoveryMainContent(
             ZashiButton(
                 state = state.secondaryButton,
                 modifier = Modifier.fillMaxWidth(),
-                colors = ZashiButtonDefaults.secondaryColors()
+                defaultPrimaryColors = ZashiButtonDefaults.secondaryColors()
             )
             Spacer(8.dp)
         }

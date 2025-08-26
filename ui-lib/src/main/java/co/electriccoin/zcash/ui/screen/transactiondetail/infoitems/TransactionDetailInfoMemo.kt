@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +32,9 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.ShimmerRectangle
+import co.electriccoin.zcash.ui.design.component.Spacer
+import co.electriccoin.zcash.ui.design.component.rememberZashiShimmer
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -39,6 +44,7 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemoState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemosState
+import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun TransactionDetailMemo(
@@ -48,24 +54,25 @@ fun TransactionDetailMemo(
     Column(
         modifier = modifier
     ) {
-        if (state.memos.isEmpty()) {
-            TransactionDetailInfoEmptyMemo(modifier = Modifier.fillMaxWidth())
-        } else {
-            state.memos.forEachIndexed { index, memo ->
+        when {
+            state.memos == null -> TransactionDetailLoadingMemo()
 
-                val fullMemo = memo.content.getValue()
-                val fullMemoTooBig = fullMemo.length > MAX_MEMO_LENGTH
+            state.memos.isEmpty() -> TransactionDetailInfoEmptyMemo(modifier = Modifier.fillMaxWidth())
+            else ->
+                state.memos.forEachIndexed { index, memo ->
+                    val fullMemo = memo.content.getValue()
+                    val fullMemoTooBig = fullMemo.length > MAX_MEMO_LENGTH
 
-                if (index > 0) {
-                    Spacer(Modifier.height(8.dp))
+                    if (index > 0) {
+                        Spacer(Modifier.height(8.dp))
+                    }
+
+                    if (fullMemoTooBig) {
+                        ExpandableMemo(memo)
+                    } else {
+                        NonExpandableMemo(memo)
+                    }
                 }
-
-                if (fullMemoTooBig) {
-                    ExpandableMemo(memo)
-                } else {
-                    NonExpandableMemo(memo)
-                }
-            }
         }
     }
 }
@@ -92,7 +99,12 @@ private fun ExpandableMemo(state: TransactionDetailMemoState) {
                                 } else {
                                     stringRes(R.string.transaction_detail_memo_view_more)
                                 },
-                            trailingIcon = if (it) R.drawable.ic_chevron_up_small else R.drawable.ic_chevron_down_small,
+                            trailingIcon =
+                                if (it) {
+                                    co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_up_small
+                                } else {
+                                    co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_down_small
+                                },
                             onClick = { isExpanded = !isExpanded }
                         ),
                     onClick = state.onClick
@@ -114,6 +126,49 @@ private fun NonExpandableMemo(state: TransactionDetailMemoState) {
     )
 }
 
+@Suppress("MagicNumber")
+@Composable
+private fun TransactionDetailLoadingMemo(
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        color = ZashiColors.Surfaces.bgSecondary,
+    ) {
+        Column(
+            modifier =
+                Modifier
+                    .shimmer(rememberZashiShimmer())
+                    .padding(12.dp)
+        ) {
+            ShimmerRectangle(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(20.dp),
+                color = ZashiColors.Surfaces.bgTertiary
+            )
+            Spacer(4.dp)
+            ShimmerRectangle(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(20.dp),
+                color = ZashiColors.Surfaces.bgTertiary
+            )
+            Spacer(4.dp)
+            ShimmerRectangle(
+                modifier =
+                    Modifier
+                        .fillMaxWidth(.66f)
+                        .height(20.dp),
+                color = ZashiColors.Surfaces.bgTertiary
+            )
+        }
+    }
+}
+
 @Composable
 private fun TransactionDetailInfoMemo(
     state: TransactionDetailInfoMemoState,
@@ -128,7 +183,7 @@ private fun TransactionDetailInfoMemo(
                     onClick = state.onClick,
                     role = Role.Button,
                 ),
-        shape = TransactionDetailInfoShape.SINGLE.shape,
+        shape = RoundedCornerShape(12.dp),
         color = ZashiColors.Surfaces.bgSecondary,
     ) {
         Column(
@@ -186,6 +241,7 @@ private fun TransactionDetailInfoMemo(
     }
 }
 
+@Immutable
 private data class TransactionDetailInfoMemoState(
     val content: StringResource,
     val bottomButton: ButtonState?,
@@ -207,10 +263,22 @@ private fun Preview() =
                         bottomButton =
                             ButtonState(
                                 text = stringRes("Button"),
-                                trailingIcon = R.drawable.ic_chevron_down_small
+                                trailingIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_down_small
                             ),
                         onClick = {}
                     )
+            )
+        }
+    }
+
+@PreviewScreens
+@Composable
+private fun LoadingPreview() =
+    ZcashTheme {
+        BlankSurface {
+            TransactionDetailMemo(
+                modifier = Modifier.fillMaxWidth(),
+                state = TransactionDetailMemosState(null)
             )
         }
     }

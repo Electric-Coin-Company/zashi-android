@@ -92,7 +92,7 @@ private fun Content(
         ZashiButton(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             state = state.copy,
-            colors = ZashiButtonDefaults.tertiaryColors()
+            defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
         )
         VerticalSpacer(24.dp)
         Spacer(1f)

@@ -8,9 +8,9 @@ import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase.Zip321ParseUriValidation
-import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
-import co.electriccoin.zcash.ui.screen.scan.Scan
+import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow.ADDRESS_BOOK
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow.HOMEPAGE
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow.SEND
@@ -26,7 +26,7 @@ class OnZip321ScannedUseCase(
 ) {
     suspend operator fun invoke(
         zip321: Zip321ParseUriValidation.Valid,
-        scanArgs: Scan
+        scanArgs: ScanArgs
     ) {
         when (scanArgs.flow) {
             ADDRESS_BOOK -> addressBookFlow(zip321)
@@ -43,7 +43,7 @@ class OnZip321ScannedUseCase(
 
     private fun addressBookFlow(zip321: Zip321ParseUriValidation.Valid) {
         navigationRouter.replace(
-            AddContactArgs(
+            AddZashiABContactArgs(
                 zip321.payment.payments[0]
                     .recipientAddress.value
             )

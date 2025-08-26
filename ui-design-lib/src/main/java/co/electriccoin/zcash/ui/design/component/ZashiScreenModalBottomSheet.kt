@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
@@ -27,7 +28,10 @@ import co.electriccoin.zcash.ui.design.LocalSheetStateManager
 @Composable
 fun <T : ModalBottomSheetState> ZashiScreenModalBottomSheet(
     state: T?,
+    includeBottomPadding: Boolean = true,
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
+    dragHandle: @Composable (() -> Unit)? = { ZashiModalBottomSheetDragHandle() },
+    contentWindowInsets: @Composable () -> WindowInsets = { BottomSheetDefaults.windowInsets },
     content: @Composable ColumnScope.(state: T) -> Unit = {},
 ) {
     val parent = LocalView.current.parent
@@ -39,21 +43,25 @@ fun <T : ModalBottomSheetState> ZashiScreenModalBottomSheet(
     state?.let {
         ZashiModalBottomSheet(
             sheetState = sheetState,
+            dragHandle = dragHandle,
             content = {
                 BackHandler {
                     it.onBack()
                 }
                 content(it)
-                Spacer(24.dp)
-                androidx.compose.foundation.layout.Spacer(
-                    modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars),
-                )
+                if (includeBottomPadding) {
+                    Spacer(24.dp)
+                    androidx.compose.foundation.layout.Spacer(
+                        modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars),
+                    )
+                }
 
                 LaunchedEffect(Unit) {
                     sheetState.show()
                 }
             },
-            onDismissRequest = it.onBack
+            onDismissRequest = it.onBack,
+            contentWindowInsets = contentWindowInsets
         )
     }
 }

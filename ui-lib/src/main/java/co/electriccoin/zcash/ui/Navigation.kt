@@ -10,6 +10,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.NavType
@@ -19,7 +21,6 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.spackle.getSerializableCompat
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
 import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
@@ -45,20 +46,24 @@ import co.electriccoin.zcash.ui.screen.about.WrapAbout
 import co.electriccoin.zcash.ui.screen.accountlist.AccountList
 import co.electriccoin.zcash.ui.screen.accountlist.AndroidAccountList
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
-import co.electriccoin.zcash.ui.screen.addressbook.WrapAddressBook
+import co.electriccoin.zcash.ui.screen.addressbook.AddressBookScreen
+import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientArgs
+import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientScreen
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsArgs
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsScreen
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
-import co.electriccoin.zcash.ui.screen.balances.spendable.AndroidSpendableBalance
-import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalance
+import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceArgs
+import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceScreen
 import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
 import co.electriccoin.zcash.ui.screen.connectkeystone.AndroidConnectKeystone
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
-import co.electriccoin.zcash.ui.screen.contact.AddContactArgs
-import co.electriccoin.zcash.ui.screen.contact.UpdateContactArgs
-import co.electriccoin.zcash.ui.screen.contact.WrapAddContact
-import co.electriccoin.zcash.ui.screen.contact.WrapUpdateContact
+import co.electriccoin.zcash.ui.screen.contact.AddGenericABContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddGenericABContactScreen
+import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
+import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactScreen
+import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactArgs
+import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactScreen
 import co.electriccoin.zcash.ui.screen.crashreporting.AndroidCrashReportingOptIn
 import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
 import co.electriccoin.zcash.ui.screen.error.AndroidErrorBottomSheet
@@ -90,10 +95,10 @@ import co.electriccoin.zcash.ui.screen.home.syncing.AndroidWalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.AndroidWalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
-import co.electriccoin.zcash.ui.screen.integrations.AndroidDialogIntegrations
 import co.electriccoin.zcash.ui.screen.integrations.AndroidIntegrations
-import co.electriccoin.zcash.ui.screen.integrations.DialogIntegrations
 import co.electriccoin.zcash.ui.screen.integrations.Integrations
+import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
+import co.electriccoin.zcash.ui.screen.integrations.IntegrationsScreen
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.ReceiveArgs
@@ -107,8 +112,10 @@ import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
-import co.electriccoin.zcash.ui.screen.scan.Scan
-import co.electriccoin.zcash.ui.screen.scan.WrapScanValidator
+import co.electriccoin.zcash.ui.screen.scan.ScanArgs
+import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressArgs
+import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressScreen
+import co.electriccoin.zcash.ui.screen.scan.ScanZashiAddressScreen
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.AndroidThirdPartyScan
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScan
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
@@ -122,22 +129,38 @@ import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeystoneTransaction
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.swap.SwapArgs
+import co.electriccoin.zcash.ui.screen.swap.SwapScreen
+import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactArgs
+import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactScreen
+import co.electriccoin.zcash.ui.screen.swap.ab.SelectABSwapRecipientArgs
+import co.electriccoin.zcash.ui.screen.swap.ab.SelectSwapABRecipientScreen
+import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
+import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoScreen
+import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
+import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerScreen
+import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerArgs
+import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerScreen
+import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteArgs
+import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteScreen
+import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
+import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageScreen
 import co.electriccoin.zcash.ui.screen.taxexport.AndroidTaxExport
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExport
 import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInArgs
 import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInScreen
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsArgs
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsScreen
-import co.electriccoin.zcash.ui.screen.transactiondetail.AndroidTransactionDetail
-import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
-import co.electriccoin.zcash.ui.screen.transactionfilters.AndroidTransactionFiltersList
-import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFilters
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailArgs
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailScreen
+import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersArgs
+import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersScreen
 import co.electriccoin.zcash.ui.screen.transactionhistory.AndroidTransactionHistory
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
 import co.electriccoin.zcash.ui.screen.transactionnote.AndroidTransactionNote
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
-import co.electriccoin.zcash.ui.screen.transactionprogress.AndroidTransactionProgress
-import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgress
+import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressArgs
+import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressScreen
 import co.electriccoin.zcash.ui.screen.walletbackup.AndroidWalletBackup
 import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackup
 import co.electriccoin.zcash.ui.screen.warning.WrapNotEnoughSpace
@@ -202,12 +225,8 @@ internal fun MainActivity.Navigation() {
         popEnterTransition = { popEnterTransition() },
         popExitTransition = { popExitTransition() }
     ) {
-        composable<Home> {
-            NavigationHome(navController)
-        }
-        composable(SETTINGS) {
-            WrapSettings()
-        }
+        composable<Home> { NavigationHome(navController) }
+        composable(SETTINGS) { WrapSettings() }
         composable<AdvancedSettingsArgs> {
             AdvancedSettingsScreen(
                 goExportPrivateData = {
@@ -248,16 +267,9 @@ internal fun MainActivity.Navigation() {
                 }
             }
         }
-        composable(CHOOSE_SERVER) {
-            WrapChooseServer()
-        }
-        composable<WalletBackup> {
-            AndroidWalletBackup(it.toRoute())
-        }
-        composable(SUPPORT) {
-            // Pop back stack won't be right if we deep link into support
-            WrapFeedback()
-        }
+        composable(CHOOSE_SERVER) { WrapChooseServer() }
+        composable<WalletBackup> { AndroidWalletBackup(it.toRoute()) }
+        composable(SUPPORT) { WrapFeedback() }
         composable(DELETE_WALLET) {
             WrapDeleteWallet(
                 goBack = {
@@ -270,47 +282,17 @@ internal fun MainActivity.Navigation() {
                 }
             )
         }
-        composable(ABOUT) {
-            WrapAbout(
-                goBack = { navController.popBackStackJustOnce(ABOUT) },
-            )
-        }
-        composable(WHATS_NEW) {
-            WrapWhatsNew()
-        }
-        composable<Integrations> {
-            AndroidIntegrations()
-        }
-        dialog<DialogIntegrations> {
-            AndroidDialogIntegrations()
-        }
-        composable<ExchangeRateSettingsArgs> {
-            ExchangeRateSettingsScreen()
-        }
-        composable(CRASH_REPORTING_OPT_IN) {
-            AndroidCrashReportingOptIn()
-        }
-        composable<ScanKeystoneSignInRequest> {
-            WrapScanKeystoneSignInRequest()
-        }
-        composable<ScanKeystonePCZTRequest> {
-            WrapScanKeystonePCZTRequest()
-        }
-        composable<SignKeystoneTransaction> {
-            AndroidSignKeystoneTransaction()
-        }
-        dialog<AccountList>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false,
-                )
-        ) {
-            AndroidAccountList()
-        }
-        composable<Scan> {
-            WrapScanValidator(it.toRoute())
-        }
+        composable(ABOUT) { WrapAbout(goBack = { navController.popBackStackJustOnce(ABOUT) }) }
+        composable(WHATS_NEW) { WrapWhatsNew() }
+        composable<Integrations> { AndroidIntegrations() }
+        dialogComposable<IntegrationsArgs> { IntegrationsScreen() }
+        composable<ExchangeRateSettingsArgs> { ExchangeRateSettingsScreen() }
+        composable(CRASH_REPORTING_OPT_IN) { AndroidCrashReportingOptIn() }
+        composable<ScanKeystoneSignInRequest> { WrapScanKeystoneSignInRequest() }
+        composable<ScanKeystonePCZTRequest> { WrapScanKeystonePCZTRequest() }
+        composable<SignKeystoneTransaction> { AndroidSignKeystoneTransaction() }
+        dialogComposable<AccountList> { AndroidAccountList() }
+        composable<ScanArgs> { ScanZashiAddressScreen(it.toRoute()) }
         composable(EXPORT_PRIVATE_DATA) {
             WrapExportPrivateData(
                 goBack = {
@@ -329,43 +311,9 @@ internal fun MainActivity.Navigation() {
                 goSettings = { navController.navigateJustOnce(SETTINGS) }
             )
         }
-        composable(
-            route = AddressBookArgs.ROUTE,
-            arguments =
-                listOf(
-                    navArgument(AddressBookArgs.MODE) {
-                        defaultValue = AddressBookArgs.DEFAULT
-                        type = NavType.EnumType(AddressBookArgs::class.java)
-                    }
-                )
-        ) { backStackEntry ->
-            val args =
-                backStackEntry.arguments
-                    ?.getSerializableCompat<AddressBookArgs>(AddressBookArgs.MODE) ?: AddressBookArgs.DEFAULT
-
-            WrapAddressBook(args)
-        }
-        composable(
-            route = AddContactArgs.ROUTE,
-            arguments =
-                listOf(
-                    navArgument(AddContactArgs.ADDRESS) {
-                        nullable = true
-                        defaultValue = null
-                        type = NavType.StringType
-                    }
-                )
-        ) { backStackEntry ->
-            val address = backStackEntry.arguments?.getString(AddContactArgs.ADDRESS)
-            WrapAddContact(address)
-        }
-        composable(
-            route = UpdateContactArgs.ROUTE,
-            arguments = listOf(navArgument(UpdateContactArgs.CONTACT_ADDRESS) { type = NavType.StringType })
-        ) { backStackEntry ->
-            val contactAddress = backStackEntry.arguments?.getString(UpdateContactArgs.CONTACT_ADDRESS).orEmpty()
-            WrapUpdateContact(contactAddress)
-        }
+        composable<AddressBookArgs> { AddressBookScreen() }
+        composable<SelectRecipientArgs> { SelectRecipientScreen() }
+        composable<AddZashiABContactArgs> { AddZashiABContactScreen(it.toRoute()) }
         composable(
             route = "$QR_CODE/{$ADDRESS_TYPE}",
             arguments = listOf(navArgument(ADDRESS_TYPE) { type = NavType.IntType })
@@ -380,170 +328,58 @@ internal fun MainActivity.Navigation() {
             val addressType = backStackEntry.arguments?.getInt(ADDRESS_TYPE) ?: ReceiveAddressType.Unified.ordinal
             WrapRequest(addressType)
         }
-        composable<ConnectKeystone> {
-            AndroidConnectKeystone()
-        }
-        composable<SelectKeystoneAccount> {
-            AndroidSelectKeystoneAccount(it.toRoute())
-        }
-        composable<ReviewTransaction> {
-            AndroidReviewTransaction()
-        }
-        composable<TransactionProgress> {
-            AndroidTransactionProgress(it.toRoute())
-        }
-        composable<TransactionHistory> {
-            AndroidTransactionHistory()
-        }
-        dialog<TransactionFilters>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidTransactionFiltersList()
-        }
-        composable<TransactionDetail> {
-            AndroidTransactionDetail(it.toRoute())
-        }
-        dialog<TransactionNote>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false,
-                )
-        ) {
-            AndroidTransactionNote(it.toRoute())
-        }
-        composable<TaxExport> {
-            AndroidTaxExport()
-        }
-        composable<ReceiveArgs> {
-            ReceiveScreen()
-        }
-        composable<Send> {
-            WrapSend(it.toRoute())
-        }
-        dialog<SeedInfo>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false,
-                )
-        ) {
-            AndroidSeedInfo()
-        }
-        composable<WalletBackupDetail> {
-            AndroidWalletBackupDetail(it.toRoute())
-        }
-        dialog<SeedBackupInfo>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidWalletBackupInfo()
-        }
-        dialog<ShieldFundsInfo>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidShieldFundsInfo()
-        }
-        dialog<WalletDisconnectedInfo>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidWalletDisconnectedInfo()
-        }
-        dialog<WalletRestoringInfo>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidWalletRestoringInfo()
-        }
-        dialog<WalletSyncingInfo>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidWalletSyncingInfo()
-        }
-        dialog<WalletUpdatingInfo>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidWalletUpdatingInfo()
-        }
-        dialog<ErrorDialog>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidErrorDialog()
-        }
-        dialog<ErrorBottomSheet>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidErrorBottomSheet()
-        }
-        dialog<SpendableBalance>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            AndroidSpendableBalance()
-        }
+        composable<ConnectKeystone> { AndroidConnectKeystone() }
+        composable<SelectKeystoneAccount> { AndroidSelectKeystoneAccount(it.toRoute()) }
+        composable<ReviewTransaction> { AndroidReviewTransaction() }
+        composable<TransactionProgressArgs> { TransactionProgressScreen(it.toRoute()) }
+        composable<TransactionHistory> { AndroidTransactionHistory() }
+        dialogComposable<TransactionFiltersArgs> { TransactionFiltersScreen() }
+        composable<TransactionDetailArgs> { TransactionDetailScreen(it.toRoute()) }
+        dialogComposable<TransactionNote> { AndroidTransactionNote(it.toRoute()) }
+        composable<TaxExport> { AndroidTaxExport() }
+        composable<ReceiveArgs> { ReceiveScreen() }
+        composable<Send> { WrapSend(it.toRoute()) }
+        dialogComposable<SeedInfo> { AndroidSeedInfo() }
+        composable<WalletBackupDetail> { AndroidWalletBackupDetail(it.toRoute()) }
+        dialogComposable<SeedBackupInfo> { AndroidWalletBackupInfo() }
+        dialogComposable<ShieldFundsInfo> { AndroidShieldFundsInfo() }
+        dialogComposable<WalletDisconnectedInfo> { AndroidWalletDisconnectedInfo() }
+        dialogComposable<WalletRestoringInfo> { AndroidWalletRestoringInfo() }
+        dialogComposable<WalletSyncingInfo> { AndroidWalletSyncingInfo() }
+        dialogComposable<WalletUpdatingInfo> { AndroidWalletUpdatingInfo() }
+        dialogComposable<ErrorDialog> { AndroidErrorDialog() }
+        dialogComposable<ErrorBottomSheet> { AndroidErrorBottomSheet() }
+        dialogComposable<SpendableBalanceArgs> { SpendableBalanceScreen() }
         composable<CrashReportOptIn> { AndroidCrashReportOptIn() }
         composable<ThirdPartyScan> { AndroidThirdPartyScan() }
+        dialogComposable<SwapAssetPickerArgs> { SwapAssetPickerScreen(it.toRoute()) }
+        dialogComposable<SwapBlockchainPickerArgs> { SwapBlockchainPickerScreen(it.toRoute()) }
+        composable<SwapArgs> { SwapScreen() }
+        dialogComposable<SwapSlippageArgs> { SwapSlippageScreen(it.toRoute()) }
+        dialogComposable<SwapInfoArgs> { SwapInfoScreen() }
+        dialogComposable<SwapQuoteArgs> { SwapQuoteScreen() }
+        composable<ScanGenericAddressArgs> { ScanGenericAddressScreen(it.toRoute()) }
+        composable<SelectABSwapRecipientArgs> { SelectSwapABRecipientScreen(it.toRoute()) }
+        composable<AddSwapABContactArgs> { AddSwapABContactScreen(it.toRoute()) }
+        composable<AddGenericABContactArgs> { AddGenericABContactScreen(it.toRoute()) }
+        composable<UpdateGenericABContactArgs> { UpdateGenericABContactScreen(it.toRoute()) }
         composable<TorSettingsArgs> { TorSettingsScreen() }
         composable<TorOptInArgs> { TorOptInScreen() }
-        dialog<ShieldedAddressInfoArgs>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            ShieldedAddressInfoScreen()
-        }
-        dialog<TransparentAddressInfoArgs>(
-            dialogProperties =
-                DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false
-                )
-        ) {
-            TransparentAddressInfoScreen()
-        }
-        composable<ExchangeRateOptInArgs> {
-            ExchangeRateOptInScreen()
-        }
+        dialogComposable<ShieldedAddressInfoArgs> { ShieldedAddressInfoScreen() }
+        dialogComposable<TransparentAddressInfoArgs> { TransparentAddressInfoScreen() }
+        composable<ExchangeRateOptInArgs> { ExchangeRateOptInScreen() }
     }
+}
+
+private inline fun <reified T : Any> NavGraphBuilder.dialogComposable(
+    noinline content: @Composable (NavBackStackEntry) -> Unit
+) {
+    this.dialog<T>(
+        typeMap = emptyMap(),
+        deepLinks = emptyList(),
+        dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
+        content = content
+    )
 }
 
 /**

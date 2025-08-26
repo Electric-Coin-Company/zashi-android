@@ -4,7 +4,6 @@ import co.electriccoin.zcash.preference.api.PreferenceProvider
 
 data class NullableBooleanPreferenceDefault(
     override val key: PreferenceKey,
-    private val defaultValue: Boolean?
 ) : PreferenceDefault<Boolean?> {
     @Suppress("SwallowedException")
     override suspend fun getValue(preferenceProvider: PreferenceProvider) =
@@ -14,9 +13,9 @@ data class NullableBooleanPreferenceDefault(
             } catch (e: IllegalArgumentException) {
                 // TODO [#32]: Log coercion failure instead of just silently returning default
                 // TODO [#32]: https://github.com/Electric-Coin-Company/zashi-android/issues/32
-                defaultValue
+                null
             }
-        } ?: defaultValue
+        }
 
     override suspend fun putValue(
         preferenceProvider: PreferenceProvider,

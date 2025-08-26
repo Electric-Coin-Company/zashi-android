@@ -7,6 +7,7 @@
     <string name="transaction_filters_unread">Unread</string>
     <string name="transaction_filters_bookmarked">Bookmarked</string>
     <string name="transaction_filters_notes">Notes</string>
+    <string name="transaction_filters_swap">Swap</string>
     <string name="transaction_filters_btn_reset">Reset</string>
     <string name="transaction_filters_btn_apply">Apply</string>
 </resources>

@@ -32,10 +32,10 @@ import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.listitem.BaseListItem
+import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemColors
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDefaults
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDesignType
-import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemState
 import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
 import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -43,6 +43,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListItem
 import co.electriccoin.zcash.ui.screen.accountlist.model.AccountListState
@@ -112,7 +113,7 @@ private fun BottomSheetContent(state: AccountListState) {
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp),
-                colors =
+                defaultPrimaryColors =
                     ZashiButtonDefaults.secondaryColors(
                         borderColor = ZashiColors.Btns.Secondary.btnSecondaryBorder
                     )
@@ -131,7 +132,7 @@ private fun ZashiKeystonePromoListItem(item: AccountListItem.Other) {
 
 @Composable
 private fun ZashiKeystonePromoListItem(
-    state: ZashiListItemState,
+    state: ListItemState,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(24.dp),
     colors: ZashiListItemColors =
@@ -213,7 +214,8 @@ private fun ZashiAccountListItem(
         leading = {
             ZashiListItemDefaults.LeadingItem(
                 modifier = it,
-                icon = state.icon,
+                icon = imageRes(state.icon),
+                badge = null,
                 contentDescription = state.title.getValue()
             )
         },
@@ -226,9 +228,7 @@ private fun ZashiAccountListItem(
                 isEnabled = true
             )
         },
-        trailing = {
-            // empty
-        },
+        trailing = null,
         color =
             if (state.isSelected) {
                 ZashiColors.Surfaces.bgSecondary
@@ -259,7 +259,7 @@ private fun Preview() =
                                 )
                             ),
                             AccountListItem.Other(
-                                ZashiListItemState(
+                                ListItemState(
                                     title = stringRes("Keystone Hardware Wallet"),
                                     subtitle = stringRes("Get a Keystone Hardware Wallet and secure your Zcash."),
                                     design = ZashiListItemDesignType.SECONDARY,

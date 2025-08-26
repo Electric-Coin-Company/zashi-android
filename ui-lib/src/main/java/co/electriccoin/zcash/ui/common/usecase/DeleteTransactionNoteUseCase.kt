@@ -7,7 +7,7 @@ class DeleteTransactionNoteUseCase(
     private val metadataRepository: MetadataRepository,
     private val navigationRouter: NavigationRouter
 ) {
-    suspend operator fun invoke(txId: String) {
+    operator fun invoke(txId: String) {
         metadataRepository.deleteTxNote(txId)
         navigationRouter.back()
     }

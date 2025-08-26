@@ -6,9 +6,9 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.integration.test.common.getPermissionNegativeButtonUiObject
 import co.electriccoin.zcash.ui.integration.test.common.getPermissionPositiveButtonUiObject
-import co.electriccoin.zcash.ui.screen.scan.Scan
 import co.electriccoin.zcash.ui.screen.scan.ScanScreenState
 import co.electriccoin.zcash.ui.screen.scan.ScanValidationState
+import co.electriccoin.zcash.ui.screen.scan.ScanView
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import java.util.concurrent.atomic.AtomicInteger
@@ -48,7 +48,7 @@ class ScanViewTestSetup(
 
     @Composable
     fun DefaultContent() {
-        Scan(
+        ScanView(
             snackbarHostState = SnackbarHostState(),
             onBack = {},
             onScan = {},

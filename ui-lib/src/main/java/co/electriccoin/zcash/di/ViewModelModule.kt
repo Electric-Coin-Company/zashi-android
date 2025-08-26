@@ -1,18 +1,19 @@
 package co.electriccoin.zcash.di
 
-import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarViewModel
+import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarVM
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.OldHomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
-import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.AddressBookViewModel
-import co.electriccoin.zcash.ui.screen.addressbook.viewmodel.SelectRecipientViewModel
+import co.electriccoin.zcash.ui.screen.addressbook.AddressBookVM
+import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientVM
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsVM
-import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetViewModel
-import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceViewModel
+import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetVM
+import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceVM
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
-import co.electriccoin.zcash.ui.screen.contact.viewmodel.AddContactViewModel
-import co.electriccoin.zcash.ui.screen.contact.viewmodel.UpdateContactViewModel
+import co.electriccoin.zcash.ui.screen.contact.AddGenericABContactVM
+import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactVM
+import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactVM
 import co.electriccoin.zcash.ui.screen.crashreporting.viewmodel.CrashReportingViewModel
 import co.electriccoin.zcash.ui.screen.error.ErrorViewModel
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInVM
@@ -25,7 +26,7 @@ import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptInViewModel
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoViewModel
-import co.electriccoin.zcash.ui.screen.integrations.IntegrationsViewModel
+import co.electriccoin.zcash.ui.screen.integrations.IntegrationsVM
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
 import co.electriccoin.zcash.ui.screen.receive.ReceiveVM
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
@@ -35,32 +36,35 @@ import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightViewModel
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
-import co.electriccoin.zcash.ui.screen.scan.ScanViewModel
+import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressVM
+import co.electriccoin.zcash.ui.screen.scan.ScanZashiAddressVM
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScanViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTViewModel
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
-import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel.SelectKeystoneAccountViewModel
 import co.electriccoin.zcash.ui.screen.send.SendViewModel
-import co.electriccoin.zcash.ui.screen.settings.viewmodel.ScreenBrightnessViewModel
-import co.electriccoin.zcash.ui.screen.settings.viewmodel.SettingsViewModel
+import co.electriccoin.zcash.ui.screen.settings.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
+import co.electriccoin.zcash.ui.screen.swap.SwapVM
+import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactVM
+import co.electriccoin.zcash.ui.screen.swap.ab.SelectSwapABRecipientVM
+import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerVM
+import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerVM
+import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteVM
+import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageVM
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExportViewModel
 import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInVM
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsVM
-import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetail
-import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailViewModel
-import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersViewModel
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailVM
+import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersVM
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryViewModel
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetViewModel
-import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
 import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNoteViewModel
-import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressViewModel
+import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressVM
 import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackupViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.screen.whatsnew.viewmodel.WhatsNewViewModel
-import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -71,76 +75,39 @@ val viewModelModule =
         viewModelOf(::OldHomeViewModel)
         viewModelOf(::StorageCheckViewModel)
         viewModelOf(::RestoreSeedViewModel)
-        viewModelOf(::ScreenBrightnessViewModel)
         viewModelOf(::SettingsViewModel)
         viewModelOf(::AdvancedSettingsVM)
         viewModelOf(::SupportViewModel)
         viewModelOf(::RestoreSuccessViewModel)
         viewModelOf(::WhatsNewViewModel)
         viewModelOf(::ChooseServerViewModel)
-        viewModel { (address: String?) ->
-            AddContactViewModel(
-                address = address,
-                validateContactAddress = get(),
-                validateContactName = get(),
-                saveContact = get(),
-                navigationRouter = get()
-            )
-        }
-        viewModelOf(::UpdateContactViewModel)
         viewModelOf(::ReceiveVM)
         viewModelOf(::QrCodeViewModel)
         viewModelOf(::RequestViewModel)
-        viewModelOf(::ScanViewModel)
+        viewModelOf(::ScanZashiAddressVM)
         viewModelOf(::ScanKeystoneSignInRequestViewModel)
         viewModelOf(::ScanKeystonePCZTViewModel)
-        viewModelOf(::IntegrationsViewModel)
+        viewModelOf(::IntegrationsVM)
         viewModelOf(::FlexaViewModel)
         viewModelOf(::SendViewModel)
         viewModelOf(::WalletBackupViewModel)
         viewModelOf(::FeedbackViewModel)
         viewModelOf(::SignKeystoneTransactionViewModel)
         viewModelOf(::AccountListViewModel)
-        viewModelOf(::ZashiTopAppBarViewModel)
-        viewModel { (args: SelectKeystoneAccount) ->
-            SelectKeystoneAccountViewModel(
-                args = args,
-                createKeystoneAccount = get(),
-                deriveKeystoneAccountUnifiedAddress = get(),
-                parseKeystoneUrToZashiAccounts = get(),
-                navigationRouter = get()
-            )
-        }
+        viewModelOf(::ZashiTopAppBarVM)
+        viewModelOf(::SelectKeystoneAccountViewModel)
         viewModelOf(::ReviewTransactionViewModel)
-        viewModelOf(::TransactionFiltersViewModel)
-        viewModelOf(::TransactionProgressViewModel)
+        viewModelOf(::TransactionFiltersVM)
+        viewModelOf(::TransactionProgressVM)
         viewModelOf(::TransactionHistoryWidgetViewModel)
         viewModelOf(::TransactionHistoryViewModel)
-        viewModel { (transactionDetail: TransactionDetail) ->
-            TransactionDetailViewModel(
-                transactionDetail = transactionDetail,
-                getTransactionDetailById = get(),
-                copyToClipboard = get(),
-                navigationRouter = get(),
-                sendTransactionAgain = get(),
-                flipTransactionBookmark = get(),
-                markTxMemoAsRead = get()
-            )
-        }
-        viewModelOf(::AddressBookViewModel)
-        viewModelOf(::SelectRecipientViewModel)
-        viewModel { (transactionNote: TransactionNote) ->
-            TransactionNoteViewModel(
-                transactionNote = transactionNote,
-                navigationRouter = get(),
-                getTransactionNote = get(),
-                createOrUpdateTransactionNote = get(),
-                deleteTransactionNote = get(),
-            )
-        }
+        viewModelOf(::TransactionDetailVM)
+        viewModelOf(::AddressBookVM)
+        viewModelOf(::SelectRecipientVM)
+        viewModelOf(::TransactionNoteViewModel)
         viewModelOf(::TaxExportViewModel)
         viewModelOf(::CrashReportingViewModel)
-        viewModelOf(::BalanceWidgetViewModel)
+        viewModelOf(::BalanceWidgetVM)
         viewModelOf(::HomeViewModel)
         viewModelOf(::RestoreBDHeightViewModel)
         viewModelOf(::RestoreBDDateViewModel)
@@ -150,11 +117,22 @@ val viewModelModule =
         viewModelOf(::ExchangeRateSettingsVM)
         viewModelOf(::WalletBackupDetailViewModel)
         viewModelOf(::ErrorViewModel)
-        viewModelOf(::SpendableBalanceViewModel)
+        viewModelOf(::SpendableBalanceVM)
         viewModelOf(::CrashReportOptInViewModel)
         viewModelOf(::WalletRestoringInfoViewModel)
         viewModelOf(::ThirdPartyScanViewModel)
         viewModelOf(::TorSettingsVM)
         viewModelOf(::TorOptInVM)
         viewModelOf(::ExchangeRateOptInVM)
+        viewModelOf(::SwapAssetPickerVM)
+        viewModelOf(::SwapSlippageVM)
+        viewModelOf(::SwapVM)
+        viewModelOf(::SwapQuoteVM)
+        viewModelOf(::ScanGenericAddressVM)
+        viewModelOf(::SelectSwapABRecipientVM)
+        viewModelOf(::SwapBlockchainPickerVM)
+        viewModelOf(::AddZashiABContactVM)
+        viewModelOf(::AddSwapABContactVM)
+        viewModelOf(::AddGenericABContactVM)
+        viewModelOf(::UpdateGenericABContactVM)
     }
