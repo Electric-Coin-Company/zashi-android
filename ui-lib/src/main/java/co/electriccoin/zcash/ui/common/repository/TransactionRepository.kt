@@ -40,9 +40,13 @@ import kotlin.time.Duration.Companion.seconds
 
 interface TransactionRepository {
     val currentTransactions: Flow<List<Transaction>?>
+
     suspend fun getMemos(transaction: Transaction): List<String>
+
     fun observeTransaction(txId: String): Flow<Transaction?>
+
     fun observeTransactionsByMemo(memo: String): Flow<List<TransactionId>?>
+
     suspend fun getTransactions(): List<Transaction>
 }
 
@@ -253,11 +257,12 @@ class TransactionRepositoryImpl(
     override suspend fun getTransactions(): List<Transaction> = currentTransactions.filterNotNull().first()
 
     private suspend fun getRecipient(overview: TransactionOverview): WalletAddress? {
-        val address = synchronizerProvider
-            .getSynchronizer()
-            .getRecipients(overview)
-            .firstOrNull()
-            ?.addressValue ?: return null
+        val address =
+            synchronizerProvider
+                .getSynchronizer()
+                .getRecipients(overview)
+                .firstOrNull()
+                ?.addressValue ?: return null
 
         return when (synchronizerProvider.getSynchronizer().validateAddress(address)) {
             AddressType.Shielded -> WalletAddress.Sapling.new(address)

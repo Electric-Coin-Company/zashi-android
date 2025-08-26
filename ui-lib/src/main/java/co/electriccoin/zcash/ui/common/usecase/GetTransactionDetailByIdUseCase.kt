@@ -73,9 +73,7 @@ class GetTransactionDetailByIdUseCase(
                         } else {
                             addressBookRepository.observeContactByAddress(address)
                         }
-
-                    }
-                    .distinctUntilChanged()
+                    }.distinctUntilChanged()
 
             val swapFlow =
                 requestSwipeReloadPipeline

@@ -219,11 +219,12 @@ class MetadataRepositoryImpl(
         return metadata
             .map { metadata ->
                 val accountMetadata = metadata?.accountMetadata
-                val swapMetadata = if (depositAddress != null) {
-                    accountMetadata?.swaps?.swapIds?.find { it.depositAddress == depositAddress }
-                } else {
-                    null
-                }
+                val swapMetadata =
+                    if (depositAddress != null) {
+                        accountMetadata?.swaps?.swapIds?.find { it.depositAddress == depositAddress }
+                    } else {
+                        null
+                    }
                 TransactionMetadata(
                     isBookmarked = accountMetadata?.bookmarked?.find { it.txId == txId }?.isBookmarked == true,
                     isRead = accountMetadata?.read?.any { it == txId } == true,

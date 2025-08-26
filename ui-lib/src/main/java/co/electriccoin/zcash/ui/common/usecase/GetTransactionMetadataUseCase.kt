@@ -14,10 +14,11 @@ class GetTransactionMetadataUseCase(
     suspend operator fun invoke(txId: String) = observe(txId).first()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun observe(txId: String) = transactionRepository
-        .observeTransaction(txId)
-        .filterNotNull()
-        .flatMapLatest {
-            metadataRepository.observeTransactionMetadata(it)
-        }
+    fun observe(txId: String) =
+        transactionRepository
+            .observeTransaction(txId)
+            .filterNotNull()
+            .flatMapLatest {
+                metadataRepository.observeTransactionMetadata(it)
+            }
 }
