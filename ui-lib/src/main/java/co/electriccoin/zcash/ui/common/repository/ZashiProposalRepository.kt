@@ -159,26 +159,32 @@ class ZashiProposalRepositoryImpl(
                     )
                 submitState.update { SubmitProposalState.Result(result) }
 
-                val txIds: List<String> =
-                    when (result) {
-                        is SubmitResult.MultipleTrxFailure -> result.results.map { it.txIdString() }
-                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc -> listOf(result.result.txIdString())
-                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther -> emptyList()
-                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit -> listOf(result.result.txIdString())
-                        is SubmitResult.Success -> result.txIds
-                    }.filter { it.isNotEmpty() }
+                if (transactionProposal is SwapTransactionProposal) {
+                    val txIds: List<String> =
+                        when (result) {
+                            is SubmitResult.MultipleTrxFailure ->
+                                result.results.map { it.txIdString() }
 
-                if (txIds.isNotEmpty() && transactionProposal is SwapTransactionProposal) {
+                            is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc ->
+                                listOf(result.result.txIdString())
+
+                            is SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther ->
+                                emptyList()
+
+                            is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit ->
+                                listOf(result.result.txIdString())
+
+                            is SubmitResult.Success -> result.txIds
+                        }.filter { it.isNotEmpty() }
+                    val depositAddress = transactionProposal.destination.address
                     scope.launch {
-                        txIds.forEach { txId ->
-                            metadataRepository.markTxAsSwap(
-                                txId = txId,
-                                provider = transactionProposal.quote.provider,
-                                totalFees = transactionProposal.totalFees,
-                                totalFeesUsd = transactionProposal.totalFeesUsd
-                            )
-                            submitDepositTransaction(txId, transactionProposal)
-                        }
+                        metadataRepository.markTxAsSwap(
+                            depositAddress = depositAddress,
+                            provider = transactionProposal.quote.provider,
+                            totalFees = transactionProposal.totalFees,
+                            totalFeesUsd = transactionProposal.totalFeesUsd
+                        )
+                        txIds.forEach { submitDepositTransaction(it, transactionProposal) }
                     }
                 }
             }

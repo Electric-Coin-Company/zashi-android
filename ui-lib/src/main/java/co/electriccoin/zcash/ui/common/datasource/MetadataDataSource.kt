@@ -45,7 +45,7 @@ interface MetadataDataSource {
     ): Metadata
 
     suspend fun markTxAsSwap(
-        txId: String,
+        depositAddress: String,
         provider: String,
         totalFees: Zatoshi,
         totalFeesUsd: BigDecimal,
@@ -138,7 +138,7 @@ class MetadataDataSourceImpl(
         }
 
     override suspend fun markTxAsSwap(
-        txId: String,
+        depositAddress: String,
         provider: String,
         totalFees: Zatoshi,
         totalFeesUsd: BigDecimal,
@@ -146,7 +146,7 @@ class MetadataDataSourceImpl(
     ): Metadata =
         mutex.withLock {
             addSwapMetadata(
-                txId = txId,
+                depositAddress = depositAddress,
                 provider = provider,
                 totalFees = totalFees,
                 totalFeesUsd = totalFeesUsd,
@@ -257,7 +257,7 @@ class MetadataDataSourceImpl(
         )
 
     private suspend fun addSwapMetadata(
-        txId: String,
+        depositAddress: String,
         provider: String,
         totalFees: Zatoshi,
         totalFeesUsd: BigDecimal,
@@ -270,15 +270,16 @@ class MetadataDataSourceImpl(
                     swaps =
                         metadata.swaps.copy(
                             swapIds =
-                                metadata.swaps.swapIds.replaceOrAdd(predicate = { it.txId == txId }) {
-                                    SwapMetadata(
-                                        txId = txId,
-                                        lastUpdated = Instant.now(),
-                                        totalFees = totalFees,
-                                        totalFeesUsd = totalFeesUsd,
-                                        provider = provider
-                                    )
-                                }
+                                metadata.swaps.swapIds
+                                    .replaceOrAdd(predicate = { it.depositAddress == depositAddress }) {
+                                        SwapMetadata(
+                                            depositAddress = depositAddress,
+                                            lastUpdated = Instant.now(),
+                                            totalFees = totalFees,
+                                            totalFeesUsd = totalFeesUsd,
+                                            provider = provider
+                                        )
+                                    }
                         ),
                 )
             }

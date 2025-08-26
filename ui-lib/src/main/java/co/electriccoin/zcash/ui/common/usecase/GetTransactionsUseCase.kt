@@ -26,7 +26,7 @@ class GetTransactionsUseCase(
                     transactions
                         .map {
                             metadataRepository
-                                .observeTransactionMetadataByTxId(it.id.txIdString())
+                                .observeTransactionMetadata(it)
                                 .mapLatest { metadata ->
                                     ListTransactionData(
                                         transaction = it,

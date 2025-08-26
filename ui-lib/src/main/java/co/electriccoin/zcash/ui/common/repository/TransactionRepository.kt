@@ -8,7 +8,9 @@ import cash.z.ecc.android.sdk.model.TransactionState
 import cash.z.ecc.android.sdk.model.TransactionState.Confirmed
 import cash.z.ecc.android.sdk.model.TransactionState.Expired
 import cash.z.ecc.android.sdk.model.TransactionState.Pending
+import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.android.sdk.model.Zatoshi
+import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import kotlinx.coroutines.CoroutineScope
@@ -38,15 +40,9 @@ import kotlin.time.Duration.Companion.seconds
 
 interface TransactionRepository {
     val currentTransactions: Flow<List<Transaction>?>
-
     suspend fun getMemos(transaction: Transaction): List<String>
-
-    suspend fun getRecipients(transaction: Transaction): String?
-
     fun observeTransaction(txId: String): Flow<Transaction?>
-
     fun observeTransactionsByMemo(memo: String): Flow<List<TransactionId>?>
-
     suspend fun getTransactions(): List<Transaction>
 }
 
@@ -105,7 +101,8 @@ class TransactionRepositoryImpl(
                                             id = transaction.txId,
                                             memoCount = transaction.memoCount,
                                             fee = transaction.netValue,
-                                            overview = transaction
+                                            overview = transaction,
+                                            recipient = null
                                         )
 
                                     transaction.isSentTransaction ->
@@ -116,7 +113,8 @@ class TransactionRepositoryImpl(
                                             id = transaction.txId,
                                             memoCount = transaction.memoCount,
                                             fee = transaction.feePaid,
-                                            overview = transaction
+                                            overview = transaction,
+                                            recipient = getRecipient(transaction)
                                         )
 
                                     else ->
@@ -126,7 +124,8 @@ class TransactionRepositoryImpl(
                                             amount = transaction.netValue,
                                             id = transaction.txId,
                                             memoCount = transaction.memoCount,
-                                            overview = transaction
+                                            overview = transaction,
+                                            recipient = null
                                         )
                                 }
 
@@ -140,7 +139,8 @@ class TransactionRepositoryImpl(
                                             id = transaction.txId,
                                             memoCount = transaction.memoCount,
                                             fee = transaction.netValue,
-                                            overview = transaction
+                                            overview = transaction,
+                                            recipient = null
                                         )
 
                                     transaction.isSentTransaction ->
@@ -151,7 +151,8 @@ class TransactionRepositoryImpl(
                                             id = transaction.txId,
                                             memoCount = transaction.memoCount,
                                             fee = transaction.feePaid,
-                                            overview = transaction
+                                            overview = transaction,
+                                            recipient = getRecipient(transaction)
                                         )
 
                                     else ->
@@ -161,7 +162,8 @@ class TransactionRepositoryImpl(
                                             amount = transaction.netValue,
                                             id = transaction.txId,
                                             memoCount = transaction.memoCount,
-                                            overview = transaction
+                                            overview = transaction,
+                                            recipient = null
                                         )
                                 }
 
@@ -175,7 +177,8 @@ class TransactionRepositoryImpl(
                                             id = transaction.txId,
                                             memoCount = transaction.memoCount,
                                             fee = transaction.netValue,
-                                            overview = transaction
+                                            overview = transaction,
+                                            recipient = null
                                         )
 
                                     transaction.isSentTransaction ->
@@ -186,7 +189,8 @@ class TransactionRepositoryImpl(
                                             id = transaction.txId,
                                             memoCount = transaction.memoCount,
                                             fee = transaction.feePaid,
-                                            overview = transaction
+                                            overview = transaction,
+                                            recipient = getRecipient(transaction)
                                         )
 
                                     else ->
@@ -196,7 +200,8 @@ class TransactionRepositoryImpl(
                                             amount = transaction.netValue,
                                             id = transaction.txId,
                                             memoCount = transaction.memoCount,
-                                            overview = transaction
+                                            overview = transaction,
+                                            recipient = null
                                         )
                                 }
 
@@ -231,19 +236,6 @@ class TransactionRepositoryImpl(
                 .toList()
         }
 
-    override suspend fun getRecipients(transaction: Transaction): String? =
-        withContext(Dispatchers.IO) {
-            if (transaction is SendTransaction) {
-                synchronizerProvider
-                    .getSynchronizer()
-                    .getRecipients(transaction.overview)
-                    .firstOrNull()
-                    ?.addressValue
-            } else {
-                null
-            }
-        }
-
     override fun observeTransaction(txId: String): Flow<Transaction?> =
         currentTransactions
             .map { transactions ->
@@ -259,6 +251,22 @@ class TransactionRepositoryImpl(
             }.distinctUntilChanged()
 
     override suspend fun getTransactions(): List<Transaction> = currentTransactions.filterNotNull().first()
+
+    private suspend fun getRecipient(overview: TransactionOverview): WalletAddress? {
+        val address = synchronizerProvider
+            .getSynchronizer()
+            .getRecipients(overview)
+            .firstOrNull()
+            ?.addressValue ?: return null
+
+        return when (synchronizerProvider.getSynchronizer().validateAddress(address)) {
+            AddressType.Shielded -> WalletAddress.Sapling.new(address)
+            AddressType.Tex -> WalletAddress.Tex.new(address)
+            AddressType.Transparent -> WalletAddress.Transparent.new(address)
+            AddressType.Unified -> WalletAddress.Unified.new(address)
+            else -> null
+        }
+    }
 }
 
 sealed interface Transaction {
@@ -269,6 +277,7 @@ sealed interface Transaction {
     val transactionOutputs: List<TransactionOutput>
     val overview: TransactionOverview
     val fee: Zatoshi?
+    val recipient: WalletAddress?
 }
 
 sealed interface SendTransaction : Transaction {
@@ -280,6 +289,7 @@ sealed interface SendTransaction : Transaction {
         override val fee: Zatoshi?,
         override val transactionOutputs: List<TransactionOutput>,
         override val overview: TransactionOverview,
+        override val recipient: WalletAddress?,
     ) : SendTransaction
 
     data class Pending(
@@ -290,6 +300,7 @@ sealed interface SendTransaction : Transaction {
         override val fee: Zatoshi?,
         override val transactionOutputs: List<TransactionOutput>,
         override val overview: TransactionOverview,
+        override val recipient: WalletAddress?,
     ) : SendTransaction
 
     data class Failed(
@@ -300,6 +311,7 @@ sealed interface SendTransaction : Transaction {
         override val fee: Zatoshi?,
         override val transactionOutputs: List<TransactionOutput>,
         override val overview: TransactionOverview,
+        override val recipient: WalletAddress?,
     ) : SendTransaction
 }
 
@@ -314,6 +326,7 @@ sealed interface ReceiveTransaction : Transaction {
         override val memoCount: Int,
         override val transactionOutputs: List<TransactionOutput>,
         override val overview: TransactionOverview,
+        override val recipient: WalletAddress?,
     ) : ReceiveTransaction
 
     data class Pending(
@@ -323,6 +336,7 @@ sealed interface ReceiveTransaction : Transaction {
         override val memoCount: Int,
         override val transactionOutputs: List<TransactionOutput>,
         override val overview: TransactionOverview,
+        override val recipient: WalletAddress?,
     ) : ReceiveTransaction
 
     data class Failed(
@@ -332,6 +346,7 @@ sealed interface ReceiveTransaction : Transaction {
         override val memoCount: Int,
         override val transactionOutputs: List<TransactionOutput>,
         override val overview: TransactionOverview,
+        override val recipient: WalletAddress?,
     ) : ReceiveTransaction
 }
 
@@ -344,6 +359,7 @@ sealed interface ShieldTransaction : Transaction {
         override val fee: Zatoshi?,
         override val transactionOutputs: List<TransactionOutput>,
         override val overview: TransactionOverview,
+        override val recipient: WalletAddress?,
     ) : ShieldTransaction
 
     data class Pending(
@@ -354,6 +370,7 @@ sealed interface ShieldTransaction : Transaction {
         override val fee: Zatoshi?,
         override val transactionOutputs: List<TransactionOutput>,
         override val overview: TransactionOverview,
+        override val recipient: WalletAddress?,
     ) : ShieldTransaction
 
     data class Failed(
@@ -364,6 +381,7 @@ sealed interface ShieldTransaction : Transaction {
         override val transactionOutputs: List<TransactionOutput>,
         override val fee: Zatoshi?,
         override val overview: TransactionOverview,
+        override val recipient: WalletAddress?,
     ) : ShieldTransaction
 }
 

@@ -74,8 +74,8 @@ data class SwapsMetadata(
 @JsonIgnoreUnknownKeys
 @Serializable
 data class SwapMetadata(
-    @SerialName("txId")
-    val txId: String,
+    @SerialName("depositAddress")
+    val depositAddress: String,
     @SerialName("lastUpdated")
     @Serializable(InstantSerializer::class)
     val lastUpdated: Instant,

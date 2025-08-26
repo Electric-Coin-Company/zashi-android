@@ -56,31 +56,26 @@ class GetCurrentFilteredTransactionsUseCase(
                 val enhancedTransactions =
                     transactions
                         ?.map { transaction ->
-                            val recipient = transactionRepository.getRecipients(transaction)
+                            val recipient = transaction.recipient
 
                             if (recipient == null) {
                                 metadataRepository
-                                    .observeTransactionMetadataByTxId(
-                                        transaction.id.txIdString()
-                                    ).map {
+                                    .observeTransactionMetadata(transaction)
+                                    .map {
                                         FilterTransactionData(
                                             transaction = transaction,
                                             contact = null,
-                                            recipientAddress = null,
                                             transactionMetadata = it
                                         )
                                     }
                             } else {
                                 combine(
-                                    addressBookRepository.observeContactByAddress(recipient),
-                                    metadataRepository.observeTransactionMetadataByTxId(
-                                        txId = transaction.id.txIdString(),
-                                    )
+                                    addressBookRepository.observeContactByAddress(recipient.address),
+                                    metadataRepository.observeTransactionMetadata(transaction)
                                 ) { contact, transactionMetadata ->
                                     FilterTransactionData(
                                         transaction = transaction,
                                         contact = contact,
-                                        recipientAddress = recipient,
                                         transactionMetadata = transactionMetadata
                                     )
                                 }
@@ -275,8 +270,9 @@ class GetCurrentFilteredTransactionsUseCase(
 private data class FilterTransactionData(
     val transaction: Transaction,
     val contact: EnhancedABContact?,
-    val recipientAddress: String?,
     val transactionMetadata: TransactionMetadata
-)
+) {
+    val recipientAddress = transaction.recipient?.address
+}
 
 private const val MIN_TEXT_FILTER_LENGTH = 3

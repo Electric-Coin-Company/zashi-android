@@ -136,7 +136,7 @@ class TransactionDetailVM(
                             quoteHeader = createQuoteHeaderState(transaction.swap),
                             depositAddress =
                                 stringResByAddress(
-                                    value = transaction.recipientAddress?.address.orEmpty(),
+                                    value = transaction.recipient?.address.orEmpty(),
                                     abbreviated = true
                                 ),
                             totalFees =
@@ -161,7 +161,7 @@ class TransactionDetailVM(
                                 onCopyToClipboard(transaction.transaction.id.txIdString())
                             },
                             onDepositAddressClick = {
-                                onCopyToClipboard(transaction.recipientAddress?.address.orEmpty())
+                                onCopyToClipboard(transaction.recipient?.address.orEmpty())
                             },
                             onRecipientAddressClick =
                                 if (recipient == null) {
@@ -180,7 +180,7 @@ class TransactionDetailVM(
                         )
                     }
 
-                    transaction.recipientAddress is WalletAddress.Transparent ->
+                    transaction.recipient is WalletAddress.Transparent ->
                         SendTransparentState(
                             contact = transaction.contact?.let { stringRes(it.name) },
                             address = createAddressStringRes(transaction),
@@ -193,7 +193,7 @@ class TransactionDetailVM(
                             onTransactionIdClick = {
                                 onCopyToClipboard(transaction.transaction.id.txIdString())
                             },
-                            onTransactionAddressClick = { onCopyToClipboard(transaction.recipientAddress.address) },
+                            onTransactionAddressClick = { onCopyToClipboard(transaction.recipient.address) },
                             fee = createFeeStringRes(transaction),
                             completedTimestamp = createTimestampStringRes(transaction),
                             isPending = isPending(transaction),
@@ -213,7 +213,7 @@ class TransactionDetailVM(
                                 onCopyToClipboard(transaction.transaction.id.txIdString())
                             },
                             onTransactionAddressClick = {
-                                onCopyToClipboard(transaction.recipientAddress?.address.orEmpty())
+                                onCopyToClipboard(transaction.recipient?.address.orEmpty())
                             },
                             fee = createFeeStringRes(transaction),
                             completedTimestamp = createTimestampStringRes(transaction),
@@ -365,13 +365,13 @@ class TransactionDetailVM(
 
     private fun createAddressStringRes(transaction: DetailedTransactionData) =
         stringResByAddress(
-            value = transaction.recipientAddress?.address.orEmpty(),
+            value = transaction.recipient?.address.orEmpty(),
             abbreviated = false
         )
 
     private fun createAbbreviatedAddressStringRes(transaction: DetailedTransactionData) =
         stringResByAddress(
-            value = transaction.recipientAddress?.address.orEmpty(),
+            value = transaction.recipient?.address.orEmpty(),
             abbreviated = true
         )
 
@@ -480,7 +480,7 @@ class TransactionDetailVM(
     }
 
     private fun onSaveAddressClick(transaction: DetailedTransactionData) {
-        transaction.recipientAddress?.let {
+        transaction.recipient?.let {
             navigationRouter.forward(AddZashiABContactArgs(it.address))
         }
     }

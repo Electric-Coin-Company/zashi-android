@@ -38,11 +38,11 @@ interface MetadataRepository {
 
     fun markTxMemoAsRead(txId: String)
 
-    fun markTxAsSwap(txId: String, provider: String, totalFees: Zatoshi, totalFeesUsd: BigDecimal)
+    fun markTxAsSwap(depositAddress: String, provider: String, totalFees: Zatoshi, totalFeesUsd: BigDecimal)
 
     fun addSwapAssetToHistory(tokenTicker: String, chainTicker: String)
 
-    fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata>
+    fun observeTransactionMetadata(transaction: Transaction): Flow<TransactionMetadata>
 
     fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?>
 }
@@ -103,7 +103,7 @@ class MetadataRepositoryImpl(
 
                                             is Command.MarkTxAsSwap ->
                                                 metadataDataSource.markTxAsSwap(
-                                                    txId = command.txId,
+                                                    depositAddress = command.depositAddress,
                                                     provider = command.provider,
                                                     totalFees = command.totalFees,
                                                     totalFeesUsd = command.totalFeesUsd,
@@ -182,7 +182,7 @@ class MetadataRepositoryImpl(
     }
 
     override fun markTxAsSwap(
-        txId: String,
+        depositAddress: String,
         provider: String,
         totalFees: Zatoshi,
         totalFeesUsd: BigDecimal
@@ -190,7 +190,7 @@ class MetadataRepositoryImpl(
         scope.launch {
             command.send(
                 Command.MarkTxAsSwap(
-                    txId = txId,
+                    depositAddress = depositAddress,
                     provider = provider,
                     totalFees = totalFees,
                     totalFeesUsd = totalFeesUsd,
@@ -212,11 +212,18 @@ class MetadataRepositoryImpl(
         }
     }
 
-    override fun observeTransactionMetadataByTxId(txId: String): Flow<TransactionMetadata> =
-        metadata
+    override fun observeTransactionMetadata(transaction: Transaction): Flow<TransactionMetadata> {
+        val txId = transaction.id.txIdString()
+        val depositAddress = transaction.recipient?.address
+
+        return metadata
             .map { metadata ->
                 val accountMetadata = metadata?.accountMetadata
-                val swapMetadata = accountMetadata?.swaps?.swapIds?.find { it.txId == txId }
+                val swapMetadata = if (depositAddress != null) {
+                    accountMetadata?.swaps?.swapIds?.find { it.depositAddress == depositAddress }
+                } else {
+                    null
+                }
                 TransactionMetadata(
                     isBookmarked = accountMetadata?.bookmarked?.find { it.txId == txId }?.isBookmarked == true,
                     isRead = accountMetadata?.read?.any { it == txId } == true,
@@ -224,6 +231,7 @@ class MetadataRepositoryImpl(
                     swapMetadata = swapMetadata,
                 )
             }.distinctUntilChanged()
+    }
 
     override fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?> =
         metadata
@@ -288,7 +296,7 @@ private sealed interface Command {
     ) : Command
 
     data class MarkTxAsSwap(
-        val txId: String,
+        val depositAddress: String,
         val provider: String,
         val totalFees: Zatoshi,
         val totalFeesUsd: BigDecimal,
