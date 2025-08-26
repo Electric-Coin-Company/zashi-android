@@ -244,11 +244,18 @@ class KeystoneProposalRepositoryImpl(
                     )
                 submitState.update { SubmitProposalState.Result(result) }
 
-                if (result is SubmitResult.Success && transactionProposal is SwapTransactionProposal) {
-                    val txId = result.txIds.firstOrNull()
+                val txIds: List<String> =
+                    when (result) {
+                        is SubmitResult.MultipleTrxFailure -> result.results.map { it.txIdString() }
+                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc -> listOf(result.result.txIdString())
+                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther -> emptyList()
+                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit -> listOf(result.result.txIdString())
+                        is SubmitResult.Success -> result.txIds
+                    }.filter { it.isNotEmpty() }
 
-                    if (!txId.isNullOrEmpty()) {
-                        scope.launch {
+                if (txIds.isNotEmpty() && transactionProposal is SwapTransactionProposal) {
+                    scope.launch {
+                        txIds.forEach { txId ->
                             metadataRepository.markTxAsSwap(
                                 txId = txId,
                                 provider = transactionProposal.quote.provider,
