@@ -6,6 +6,13 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.2.0 (1120)] - 2025-08-27
+
+### Added
+- Swap ZEC with Zashi:
+- Swap shielded ZEC to any supported cryptocurrency with the Near Intents integration.
+- Zashi is a ZEC-only wallet, so you’ll need a valid wallet address for the asset you’re swapping to.
+
 ## [2.1.0 (999)] - 2025-08-06
 
 ### Changed
