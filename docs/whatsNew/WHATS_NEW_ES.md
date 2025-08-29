@@ -12,6 +12,13 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.2.1 (1121)] - 2025-08-29
+
+### Añadido:
+- Swap ZEC con Zashi:
+- Swap ZEC protegidos por cualquier criptomoneda compatible con la integración de Near Intents.
+- Zashi es una billetera exclusiva para ZEC, por lo que necesitarás una dirección de billetera válida para el activo al que vas a intercambiar.
+
 ## [2.2.0 (1120)] - 2025-08-27
 
 ### Añadido:

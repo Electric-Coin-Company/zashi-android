@@ -1,0 +1,3 @@
+Swap ZEC con Zashi
+- Swap ZEC protegidos por cualquier criptomoneda compatible con la integración de Near Intents.
+- Zashi es una billetera exclusiva para ZEC, por lo que necesitarás una dirección de billetera válida para el activo al que vas a intercambiar.
