@@ -14,6 +14,10 @@ import co.electriccoin.zcash.ui.common.provider.MetadataStorageProvider
 import co.electriccoin.zcash.ui.common.serialization.METADATA_SERIALIZATION_V2
 import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -21,28 +25,19 @@ import java.math.BigDecimal
 import java.time.Instant
 
 interface MetadataDataSource {
-    suspend fun getMetadata(key: MetadataKey): Metadata
+    fun observe(key: MetadataKey): Flow<Metadata?>
 
-    suspend fun flipTxAsBookmarked(
-        txId: String,
-        key: MetadataKey
-    ): Metadata
+    suspend fun flipTxAsBookmarked(txId: String, key: MetadataKey)
 
     suspend fun createOrUpdateTxNote(
         txId: String,
         note: String,
         key: MetadataKey
-    ): Metadata
+    )
 
-    suspend fun deleteTxNote(
-        txId: String,
-        key: MetadataKey
-    ): Metadata
+    suspend fun deleteTxNote(txId: String, key: MetadataKey)
 
-    suspend fun markTxMemoAsRead(
-        txId: String,
-        key: MetadataKey
-    ): Metadata
+    suspend fun markTxMemoAsRead(txId: String, key: MetadataKey)
 
     suspend fun markTxAsSwap(
         depositAddress: String,
@@ -50,16 +45,11 @@ interface MetadataDataSource {
         totalFees: Zatoshi,
         totalFeesUsd: BigDecimal,
         key: MetadataKey
-    ): Metadata
+    )
 
     suspend fun addSwapAssetToHistory(
         tokenTicker: String,
         chainTicker: String,
-        key: MetadataKey
-    ): Metadata
-
-    suspend fun save(
-        metadata: Metadata,
         key: MetadataKey
     )
 }
@@ -71,15 +61,24 @@ class MetadataDataSourceImpl(
 ) : MetadataDataSource {
     private val mutex = Mutex()
 
-    override suspend fun getMetadata(key: MetadataKey): Metadata =
-        mutex.withLock {
-            getMetadataInternal(key)
-        }
+    private val metadataUpdatePipeline = MutableSharedFlow<Pair<MetadataKey, Metadata>>()
 
-    override suspend fun flipTxAsBookmarked(
-        txId: String,
-        key: MetadataKey,
-    ): Metadata =
+    override fun observe(key: MetadataKey) =
+        flow {
+            emit(null)
+            mutex.withLock { emit(getMetadataInternal(key)) }
+            metadataUpdatePipeline.collect { (newKey, newMetadata) ->
+                if (key.bytes.size == newKey.bytes.size &&
+                    key.bytes
+                        .mapIndexed { index, secretBytes -> secretBytes.equalsSecretBytes(newKey.bytes[index]) }
+                        .all { it }
+                ) {
+                    emit(newMetadata)
+                }
+            }
+        }.distinctUntilChanged()
+
+    override suspend fun flipTxAsBookmarked(txId: String, key: MetadataKey) =
         mutex.withLock {
             updateMetadataBookmark(txId = txId, key = key) {
                 it.copy(
@@ -89,11 +88,7 @@ class MetadataDataSourceImpl(
             }
         }
 
-    override suspend fun createOrUpdateTxNote(
-        txId: String,
-        note: String,
-        key: MetadataKey
-    ): Metadata =
+    override suspend fun createOrUpdateTxNote(txId: String, note: String, key: MetadataKey) =
         mutex.withLock {
             updateMetadataAnnotation(
                 txId = txId,
@@ -106,10 +101,7 @@ class MetadataDataSourceImpl(
             }
         }
 
-    override suspend fun deleteTxNote(
-        txId: String,
-        key: MetadataKey
-    ): Metadata =
+    override suspend fun deleteTxNote(txId: String, key: MetadataKey) =
         mutex.withLock {
             updateMetadataAnnotation(
                 txId = txId,
@@ -122,10 +114,7 @@ class MetadataDataSourceImpl(
             }
         }
 
-    override suspend fun markTxMemoAsRead(
-        txId: String,
-        key: MetadataKey
-    ): Metadata =
+    override suspend fun markTxMemoAsRead(txId: String, key: MetadataKey) =
         mutex.withLock {
             updateMetadata(
                 key = key,
@@ -143,35 +132,26 @@ class MetadataDataSourceImpl(
         totalFees: Zatoshi,
         totalFeesUsd: BigDecimal,
         key: MetadataKey
-    ): Metadata =
-        mutex.withLock {
-            addSwapMetadata(
-                depositAddress = depositAddress,
-                provider = provider,
-                totalFees = totalFees,
-                totalFeesUsd = totalFeesUsd,
-                key = key
-            )
-        }
+    ) = mutex.withLock {
+        addSwapMetadata(
+            depositAddress = depositAddress,
+            provider = provider,
+            totalFees = totalFees,
+            totalFeesUsd = totalFeesUsd,
+            key = key
+        )
+    }
 
     override suspend fun addSwapAssetToHistory(
         tokenTicker: String,
         chainTicker: String,
         key: MetadataKey
-    ): Metadata =
-        mutex.withLock {
-            prependSwapAssetToHistory(
-                tokenTicker = tokenTicker,
-                chainTicker = chainTicker,
-                key = key
-            )
-        }
-
-    override suspend fun save(
-        metadata: Metadata,
-        key: MetadataKey
     ) = mutex.withLock {
-        writeToLocalStorage(metadata, key)
+        prependSwapAssetToHistory(
+            tokenTicker = tokenTicker,
+            chainTicker = chainTicker,
+            key = key
+        )
     }
 
     private suspend fun getMetadataInternal(key: MetadataKey): Metadata {
@@ -200,10 +180,7 @@ class MetadataDataSourceImpl(
         }
     }
 
-    private suspend fun writeToLocalStorage(
-        metadata: Metadata,
-        key: MetadataKey
-    ) {
+    private suspend fun writeToLocalStorage(metadata: Metadata, key: MetadataKey) {
         withContext(Dispatchers.IO) {
             runCatching {
                 val file = metadataStorageProvider.getOrCreateStorageFile(key)
@@ -216,45 +193,43 @@ class MetadataDataSourceImpl(
         txId: String,
         key: MetadataKey,
         transform: (AnnotationMetadata) -> AnnotationMetadata
-    ): Metadata =
-        updateMetadata(
-            key = key,
-            transform = { metadata ->
-                metadata.copy(
-                    annotations =
-                        metadata.annotations
-                            .replaceOrAdd(
-                                predicate = { it.txId == txId },
-                                transform = {
-                                    val bookmarkMetadata = it ?: defaultAnnotationMetadata(txId)
-                                    transform(bookmarkMetadata)
-                                }
-                            )
-                )
-            }
-        )
+    ) = updateMetadata(
+        key = key,
+        transform = { metadata ->
+            metadata.copy(
+                annotations =
+                    metadata.annotations
+                        .replaceOrAdd(
+                            predicate = { it.txId == txId },
+                            transform = {
+                                val bookmarkMetadata = it ?: defaultAnnotationMetadata(txId)
+                                transform(bookmarkMetadata)
+                            }
+                        )
+            )
+        }
+    )
 
     private suspend fun updateMetadataBookmark(
         txId: String,
         key: MetadataKey,
         transform: (BookmarkMetadata) -> BookmarkMetadata
-    ): Metadata =
-        updateMetadata(
-            key = key,
-            transform = { metadata ->
-                metadata.copy(
-                    bookmarked =
-                        metadata.bookmarked
-                            .replaceOrAdd(
-                                predicate = { it.txId == txId },
-                                transform = {
-                                    val bookmarkMetadata = it ?: defaultBookmarkMetadata(txId)
-                                    transform(bookmarkMetadata)
-                                }
-                            )
-                )
-            }
-        )
+    ) = updateMetadata(
+        key = key,
+        transform = { metadata ->
+            metadata.copy(
+                bookmarked =
+                    metadata.bookmarked
+                        .replaceOrAdd(
+                            predicate = { it.txId == txId },
+                            transform = {
+                                val bookmarkMetadata = it ?: defaultBookmarkMetadata(txId)
+                                transform(bookmarkMetadata)
+                            }
+                        )
+            )
+        }
+    )
 
     private suspend fun addSwapMetadata(
         depositAddress: String,
@@ -262,78 +237,75 @@ class MetadataDataSourceImpl(
         totalFees: Zatoshi,
         totalFeesUsd: BigDecimal,
         key: MetadataKey
-    ): Metadata =
-        updateMetadata(
-            key = key,
-            transform = { metadata ->
-                metadata.copy(
-                    swaps =
-                        metadata.swaps.copy(
-                            swapIds =
-                                metadata.swaps.swapIds
-                                    .replaceOrAdd(predicate = { it.depositAddress == depositAddress }) {
-                                        SwapMetadata(
-                                            depositAddress = depositAddress,
-                                            lastUpdated = Instant.now(),
-                                            totalFees = totalFees,
-                                            totalFeesUsd = totalFeesUsd,
-                                            provider = provider
-                                        )
-                                    }
-                        ),
-                )
-            }
-        )
+    ) = updateMetadata(
+        key = key,
+        transform = { metadata ->
+            metadata.copy(
+                swaps =
+                    metadata.swaps.copy(
+                        swapIds =
+                            metadata.swaps.swapIds
+                                .replaceOrAdd(predicate = { it.depositAddress == depositAddress }) {
+                                    SwapMetadata(
+                                        depositAddress = depositAddress,
+                                        lastUpdated = Instant.now(),
+                                        totalFees = totalFees,
+                                        totalFeesUsd = totalFeesUsd,
+                                        provider = provider
+                                    )
+                                }
+                    ),
+            )
+        }
+    )
 
     private suspend fun prependSwapAssetToHistory(
         tokenTicker: String,
         chainTicker: String,
         key: MetadataKey
-    ): Metadata =
-        updateMetadata(key) { metadata ->
-            val current = metadata.swaps.lastUsedAssetHistory.toSimpleAssetSet()
-            val newAsset =
-                SimpleSwapAsset(
-                    tokenTicker = tokenTicker.lowercase(),
-                    chainTicker = chainTicker.lowercase()
-                )
-
-            val newList = current.toMutableList()
-            if (newList.contains(newAsset)) newList.remove(newAsset)
-            newList.add(0, newAsset)
-            val finalSet =
-                newList
-                    .take(MAX_SWAP_ASSETS_IN_HISTORY)
-                    .map { asset -> "${asset.tokenTicker}:${asset.chainTicker}" }
-                    .toSet()
-
-            metadata.copy(
-                swaps =
-                    metadata.swaps.copy(
-                        lastUsedAssetHistory = finalSet
-                    )
+    ) = updateMetadata(key) { metadata ->
+        val current = metadata.swaps.lastUsedAssetHistory.toSimpleAssetSet()
+        val newAsset =
+            SimpleSwapAsset(
+                tokenTicker = tokenTicker.lowercase(),
+                chainTicker = chainTicker.lowercase()
             )
-        }
+
+        val newList = current.toMutableList()
+        if (newList.contains(newAsset)) newList.remove(newAsset)
+        newList.add(0, newAsset)
+        val finalSet =
+            newList
+                .take(MAX_SWAP_ASSETS_IN_HISTORY)
+                .map { asset -> "${asset.tokenTicker}:${asset.chainTicker}" }
+                .toSet()
+
+        metadata.copy(
+            swaps =
+                metadata.swaps.copy(
+                    lastUsedAssetHistory = finalSet
+                )
+        )
+    }
 
     private suspend fun updateMetadata(
         key: MetadataKey,
         transform: (AccountMetadata) -> AccountMetadata
-    ): Metadata =
-        withContext(Dispatchers.IO) {
-            val metadata = getMetadataInternal(key)
+    ) = withContext(Dispatchers.IO) {
+        val metadata = getMetadataInternal(key)
 
-            val accountMetadata = metadata.accountMetadata
+        val accountMetadata = metadata.accountMetadata
 
-            val updatedMetadata =
-                metadata.copy(
-                    lastUpdated = Instant.now(),
-                    accountMetadata = transform(accountMetadata)
-                )
+        val updatedMetadata =
+            metadata.copy(
+                lastUpdated = Instant.now(),
+                accountMetadata = transform(accountMetadata)
+            )
 
-            writeToLocalStorage(updatedMetadata, key)
+        writeToLocalStorage(updatedMetadata, key)
 
-            updatedMetadata
-        }
+        metadataUpdatePipeline.emit(key to updatedMetadata)
+    }
 }
 
 private fun defaultAccountMetadata() =

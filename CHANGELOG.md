@@ -6,6 +6,11 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.2.1 (1121)] - 2025-08-29
+
+### Fixed
+- Fixed concurrency between [WalletClient] and [Metadata] update at the same time
+
 ## [2.2.0 (1120)] - 2025-08-27
 
 ### Added

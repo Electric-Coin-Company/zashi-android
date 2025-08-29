@@ -242,37 +242,40 @@ class KeystoneProposalRepositoryImpl(
                         pcztWithProofs = pcztWithProofs,
                         pcztWithSignatures = pcztWithSignatures
                     )
+                runSwapPipeline(transactionProposal, result)
                 submitState.update { SubmitProposalState.Result(result) }
-                if (transactionProposal is SwapTransactionProposal) {
-                    val txIds: List<String> =
-                        when (result) {
-                            is SubmitResult.MultipleTrxFailure ->
-                                result.results.map { it.txIdString() }
-
-                            is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc ->
-                                listOf(result.result.txIdString())
-
-                            is SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther ->
-                                emptyList()
-
-                            is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit ->
-                                listOf(result.result.txIdString())
-
-                            is SubmitResult.Success -> result.txIds
-                        }.filter { it.isNotEmpty() }
-                    val depositAddress = transactionProposal.destination.address
-                    scope.launch {
-                        metadataRepository.markTxAsSwap(
-                            depositAddress = depositAddress,
-                            provider = transactionProposal.quote.provider,
-                            totalFees = transactionProposal.totalFees,
-                            totalFeesUsd = transactionProposal.totalFeesUsd
-                        )
-                        txIds.forEach { submitDepositTransaction(it, transactionProposal) }
-                    }
-                }
             }
     }
+
+    private fun runSwapPipeline(transactionProposal: TransactionProposal?, result: SubmitResult) =
+        scope.launch {
+            if (transactionProposal is SwapTransactionProposal) {
+                val txIds: List<String> =
+                    when (result) {
+                        is SubmitResult.MultipleTrxFailure ->
+                            result.results.map { it.txIdString() }
+
+                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc ->
+                            listOf(result.result.txIdString())
+
+                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther ->
+                            emptyList()
+
+                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit ->
+                            listOf(result.result.txIdString())
+
+                        is SubmitResult.Success -> result.txIds
+                    }.filter { it.isNotEmpty() }
+                val depositAddress = transactionProposal.destination.address
+                metadataRepository.markTxAsSwap(
+                    depositAddress = depositAddress,
+                    provider = transactionProposal.quote.provider,
+                    totalFees = transactionProposal.totalFees,
+                    totalFeesUsd = transactionProposal.totalFeesUsd
+                )
+                txIds.forEach { submitDepositTransaction(it, transactionProposal) }
+            }
+        }
 
     override suspend fun getTransactionProposal(): TransactionProposal = transactionProposal.filterNotNull().first()
 

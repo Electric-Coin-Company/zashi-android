@@ -3,8 +3,6 @@ package co.electriccoin.zcash.ui.common.serialization.metada
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.android.sdk.tool.DerivationTool
-import co.electriccoin.zcash.ui.common.model.KeystoneAccount
-import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.serialization.METADATA_ENCRYPTION_KEY_SIZE
 import co.electriccoin.zcash.ui.common.serialization.METADATA_FILE_IDENTIFIER_SIZE
@@ -73,7 +71,7 @@ class MetadataKey(
             seedPhrase: SeedPhrase,
             network: ZcashNetwork,
             zashiAccount: ZashiAccount,
-            selectedAccount: WalletAccount
+            ufvk: String?
         ): MetadataKey {
             val key =
                 DerivationTool
@@ -83,11 +81,7 @@ class MetadataKey(
                         network = network,
                         accountIndex = zashiAccount.hdAccountIndex,
                     ).derivePrivateUseMetadataKey(
-                        ufvk =
-                            when (selectedAccount) {
-                                is KeystoneAccount -> selectedAccount.sdkAccount.ufvk
-                                is ZashiAccount -> null
-                            },
+                        ufvk = ufvk,
                         network = network,
                         privateUseSubject = "metadata".toByteArray()
                     )
