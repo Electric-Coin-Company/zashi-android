@@ -34,7 +34,7 @@ sealed interface AmountState {
     ) : AmountState
 
     companion object {
-        @Suppress("LongParameterList")
+        @Suppress("LongParameterList", "ReturnCount")
         fun newFromZec(
             locale: java.util.Locale,
             value: String,
@@ -49,7 +49,12 @@ sealed interface AmountState {
                 UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
                     ?: return Invalid(normalized, if (normalized.isBlank()) "" else fiatValue, lastFieldChangedByUser)
 
-            val zatoshi = zecAmount.convertZecToZatoshi()
+            val zatoshi =
+                try {
+                    zecAmount.convertZecToZatoshi()
+                } catch (_: IllegalArgumentException) {
+                    return Invalid(normalized, if (normalized.isBlank()) "" else fiatValue, lastFieldChangedByUser)
+                }
 
             val currencyConversion =
                 if (exchangeRateState !is ExchangeRateState.Data ||
