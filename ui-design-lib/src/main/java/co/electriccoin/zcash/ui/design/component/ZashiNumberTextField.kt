@@ -117,7 +117,7 @@ private fun createTextFieldState(state: NumberTextFieldState): EnhancedTextField
             isEnabled = state.isEnabled,
             error = state.errorString.takeIf { state.innerState.isError },
             onValueChange = { innerState ->
-                val newText = innerState.value.getString(context, locale)
+                val newText = innerState.value.getString(context, locale).replace(" ", "")
                 val normalized: String
                 val amount: BigDecimal?
                 val lastValidAmount: BigDecimal?
