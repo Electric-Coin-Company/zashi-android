@@ -4,29 +4,29 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.MetadataDataSource
 import co.electriccoin.zcash.ui.common.datasource.toSimpleAssetSet
-import co.electriccoin.zcash.ui.common.model.Metadata
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMetadata
 import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.MetadataKeyStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
-import co.electriccoin.zcash.ui.util.CloseableScopeHolder
-import co.electriccoin.zcash.ui.util.CloseableScopeHolderImpl
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.math.BigDecimal
 
 interface MetadataRepository {
@@ -52,165 +52,64 @@ class MetadataRepositoryImpl(
     private val metadataDataSource: MetadataDataSource,
     private val metadataKeyStorageProvider: MetadataKeyStorageProvider,
     private val persistableWalletProvider: PersistableWalletProvider,
-) : MetadataRepository,
-    CloseableScopeHolder by CloseableScopeHolderImpl(Dispatchers.IO) {
-    private val command = Channel<Command>()
+) : MetadataRepository {
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+    private val mutex = Mutex()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val metadata: Flow<Metadata?> =
+    private val metadata =
         accountDataSource
             .selectedAccount
-            .flatMapLatest { account ->
-                channelFlow {
-                    send(null)
-
-                    if (account != null) {
-                        val metadataKey = getMetadataKey(account)
-                        send(metadataDataSource.getMetadata(metadataKey))
-
-                        launch {
-                            command
-                                .receiveAsFlow()
-                                .filter {
-                                    it.account.sdkAccount.accountUuid == account.sdkAccount.accountUuid
-                                }.collect { command ->
-                                    val new =
-                                        when (command) {
-                                            is Command.CreateOrUpdateTxNote ->
-                                                metadataDataSource.createOrUpdateTxNote(
-                                                    txId = command.txId,
-                                                    key = metadataKey,
-                                                    note = command.note
-                                                )
-
-                                            is Command.DeleteTxNote ->
-                                                metadataDataSource.deleteTxNote(
-                                                    txId = command.txId,
-                                                    key = metadataKey,
-                                                )
-
-                                            is Command.FlipTxBookmark ->
-                                                metadataDataSource.flipTxAsBookmarked(
-                                                    txId = command.txId,
-                                                    key = metadataKey,
-                                                )
-
-                                            is Command.MarkTxMemoAsRead ->
-                                                metadataDataSource.markTxMemoAsRead(
-                                                    txId = command.txId,
-                                                    key = metadataKey,
-                                                )
-
-                                            is Command.MarkTxAsSwap ->
-                                                metadataDataSource.markTxAsSwap(
-                                                    depositAddress = command.depositAddress,
-                                                    provider = command.provider,
-                                                    totalFees = command.totalFees,
-                                                    totalFeesUsd = command.totalFeesUsd,
-                                                    key = metadataKey,
-                                                )
-
-                                            is Command.AddSwapAssetToHistory ->
-                                                metadataDataSource.addSwapAssetToHistory(
-                                                    tokenTicker = command.tokenTicker,
-                                                    chainTicker = command.chainTicker,
-                                                    key = metadataKey
-                                                )
-                                        }
-
-                                    send(new)
-                                }
-                        }
-                    }
-
-                    awaitClose {
-                        // do nothing
-                    }
-                }
-            }.stateIn(
+            .distinctUntilChangedBy { it?.sdkAccount?.accountUuid }
+            .map { getMetadataKey(it ?: return@map null) }
+            .distinctUntilChanged()
+            .flatMapLatest { if (it == null) flowOf(null) else metadataDataSource.observe(it) }
+            .shareIn(
                 scope = scope,
-                started = SharingStarted.Eagerly,
-                initialValue = null
+                started = SharingStarted.WhileSubscribed(0, 0),
+                replay = 1
             )
 
-    override fun flipTxBookmark(txId: String) {
-        scope.launch {
-            command.send(
-                Command.FlipTxBookmark(
-                    txId = txId,
-                    account = accountDataSource.getSelectedAccount()
-                )
-            )
+    override fun flipTxBookmark(txId: String) =
+        updateMetadata {
+            metadataDataSource.flipTxAsBookmarked(txId = txId, key = it)
         }
-    }
 
-    override fun createOrUpdateTxNote(
-        txId: String,
-        note: String
-    ) {
-        scope.launch {
-            command.send(
-                Command.CreateOrUpdateTxNote(
-                    txId = txId,
-                    note = note,
-                    account = accountDataSource.getSelectedAccount()
-                )
-            )
+    override fun createOrUpdateTxNote(txId: String, note: String) =
+        updateMetadata {
+            metadataDataSource.createOrUpdateTxNote(txId = txId, key = it, note = note)
         }
-    }
 
-    override fun deleteTxNote(txId: String) {
-        scope.launch {
-            command.send(
-                Command.DeleteTxNote(
-                    txId = txId,
-                    account = accountDataSource.getSelectedAccount()
-                )
-            )
+    override fun deleteTxNote(txId: String) =
+        updateMetadata {
+            metadataDataSource.deleteTxNote(txId = txId, key = it)
         }
-    }
 
-    override fun markTxMemoAsRead(txId: String) {
-        scope.launch {
-            command.send(
-                Command.MarkTxMemoAsRead(
-                    txId = txId,
-                    account = accountDataSource.getSelectedAccount()
-                )
-            )
+    override fun markTxMemoAsRead(txId: String) =
+        updateMetadata {
+            metadataDataSource.markTxMemoAsRead(txId = txId, key = it)
         }
-    }
 
     override fun markTxAsSwap(
         depositAddress: String,
         provider: String,
         totalFees: Zatoshi,
         totalFeesUsd: BigDecimal
-    ) {
-        scope.launch {
-            command.send(
-                Command.MarkTxAsSwap(
-                    depositAddress = depositAddress,
-                    provider = provider,
-                    totalFees = totalFees,
-                    totalFeesUsd = totalFeesUsd,
-                    account = accountDataSource.getSelectedAccount()
-                )
-            )
-        }
+    ) = updateMetadata {
+        metadataDataSource.markTxAsSwap(
+            depositAddress = depositAddress,
+            provider = provider,
+            totalFees = totalFees,
+            totalFeesUsd = totalFeesUsd,
+            key = it
+        )
     }
 
-    override fun addSwapAssetToHistory(tokenTicker: String, chainTicker: String) {
-        scope.launch {
-            command.send(
-                Command.AddSwapAssetToHistory(
-                    tokenTicker = tokenTicker,
-                    chainTicker = chainTicker,
-                    account = accountDataSource.getSelectedAccount()
-                )
-            )
+    override fun addSwapAssetToHistory(tokenTicker: String, chainTicker: String) =
+        updateMetadata {
+            metadataDataSource.addSwapAssetToHistory(tokenTicker = tokenTicker, chainTicker = chainTicker, key = it)
         }
-    }
 
     override fun observeTransactionMetadata(transaction: Transaction): Flow<TransactionMetadata> {
         val txId = transaction.id.txIdString()
@@ -244,8 +143,18 @@ class MetadataRepositoryImpl(
                     ?.toSimpleAssetSet()
             }.distinctUntilChanged()
 
+    private fun updateMetadata(block: suspend (MetadataKey) -> Unit) {
+        scope.launch {
+            mutex.withLock {
+                val selectedAccount = accountDataSource.getSelectedAccount()
+                val key = getMetadataKey(selectedAccount)
+                block(key)
+            }
+        }
+    }
+
     private suspend fun getMetadataKey(selectedAccount: WalletAccount): MetadataKey {
-        val key = metadataKeyStorageProvider.get(selectedAccount)
+        val key = metadataKeyStorageProvider.get(selectedAccount.sdkAccount)
 
         return if (key != null) {
             key
@@ -257,9 +166,13 @@ class MetadataRepositoryImpl(
                     seedPhrase = persistableWallet.seedPhrase,
                     network = persistableWallet.network,
                     zashiAccount = zashiAccount,
-                    selectedAccount = selectedAccount
+                    ufvk =
+                        when (selectedAccount) {
+                            is KeystoneAccount -> selectedAccount.sdkAccount.ufvk
+                            is ZashiAccount -> null
+                        }
                 )
-            metadataKeyStorageProvider.store(newKey, selectedAccount)
+            metadataKeyStorageProvider.store(newKey, selectedAccount.sdkAccount)
             newKey
         }
     }
@@ -271,42 +184,3 @@ data class TransactionMetadata(
     val note: String?,
     val swapMetadata: SwapMetadata?
 )
-
-private sealed interface Command {
-    val account: WalletAccount
-
-    data class FlipTxBookmark(
-        val txId: String,
-        override val account: WalletAccount
-    ) : Command
-
-    data class CreateOrUpdateTxNote(
-        val txId: String,
-        val note: String,
-        override val account: WalletAccount
-    ) : Command
-
-    data class DeleteTxNote(
-        val txId: String,
-        override val account: WalletAccount
-    ) : Command
-
-    data class MarkTxMemoAsRead(
-        val txId: String,
-        override val account: WalletAccount
-    ) : Command
-
-    data class MarkTxAsSwap(
-        val depositAddress: String,
-        val provider: String,
-        val totalFees: Zatoshi,
-        val totalFeesUsd: BigDecimal,
-        override val account: WalletAccount
-    ) : Command
-
-    data class AddSwapAssetToHistory(
-        val tokenTicker: String,
-        val chainTicker: String,
-        override val account: WalletAccount
-    ) : Command
-}

@@ -1,9 +1,9 @@
 package co.electriccoin.zcash.ui.common.provider
 
+import cash.z.ecc.android.sdk.model.Account
 import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.api.PreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
-import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
 import com.google.crypto.tink.InsecureSecretKeyAccess
 import com.google.crypto.tink.SecretKeyAccess
@@ -12,12 +12,9 @@ import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 interface MetadataKeyStorageProvider {
-    suspend fun get(account: WalletAccount): MetadataKey?
+    suspend fun get(sdkAccount: Account): MetadataKey?
 
-    suspend fun store(
-        key: MetadataKey,
-        account: WalletAccount
-    )
+    suspend fun store(key: MetadataKey, sdkAccount: Account)
 }
 
 class MetadataKeyStorageProviderImpl(
@@ -25,19 +22,16 @@ class MetadataKeyStorageProviderImpl(
 ) : MetadataKeyStorageProvider {
     private val default = MetadataKeyPreferenceDefault()
 
-    override suspend fun get(account: WalletAccount): MetadataKey? =
+    override suspend fun get(sdkAccount: Account): MetadataKey? =
         default.getValue(
-            walletAccount = account,
+            sdkAccount = sdkAccount,
             preferenceProvider = encryptedPreferenceProvider(),
         )
 
-    override suspend fun store(
-        key: MetadataKey,
-        account: WalletAccount
-    ) {
+    override suspend fun store(key: MetadataKey, sdkAccount: Account) {
         default.putValue(
             newValue = key,
-            walletAccount = account,
+            sdkAccount = sdkAccount,
             preferenceProvider = encryptedPreferenceProvider(),
         )
     }
@@ -48,28 +42,28 @@ private class MetadataKeyPreferenceDefault {
         get() = InsecureSecretKeyAccess.get()
 
     suspend fun getValue(
-        walletAccount: WalletAccount,
+        sdkAccount: Account,
         preferenceProvider: PreferenceProvider,
     ): MetadataKey? =
         preferenceProvider
             .getStringSet(
-                key = getKey(walletAccount)
+                key = getKey(sdkAccount)
             )?.decode()
 
     suspend fun putValue(
         newValue: MetadataKey?,
-        walletAccount: WalletAccount,
+        sdkAccount: Account,
         preferenceProvider: PreferenceProvider,
     ) {
         preferenceProvider.putStringSet(
-            key = getKey(walletAccount),
+            key = getKey(sdkAccount),
             value = newValue?.encode()
         )
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    private fun getKey(walletAccount: WalletAccount): PreferenceKey =
-        PreferenceKey("metadata_key_${walletAccount.sdkAccount.accountUuid.value.toHexString()}")
+    private fun getKey(sdkAccount: Account): PreferenceKey =
+        PreferenceKey("metadata_key_${sdkAccount.accountUuid.value.toHexString()}")
 
     @OptIn(ExperimentalEncodingApi::class)
     private fun MetadataKey?.encode(): Set<String>? =
