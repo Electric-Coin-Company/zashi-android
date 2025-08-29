@@ -20,6 +20,7 @@ import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
+import co.electriccoin.zcash.ui.common.provider.WalletBackupFlagStorageProvider
 import co.electriccoin.zcash.ui.common.provider.WalletRestoringStateProvider
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
@@ -81,6 +82,7 @@ class WalletRepositoryImpl(
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val walletRestoringStateProvider: WalletRestoringStateProvider,
     private val isTorEnabledStorageProvider: IsTorEnabledStorageProvider,
+    private val walletBackupFlagStorageProvider: WalletBackupFlagStorageProvider,
 ) : WalletRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -222,6 +224,7 @@ class WalletRepositoryImpl(
                 )
             persistWalletInternal(restoredWallet)
             walletRestoringStateProvider.store(WalletRestoringState.RESTORING)
+            walletBackupFlagStorageProvider.store(true)
             restoreTimestampDataSource.getOrCreate()
             persistOnboardingStateInternal(OnboardingState.READY)
         }
