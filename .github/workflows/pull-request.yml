@@ -299,7 +299,7 @@ jobs:
           ./gradlew assembleZcashmainnetStoreDebug assembleZcashtestnetStoreDebug assembleAndroidTest
       - name: Authenticate to Google Cloud for Firebase Test Lab
         id: auth_test_lab
-        uses: google-github-actions/auth@6fc4af4b145ae7821d527454aa9bd537d1f2dc5f
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
         with:
           create_credentials_file: true
           project_id: ${{ vars.FIREBASE_TEST_LAB_PROJECT }}
@@ -483,7 +483,7 @@ jobs:
           ./gradlew :app:assembleZcashmainnetStoreDebug :app:assembleZcashtestnetStoreDebug
       - name: Authenticate to Google Cloud for Firebase Test Lab
         id: auth_test_lab
-        uses: google-github-actions/auth@6fc4af4b145ae7821d527454aa9bd537d1f2dc5f
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
         with:
           create_credentials_file: true
           project_id: ${{ vars.FIREBASE_TEST_LAB_PROJECT }}
@@ -618,7 +618,7 @@ jobs:
         timeout-minutes: 5
       - name: Authenticate to Google Cloud for Firebase Test Lab
         id: auth_test_lab
-        uses: google-github-actions/auth@6fc4af4b145ae7821d527454aa9bd537d1f2dc5f
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
         with:
           create_credentials_file: true
           project_id: ${{ vars.FIREBASE_TEST_LAB_PROJECT }}
