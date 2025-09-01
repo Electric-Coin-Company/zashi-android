@@ -66,7 +66,7 @@ internal class TransactionNoteViewModel(
             noteCharacters =
                 StyledStringResource(
                     resource = stringRes(R.string.transaction_note_max_length, noteText.length.toString()),
-                    color = if (isNoteTextTooLong) StringResourceColor.NEGATIVE else StringResourceColor.DEFAULT
+                    color = if (isNoteTextTooLong) StringResourceColor.NEGATIVE else StringResourceColor.PRIMARY
                 ),
             primaryButton =
                 ButtonState(

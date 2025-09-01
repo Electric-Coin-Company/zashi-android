@@ -35,7 +35,7 @@ import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationVie
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightViewModel
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
-import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionVM
 import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressVM
 import co.electriccoin.zcash.ui.screen.scan.ScanZashiAddressVM
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScanViewModel
@@ -96,7 +96,7 @@ val viewModelModule =
         viewModelOf(::AccountListViewModel)
         viewModelOf(::ZashiTopAppBarVM)
         viewModelOf(::SelectKeystoneAccountViewModel)
-        viewModelOf(::ReviewTransactionViewModel)
+        viewModelOf(::ReviewTransactionVM)
         viewModelOf(::TransactionFiltersVM)
         viewModelOf(::TransactionProgressVM)
         viewModelOf(::TransactionHistoryWidgetViewModel)

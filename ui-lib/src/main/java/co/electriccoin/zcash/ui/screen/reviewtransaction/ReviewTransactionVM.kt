@@ -2,10 +2,12 @@ package co.electriccoin.zcash.ui.screen.reviewtransaction
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.datasource.ExactOutputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
@@ -21,7 +23,11 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCa
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ChipButtonState
+import co.electriccoin.zcash.ui.design.util.StringResourceColor
+import co.electriccoin.zcash.ui.design.util.StyledStringResource
+import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
 import co.electriccoin.zcash.ui.util.Quadruple
@@ -38,7 +44,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ReviewTransactionViewModel(
+class ReviewTransactionVM(
     observeContactByAddress: ObserveContactByAddressUseCase,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     observeKeystoneSendTransactionProposal: ObserveProposalUseCase,
@@ -70,16 +76,22 @@ class ReviewTransactionViewModel(
             Quadruple(wallet, zecSend, isReceiverExpanded, exchangeRate)
         }.flatMapLatest { (selectedWallet, proposal, isReceiverExpanded, exchangeRate) ->
             observeContactByAddress(proposal.destination.address).map { addressBookContact ->
-                if (proposal is Zip321TransactionProposal) {
-                    createZip321State(
+                when (proposal) {
+                    is ExactOutputSwapTransactionProposal -> createExactOutputState(
+                        transactionProposal = proposal,
+                        addressBookContact = addressBookContact,
+                        selectedWallet = selectedWallet,
+                    )
+
+                    is Zip321TransactionProposal -> createZip321State(
                         transactionProposal = proposal,
                         addressBookContact = addressBookContact,
                         selectedWallet = selectedWallet,
                         isReceiverExpanded = isReceiverExpanded,
                         exchangeRateState = exchangeRate
                     )
-                } else {
-                    createState(
+
+                    else -> createState(
                         transactionProposal = proposal,
                         addressBookContact = addressBookContact,
                         selectedWallet = selectedWallet,
@@ -149,6 +161,92 @@ class ReviewTransactionViewModel(
                     when (selectedWallet) {
                         is KeystoneAccount -> stringRes(R.string.review_keystone_transaction_positive)
                         is ZashiAccount -> stringRes(R.string.send_confirmation_send_button)
+                    },
+                onClick = ::onConfirmClick
+            ),
+        negativeButton =
+            ButtonState(
+                text = stringRes(R.string.review_keystone_transaction_negative),
+                onClick = ::onCancelClick
+            ),
+        onBack = ::onBack,
+    )
+
+    private fun createExactOutputState(
+        selectedWallet: WalletAccount,
+        transactionProposal: ExactOutputSwapTransactionProposal,
+        addressBookContact: EnhancedABContact?
+    ) = ReviewTransactionState(
+        title =
+            when (selectedWallet) {
+                is KeystoneAccount -> stringRes(R.string.review_keystone_transaction_title)
+                is ZashiAccount -> stringRes(R.string.send_stage_confirmation_title)
+            },
+        items =
+            listOfNotNull(
+                SimpleAmountState(
+                    title = stringRes("Payment Amount"),
+                    amount = stringRes(transactionProposal.quote.amountInZatoshi, TickerLocation.HIDDEN),
+                    amountFiat = stringResByDynamicCurrencyNumber(
+                        amount = transactionProposal.quote.amountInUsd,
+                        ticker = FiatCurrency.USD.symbol
+                    ),
+                    bigIcon = transactionProposal.quote.destinationAsset.tokenIcon,
+                    smallIcon = transactionProposal.quote.destinationAsset.chainIcon,
+                ),
+                ReceiverState(
+                    title = stringRes(R.string.send_confirmation_address),
+                    name = addressBookContact?.name?.let { stringRes(it) },
+                    address = stringRes(transactionProposal.destination.address)
+                ),
+                SenderState(
+                    title = stringRes(R.string.send_confirmation_address_from),
+                    icon = selectedWallet.icon,
+                    name = selectedWallet.name
+                ),
+                SimpleListItemState(
+                    title = StyledStringResource(
+                        resource = stringRes(R.string.send_amount_label),
+                        color = StringResourceColor.TERTIARY
+                    ),
+                    text = StyledStringResource(
+                        resource = stringRes(transactionProposal.quote.quote.amountInZatoshi)
+                    ),
+                    subtext = null
+                ),
+                SimpleListItemState(
+                    title = StyledStringResource(
+                        resource = stringRes(R.string.send_confirmation_fee),
+                        color = StringResourceColor.TERTIARY
+                    ),
+                    text = StyledStringResource(
+                        resource = stringRes(transactionProposal.totalFees)
+                    ),
+                    subtext = null
+                ),
+                DividerState,
+                SimpleListItemState(
+                    title = StyledStringResource(
+                        resource = stringRes("Total")
+                    ),
+                    text = StyledStringResource(
+                        resource = stringRes(transactionProposal.totalZatoshi)
+                    ),
+                    subtext = StyledStringResource(
+                        resource = stringResByDynamicCurrencyNumber(
+                            amount = transactionProposal.totalUsd,
+                            ticker = FiatCurrency.USD.symbol
+                        ),
+                        color = StringResourceColor.TERTIARY
+                    )
+                )
+            ),
+        primaryButton =
+            ButtonState(
+                text =
+                    when (selectedWallet) {
+                        is KeystoneAccount -> stringRes("Sign with Keystone")
+                        is ZashiAccount -> stringRes("Pay")
                     },
                 onClick = ::onConfirmClick
             ),

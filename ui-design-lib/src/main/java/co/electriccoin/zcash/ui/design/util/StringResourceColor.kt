@@ -2,12 +2,11 @@ package co.electriccoin.zcash.ui.design.util
 
 import androidx.compose.runtime.Composable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
-import co.electriccoin.zcash.ui.design.util.StringResourceColor.DEFAULT
-import co.electriccoin.zcash.ui.design.util.StringResourceColor.NEGATIVE
-import co.electriccoin.zcash.ui.design.util.StringResourceColor.POSITIVE
+import co.electriccoin.zcash.ui.design.util.StringResourceColor.*
 
 enum class StringResourceColor {
-    DEFAULT,
+    PRIMARY,
+    TERTIARY,
     POSITIVE,
     NEGATIVE
 }
@@ -15,7 +14,8 @@ enum class StringResourceColor {
 @Composable
 fun StringResourceColor.getColor() =
     when (this) {
-        DEFAULT -> ZashiColors.Text.textPrimary
+        PRIMARY -> ZashiColors.Text.textPrimary
+        TERTIARY -> ZashiColors.Text.textTertiary
         POSITIVE -> ZashiColors.Utility.SuccessGreen.utilitySuccess700
         NEGATIVE -> ZashiColors.Text.textError
     }

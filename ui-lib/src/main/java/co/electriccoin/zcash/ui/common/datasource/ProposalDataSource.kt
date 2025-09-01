@@ -320,6 +320,12 @@ sealed interface SwapTransactionProposal : SendTransactionProposal {
         get() = quote.getTotalFeesZatoshi(proposal)
     val totalFeesUsd: BigDecimal
         get() = quote.getTotalFeesUsd(proposal)
+
+    val totalZatoshi: Zatoshi
+        get() = quote.getTotalZatoshi(proposal)
+
+    val totalUsd: BigDecimal
+        get() = quote.getTotalUsd(proposal)
 }
 
 data class ShieldTransactionProposal(

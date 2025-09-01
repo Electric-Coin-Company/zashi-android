@@ -20,6 +20,8 @@ data class CompositeSwapQuote(
     fun getZecFeeUsd(proposal: Proposal): BigDecimal =
         zecExchangeRate.multiply(getZecFee(proposal), MathContext.DECIMAL128)
 
+    fun getTotalZatoshi(proposal: Proposal): Zatoshi = amountInZatoshi + proposal.totalFeeRequired()
+
     fun getTotalZec(proposal: Proposal): BigDecimal = amountInZec + getZecFee(proposal)
 
     fun getTotalUsd(proposal: Proposal): BigDecimal = amountInUsd + getZecFeeUsd(proposal)
