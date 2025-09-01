@@ -6,7 +6,6 @@ import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
-import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
@@ -46,7 +45,6 @@ internal class ExactInputVMMapper : SwapVMMapper {
         onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
         onTryAgainClick: () -> Unit,
         onAddressChange: (String) -> Unit,
-        onSwapModeChange: (SwapMode) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
         onQrCodeScannerClick: () -> Unit,
         onAddressBookClick: () -> Unit,
@@ -73,7 +71,6 @@ internal class ExactInputVMMapper : SwapVMMapper {
                     state = state,
                     onSwapAssetPickerClick = onSwapAssetPickerClick
                 ),
-            mode = state.swapMode,
             addressContact =
                 createAddressContactState(
                     state = state,
@@ -102,12 +99,6 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 IconButtonState(
                     icon = R.drawable.send_address_book,
                     onClick = onAddressBookClick,
-                    isEnabled = !state.isRequestingQuote
-                ),
-            changeModeButton =
-                IconButtonState(
-                    icon = R.drawable.ic_swap_change_mode,
-                    onClick = { onSwapModeChange(SwapMode.EXACT_OUTPUT) },
                     isEnabled = !state.isRequestingQuote
                 ),
             appBarState =
@@ -444,7 +435,6 @@ private data class ExactInputInternalState(
     override val slippage: BigDecimal,
     override val isAddressBookHintVisible: Boolean,
     override val swapAssets: SwapAssetsData,
-    override val swapMode: SwapMode,
     override val isRequestingQuote: Boolean,
     override val selectedContact: EnhancedABContact?,
 ) : InternalState {
@@ -457,7 +447,6 @@ private data class ExactInputInternalState(
         slippage = original.slippage,
         isAddressBookHintVisible = original.isAddressBookHintVisible,
         swapAssets = original.swapAssets,
-        swapMode = original.swapMode,
         isRequestingQuote = original.isRequestingQuote,
         selectedContact = original.selectedContact
     )

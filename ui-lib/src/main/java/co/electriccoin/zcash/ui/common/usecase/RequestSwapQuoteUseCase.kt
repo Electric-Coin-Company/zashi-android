@@ -31,7 +31,7 @@ class RequestSwapQuoteUseCase(
 ) {
     @Suppress("TooGenericExceptionCaught")
     suspend operator fun invoke(amount: BigDecimal, address: String, canNavigateToSwapQuote: () -> Boolean) {
-        swapRepository.requestQuote(amount = amount, address = address)
+        swapRepository.requestExactInputQuote(amount = amount, address = address)
         val result = getCompositeSwapQuoteUseCase.observe().filter { it !is SwapQuoteCompositeData.Loading }.first()
 
         if (result is SwapQuoteCompositeData.Success) {

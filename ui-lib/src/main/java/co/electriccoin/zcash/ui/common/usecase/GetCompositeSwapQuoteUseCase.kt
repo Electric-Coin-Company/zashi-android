@@ -14,11 +14,10 @@ class GetCompositeSwapQuoteUseCase(
     fun observe() =
         combine(
             swapRepository.slippage,
-            swapRepository.mode,
             swapRepository.quote.filterNotNull(),
             swapRepository.selectedAsset.filterNotNull(),
             swapRepository.assets.map { it.zecAsset }.filterNotNull()
-        ) { slippage, mode, quote, destinationAsset, originAsset ->
+        ) { slippage, quote, destinationAsset, originAsset ->
             when (quote) {
                 SwapQuoteData.Loading -> SwapQuoteCompositeData.Loading
                 is SwapQuoteData.Error -> SwapQuoteCompositeData.Error(quote.exception)
@@ -26,7 +25,7 @@ class GetCompositeSwapQuoteUseCase(
                     SwapQuoteCompositeData.Success(
                         CompositeSwapQuote(
                             slippage = slippage,
-                            mode = mode,
+                            mode = quote.quote.type,
                             quote = quote.quote,
                             destinationAsset = destinationAsset,
                             originAsset = originAsset

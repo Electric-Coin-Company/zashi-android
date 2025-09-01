@@ -28,7 +28,6 @@ import java.math.BigDecimal
 import kotlin.time.Duration.Companion.seconds
 
 interface SwapRepository {
-    val mode: StateFlow<SwapMode>
 
     val assets: StateFlow<SwapAssetsData>
 
@@ -44,11 +43,11 @@ interface SwapRepository {
 
     fun requestRefreshAssets()
 
-    fun changeMode(mode: SwapMode)
-
     fun observeSwapStatus(depositAddress: String): Flow<SwapQuoteStatusData>
 
-    fun requestQuote(amount: BigDecimal, address: String)
+    fun requestExactInputQuote(amount: BigDecimal, address: String)
+
+    fun requestExactOutputQuote(amount: BigDecimal, address: String)
 
     fun clear()
 
@@ -87,8 +86,6 @@ class SwapRepositoryImpl(
     private val metadataRepository: MetadataRepository,
 ) : SwapRepository {
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
-
-    override val mode = MutableStateFlow(DEFAULT_MODE)
 
     override val assets =
         MutableStateFlow(
@@ -195,10 +192,6 @@ class SwapRepositoryImpl(
         }
     }
 
-    override fun changeMode(mode: SwapMode) {
-        this.mode.update { mode }
-    }
-
     @Suppress("TooGenericExceptionCaught", "LoopWithTooManyJumpStatements")
     override fun observeSwapStatus(depositAddress: String): Flow<SwapQuoteStatusData> {
         return channelFlow {
@@ -268,7 +261,15 @@ class SwapRepositoryImpl(
     }
 
     @Suppress("TooGenericExceptionCaught")
-    override fun requestQuote(amount: BigDecimal, address: String) {
+    override fun requestExactInputQuote(amount: BigDecimal, address: String) {
+        requestQuote(amount, address, SwapMode.EXACT_INPUT)
+    }
+
+    override fun requestExactOutputQuote(amount: BigDecimal, address: String) {
+        requestQuote(amount, address, SwapMode.EXACT_OUTPUT)
+    }
+
+    private fun requestQuote(amount: BigDecimal, address: String, mode: SwapMode) {
         requestQuoteJob =
             scope.launch {
                 quote.update { SwapQuoteData.Loading }
@@ -278,7 +279,7 @@ class SwapRepositoryImpl(
                     val selectedAccount = accountDataSource.getSelectedAccount()
                     val result =
                         swapDataSource.requestQuote(
-                            swapMode = mode.value,
+                            swapMode = mode,
                             amount = amount,
                             originAddress = selectedAccount.transparent.address.address,
                             originAsset = originAsset,
@@ -306,7 +307,6 @@ class SwapRepositoryImpl(
         refreshJob = null
         selectedAsset.update { null }
         slippage.update { DEFAULT_SLIPPAGE }
-        mode.update { DEFAULT_MODE }
         clearQuote()
     }
 
@@ -318,5 +318,3 @@ class SwapRepositoryImpl(
 }
 
 private val DEFAULT_SLIPPAGE = BigDecimal("1")
-
-private val DEFAULT_MODE = SwapMode.EXACT_INPUT

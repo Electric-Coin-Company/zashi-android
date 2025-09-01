@@ -17,8 +17,6 @@ import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
 @Immutable
 internal data class SwapState(
     val appBarState: SwapAppBarState,
-    val changeModeButton: IconButtonState,
-    val mode: SwapMode,
     val swapInfoButton: IconButtonState,
     val amountTextField: SwapAmountTextFieldState,
     val slippage: ButtonState,

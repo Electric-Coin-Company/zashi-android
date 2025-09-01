@@ -7,9 +7,6 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
-import co.electriccoin.zcash.ui.common.model.SwapMode
-import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
-import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
@@ -19,14 +16,12 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetSwapModeUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
 import co.electriccoin.zcash.ui.common.usecase.RequestSwapQuoteUseCase
-import co.electriccoin.zcash.ui.common.usecase.UpdateSwapModeUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.InnerTextFieldState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
@@ -52,13 +47,11 @@ import java.math.BigDecimal
 
 @Suppress("TooManyFunctions")
 internal class SwapVM(
-    getSwapMode: GetSwapModeUseCase,
     getSlippage: GetSlippageUseCase,
     getSelectedSwapAsset: GetSelectedSwapAssetUseCase,
     getSwapAssetsUseCase: GetSwapAssetsUseCase,
     getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
     private val swapRepository: SwapRepository,
-    private val updateSwapMode: UpdateSwapModeUseCase,
     private val navigateToSwapInfo: NavigateToSwapInfoUseCase,
     private val isABContactHintVisible: IsABContactHintVisibleUseCase,
     private val cancelSwap: CancelSwapUseCase,
@@ -121,7 +114,6 @@ internal class SwapVM(
             addressText.flatMapLatest { isABContactHintVisible.observe() },
             currencyType,
             getSwapAssetsUseCase.observe(),
-            getSwapMode.observe(),
             isRequestingQuote,
             selectedContact,
             getSelectedWalletAccount.observe().filterNotNull()
@@ -133,7 +125,6 @@ internal class SwapVM(
             isAddressBookHintVisible,
             currencyType,
             swapAssets,
-            mode,
             isRequestingQuote,
             selectedContact,
             account
@@ -146,7 +137,6 @@ internal class SwapVM(
                 slippage = slippage,
                 isAddressBookHintVisible = isAddressBookHintVisible,
                 swapAssets = swapAssets,
-                swapMode = mode,
                 isRequestingQuote = isRequestingQuote,
                 selectedContact = selectedContact,
                 account = account
@@ -164,14 +154,7 @@ internal class SwapVM(
             )
 
     private fun createState(innerState: InternalStateImpl): SwapState {
-        val mapper =
-            when (innerState.swapMode) {
-                EXACT_INPUT -> exactInputVMMapper
-                // EXACT_OUTPUT -> exactOutputVMMapper
-                EXACT_OUTPUT -> error("EXACT_OUTPUT is disabled")
-            }
-
-        return mapper.createState(
+        return exactInputVMMapper.createState(
             internalState = innerState,
             onBack = ::onBack,
             onSwapInfoClick = ::onSwapInfoClick,
@@ -181,7 +164,6 @@ internal class SwapVM(
             onRequestSwapQuoteClick = ::onRequestSwapQuoteClick,
             onTryAgainClick = ::onTryAgainClick,
             onAddressChange = ::onAddressChange,
-            onSwapModeChange = ::onSwapModeChange,
             onTextFieldChange = ::onTextFieldChange,
             onQrCodeScannerClick = ::onQrCodeScannerClick,
             onAddressBookClick = ::onAddressBookClick,
@@ -292,8 +274,6 @@ internal class SwapVM(
             isRequestingQuote.update { false }
         }
 
-    private fun onSwapModeChange(swapMode: SwapMode) = updateSwapMode(swapMode)
-
     private fun onSwapInfoClick() = navigateToSwapInfo()
 
     private fun onAddressChange(new: String) {
@@ -320,7 +300,6 @@ internal interface SwapVMMapper {
         onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
         onTryAgainClick: () -> Unit,
         onAddressChange: (String) -> Unit,
-        onSwapModeChange: (SwapMode) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
         onQrCodeScannerClick: () -> Unit,
         onAddressBookClick: () -> Unit,
@@ -338,7 +317,6 @@ internal interface InternalState {
     val slippage: BigDecimal
     val isAddressBookHintVisible: Boolean
     val swapAssets: SwapAssetsData
-    val swapMode: SwapMode
     val isRequestingQuote: Boolean
     val selectedContact: EnhancedABContact?
 
@@ -355,7 +333,6 @@ internal data class InternalStateImpl(
     override val slippage: BigDecimal,
     override val isAddressBookHintVisible: Boolean,
     override val swapAssets: SwapAssetsData,
-    override val swapMode: SwapMode,
     override val isRequestingQuote: Boolean,
     override val selectedContact: EnhancedABContact?,
 ) : InternalState

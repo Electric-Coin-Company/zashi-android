@@ -45,8 +45,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
-import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
-import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -109,36 +107,16 @@ internal fun SwapView(
                 state = state.amountTextField,
                 focusRequester = focusRequester
             )
-
-            when (state.mode) {
-                EXACT_INPUT -> {
-                    Spacer(16.dp)
-                }
-
-                EXACT_OUTPUT -> {
-                    Spacer(10.dp)
-                    AddressTextField(state = state)
-                    Spacer(16.dp)
-                }
-            }
-
+            Spacer(16.dp)
             SlippageSeparator(
                 // state = state
             )
             Spacer(14.dp)
             SwapAmountText(state = state.amountText)
 
-            when (state.mode) {
-                EXACT_INPUT -> {
-                    Spacer(10.dp)
-                    AddressTextField(state = state)
-                    Spacer(22.dp)
-                }
-
-                EXACT_OUTPUT -> {
-                    Spacer(22.dp)
-                }
-            }
+            Spacer(10.dp)
+            AddressTextField(state = state)
+            Spacer(22.dp)
 
             SlippageButton(
                 state = state.slippage
@@ -433,7 +411,6 @@ private fun Preview() {
                             stringRes("Get a quote")
                         ),
                     onBack = {},
-                    mode = EXACT_OUTPUT,
                     swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     infoItems =
                         listOf(
@@ -453,11 +430,6 @@ private fun Preview() {
                         IconButtonState(
                             icon = R.drawable.send_address_book,
                             onClick = {}
-                        ),
-                    changeModeButton =
-                        IconButtonState(
-                            icon = R.drawable.ic_swap_change_mode,
-                            onClick = { }
                         ),
                     appBarState =
                         SwapAppBarState(
@@ -519,7 +491,6 @@ private fun UnexpectedErrorPreview() {
                             subtitle = null
                         ),
                     onBack = {},
-                    mode = EXACT_OUTPUT,
                     swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     infoItems =
                         listOf(
@@ -539,11 +510,6 @@ private fun UnexpectedErrorPreview() {
                         IconButtonState(
                             icon = R.drawable.send_address_book,
                             onClick = {}
-                        ),
-                    changeModeButton =
-                        IconButtonState(
-                            icon = R.drawable.ic_swap_change_mode,
-                            onClick = { }
                         ),
                     appBarState =
                         SwapAppBarState(
@@ -614,7 +580,6 @@ private fun ServiceUnavailableErrorPreview() {
                             subtitle = null
                         ),
                     onBack = {},
-                    mode = EXACT_OUTPUT,
                     swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     infoItems =
                         listOf(
@@ -634,11 +599,6 @@ private fun ServiceUnavailableErrorPreview() {
                         IconButtonState(
                             icon = R.drawable.send_address_book,
                             onClick = {}
-                        ),
-                    changeModeButton =
-                        IconButtonState(
-                            icon = R.drawable.ic_swap_change_mode,
-                            onClick = { }
                         ),
                     appBarState =
                         SwapAppBarState(
