@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.screen.swap
 
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
-import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
@@ -27,13 +26,13 @@ internal data class SwapState(
     val isAddressBookHintVisible: Boolean,
     val qrScannerButton: IconButtonState,
     val addressBookButton: IconButtonState,
-    val errorFooter: ErrorFooter?,
+    val errorFooter: SwapErrorFooterState?,
     val primaryButton: ButtonState?,
     val onBack: () -> Unit
 )
 
 @Immutable
-data class ErrorFooter(
+data class SwapErrorFooterState(
     val title: StringResource,
     val subtitle: StringResource,
 )

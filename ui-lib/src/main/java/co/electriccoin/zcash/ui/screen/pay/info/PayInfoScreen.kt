@@ -16,4 +16,4 @@ fun PayInfoScreen() {
 }
 
 @Serializable
-data object SwapInfoArgs
+data object PayInfoArgs

@@ -63,7 +63,7 @@ internal fun SwapAmountTextField(
         )
 
         if (state.isError) {
-            val error = state.error ?: state.textField.errorString
+            val error = state.error ?: state.textField.defaultNumberError
 
             if (error.getValue().isNotEmpty()) {
                 Spacer(8.dp)

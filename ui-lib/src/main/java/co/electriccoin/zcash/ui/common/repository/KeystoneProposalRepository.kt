@@ -44,13 +44,15 @@ interface KeystoneProposalRepository {
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactInputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote
+        quote: CompositeSwapQuote,
+        address: String,
     ): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactOutputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote
+        quote: CompositeSwapQuote,
+        address: String,
     ): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
@@ -122,25 +124,29 @@ class KeystoneProposalRepositoryImpl(
 
     override suspend fun createExactInputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote
+        quote: CompositeSwapQuote,
+        address: String,
     ): ExactInputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactInputProposal(
                 account = accountDataSource.getSelectedAccount(),
                 send = zecSend,
-                quote = quote
+                quote = quote,
+                address = address
             )
         }
 
     override suspend fun createExactOutputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote
+        quote: CompositeSwapQuote,
+        address: String,
     ): ExactOutputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactOutputProposal(
                 account = accountDataSource.getSelectedAccount(),
                 send = zecSend,
-                quote = quote
+                quote = quote,
+                address = address
             )
         }
 

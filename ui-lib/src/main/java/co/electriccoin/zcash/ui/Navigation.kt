@@ -99,6 +99,8 @@ import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsScreen
 import co.electriccoin.zcash.ui.screen.pay.PayArgs
 import co.electriccoin.zcash.ui.screen.pay.PayScreen
+import co.electriccoin.zcash.ui.screen.pay.info.PayInfoArgs
+import co.electriccoin.zcash.ui.screen.pay.info.PayInfoScreen
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.ReceiveArgs
@@ -111,7 +113,7 @@ import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
-import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressScreen
@@ -329,7 +331,7 @@ internal fun MainActivity.Navigation() {
         }
         composable<ConnectKeystone> { AndroidConnectKeystone() }
         composable<SelectKeystoneAccount> { AndroidSelectKeystoneAccount(it.toRoute()) }
-        composable<ReviewTransaction> { AndroidReviewTransaction() }
+        composable<ReviewTransactionArgs> { AndroidReviewTransaction() }
         composable<TransactionProgressArgs> { TransactionProgressScreen(it.toRoute()) }
         composable<TransactionHistory> { AndroidTransactionHistory() }
         dialogComposable<TransactionFiltersArgs> { TransactionFiltersScreen() }
@@ -368,6 +370,7 @@ internal fun MainActivity.Navigation() {
         dialogComposable<TransparentAddressInfoArgs> { TransparentAddressInfoScreen() }
         composable<ExchangeRateOptInArgs> { ExchangeRateOptInScreen() }
         composable<PayArgs> { PayScreen() }
+        dialogComposable<PayInfoArgs> { PayInfoScreen() }
     }
 }
 

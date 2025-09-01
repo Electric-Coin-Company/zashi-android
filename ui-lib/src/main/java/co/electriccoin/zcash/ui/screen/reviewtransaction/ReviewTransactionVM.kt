@@ -15,6 +15,7 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
+import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
@@ -25,9 +26,9 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
-import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
 import co.electriccoin.zcash.ui.util.Quadruple
@@ -52,6 +53,7 @@ class ReviewTransactionVM(
     private val getExchangeRate: GetExchangeRateUseCase,
     private val navigationRouter: NavigationRouter,
     private val confirmProposal: ConfirmProposalUseCase,
+    private val cancelSwapQuote: CancelSwapQuoteUseCase
 ) : ViewModel() {
     private val isReceiverExpanded = MutableStateFlow(false)
 
@@ -75,7 +77,13 @@ class ReviewTransactionVM(
         ) { wallet, zecSend, isReceiverExpanded, exchangeRate ->
             Quadruple(wallet, zecSend, isReceiverExpanded, exchangeRate)
         }.flatMapLatest { (selectedWallet, proposal, isReceiverExpanded, exchangeRate) ->
-            observeContactByAddress(proposal.destination.address).map { addressBookContact ->
+            observeContactByAddress(
+                if (proposal is ExactOutputSwapTransactionProposal) {
+                    proposal.address
+                } else {
+                    proposal.destination.address
+                }
+            ).map { addressBookContact ->
                 when (proposal) {
                     is ExactOutputSwapTransactionProposal -> createExactOutputState(
                         transactionProposal = proposal,
@@ -186,9 +194,9 @@ class ReviewTransactionVM(
             listOfNotNull(
                 SimpleAmountState(
                     title = stringRes("Payment Amount"),
-                    amount = stringRes(transactionProposal.quote.amountInZatoshi, TickerLocation.HIDDEN),
+                    amount = stringResByDynamicNumber(transactionProposal.quote.amountOutFormatted),
                     amountFiat = stringResByDynamicCurrencyNumber(
-                        amount = transactionProposal.quote.amountInUsd,
+                        amount = transactionProposal.quote.amountOutUsd,
                         ticker = FiatCurrency.USD.symbol
                     ),
                     bigIcon = transactionProposal.quote.destinationAsset.tokenIcon,
@@ -197,7 +205,7 @@ class ReviewTransactionVM(
                 ReceiverState(
                     title = stringRes(R.string.send_confirmation_address),
                     name = addressBookContact?.name?.let { stringRes(it) },
-                    address = stringRes(transactionProposal.destination.address)
+                    address = stringRes(transactionProposal.address)
                 ),
                 SenderState(
                     title = stringRes(R.string.send_confirmation_address_from),
@@ -245,17 +253,14 @@ class ReviewTransactionVM(
             ButtonState(
                 text =
                     when (selectedWallet) {
-                        is KeystoneAccount -> stringRes("Sign with Keystone")
+                        is KeystoneAccount -> stringRes("Pay with Keystone")
                         is ZashiAccount -> stringRes("Pay")
                     },
                 onClick = ::onConfirmClick
             ),
-        negativeButton =
-            ButtonState(
-                text = stringRes(R.string.review_keystone_transaction_negative),
-                onClick = ::onCancelClick
-            ),
-        onBack = ::onBack,
+        negativeButton = null,
+        onBack = ::onBackFromPay,
+        showNavigationAction = true
     )
 
     private fun createZip321State(
@@ -336,6 +341,8 @@ class ReviewTransactionVM(
     private fun onExpandReceiverClick() = isReceiverExpanded.update { !it }
 
     private fun onBack() = viewModelScope.launch { cancelProposalFlow(clearSendForm = false) }
+
+    private fun onBackFromPay() = viewModelScope.launch { cancelSwapQuote() }
 
     private fun onCancelClick() = viewModelScope.launch { cancelProposalFlow(clearSendForm = false) }
 

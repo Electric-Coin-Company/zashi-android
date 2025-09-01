@@ -15,6 +15,7 @@ data class ReviewTransactionState(
     val primaryButton: ButtonState,
     val negativeButton: ButtonState?,
     val onBack: () -> Unit,
+    val showNavigationAction: Boolean = false
 )
 
 sealed interface ReviewTransactionItemState

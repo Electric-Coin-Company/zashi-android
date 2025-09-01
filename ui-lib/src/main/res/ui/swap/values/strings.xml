@@ -9,6 +9,7 @@
     <string name="swap_slippage_subtitle">This setting determines the maximum allowable difference between the expected price of a swap and the actual price you pay, which is outside of Zashi\'s control.</string>
     <string name="swap_slippage_max_threshold">Please enter maximum slippage of 30%%.</string>
     <string name="swap_slippage_info">You may receive up to %s less than quoted.</string>
+    <string name="pay_slippage_info">You may pay up to %s more, in addition to transaction fees.</string>
     <string name="swap_title">Swap with</string>
     <string name="swap_from">From</string>
     <string name="swap_insufficient_funds">Insufficient funds</string>

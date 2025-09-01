@@ -115,7 +115,7 @@ private fun createTextFieldState(state: NumberTextFieldState): EnhancedTextField
                     selection = selection
                 ),
             isEnabled = state.isEnabled,
-            error = state.errorString.takeIf { state.innerState.isError },
+            error = state.explicitError ?: state.defaultNumberError.takeIf { state.innerState.isError },
             onValueChange = { innerState ->
                 val newText = innerState.value.getString(context, locale)
                 val normalized: String
@@ -156,9 +156,12 @@ private fun createTextFieldState(state: NumberTextFieldState): EnhancedTextField
 data class NumberTextFieldState(
     val innerState: NumberTextFieldInnerState = NumberTextFieldInnerState(),
     val isEnabled: Boolean = true,
-    val errorString: StringResource = stringRes(""),
+    val explicitError: StringResource? = null,
+    val defaultNumberError: StringResource = stringRes(""),
     val onValueChange: (NumberTextFieldInnerState) -> Unit,
-)
+) {
+    val isError = explicitError != null || innerState.isError
+}
 
 @Immutable
 data class NumberTextFieldInnerState(
@@ -195,10 +198,11 @@ object ZashiNumberTextFieldDefaults {
         modifier: Modifier = Modifier,
         style: TextStyle = ZashiTypography.textMd,
         fontWeight: FontWeight = FontWeight.Normal,
-        textAlign: TextAlign = TextAlign.Start
+        textAlign: TextAlign = TextAlign.Start,
+        text: String = stringResByDynamicNumber(0).getValue()
     ) {
         Text(
-            text = stringResByDynamicNumber(0).getValue(),
+            text = text,
             modifier = modifier,
             style = style,
             fontWeight = fontWeight,

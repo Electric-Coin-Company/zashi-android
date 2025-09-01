@@ -128,41 +128,11 @@ internal fun SwapView(
                     state = infoItem
                 )
             }
-
             Spacer(24.dp)
             Spacer(1f)
-
             if (state.errorFooter != null) {
-                Image(
-                    modifier =
-                        Modifier
-                            .size(16.dp)
-                            .align(Alignment.CenterHorizontally),
-                    painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(ZashiColors.Text.textError)
-                )
-                Spacer(8.dp)
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = state.errorFooter.title.getValue(),
-                    style = ZashiTypography.textSm,
-                    fontWeight = FontWeight.Medium,
-                    color = ZashiColors.Text.textError,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(4.dp)
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = state.errorFooter.subtitle.getValue(),
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Text.textError,
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(32.dp)
+                SwapErrorFooter(state.errorFooter)
             }
-
             if (state.primaryButton != null) {
                 ZashiButton(
                     modifier = Modifier.fillMaxWidth(),
@@ -174,7 +144,41 @@ internal fun SwapView(
 }
 
 @Composable
-private fun SlippageButton(state: ButtonState, modifier: Modifier = Modifier) {
+fun SwapErrorFooter(errorFooter: SwapErrorFooterState) {
+    Column {
+        Image(
+            modifier =
+                Modifier
+                    .size(16.dp)
+                    .align(Alignment.CenterHorizontally),
+            painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(ZashiColors.Text.textError)
+        )
+        Spacer(8.dp)
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = errorFooter.title.getValue(),
+            style = ZashiTypography.textSm,
+            fontWeight = FontWeight.Medium,
+            color = ZashiColors.Text.textError,
+            textAlign = TextAlign.Center
+        )
+        Spacer(4.dp)
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = errorFooter.subtitle.getValue(),
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Text.textError,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(32.dp)
+    }
+}
+
+@Composable
+fun SlippageButton(state: ButtonState, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = CenterVertically
@@ -517,7 +521,7 @@ private fun UnexpectedErrorPreview() {
                             icon = R.drawable.ic_near_logo
                         ),
                     errorFooter =
-                        ErrorFooter(
+                        SwapErrorFooterState(
                             title = stringRes("Unexpected error"),
                             subtitle = stringRes("Please check your connection and try again."),
                         ),
@@ -606,7 +610,7 @@ private fun ServiceUnavailableErrorPreview() {
                             icon = R.drawable.ic_near_logo
                         ),
                     errorFooter =
-                        ErrorFooter(
+                        SwapErrorFooterState(
                             title = stringRes("The service is unavailable"),
                             subtitle = stringRes("Please try again later."),
                         ),
