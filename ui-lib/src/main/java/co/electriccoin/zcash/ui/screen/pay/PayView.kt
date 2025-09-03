@@ -5,7 +5,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -60,6 +59,7 @@ import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiAddressTextField
 import co.electriccoin.zcash.ui.design.component.ZashiAssetCard
+import co.electriccoin.zcash.ui.design.component.ZashiAutoSizeText
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiChipButton
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
@@ -293,18 +293,13 @@ private fun AmountTextFields(state: PayState) {
 private fun TopAppBar(state: PayState, appBarState: ZashiMainTopAppBarState) {
     ZashiSmallTopAppBar(
         content = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = "CROSSPAY",
-                    style = ZashiTypography.textMd,
-                    fontWeight = FontWeight.SemiBold,
-                    color = ZashiColors.Text.textPrimary
-                )
-            }
+            ZashiAutoSizeText(
+                text = "CROSSPAY",
+                style = ZashiTypography.textMd,
+                fontWeight = FontWeight.SemiBold,
+                color = ZashiColors.Text.textPrimary,
+                maxLines = 1
+            )
         },
         navigationAction = {
             ZashiTopAppBarBackNavigation(

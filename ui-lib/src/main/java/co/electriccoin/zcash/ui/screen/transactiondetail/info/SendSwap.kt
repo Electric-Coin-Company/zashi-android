@@ -233,7 +233,6 @@ private fun Preview() =
                         status = SwapStatus.REFUNDED,
                         quoteHeader =
                             SwapQuoteHeaderState(
-                                rotateIcon = false,
                                 from = null,
                                 to = null
                             ),

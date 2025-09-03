@@ -291,18 +291,10 @@ class TransactionDetailVM(
             }
         }
 
-    // private fun createTotalFeesForSwap(
-    //     transaction: DetailedTransactionData,
-    //     swap: SwapQuoteStatusData,
-    // ) = if (swap.data?.swapProviderFee != null) {
-    //     stringRes(swap.data.swapProviderFee + (transaction.transaction.fee ?: Zatoshi(0)))
-    // } else {
-    //     transaction.metadata.swapMetadata?.totalFees?.let { stringRes(it) }
-    // }
-
     private fun createQuoteHeaderState(swap: SwapQuoteStatusData): SwapQuoteHeaderState {
         fun createFromState(): SwapTokenAmountState? =
             when (swap.data?.swapMode) {
+                EXACT_OUTPUT,
                 EXACT_INPUT -> {
                     SwapTokenAmountState(
                         bigIcon = imageRes(R.drawable.ic_zec_round_full),
@@ -312,19 +304,12 @@ class TransactionDetailVM(
                     )
                 }
 
-                EXACT_OUTPUT ->
-                    SwapTokenAmountState(
-                        bigIcon = swap.destinationAsset?.tokenIcon,
-                        smallIcon = swap.destinationAsset?.chainIcon,
-                        title = stringResByDynamicNumber(swap.data.amountOutFormatted),
-                        subtitle = stringResByDynamicCurrencyNumber(swap.data.amountOutUsd, FiatCurrency.USD.symbol)
-                    )
-
                 null -> null
             }
 
         fun createToState(): SwapTokenAmountState? =
             when (swap.data?.swapMode) {
+                EXACT_OUTPUT,
                 EXACT_INPUT ->
                     SwapTokenAmountState(
                         bigIcon = swap.destinationAsset?.tokenIcon,
@@ -333,22 +318,10 @@ class TransactionDetailVM(
                         subtitle = stringResByDynamicCurrencyNumber(swap.data.amountOutUsd, FiatCurrency.USD.symbol)
                     )
 
-                EXACT_OUTPUT ->
-                    SwapTokenAmountState(
-                        bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                        smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
-                        title = stringRes(swap.data.amountInZatoshi, HIDDEN),
-                        subtitle = stringResByDynamicCurrencyNumber(swap.data.amountInUsd, FiatCurrency.USD.symbol)
-                    )
-
                 null -> null
             }
 
-        return SwapQuoteHeaderState(
-            rotateIcon = swap.data?.swapMode?.let { it == EXACT_OUTPUT },
-            from = createFromState(),
-            to = createToState(),
-        )
+        return SwapQuoteHeaderState(from = createFromState(), to = createToState())
     }
 
     private fun createFeeStringRes(data: DetailedTransactionData): StringResource {

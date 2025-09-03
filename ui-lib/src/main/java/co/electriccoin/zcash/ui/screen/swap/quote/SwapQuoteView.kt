@@ -144,7 +144,6 @@ private fun Success(
         ZashiSwapQuoteHeader(
             state =
                 SwapQuoteHeaderState(
-                    rotateIcon = state.rotateIcon,
                     from = state.from,
                     to = state.to
                 )
