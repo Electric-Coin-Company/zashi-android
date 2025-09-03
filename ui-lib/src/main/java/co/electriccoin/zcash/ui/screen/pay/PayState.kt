@@ -25,5 +25,6 @@ internal data class PayState(
     val slippage: ButtonState,
     val errorFooter: SwapErrorFooterState?,
     val primaryButton: ButtonState?,
+    val isABHintVisible: Boolean,
     val onBack: () -> Unit,
 )

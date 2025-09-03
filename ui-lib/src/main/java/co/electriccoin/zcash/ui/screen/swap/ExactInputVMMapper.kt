@@ -81,7 +81,6 @@ internal class ExactInputVMMapper {
                     state = state,
                     onAddressChange = onAddressChange
                 ),
-            isAddressBookHintVisible = state.isAddressBookHintVisible,
             onBack = onBack,
             swapInfoButton =
                 IconButtonState(
@@ -433,7 +432,6 @@ private data class ExactInputInternalState(
     override val amountTextState: NumberTextFieldInnerState,
     override val addressText: String,
     override val slippage: BigDecimal,
-    override val isAddressBookHintVisible: Boolean,
     override val swapAssets: SwapAssetsData,
     override val isRequestingQuote: Boolean,
     override val selectedContact: EnhancedABContact?,
@@ -445,7 +443,6 @@ private data class ExactInputInternalState(
         amountTextState = original.amountTextState,
         addressText = original.addressText,
         slippage = original.slippage,
-        isAddressBookHintVisible = original.isAddressBookHintVisible,
         swapAssets = original.swapAssets,
         isRequestingQuote = original.isRequestingQuote,
         selectedContact = original.selectedContact

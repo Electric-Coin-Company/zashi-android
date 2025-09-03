@@ -17,6 +17,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
+import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
@@ -35,7 +36,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -58,9 +61,10 @@ internal class PayVM(
     private val exactOutputVMMapper: ExactOutputVMMapper,
     private val navigateToScanAddress: NavigateToScanGenericAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
+    private val isABContactHintVisible: IsABContactHintVisibleUseCase
 ) : ViewModel() {
 
-    private val addressText: MutableStateFlow<String> = MutableStateFlow("")
+    private val address: MutableStateFlow<String> = MutableStateFlow("")
 
     private val text = MutableStateFlow(NumberTextFieldInnerState() to NumberTextFieldInnerState())
 
@@ -69,6 +73,16 @@ internal class PayVM(
     private val isCancelStateVisible = MutableStateFlow(false)
 
     private var selectedContact: MutableStateFlow<EnhancedABContact?> = MutableStateFlow(null)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val isABHintVisible = combine(
+        address,
+        selectedContact
+    ) { address, contact ->
+        address to contact
+    }.flatMapLatest { (address, contact) ->
+        isABContactHintVisible.observe(selectedContact = contact, text = address)
+    }
 
     val cancelState =
         isCancelStateVisible
@@ -102,14 +116,15 @@ internal class PayVM(
     @OptIn(ExperimentalCoroutinesApi::class)
     private val innerState =
         combine(
-            addressText,
+            address,
             text,
             getSelectedSwapAsset.observe(),
             getSlippage.observe(),
             getSwapAssetsUseCase.observe(),
             isRequestingQuote,
             selectedContact,
-            getSelectedWalletAccount.observe().filterNotNull()
+            getSelectedWalletAccount.observe().filterNotNull(),
+            isABHintVisible
         ) { address,
             text,
             asset,
@@ -117,7 +132,8 @@ internal class PayVM(
             swapAssets,
             isRequestingQuote,
             selectedContact,
-            account
+            account,
+            isABHintVisible
             ->
             InternalStateImpl(
                 asset = asset,
@@ -128,7 +144,8 @@ internal class PayVM(
                 swapAssets = swapAssets,
                 isRequestingQuote = isRequestingQuote,
                 selectedABContact = selectedContact,
-                account = account
+                account = account,
+                isABHintVisible = isABHintVisible
             )
         }
 
@@ -180,7 +197,7 @@ internal class PayVM(
 
             if (selected != null) {
                 selectedContact.update { selected }
-                addressText.update { "" }
+                address.update { "" }
             }
         }
 
@@ -190,7 +207,7 @@ internal class PayVM(
             if (result != null) {
                 navigationRouter.back()
                 selectedContact.update { null }
-                addressText.update { result.address }
+                address.update { result.address }
                 if (result.amount != null) {
                     text.update {
                         it.copy(
@@ -264,7 +281,7 @@ internal class PayVM(
 
     private fun onAddressChange(new: String) {
         selectedContact.update { null }
-        addressText.update { new }
+        address.update { new }
     }
 
     private fun onSwapAssetPickerClick() =
@@ -274,6 +291,7 @@ internal class PayVM(
 
 internal interface InternalState {
     val address: String
+    val isABHintVisible: Boolean
     val selectedABContact: EnhancedABContact?
     val asset: SwapAsset?
     val amount: NumberTextFieldInnerState
@@ -289,6 +307,7 @@ internal interface InternalState {
 
 internal data class InternalStateImpl(
     override val address: String,
+    override val isABHintVisible: Boolean,
     override val selectedABContact: EnhancedABContact?,
     override val asset: SwapAsset?,
     override val amount: NumberTextFieldInnerState,

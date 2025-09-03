@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.pay
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -80,6 +81,7 @@ import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidget
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
+import co.electriccoin.zcash.ui.screen.send.view.SendAddressBookHint
 import co.electriccoin.zcash.ui.screen.swap.SlippageButton
 import co.electriccoin.zcash.ui.screen.swap.SwapErrorFooter
 import co.electriccoin.zcash.ui.screen.swap.SwapErrorFooterState
@@ -128,6 +130,12 @@ internal fun PayView(
                 modifier = Modifier.focusRequester(focusRequester),
                 state = state
             )
+            AnimatedVisibility(visible = state.isABHintVisible) {
+                Column {
+                    Spacer(8.dp)
+                    SendAddressBookHint(Modifier.fillMaxWidth())
+                }
+            }
             Spacer(22.dp)
             Text(
                 "Amount",
@@ -395,13 +403,6 @@ private fun AddressTextField(
                 imeAction = ImeAction.Done
             ),
     )
-
-    // AnimatedVisibility(visible = state.isAddressBookHintVisible) {
-    //     Column {
-    //         Spacer(8.dp)
-    //         SendAddressBookHint(Modifier.fillMaxWidth())
-    //     }
-    // }
 }
 
 @PreviewScreens
@@ -447,6 +448,7 @@ private fun Preview() {
                     primaryButton = ButtonState(
                         stringRes("Primary"),
                     ),
+                    isABHintVisible = true
                 )
         )
     }
@@ -496,6 +498,7 @@ private fun ErrorPreview() {
                         subtitle = stringRes("Please check your connection and try again."),
                     ),
                     primaryButton = null,
+                    isABHintVisible = true
                 )
         )
     }

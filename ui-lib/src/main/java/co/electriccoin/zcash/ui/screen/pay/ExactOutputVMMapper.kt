@@ -75,6 +75,7 @@ internal class ExactOutputVMMapper {
                 onRequestSwapQuoteClick = onRequestSwapQuoteClick,
                 onTryAgainClick = onTryAgainClick
             ),
+            isABHintVisible = state.isABHintVisible,
             onBack = onBack,
         )
     }
@@ -324,7 +325,8 @@ private data class ExactOutputInternalState(
     override val slippage: BigDecimal,
     override val isRequestingQuote: Boolean,
     override val account: WalletAccount,
-    override val swapAssets: SwapAssetsData
+    override val swapAssets: SwapAssetsData,
+    override val isABHintVisible: Boolean
 
 ) : InternalState {
     constructor(original: InternalState) : this(
@@ -337,6 +339,7 @@ private data class ExactOutputInternalState(
         isRequestingQuote = original.isRequestingQuote,
         account = original.account,
         swapAssets = original.swapAssets,
+        isABHintVisible = original.isABHintVisible
     )
 
     // fun getTotalSpendableFiatBalance(): BigDecimal? {

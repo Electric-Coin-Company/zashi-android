@@ -23,7 +23,6 @@ internal data class SwapState(
     val infoItems: List<SimpleListItemState>,
     val addressContact: ChipButtonState? = null,
     val address: TextFieldState,
-    val isAddressBookHintVisible: Boolean,
     val qrScannerButton: IconButtonState,
     val addressBookButton: IconButtonState,
     val errorFooter: SwapErrorFooterState?,

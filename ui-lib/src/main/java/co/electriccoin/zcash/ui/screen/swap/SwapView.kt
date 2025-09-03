@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.swap
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -74,7 +73,6 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
-import co.electriccoin.zcash.ui.screen.send.view.SendAddressBookHint
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountText
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextField
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
@@ -347,13 +345,6 @@ private fun ColumnScope.AddressTextField(state: SwapState) {
                 imeAction = ImeAction.Done
             ),
     )
-
-    AnimatedVisibility(visible = state.isAddressBookHintVisible) {
-        Column {
-            Spacer(8.dp)
-            SendAddressBookHint(Modifier.fillMaxWidth())
-        }
-    }
 }
 
 @PreviewScreens
@@ -424,7 +415,6 @@ private fun Preview() {
                             )
                         ),
                     address = TextFieldState(stringRes("")) {},
-                    isAddressBookHintVisible = true,
                     qrScannerButton =
                         IconButtonState(
                             icon = R.drawable.qr_code_icon,
@@ -504,7 +494,6 @@ private fun UnexpectedErrorPreview() {
                             )
                         ),
                     address = TextFieldState(stringRes("")) {},
-                    isAddressBookHintVisible = true,
                     qrScannerButton =
                         IconButtonState(
                             icon = R.drawable.qr_code_icon,
@@ -593,7 +582,6 @@ private fun ServiceUnavailableErrorPreview() {
                             )
                         ),
                     address = TextFieldState(stringRes("")) {},
-                    isAddressBookHintVisible = true,
                     qrScannerButton =
                         IconButtonState(
                             icon = R.drawable.qr_code_icon,

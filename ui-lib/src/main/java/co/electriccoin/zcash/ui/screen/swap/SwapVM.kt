@@ -54,7 +54,6 @@ internal class SwapVM(
     getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
     private val swapRepository: SwapRepository,
     private val navigateToSwapInfo: NavigateToSwapInfoUseCase,
-    private val isABContactHintVisible: IsABContactHintVisibleUseCase,
     private val cancelSwap: CancelSwapUseCase,
     private val navigationRouter: NavigationRouter,
     private val requestSwapQuote: RequestSwapQuoteUseCase,
@@ -112,7 +111,6 @@ internal class SwapVM(
             amountText,
             getSelectedSwapAsset.observe(),
             getSlippage.observe(),
-            addressText.flatMapLatest { isABContactHintVisible.observe() },
             currencyType,
             getSwapAssetsUseCase.observe(),
             isRequestingQuote,
@@ -122,7 +120,6 @@ internal class SwapVM(
             amount,
             asset,
             slippage,
-            isAddressBookHintVisible,
             currencyType,
             swapAssets,
             isRequestingQuote,
@@ -135,7 +132,6 @@ internal class SwapVM(
                 amountTextState = amount,
                 addressText = address,
                 slippage = slippage,
-                isAddressBookHintVisible = isAddressBookHintVisible,
                 swapAssets = swapAssets,
                 isRequestingQuote = isRequestingQuote,
                 selectedContact = selectedContact,
@@ -302,7 +298,6 @@ internal interface InternalState {
     val amountTextState: NumberTextFieldInnerState
     val addressText: String
     val slippage: BigDecimal
-    val isAddressBookHintVisible: Boolean
     val swapAssets: SwapAssetsData
     val isRequestingQuote: Boolean
     val selectedContact: EnhancedABContact?
@@ -318,7 +313,6 @@ internal data class InternalStateImpl(
     override val amountTextState: NumberTextFieldInnerState,
     override val addressText: String,
     override val slippage: BigDecimal,
-    override val isAddressBookHintVisible: Boolean,
     override val swapAssets: SwapAssetsData,
     override val isRequestingQuote: Boolean,
     override val selectedContact: EnhancedABContact?,
