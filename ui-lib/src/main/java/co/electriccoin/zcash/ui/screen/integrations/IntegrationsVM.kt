@@ -16,8 +16,6 @@ import co.electriccoin.zcash.ui.common.usecase.GetKeystoneStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToNearPayUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToNearSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.Status
 import co.electriccoin.zcash.ui.common.usecase.Status.DISABLED
 import co.electriccoin.zcash.ui.common.usecase.Status.ENABLED
@@ -44,8 +42,6 @@ class IntegrationsVM(
     getKeystoneStatus: GetKeystoneStatusUseCase,
     private val navigationRouter: NavigationRouter,
     private val navigateToCoinbase: NavigateToCoinbaseUseCase,
-    private val navigateToNearSwap: NavigateToNearSwapUseCase,
-    private val navigateToNearPay: NavigateToNearPayUseCase
 ) : ViewModel() {
     private val isRestoring = getWalletRestoringState.observe().map { it == WalletRestoringState.RESTORING }
 
@@ -89,18 +85,6 @@ class IntegrationsVM(
         items =
             listOfNotNull(
                 ListItemState(
-                    bigIcon = imageRes(R.drawable.ic_integrations_near),
-                    title = stringRes("CrossPay with Near"),
-                    subtitle = stringRes("Use shielded ZEC to send private cross-chain payments."),
-                    onClick = ::onNearPayClick,
-                ),
-                ListItemState(
-                    bigIcon = imageRes(R.drawable.ic_integrations_near),
-                    title = stringRes(R.string.integrations_near_swap),
-                    subtitle = stringRes(R.string.integrations_near_swap_message),
-                    onClick = ::onNearSwapClick,
-                ),
-                ListItemState(
                     // Set the wallet currency by app build is more future-proof, although we hide it from
                     // the UI in the Testnet build
                     bigIcon = imageRes(R.drawable.ic_integrations_coinbase),
@@ -136,10 +120,6 @@ class IntegrationsVM(
                 ).takeIf { keystoneStatus != UNAVAILABLE },
             ).toImmutableList(),
     )
-
-    private fun onNearPayClick() = viewModelScope.launch { navigateToNearPay() }
-
-    private fun onNearSwapClick() = viewModelScope.launch { navigateToNearSwap() }
 
     private fun onBack() = navigationRouter.back()
 

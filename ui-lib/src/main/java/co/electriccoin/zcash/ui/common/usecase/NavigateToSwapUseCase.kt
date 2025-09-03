@@ -4,7 +4,7 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.screen.swap.SwapArgs
 
-class NavigateToNearSwapUseCase(
+class NavigateToSwapUseCase(
     private val swapRepository: SwapRepository,
     private val navigationRouter: NavigationRouter,
 ) {

@@ -10,5 +10,6 @@ import kotlinx.collections.immutable.ImmutableList
 data class IntegrationsState(
     val disabledInfo: StringResource?,
     val items: ImmutableList<ListItemState>,
+    val showFooter: Boolean = true,
     override val onBack: () -> Unit,
 ) : ModalBottomSheetState

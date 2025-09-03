@@ -55,27 +55,29 @@ internal fun IntegrationsDialogView(
 fun BottomSheetContent(state: IntegrationsState) {
     Column {
         IntegrationItems(state, contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp))
-        Spacer(16.dp)
-        Row(
-            modifier =
-                Modifier
-                    .padding(horizontal = 24.dp)
-                    .fillMaxWidth(),
-        ) {
-            Image(
-                modifier = Modifier,
-                painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(ZashiColors.Text.textTertiary)
-            )
-            Spacer(8.dp)
-            Text(
-                modifier = Modifier.weight(1f),
-                text = stringResource(id = R.string.integrations_dialog_info),
-                textAlign = TextAlign.Start,
-                style = ZashiTypography.textXs,
-                color = ZashiColors.Text.textTertiary
-            )
+        if (state.showFooter) {
+            Spacer(16.dp)
+            Row(
+                modifier =
+                    Modifier
+                        .padding(horizontal = 24.dp)
+                        .fillMaxWidth(),
+            ) {
+                Image(
+                    modifier = Modifier,
+                    painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(ZashiColors.Text.textTertiary)
+                )
+                Spacer(8.dp)
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(id = R.string.integrations_dialog_info),
+                    textAlign = TextAlign.Start,
+                    style = ZashiTypography.textXs,
+                    color = ZashiColors.Text.textTertiary
+                )
+            }
         }
     }
 }

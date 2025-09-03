@@ -56,7 +56,7 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToNearPayUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToNearSwapUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
@@ -215,7 +215,7 @@ val useCaseModule =
         factoryOf(::IsTorEnabledUseCase)
         factoryOf(::OptInExchangeRateUseCase)
         factoryOf(::OptInTorUseCase)
-        factoryOf(::NavigateToNearSwapUseCase)
+        factoryOf(::NavigateToSwapUseCase)
         factoryOf(::CancelSwapUseCase)
         factoryOf(::GetSelectedSwapAssetUseCase)
         factoryOf(::SelectSwapAssetUseCase)
