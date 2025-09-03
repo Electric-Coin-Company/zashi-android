@@ -2,13 +2,11 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlin.time.Duration.Companion.seconds
 
-class IsABContactHintVisibleUseCase(
+class CanCreateABContactUseCase(
     private val addressBookRepository: AddressBookRepository,
 ) {
     fun observe(
@@ -25,8 +23,6 @@ class IsABContactHintVisibleUseCase(
                     .collect { isAbleToAddContact ->
                         if (isAbleToAddContact) {
                             emit(true)
-                            delay(3.seconds)
-                            emit(false)
                         } else {
                             emit(false)
                         }

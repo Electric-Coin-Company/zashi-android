@@ -201,12 +201,13 @@ object ZashiNumberTextFieldDefaults {
         textAlign: TextAlign = TextAlign.Start,
         text: String = stringResByDynamicNumber(0).getValue()
     ) {
-        Text(
+        ZashiAutoSizeText(
             text = text,
             modifier = modifier,
             style = style,
             fontWeight = fontWeight,
             textAlign = textAlign,
+            maxLines = 1,
         )
     }
 }
