@@ -66,6 +66,9 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.StringResourceColor
+import co.electriccoin.zcash.ui.design.util.StyledStringResource
+import co.electriccoin.zcash.ui.design.util.getColor
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -180,7 +183,11 @@ private fun ZecAmountText(state: PayState) {
             text = state.zecAmount.getValue(),
             style = ZashiTypography.textSm,
             fontWeight = FontWeight.Medium,
-            color = ZashiColors.Text.textPrimary
+            color = if (state.zecAmount.color == StringResourceColor.NEGATIVE) {
+                ZashiColors.Inputs.ErrorDefault.hint
+            } else {
+                state.zecAmount.getColor()
+            }
         )
     }
 }
@@ -201,19 +208,14 @@ private fun AmountTextFields(state: PayState) {
                 if (!isAmountFocused) {
                     {
                         val assetTicker = (state.asset as? AssetCardState.Data)?.ticker
-                        val text = if (assetTicker != null) {
-                            stringResByDynamicNumber(0) + stringRes(" ") + assetTicker
-                        } else {
-                            stringResByDynamicNumber(0)
-                        }.getValue()
-
+                        val placeholderText = assetTicker ?: stringResByDynamicNumber(0)
                         ZashiNumberTextFieldDefaults.Placeholder(
                             modifier = Modifier.fillMaxWidth(),
                             style = ZashiTypography.textMd.copy(
                                 color = ZashiColors.Inputs.Default.text
                             ),
                             fontWeight = FontWeight.Normal,
-                            text = text
+                            text = placeholderText.getValue()
                         )
                     }
                 } else {
@@ -418,7 +420,7 @@ private fun Preview() {
                         icon = R.drawable.qr_code_icon,
                         onClick = {}
                     ),
-                    zecAmount = stringResByNumber(1),
+                    zecAmount = StyledStringResource(stringResByNumber(1)),
                     slippage = ButtonState(
                         stringRes("1%"),
                         trailingIcon = R.drawable.ic_swap_slippage
@@ -467,7 +469,7 @@ private fun ErrorPreview() {
                         icon = R.drawable.qr_code_icon,
                         onClick = {}
                     ),
-                    zecAmount = stringResByNumber(1),
+                    zecAmount = StyledStringResource(stringResByNumber(1)),
                     slippage = ButtonState(
                         stringRes("1%"),
                         trailingIcon = R.drawable.ic_swap_slippage

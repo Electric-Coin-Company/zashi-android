@@ -18,6 +18,8 @@ import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.TextSelection
 import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.StringResourceColor
+import co.electriccoin.zcash.ui.design.util.StyledStringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
@@ -75,7 +77,7 @@ internal class ExactOutputVMMapper {
             amount = amountState,
             amountFiat = createFiatAmountState(state, onTextFieldChange),
             amountError = createAmountErrorState(state),
-            zecAmount = stringRes(state.getZatoshi() ?: Zatoshi(0)),
+            zecAmount = createZecAmount(state),
             slippage = createSlippageState(state, onSlippageClick),
             errorFooter = createErrorFooterState(state),
             primaryButton = createPrimaryButtonState(
@@ -86,6 +88,18 @@ internal class ExactOutputVMMapper {
             ),
             isABHintVisible = state.isABHintVisible,
             onBack = onBack,
+        )
+    }
+
+    private fun createZecAmount(state: ExactOutputInternalState): StyledStringResource {
+        val zatoshi = state.getZatoshi()
+        return StyledStringResource(
+            resource = stringRes(state.getZatoshi() ?: Zatoshi(0)),
+            color = if (zatoshi != null && state.totalSpendableBalance < zatoshi) {
+                StringResourceColor.NEGATIVE
+            } else {
+                StringResourceColor.PRIMARY
+            }
         )
     }
 

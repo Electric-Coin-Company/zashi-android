@@ -29,7 +29,6 @@ fun PayInfoView(state: PayInfoState) {
         Column(
             modifier = Modifier.padding(horizontal = 24.dp)
         ) {
-            Spacer(24.dp)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,

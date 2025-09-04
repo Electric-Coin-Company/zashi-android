@@ -34,13 +34,6 @@ fun SwapInfoView(state: SwapInfoState) {
         Column(
             modifier = Modifier.padding(horizontal = 24.dp)
         ) {
-            Spacer(24.dp)
-            Image(
-                modifier = Modifier.size(40.dp),
-                painter = painterResource(R.drawable.ic_swap_info_item_1),
-                contentDescription = null
-            )
-            Spacer(12.dp)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,

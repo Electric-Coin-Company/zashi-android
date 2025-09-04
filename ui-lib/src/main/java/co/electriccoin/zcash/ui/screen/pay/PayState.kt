@@ -8,6 +8,7 @@ import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.StyledStringResource
 import co.electriccoin.zcash.ui.screen.swap.SwapErrorFooterState
 
 @Immutable
@@ -21,7 +22,7 @@ internal data class PayState(
     val amount: NumberTextFieldState,
     val amountFiat: NumberTextFieldState,
     val amountError: StringResource? = null,
-    val zecAmount: StringResource,
+    val zecAmount: StyledStringResource,
     val slippage: ButtonState,
     val errorFooter: SwapErrorFooterState?,
     val primaryButton: ButtonState?,

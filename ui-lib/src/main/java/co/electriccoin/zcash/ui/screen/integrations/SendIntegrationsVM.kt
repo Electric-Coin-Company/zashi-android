@@ -30,13 +30,13 @@ class SendIntegrationsVM(
                 ListItemState(
                     bigIcon = imageRes(R.drawable.ic_integrations_send),
                     title = stringRes("Send ZEC"),
-                    subtitle = stringRes("Use shielded ZEC to send private payments."),
+                    subtitle = stringRes("Use shielded ZEC to send private Zcash payments"),
                     onClick = ::onSendClick,
                 ),
                 ListItemState(
                     bigIcon = imageRes(R.drawable.ic_integrations_near),
                     title = stringRes("CrossPay with Near"),
-                    subtitle = stringRes("Use shielded ZEC to send private cross-chain payments."),
+                    subtitle = stringRes("Use shielded ZEC to send cross-chain payments."),
                     onClick = ::onNearPayClick,
                 ),
 
