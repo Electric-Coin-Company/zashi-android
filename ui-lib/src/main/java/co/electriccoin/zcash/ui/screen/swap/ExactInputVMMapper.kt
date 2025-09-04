@@ -503,6 +503,7 @@ private data class ExactInputInternalState(
     fun getZatoshi() = getOriginTokenAmount()?.convertZecToZatoshi()
 }
 
+@Suppress("MagicNumber")
 internal fun BigDecimal.convertZecToZatoshi(): Zatoshi =
     Zatoshi(
         this

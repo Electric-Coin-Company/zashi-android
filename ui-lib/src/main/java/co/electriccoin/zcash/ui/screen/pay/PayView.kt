@@ -132,6 +132,14 @@ internal fun PayView(
             )
             Spacer(10.dp)
             AmountTextFields(state)
+            if (state.amountError != null && state.amountError.getValue().isNotEmpty()) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = state.amountError.getValue(),
+                    style = ZashiTypography.textSm,
+                    color = ZashiColors.Inputs.ErrorDefault.hint
+                )
+            }
             Spacer(28.dp)
             ZecAmountText(state)
             Spacer(12.dp)
@@ -163,10 +171,11 @@ private fun ZecAmountText(state: PayState) {
                 contentDescription = null
             )
             Image(
-                modifier = Modifier
-                    .size(14.dp)
-                    .align(BottomEnd)
-                    .offset(4.dp, 3.dp),
+                modifier =
+                    Modifier
+                        .size(14.dp)
+                        .align(BottomEnd)
+                        .offset(4.dp, 3.dp),
                 painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
                 contentDescription = null,
             )
@@ -183,11 +192,12 @@ private fun ZecAmountText(state: PayState) {
             text = state.zecAmount.getValue(),
             style = ZashiTypography.textSm,
             fontWeight = FontWeight.Medium,
-            color = if (state.zecAmount.color == StringResourceColor.NEGATIVE) {
-                ZashiColors.Inputs.ErrorDefault.hint
-            } else {
-                state.zecAmount.getColor()
-            }
+            color =
+                if (state.zecAmount.color == StringResourceColor.NEGATIVE) {
+                    ZashiColors.Inputs.ErrorDefault.hint
+                } else {
+                    state.zecAmount.getColor()
+                }
         )
     }
 }
@@ -211,9 +221,10 @@ private fun AmountTextFields(state: PayState) {
                         val placeholderText = assetTicker ?: stringResByDynamicNumber(0)
                         ZashiNumberTextFieldDefaults.Placeholder(
                             modifier = Modifier.fillMaxWidth(),
-                            style = ZashiTypography.textMd.copy(
-                                color = ZashiColors.Inputs.Default.text
-                            ),
+                            style =
+                                ZashiTypography.textMd.copy(
+                                    color = ZashiColors.Inputs.Default.text
+                                ),
                             fontWeight = FontWeight.Normal,
                             text = placeholderText.getValue()
                         )
@@ -237,9 +248,10 @@ private fun AmountTextFields(state: PayState) {
             placeholder = {
                 ZashiNumberTextFieldDefaults.Placeholder(
                     modifier = Modifier.fillMaxWidth(),
-                    style = ZashiTypography.textMd.copy(
-                        color = ZashiColors.Inputs.Default.text
-                    ),
+                    style =
+                        ZashiTypography.textMd.copy(
+                            color = ZashiColors.Inputs.Default.text
+                        ),
                     fontWeight = FontWeight.Normal,
                     text = stringResource(R.string.send_usd_amount_hint)
                 )
@@ -262,15 +274,6 @@ private fun AmountTextFields(state: PayState) {
                         )
                 )
             }
-        )
-    }
-
-    if (state.amountError != null && state.amountError.getValue().isNotEmpty()) {
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            text = state.amountError.getValue(),
-            style = ZashiTypography.textSm,
-            color = ZashiColors.Inputs.ErrorDefault.hint
         )
     }
 }
@@ -395,40 +398,46 @@ private fun Preview() {
             balanceState = BalanceStateFixture.new(),
             state =
                 PayState(
-                    asset = AssetCardState.Data(
-                        ticker = stringRes("USDT"),
-                        bigIcon = null,
-                        smallIcon = null,
-                        isEnabled = true,
-                        onClick = {}
-                    ),
+                    asset =
+                        AssetCardState.Data(
+                            ticker = stringRes("USDT"),
+                            bigIcon = null,
+                            smallIcon = null,
+                            isEnabled = true,
+                            onClick = {}
+                        ),
                     amount = NumberTextFieldState {},
                     amountFiat = NumberTextFieldState {},
                     info = IconButtonState(R.drawable.ic_help) {},
                     onBack = {},
-                    abButton = IconButtonState(
-                        icon = R.drawable.send_address_book,
-                        onClick = {}
-                    ),
+                    abButton =
+                        IconButtonState(
+                            icon = R.drawable.send_address_book,
+                            onClick = {}
+                        ),
                     address = TextFieldState(stringRes("")) {},
-                    abContact = ChipButtonState(
-                        text = stringRes("Contact"),
-                        onClick = {},
-                        endIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chip_close
-                    ),
-                    qrButton = IconButtonState(
-                        icon = R.drawable.qr_code_icon,
-                        onClick = {}
-                    ),
+                    abContact =
+                        ChipButtonState(
+                            text = stringRes("Contact"),
+                            onClick = {},
+                            endIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chip_close
+                        ),
+                    qrButton =
+                        IconButtonState(
+                            icon = R.drawable.qr_code_icon,
+                            onClick = {}
+                        ),
                     zecAmount = StyledStringResource(stringResByNumber(1)),
-                    slippage = ButtonState(
-                        stringRes("1%"),
-                        trailingIcon = R.drawable.ic_swap_slippage
-                    ),
+                    slippage =
+                        ButtonState(
+                            stringRes("1%"),
+                            trailingIcon = R.drawable.ic_swap_slippage
+                        ),
                     errorFooter = null,
-                    primaryButton = ButtonState(
-                        stringRes("Primary"),
-                    ),
+                    primaryButton =
+                        ButtonState(
+                            stringRes("Primary"),
+                        ),
                     isABHintVisible = true
                 )
         )
@@ -444,40 +453,46 @@ private fun ErrorPreview() {
             balanceState = BalanceStateFixture.new(),
             state =
                 PayState(
-                    asset = AssetCardState.Data(
-                        ticker = stringRes("USDT"),
-                        bigIcon = null,
-                        smallIcon = null,
-                        isEnabled = true,
-                        onClick = {}
-                    ),
+                    asset =
+                        AssetCardState.Data(
+                            ticker = stringRes("USDT"),
+                            bigIcon = null,
+                            smallIcon = null,
+                            isEnabled = true,
+                            onClick = {}
+                        ),
                     amount = NumberTextFieldState {},
                     amountFiat = NumberTextFieldState {},
                     info = IconButtonState(R.drawable.ic_help) {},
                     onBack = {},
-                    abButton = IconButtonState(
-                        icon = R.drawable.send_address_book,
-                        onClick = {}
-                    ),
+                    abButton =
+                        IconButtonState(
+                            icon = R.drawable.send_address_book,
+                            onClick = {}
+                        ),
                     address = TextFieldState(stringRes("")) {},
-                    abContact = ChipButtonState(
-                        text = stringRes("Contact"),
-                        onClick = {},
-                        endIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chip_close
-                    ),
-                    qrButton = IconButtonState(
-                        icon = R.drawable.qr_code_icon,
-                        onClick = {}
-                    ),
+                    abContact =
+                        ChipButtonState(
+                            text = stringRes("Contact"),
+                            onClick = {},
+                            endIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chip_close
+                        ),
+                    qrButton =
+                        IconButtonState(
+                            icon = R.drawable.qr_code_icon,
+                            onClick = {}
+                        ),
                     zecAmount = StyledStringResource(stringResByNumber(1)),
-                    slippage = ButtonState(
-                        stringRes("1%"),
-                        trailingIcon = R.drawable.ic_swap_slippage
-                    ),
-                    errorFooter = SwapErrorFooterState(
-                        title = stringRes("Unexpected error"),
-                        subtitle = stringRes("Please check your connection and try again."),
-                    ),
+                    slippage =
+                        ButtonState(
+                            stringRes("1%"),
+                            trailingIcon = R.drawable.ic_swap_slippage
+                        ),
+                    errorFooter =
+                        SwapErrorFooterState(
+                            title = stringRes("Unexpected error"),
+                            subtitle = stringRes("Please check your connection and try again."),
+                        ),
                     primaryButton = null,
                     isABHintVisible = true
                 )

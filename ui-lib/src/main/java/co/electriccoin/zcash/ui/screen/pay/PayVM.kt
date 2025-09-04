@@ -12,13 +12,13 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
+import co.electriccoin.zcash.ui.common.usecase.CanCreateABContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
-import co.electriccoin.zcash.ui.common.usecase.CanCreateABContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
@@ -31,7 +31,6 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.pay.info.PayInfoArgs
 import co.electriccoin.zcash.ui.screen.swap.SwapCancelState
 import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactArgs
-import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -67,7 +66,6 @@ internal class PayVM(
     private val isABContactHintVisible: IsABContactHintVisibleUseCase,
     private val canCreateABContact: CanCreateABContactUseCase
 ) : ViewModel() {
-
     private val address: MutableStateFlow<String> = MutableStateFlow("")
 
     private val text = MutableStateFlow(NumberTextFieldInnerState() to NumberTextFieldInnerState())
@@ -79,24 +77,26 @@ internal class PayVM(
     private var selectedContact: MutableStateFlow<EnhancedABContact?> = MutableStateFlow(null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val isABHintVisible = combine(
-        address,
-        selectedContact
-    ) { address, contact ->
-        address to contact
-    }.flatMapLatest { (address, contact) ->
-        isABContactHintVisible.observe(selectedContact = contact, text = address)
-    }
+    private val isABHintVisible =
+        combine(
+            address,
+            selectedContact
+        ) { address, contact ->
+            address to contact
+        }.flatMapLatest { (address, contact) ->
+            isABContactHintVisible.observe(selectedContact = contact, text = address)
+        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val canCreateNewABContact = combine(
-        address,
-        selectedContact
-    ) { address, contact ->
-        address to contact
-    }.flatMapLatest { (address, contact) ->
-        canCreateABContact.observe(selectedContact = contact, text = address)
-    }
+    private val canCreateNewABContact =
+        combine(
+            address,
+            selectedContact
+        ) { address, contact ->
+            address to contact
+        }.flatMapLatest { (address, contact) ->
+            canCreateABContact.observe(selectedContact = contact, text = address)
+        }
 
     val cancelState =
         isCancelStateVisible
@@ -140,7 +140,8 @@ internal class PayVM(
             getSelectedWalletAccount.observe().filterNotNull(),
             isABHintVisible,
             canCreateNewABContact
-        ) { address,
+        ) {
+            address,
             text,
             asset,
             slippage,
@@ -184,7 +185,6 @@ internal class PayVM(
                     onTextFieldChange = ::onTextFieldChange,
                     onCreateNewContactClick = ::onCreateNewContactClick
                 )
-
             }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -195,14 +195,14 @@ internal class PayVM(
         swapRepository
             .selectedAsset
             .onEach { asset ->
-                val newFiatAmountState = exactOutputVMMapper.createFiatAmountInnerState(
-                    amountInnerState = text.value.first,
-                    fiatInnerState = text.value.second,
-                    asset = asset
-                )
+                val newFiatAmountState =
+                    exactOutputVMMapper.createFiatAmountInnerState(
+                        amountInnerState = text.value.first,
+                        fiatInnerState = text.value.second,
+                        asset = asset
+                    )
                 text.update { it.copy(second = newFiatAmountState) }
-            }
-            .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
     }
 
     private fun onDeleteSelectedContactClick() = selectedContact.update { null }

@@ -15,15 +15,16 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun PayScreen() {
     val vm = koinViewModel<PayVM>()
-    val balanceVM = koinViewModel<BalanceWidgetVM> {
-        parametersOf(
-            BalanceWidgetArgs(
-                isBalanceButtonEnabled = true,
-                isExchangeRateButtonEnabled = false,
-                showDust = true
+    val balanceVM =
+        koinViewModel<BalanceWidgetVM> {
+            parametersOf(
+                BalanceWidgetArgs(
+                    isBalanceButtonEnabled = true,
+                    isExchangeRateButtonEnabled = false,
+                    showDust = true
+                )
             )
-        )
-    }
+        }
     val appBarVM = koinViewModel<ZashiTopAppBarVM>()
     val state by vm.state.collectAsStateWithLifecycle()
     val balanceState by balanceVM.state.collectAsStateWithLifecycle()

@@ -18,35 +18,33 @@ class SendIntegrationsVM(
     private val navigationRouter: NavigationRouter,
     private val navigateToNearPay: NavigateToNearPayUseCase
 ) : ViewModel() {
-
     val state = MutableStateFlow(createState()).asStateFlow()
 
-    private fun createState() = IntegrationsState(
-        disabledInfo = null,
-        onBack = ::onBack,
-        showFooter = false,
-        items =
-            listOfNotNull(
-                ListItemState(
-                    bigIcon = imageRes(R.drawable.ic_integrations_send),
-                    title = stringRes("Send ZEC"),
-                    subtitle = stringRes("Use shielded ZEC to send private Zcash payments"),
-                    onClick = ::onSendClick,
-                ),
-                ListItemState(
-                    bigIcon = imageRes(R.drawable.ic_integrations_near),
-                    title = stringRes("CrossPay with Near"),
-                    subtitle = stringRes("Use shielded ZEC to send cross-chain payments."),
-                    onClick = ::onNearPayClick,
-                ),
-
+    private fun createState() =
+        IntegrationsState(
+            disabledInfo = null,
+            onBack = ::onBack,
+            showFooter = false,
+            items =
+                listOfNotNull(
+                    ListItemState(
+                        bigIcon = imageRes(R.drawable.ic_integrations_send),
+                        title = stringRes("Send ZEC"),
+                        subtitle = stringRes("Use shielded ZEC to send private Zcash payments"),
+                        onClick = ::onSendClick,
+                    ),
+                    ListItemState(
+                        bigIcon = imageRes(R.drawable.ic_integrations_near),
+                        title = stringRes("CrossPay with Near"),
+                        subtitle = stringRes("Use shielded ZEC to send cross-chain payments."),
+                        onClick = ::onNearPayClick,
+                    ),
                 ).toImmutableList(),
-    )
+        )
 
     private fun onNearPayClick() = viewModelScope.launch { navigateToNearPay() }
 
     private fun onSendClick() = navigationRouter.forward(Send())
 
     private fun onBack() = navigationRouter.back()
-
 }

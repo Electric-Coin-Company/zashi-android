@@ -43,8 +43,9 @@ fun PayInfoView(state: PayInfoState) {
             }
             Spacer(12.dp)
             Text(
-                text = "Make cross-chain payments in any NEAR-supported coin or token.\n\nIf the actual slippage and " +
-                    "network conditions result in your recipient receiving less than the promised amount, your transaction will be reversed. You will receive a full refund minus network fees.",
+                text =
+                    "Make cross-chain payments in any NEAR-supported coin or token.\n\nIf the actual slippage and " +
+                        "network conditions result in your recipient receiving less than the promised amount, your transaction will be reversed. You will receive a full refund minus network fees.",
                 style = ZashiTypography.textSm,
                 color = ZashiColors.Text.textTertiary
             )

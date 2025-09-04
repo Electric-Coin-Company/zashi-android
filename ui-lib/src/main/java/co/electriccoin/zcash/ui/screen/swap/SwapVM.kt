@@ -17,7 +17,6 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
-import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
@@ -39,7 +38,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -116,7 +114,8 @@ internal class SwapVM(
             isRequestingQuote,
             selectedContact,
             getSelectedWalletAccount.observe().filterNotNull()
-        ) { address,
+        ) {
+            address,
             amount,
             asset,
             slippage,
@@ -149,8 +148,8 @@ internal class SwapVM(
                 initialValue = null
             )
 
-    private fun createState(innerState: InternalStateImpl): SwapState {
-        return exactInputVMMapper.createState(
+    private fun createState(innerState: InternalStateImpl): SwapState =
+        exactInputVMMapper.createState(
             internalState = innerState,
             onBack = ::onBack,
             onSwapInfoClick = ::onSwapInfoClick,
@@ -166,7 +165,6 @@ internal class SwapVM(
             onDeleteSelectedContactClick = ::onDeleteSelectedContactClick,
             onBalanceButtonClick = ::onBalanceButtonClick
         )
-    }
 
     private fun onBalanceButtonClick() {
         // navigationRouter.forward(SpendableBalanceArgs)

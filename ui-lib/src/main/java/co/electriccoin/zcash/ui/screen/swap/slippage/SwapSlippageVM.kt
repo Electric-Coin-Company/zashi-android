@@ -6,7 +6,8 @@ import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.SwapMode.*
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.SetSlippageUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -108,10 +109,11 @@ class SwapSlippageVM(
         val result =
             when {
                 percent > BigDecimal("30") -> stringRes(R.string.swap_slippage_max_threshold)
-                fiatAmount == null -> when (args.mode) {
-                    EXACT_INPUT -> stringRes(R.string.swap_slippage_info, percentString)
-                    EXACT_OUTPUT -> stringRes(R.string.pay_slippage_info, percentString)
-                }
+                fiatAmount == null ->
+                    when (args.mode) {
+                        EXACT_INPUT -> stringRes(R.string.swap_slippage_info, percentString)
+                        EXACT_OUTPUT -> stringRes(R.string.pay_slippage_info, percentString)
+                    }
 
                 else -> {
                     val slippageFiat =

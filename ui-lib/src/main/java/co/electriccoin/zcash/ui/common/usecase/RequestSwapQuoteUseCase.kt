@@ -9,7 +9,8 @@ import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.model.CompositeSwapQuote
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.SwapMode
-import co.electriccoin.zcash.ui.common.model.SwapMode.*
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
@@ -60,11 +61,12 @@ class RequestSwapQuoteUseCase(
         if (canNavigateToSwapQuote()) {
             when (mode) {
                 EXACT_INPUT -> navigationRouter.forward(SwapQuoteArgs)
-                EXACT_OUTPUT -> if (result is SwapQuoteCompositeData.Success) {
-                    navigationRouter.forward(ReviewTransactionArgs)
-                } else {
-                    navigationRouter.forward(SwapQuoteArgs)
-                }
+                EXACT_OUTPUT ->
+                    if (result is SwapQuoteCompositeData.Success) {
+                        navigationRouter.forward(ReviewTransactionArgs)
+                    } else {
+                        navigationRouter.forward(SwapQuoteArgs)
+                    }
             }
         }
     }
@@ -85,6 +87,7 @@ class RequestSwapQuoteUseCase(
                     when (quote.type) {
                         EXACT_INPUT ->
                             keystoneProposalRepository.createExactInputSwapProposal(send, quote, address)
+
                         EXACT_OUTPUT ->
                             keystoneProposalRepository.createExactOutputSwapProposal(send, quote, address)
                     }
@@ -95,6 +98,7 @@ class RequestSwapQuoteUseCase(
                     when (quote.type) {
                         EXACT_INPUT ->
                             zashiProposalRepository.createExactInputSwapProposal(send, quote, address)
+
                         EXACT_OUTPUT ->
                             zashiProposalRepository.createExactOutputSwapProposal(send, quote, address)
                     }

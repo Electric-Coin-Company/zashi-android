@@ -30,6 +30,7 @@ import io.ktor.http.HttpStatusCode
 import java.math.BigDecimal
 import java.math.MathContext
 
+@Suppress("TooManyFunctions")
 internal class ExactOutputVMMapper {
     fun createState(
         internalState: InternalState,
@@ -49,43 +50,47 @@ internal class ExactOutputVMMapper {
         val state = ExactOutputInternalState(internalState)
         val amountState = createAmountState(state, onTextFieldChange)
         return PayState(
-            info = IconButtonState(
-                icon = co.electriccoin.zcash.ui.design.R.drawable.ic_info,
-                onClick = onSwapInfoClick
-            ),
+            info =
+                IconButtonState(
+                    icon = co.electriccoin.zcash.ui.design.R.drawable.ic_info,
+                    onClick = onSwapInfoClick
+                ),
             address = createAddressState(state, onAddressChange),
             asset = createAssetState(state, onSwapAssetPickerClick),
             abContact = createAddressContactState(state, onDeleteSelectedContactClick),
-            abButton = if (state.canCreateNewABContact) {
+            abButton =
+                if (state.canCreateNewABContact) {
+                    IconButtonState(
+                        icon = R.drawable.send_address_book_plus,
+                        onClick = { onCreateNewContactClick(state.address, state.asset?.chainTicker) },
+                        isEnabled = !state.isRequestingQuote
+                    )
+                } else {
+                    IconButtonState(
+                        icon = R.drawable.send_address_book,
+                        onClick = onAddressBookClick,
+                        isEnabled = !state.isRequestingQuote
+                    )
+                },
+            qrButton =
                 IconButtonState(
-                    icon = R.drawable.send_address_book_plus,
-                    onClick = { onCreateNewContactClick(state.address, state.asset?.chainTicker) },
+                    icon = R.drawable.qr_code_icon,
+                    onClick = onQrCodeScannerClick,
                     isEnabled = !state.isRequestingQuote
-                )
-            } else {
-                IconButtonState(
-                    icon = R.drawable.send_address_book,
-                    onClick = onAddressBookClick,
-                    isEnabled = !state.isRequestingQuote
-                )
-            },
-            qrButton = IconButtonState(
-                icon = R.drawable.qr_code_icon,
-                onClick = onQrCodeScannerClick,
-                isEnabled = !state.isRequestingQuote
-            ),
+                ),
             amount = amountState,
             amountFiat = createFiatAmountState(state, onTextFieldChange),
             amountError = createAmountErrorState(state),
             zecAmount = createZecAmount(state),
             slippage = createSlippageState(state, onSlippageClick),
             errorFooter = createErrorFooterState(state),
-            primaryButton = createPrimaryButtonState(
-                textField = amountState,
-                state = state,
-                onRequestSwapQuoteClick = onRequestSwapQuoteClick,
-                onTryAgainClick = onTryAgainClick
-            ),
+            primaryButton =
+                createPrimaryButtonState(
+                    textField = amountState,
+                    state = state,
+                    onRequestSwapQuoteClick = onRequestSwapQuoteClick,
+                    onTryAgainClick = onTryAgainClick
+                ),
             isABHintVisible = state.isABHintVisible,
             onBack = onBack,
         )
@@ -95,11 +100,12 @@ internal class ExactOutputVMMapper {
         val zatoshi = state.getZatoshi()
         return StyledStringResource(
             resource = stringRes(state.getZatoshi() ?: Zatoshi(0)),
-            color = if (zatoshi != null && state.totalSpendableBalance < zatoshi) {
-                StringResourceColor.NEGATIVE
-            } else {
-                StringResourceColor.PRIMARY
-            }
+            color =
+                if (zatoshi != null && state.totalSpendableBalance < zatoshi) {
+                    StringResourceColor.NEGATIVE
+                } else {
+                    StringResourceColor.PRIMARY
+                }
         )
     }
 
@@ -109,16 +115,18 @@ internal class ExactOutputVMMapper {
         asset: SwapAsset?
     ): NumberTextFieldInnerState {
         val amount = amountInnerState.amount
-        val fiat = if (amount == null || asset?.usdPrice == null) {
-            null
-        } else {
-            amount.multiply(asset.usdPrice, MathContext.DECIMAL128)
-        }
+        val fiat =
+            if (amount == null || asset?.usdPrice == null) {
+                null
+            } else {
+                amount.multiply(asset.usdPrice, MathContext.DECIMAL128)
+            }
         return fiatInnerState.copy(
-            innerTextFieldState = fiatInnerState.innerTextFieldState.copy(
-                value = fiat?.let { stringResByDynamicNumber(it) } ?: stringRes(""),
-                selection = TextSelection.End
-            ),
+            innerTextFieldState =
+                fiatInnerState.innerTextFieldState.copy(
+                    value = fiat?.let { stringResByDynamicNumber(it) } ?: stringRes(""),
+                    selection = TextSelection.End
+                ),
             amount = fiat,
             lastValidAmount = fiat ?: fiatInnerState.lastValidAmount
         )
@@ -143,29 +151,32 @@ internal class ExactOutputVMMapper {
             onValueChange = { amountInnerState ->
                 val amount = amountInnerState.amount
                 val asset = state.asset
-                val fiat = if (amount == null || asset?.usdPrice == null) {
-                    null
-                } else {
-                    amount.multiply(asset.usdPrice, MathContext.DECIMAL128)
-                }
+                val fiat =
+                    if (amount == null || asset?.usdPrice == null) {
+                        null
+                    } else {
+                        amount.multiply(asset.usdPrice, MathContext.DECIMAL128)
+                    }
                 onTextFieldChange(
                     amountInnerState,
                     state.fiatAmount.copy(
-                        innerTextFieldState = state.fiatAmount.innerTextFieldState.copy(
-                            value = fiat?.let { stringResByDynamicNumber(it) } ?: stringRes(""),
-                            selection = TextSelection.End
-                        ),
+                        innerTextFieldState =
+                            state.fiatAmount.innerTextFieldState.copy(
+                                value = fiat?.let { stringResByDynamicNumber(it) } ?: stringRes(""),
+                                selection = TextSelection.End
+                            ),
                         amount = fiat,
                         lastValidAmount = if (fiat != null) fiat else state.fiatAmount.lastValidAmount
                     )
                 )
             },
             isEnabled = !state.isRequestingQuote,
-            explicitError = if (zatoshi != null && state.totalSpendableBalance < zatoshi) {
-                stringRes("")
-            } else {
-                null
-            }
+            explicitError =
+                if (zatoshi != null && state.totalSpendableBalance < zatoshi) {
+                    stringRes("")
+                } else {
+                    null
+                }
         )
     }
 
@@ -179,50 +190,53 @@ internal class ExactOutputVMMapper {
             onValueChange = { fiatInnerState ->
                 val fiat = fiatInnerState.amount
                 val asset = state.asset
-                val amount = if (fiat == null || asset?.usdPrice == null) {
-                    null
-                } else {
-                    fiat.divide(asset.usdPrice, MathContext.DECIMAL128)
-                }
+                val amount =
+                    if (fiat == null || asset?.usdPrice == null) {
+                        null
+                    } else {
+                        fiat.divide(asset.usdPrice, MathContext.DECIMAL128)
+                    }
                 onTextFieldChange(
                     state.amount.copy(
-                        innerTextFieldState = state.amount.innerTextFieldState.copy(
-                            value = amount?.let { stringResByDynamicNumber(it) } ?: stringRes(""),
-                            selection = TextSelection.End
-                        ),
+                        innerTextFieldState =
+                            state.amount.innerTextFieldState.copy(
+                                value = amount?.let { stringResByDynamicNumber(it) } ?: stringRes(""),
+                                selection = TextSelection.End
+                            ),
                         amount = amount,
                         lastValidAmount = if (amount != null) amount else state.amount.lastValidAmount
                     ),
                     fiatInnerState
                 )
-
             },
             isEnabled = !state.isRequestingQuote,
-            explicitError = if (zatoshi != null && state.totalSpendableBalance < zatoshi) {
-                stringRes("")
-            } else {
-                null
-            }
+            explicitError =
+                if (zatoshi != null && state.totalSpendableBalance < zatoshi) {
+                    stringRes("")
+                } else {
+                    null
+                }
         )
     }
 
     private fun createAssetState(
         state: ExactOutputInternalState,
         onSwapAssetPickerClick: () -> Unit
-    ): AssetCardState = if (state.asset == null) {
-        AssetCardState.Loading(
-            onClick = onSwapAssetPickerClick,
-            isEnabled = !state.isRequestingQuote,
-        )
-    } else {
-        AssetCardState.Data(
-            ticker = state.asset.tokenTicker.let { stringRes(it) },
-            bigIcon = state.asset.tokenIcon,
-            smallIcon = state.asset.chainIcon,
-            onClick = onSwapAssetPickerClick,
-            isEnabled = !state.isRequestingQuote,
-        )
-    }
+    ): AssetCardState =
+        if (state.asset == null) {
+            AssetCardState.Loading(
+                onClick = onSwapAssetPickerClick,
+                isEnabled = !state.isRequestingQuote,
+            )
+        } else {
+            AssetCardState.Data(
+                ticker = state.asset.tokenTicker.let { stringRes(it) },
+                bigIcon = state.asset.tokenIcon,
+                smallIcon = state.asset.chainIcon,
+                onClick = onSwapAssetPickerClick,
+                isEnabled = !state.isRequestingQuote,
+            )
+        }
 
     private fun createAddressContactState(
         state: ExactOutputInternalState,

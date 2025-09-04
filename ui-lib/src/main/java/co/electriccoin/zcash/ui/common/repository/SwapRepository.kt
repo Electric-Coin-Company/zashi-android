@@ -28,7 +28,6 @@ import java.math.BigDecimal
 import kotlin.time.Duration.Companion.seconds
 
 interface SwapRepository {
-
     val assets: StateFlow<SwapAssetsData>
 
     val selectedAsset: StateFlow<SwapAsset?>
@@ -269,6 +268,7 @@ class SwapRepositoryImpl(
         requestQuote(amount, address, SwapMode.EXACT_OUTPUT)
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun requestQuote(amount: BigDecimal, address: String, mode: SwapMode) {
         requestQuoteJob =
             scope.launch {

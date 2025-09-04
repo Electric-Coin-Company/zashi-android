@@ -11,6 +11,7 @@ import kotlin.time.Duration.Companion.seconds
 class IsABContactHintVisibleUseCase(
     private val addressBookRepository: AddressBookRepository,
 ) {
+    @Suppress("MagicNumber")
     fun observe(
         selectedContact: EnhancedABContact?,
         text: String?

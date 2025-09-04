@@ -734,10 +734,11 @@ private fun PayPreview() =
                             SimpleAmountState(
                                 title = stringRes("Payment Amount"),
                                 amount = stringRes(Zatoshi(0), TickerLocation.HIDDEN),
-                                amountFiat = stringResByDynamicCurrencyNumber(
-                                    amount = 0,
-                                    ticker = FiatCurrency.USD.symbol
-                                ),
+                                amountFiat =
+                                    stringResByDynamicCurrencyNumber(
+                                        amount = 0,
+                                        ticker = FiatCurrency.USD.symbol
+                                    ),
                                 bigIcon = imageRes(R.drawable.ic_chain_placeholder),
                                 smallIcon = imageRes(R.drawable.ic_token_placeholder),
                             ),
@@ -752,44 +753,52 @@ private fun PayPreview() =
                                 name = stringRes("Keystone wallet"),
                             ),
                             SimpleListItemState(
-                                title = StyledStringResource(
-                                    stringRes("Amount"),
-                                    StringResourceColor.TERTIARY
-                                ),
-                                text = StyledStringResource(
-                                    stringRes(Zatoshi(0))
-                                ),
-                                subtext = StyledStringResource(
-                                    stringResByDynamicCurrencyNumber(0, FiatCurrency.USD.symbol),
-                                    StringResourceColor.TERTIARY
-                                )
+                                title =
+                                    StyledStringResource(
+                                        stringRes("Amount"),
+                                        StringResourceColor.TERTIARY
+                                    ),
+                                text =
+                                    StyledStringResource(
+                                        stringRes(Zatoshi(0))
+                                    ),
+                                subtext =
+                                    StyledStringResource(
+                                        stringResByDynamicCurrencyNumber(0, FiatCurrency.USD.symbol),
+                                        StringResourceColor.TERTIARY
+                                    )
                             ),
                             SimpleListItemState(
-                                title = StyledStringResource(
-                                    stringRes("Fee"),
-                                    StringResourceColor.TERTIARY
-                                ),
-                                text = StyledStringResource(
-                                    stringRes(Zatoshi(0))
-                                ),
-                                subtext = StyledStringResource(
-                                    stringResByDynamicCurrencyNumber(0, FiatCurrency.USD.symbol),
-                                    StringResourceColor.TERTIARY
-                                )
+                                title =
+                                    StyledStringResource(
+                                        stringRes("Fee"),
+                                        StringResourceColor.TERTIARY
+                                    ),
+                                text =
+                                    StyledStringResource(
+                                        stringRes(Zatoshi(0))
+                                    ),
+                                subtext =
+                                    StyledStringResource(
+                                        stringResByDynamicCurrencyNumber(0, FiatCurrency.USD.symbol),
+                                        StringResourceColor.TERTIARY
+                                    )
                             ),
                             DividerState,
                             SimpleListItemState(
-                                title = StyledStringResource(
-                                    stringRes("Total")
-                                ),
-                                text = StyledStringResource(
-                                    stringRes(Zatoshi(0))
-                                ),
-                                subtext = StyledStringResource(
-                                    stringResByDynamicCurrencyNumber(0, FiatCurrency.USD.symbol),
-                                )
+                                title =
+                                    StyledStringResource(
+                                        stringRes("Total")
+                                    ),
+                                text =
+                                    StyledStringResource(
+                                        stringRes(Zatoshi(0))
+                                    ),
+                                subtext =
+                                    StyledStringResource(
+                                        stringResByDynamicCurrencyNumber(0, FiatCurrency.USD.symbol),
+                                    )
                             )
-
                         ),
                     primaryButton =
                         ButtonState(

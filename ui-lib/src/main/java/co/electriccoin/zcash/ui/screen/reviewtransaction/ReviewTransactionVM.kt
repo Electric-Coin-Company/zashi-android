@@ -85,26 +85,29 @@ class ReviewTransactionVM(
                 }
             ).map { addressBookContact ->
                 when (proposal) {
-                    is ExactOutputSwapTransactionProposal -> createExactOutputState(
-                        transactionProposal = proposal,
-                        addressBookContact = addressBookContact,
-                        selectedWallet = selectedWallet,
-                    )
+                    is ExactOutputSwapTransactionProposal ->
+                        createExactOutputState(
+                            transactionProposal = proposal,
+                            addressBookContact = addressBookContact,
+                            selectedWallet = selectedWallet,
+                        )
 
-                    is Zip321TransactionProposal -> createZip321State(
-                        transactionProposal = proposal,
-                        addressBookContact = addressBookContact,
-                        selectedWallet = selectedWallet,
-                        isReceiverExpanded = isReceiverExpanded,
-                        exchangeRateState = exchangeRate
-                    )
+                    is Zip321TransactionProposal ->
+                        createZip321State(
+                            transactionProposal = proposal,
+                            addressBookContact = addressBookContact,
+                            selectedWallet = selectedWallet,
+                            isReceiverExpanded = isReceiverExpanded,
+                            exchangeRateState = exchangeRate
+                        )
 
-                    else -> createState(
-                        transactionProposal = proposal,
-                        addressBookContact = addressBookContact,
-                        selectedWallet = selectedWallet,
-                        exchangeRateState = exchangeRate
-                    )
+                    else ->
+                        createState(
+                            transactionProposal = proposal,
+                            addressBookContact = addressBookContact,
+                            selectedWallet = selectedWallet,
+                            exchangeRateState = exchangeRate
+                        )
                 }
             }
         }.stateIn(
@@ -195,10 +198,11 @@ class ReviewTransactionVM(
                 SimpleAmountState(
                     title = stringRes("Payment Amount"),
                     amount = stringResByDynamicNumber(transactionProposal.quote.amountOutFormatted),
-                    amountFiat = stringResByDynamicCurrencyNumber(
-                        amount = transactionProposal.quote.amountOutUsd,
-                        ticker = FiatCurrency.USD.symbol
-                    ),
+                    amountFiat =
+                        stringResByDynamicCurrencyNumber(
+                            amount = transactionProposal.quote.amountOutUsd,
+                            ticker = FiatCurrency.USD.symbol
+                        ),
                     bigIcon = transactionProposal.quote.destinationAsset.tokenIcon,
                     smallIcon = transactionProposal.quote.destinationAsset.chainIcon,
                 ),
@@ -213,40 +217,48 @@ class ReviewTransactionVM(
                     name = selectedWallet.name
                 ),
                 SimpleListItemState(
-                    title = StyledStringResource(
-                        resource = stringRes(R.string.send_amount_label),
-                        color = StringResourceColor.TERTIARY
-                    ),
-                    text = StyledStringResource(
-                        resource = stringRes(transactionProposal.quote.quote.amountInZatoshi)
-                    ),
+                    title =
+                        StyledStringResource(
+                            resource = stringRes(R.string.send_amount_label),
+                            color = StringResourceColor.TERTIARY
+                        ),
+                    text =
+                        StyledStringResource(
+                            resource = stringRes(transactionProposal.quote.quote.amountInZatoshi)
+                        ),
                     subtext = null
                 ),
                 SimpleListItemState(
-                    title = StyledStringResource(
-                        resource = stringRes(R.string.send_confirmation_fee),
-                        color = StringResourceColor.TERTIARY
-                    ),
-                    text = StyledStringResource(
-                        resource = stringRes(transactionProposal.totalFees)
-                    ),
+                    title =
+                        StyledStringResource(
+                            resource = stringRes(R.string.send_confirmation_fee),
+                            color = StringResourceColor.TERTIARY
+                        ),
+                    text =
+                        StyledStringResource(
+                            resource = stringRes(transactionProposal.totalFees)
+                        ),
                     subtext = null
                 ),
                 DividerState,
                 SimpleListItemState(
-                    title = StyledStringResource(
-                        resource = stringRes("Total")
-                    ),
-                    text = StyledStringResource(
-                        resource = stringRes(transactionProposal.totalZatoshi)
-                    ),
-                    subtext = StyledStringResource(
-                        resource = stringResByDynamicCurrencyNumber(
-                            amount = transactionProposal.totalUsd,
-                            ticker = FiatCurrency.USD.symbol
+                    title =
+                        StyledStringResource(
+                            resource = stringRes("Total")
                         ),
-                        color = StringResourceColor.TERTIARY
-                    )
+                    text =
+                        StyledStringResource(
+                            resource = stringRes(transactionProposal.totalZatoshi)
+                        ),
+                    subtext =
+                        StyledStringResource(
+                            resource =
+                                stringResByDynamicCurrencyNumber(
+                                    amount = transactionProposal.totalUsd,
+                                    ticker = FiatCurrency.USD.symbol
+                                ),
+                            color = StringResourceColor.TERTIARY
+                        )
                 )
             ),
         primaryButton =

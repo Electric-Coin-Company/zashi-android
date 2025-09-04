@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.map
 class CanCreateABContactUseCase(
     private val addressBookRepository: AddressBookRepository,
 ) {
+    @Suppress("MagicNumber")
     fun observe(
         selectedContact: EnhancedABContact?,
         text: String?
