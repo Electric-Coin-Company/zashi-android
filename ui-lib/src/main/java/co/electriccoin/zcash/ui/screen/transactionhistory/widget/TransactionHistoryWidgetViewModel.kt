@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -28,7 +29,7 @@ class TransactionHistoryWidgetViewModel(
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
-    private val navigateToRequestShielded: NavigateToRequestShieldedUseCase
+    private val navigateToCoinbase: NavigateToCoinbaseUseCase
 ) : ViewModel() {
     val state =
         combine(
@@ -89,7 +90,7 @@ class TransactionHistoryWidgetViewModel(
         navigationRouter.forward(TransactionHistory)
     }
 
-    private fun onRequestZecClick() = viewModelScope.launch { navigateToRequestShielded() }
+    private fun onRequestZecClick() = viewModelScope.launch { navigateToCoinbase() }
 }
 
 private const val MAX_TRANSACTION_COUNT = 5
