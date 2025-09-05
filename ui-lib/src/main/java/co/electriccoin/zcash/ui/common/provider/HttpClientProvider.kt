@@ -8,6 +8,7 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngineConfig
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpCallValidator
+import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
@@ -55,6 +56,11 @@ class HttpClientProviderImpl(
     private fun createDefault() =
         HttpClient(OkHttp) {
             configureHttpClient()
+            install(HttpRequestRetry) {
+                maxRetries = 4
+                retryOnExceptionOrServerErrors(4)
+                exponentialDelay()
+            }
             install(HttpCallValidator) {
                 handleResponseExceptionWithRequest { exception, _ ->
                     if (exception is ResponseException) {
