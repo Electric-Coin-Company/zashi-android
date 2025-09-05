@@ -137,7 +137,7 @@ internal class PayVM(
             getSwapAssetsUseCase.observe(),
             isRequestingQuote,
             selectedContact,
-            getSelectedWalletAccount.observe().filterNotNull(),
+            getSelectedWalletAccount.observe(),
             isABHintVisible,
             canCreateNewABContact
         ) {
@@ -321,11 +321,11 @@ internal interface InternalState {
     val fiatAmount: NumberTextFieldInnerState
     val slippage: BigDecimal
     val isRequestingQuote: Boolean
-    val account: WalletAccount
+    val account: WalletAccount?
     val swapAssets: SwapAssetsData
 
     val totalSpendableBalance: Zatoshi
-        get() = account.spendableShieldedBalance
+        get() = account?.spendableShieldedBalance ?: Zatoshi(0)
 }
 
 internal data class InternalStateImpl(
@@ -338,6 +338,6 @@ internal data class InternalStateImpl(
     override val fiatAmount: NumberTextFieldInnerState,
     override val slippage: BigDecimal,
     override val isRequestingQuote: Boolean,
-    override val account: WalletAccount,
+    override val account: WalletAccount?,
     override val swapAssets: SwapAssetsData,
 ) : InternalState

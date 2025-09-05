@@ -113,7 +113,7 @@ internal class SwapVM(
             getSwapAssetsUseCase.observe(),
             isRequestingQuote,
             selectedContact,
-            getSelectedWalletAccount.observe().filterNotNull()
+            getSelectedWalletAccount.observe()
         ) {
             address,
             amount,
@@ -290,7 +290,7 @@ internal class SwapVM(
 internal enum class CurrencyType { TOKEN, FIAT }
 
 internal interface InternalState {
-    val account: WalletAccount
+    val account: WalletAccount?
     val swapAsset: SwapAsset?
     val currencyType: CurrencyType
     val amountTextState: NumberTextFieldInnerState
@@ -301,11 +301,11 @@ internal interface InternalState {
     val selectedContact: EnhancedABContact?
 
     val totalSpendableBalance: Zatoshi
-        get() = account.spendableShieldedBalance
+        get() = account?.spendableShieldedBalance ?: Zatoshi(0)
 }
 
 internal data class InternalStateImpl(
-    override val account: WalletAccount,
+    override val account: WalletAccount?,
     override val swapAsset: SwapAsset?,
     override val currencyType: CurrencyType,
     override val amountTextState: NumberTextFieldInnerState,

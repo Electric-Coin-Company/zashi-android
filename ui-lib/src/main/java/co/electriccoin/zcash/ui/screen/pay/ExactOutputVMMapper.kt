@@ -362,7 +362,7 @@ private data class ExactOutputInternalState(
     override val fiatAmount: NumberTextFieldInnerState,
     override val slippage: BigDecimal,
     override val isRequestingQuote: Boolean,
-    override val account: WalletAccount,
+    override val account: WalletAccount?,
     override val swapAssets: SwapAssetsData,
     override val isABHintVisible: Boolean,
 ) : InternalState {

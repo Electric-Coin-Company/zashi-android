@@ -202,7 +202,11 @@ internal class ExactInputVMMapper {
         state: ExactInputInternalState,
         onBalanceButtonClick: () -> Unit
     ): ButtonState {
-        val account = state.account
+        val account = state.account ?: return ButtonState(
+            text = stringRes(R.string.swap_max_standalone),
+            isLoading = true,
+            onClick = onBalanceButtonClick
+        )
 
         return when {
             account.totalBalance > account.spendableShieldedBalance &&
@@ -426,7 +430,7 @@ internal class ExactInputVMMapper {
 }
 
 private data class ExactInputInternalState(
-    override val account: WalletAccount,
+    override val account: WalletAccount?,
     override val swapAsset: SwapAsset?,
     override val currencyType: CurrencyType,
     override val amountTextState: NumberTextFieldInnerState,
