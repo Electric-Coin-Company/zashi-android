@@ -35,24 +35,24 @@ class PayIntegrationsVM(
     private val navigationRouter: NavigationRouter,
     private val navigateToNearPay: NavigateToNearPayUseCase
 ) : ViewModel() {
-
     private val isRestoring = getWalletRestoringState.observe().map { it == WalletRestoringState.RESTORING }
 
-    val state = combine(
-        getFlexaStatus.observe(),
-        isRestoring,
-        getSelectedWalletAccount.observe()
-    ) { flexaStatus, isRestoring, selectedAccount ->
-        createState(
-            flexaStatus = flexaStatus,
-            isRestoring = isRestoring,
-            selectedAccount = selectedAccount
+    val state =
+        combine(
+            getFlexaStatus.observe(),
+            isRestoring,
+            getSelectedWalletAccount.observe()
+        ) { flexaStatus, isRestoring, selectedAccount ->
+            createState(
+                flexaStatus = flexaStatus,
+                isRestoring = isRestoring,
+                selectedAccount = selectedAccount
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-        initialValue = null
-    )
 
     private fun createState(
         isRestoring: Boolean,

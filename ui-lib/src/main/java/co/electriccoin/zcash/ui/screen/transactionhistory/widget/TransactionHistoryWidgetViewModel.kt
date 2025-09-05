@@ -94,14 +94,14 @@ class TransactionHistoryWidgetViewModel(
         navigationRouter.forward(TransactionHistory)
     }
 
-    private fun onRequestZecClick() = viewModelScope.launch {
-        if (getVersionInfoProvider().distributionDimension == DistributionDimension.FOSS) {
-            navigateToRequestShielded()
-        } else {
-            navigateToCoinbase()
+    private fun onRequestZecClick() =
+        viewModelScope.launch {
+            if (getVersionInfoProvider().distributionDimension == DistributionDimension.FOSS) {
+                navigateToRequestShielded()
+            } else {
+                navigateToCoinbase()
+            }
         }
-    }
-
 }
 
 private const val MAX_TRANSACTION_COUNT = 5

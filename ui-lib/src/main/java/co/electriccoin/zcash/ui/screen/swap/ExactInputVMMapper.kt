@@ -202,11 +202,12 @@ internal class ExactInputVMMapper {
         state: ExactInputInternalState,
         onBalanceButtonClick: () -> Unit
     ): ButtonState {
-        val account = state.account ?: return ButtonState(
-            text = stringRes(R.string.swap_max_standalone),
-            isLoading = true,
-            onClick = onBalanceButtonClick
-        )
+        val account =
+            state.account ?: return ButtonState(
+                text = stringRes(R.string.swap_max_standalone),
+                isLoading = true,
+                onClick = onBalanceButtonClick
+            )
 
         return when {
             account.totalBalance > account.spendableShieldedBalance &&
