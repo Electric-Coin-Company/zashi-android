@@ -9,11 +9,11 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SendIntegrationsScreen() {
-    val vm = koinViewModel<SendIntegrationsVM>()
+fun PayIntegrationsScreen() {
+    val vm = koinViewModel<PayIntegrationsVM>()
     val state by vm.state.collectAsStateWithLifecycle()
     IntegrationsDialogView(state)
 }
 
 @Serializable
-data object SendIntegrationsArgs
+data object PayIntegrationsArgs

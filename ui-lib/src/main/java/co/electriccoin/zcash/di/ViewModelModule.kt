@@ -27,7 +27,7 @@ import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptInViewModel
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoViewModel
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsVM
-import co.electriccoin.zcash.ui.screen.integrations.SendIntegrationsVM
+import co.electriccoin.zcash.ui.screen.integrations.PayIntegrationsVM
 import co.electriccoin.zcash.ui.screen.pay.PayVM
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
 import co.electriccoin.zcash.ui.screen.receive.ReceiveVM
@@ -138,5 +138,5 @@ val viewModelModule =
         viewModelOf(::AddSwapABContactVM)
         viewModelOf(::AddGenericABContactVM)
         viewModelOf(::UpdateGenericABContactVM)
-        viewModelOf(::SendIntegrationsVM)
+        viewModelOf(::PayIntegrationsVM)
     }

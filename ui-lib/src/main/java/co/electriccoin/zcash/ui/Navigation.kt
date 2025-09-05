@@ -97,8 +97,8 @@ import co.electriccoin.zcash.ui.screen.home.updating.AndroidWalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsScreen
-import co.electriccoin.zcash.ui.screen.integrations.SendIntegrationsArgs
-import co.electriccoin.zcash.ui.screen.integrations.SendIntegrationsScreen
+import co.electriccoin.zcash.ui.screen.integrations.PayIntegrationsArgs
+import co.electriccoin.zcash.ui.screen.integrations.PayIntegrationsScreen
 import co.electriccoin.zcash.ui.screen.pay.PayArgs
 import co.electriccoin.zcash.ui.screen.pay.PayScreen
 import co.electriccoin.zcash.ui.screen.pay.info.PayInfoArgs
@@ -373,7 +373,7 @@ internal fun MainActivity.Navigation() {
         composable<ExchangeRateOptInArgs> { ExchangeRateOptInScreen() }
         composable<PayArgs> { PayScreen() }
         dialogComposable<PayInfoArgs> { PayInfoScreen() }
-        dialogComposable<SendIntegrationsArgs> { SendIntegrationsScreen() }
+        dialogComposable<PayIntegrationsArgs> { PayIntegrationsScreen() }
     }
 }
 

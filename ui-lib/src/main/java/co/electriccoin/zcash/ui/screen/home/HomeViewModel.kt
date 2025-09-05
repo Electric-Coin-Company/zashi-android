@@ -35,7 +35,8 @@ import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
-import co.electriccoin.zcash.ui.screen.integrations.SendIntegrationsArgs
+import co.electriccoin.zcash.ui.screen.integrations.PayIntegrationsArgs
+import co.electriccoin.zcash.ui.screen.send.Send
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -116,9 +117,9 @@ class HomeViewModel(
             ),
         thirdButton =
             BigIconButtonState(
-                text = stringRes("Swap"),
-                icon = R.drawable.ic_home_swap,
-                onClick = ::onSwapButtonClick,
+                text = stringRes("Pay"),
+                icon = R.drawable.ic_home_pay,
+                onClick = ::onPayButtonClick,
             ),
         fourthButton =
             BigIconButtonState(
@@ -208,11 +209,11 @@ class HomeViewModel(
 
     private fun onMoreButtonClick() = navigationRouter.forward(IntegrationsArgs)
 
-    private fun onSendButtonClick() = navigationRouter.forward(SendIntegrationsArgs)
+    private fun onSendButtonClick() = navigationRouter.forward(Send())
 
     private fun onReceiveButtonClick() = viewModelScope.launch { navigateToReceive() }
 
-    private fun onSwapButtonClick() = navigateToSwap()
+    private fun onPayButtonClick() = navigationRouter.forward(PayIntegrationsArgs)
 
     private fun onWalletUpdatingMessageClick() = navigationRouter.forward(WalletUpdatingInfo)
 
