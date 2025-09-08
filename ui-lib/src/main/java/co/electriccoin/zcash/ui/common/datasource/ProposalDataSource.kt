@@ -42,7 +42,6 @@ interface ProposalDataSource {
         account: WalletAccount,
         send: ZecSend,
         quote: CompositeSwapQuote,
-        address: String,
     ): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
@@ -50,7 +49,6 @@ interface ProposalDataSource {
         account: WalletAccount,
         send: ZecSend,
         quote: CompositeSwapQuote,
-        address: String,
     ): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
@@ -142,7 +140,6 @@ class ProposalDataSourceImpl(
         account: WalletAccount,
         send: ZecSend,
         quote: CompositeSwapQuote,
-        address: String,
     ): ExactInputSwapTransactionProposal =
         withContext(Dispatchers.IO) {
             getOrThrow {
@@ -152,7 +149,6 @@ class ProposalDataSourceImpl(
                     memo = send.memo,
                     proposal = synchronizerProvider.getSynchronizer().proposeSend(account.sdkAccount, send),
                     quote = quote,
-                    address = address
                 )
             }
         }
@@ -161,7 +157,6 @@ class ProposalDataSourceImpl(
         account: WalletAccount,
         send: ZecSend,
         quote: CompositeSwapQuote,
-        address: String,
     ): ExactOutputSwapTransactionProposal =
         withContext(Dispatchers.IO) {
             getOrThrow {
@@ -171,7 +166,6 @@ class ProposalDataSourceImpl(
                     memo = send.memo,
                     proposal = synchronizerProvider.getSynchronizer().proposeSend(account.sdkAccount, send),
                     quote = quote,
-                    address = address
                 )
             }
         }
@@ -322,8 +316,6 @@ sealed interface SendTransactionProposal : TransactionProposal {
 sealed interface SwapTransactionProposal : SendTransactionProposal {
     val quote: CompositeSwapQuote
 
-    val address: String
-
     val totalFees: Zatoshi
         get() = quote.getTotalFeesZatoshi(proposal)
     val totalFeesUsd: BigDecimal
@@ -360,7 +352,6 @@ data class ExactInputSwapTransactionProposal(
     override val memo: Memo,
     override val proposal: Proposal,
     override val quote: CompositeSwapQuote,
-    override val address: String,
 ) : SwapTransactionProposal
 
 data class ExactOutputSwapTransactionProposal(
@@ -369,7 +360,6 @@ data class ExactOutputSwapTransactionProposal(
     override val memo: Memo,
     override val proposal: Proposal,
     override val quote: CompositeSwapQuote,
-    override val address: String,
 ) : SwapTransactionProposal
 
 private const val DEFAULT_SHIELDING_THRESHOLD = 100000L

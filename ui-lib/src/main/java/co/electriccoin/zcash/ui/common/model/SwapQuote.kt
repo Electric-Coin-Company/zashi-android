@@ -14,7 +14,8 @@ sealed interface SwapQuote {
     val destinationAmount: Zatoshi
     val depositAddress: String
     val origin: String
-    val destination: String
+    val destinationAssetTicker: String
+    val destinationAddress: String
     val provider: String
     val type: SwapMode
     val amountInUsd: BigDecimal
@@ -39,7 +40,8 @@ data class NearSwapQuote(
     override val destinationAmount: Zatoshi = Zatoshi(response.quote.amountIn.toLong())
     override val depositAddress: String = response.quote.depositAddress
     override val origin: String = response.quoteRequest.originAsset
-    override val destination: String = response.quoteRequest.destinationAsset
+    override val destinationAssetTicker: String = response.quoteRequest.destinationAsset
+    override val destinationAddress: String = response.quoteRequest.recipient
     override val provider: String = "near"
     override val type: SwapMode =
         when (response.quoteRequest.swapType) {

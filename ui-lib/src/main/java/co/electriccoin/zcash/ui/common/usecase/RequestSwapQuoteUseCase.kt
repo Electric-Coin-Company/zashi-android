@@ -48,7 +48,7 @@ class RequestSwapQuoteUseCase(
 
         if (result is SwapQuoteCompositeData.Success) {
             try {
-                createProposal(result.quote, address)
+                createProposal(result.quote)
             } catch (e: Exception) {
                 swapRepository.clearQuote()
                 zashiProposalRepository.clear()
@@ -72,7 +72,7 @@ class RequestSwapQuoteUseCase(
     }
 
     @Suppress("TooGenericExceptionCaught")
-    private suspend fun createProposal(quote: CompositeSwapQuote, address: String) {
+    private suspend fun createProposal(quote: CompositeSwapQuote) {
         try {
             val send =
                 ZecSend(
@@ -86,10 +86,10 @@ class RequestSwapQuoteUseCase(
                 is KeystoneAccount -> {
                     when (quote.type) {
                         EXACT_INPUT ->
-                            keystoneProposalRepository.createExactInputSwapProposal(send, quote, address)
+                            keystoneProposalRepository.createExactInputSwapProposal(send, quote)
 
                         EXACT_OUTPUT ->
-                            keystoneProposalRepository.createExactOutputSwapProposal(send, quote, address)
+                            keystoneProposalRepository.createExactOutputSwapProposal(send, quote)
                     }
                     keystoneProposalRepository.createPCZTFromProposal()
                 }
@@ -97,10 +97,10 @@ class RequestSwapQuoteUseCase(
                 is ZashiAccount ->
                     when (quote.type) {
                         EXACT_INPUT ->
-                            zashiProposalRepository.createExactInputSwapProposal(send, quote, address)
+                            zashiProposalRepository.createExactInputSwapProposal(send, quote)
 
                         EXACT_OUTPUT ->
-                            zashiProposalRepository.createExactOutputSwapProposal(send, quote, address)
+                            zashiProposalRepository.createExactOutputSwapProposal(send, quote)
                     }
             }
         } catch (e: Exception) {

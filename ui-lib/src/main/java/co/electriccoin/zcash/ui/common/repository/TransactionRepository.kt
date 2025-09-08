@@ -208,8 +208,6 @@ class TransactionRepositoryImpl(
                                             recipient = null
                                         )
                                 }
-
-                            else -> error("Unexpected transaction stat")
                         }
                     }.sortedByDescending { transaction ->
                         transaction.timestamp ?: Instant.now()

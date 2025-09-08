@@ -31,6 +31,7 @@ data class CompositeSwapQuote(
     fun getTotalFeesZatoshi(proposal: Proposal): Zatoshi = proposal.totalFeeRequired() + affiliateFee
 
     private val tokenTicker = destinationAsset.tokenTicker.lowercase()
+
     private val chainTicker = destinationAsset.chainTicker.lowercase()
 
     override val provider: String = "${quote.provider}.$tokenTicker.$chainTicker"

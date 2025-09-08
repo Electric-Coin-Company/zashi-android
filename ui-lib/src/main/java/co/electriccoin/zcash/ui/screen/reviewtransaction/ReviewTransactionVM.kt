@@ -79,7 +79,7 @@ class ReviewTransactionVM(
         }.flatMapLatest { (selectedWallet, proposal, isReceiverExpanded, exchangeRate) ->
             observeContactByAddress(
                 if (proposal is ExactOutputSwapTransactionProposal) {
-                    proposal.address
+                    proposal.quote.quote.destinationAddress
                 } else {
                     proposal.destination.address
                 }
@@ -209,7 +209,7 @@ class ReviewTransactionVM(
                 ReceiverState(
                     title = stringRes(R.string.send_confirmation_address),
                     name = addressBookContact?.name?.let { stringRes(it) },
-                    address = stringRes(transactionProposal.address)
+                    address = stringRes(transactionProposal.quote.destinationAddress)
                 ),
                 SenderState(
                     title = stringRes(R.string.send_confirmation_address_from),
