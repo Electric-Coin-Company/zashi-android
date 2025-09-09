@@ -36,6 +36,8 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.orHidden
+import co.electriccoin.zcash.ui.design.util.orHiddenString
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailHeader
@@ -83,7 +85,8 @@ fun SendSwap(
                 state =
                     TransactionDetailInfoRowState(
                         title = stringRes(R.string.transaction_detail_info_sent_to),
-                        message = state.depositAddress,
+                        message = state.depositAddress orHidden
+                            stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                         trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                         onClick = state.onDepositAddressClick
                     ),
