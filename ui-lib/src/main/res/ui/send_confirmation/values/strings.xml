@@ -36,7 +36,7 @@
     <string name="send_confirmation_failure_close_button">Close</string>
     <string name="send_confirmation_failure_report_button">Report</string>
 
-    <string name="send_confirmation_failure_grpc_title">Connection Error</string>
+    <string name="send_confirmation_failure_grpc_title">Connection Issue</string>
     <string name="send_confirmation_failure_grpc_subtitle">Zashi encountered connection issues when submitting the
         transaction. It will retry in the next few minutes.</string>
     <string name="send_confirmation_failure_grpc_close_button">Close</string>
