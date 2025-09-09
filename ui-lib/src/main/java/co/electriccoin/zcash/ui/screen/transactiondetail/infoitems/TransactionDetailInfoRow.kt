@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -18,6 +19,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
@@ -26,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ShimmerRectangle
+import co.electriccoin.zcash.ui.design.component.heightDp
+import co.electriccoin.zcash.ui.design.component.measureTextStyle
 import co.electriccoin.zcash.ui.design.component.rememberZashiShimmer
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -74,9 +78,13 @@ fun TransactionDetailInfoRow(
                         .shimmer(rememberZashiShimmer()),
                 contentAlignment = Alignment.CenterEnd
             ) {
+                val textSize = measureTextStyle(
+                    style = ZashiTypography.textSm.copy(fontWeight = FontWeight.Medium)
+                )
+
                 ShimmerRectangle(
                     width = 64.dp,
-                    height = 20.dp,
+                    height = textSize.size.heightDp,
                     color = ZashiColors.Surfaces.bgTertiary
                 )
             }
@@ -87,6 +95,10 @@ fun TransactionDetailInfoRow(
                 painter = painterResource(state.trailingIcon),
                 contentDescription = null
             )
+        } else if (state.trailingIcon != null) {
+            val painter = painterResource(state.trailingIcon)
+            val height = with (LocalDensity.current) { painter.intrinsicSize.height.toDp() }
+            Spacer(modifier = Modifier.height(height))
         }
     }
 }

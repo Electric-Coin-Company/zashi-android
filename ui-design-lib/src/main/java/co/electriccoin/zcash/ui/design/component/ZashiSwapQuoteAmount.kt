@@ -4,11 +4,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,11 +29,14 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.TickerLocation
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.orHiddenString
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
+import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import com.valentinilk.shimmer.shimmer
+import java.math.BigDecimal
 
 @Composable
 internal fun ZashiSwapQuoteAmount(
@@ -57,42 +57,47 @@ private fun Loading() {
     Column(
         modifier =
             Modifier
-                .padding(start = 16.dp, top = 17.dp, end = 16.dp, bottom = 12.dp)
+                .padding(12.dp)
                 .shimmer(rememberZashiShimmer()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ShimmerRectangle(
-                width = 44.dp,
-                height = 20.dp,
+        Box {
+            ShimmerCircle(
+                size = 20.dp,
                 color = ZashiColors.Surfaces.bgTertiary
             )
-            Spacer(4.dp)
-
-            Box {
-                ShimmerCircle(
-                    size = 20.dp,
-                    color = ZashiColors.Surfaces.bgTertiary
-                )
-                Box(
-                    modifier =
-                        Modifier
-                            .offset(2.dp, 2.dp)
-                            .size(12.dp)
-                            .border(1.dp, ZashiColors.Surfaces.bgSecondary, CircleShape)
-                            .align(Alignment.BottomEnd)
-                            .background(ZashiColors.Surfaces.bgTertiary, CircleShape)
-                )
-            }
+            Box(
+                modifier =
+                    Modifier
+                        .offset(2.dp, 2.dp)
+                        .size(12.dp)
+                        .border(1.dp, ZashiColors.Surfaces.bgSecondary, CircleShape)
+                        .align(Alignment.BottomEnd)
+                        .background(ZashiColors.Surfaces.bgTertiary, CircleShape)
+            )
         }
         Spacer(4.dp)
+        val titleTextSize = measureTextStyle(
+            text = stringResByNumber(BigDecimal(".123456")).getValue(),
+            style = ZashiTypography.textXl.copy(
+                fontWeight = FontWeight.SemiBold,
+            ),
+        )
         ShimmerRectangle(
-            width = 44.dp,
-            height = 20.dp,
+            width = titleTextSize.size.widthDp,
+            height = titleTextSize.size.heightDp,
+            color = ZashiColors.Surfaces.bgTertiary
+        )
+        Spacer(4.dp)
+        val subtitleTextSize = measureTextStyle(
+            text = stringResByNumber(BigDecimal(".123")).getValue(),
+            style = ZashiTypography.textSm.copy(
+                fontWeight = FontWeight.SemiBold,
+            ),
+        )
+        ShimmerRectangle(
+            width = subtitleTextSize.size.widthDp,
+            height = subtitleTextSize.size.heightDp,
             color = ZashiColors.Surfaces.bgTertiary
         )
     }

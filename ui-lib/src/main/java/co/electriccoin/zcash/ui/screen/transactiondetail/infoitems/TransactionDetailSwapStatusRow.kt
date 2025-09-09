@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -19,7 +20,10 @@ import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ShimmerRectangle
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
 import co.electriccoin.zcash.ui.design.component.ZashiBadgeDefaults
+import co.electriccoin.zcash.ui.design.component.heightDp
+import co.electriccoin.zcash.ui.design.component.measureTextStyle
 import co.electriccoin.zcash.ui.design.component.rememberZashiShimmer
+import co.electriccoin.zcash.ui.design.component.widthDp
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -53,10 +57,16 @@ fun TransactionDetailSwapStatusRow(
             Box(
                 modifier = Modifier.shimmer(rememberZashiShimmer())
             ) {
+                val textSize = measureTextStyle(
+                    style = ZcashTheme.extendedTypography.transactionItemStyles.contentMedium,
+                    text = stringResource(R.string.swap_detail_completed),
+                )
+
                 ShimmerRectangle(
-                    width = 84.dp,
-                    height = 25.dp,
-                    color = ZashiColors.Surfaces.bgTertiary
+                    width = textSize.size.widthDp + 4.dp + 4.dp + 1.dp,
+                    height = textSize.size.heightDp + 4.dp + 4.dp + 1.dp,
+                    color = ZashiColors.Surfaces.bgTertiary,
+                    shape = CircleShape
                 )
             }
         }
