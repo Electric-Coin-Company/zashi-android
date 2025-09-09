@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.common.usecase.ErrorArgs
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToNearPayUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
@@ -54,6 +55,7 @@ class HomeViewModel(
     private val shieldFunds: ShieldFundsMessageUseCase,
     private val navigateToError: NavigateToErrorUseCase,
     private val navigateToReceive: NavigateToReceiveUseCase,
+    private val navigateToNearPay: NavigateToNearPayUseCase
 ) : ViewModel() {
     private val messageState =
         combine(
@@ -211,7 +213,7 @@ class HomeViewModel(
 
     private fun onReceiveButtonClick() = viewModelScope.launch { navigateToReceive() }
 
-    private fun onPayButtonClick() = navigationRouter.forward(PayArgs)
+    private fun onPayButtonClick() = navigateToNearPay()
 
     private fun onWalletUpdatingMessageClick() = navigationRouter.forward(WalletUpdatingInfo)
 

@@ -18,7 +18,14 @@
       android:pathData="M68,24m-24,0a24,24 0,1 1,48 0a24,24 0,1 1,-48 0"
       android:fillColor="#454243"/>
   <path
-      android:pathData="M64,24L68,28M68,28L72,24M68,28V20M78,24C78,29.523 73.523,34 68,34C62.477,34 58,29.523 58,24C58,18.477 62.477,14 68,14C73.523,14 78,18.477 78,24Z"
+      android:pathData="M73,15.338C75.989,17.067 78,20.299 78,24C78,29.523 73.523,34 68,34C62.477,34 58,29.523 58,24C58,20.299 60.011,17.067 63,15.338"
+      android:strokeLineJoin="round"
+      android:strokeWidth="2"
+      android:fillColor="#00000000"
+      android:strokeColor="#E8E8E8"
+      android:strokeLineCap="round"/>
+  <path
+      android:pathData="M64,24L68,28M68,28L72,24M68,28V20"
       android:strokeLineJoin="round"
       android:strokeWidth="2"
       android:fillColor="#00000000"
