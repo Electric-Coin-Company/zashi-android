@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -59,7 +60,7 @@ fun TransactionDetailHeader(
             iconState.icons.forEachIndexed { index, icon ->
                 Image(
                     modifier =
-                        when (index) {
+                        Modifier.size(48.dp) then when (index) {
                             0 -> Modifier
                             1 -> Modifier.offset(x = (-10).dp)
                             else -> Modifier.offset(x = (-22).dp)

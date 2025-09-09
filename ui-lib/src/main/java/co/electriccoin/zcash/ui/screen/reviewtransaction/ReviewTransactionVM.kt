@@ -179,11 +179,6 @@ class ReviewTransactionVM(
                     },
                 onClick = ::onConfirmClick
             ),
-        negativeButton =
-            ButtonState(
-                text = stringRes(R.string.review_keystone_transaction_negative),
-                onClick = ::onCancelClick
-            ),
         onBack = ::onBack,
     )
 
@@ -285,9 +280,7 @@ class ReviewTransactionVM(
                     },
                 onClick = ::onConfirmClick
             ),
-        negativeButton = null,
         onBack = ::onBackFromPay,
-        showNavigationAction = true
     )
 
     private fun createZip321State(
@@ -357,11 +350,6 @@ class ReviewTransactionVM(
                     },
                 onClick = ::onConfirmClick
             ),
-        negativeButton =
-            ButtonState(
-                text = stringRes(R.string.review_keystone_transaction_negative),
-                onClick = ::onCancelClick
-            ),
         onBack = ::onBack,
     )
 
@@ -370,8 +358,6 @@ class ReviewTransactionVM(
     private fun onBack() = viewModelScope.launch { cancelProposalFlow(clearSendForm = false) }
 
     private fun onBackFromPay() = viewModelScope.launch { cancelSwapQuote() }
-
-    private fun onCancelClick() = viewModelScope.launch { cancelProposalFlow(clearSendForm = false) }
 
     private fun onConfirmClick() = viewModelScope.launch { confirmProposal() }
 

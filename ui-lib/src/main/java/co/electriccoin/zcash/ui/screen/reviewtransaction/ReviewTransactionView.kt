@@ -45,7 +45,6 @@ import co.electriccoin.zcash.ui.design.component.SwapQuoteHeaderState
 import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
-import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiChipButton
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
@@ -77,12 +76,10 @@ fun ReviewTransactionView(state: ReviewTransactionState) {
             ZashiSmallTopAppBar(
                 title = state.title.getValue(),
                 navigationAction = {
-                    if (state.showNavigationAction) {
-                        ZashiTopAppBarBackNavigation(
-                            onBack = state.onBack,
-                            modifier = Modifier.testTag(ZashiTopAppBarTags.BACK)
-                        )
-                    }
+                    ZashiTopAppBarBackNavigation(
+                        onBack = state.onBack,
+                        modifier = Modifier.testTag(ZashiTopAppBarTags.BACK)
+                    )
                 }
             )
         }
@@ -437,16 +434,6 @@ private fun SimpleAmountWidget(state: ExactOutputQuoteState) {
 @Composable
 private fun BottomBar(state: ReviewTransactionState) {
     OldZashiBottomBar {
-        if (state.negativeButton != null) {
-            ZashiButton(
-                state = state.negativeButton,
-                defaultPrimaryColors = ZashiButtonDefaults.secondaryColors(),
-                modifier =
-                    Modifier
-                        .padding(horizontal = 24.dp)
-                        .fillMaxWidth()
-            )
-        }
         ZashiButton(
             state = state.primaryButton,
             modifier =
@@ -510,10 +497,6 @@ private fun Preview() =
                         ButtonState(
                             stringRes("Confirm with Keystone")
                         ),
-                    negativeButton =
-                        ButtonState(
-                            stringRes("Cancel")
-                        ),
                     onBack = {},
                 )
         )
@@ -572,10 +555,6 @@ private fun TransparentPreview() =
                     primaryButton =
                         ButtonState(
                             stringRes("Confirm with Keystone")
-                        ),
-                    negativeButton =
-                        ButtonState(
-                            stringRes("Cancel")
                         ),
                     onBack = {},
                 )
@@ -646,10 +625,6 @@ private fun Zip321Preview() =
                     primaryButton =
                         ButtonState(
                             stringRes(co.electriccoin.zcash.ui.R.string.review_keystone_transaction_positive)
-                        ),
-                    negativeButton =
-                        ButtonState(
-                            stringRes(co.electriccoin.zcash.ui.R.string.review_keystone_transaction_negative)
                         ),
                     onBack = {},
                 )
@@ -746,7 +721,6 @@ private fun PayPreview() =
                         ButtonState(
                             stringRes("Pay")
                         ),
-                    negativeButton = null,
                     onBack = {},
                 )
         )
