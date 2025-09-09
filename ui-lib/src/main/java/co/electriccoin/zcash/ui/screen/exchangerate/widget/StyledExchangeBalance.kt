@@ -15,9 +15,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +37,7 @@ import cash.z.ecc.android.sdk.model.Locale
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.toFiatString
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.ZashiTooltipBox
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.LottieProgress
@@ -47,6 +51,7 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
 @Suppress("LongParameterList", "ComplexCondition")
@@ -165,55 +170,56 @@ internal fun createExchangeRateText(
     return text
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ExchangeRateUnavailableButton(
     textColor: Color,
     style: TextStyle,
     modifier: Modifier = Modifier,
 ) {
-    val transitionState = remember { MutableTransitionState(false) }
-
-    ExchangeRateButton(
-        modifier = modifier,
-        onClick = {
-            if (transitionState.targetState && transitionState.currentState) {
-                transitionState.targetState = false
-            } else if (!transitionState.targetState && !transitionState.currentState) {
-                transitionState.targetState = true
-            }
-        },
-        isEnabled = true,
-        enableBorder = false,
-        textColor = textColor,
+    val scope = rememberCoroutineScope()
+    val tooltipState = rememberTooltipState(isPersistent = true)
+    ZashiTooltipBox(
+        state = tooltipState,
+        tooltip = {
+            StyledExchangeUnavailablePopup(
+                onDismissRequest = {
+                    scope.launch {
+                        tooltipState.dismiss()
+                    }
+                },
+            )
+        }
     ) {
-        Text(
-            text = stringResource(id = R.string.exchange_rate_unavailable_title),
-            style = style,
-            maxLines = 1,
-            color = textColor
-        )
-
-        Spacer(modifier = Modifier.width(10.dp))
-
-        Image(
-            modifier =
-                Modifier
-                    .align(CenterVertically),
-            painter = painterResource(R.drawable.ic_exchange_rate_info),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(textColor)
-        )
-    }
-
-    if (transitionState.currentState || transitionState.targetState || !transitionState.isIdle) {
-        val offset = with(LocalDensity.current) { 78.dp.toPx() }.toInt()
-        StyledExchangeUnavailablePopup(
-            onDismissRequest = {
-                transitionState.targetState = false
+        ExchangeRateButton(
+            modifier = modifier,
+            onClick = {
+                scope.launch {
+                    if (tooltipState.isVisible) tooltipState.dismiss() else tooltipState.show()
+                }
             },
-            transitionState = transitionState,
-            offset = IntOffset(0, offset)
-        )
+            isEnabled = true,
+            enableBorder = false,
+            textColor = textColor,
+        ) {
+            Text(
+                text = stringResource(id = R.string.exchange_rate_unavailable_title),
+                style = style,
+                maxLines = 1,
+                color = textColor
+            )
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Image(
+                modifier =
+                    Modifier
+                        .align(CenterVertically),
+                painter = painterResource(R.drawable.ic_exchange_rate_info),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(textColor)
+            )
+        }
     }
 }
 

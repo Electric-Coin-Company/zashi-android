@@ -218,42 +218,12 @@ private fun BottomBar(
 fun getHeaderIconState(info: TransactionDetailInfoState): TransactionDetailIconHeaderState =
     TransactionDetailIconHeaderState(
         when (info) {
-            is ReceiveShieldedState ->
-                listOf(
-                    R.drawable.ic_transaction_detail_z,
-                    R.drawable.ic_transaction_detail_receive
-                )
-
-            is ReceiveTransparentState ->
-                listOf(
-                    R.drawable.ic_transaction_detail_z,
-                    R.drawable.ic_transaction_detail_receive
-                )
-
-            is SendShieldedState ->
-                listOf(
-                    R.drawable.ic_transaction_detail_z,
-                    R.drawable.ic_transaction_detail_send
-                )
-
-            is SendSwapState ->
-                listOf(
-                    R.drawable.ic_transaction_detail_z,
-                    R.drawable.ic_transaction_detail_send
-                )
-
-            is SendTransparentState ->
-                listOf(
-                    R.drawable.ic_transaction_detail_z,
-                    R.drawable.ic_transaction_detail_send
-                )
-
-            is ShieldingState ->
-                listOf(
-                    R.drawable.ic_transaction_detail_z,
-                    R.drawable.ic_transaction_detail_private,
-                    R.drawable.ic_transaction_detail_shield
-                )
+            is ReceiveShieldedState,
+            is ReceiveTransparentState -> R.drawable.ic_transaction_detail_receive
+            is SendShieldedState,
+            is SendSwapState,
+            is SendTransparentState -> R.drawable.ic_transaction_detail_send
+            is ShieldingState -> R.drawable.ic_transaction_detail_shielding
         }
     )
 
