@@ -5,7 +5,7 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ChipButtonState
-import co.electriccoin.zcash.ui.design.util.ImageResource
+import co.electriccoin.zcash.ui.design.component.SwapQuoteHeaderState
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
 
@@ -26,12 +26,8 @@ data class AmountState(
     val exchangeRate: ExchangeRateState,
 ) : ReviewTransactionItemState
 
-data class SimpleAmountState(
-    val bigIcon: ImageResource,
-    val smallIcon: ImageResource,
-    val title: StringResource,
-    val amount: StringResource,
-    val amountFiat: StringResource,
+data class ExactOutputQuoteState(
+    val state: SwapQuoteHeaderState
 ) : ReviewTransactionItemState
 
 data class ReceiverState(

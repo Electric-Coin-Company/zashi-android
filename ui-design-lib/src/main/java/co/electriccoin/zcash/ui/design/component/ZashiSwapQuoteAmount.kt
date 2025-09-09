@@ -101,68 +101,63 @@ private fun Loading() {
 @Composable
 private fun Data(state: SwapTokenAmountState) {
     Column(
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            SelectionContainer {
-                ZashiAutoSizeText(
-                    modifier = Modifier.weight(1f, false),
-                    textAlign = TextAlign.Center,
-                    text = state.title orHiddenString stringRes(R.string.hide_balance_placeholder),
-                    style = ZashiTypography.textXl,
-                    fontWeight = FontWeight.SemiBold,
-                    color = ZashiColors.Text.textPrimary,
-                    maxLines = 1,
+        if (state.bigIcon is ImageResource.ByDrawable) {
+            Box {
+                Image(
+                    modifier = Modifier.size(20.dp),
+                    painter = painterResource(state.bigIcon.resource),
+                    contentDescription = null
                 )
-            }
-            if (state.bigIcon is ImageResource.ByDrawable) {
-                Spacer(4.dp)
-                Box {
-                    Image(
-                        modifier = Modifier.size(20.dp),
-                        painter = painterResource(state.bigIcon.resource),
-                        contentDescription = null
-                    )
 
-                    if (state.smallIcon is ImageResource.ByDrawable) {
-                        if (state.smallIcon.resource ==
-                            R.drawable.ic_receive_shield
+                if (state.smallIcon is ImageResource.ByDrawable) {
+                    if (state.smallIcon.resource ==
+                        R.drawable.ic_receive_shield
+                    ) {
+                        Image(
+                            modifier =
+                                Modifier
+                                    .size(12.dp)
+                                    .align(Alignment.BottomEnd)
+                                    .offset(4.dp, 2.dp),
+                            painter = painterResource(state.smallIcon.resource),
+                            contentDescription = null,
+                        )
+                    } else {
+                        Surface(
+                            modifier =
+                                Modifier
+                                    .size(14.dp)
+                                    .align(Alignment.BottomEnd)
+                                    .offset(4.dp, 4.dp),
+                            shape = CircleShape,
+                            border = BorderStroke(1.dp, ZashiColors.Surfaces.bgPrimary)
                         ) {
                             Image(
-                                modifier =
-                                    Modifier
-                                        .size(12.dp)
-                                        .align(Alignment.BottomEnd)
-                                        .offset(4.dp, 2.dp),
+                                modifier = Modifier.size(14.dp),
                                 painter = painterResource(state.smallIcon.resource),
                                 contentDescription = null,
                             )
-                        } else {
-                            Surface(
-                                modifier =
-                                    Modifier
-                                        .size(14.dp)
-                                        .align(Alignment.BottomEnd)
-                                        .offset(4.dp, 4.dp),
-                                shape = CircleShape,
-                                border = BorderStroke(1.dp, ZashiColors.Surfaces.bgPrimary)
-                            ) {
-                                Image(
-                                    modifier = Modifier.size(14.dp),
-                                    painter = painterResource(state.smallIcon.resource),
-                                    contentDescription = null,
-                                )
-                            }
                         }
                     }
                 }
             }
+            Spacer(4.dp)
         }
+        SelectionContainer {
+            ZashiAutoSizeText(
+                modifier = Modifier.weight(1f, false),
+                textAlign = TextAlign.Center,
+                text = state.title orHiddenString stringRes(R.string.hide_balance_placeholder),
+                style = ZashiTypography.textXl,
+                fontWeight = FontWeight.SemiBold,
+                color = ZashiColors.Text.textPrimary,
+                maxLines = 1,
+            )
+        }
+        Spacer(4.dp)
         SelectionContainer {
             ZashiAutoSizeText(
                 textAlign = TextAlign.Center,

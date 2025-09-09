@@ -2,23 +2,18 @@
 
 package co.electriccoin.zcash.ui.screen.reviewtransaction
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,12 +41,15 @@ import co.electriccoin.zcash.ui.design.component.OldZashiBottomBar
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
+import co.electriccoin.zcash.ui.design.component.SwapQuoteHeaderState
+import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiChipButton
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiSwapQuoteHeader
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
@@ -59,7 +57,6 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
 import co.electriccoin.zcash.ui.design.util.TickerLocation
@@ -106,7 +103,11 @@ fun ReviewTransactionView(state: ReviewTransactionState) {
                     when (item) {
                         is AmountState -> AmountWidget(item)
 
-                        is SimpleAmountState -> SimpleAmountWidget(item)
+                        is ExactOutputQuoteState -> {
+
+                            SimpleAmountWidget(item)
+                            Spacer(4.dp)
+                        }
 
                         is ReceiverState -> {
                             Spacer(24.dp)
@@ -427,76 +428,10 @@ private fun AmountWidget(state: AmountState) {
 }
 
 @Composable
-private fun SimpleAmountWidget(state: SimpleAmountState) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = state.title.getValue(),
-            style = ZashiTypography.textMd,
-            color = ZashiColors.Text.textPrimary,
-            fontWeight = FontWeight.Medium
-        )
-        Spacer(12.dp)
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            if (state.bigIcon is ImageResource.ByDrawable) {
-                Box {
-                    Image(
-                        modifier = Modifier.size(40.dp),
-                        painter = painterResource(state.bigIcon.resource),
-                        contentDescription = null
-                    )
-
-                    if (state.smallIcon is ImageResource.ByDrawable) {
-                        if (state.smallIcon.resource == R.drawable.ic_receive_shield) {
-                            Image(
-                                modifier =
-                                    Modifier
-                                        .size(20.dp)
-                                        .align(Alignment.BottomEnd)
-                                        .offset(4.dp, 4.dp),
-                                painter = painterResource(state.smallIcon.resource),
-                                contentDescription = null,
-                            )
-                        } else {
-                            Surface(
-                                modifier =
-                                    Modifier
-                                        .size(20.dp)
-                                        .align(Alignment.BottomEnd)
-                                        .offset(4.dp, 4.dp),
-                                shape = CircleShape,
-                                border = BorderStroke(1.dp, ZashiColors.Surfaces.bgPrimary)
-                            ) {
-                                Image(
-                                    modifier = Modifier.size(14.dp),
-                                    painter = painterResource(state.smallIcon.resource),
-                                    contentDescription = null,
-                                )
-                            }
-                        }
-                    }
-                }
-                Spacer(8.dp)
-            }
-            Text(
-                text = state.amount.getValue(),
-                fontWeight = FontWeight.SemiBold,
-                style = ZashiTypography.header2,
-                color = ZashiColors.Text.textPrimary
-            )
-        }
-        Spacer(4.dp)
-        Text(
-            text = state.amountFiat.getValue(),
-            style = ZashiTypography.textLg,
-            color = ZashiColors.Text.textTertiary,
-            fontWeight = FontWeight.Medium
-        )
-    }
+private fun SimpleAmountWidget(state: ExactOutputQuoteState) {
+    ZashiSwapQuoteHeader(
+        state = state.state
+    )
 }
 
 @Composable
@@ -731,16 +666,23 @@ private fun PayPreview() =
                     title = stringRes("Review"),
                     items =
                         listOf(
-                            SimpleAmountState(
-                                title = stringRes("Payment Amount"),
-                                amount = stringRes(Zatoshi(0), TickerLocation.HIDDEN),
-                                amountFiat =
-                                    stringResByDynamicCurrencyNumber(
-                                        amount = 0,
-                                        ticker = FiatCurrency.USD.symbol
-                                    ),
-                                bigIcon = imageRes(R.drawable.ic_chain_placeholder),
-                                smallIcon = imageRes(R.drawable.ic_token_placeholder),
+                            ExactOutputQuoteState(
+                                SwapQuoteHeaderState(
+                                    from =
+                                        SwapTokenAmountState(
+                                            bigIcon = imageRes(R.drawable.ic_chain_placeholder),
+                                            smallIcon = imageRes(R.drawable.ic_token_placeholder),
+                                            title = stringResByDynamicCurrencyNumber(0.000000421423154, "", TickerLocation.HIDDEN),
+                                            subtitle = stringResByDynamicCurrencyNumber(0.0000000000000021312, "$")
+                                        ),
+                                    to =
+                                        SwapTokenAmountState(
+                                            bigIcon = imageRes(R.drawable.ic_chain_placeholder),
+                                            smallIcon = imageRes(R.drawable.ic_token_placeholder),
+                                            title = stringResByDynamicCurrencyNumber(0.000000421423154, "", TickerLocation.HIDDEN),
+                                            subtitle = stringResByDynamicCurrencyNumber(0.0000000000000021312, "$")
+                                        )
+                                )
                             ),
                             ReceiverState(
                                 title = stringRes("Sending to"),

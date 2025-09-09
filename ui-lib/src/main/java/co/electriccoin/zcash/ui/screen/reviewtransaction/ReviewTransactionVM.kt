@@ -24,8 +24,12 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCa
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ChipButtonState
+import co.electriccoin.zcash.ui.design.component.SwapQuoteHeaderState
+import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
+import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
@@ -195,16 +199,27 @@ class ReviewTransactionVM(
             },
         items =
             listOfNotNull(
-                SimpleAmountState(
-                    title = stringRes("Payment Amount"),
-                    amount = stringResByDynamicNumber(transactionProposal.quote.amountOutFormatted),
-                    amountFiat =
-                        stringResByDynamicCurrencyNumber(
-                            amount = transactionProposal.quote.amountOutUsd,
-                            ticker = FiatCurrency.USD.symbol
+                ExactOutputQuoteState(
+                    SwapQuoteHeaderState(
+                        SwapTokenAmountState(
+                            bigIcon = imageRes(R.drawable.ic_zec_round_full),
+                            smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
+                            title = stringRes(transactionProposal.quote.quote.amountInZatoshi, HIDDEN),
+                            subtitle = stringResByDynamicCurrencyNumber(
+                                transactionProposal.quote.quote.amountInUsd,
+                                FiatCurrency.USD.symbol
+                            )
                         ),
-                    bigIcon = transactionProposal.quote.destinationAsset.tokenIcon,
-                    smallIcon = transactionProposal.quote.destinationAsset.chainIcon,
+                        SwapTokenAmountState(
+                            bigIcon = transactionProposal.quote.destinationAsset.tokenIcon,
+                            smallIcon = transactionProposal.quote.destinationAsset.chainIcon,
+                            title = stringResByDynamicNumber(transactionProposal.quote.quote.amountOutFormatted),
+                            subtitle = stringResByDynamicCurrencyNumber(
+                                transactionProposal.quote.quote.amountOutUsd,
+                                FiatCurrency.USD.symbol
+                            )
+                        )
+                    )
                 ),
                 ReceiverState(
                     title = stringRes(R.string.send_confirmation_address),
