@@ -9,6 +9,7 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 data class SwapSlippageState(
     val picker: SlippagePickerState,
     val info: SwapSlippageInfoState?,
+    val footer: StringResource?,
     val primary: ButtonState,
     override val onBack: () -> Unit
 ) : ModalBottomSheetState

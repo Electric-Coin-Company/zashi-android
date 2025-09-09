@@ -27,6 +27,7 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiCard
+import co.electriccoin.zcash.ui.design.component.ZashiInfoText
 import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarCloseNavigation
@@ -80,8 +81,16 @@ fun SwapSlippageView(state: SwapSlippageState?) {
                     Spacer(20.dp)
                     SlippageInfoCard(innerState.info)
                 }
-                Spacer(24.dp)
                 Spacer(1f)
+                if (innerState.footer != null) {
+                    Spacer(20.dp)
+                    ZashiInfoText(
+                        text = innerState.footer.getValue(),
+                        style = ZashiTypography.textXs,
+                        color = ZashiColors.Text.textTertiary
+                    )
+                }
+                Spacer(24.dp)
                 ZashiButton(
                     modifier = Modifier.fillMaxWidth(),
                     state = innerState.primary
@@ -163,7 +172,8 @@ private fun Preview() =
                     primary =
                         ButtonState(
                             text = stringRes("Confirm")
-                        )
+                        ),
+                    footer = null
                 )
         )
     }
