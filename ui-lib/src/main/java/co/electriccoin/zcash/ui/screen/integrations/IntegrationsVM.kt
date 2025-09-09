@@ -8,19 +8,24 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.usecase.GetCoinbaseStatusUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetFlexaStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetKeystoneStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.Status
+import co.electriccoin.zcash.ui.common.usecase.Status.DISABLED
+import co.electriccoin.zcash.ui.common.usecase.Status.ENABLED
 import co.electriccoin.zcash.ui.common.usecase.Status.UNAVAILABLE
 import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
+import co.electriccoin.zcash.ui.screen.flexa.Flexa
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -34,6 +39,7 @@ class IntegrationsVM(
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
     getCoinbaseStatus: GetCoinbaseStatusUseCase,
+    getFlexaStatus: GetFlexaStatusUseCase,
     getKeystoneStatus: GetKeystoneStatusUseCase,
     private val navigationRouter: NavigationRouter,
     private val navigateToCoinbase: NavigateToCoinbaseUseCase,
@@ -46,12 +52,14 @@ class IntegrationsVM(
             isRestoring,
             getSelectedWalletAccount.observe(),
             getCoinbaseStatus.observe(),
+            getFlexaStatus.observe(),
             getKeystoneStatus.observe(),
-        ) { isRestoring, selectedAccount, coinbaseStatus, keystoneStatus ->
+        ) { isRestoring, selectedAccount, coinbaseStatus, flexaStatus, keystoneStatus ->
             createState(
                 isRestoring = isRestoring,
                 getZcashCurrency = getZcashCurrency,
                 selectedAccount = selectedAccount,
+                flexaStatus = flexaStatus,
                 coinbaseStatus = coinbaseStatus,
                 keystoneStatus = keystoneStatus,
             )
@@ -65,6 +73,7 @@ class IntegrationsVM(
         isRestoring: Boolean,
         getZcashCurrency: GetZcashCurrencyProvider,
         selectedAccount: WalletAccount?,
+        flexaStatus: Status,
         coinbaseStatus: Status,
         keystoneStatus: Status
     ) = IntegrationsState(
@@ -83,6 +92,22 @@ class IntegrationsVM(
                     subtitle = stringRes(R.string.integrations_near_swap_message),
                     onClick = ::onNearSwapClick,
                 ),
+                ListItemState(
+                    // Set the wallet currency by app build is more future-proof, although we hide it from
+                    // the UI in the Testnet build
+                    isEnabled = isRestoring.not() && selectedAccount is ZashiAccount,
+                    bigIcon =
+                        imageRes(
+                            when (flexaStatus) {
+                                ENABLED -> R.drawable.ic_integrations_flexa
+                                DISABLED -> R.drawable.ic_integrations_flexa_disabled
+                                UNAVAILABLE -> R.drawable.ic_integrations_flexa_disabled
+                            }
+                        ),
+                    title = stringRes(R.string.integrations_flexa),
+                    subtitle = stringRes(R.string.integrations_flexa_subtitle),
+                    onClick = ::onFlexaClicked
+                ).takeIf { flexaStatus != UNAVAILABLE },
                 ListItemState(
                     // Set the wallet currency by app build is more future-proof, although we hide it from
                     // the UI in the Testnet build
@@ -111,4 +136,6 @@ class IntegrationsVM(
     private fun onBuyWithCoinbaseClicked() = viewModelScope.launch { navigateToCoinbase() }
 
     private fun onConnectKeystoneClick() = viewModelScope.launch { navigationRouter.replace(ConnectKeystone) }
+
+    private fun onFlexaClicked() = navigationRouter.replace(Flexa)
 }
