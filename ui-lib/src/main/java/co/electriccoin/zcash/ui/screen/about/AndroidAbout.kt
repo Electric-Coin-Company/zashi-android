@@ -2,72 +2,36 @@
 
 package co.electriccoin.zcash.ui.screen.about
 
-import android.app.Activity
 import androidx.activity.compose.BackHandler
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import co.electriccoin.zcash.configuration.api.ConfigurationProvider
-import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.VersionInfo
-import co.electriccoin.zcash.ui.screen.about.util.WebBrowserUtil
+import co.electriccoin.zcash.ui.screen.ExternalUrl
 import co.electriccoin.zcash.ui.screen.about.view.About
 import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 
 @Composable
-internal fun WrapAbout(goBack: () -> Unit) {
+internal fun AboutScreen() {
     val activity = LocalActivity.current
-
-    BackHandler {
-        goBack()
-    }
-
+    val navigationRouter = koinInject<NavigationRouter>()
     val androidConfigurationProvider = koinInject<ConfigurationProvider>()
     val configInfo = ConfigInfo.new(androidConfigurationProvider)
     val versionInfo = VersionInfo.new(activity.applicationContext)
-
-    // Allows an implicit way to force configuration refresh by simply visiting the About screen
-    LaunchedEffect(key1 = true) {
-        androidConfigurationProvider.hintToRefresh()
-    }
-
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    val scope = rememberCoroutineScope()
-
+    LaunchedEffect(Unit) { androidConfigurationProvider.hintToRefresh() }
+    BackHandler { navigationRouter.back() }
     About(
-        onBack = goBack,
+        onBack = { navigationRouter.back() },
         configInfo = configInfo,
-        onPrivacyPolicy = {
-            openPrivacyPolicyInWebBrowser(
-                activity,
-                snackbarHostState,
-                scope
-            )
-        },
-        snackbarHostState = snackbarHostState,
         versionInfo = versionInfo,
+        onPrivacyPolicy = { navigationRouter.forward(ExternalUrl("https://electriccoin.co/zashi-privacy-policy/")) },
+        onTermsOfUse = { navigationRouter.forward(ExternalUrl("https://electriccoin.co/zashi-terms-of-use")) }
     )
 }
 
-fun openPrivacyPolicyInWebBrowser(
-    activity: Activity,
-    snackbarHostState: SnackbarHostState,
-    scope: CoroutineScope
-) {
-    runCatching {
-        WebBrowserUtil.startActivity(activity, WebBrowserUtil.ZCASH_PRIVACY_POLICY_URI)
-    }.onFailure {
-        scope.launch {
-            snackbarHostState.showSnackbar(
-                message = activity.getString(R.string.about_unable_to_web_browser)
-            )
-        }
-    }
-}
+@Serializable
+data object AboutArgs

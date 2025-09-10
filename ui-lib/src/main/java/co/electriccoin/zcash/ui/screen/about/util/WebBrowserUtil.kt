@@ -5,8 +5,6 @@ import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 
 object WebBrowserUtil {
-    const val ZCASH_PRIVACY_POLICY_URI = "https://electriccoin.co/zashi-privacy-policy/" // NON-NLS
-
     internal fun startActivity(
         activity: Activity,
         url: String

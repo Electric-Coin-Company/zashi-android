@@ -22,7 +22,6 @@ import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
-import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.CRASH_REPORTING_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
@@ -42,7 +41,8 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
-import co.electriccoin.zcash.ui.screen.about.WrapAbout
+import co.electriccoin.zcash.ui.screen.about.AboutArgs
+import co.electriccoin.zcash.ui.screen.about.AboutScreen
 import co.electriccoin.zcash.ui.screen.accountlist.AccountList
 import co.electriccoin.zcash.ui.screen.accountlist.AndroidAccountList
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
@@ -284,7 +284,7 @@ internal fun MainActivity.Navigation() {
                 }
             )
         }
-        composable(ABOUT) { WrapAbout(goBack = { navController.popBackStackJustOnce(ABOUT) }) }
+        composable<AboutArgs> { AboutScreen() }
         composable(WHATS_NEW) { WrapWhatsNew() }
         dialogComposable<IntegrationsArgs> { IntegrationsScreen() }
         composable<ExchangeRateSettingsArgs> { ExchangeRateSettingsScreen() }
@@ -474,7 +474,6 @@ fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: String) {
 }
 
 object NavigationTargets {
-    const val ABOUT = "about"
     const val DELETE_WALLET = "delete_wallet"
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val CHOOSE_SERVER = "choose_server"
