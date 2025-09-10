@@ -35,7 +35,7 @@ sealed interface ErrorArgs {
     ) : ErrorArgs
 
     data class ShieldingError(
-        val error: SubmitResult.Failure
+        val error: SubmitResult
     ) : ErrorArgs
 
     data class ShieldingGeneralError(

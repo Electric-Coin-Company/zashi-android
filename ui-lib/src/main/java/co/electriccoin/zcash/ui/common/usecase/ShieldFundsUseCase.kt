@@ -57,8 +57,14 @@ class ShieldFundsUseCase(
                     .first()
                     .submitResult
 
-            if (result is SubmitResult.Failure) {
-                navigateToError(ErrorArgs.ShieldingError(result))
+            when (result) {
+                is SubmitResult.Failure,
+                is SubmitResult.GrpcFailure,
+                is SubmitResult.Partial -> navigateToError(ErrorArgs.ShieldingError(result))
+
+                is SubmitResult.Success -> {
+                    // do nothing
+                }
             }
         } catch (e: Exception) {
             navigateToError(ErrorArgs.ShieldingGeneralError(e))

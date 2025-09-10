@@ -212,31 +212,15 @@ class KeystoneProposalRepositoryImpl(
 
     @Suppress("UseCheckOrError")
     override fun extractPCZT() {
-        fun createErrorState(message: String) =
-            SubmitProposalState.Result(
-                SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther(NullPointerException(message))
-            )
-
         extractPCZTJob?.cancel()
+
+        val transactionProposal = transactionProposal.value ?: throw IllegalStateException()
+        val pcztWithSignatures = pcztWithSignatures ?: throw IllegalStateException()
+
         extractPCZTJob =
             scope.launch {
-                val transactionProposal = transactionProposal.value
-                val pcztWithSignatures = pcztWithSignatures
-
-                if (pcztWithSignatures == null) {
-                    submitState.update { createErrorState("pcztWithSignatures is null") }
-                    return@launch
-                }
-
                 submitState.update { SubmitProposalState.Submitting }
-
-                val pcztWithProofs = pcztWithProofs.filter { !it.isLoading }.first().pczt
-
-                if (pcztWithProofs == null) {
-                    submitState.update { createErrorState("pcztWithProofs is null") }
-                    return@launch
-                }
-
+                val pcztWithProofs = pcztWithProofs.filter { !it.isLoading }.first().pczt ?: throw IllegalStateException()
                 val result =
                     proposalDataSource.submitTransaction(
                         pcztWithProofs = pcztWithProofs,
@@ -247,23 +231,14 @@ class KeystoneProposalRepositoryImpl(
             }
     }
 
-    private fun runSwapPipeline(transactionProposal: TransactionProposal?, result: SubmitResult) =
+    private fun runSwapPipeline(transactionProposal: TransactionProposal, result: SubmitResult) =
         scope.launch {
             if (transactionProposal is SwapTransactionProposal) {
                 val txIds: List<String> =
                     when (result) {
-                        is SubmitResult.MultipleTrxFailure ->
-                            result.results.map { it.txIdString() }
-
-                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc ->
-                            listOf(result.result.txIdString())
-
-                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther ->
-                            emptyList()
-
-                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit ->
-                            listOf(result.result.txIdString())
-
+                        is SubmitResult.GrpcFailure -> result.txIds
+                        is SubmitResult.Failure -> emptyList()
+                        is SubmitResult.Partial -> result.txIds
                         is SubmitResult.Success -> result.txIds
                     }.filter { it.isNotEmpty() }
                 val depositAddress = transactionProposal.destination.address

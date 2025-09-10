@@ -90,9 +90,9 @@ fun SendShielded(
                         state =
                             TransactionDetailInfoRowState(
                                 title =
-                                    stringRes(R.string.transaction_detail_info_transaction_fee) orHidden
-                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
-                                message = state.fee,
+                                    stringRes(R.string.transaction_detail_info_transaction_fee),
+                                message = state.fee orHidden
+                                    stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                             )
                     )
                     ZashiHorizontalDivider()
@@ -106,9 +106,12 @@ fun SendShielded(
                                     } else {
                                         stringRes(R.string.transaction_detail_info_transaction_completed)
                                     },
-                                message =
+                                message = if (state.isPending) {
+                                    state.completedTimestamp
+                                } else {
                                     state.completedTimestamp orHidden
-                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder)
+                                },
                             )
                     )
                 }

@@ -84,12 +84,24 @@ class ErrorViewModel(
             title = stringRes(R.string.error_shielding_title),
             message =
                 when (args.error) {
-                    is SubmitResult.MultipleTrxFailure -> stringRes(R.string.error_shielding_message_grpc)
-                    is SubmitResult.SimpleTrxFailure ->
+                    is SubmitResult.GrpcFailure -> stringRes(R.string.error_shielding_message_grpc)
+                    is SubmitResult.Failure ->
                         stringRes(
                             R.string.error_shielding_message,
-                            stringRes(args.error.toErrorStacktrace())
+                            stringRes(
+                                buildString {
+                                    appendLine("Error code: ${args.error.code}")
+                                    appendLine(args.error.description ?: "Unknown error")
+                                }
+                            )
                         )
+
+                    is SubmitResult.Partial -> stringRes(
+                        R.string.error_shielding_message,
+                        args.error.statuses.joinToString()
+                    )
+
+                    is SubmitResult.Success -> stringRes("")
                 },
             positive =
                 ButtonState(
@@ -150,7 +162,12 @@ class ErrorViewModel(
         viewModelScope.launch {
             withContext(NonCancellable) {
                 navigationRouter.back()
-                sendEmailUseCase(args.error)
+                when (args.error) {
+                    is SubmitResult.Failure -> sendEmailUseCase(args.error)
+                    is SubmitResult.GrpcFailure -> sendEmailUseCase(args.error)
+                    is SubmitResult.Partial -> sendEmailUseCase(args.error)
+                    is SubmitResult.Success -> TODO()
+                }
             }
         }
 
