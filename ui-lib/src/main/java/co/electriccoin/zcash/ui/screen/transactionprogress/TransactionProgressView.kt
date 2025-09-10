@@ -64,8 +64,9 @@ fun TransactionProgressView(state: TransactionProgressState) {
             when (state) {
                 is SendingTransactionState -> ZashiColors.Surfaces.bgPrimary
                 is SuccessfulTransactionState -> ZashiColors.Utility.SuccessGreen.utilitySuccess100
-                is GrpcFailureTransactionState -> ZashiColors.Utility.WarningYellow.utilityOrange100 orDark
-                    ZashiColors.Utility.WarningYellow.utilityOrange500
+                is GrpcFailureTransactionState ->
+                    ZashiColors.Utility.WarningYellow.utilityOrange100 orDark
+                        ZashiColors.Utility.WarningYellow.utilityOrange500
                 is FailureTransactionState,
                 is MultipleFailuresTransactionState -> ZashiColors.Utility.ErrorRed.utilityError100
             },

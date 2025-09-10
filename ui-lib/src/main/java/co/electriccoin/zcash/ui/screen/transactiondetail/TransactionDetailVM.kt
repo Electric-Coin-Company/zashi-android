@@ -299,7 +299,8 @@ class TransactionDetailVM(
                     smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
                     title = stringRes(swap.data.amountInZatoshi, HIDDEN),
                     subtitle = stringResByDynamicCurrencyNumber(swap.data.amountInUsd, FiatCurrency.USD.symbol)
-                ), to =
+                ),
+            to =
                 SwapTokenAmountState(
                     bigIcon = swap.destinationAsset?.tokenIcon,
                     smallIcon = swap.destinationAsset?.chainIcon,

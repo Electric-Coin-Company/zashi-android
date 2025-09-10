@@ -101,7 +101,6 @@ fun ReviewTransactionView(state: ReviewTransactionState) {
                         is AmountState -> AmountWidget(item)
 
                         is ExactOutputQuoteState -> {
-
                             SimpleAmountWidget(item)
                             Spacer(4.dp)
                         }
@@ -647,15 +646,25 @@ private fun PayPreview() =
                                         SwapTokenAmountState(
                                             bigIcon = imageRes(R.drawable.ic_chain_placeholder),
                                             smallIcon = imageRes(R.drawable.ic_token_placeholder),
-                                            title = stringResByDynamicCurrencyNumber(0.000000421423154, "", TickerLocation.HIDDEN),
-                                            subtitle = stringResByDynamicCurrencyNumber(0.0000000000000021312, "$")
+                                            title =
+                                                stringResByDynamicCurrencyNumber(
+                                                    amount = 0.4,
+                                                    ticker = "",
+                                                    tickerLocation = TickerLocation.HIDDEN
+                                                ),
+                                            subtitle = stringResByDynamicCurrencyNumber(0.2, "$")
                                         ),
                                     to =
                                         SwapTokenAmountState(
                                             bigIcon = imageRes(R.drawable.ic_chain_placeholder),
                                             smallIcon = imageRes(R.drawable.ic_token_placeholder),
-                                            title = stringResByDynamicCurrencyNumber(0.000000421423154, "", TickerLocation.HIDDEN),
-                                            subtitle = stringResByDynamicCurrencyNumber(0.0000000000000021312, "$")
+                                            title =
+                                                stringResByDynamicCurrencyNumber(
+                                                    amount = 0.4,
+                                                    ticker = "",
+                                                    tickerLocation = TickerLocation.HIDDEN
+                                                ),
+                                            subtitle = stringResByDynamicCurrencyNumber(0.2, "$")
                                         )
                                 )
                             ),

@@ -77,24 +77,28 @@ private fun Loading() {
             )
         }
         Spacer(4.dp)
-        val titleTextSize = measureTextStyle(
-            text = stringResByNumber(BigDecimal(".123456")).getValue(),
-            style = ZashiTypography.textXl.copy(
-                fontWeight = FontWeight.SemiBold,
-            ),
-        )
+        val titleTextSize =
+            measureTextStyle(
+                text = stringResByNumber(BigDecimal(".123456")).getValue(),
+                style =
+                    ZashiTypography.textXl.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+            )
         ShimmerRectangle(
             width = titleTextSize.size.widthDp,
             height = titleTextSize.size.heightDp,
             color = ZashiColors.Surfaces.bgTertiary
         )
         Spacer(4.dp)
-        val subtitleTextSize = measureTextStyle(
-            text = stringResByNumber(BigDecimal(".123")).getValue(),
-            style = ZashiTypography.textSm.copy(
-                fontWeight = FontWeight.SemiBold,
-            ),
-        )
+        val subtitleTextSize =
+            measureTextStyle(
+                text = stringResByNumber(BigDecimal(".123")).getValue(),
+                style =
+                    ZashiTypography.textSm.copy(
+                        fontWeight = FontWeight.SemiBold,
+                    ),
+            )
         ShimmerRectangle(
             width = subtitleTextSize.size.widthDp,
             height = subtitleTextSize.size.heightDp,

@@ -200,19 +200,21 @@ class ReviewTransactionVM(
                             bigIcon = imageRes(R.drawable.ic_zec_round_full),
                             smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
                             title = stringRes(transactionProposal.quote.quote.amountInZatoshi, HIDDEN),
-                            subtitle = stringResByDynamicCurrencyNumber(
-                                transactionProposal.quote.quote.amountInUsd,
-                                FiatCurrency.USD.symbol
-                            )
+                            subtitle =
+                                stringResByDynamicCurrencyNumber(
+                                    transactionProposal.quote.quote.amountInUsd,
+                                    FiatCurrency.USD.symbol
+                                )
                         ),
                         SwapTokenAmountState(
                             bigIcon = transactionProposal.quote.destinationAsset.tokenIcon,
                             smallIcon = transactionProposal.quote.destinationAsset.chainIcon,
                             title = stringResByDynamicNumber(transactionProposal.quote.quote.amountOutFormatted),
-                            subtitle = stringResByDynamicCurrencyNumber(
-                                transactionProposal.quote.quote.amountOutUsd,
-                                FiatCurrency.USD.symbol
-                            )
+                            subtitle =
+                                stringResByDynamicCurrencyNumber(
+                                    transactionProposal.quote.quote.amountOutUsd,
+                                    FiatCurrency.USD.symbol
+                                )
                         )
                     )
                 ),
@@ -254,7 +256,7 @@ class ReviewTransactionVM(
                 SimpleListItemState(
                     title =
                         StyledStringResource(
-                            resource = stringRes("Total")
+                            resource = stringRes(R.string.send_confirmation_total)
                         ),
                     text =
                         StyledStringResource(
@@ -275,8 +277,8 @@ class ReviewTransactionVM(
             ButtonState(
                 text =
                     when (selectedWallet) {
-                        is KeystoneAccount -> stringRes("Pay with Keystone")
-                        is ZashiAccount -> stringRes("Pay")
+                        is KeystoneAccount -> stringRes(R.string.send_confirmation_pay_with_keystone)
+                        is ZashiAccount -> stringRes(R.string.send_confirmation_pay)
                     },
                 onClick = ::onConfirmClick
             ),

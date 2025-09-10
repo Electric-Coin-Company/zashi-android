@@ -57,10 +57,11 @@ fun TransactionDetailSwapStatusRow(
             Box(
                 modifier = Modifier.shimmer(rememberZashiShimmer())
             ) {
-                val textSize = measureTextStyle(
-                    style = ZcashTheme.extendedTypography.transactionItemStyles.contentMedium,
-                    text = stringResource(R.string.swap_detail_completed),
-                )
+                val textSize =
+                    measureTextStyle(
+                        style = ZcashTheme.extendedTypography.transactionItemStyles.contentMedium,
+                        text = stringResource(R.string.swap_detail_completed),
+                    )
 
                 ShimmerRectangle(
                     width = textSize.size.widthDp + 4.dp + 4.dp + 1.dp,

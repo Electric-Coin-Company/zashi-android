@@ -20,7 +20,7 @@ import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInVM
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsVM
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
-import co.electriccoin.zcash.ui.screen.home.HomeViewModel
+import co.electriccoin.zcash.ui.screen.home.HomeVM
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetailViewModel
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptInViewModel
@@ -60,7 +60,7 @@ import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsVM
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailVM
 import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersVM
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryViewModel
-import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetViewModel
+import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetVM
 import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNoteViewModel
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressVM
 import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackupViewModel
@@ -100,7 +100,7 @@ val viewModelModule =
         viewModelOf(::ReviewTransactionVM)
         viewModelOf(::TransactionFiltersVM)
         viewModelOf(::TransactionProgressVM)
-        viewModelOf(::TransactionHistoryWidgetViewModel)
+        viewModelOf(::TransactionHistoryWidgetVM)
         viewModelOf(::TransactionHistoryViewModel)
         viewModelOf(::TransactionDetailVM)
         viewModelOf(::AddressBookVM)
@@ -109,7 +109,7 @@ val viewModelModule =
         viewModelOf(::TaxExportViewModel)
         viewModelOf(::CrashReportingViewModel)
         viewModelOf(::BalanceWidgetVM)
-        viewModelOf(::HomeViewModel)
+        viewModelOf(::HomeVM)
         viewModelOf(::RestoreBDHeightViewModel)
         viewModelOf(::RestoreBDDateViewModel)
         viewModelOf(::RestoreBDEstimationViewModel)

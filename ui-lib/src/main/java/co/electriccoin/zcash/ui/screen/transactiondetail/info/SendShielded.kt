@@ -56,10 +56,11 @@ fun SendShielded(
                 state =
                     TransactionDetailInfoRowState(
                         title = stringRes(R.string.transaction_detail_info_sent_to),
-                        message = state.contact ?: state.address.let {
-                            it orHidden
-                                stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder)
-                        },
+                        message =
+                            state.contact ?: state.address.let {
+                                it orHidden
+                                    stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder)
+                            },
                         trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                         onClick = state.onTransactionAddressClick
                     ),
@@ -76,8 +77,9 @@ fun SendShielded(
                         state =
                             TransactionDetailInfoRowState(
                                 title = stringRes(R.string.transaction_detail_info_transaction_id),
-                                message = state.transactionId orHidden
-                                    stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                                message =
+                                    state.transactionId orHidden
+                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                                 trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                                 onClick = state.onTransactionIdClick
                             )
@@ -87,8 +89,9 @@ fun SendShielded(
                         modifier = Modifier.fillMaxWidth(),
                         state =
                             TransactionDetailInfoRowState(
-                                title = stringRes(R.string.transaction_detail_info_transaction_fee) orHidden
-                                    stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                                title =
+                                    stringRes(R.string.transaction_detail_info_transaction_fee) orHidden
+                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                                 message = state.fee,
                             )
                     )
@@ -103,8 +106,9 @@ fun SendShielded(
                                     } else {
                                         stringRes(R.string.transaction_detail_info_transaction_completed)
                                     },
-                                message = state.completedTimestamp orHidden
-                                    stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                                message =
+                                    state.completedTimestamp orHidden
+                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                             )
                     )
                 }

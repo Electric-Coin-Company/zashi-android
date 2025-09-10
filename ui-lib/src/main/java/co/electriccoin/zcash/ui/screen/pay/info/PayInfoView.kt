@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.pay.info
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,8 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -35,17 +39,20 @@ fun PayInfoView(state: PayInfoState) {
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    text = "CrossPay",
+                    text = stringResource(R.string.pay_info_title),
                     style = ZashiTypography.textXl,
                     fontWeight = FontWeight.SemiBold,
                     color = ZashiColors.Text.textPrimary
                 )
+                Spacer(10.dp)
+                Image(
+                    painter = painterResource(R.drawable.ic_near_logo),
+                    contentDescription = null
+                )
             }
             Spacer(12.dp)
             Text(
-                text =
-                    "Make cross-chain payments in any NEAR-supported coin or token.\n\nIf the actual slippage and " +
-                        "network conditions result in your recipient receiving less than the promised amount, your transaction will be reversed. You will receive a full refund minus network fees.",
+                text = stringResource(R.string.pay_info_subtitle),
                 style = ZashiTypography.textSm,
                 color = ZashiColors.Text.textTertiary
             )

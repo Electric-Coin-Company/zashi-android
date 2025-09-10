@@ -3,8 +3,8 @@
 
     <string name="send_stage_confirmation_title">Confirmación</string>
     <string name="send_confirmation_amount">Monto total</string>
-    <string name="send_confirmation_address">Enviando a</string>
-    <string name="send_confirmation_address_from">Enviando desde</string>
+    <string name="send_confirmation_address">Send to</string>
+    <string name="send_confirmation_address_from">Send from</string>
     <string name="send_confirmation_memo">Mensaje</string>
     <string name="send_confirmation_fee">Comisión</string>
     <string name="send_confirmation_amount_item">Monto</string>
@@ -65,5 +65,7 @@
     <string name="send_confirmation_error_swap_subtitle">Hubo un error al iniciar el intercambio.\nInténtalo de nuevo, por favor.</string>
     <string name="send_confirmation_swapping_subtitle_transparent">Tus monedas se están enviando a la dirección de depósito…</string>
     <string name="send_confirmation_success_btn_check_status">Ver estado</string>
-
+    <string name="send_confirmation_total">Total</string>
+    <string name="send_confirmation_pay_with_keystone">Pay with Keystone</string>
+    <string name="send_confirmation_pay">Pay</string>
 </resources>

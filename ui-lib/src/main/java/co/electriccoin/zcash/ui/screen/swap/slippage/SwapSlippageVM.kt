@@ -93,8 +93,7 @@ class SwapSlippageVM(
         info = slippageInfoState,
         primary = confirmButtonState,
         onBack = ::onBack,
-        footer = stringRes("Any unused portion of the slippage fee will be refunded if the swap executes with lower " +
-            "slippage than expected.").takeIf { args.mode == EXACT_OUTPUT }
+        footer = stringRes(R.string.pay_slippage_footer).takeIf { args.mode == EXACT_OUTPUT }
     )
 
     private fun createButtonState(amount: BigDecimal?) =

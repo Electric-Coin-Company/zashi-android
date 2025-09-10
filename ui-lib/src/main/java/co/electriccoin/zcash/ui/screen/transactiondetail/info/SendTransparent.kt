@@ -53,9 +53,11 @@ fun SendTransparent(
                 state =
                     TransactionDetailInfoRowState(
                         title = stringRes(R.string.transaction_detail_info_sent_to),
-                        message = state.contact
-                            ?: (state.addressAbbreviated orHidden
-                                stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder)
+                        message =
+                            state.contact
+                                ?: (
+                                    state.addressAbbreviated orHidden
+                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder)
                                 ),
                         trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                         onClick = state.onTransactionAddressClick
@@ -74,8 +76,9 @@ fun SendTransparent(
                         state =
                             TransactionDetailInfoRowState(
                                 title = stringRes(R.string.transaction_detail_info_transaction_id),
-                                message = state.transactionId orHidden
-                                    stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                                message =
+                                    state.transactionId orHidden
+                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                                 trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                                 onClick = state.onTransactionIdClick
                             )
@@ -85,9 +88,10 @@ fun SendTransparent(
                         modifier = Modifier.fillMaxWidth(),
                         state =
                             TransactionDetailInfoRowState(
-                                title = stringRes(R.string.transaction_detail_info_transaction_fee) ,
-                                message = state.fee orHidden
-                                    stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                                title = stringRes(R.string.transaction_detail_info_transaction_fee),
+                                message =
+                                    state.fee orHidden
+                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                             )
                     )
                     ZashiHorizontalDivider()
@@ -101,8 +105,9 @@ fun SendTransparent(
                                     } else {
                                         stringRes(R.string.transaction_detail_info_transaction_completed)
                                     },
-                                message = state.completedTimestamp orHidden
-                                    stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                                message =
+                                    state.completedTimestamp orHidden
+                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                             )
                     )
                 }

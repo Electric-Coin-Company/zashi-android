@@ -1,5 +1,3 @@
-@file:Suppress("standard:no-empty-file")
-
 package co.electriccoin.zcash.ui.screen.pay
 
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -166,7 +164,7 @@ internal class ExactOutputVMMapper {
                                 selection = TextSelection.End
                             ),
                         amount = fiat,
-                        lastValidAmount = if (fiat != null) fiat else state.fiatAmount.lastValidAmount
+                        lastValidAmount = fiat ?: state.fiatAmount.lastValidAmount
                     )
                 )
             },
@@ -204,7 +202,7 @@ internal class ExactOutputVMMapper {
                                 selection = TextSelection.End
                             ),
                         amount = amount,
-                        lastValidAmount = if (amount != null) amount else state.amount.lastValidAmount
+                        lastValidAmount = amount ?: state.amount.lastValidAmount
                     ),
                     fiatInnerState
                 )
@@ -275,15 +273,15 @@ internal class ExactOutputVMMapper {
         return SwapErrorFooterState(
             title =
                 if (isServiceUnavailableError) {
-                    stringRes("The service is unavailable")
+                    stringRes(co.electriccoin.zcash.ui.design.R.string.general_service_unavailable)
                 } else {
-                    stringRes("Unexpected error")
+                    stringRes(co.electriccoin.zcash.ui.design.R.string.general_unexpected_error)
                 },
             subtitle =
                 if (isServiceUnavailableError) {
-                    stringRes("Please try again later.")
+                    stringRes(co.electriccoin.zcash.ui.design.R.string.general_please_try_again)
                 } else {
-                    stringRes("Please check your connection and try again.")
+                    stringRes(co.electriccoin.zcash.ui.design.R.string.general_check_connection)
                 }
         )
     }
@@ -305,9 +303,11 @@ internal class ExactOutputVMMapper {
         return ButtonState(
             text =
                 when {
-                    state.swapAssets.error != null -> stringRes("Try again")
-                    state.swapAssets.isLoading && state.swapAssets.data == null -> stringRes("Loading")
-                    else -> stringRes("Review")
+                    state.swapAssets.error != null ->
+                        stringRes(co.electriccoin.zcash.ui.design.R.string.general_try_again)
+                    state.swapAssets.isLoading && state.swapAssets.data == null ->
+                        stringRes(co.electriccoin.zcash.ui.design.R.string.general_loading)
+                    else -> stringRes(co.electriccoin.zcash.ui.design.R.string.general_review)
                 },
             style = if (state.swapAssets.error != null) ButtonStyle.DESTRUCTIVE1 else null,
             onClick = {

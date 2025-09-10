@@ -78,9 +78,10 @@ fun TransactionDetailInfoRow(
                         .shimmer(rememberZashiShimmer()),
                 contentAlignment = Alignment.CenterEnd
             ) {
-                val textSize = measureTextStyle(
-                    style = ZashiTypography.textSm.copy(fontWeight = FontWeight.Medium)
-                )
+                val textSize =
+                    measureTextStyle(
+                        style = ZashiTypography.textSm.copy(fontWeight = FontWeight.Medium)
+                    )
 
                 ShimmerRectangle(
                     width = 64.dp,
@@ -97,7 +98,7 @@ fun TransactionDetailInfoRow(
             )
         } else if (state.trailingIcon != null) {
             val painter = painterResource(state.trailingIcon)
-            val height = with (LocalDensity.current) { painter.intrinsicSize.height.toDp() }
+            val height = with(LocalDensity.current) { painter.intrinsicSize.height.toDp() }
             Spacer(modifier = Modifier.height(height))
         }
     }

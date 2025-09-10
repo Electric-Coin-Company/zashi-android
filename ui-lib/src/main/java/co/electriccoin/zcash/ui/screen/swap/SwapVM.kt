@@ -32,7 +32,6 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -55,7 +54,6 @@ internal class SwapVM(
     private val navigationRouter: NavigationRouter,
     private val requestSwapQuote: RequestSwapQuoteUseCase,
     private val navigateToSwapQuoteIfAvailable: NavigateToSwapQuoteIfAvailableUseCase,
-    // private val exactOutputVMMapper: ExactOutputVMMapper,
     private val exactInputVMMapper: ExactInputVMMapper,
     private val navigateToScanAddress: NavigateToScanGenericAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
@@ -82,7 +80,7 @@ internal class SwapVM(
                         subtitle = stringRes(R.string.swap_cancel_subtitle),
                         negativeButton =
                             ButtonState(
-                                text = stringRes("Cancel payment"),
+                                text = stringRes(R.string.swap_quote_cancel_payment),
                                 onClick = ::onCancelSwapClick
                             ),
                         positiveButton =
@@ -101,7 +99,6 @@ internal class SwapVM(
                 initialValue = null
             )
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private val innerState =
         combine(
             addressText,

@@ -53,6 +53,7 @@ class HttpClientProviderImpl(
                 }
             }
 
+    @Suppress("MagicNumber")
     private fun createDefault() =
         HttpClient(OkHttp) {
             configureHttpClient()

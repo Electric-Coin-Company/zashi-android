@@ -35,7 +35,6 @@ import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
-import co.electriccoin.zcash.ui.screen.pay.PayArgs
 import co.electriccoin.zcash.ui.screen.send.Send
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -47,7 +46,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @Suppress("TooManyFunctions")
-class HomeViewModel(
+class HomeVM(
     getHomeMessage: GetHomeMessageUseCase,
     shieldFundsInfoProvider: ShieldFundsInfoProvider,
     private val navigationRouter: NavigationRouter,
@@ -117,7 +116,7 @@ class HomeViewModel(
             ),
         thirdButton =
             BigIconButtonState(
-                text = stringRes("Pay"),
+                text = stringRes(R.string.home_button_pay),
                 icon = R.drawable.ic_home_pay,
                 onClick = ::onPayButtonClick,
             ),

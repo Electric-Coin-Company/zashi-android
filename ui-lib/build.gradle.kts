@@ -55,6 +55,7 @@ android {
                     "src/main/res/ui/choose_server",
                     "src/main/res/ui/integrations",
                     "src/main/res/ui/onboarding",
+                    "src/main/res/ui/pay",
                     "src/main/res/ui/payment_request",
                     "src/main/res/ui/qr_code",
                     "src/main/res/ui/request",

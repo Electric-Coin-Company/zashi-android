@@ -45,8 +45,9 @@ fun ReceiveTransparent(
                 state =
                     TransactionDetailInfoRowState(
                         title = stringRes(R.string.transaction_detail_info_transaction_id),
-                        message = state.transactionId orHidden
-                            stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                        message =
+                            state.transactionId orHidden
+                                stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                         trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                         onClick = state.onTransactionIdClick
                     )
@@ -62,8 +63,9 @@ fun ReceiveTransparent(
                             } else {
                                 stringRes(R.string.transaction_detail_info_transaction_completed)
                             },
-                        message = state.completedTimestamp orHidden
-                            stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                        message =
+                            state.completedTimestamp orHidden
+                                stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                     )
             )
             if (state.note != null) {
