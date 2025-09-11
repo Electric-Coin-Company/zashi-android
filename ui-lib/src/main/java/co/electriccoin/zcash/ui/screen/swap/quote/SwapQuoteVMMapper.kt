@@ -29,7 +29,7 @@ internal class SwapQuoteVMMapper {
                 title =
                     when (quote.mode) {
                         EXACT_INPUT -> stringRes(R.string.swap_quote_title)
-                        EXACT_OUTPUT -> stringRes("Pay now")
+                        EXACT_OUTPUT -> stringRes(R.string.pay_quote_title)
                     },
                 rotateIcon = quote.mode == EXACT_OUTPUT,
                 from = createFromState(),
@@ -64,7 +64,7 @@ internal class SwapQuoteVMMapper {
                 description =
                     when (quote.mode) {
                         EXACT_INPUT -> stringRes(R.string.swap_quote_from)
-                        EXACT_OUTPUT -> stringRes("Pay from")
+                        EXACT_OUTPUT -> stringRes(R.string.pay_from)
                     },
                 title = stringRes(R.string.swap_quote_zashi),
                 subtitle = null
@@ -73,7 +73,7 @@ internal class SwapQuoteVMMapper {
                 description =
                     when (quote.mode) {
                         EXACT_INPUT -> stringRes(R.string.swap_quote_to)
-                        EXACT_OUTPUT -> stringRes("Pay to")
+                        EXACT_OUTPUT -> stringRes(R.string.pay_to)
                     },
                 title = stringResByAddress(quote.recipient, true),
                 subtitle = null
@@ -82,6 +82,9 @@ internal class SwapQuoteVMMapper {
                 description = stringRes(R.string.swap_quote_total_fees),
                 title = stringRes(totalFeesZatoshi),
                 subtitle = stringResByDynamicCurrencyNumber(totalFeesUsd, FiatCurrency.USD.symbol)
+                    .takeIf {
+                        quote.mode == EXACT_INPUT
+                    }
             ),
             if (quote.quote.type == EXACT_OUTPUT) {
                 val slippage = quote.slippage.divide(BigDecimal(100))
@@ -95,6 +98,9 @@ internal class SwapQuoteVMMapper {
                         ),
                     title = stringRes(slippageZatoshi),
                     subtitle = stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol)
+                        .takeIf {
+                            quote.mode == EXACT_INPUT
+                        }
                 )
             } else {
                 null
@@ -109,47 +115,21 @@ internal class SwapQuoteVMMapper {
         )
 
     private fun SwapQuoteInternalState.createFromState(): SwapTokenAmountState =
-        when (quote.mode) {
-            EXACT_INPUT -> {
-                SwapTokenAmountState(
-                    bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                    smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
-                    title = stringRes(quote.amountInZatoshi, TickerLocation.HIDDEN),
-                    subtitle = stringResByDynamicCurrencyNumber(quote.amountInUsd, FiatCurrency.USD.symbol)
-                )
-            }
-
-            EXACT_OUTPUT ->
-                SwapTokenAmountState(
-                    bigIcon = quote.destinationAsset.tokenIcon,
-                    smallIcon = quote.destinationAsset.chainIcon,
-                    title =
-                        stringResByDynamicNumber(
-                            quote.amountOutFormatted.setScale(quote.amountOutDecimals, RoundingMode.DOWN),
-                        ),
-                    subtitle = stringResByDynamicCurrencyNumber(quote.amountOutUsd, FiatCurrency.USD.symbol)
-                )
-        }
+        SwapTokenAmountState(
+            bigIcon = imageRes(R.drawable.ic_zec_round_full),
+            smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
+            title = stringRes(quote.amountInZatoshi, TickerLocation.HIDDEN),
+            subtitle = stringResByDynamicCurrencyNumber(quote.amountInUsd, FiatCurrency.USD.symbol)
+        )
 
     private fun SwapQuoteInternalState.createToState(): SwapTokenAmountState =
-        when (quote.mode) {
-            EXACT_INPUT ->
-                SwapTokenAmountState(
-                    bigIcon = quote.destinationAsset.tokenIcon,
-                    smallIcon = quote.destinationAsset.chainIcon,
-                    title =
-                        stringResByDynamicNumber(
-                            quote.amountOutFormatted.setScale(quote.amountOutDecimals, RoundingMode.DOWN),
-                        ),
-                    subtitle = stringResByDynamicCurrencyNumber(quote.amountOutUsd, FiatCurrency.USD.symbol)
-                )
-
-            EXACT_OUTPUT ->
-                SwapTokenAmountState(
-                    bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                    smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
-                    title = stringRes(quote.amountInZatoshi, TickerLocation.HIDDEN),
-                    subtitle = stringResByDynamicCurrencyNumber(quote.amountInUsd, FiatCurrency.USD.symbol)
-                )
-        }
+        SwapTokenAmountState(
+            bigIcon = quote.destinationAsset.tokenIcon,
+            smallIcon = quote.destinationAsset.chainIcon,
+            title =
+                stringResByDynamicNumber(
+                    quote.amountOutFormatted.setScale(quote.amountOutDecimals, RoundingMode.DOWN),
+                ),
+            subtitle = stringResByDynamicCurrencyNumber(quote.amountOutUsd, FiatCurrency.USD.symbol)
+        )
 }

@@ -207,7 +207,7 @@ internal class SwapVM(
                 isCancelStateVisible.update { true }
             } else if (isCancelStateVisible.value) {
                 isCancelStateVisible.update { false }
-                navigateToSwapQuoteIfAvailable(SwapMode.EXACT_INPUT) { hideCancelBottomSheet() }
+                navigateToSwapQuoteIfAvailable { hideCancelBottomSheet() }
             } else {
                 if (isCancelStateVisible.value) {
                     hideCancelBottomSheet()
@@ -227,7 +227,7 @@ internal class SwapVM(
     private fun onDismissCancelClick() =
         viewModelScope.launch {
             isCancelStateVisible.update { false }
-            navigateToSwapQuoteIfAvailable(SwapMode.EXACT_INPUT) { hideCancelBottomSheet() }
+            navigateToSwapQuoteIfAvailable { hideCancelBottomSheet() }
         }
 
     @Suppress("MagicNumber")

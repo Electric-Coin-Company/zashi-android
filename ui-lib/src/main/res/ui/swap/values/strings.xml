@@ -41,4 +41,7 @@
     <string name="swap_confirm">Get a quote</string>
     <string name="swap_picker_select_chain">Select chain</string>
     <string name="swap_slippage_custom">Custom</string>
+    <string name="pay_quote_title">Pay now</string>
+    <string name="pay_from">Pay from</string>
+    <string name="pay_to">Pay to</string>
 </resources>

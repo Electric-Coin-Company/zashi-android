@@ -16,7 +16,6 @@ import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
-import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionArgs
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteArgs
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -59,15 +58,7 @@ class RequestSwapQuoteUseCase(
         }
 
         if (canNavigateToSwapQuote()) {
-            when (mode) {
-                EXACT_INPUT -> navigationRouter.forward(SwapQuoteArgs)
-                EXACT_OUTPUT ->
-                    if (result is SwapQuoteCompositeData.Success) {
-                        navigationRouter.forward(ReviewTransactionArgs)
-                    } else {
-                        navigationRouter.forward(SwapQuoteArgs)
-                    }
-            }
+            navigationRouter.forward(SwapQuoteArgs)
         }
     }
 
