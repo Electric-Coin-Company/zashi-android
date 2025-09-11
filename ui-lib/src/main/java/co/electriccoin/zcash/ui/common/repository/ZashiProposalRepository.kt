@@ -123,17 +123,18 @@ class ZashiProposalRepositoryImpl(
         }
     }
 
-    @Suppress("UseCheckOrError")
+    @Suppress("UseCheckOrError", "ThrowingExceptionsWithoutMessageOrCause")
     override fun submitTransaction() {
         submitJob?.cancel()
         val transactionProposal = transactionProposal.value ?: throw IllegalStateException()
         submitJob =
             scope.launch {
                 submitState.update { SubmitProposalState.Submitting }
-                val result = proposalDataSource.submitTransaction(
-                    proposal = transactionProposal.proposal,
-                    usk = zashiSpendingKeyDataSource.getZashiSpendingKey()
-                )
+                val result =
+                    proposalDataSource.submitTransaction(
+                        proposal = transactionProposal.proposal,
+                        usk = zashiSpendingKeyDataSource.getZashiSpendingKey()
+                    )
                 runSwapPipeline(transactionProposal, result)
                 submitState.update { SubmitProposalState.Result(result) }
             }

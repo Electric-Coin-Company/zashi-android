@@ -210,7 +210,7 @@ class KeystoneProposalRepositoryImpl(
             }
         }
 
-    @Suppress("UseCheckOrError")
+    @Suppress("UseCheckOrError", "ThrowingExceptionsWithoutMessageOrCause")
     override fun extractPCZT() {
         extractPCZTJob?.cancel()
 
@@ -220,7 +220,9 @@ class KeystoneProposalRepositoryImpl(
         extractPCZTJob =
             scope.launch {
                 submitState.update { SubmitProposalState.Submitting }
-                val pcztWithProofs = pcztWithProofs.filter { !it.isLoading }.first().pczt ?: throw IllegalStateException()
+                val pcztWithProofs =
+                    pcztWithProofs.filter { !it.isLoading }.first().pczt
+                        ?: throw IllegalStateException()
                 val result =
                     proposalDataSource.submitTransaction(
                         pcztWithProofs = pcztWithProofs,

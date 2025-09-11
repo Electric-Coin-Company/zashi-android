@@ -81,10 +81,11 @@ internal class SwapQuoteVMMapper {
             SwapQuoteInfoItem(
                 description = stringRes(R.string.swap_quote_total_fees),
                 title = stringRes(totalFeesZatoshi),
-                subtitle = stringResByDynamicCurrencyNumber(totalFeesUsd, FiatCurrency.USD.symbol)
-                    .takeIf {
-                        quote.mode == EXACT_INPUT
-                    }
+                subtitle =
+                    stringResByDynamicCurrencyNumber(totalFeesUsd, FiatCurrency.USD.symbol)
+                        .takeIf {
+                            quote.mode == EXACT_INPUT
+                        }
             ),
             if (quote.quote.type == EXACT_OUTPUT) {
                 val slippage = quote.slippage.divide(BigDecimal(100))
@@ -97,10 +98,11 @@ internal class SwapQuoteVMMapper {
                             stringResByNumber(quote.slippage, minDecimals = 0) + stringRes("%")
                         ),
                     title = stringRes(slippageZatoshi),
-                    subtitle = stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol)
-                        .takeIf {
-                            quote.mode == EXACT_INPUT
-                        }
+                    subtitle =
+                        stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol)
+                            .takeIf {
+                                quote.mode == EXACT_INPUT
+                            }
                 )
             } else {
                 null

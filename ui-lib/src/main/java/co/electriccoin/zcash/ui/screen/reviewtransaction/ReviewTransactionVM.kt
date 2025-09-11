@@ -18,6 +18,7 @@ import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
@@ -35,7 +36,7 @@ import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
-import co.electriccoin.zcash.ui.util.Quadruple
+import co.electriccoin.zcash.ui.util.Quintuple
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -50,6 +51,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ReviewTransactionVM(
+    getWalletAccounts: GetWalletAccountsUseCase,
     observeContactByAddress: ObserveContactByAddressUseCase,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     observeKeystoneSendTransactionProposal: ObserveProposalUseCase,
@@ -78,9 +80,10 @@ class ReviewTransactionVM(
             observeKeystoneSendTransactionProposal.filterSendTransactions(),
             isReceiverExpanded,
             exchangeRate,
-        ) { wallet, zecSend, isReceiverExpanded, exchangeRate ->
-            Quadruple(wallet, zecSend, isReceiverExpanded, exchangeRate)
-        }.flatMapLatest { (selectedWallet, proposal, isReceiverExpanded, exchangeRate) ->
+            getWalletAccounts.observe()
+        ) { wallet, zecSend, isReceiverExpanded, exchangeRate, accounts ->
+            Quintuple(wallet, zecSend, isReceiverExpanded, exchangeRate, accounts)
+        }.flatMapLatest { (selectedWallet, proposal, isReceiverExpanded, exchangeRate, accounts) ->
             observeContactByAddress(
                 if (proposal is ExactOutputSwapTransactionProposal) {
                     proposal.quote.quote.destinationAddress
@@ -110,7 +113,8 @@ class ReviewTransactionVM(
                             transactionProposal = proposal,
                             addressBookContact = addressBookContact,
                             selectedWallet = selectedWallet,
-                            exchangeRateState = exchangeRate
+                            exchangeRateState = exchangeRate,
+                            accounts = accounts
                         )
                 }
             }
@@ -124,7 +128,8 @@ class ReviewTransactionVM(
         selectedWallet: WalletAccount,
         transactionProposal: SendTransactionProposal,
         addressBookContact: EnhancedABContact?,
-        exchangeRateState: ExchangeRateState
+        exchangeRateState: ExchangeRateState,
+        accounts: List<WalletAccount>?
     ) = ReviewTransactionState(
         title =
             when (selectedWallet) {
@@ -147,7 +152,7 @@ class ReviewTransactionVM(
                     title = stringRes(R.string.send_confirmation_address_from),
                     icon = selectedWallet.icon,
                     name = selectedWallet.name
-                ),
+                ).takeIf { (accounts?.size ?: 0) > 1 },
                 FinancialInfoState(
                     title = stringRes(R.string.send_amount_label),
                     amount = transactionProposal.amount

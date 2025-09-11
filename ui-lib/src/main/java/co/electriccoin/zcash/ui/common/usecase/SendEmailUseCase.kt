@@ -68,14 +68,16 @@ class SendEmailUseCase(
     }
 
     suspend operator fun invoke(submitResult: SubmitResult.Partial) {
-        val fullMessage = EmailUtil.formatMessage(
-            prefix = context.getString(R.string.send_confirmation_multiple_report_text),
-            supportInfo = getSupport().toSupportString(SupportInfoType.entries.toSet()),
-            suffix = buildString {
-                appendLine(context.getString(R.string.send_confirmation_multiple_report_statuses))
-                appendLine(submitResult.statuses.joinToString())
-            }
-        )
+        val fullMessage =
+            EmailUtil.formatMessage(
+                prefix = context.getString(R.string.send_confirmation_multiple_report_text),
+                supportInfo = getSupport().toSupportString(SupportInfoType.entries.toSet()),
+                suffix =
+                    buildString {
+                        appendLine(context.getString(R.string.send_confirmation_multiple_report_statuses))
+                        appendLine(submitResult.statuses.joinToString())
+                    }
+            )
 
         val mailIntent =
             EmailUtil
@@ -93,22 +95,27 @@ class SendEmailUseCase(
     }
 
     operator fun invoke(submitResult: SubmitResult.Failure) {
-        val fullMessage = EmailUtil.formatMessage(
-            body = buildString {
-                appendLine("Error code: ${submitResult.code}")
-                appendLine(submitResult.description ?: "Unknown error")
-            },
-            supportInfo = buildString {
-                appendLine(context.getString(R.string.send_confirmation_multiple_report_statuses))
-                appendLine(context.getString(
-                    R.string.send_confirmation_multiple_report_status_failure,
-                    0,
-                    false.toString(),
-                    submitResult.code,
-                    submitResult.description,
-                ))
-            }
-        )
+        val fullMessage =
+            EmailUtil.formatMessage(
+                body =
+                    buildString {
+                        appendLine("Error code: ${submitResult.code}")
+                        appendLine(submitResult.description ?: "Unknown error")
+                    },
+                supportInfo =
+                    buildString {
+                        appendLine(context.getString(R.string.send_confirmation_multiple_report_statuses))
+                        appendLine(
+                            context.getString(
+                                R.string.send_confirmation_multiple_report_status_failure,
+                                0,
+                                false.toString(),
+                                submitResult.code,
+                                submitResult.description,
+                            )
+                        )
+                    }
+            )
 
         val mailIntent =
             EmailUtil
@@ -126,10 +133,11 @@ class SendEmailUseCase(
     }
 
     operator fun invoke(submitResult: SubmitResult.GrpcFailure) {
-        val fullMessage = EmailUtil.formatMessage(
-            body = "Grpc failure",
-            supportInfo = ""
-        )
+        val fullMessage =
+            EmailUtil.formatMessage(
+                body = "Grpc failure",
+                supportInfo = ""
+            )
 
         val mailIntent =
             EmailUtil

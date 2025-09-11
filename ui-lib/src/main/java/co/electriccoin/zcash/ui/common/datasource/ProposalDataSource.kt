@@ -268,7 +268,10 @@ class ProposalDataSourceImpl(
                             resubmittableFailure = true
                         } else {
                             txIds.add(transactionSubmitResult.txIdString())
-                            statuses.add("code: ${transactionSubmitResult.code} desc: ${transactionSubmitResult.description}")
+                            statuses.add(
+                                "code: ${transactionSubmitResult.code} " +
+                                    "desc: ${transactionSubmitResult.description}"
+                            )
                             errCode = transactionSubmitResult.code
                             errDesc = transactionSubmitResult.description.orEmpty()
                         }
@@ -281,16 +284,18 @@ class ProposalDataSourceImpl(
                 }
             }
 
-            val result = when (successCount) {
-                0 ->
-                    if (resubmittableFailure) {
-                        SubmitResult.GrpcFailure(txIds = txIds)
-                    } else {
-                        SubmitResult.Failure(txIds = txIds, code = errCode, description = errDesc)
-                    }
-                transactionCount -> SubmitResult.Success(txIds = txIds)
-                else -> SubmitResult.Partial(txIds = txIds, statuses = statuses)
-            }
+            val result =
+                when (successCount) {
+                    0 ->
+                        if (resubmittableFailure) {
+                            SubmitResult.GrpcFailure(txIds = txIds)
+                        } else {
+                            SubmitResult.Failure(txIds = txIds, code = errCode, description = errDesc)
+                        }
+
+                    transactionCount -> SubmitResult.Success(txIds = txIds)
+                    else -> SubmitResult.Partial(txIds = txIds, statuses = statuses)
+                }
 
             synchronizer.refreshTransactions()
             synchronizer.refreshAllBalances()

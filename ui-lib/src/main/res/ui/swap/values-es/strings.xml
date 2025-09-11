@@ -39,4 +39,8 @@
     <string name="swap_confirm">Obtener cotización</string>
     <string name="swap_picker_select_chain">Seleccionar Activo</string>
     <string name="swap_slippage_custom">Personalizado</string>
+    <string name="pay_quote_title">Pay Now</string>
+    <string name="pay_from">Pay from</string>
+    <string name="pay_to">Pay to</string>
+    <string name="pay_slippage_info">You may pay up to %s more, in addition to transaction fees.</string>
 </resources>

@@ -96,10 +96,11 @@ class ErrorViewModel(
                             )
                         )
 
-                    is SubmitResult.Partial -> stringRes(
-                        R.string.error_shielding_message,
-                        args.error.statuses.joinToString()
-                    )
+                    is SubmitResult.Partial ->
+                        stringRes(
+                            R.string.error_shielding_message,
+                            args.error.statuses.joinToString()
+                        )
 
                     is SubmitResult.Success -> stringRes("")
                 },

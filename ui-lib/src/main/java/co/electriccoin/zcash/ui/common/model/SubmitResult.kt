@@ -9,14 +9,14 @@ sealed interface SubmitResult {
         val txIds: List<String>,
         val code: Int,
         val description: String?
-    ): SubmitResult
+    ) : SubmitResult
 
     data class GrpcFailure(
         val txIds: List<String>
-    ): SubmitResult
+    ) : SubmitResult
 
     data class Partial(
         val txIds: List<String>,
         val statuses: List<String>
-    ): SubmitResult
+    ) : SubmitResult
 }

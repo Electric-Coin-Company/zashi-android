@@ -36,8 +36,12 @@ class CreateFlexaTransactionUseCase(
             )
             zashiProposalRepository.createProposal(getZecSend(transaction.getOrNull()))
             zashiProposalRepository.submitTransaction()
-            when (val result =
-                zashiProposalRepository.submitState.filterIsInstance<SubmitProposalState.Result>().first().submitResult
+            when (
+                val result =
+                    zashiProposalRepository.submitState
+                        .filterIsInstance<SubmitProposalState.Result>()
+                        .first()
+                        .submitResult
             ) {
                 is SubmitResult.Success -> {
                     Flexa
@@ -74,8 +78,9 @@ class CreateFlexaTransactionUseCase(
         }
     }
 
+    @Suppress("TooGenericExceptionThrown")
     private suspend fun getZecSend(transaction: Transaction?): ZecSend {
-        if (transaction == null) throw IllegalArgumentException("Transaction is null")
+        requireNotNull(transaction)
 
         val address = transaction.destinationAddress.split(":").last()
 

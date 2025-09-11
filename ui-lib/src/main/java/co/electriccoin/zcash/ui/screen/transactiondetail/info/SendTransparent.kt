@@ -105,12 +105,13 @@ fun SendTransparent(
                                     } else {
                                         stringRes(R.string.transaction_detail_info_transaction_completed)
                                     },
-                                message = if (state.isPending) {
-                                    state.completedTimestamp
-                                } else {
-                                    state.completedTimestamp orHidden
-                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder)
-                                }
+                                message =
+                                    if (state.isPending) {
+                                        state.completedTimestamp
+                                    } else {
+                                        state.completedTimestamp orHidden
+                                            stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder)
+                                    }
                             )
                     )
                 }
