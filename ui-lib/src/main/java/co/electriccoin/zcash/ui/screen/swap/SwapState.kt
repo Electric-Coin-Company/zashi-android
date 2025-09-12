@@ -27,8 +27,15 @@ internal data class SwapState(
     val addressBookButton: IconButtonState,
     val errorFooter: SwapErrorFooterState?,
     val primaryButton: ButtonState?,
-    val onBack: () -> Unit
-)
+    val addressLocation: AddressLocation,
+    val footer: StringResource?,
+    val onBack: () -> Unit,
+    val changeModeButton: IconButtonState,
+) {
+    enum class AddressLocation {
+        TOP, BOTTOM
+    }
+}
 
 @Immutable
 data class SwapErrorFooterState(

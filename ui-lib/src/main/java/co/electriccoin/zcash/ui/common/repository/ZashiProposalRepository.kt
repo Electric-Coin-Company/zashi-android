@@ -13,8 +13,8 @@ import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
-import co.electriccoin.zcash.ui.common.model.CompositeSwapQuote
 import co.electriccoin.zcash.ui.common.model.SubmitResult
+import co.electriccoin.zcash.ui.common.model.SwapQuote
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -40,13 +40,13 @@ interface ZashiProposalRepository {
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactInputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactOutputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
@@ -93,7 +93,7 @@ class ZashiProposalRepositoryImpl(
 
     override suspend fun createExactInputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactInputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactInputProposal(
@@ -105,7 +105,7 @@ class ZashiProposalRepositoryImpl(
 
     override suspend fun createExactOutputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactOutputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactOutputProposal(

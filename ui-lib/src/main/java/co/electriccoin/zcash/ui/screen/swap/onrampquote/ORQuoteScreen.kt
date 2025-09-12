@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap
+package co.electriccoin.zcash.ui.screen.swap.onrampquote
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
@@ -6,17 +6,14 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
-fun SwapScreen() {
-    val vm = koinViewModel<SwapVM>()
+fun ORQuoteScreen() {
+    val vm = koinViewModel<ORQuoteVM>()
     val state by vm.state.collectAsStateWithLifecycle()
-    val cancelState by vm.cancelState.collectAsStateWithLifecycle()
-    state?.let { SwapView(it) }
-    BackHandler(state != null) { state?.onBack?.invoke() }
-    SwapCancelView(cancelState)
+    BackHandler { state?.onBack?.invoke() }
+    state?.let { ORQuoteView(it) }
 }
 
 @Serializable
-data object SwapArgs
+data object ORQuoteArgs

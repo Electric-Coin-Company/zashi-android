@@ -13,8 +13,8 @@ import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
-import co.electriccoin.zcash.ui.common.model.CompositeSwapQuote
 import co.electriccoin.zcash.ui.common.model.SubmitResult
+import co.electriccoin.zcash.ui.common.model.SwapQuote
 import com.keystone.sdk.KeystoneSDK
 import com.keystone.sdk.KeystoneZcashSDK
 import com.sparrowwallet.hummingbird.UR
@@ -44,13 +44,13 @@ interface KeystoneProposalRepository {
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactInputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactOutputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
@@ -122,7 +122,7 @@ class KeystoneProposalRepositoryImpl(
 
     override suspend fun createExactInputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactInputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactInputProposal(
@@ -134,7 +134,7 @@ class KeystoneProposalRepositoryImpl(
 
     override suspend fun createExactOutputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactOutputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactOutputProposal(

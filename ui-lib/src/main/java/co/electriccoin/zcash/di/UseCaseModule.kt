@@ -24,7 +24,6 @@ import co.electriccoin.zcash.ui.common.usecase.GetABContactByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABSwapContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCoinbaseStatusUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetCompositeSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
@@ -228,7 +227,6 @@ val useCaseModule =
         factoryOf(::GetTotalSpendableBalanceUseCase)
         factoryOf(::IsABContactHintVisibleUseCase)
         factoryOf(::RequestSwapQuoteUseCase)
-        factoryOf(::GetCompositeSwapQuoteUseCase)
         factoryOf(::CancelSwapQuoteUseCase)
         factoryOf(::NavigateToSwapQuoteIfAvailableUseCase)
         singleOf(::NavigateToScanGenericAddressUseCase)

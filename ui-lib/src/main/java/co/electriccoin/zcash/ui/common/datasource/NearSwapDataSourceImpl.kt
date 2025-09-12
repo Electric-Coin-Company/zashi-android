@@ -50,7 +50,7 @@ class NearSwapDataSourceImpl(
     override suspend fun requestQuote(
         swapMode: SwapMode,
         amount: BigDecimal,
-        originAddress: String,
+        refundAddress: String,
         originAsset: SwapAsset,
         destinationAddress: String,
         destinationAsset: SwapAsset,
@@ -80,7 +80,7 @@ class NearSwapDataSourceImpl(
                 depositType = RefundType.ORIGIN_CHAIN,
                 destinationAsset = destinationAsset.assetId,
                 amount = normalizedAmount,
-                refundTo = originAddress,
+                refundTo = refundAddress,
                 refundType = RefundType.ORIGIN_CHAIN,
                 recipient = destinationAddress,
                 recipientType = RecipientType.DESTINATION_CHAIN,
@@ -96,7 +96,11 @@ class NearSwapDataSourceImpl(
             )
 
         return try {
-            NearSwapQuote(nearApiProvider.requestQuote(request))
+            NearSwapQuote(
+                response = nearApiProvider.requestQuote(request),
+                originAsset = originAsset,
+                destinationAsset = destinationAsset
+            )
         } catch (e: ResponseWithErrorException) {
             when {
                 e.error.message.startsWith("Amount is too low for bridge, try at least") -> {

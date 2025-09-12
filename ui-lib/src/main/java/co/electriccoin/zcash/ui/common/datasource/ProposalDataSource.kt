@@ -13,8 +13,8 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.type.AddressType
-import co.electriccoin.zcash.ui.common.model.CompositeSwapQuote
 import co.electriccoin.zcash.ui.common.model.SubmitResult
+import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import kotlinx.coroutines.Dispatchers
@@ -41,14 +41,14 @@ interface ProposalDataSource {
     suspend fun createExactInputProposal(
         account: WalletAccount,
         send: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactOutputProposal(
         account: WalletAccount,
         send: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
@@ -139,7 +139,7 @@ class ProposalDataSourceImpl(
     override suspend fun createExactInputProposal(
         account: WalletAccount,
         send: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactInputSwapTransactionProposal =
         withContext(Dispatchers.IO) {
             getOrThrow {
@@ -156,7 +156,7 @@ class ProposalDataSourceImpl(
     override suspend fun createExactOutputProposal(
         account: WalletAccount,
         send: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactOutputSwapTransactionProposal =
         withContext(Dispatchers.IO) {
             getOrThrow {
@@ -331,18 +331,13 @@ sealed interface SendTransactionProposal : TransactionProposal {
 }
 
 sealed interface SwapTransactionProposal : SendTransactionProposal {
-    val quote: CompositeSwapQuote
+    val quote: SwapQuote
 
     val totalFees: Zatoshi
         get() = quote.getTotalFeesZatoshi(proposal)
+
     val totalFeesUsd: BigDecimal
         get() = quote.getTotalFeesUsd(proposal)
-
-    val totalZatoshi: Zatoshi
-        get() = quote.getTotalZatoshi(proposal)
-
-    val totalUsd: BigDecimal
-        get() = quote.getTotalUsd(proposal)
 }
 
 data class ShieldTransactionProposal(
@@ -368,7 +363,7 @@ data class ExactInputSwapTransactionProposal(
     override val amount: Zatoshi,
     override val memo: Memo,
     override val proposal: Proposal,
-    override val quote: CompositeSwapQuote,
+    override val quote: SwapQuote,
 ) : SwapTransactionProposal
 
 data class ExactOutputSwapTransactionProposal(
@@ -376,7 +371,7 @@ data class ExactOutputSwapTransactionProposal(
     override val amount: Zatoshi,
     override val memo: Memo,
     override val proposal: Proposal,
-    override val quote: CompositeSwapQuote,
+    override val quote: SwapQuote,
 ) : SwapTransactionProposal
 
 private const val DEFAULT_SHIELDING_THRESHOLD = 100000L
