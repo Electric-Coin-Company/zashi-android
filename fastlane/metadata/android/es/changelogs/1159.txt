@@ -1,0 +1,3 @@
+- CrossPay con Near Intents
+- Utiliza ZEC protegido para realizar pagos entre cadenas con Zashi y Near Intents.
+- Accesible a través del nuevo botón Pagar en la pantalla de inicio.
