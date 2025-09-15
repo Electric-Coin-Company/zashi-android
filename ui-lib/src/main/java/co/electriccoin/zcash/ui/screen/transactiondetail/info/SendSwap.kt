@@ -36,6 +36,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.orHidden
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailHeader
@@ -83,7 +84,9 @@ fun SendSwap(
                 state =
                     TransactionDetailInfoRowState(
                         title = stringRes(R.string.transaction_detail_info_sent_to),
-                        message = state.depositAddress,
+                        message =
+                            state.depositAddress orHidden
+                                stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                         trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                         onClick = state.onDepositAddressClick
                     ),
@@ -112,7 +115,11 @@ fun SendSwap(
                             state =
                                 TransactionDetailInfoRowState(
                                     title = stringRes(R.string.transaction_detail_info_recipient),
-                                    message = state.recipientAddress,
+                                    message =
+                                        state.recipientAddress orHidden
+                                            stringRes(
+                                                co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder
+                                            ),
                                     trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                                     onClick = state.onRecipientAddressClick
                                 )
@@ -124,7 +131,9 @@ fun SendSwap(
                         state =
                             TransactionDetailInfoRowState(
                                 title = stringRes(R.string.transaction_detail_info_transaction_id),
-                                message = state.transactionId,
+                                message =
+                                    state.transactionId orHidden
+                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                                 trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                                 onClick = state.onTransactionIdClick
                             )
@@ -136,7 +145,11 @@ fun SendSwap(
                             state =
                                 TransactionDetailInfoRowState(
                                     title = stringRes(R.string.transaction_detail_info_total_fees),
-                                    message = state.totalFees,
+                                    message =
+                                        state.totalFees orHidden
+                                            stringRes(
+                                                co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder
+                                            ),
                                 )
                         )
                     }
@@ -160,7 +173,9 @@ fun SendSwap(
                         state =
                             TransactionDetailInfoRowState(
                                 title = stringRes(R.string.transaction_detail_info_timestamp),
-                                message = state.completedTimestamp,
+                                message =
+                                    state.completedTimestamp orHidden
+                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                             )
                     )
                 }
@@ -233,7 +248,6 @@ private fun Preview() =
                         status = SwapStatus.REFUNDED,
                         quoteHeader =
                             SwapQuoteHeaderState(
-                                rotateIcon = false,
                                 from = null,
                                 to = null
                             ),

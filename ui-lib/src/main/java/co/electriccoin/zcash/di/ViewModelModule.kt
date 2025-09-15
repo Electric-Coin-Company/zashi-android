@@ -20,13 +20,14 @@ import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInVM
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsVM
 import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
-import co.electriccoin.zcash.ui.screen.home.HomeViewModel
+import co.electriccoin.zcash.ui.screen.home.HomeVM
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetailViewModel
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptInViewModel
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoViewModel
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsVM
+import co.electriccoin.zcash.ui.screen.pay.PayVM
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
 import co.electriccoin.zcash.ui.screen.receive.ReceiveVM
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
@@ -35,7 +36,7 @@ import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationVie
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightViewModel
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
-import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionViewModel
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionVM
 import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressVM
 import co.electriccoin.zcash.ui.screen.scan.ScanZashiAddressVM
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScanViewModel
@@ -59,7 +60,7 @@ import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsVM
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailVM
 import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersVM
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryViewModel
-import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetViewModel
+import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetVM
 import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNoteViewModel
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressVM
 import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackupViewModel
@@ -96,10 +97,10 @@ val viewModelModule =
         viewModelOf(::AccountListViewModel)
         viewModelOf(::ZashiTopAppBarVM)
         viewModelOf(::SelectKeystoneAccountViewModel)
-        viewModelOf(::ReviewTransactionViewModel)
+        viewModelOf(::ReviewTransactionVM)
         viewModelOf(::TransactionFiltersVM)
         viewModelOf(::TransactionProgressVM)
-        viewModelOf(::TransactionHistoryWidgetViewModel)
+        viewModelOf(::TransactionHistoryWidgetVM)
         viewModelOf(::TransactionHistoryViewModel)
         viewModelOf(::TransactionDetailVM)
         viewModelOf(::AddressBookVM)
@@ -108,7 +109,7 @@ val viewModelModule =
         viewModelOf(::TaxExportViewModel)
         viewModelOf(::CrashReportingViewModel)
         viewModelOf(::BalanceWidgetVM)
-        viewModelOf(::HomeViewModel)
+        viewModelOf(::HomeVM)
         viewModelOf(::RestoreBDHeightViewModel)
         viewModelOf(::RestoreBDDateViewModel)
         viewModelOf(::RestoreBDEstimationViewModel)
@@ -127,6 +128,7 @@ val viewModelModule =
         viewModelOf(::SwapAssetPickerVM)
         viewModelOf(::SwapSlippageVM)
         viewModelOf(::SwapVM)
+        viewModelOf(::PayVM)
         viewModelOf(::SwapQuoteVM)
         viewModelOf(::ScanGenericAddressVM)
         viewModelOf(::SelectSwapABRecipientVM)

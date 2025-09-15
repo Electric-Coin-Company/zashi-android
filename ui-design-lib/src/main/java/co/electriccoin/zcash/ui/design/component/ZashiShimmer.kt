@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
@@ -58,25 +59,27 @@ fun ShimmerCircle(
 fun ShimmerRectangle(
     width: Dp = 40.dp,
     height: Dp = 20.dp,
-    color: Color = ZashiColors.Surfaces.bgSecondary
+    color: Color = ZashiColors.Surfaces.bgSecondary,
+    shape: Shape = RoundedCornerShape(ZashiDimensions.Radius.radiusSm)
 ) {
     Box(
         modifier =
             Modifier
                 .width(width)
                 .height(height)
-                .background(color, RoundedCornerShape(ZashiDimensions.Radius.radiusSm))
+                .background(color, shape)
     )
 }
 
 @Composable
 fun ShimmerRectangle(
     modifier: Modifier = Modifier,
-    color: Color = ZashiColors.Surfaces.bgSecondary
+    color: Color = ZashiColors.Surfaces.bgSecondary,
+    shape: Shape = RoundedCornerShape(ZashiDimensions.Radius.radiusSm)
 ) {
     Box(
         modifier =
             modifier
-                .background(color, RoundedCornerShape(ZashiDimensions.Radius.radiusSm))
+                .background(color, shape)
     )
 }

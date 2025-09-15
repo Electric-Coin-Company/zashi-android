@@ -40,13 +40,13 @@ interface ZashiProposalRepository {
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactInputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote
+        quote: CompositeSwapQuote,
     ): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactOutputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote
+        quote: CompositeSwapQuote,
     ): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
@@ -93,7 +93,7 @@ class ZashiProposalRepositoryImpl(
 
     override suspend fun createExactInputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote
+        quote: CompositeSwapQuote,
     ): ExactInputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactInputProposal(
@@ -105,7 +105,7 @@ class ZashiProposalRepositoryImpl(
 
     override suspend fun createExactOutputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote
+        quote: CompositeSwapQuote,
     ): ExactOutputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactOutputProposal(
@@ -123,36 +123,18 @@ class ZashiProposalRepositoryImpl(
         }
     }
 
+    @Suppress("UseCheckOrError", "ThrowingExceptionsWithoutMessageOrCause")
     override fun submitTransaction() {
-        fun createErrorState(message: String) =
-            SubmitProposalState.Result(
-                SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther(NullPointerException(message))
-            )
-
         submitJob?.cancel()
+        val transactionProposal = transactionProposal.value ?: throw IllegalStateException()
         submitJob =
             scope.launch {
-                val transactionProposal = transactionProposal.value
-                val proposal = transactionProposal?.proposal
-
-                if (proposal == null) {
-                    submitState.update { createErrorState("proposal is null") }
-                    return@launch
-                }
-
                 submitState.update { SubmitProposalState.Submitting }
-
-                val spendingKey =
-                    runCatching {
-                        zashiSpendingKeyDataSource.getZashiSpendingKey()
-                    }.getOrNull()
-
-                if (spendingKey == null) {
-                    submitState.update { createErrorState("spendingKey is null") }
-                    return@launch
-                }
-
-                val result = proposalDataSource.submitTransaction(proposal, spendingKey)
+                val result =
+                    proposalDataSource.submitTransaction(
+                        proposal = transactionProposal.proposal,
+                        usk = zashiSpendingKeyDataSource.getZashiSpendingKey()
+                    )
                 runSwapPipeline(transactionProposal, result)
                 submitState.update { SubmitProposalState.Result(result) }
             }
@@ -163,18 +145,9 @@ class ZashiProposalRepositoryImpl(
             if (transactionProposal is SwapTransactionProposal) {
                 val txIds: List<String> =
                     when (result) {
-                        is SubmitResult.MultipleTrxFailure ->
-                            result.results.map { it.txIdString() }
-
-                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc ->
-                            listOf(result.result.txIdString())
-
-                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther ->
-                            emptyList()
-
-                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit ->
-                            listOf(result.result.txIdString())
-
+                        is SubmitResult.GrpcFailure -> result.txIds
+                        is SubmitResult.Failure -> emptyList()
+                        is SubmitResult.Partial -> result.txIds
                         is SubmitResult.Success -> result.txIds
                     }.filter { it.isNotEmpty() }
                 val depositAddress = transactionProposal.destination.address

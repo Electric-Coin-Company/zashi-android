@@ -43,6 +43,7 @@ import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.UiMode
+import co.electriccoin.zcash.ui.screen.about.AboutArgs
 import co.electriccoin.zcash.ui.screen.authentication.view.AnimationConstants.WELCOME_ANIM_TEST_TAG
 import co.electriccoin.zcash.ui.screen.balances.BalanceTag
 import co.electriccoin.zcash.ui.screen.home.HomeTags
@@ -389,7 +390,7 @@ class ScreenshotTest : UiTestPrerequisites() {
         navigateTo(NavigationTargets.EXPORT_PRIVATE_DATA)
         exportPrivateDataScreenshots(resContext, tag, composeTestRule)
 
-        navigateTo(NavigationTargets.ABOUT)
+        navigateTo(AboutArgs)
         aboutScreenshots(resContext, tag, composeTestRule)
     }
 }

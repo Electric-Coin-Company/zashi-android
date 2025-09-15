@@ -11,7 +11,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
@@ -38,22 +37,19 @@ fun ZashiSwapQuoteHeader(
                 Spacer(8.dp)
                 ZashiSwapQuoteAmount(modifier = Modifier.weight(1f), state = state.to)
             }
-            if (state.rotateIcon != null) {
-                Surface(
-                    modifier = Modifier.align(Alignment.Center),
-                    shape = CircleShape,
-                    color = ZashiColors.Surfaces.bgPrimary,
-                    shadowElevation = 2.dp
+            Surface(
+                modifier = Modifier.align(Alignment.Center),
+                shape = CircleShape,
+                color = ZashiColors.Surfaces.bgPrimary,
+                shadowElevation = 2.dp
+            ) {
+                Box(
+                    Modifier.padding(8.dp)
                 ) {
-                    Box(
-                        Modifier.padding(8.dp)
-                    ) {
-                        Image(
-                            modifier = Modifier.rotate(if (state.rotateIcon) 180f else 0f),
-                            painter = painterResource(R.drawable.ic_arrow_right),
-                            contentDescription = null
-                        )
-                    }
+                    Image(
+                        painter = painterResource(R.drawable.ic_arrow_right),
+                        contentDescription = null
+                    )
                 }
             }
         }
@@ -62,7 +58,6 @@ fun ZashiSwapQuoteHeader(
 
 @Immutable
 data class SwapQuoteHeaderState(
-    val rotateIcon: Boolean?,
     val from: SwapTokenAmountState?,
     val to: SwapTokenAmountState?,
 )
@@ -75,7 +70,6 @@ private fun Preview() =
             ZashiSwapQuoteHeader(
                 state =
                     SwapQuoteHeaderState(
-                        rotateIcon = false,
                         from =
                             SwapTokenAmountState(
                                 bigIcon = imageRes(R.drawable.ic_chain_placeholder),
@@ -103,7 +97,6 @@ private fun LoadingPreview() =
             ZashiSwapQuoteHeader(
                 state =
                     SwapQuoteHeaderState(
-                        rotateIcon = false,
                         from = null,
                         to = null
                     )

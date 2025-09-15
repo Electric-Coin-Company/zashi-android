@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.swap
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -45,8 +44,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
-import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
-import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.design.component.AssetCardState
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -76,7 +73,6 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
-import co.electriccoin.zcash.ui.screen.send.view.SendAddressBookHint
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountText
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextField
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
@@ -109,36 +105,16 @@ internal fun SwapView(
                 state = state.amountTextField,
                 focusRequester = focusRequester
             )
-
-            when (state.mode) {
-                EXACT_INPUT -> {
-                    Spacer(16.dp)
-                }
-
-                EXACT_OUTPUT -> {
-                    Spacer(10.dp)
-                    AddressTextField(state = state)
-                    Spacer(16.dp)
-                }
-            }
-
+            Spacer(16.dp)
             SlippageSeparator(
                 // state = state
             )
             Spacer(14.dp)
             SwapAmountText(state = state.amountText)
 
-            when (state.mode) {
-                EXACT_INPUT -> {
-                    Spacer(10.dp)
-                    AddressTextField(state = state)
-                    Spacer(22.dp)
-                }
-
-                EXACT_OUTPUT -> {
-                    Spacer(22.dp)
-                }
-            }
+            Spacer(10.dp)
+            AddressTextField(state = state)
+            Spacer(22.dp)
 
             SlippageButton(
                 state = state.slippage
@@ -150,41 +126,11 @@ internal fun SwapView(
                     state = infoItem
                 )
             }
-
             Spacer(24.dp)
             Spacer(1f)
-
             if (state.errorFooter != null) {
-                Image(
-                    modifier =
-                        Modifier
-                            .size(16.dp)
-                            .align(Alignment.CenterHorizontally),
-                    painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(ZashiColors.Text.textError)
-                )
-                Spacer(8.dp)
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = state.errorFooter.title.getValue(),
-                    style = ZashiTypography.textSm,
-                    fontWeight = FontWeight.Medium,
-                    color = ZashiColors.Text.textError,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(4.dp)
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = state.errorFooter.subtitle.getValue(),
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Text.textError,
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(32.dp)
+                SwapErrorFooter(state.errorFooter)
             }
-
             if (state.primaryButton != null) {
                 ZashiButton(
                     modifier = Modifier.fillMaxWidth(),
@@ -196,7 +142,41 @@ internal fun SwapView(
 }
 
 @Composable
-private fun SlippageButton(state: ButtonState, modifier: Modifier = Modifier) {
+fun SwapErrorFooter(errorFooter: SwapErrorFooterState) {
+    Column {
+        Image(
+            modifier =
+                Modifier
+                    .size(16.dp)
+                    .align(Alignment.CenterHorizontally),
+            painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(ZashiColors.Text.textError)
+        )
+        Spacer(8.dp)
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = errorFooter.title.getValue(),
+            style = ZashiTypography.textSm,
+            fontWeight = FontWeight.Medium,
+            color = ZashiColors.Text.textError,
+            textAlign = TextAlign.Center
+        )
+        Spacer(4.dp)
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = errorFooter.subtitle.getValue(),
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Text.textError,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(32.dp)
+    }
+}
+
+@Composable
+fun SlippageButton(state: ButtonState, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = CenterVertically
@@ -365,13 +345,6 @@ private fun ColumnScope.AddressTextField(state: SwapState) {
                 imeAction = ImeAction.Done
             ),
     )
-
-    AnimatedVisibility(visible = state.isAddressBookHintVisible) {
-        Column {
-            Spacer(8.dp)
-            SendAddressBookHint(Modifier.fillMaxWidth())
-        }
-    }
 }
 
 @PreviewScreens
@@ -433,7 +406,6 @@ private fun Preview() {
                             stringRes("Get a quote")
                         ),
                     onBack = {},
-                    mode = EXACT_OUTPUT,
                     swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     infoItems =
                         listOf(
@@ -443,7 +415,6 @@ private fun Preview() {
                             )
                         ),
                     address = TextFieldState(stringRes("")) {},
-                    isAddressBookHintVisible = true,
                     qrScannerButton =
                         IconButtonState(
                             icon = R.drawable.qr_code_icon,
@@ -453,11 +424,6 @@ private fun Preview() {
                         IconButtonState(
                             icon = R.drawable.send_address_book,
                             onClick = {}
-                        ),
-                    changeModeButton =
-                        IconButtonState(
-                            icon = R.drawable.ic_swap_change_mode,
-                            onClick = { }
                         ),
                     appBarState =
                         SwapAppBarState(
@@ -519,7 +485,6 @@ private fun UnexpectedErrorPreview() {
                             subtitle = null
                         ),
                     onBack = {},
-                    mode = EXACT_OUTPUT,
                     swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     infoItems =
                         listOf(
@@ -529,7 +494,6 @@ private fun UnexpectedErrorPreview() {
                             )
                         ),
                     address = TextFieldState(stringRes("")) {},
-                    isAddressBookHintVisible = true,
                     qrScannerButton =
                         IconButtonState(
                             icon = R.drawable.qr_code_icon,
@@ -540,18 +504,13 @@ private fun UnexpectedErrorPreview() {
                             icon = R.drawable.send_address_book,
                             onClick = {}
                         ),
-                    changeModeButton =
-                        IconButtonState(
-                            icon = R.drawable.ic_swap_change_mode,
-                            onClick = { }
-                        ),
                     appBarState =
                         SwapAppBarState(
                             title = stringRes("Swap with"),
                             icon = R.drawable.ic_near_logo
                         ),
                     errorFooter =
-                        ErrorFooter(
+                        SwapErrorFooterState(
                             title = stringRes("Unexpected error"),
                             subtitle = stringRes("Please check your connection and try again."),
                         ),
@@ -614,7 +573,6 @@ private fun ServiceUnavailableErrorPreview() {
                             subtitle = null
                         ),
                     onBack = {},
-                    mode = EXACT_OUTPUT,
                     swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     infoItems =
                         listOf(
@@ -624,7 +582,6 @@ private fun ServiceUnavailableErrorPreview() {
                             )
                         ),
                     address = TextFieldState(stringRes("")) {},
-                    isAddressBookHintVisible = true,
                     qrScannerButton =
                         IconButtonState(
                             icon = R.drawable.qr_code_icon,
@@ -635,18 +592,13 @@ private fun ServiceUnavailableErrorPreview() {
                             icon = R.drawable.send_address_book,
                             onClick = {}
                         ),
-                    changeModeButton =
-                        IconButtonState(
-                            icon = R.drawable.ic_swap_change_mode,
-                            onClick = { }
-                        ),
                     appBarState =
                         SwapAppBarState(
                             title = stringRes("Swap with"),
                             icon = R.drawable.ic_near_logo
                         ),
                     errorFooter =
-                        ErrorFooter(
+                        SwapErrorFooterState(
                             title = stringRes("The service is unavailable"),
                             subtitle = stringRes("Please try again later."),
                         ),

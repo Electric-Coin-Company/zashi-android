@@ -9,7 +9,7 @@ import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase.Zip321ParseUriValidation
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
-import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow.ADDRESS_BOOK
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow.HOMEPAGE
@@ -77,7 +77,7 @@ class OnZip321ScannedUseCase(
                             ?.let { listOf(it) }
                 )
             )
-            navigationRouter.replace(Send(), ReviewTransaction)
+            navigationRouter.replace(Send(), ReviewTransactionArgs)
         } catch (_: TransactionProposalNotCreatedException) {
             prefillSend.requestFromZip321(zip321.payment)
             navigationRouter.replace(Send())
@@ -118,7 +118,7 @@ class OnZip321ScannedUseCase(
                             ?.let { listOf(it) }
                 )
             )
-            navigationRouter.forward(ReviewTransaction)
+            navigationRouter.forward(ReviewTransactionArgs)
         } catch (_: TransactionProposalNotCreatedException) {
             prefillSend.requestFromZip321(zip321.payment)
             navigationRouter.back()

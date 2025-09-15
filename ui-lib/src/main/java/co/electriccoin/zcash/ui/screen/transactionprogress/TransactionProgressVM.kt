@@ -57,16 +57,13 @@ class TransactionProgressVM(
                 null, SubmitProposalState.Submitting -> createSendingTransactionState(proposal)
                 is SubmitProposalState.Result ->
                     when (val result = submitState.submitResult) {
-                        is SubmitResult.MultipleTrxFailure ->
-                            createMultipleFailuresTransactionState(supportContacted, result)
+                        is SubmitResult.Partial ->
+                            createPartialFailureTransactionState(supportContacted, result)
 
-                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc ->
+                        is SubmitResult.GrpcFailure ->
                             createGrpcFailureTransactionState()
 
-                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther ->
-                            createFailureTransactionState(proposal, result)
-
-                        is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit ->
+                        is SubmitResult.Failure ->
                             createFailureTransactionState(proposal, result)
 
                         is SubmitResult.Success -> createSuccessfulTransactionState(proposal, result)
@@ -78,9 +75,9 @@ class TransactionProgressVM(
             initialValue = null
         )
 
-    private fun createMultipleFailuresTransactionState(
+    private fun createPartialFailureTransactionState(
         supportContacted: Boolean,
-        result: SubmitResult.MultipleTrxFailure
+        result: SubmitResult.Partial
     ) = MultipleFailuresTransactionState(
         showBackButton = supportContacted,
         onBack = {
@@ -92,7 +89,7 @@ class TransactionProgressVM(
         onCopyClick = {
             copyToClipboardUseCase(
                 tag = "Transaction ID",
-                value = result.results.joinToString(separator = ", ") { it.txIdString() }
+                value = result.txIds.joinToString(separator = ", ")
             )
         },
         onSupportClick = {
@@ -101,7 +98,7 @@ class TransactionProgressVM(
                 this@TransactionProgressVM.supportContacted.update { true }
             }
         },
-        transactionIds = result.results.map { it.txIdString() }
+        transactionIds = result.txIds
     )
 
     private fun createGrpcFailureTransactionState() =
@@ -185,16 +182,12 @@ class TransactionProgressVM(
 
     private fun createFailureTransactionState(
         proposal: TransactionProposal?,
-        result: SubmitResult.SimpleTrxFailure,
+        result: SubmitResult.Failure,
     ) = FailureTransactionState(
         onBack = ::onBackToSendForm,
         onCloseClick = ::onBackToSendForm,
         onViewTransactionClick = {
-            if (result is SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit) {
-                onViewTransactionDetailClick(result.result.txIdString())
-            } else {
-                onViewTransactions()
-            }
+            result.txIds.firstOrNull()?.let { onViewTransactionDetailClick(it) }
         },
         onReportClick = {
             viewModelScope.launch {

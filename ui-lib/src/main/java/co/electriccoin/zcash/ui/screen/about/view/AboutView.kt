@@ -15,8 +15,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.ZashiVersion
@@ -52,7 +51,7 @@ fun About(
     onBack: () -> Unit,
     configInfo: ConfigInfo,
     onPrivacyPolicy: () -> Unit,
-    snackbarHostState: SnackbarHostState,
+    onTermsOfUse: () -> Unit,
     versionInfo: VersionInfo,
 ) {
     Scaffold(
@@ -63,11 +62,11 @@ fun About(
                 configInfo = configInfo,
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         AboutMainContent(
             versionInfo = versionInfo,
             onPrivacyPolicy = onPrivacyPolicy,
+            onTermsOfUse = onTermsOfUse,
             modifier =
                 Modifier
                     .fillMaxHeight()
@@ -137,6 +136,7 @@ private fun DebugMenu(
 @Composable
 fun AboutMainContent(
     onPrivacyPolicy: () -> Unit,
+    onTermsOfUse: () -> Unit,
     versionInfo: VersionInfo,
     modifier: Modifier = Modifier
 ) {
@@ -170,6 +170,18 @@ fun AboutMainContent(
                 )
         )
 
+        ZashiHorizontalDivider()
+
+        ZashiListItem(
+            modifier = Modifier.padding(horizontal = 4.dp),
+            state =
+                ListItemState(
+                    bigIcon = imageRes(R.drawable.ic_terms_of_use),
+                    title = stringRes(stringResource(R.string.terms_of_use)),
+                    onClick = onTermsOfUse
+                )
+        )
+
         Spacer(Modifier.weight(1f))
 
         ZashiVersion(
@@ -187,7 +199,7 @@ private fun AboutPreview() =
             onBack = {},
             configInfo = ConfigInfoFixture.new(),
             onPrivacyPolicy = {},
-            snackbarHostState = SnackbarHostState(),
             versionInfo = VersionInfoFixture.new(),
+            onTermsOfUse = {}
         )
     }

@@ -2,6 +2,7 @@ package co.electriccoin.zcash.di
 
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFulltextFiltersUseCase
+import co.electriccoin.zcash.ui.common.usecase.CanCreateABContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
@@ -39,7 +40,6 @@ import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetSwapModeUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableBalanceUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
@@ -55,7 +55,7 @@ import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToNearSwapUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToNearPayUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
@@ -64,6 +64,7 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToWalletBackupUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveABContactPickedUseCase
@@ -105,7 +106,6 @@ import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateABContactUseCase
-import co.electriccoin.zcash.ui.common.usecase.UpdateSwapModeUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateGenericABContactNameUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateSeedUseCase
@@ -215,7 +215,7 @@ val useCaseModule =
         factoryOf(::IsTorEnabledUseCase)
         factoryOf(::OptInExchangeRateUseCase)
         factoryOf(::OptInTorUseCase)
-        factoryOf(::NavigateToNearSwapUseCase)
+        factoryOf(::NavigateToSwapUseCase)
         factoryOf(::CancelSwapUseCase)
         factoryOf(::GetSelectedSwapAssetUseCase)
         factoryOf(::SelectSwapAssetUseCase)
@@ -225,8 +225,6 @@ val useCaseModule =
         factoryOf(::SetSlippageUseCase)
         factoryOf(::GetSlippageUseCase)
         factoryOf(::NavigateToSwapInfoUseCase)
-        factoryOf(::GetSwapModeUseCase)
-        factoryOf(::UpdateSwapModeUseCase)
         factoryOf(::GetTotalSpendableBalanceUseCase)
         factoryOf(::IsABContactHintVisibleUseCase)
         factoryOf(::RequestSwapQuoteUseCase)
@@ -238,4 +236,6 @@ val useCaseModule =
         factoryOf(::GetSwapAssetBlockchainUseCase)
         singleOf(::NavigateToSelectSwapBlockchainUseCase)
         factoryOf(::ValidateSwapABContactAddressUseCase)
+        factoryOf(::NavigateToNearPayUseCase)
+        factoryOf(::CanCreateABContactUseCase)
     }

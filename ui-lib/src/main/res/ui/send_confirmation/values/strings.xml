@@ -3,8 +3,8 @@
 
     <string name="send_stage_confirmation_title">Confirmation</string>
     <string name="send_confirmation_amount">Total Amount</string>
-    <string name="send_confirmation_address">Sending to</string>
-    <string name="send_confirmation_address_from">Sending from</string>
+    <string name="send_confirmation_address">Send to</string>
+    <string name="send_confirmation_address_from">Send from</string>
     <string name="send_confirmation_memo">Message</string>
     <string name="send_confirmation_fee">Fee</string>
     <string name="send_confirmation_amount_item">Amount</string>
@@ -36,7 +36,7 @@
     <string name="send_confirmation_failure_close_button">Close</string>
     <string name="send_confirmation_failure_report_button">Report</string>
 
-    <string name="send_confirmation_failure_grpc_title">Connection Error</string>
+    <string name="send_confirmation_failure_grpc_title">Connection Issue</string>
     <string name="send_confirmation_failure_grpc_subtitle">Zashi encountered connection issues when submitting the
         transaction. It will retry in the next few minutes.</string>
     <string name="send_confirmation_failure_grpc_close_button">Close</string>
@@ -72,5 +72,8 @@
     <string name="send_confirmation_error_swap_subtitle">There was an error initiating a swap.\nTry it again, please.</string>
     <string name="send_confirmation_swapping_subtitle_transparent">Your coins are being sent to the deposit address…</string>
     <string name="send_confirmation_success_btn_check_status">Check status</string>
+    <string name="send_confirmation_total">Total</string>
+    <string name="send_confirmation_pay_with_keystone">Pay with Keystone</string>
+    <string name="send_confirmation_pay">Pay</string>
 
 </resources>

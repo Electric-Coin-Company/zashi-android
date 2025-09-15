@@ -45,7 +45,7 @@ class ConfirmProposalUseCase(
                 )
             }
             when (accountDataSource.getSelectedAccount()) {
-                is KeystoneAccount -> navigationRouter.forward(SignKeystoneTransaction)
+                is KeystoneAccount -> navigationRouter.replace(SignKeystoneTransaction)
                 is ZashiAccount -> {
                     zashiProposalRepository.submitTransaction()
                     navigationRouter.forward(TransactionProgressArgs)

@@ -77,9 +77,10 @@
     <string name="home_message_crash_reporting_button">Review</string>
     <string name="balance_action_title">Spendable Balance</string>
     <string name="balance_action_all_shielded">All your funds are shielded and spendable.</string>
-    <string name="balance_action_pending">Pending transactions are getting mined and confirmed.</string>
+    <string name="balance_action_pending">Pending receipt of change from a prior transaction.</string>
     <string name="balance_action_syncing">Zashi is scanning the blockchain to make sure your balances are displayed correctly.</string>
     <string name="balance_action_shield_message">Shield your transparent ZEC to make it spendable and private. Doing so will create a shielding in-wallet transaction, consolidating your transparent and shielded funds. (Typical fee: %s ZEC)</string>
     <string name="balance_action_info_shielded">Shielded (Spendable)</string>
     <string name="balance_action_info_pending">Pending</string>
+    <string name="home_button_pay">Pay</string>
 </resources>

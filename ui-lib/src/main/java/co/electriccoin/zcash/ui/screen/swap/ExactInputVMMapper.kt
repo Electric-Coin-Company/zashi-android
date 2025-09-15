@@ -6,7 +6,6 @@ import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
-import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
@@ -35,8 +34,8 @@ import java.math.BigDecimal
 import java.math.MathContext
 import kotlin.math.absoluteValue
 
-internal class ExactInputVMMapper : SwapVMMapper {
-    override fun createState(
+internal class ExactInputVMMapper {
+    fun createState(
         internalState: InternalState,
         onBack: () -> Unit,
         onSwapInfoClick: () -> Unit,
@@ -46,7 +45,6 @@ internal class ExactInputVMMapper : SwapVMMapper {
         onRequestSwapQuoteClick: (BigDecimal, String) -> Unit,
         onTryAgainClick: () -> Unit,
         onAddressChange: (String) -> Unit,
-        onSwapModeChange: (SwapMode) -> Unit,
         onTextFieldChange: (NumberTextFieldInnerState) -> Unit,
         onQrCodeScannerClick: () -> Unit,
         onAddressBookClick: () -> Unit,
@@ -73,7 +71,6 @@ internal class ExactInputVMMapper : SwapVMMapper {
                     state = state,
                     onSwapAssetPickerClick = onSwapAssetPickerClick
                 ),
-            mode = state.swapMode,
             addressContact =
                 createAddressContactState(
                     state = state,
@@ -84,7 +81,6 @@ internal class ExactInputVMMapper : SwapVMMapper {
                     state = state,
                     onAddressChange = onAddressChange
                 ),
-            isAddressBookHintVisible = state.isAddressBookHintVisible,
             onBack = onBack,
             swapInfoButton =
                 IconButtonState(
@@ -102,12 +98,6 @@ internal class ExactInputVMMapper : SwapVMMapper {
                 IconButtonState(
                     icon = R.drawable.send_address_book,
                     onClick = onAddressBookClick,
-                    isEnabled = !state.isRequestingQuote
-                ),
-            changeModeButton =
-                IconButtonState(
-                    icon = R.drawable.ic_swap_change_mode,
-                    onClick = { onSwapModeChange(SwapMode.EXACT_OUTPUT) },
                     isEnabled = !state.isRequestingQuote
                 ),
             appBarState =
@@ -153,7 +143,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
             title = stringRes(R.string.swap_from),
             error =
                 if (zatoshiAmount != null &&
-                    state.totalSpendableBalance.value < zatoshiAmount
+                    state.totalSpendableBalance < zatoshiAmount
                 ) {
                     stringRes(R.string.swap_insufficient_funds)
                 } else {
@@ -187,7 +177,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
 
                     FIAT ->
                         stringResByDynamicCurrencyNumber(
-                            (zatoshiAmount ?: 0).convertZatoshiToZecBigDecimal(),
+                            (zatoshiAmount ?: Zatoshi(0)).value.convertZatoshiToZecBigDecimal(),
                             "ZEC"
                         )
                 },
@@ -199,7 +189,7 @@ internal class ExactInputVMMapper : SwapVMMapper {
                         if (zatoshiAmount == null) {
                             onSwapCurrencyTypeClick(null)
                         } else {
-                            onSwapCurrencyTypeClick(zatoshiAmount.convertZatoshiToZecBigDecimal())
+                            onSwapCurrencyTypeClick(zatoshiAmount.value.convertZatoshiToZecBigDecimal())
                         }
                     }
                 }
@@ -212,7 +202,12 @@ internal class ExactInputVMMapper : SwapVMMapper {
         state: ExactInputInternalState,
         onBalanceButtonClick: () -> Unit
     ): ButtonState {
-        val account = state.account
+        val account =
+            state.account ?: return ButtonState(
+                text = stringRes(R.string.swap_max_standalone),
+                isLoading = true,
+                onClick = onBalanceButtonClick
+            )
 
         return when {
             account.totalBalance > account.spendableShieldedBalance &&
@@ -321,14 +316,14 @@ internal class ExactInputVMMapper : SwapVMMapper {
         )
     }
 
-    private fun createErrorFooterState(state: ExactInputInternalState): ErrorFooter? {
+    private fun createErrorFooterState(state: ExactInputInternalState): SwapErrorFooterState? {
         if (state.swapAssets.error == null) return null
 
         val isServiceUnavailableError =
             state.swapAssets.error is ResponseException &&
                 state.swapAssets.error.response.status == HttpStatusCode.ServiceUnavailable
 
-        return ErrorFooter(
+        return SwapErrorFooterState(
             title =
                 if (isServiceUnavailableError) {
                     stringRes(co.electriccoin.zcash.ui.design.R.string.general_service_unavailable)
@@ -436,15 +431,13 @@ internal class ExactInputVMMapper : SwapVMMapper {
 }
 
 private data class ExactInputInternalState(
-    override val account: WalletAccount,
+    override val account: WalletAccount?,
     override val swapAsset: SwapAsset?,
     override val currencyType: CurrencyType,
     override val amountTextState: NumberTextFieldInnerState,
     override val addressText: String,
     override val slippage: BigDecimal,
-    override val isAddressBookHintVisible: Boolean,
     override val swapAssets: SwapAssetsData,
-    override val swapMode: SwapMode,
     override val isRequestingQuote: Boolean,
     override val selectedContact: EnhancedABContact?,
 ) : InternalState {
@@ -455,9 +448,7 @@ private data class ExactInputInternalState(
         amountTextState = original.amountTextState,
         addressText = original.addressText,
         slippage = original.slippage,
-        isAddressBookHintVisible = original.isAddressBookHintVisible,
         swapAssets = original.swapAssets,
-        swapMode = original.swapMode,
         isRequestingQuote = original.isRequestingQuote,
         selectedContact = original.selectedContact
     )
@@ -514,15 +505,18 @@ private data class ExactInputInternalState(
         return zecUsdPrice.divide(assetUsdPrice, MathContext.DECIMAL128)
     }
 
-    fun getZatoshi() = getOriginTokenAmount()?.convertZecToZatoshiLong()
+    fun getZatoshi() = getOriginTokenAmount()?.convertZecToZatoshi()
 }
 
-internal fun BigDecimal.convertZecToZatoshiLong(): Long =
-    this
-        .coerceAtLeast(BigDecimal(0))
-        .multiply(Conversions.ONE_ZEC_IN_ZATOSHI, MathContext.DECIMAL128)
-        .toLong()
-        .absoluteValue
+@Suppress("MagicNumber")
+internal fun BigDecimal.convertZecToZatoshi(): Zatoshi =
+    Zatoshi(
+        this
+            .coerceIn(BigDecimal(0), BigDecimal(21_000_000))
+            .multiply(Conversions.ONE_ZEC_IN_ZATOSHI, MathContext.DECIMAL128)
+            .toLong()
+            .absoluteValue
+    )
 
 internal fun Long.convertZatoshiToZecBigDecimal(scale: Int = ZEC_FORMATTER.maximumFractionDigits): BigDecimal =
     BigDecimal(this, MathContext.DECIMAL128)

@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import android.content.Context
 import android.content.Intent
-import cash.z.ecc.android.sdk.model.TransactionSubmitResult
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.viewmodel.SynchronizerError
@@ -68,24 +67,17 @@ class SendEmailUseCase(
         runCatching { context.startActivity(mailIntent) }
     }
 
-    suspend operator fun invoke(submitResult: SubmitResult.Failure) {
+    suspend operator fun invoke(submitResult: SubmitResult.Partial) {
         val fullMessage =
-            when (submitResult) {
-                is SubmitResult.SimpleTrxFailure -> {
-                    EmailUtil.formatMessage(
-                        body = submitResult.toErrorMessage(),
-                        supportInfo = submitResult.toErrorStacktrace()
-                    )
-                }
-
-                is SubmitResult.MultipleTrxFailure -> {
-                    EmailUtil.formatMessage(
-                        prefix = context.getString(R.string.send_confirmation_multiple_report_text),
-                        supportInfo = getSupport().toSupportString(SupportInfoType.entries.toSet()),
-                        suffix = submitResult.results.toSupportString(context)
-                    )
-                }
-            }
+            EmailUtil.formatMessage(
+                prefix = context.getString(R.string.send_confirmation_multiple_report_text),
+                supportInfo = getSupport().toSupportString(SupportInfoType.entries.toSet()),
+                suffix =
+                    buildString {
+                        appendLine(context.getString(R.string.send_confirmation_multiple_report_statuses))
+                        appendLine(submitResult.statuses.joinToString())
+                    }
+            )
 
         val mailIntent =
             EmailUtil
@@ -102,42 +94,63 @@ class SendEmailUseCase(
         }
     }
 
-    private fun List<TransactionSubmitResult>.toSupportString(context: Context): String =
-        buildString {
-            appendLine(context.getString(R.string.send_confirmation_multiple_report_statuses))
-
-            this@toSupportString.forEachIndexed { index, result ->
-                when (result) {
-                    is TransactionSubmitResult.Success -> {
-                        appendLine(
-                            context.getString(
-                                R.string.send_confirmation_multiple_report_status_success,
-                                index + 1
-                            )
-                        )
-                    }
-
-                    is TransactionSubmitResult.Failure -> {
+    operator fun invoke(submitResult: SubmitResult.Failure) {
+        val fullMessage =
+            EmailUtil.formatMessage(
+                body =
+                    buildString {
+                        appendLine("Error code: ${submitResult.code}")
+                        appendLine(submitResult.description ?: "Unknown error")
+                    },
+                supportInfo =
+                    buildString {
+                        appendLine(context.getString(R.string.send_confirmation_multiple_report_statuses))
                         appendLine(
                             context.getString(
                                 R.string.send_confirmation_multiple_report_status_failure,
-                                index + 1,
-                                result.grpcError.toString(),
-                                result.code,
-                                result.description,
+                                0,
+                                false.toString(),
+                                submitResult.code,
+                                submitResult.description,
                             )
                         )
                     }
+            )
 
-                    is TransactionSubmitResult.NotAttempted -> {
-                        appendLine(
-                            context.getString(
-                                R.string.send_confirmation_multiple_report_status_not_attempt,
-                                index + 1
-                            )
-                        )
-                    }
+        val mailIntent =
+            EmailUtil
+                .newMailActivityIntent(
+                    context.getString(R.string.support_email_address),
+                    context.getString(R.string.app_name),
+                    fullMessage
+                ).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
-            }
+
+        runCatching {
+            context.startActivity(mailIntent)
         }
+    }
+
+    operator fun invoke(submitResult: SubmitResult.GrpcFailure) {
+        val fullMessage =
+            EmailUtil.formatMessage(
+                body = "Grpc failure",
+                supportInfo = ""
+            )
+
+        val mailIntent =
+            EmailUtil
+                .newMailActivityIntent(
+                    context.getString(R.string.support_email_address),
+                    context.getString(R.string.app_name),
+                    fullMessage
+                ).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+
+        runCatching {
+            context.startActivity(mailIntent)
+        }
+    }
 }

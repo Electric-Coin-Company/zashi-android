@@ -7,10 +7,13 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
+import co.electriccoin.zcash.ui.common.model.DistributionDimension
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
+import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -22,13 +25,15 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class TransactionHistoryWidgetViewModel(
+class TransactionHistoryWidgetVM(
     getTransactions: GetTransactionsUseCase,
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
-    private val navigateToRequestShielded: NavigateToRequestShieldedUseCase
+    private val navigateToRequestShielded: NavigateToRequestShieldedUseCase,
+    private val navigateToCoinbase: NavigateToCoinbaseUseCase,
+    private val getVersionInfoProvider: GetVersionInfoProvider,
 ) : ViewModel() {
     val state =
         combine(
@@ -89,7 +94,14 @@ class TransactionHistoryWidgetViewModel(
         navigationRouter.forward(TransactionHistory)
     }
 
-    private fun onRequestZecClick() = viewModelScope.launch { navigateToRequestShielded() }
+    private fun onRequestZecClick() =
+        viewModelScope.launch {
+            if (getVersionInfoProvider().distributionDimension == DistributionDimension.FOSS) {
+                navigateToRequestShielded()
+            } else {
+                navigateToCoinbase()
+            }
+        }
 }
 
 private const val MAX_TRANSACTION_COUNT = 5

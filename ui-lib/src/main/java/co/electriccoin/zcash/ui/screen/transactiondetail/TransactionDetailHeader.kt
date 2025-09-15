@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Text
@@ -47,27 +45,10 @@ fun TransactionDetailHeader(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Spacer(
-                modifier =
-                    Modifier.width(
-                        when (iconState.icons.size) {
-                            2 -> 10.dp
-                            else -> 22.dp
-                        }
-                    )
+            Image(
+                painter = painterResource(iconState.icons),
+                contentDescription = null
             )
-            iconState.icons.forEachIndexed { index, icon ->
-                Image(
-                    modifier =
-                        when (index) {
-                            0 -> Modifier
-                            1 -> Modifier.offset(x = (-10).dp)
-                            else -> Modifier.offset(x = (-22).dp)
-                        },
-                    painter = painterResource(icon),
-                    contentDescription = null
-                )
-            }
         }
         Spacer(Modifier.height(10.dp))
         Text(
@@ -106,7 +87,7 @@ data class TransactionDetailHeaderState(
 )
 
 data class TransactionDetailIconHeaderState(
-    val icons: List<Int>
+    val icons: Int
 )
 
 @PreviewScreens
@@ -116,13 +97,7 @@ private fun Preview() =
         BlankSurface {
             TransactionDetailHeader(
                 iconState =
-                    TransactionDetailIconHeaderState(
-                        listOf(
-                            R.drawable.ic_transaction_detail_z,
-                            R.drawable.ic_transaction_detail_private,
-                            R.drawable.ic_transaction_detail_shield
-                        )
-                    ),
+                    TransactionDetailIconHeaderState(R.drawable.ic_transaction_detail_receive),
                 state =
                     TransactionDetailHeaderState(
                         title = stringRes("Sending"),

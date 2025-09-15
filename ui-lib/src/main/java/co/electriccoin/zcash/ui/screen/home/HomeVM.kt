@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.common.usecase.ErrorArgs
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToNearPayUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
@@ -34,8 +35,6 @@ import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
-import co.electriccoin.zcash.ui.screen.scan.ScanArgs
-import co.electriccoin.zcash.ui.screen.scan.ScanFlow
 import co.electriccoin.zcash.ui.screen.send.Send
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -47,7 +46,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @Suppress("TooManyFunctions")
-class HomeViewModel(
+class HomeVM(
     getHomeMessage: GetHomeMessageUseCase,
     shieldFundsInfoProvider: ShieldFundsInfoProvider,
     private val navigationRouter: NavigationRouter,
@@ -55,6 +54,7 @@ class HomeViewModel(
     private val shieldFunds: ShieldFundsMessageUseCase,
     private val navigateToError: NavigateToErrorUseCase,
     private val navigateToReceive: NavigateToReceiveUseCase,
+    private val navigateToNearPay: NavigateToNearPayUseCase
 ) : ViewModel() {
     private val messageState =
         combine(
@@ -116,9 +116,9 @@ class HomeViewModel(
             ),
         thirdButton =
             BigIconButtonState(
-                text = stringRes(R.string.home_button_scan),
-                icon = R.drawable.ic_home_scan,
-                onClick = ::onScanButtonClick,
+                text = stringRes(R.string.home_button_pay),
+                icon = R.drawable.ic_home_pay,
+                onClick = ::onPayButtonClick,
             ),
         fourthButton =
             BigIconButtonState(
@@ -212,7 +212,7 @@ class HomeViewModel(
 
     private fun onReceiveButtonClick() = viewModelScope.launch { navigateToReceive() }
 
-    private fun onScanButtonClick() = navigationRouter.forward(ScanArgs(ScanFlow.HOMEPAGE))
+    private fun onPayButtonClick() = navigateToNearPay()
 
     private fun onWalletUpdatingMessageClick() = navigationRouter.forward(WalletUpdatingInfo)
 

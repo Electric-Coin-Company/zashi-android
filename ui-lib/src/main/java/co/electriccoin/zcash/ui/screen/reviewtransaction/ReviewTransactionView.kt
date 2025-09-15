@@ -20,13 +20,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.extension.toZecStringFull
 import cash.z.ecc.sdk.fixture.ZatoshiFixture
+import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
 import co.electriccoin.zcash.ui.common.extension.asZecAmountTriple
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.R
@@ -34,22 +38,33 @@ import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.component.OldZashiBottomBar
+import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.StyledBalance
 import co.electriccoin.zcash.ui.design.component.StyledBalanceDefaults
+import co.electriccoin.zcash.ui.design.component.SwapQuoteHeaderState
+import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
-import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiChipButton
+import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
+import co.electriccoin.zcash.ui.design.component.ZashiSwapQuoteHeader
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
+import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.StringResourceColor
+import co.electriccoin.zcash.ui.design.util.StyledStringResource
+import co.electriccoin.zcash.ui.design.util.TickerLocation
+import co.electriccoin.zcash.ui.design.util.getColor
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetHeader
 import co.electriccoin.zcash.ui.screen.exchangerate.widget.StyledExchangeLabel
 import kotlinx.datetime.Clock
@@ -59,7 +74,13 @@ fun ReviewTransactionView(state: ReviewTransactionState) {
     BlankBgScaffold(
         topBar = {
             ZashiSmallTopAppBar(
-                title = state.title.getValue()
+                title = state.title.getValue(),
+                navigationAction = {
+                    ZashiTopAppBarBackNavigation(
+                        onBack = state.onBack,
+                        modifier = Modifier.testTag(ZashiTopAppBarTags.BACK)
+                    )
+                }
             )
         }
     ) {
@@ -77,39 +98,54 @@ fun ReviewTransactionView(state: ReviewTransactionState) {
             ) {
                 state.items.forEach { item ->
                     when (item) {
-                        is AmountState -> {
-                            AmountWidget(item)
+                        is AmountState -> AmountWidget(item)
+
+                        is ExactOutputQuoteState -> {
+                            SimpleAmountWidget(item)
+                            Spacer(4.dp)
                         }
 
                         is ReceiverState -> {
-                            Spacer(Modifier.height(24.dp))
+                            Spacer(24.dp)
                             ReceiverWidget(item)
                         }
 
                         is SenderState -> {
-                            Spacer(Modifier.height(20.dp))
+                            Spacer(20.dp)
                             SenderWidget(item)
-                            Spacer(Modifier.height(16.dp))
+                            Spacer(16.dp)
                         }
 
                         is ReceiverExpandedState -> {
-                            Spacer(Modifier.height(8.dp))
+                            Spacer(8.dp)
                             ReceiverExpandedWidget(item)
                         }
 
                         is FinancialInfoState -> {
-                            Spacer(Modifier.height(16.dp))
+                            Spacer(16.dp)
                             FinancialInfoWidget(item)
                         }
 
                         is MessageState -> {
-                            Spacer(Modifier.height(16.dp))
+                            Spacer(16.dp)
                             MessageWidget(item)
                         }
 
                         is MessagePlaceholderState -> {
-                            Spacer(Modifier.height(16.dp))
+                            Spacer(16.dp)
                             MessagePlaceholderWidget(item)
+                        }
+
+                        is SimpleListItemState -> {
+                            Spacer(12.dp)
+                            ListItemWidget(item)
+                        }
+
+                        DividerState -> {
+                            Spacer(12.dp)
+                            ZashiHorizontalDivider(
+                                color = ZashiColors.Surfaces.strokeSecondary
+                            )
                         }
                     }
                 }
@@ -328,6 +364,39 @@ private fun FinancialInfoWidget(state: FinancialInfoState) {
 }
 
 @Composable
+private fun ListItemWidget(state: SimpleListItemState) {
+    Row {
+        Text(
+            modifier = Modifier.weight(1f),
+            text = state.title.getValue(),
+            style = ZashiTypography.textSm,
+            fontWeight = FontWeight.Medium,
+            color = state.title.getColor()
+        )
+
+        Column(
+            horizontalAlignment = Alignment.End
+        ) {
+            Text(
+                text = state.text.getValue(),
+                color = state.text.getColor(),
+                style = ZashiTypography.textSm,
+                fontWeight = FontWeight.Medium
+            )
+
+            if (state.subtext != null) {
+                Text(
+                    text = state.subtext.getValue(),
+                    color = state.subtext.getColor(),
+                    style = ZashiTypography.textXs,
+                    fontWeight = FontWeight.Normal
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun AmountWidget(state: AmountState) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -355,16 +424,15 @@ private fun AmountWidget(state: AmountState) {
 }
 
 @Composable
+private fun SimpleAmountWidget(state: ExactOutputQuoteState) {
+    ZashiSwapQuoteHeader(
+        state = state.state
+    )
+}
+
+@Composable
 private fun BottomBar(state: ReviewTransactionState) {
     OldZashiBottomBar {
-        ZashiButton(
-            state = state.negativeButton,
-            defaultPrimaryColors = ZashiButtonDefaults.secondaryColors(),
-            modifier =
-                Modifier
-                    .padding(horizontal = 24.dp)
-                    .fillMaxWidth()
-        )
         ZashiButton(
             state = state.primaryButton,
             modifier =
@@ -428,10 +496,6 @@ private fun Preview() =
                         ButtonState(
                             stringRes("Confirm with Keystone")
                         ),
-                    negativeButton =
-                        ButtonState(
-                            stringRes("Cancel")
-                        ),
                     onBack = {},
                 )
         )
@@ -490,10 +554,6 @@ private fun TransparentPreview() =
                     primaryButton =
                         ButtonState(
                             stringRes("Confirm with Keystone")
-                        ),
-                    negativeButton =
-                        ButtonState(
-                            stringRes("Cancel")
                         ),
                     onBack = {},
                 )
@@ -565,9 +625,110 @@ private fun Zip321Preview() =
                         ButtonState(
                             stringRes(co.electriccoin.zcash.ui.R.string.review_keystone_transaction_positive)
                         ),
-                    negativeButton =
+                    onBack = {},
+                )
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun PayPreview() =
+    ZcashTheme {
+        ReviewTransactionView(
+            state =
+                ReviewTransactionState(
+                    title = stringRes("Review"),
+                    items =
+                        listOf(
+                            ExactOutputQuoteState(
+                                SwapQuoteHeaderState(
+                                    from =
+                                        SwapTokenAmountState(
+                                            bigIcon = imageRes(R.drawable.ic_chain_placeholder),
+                                            smallIcon = imageRes(R.drawable.ic_token_placeholder),
+                                            title =
+                                                stringResByDynamicCurrencyNumber(
+                                                    amount = 0.4,
+                                                    ticker = "",
+                                                    tickerLocation = TickerLocation.HIDDEN
+                                                ),
+                                            subtitle = stringResByDynamicCurrencyNumber(0.2, "$")
+                                        ),
+                                    to =
+                                        SwapTokenAmountState(
+                                            bigIcon = imageRes(R.drawable.ic_chain_placeholder),
+                                            smallIcon = imageRes(R.drawable.ic_token_placeholder),
+                                            title =
+                                                stringResByDynamicCurrencyNumber(
+                                                    amount = 0.4,
+                                                    ticker = "",
+                                                    tickerLocation = TickerLocation.HIDDEN
+                                                ),
+                                            subtitle = stringResByDynamicCurrencyNumber(0.2, "$")
+                                        )
+                                )
+                            ),
+                            ReceiverState(
+                                title = stringRes("Sending to"),
+                                name = stringRes("Name"),
+                                address = stringRes("Address")
+                            ),
+                            SenderState(
+                                title = stringRes("Sending from"),
+                                icon = R.drawable.ic_item_keystone,
+                                name = stringRes("Keystone wallet"),
+                            ),
+                            SimpleListItemState(
+                                title =
+                                    StyledStringResource(
+                                        stringRes("Amount"),
+                                        StringResourceColor.TERTIARY
+                                    ),
+                                text =
+                                    StyledStringResource(
+                                        stringRes(Zatoshi(0))
+                                    ),
+                                subtext =
+                                    StyledStringResource(
+                                        stringResByDynamicCurrencyNumber(0, FiatCurrency.USD.symbol),
+                                        StringResourceColor.TERTIARY
+                                    )
+                            ),
+                            SimpleListItemState(
+                                title =
+                                    StyledStringResource(
+                                        stringRes("Fee"),
+                                        StringResourceColor.TERTIARY
+                                    ),
+                                text =
+                                    StyledStringResource(
+                                        stringRes(Zatoshi(0))
+                                    ),
+                                subtext =
+                                    StyledStringResource(
+                                        stringResByDynamicCurrencyNumber(0, FiatCurrency.USD.symbol),
+                                        StringResourceColor.TERTIARY
+                                    )
+                            ),
+                            DividerState,
+                            SimpleListItemState(
+                                title =
+                                    StyledStringResource(
+                                        stringRes("Total")
+                                    ),
+                                text =
+                                    StyledStringResource(
+                                        stringRes(Zatoshi(0))
+                                    ),
+                                subtext =
+                                    StyledStringResource(
+                                        stringResByDynamicCurrencyNumber(0, FiatCurrency.USD.symbol),
+                                    )
+                            )
+                        ),
+                    primaryButton =
                         ButtonState(
-                            stringRes(co.electriccoin.zcash.ui.R.string.review_keystone_transaction_negative)
+                            stringRes("Pay")
                         ),
                     onBack = {},
                 )

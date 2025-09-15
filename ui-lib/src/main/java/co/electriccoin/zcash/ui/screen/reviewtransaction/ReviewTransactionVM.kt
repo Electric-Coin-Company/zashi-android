@@ -2,10 +2,12 @@ package co.electriccoin.zcash.ui.screen.reviewtransaction
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.datasource.ExactOutputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.SendTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
@@ -13,18 +15,28 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
+import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ChipButtonState
+import co.electriccoin.zcash.ui.design.component.SwapQuoteHeaderState
+import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
+import co.electriccoin.zcash.ui.design.util.StringResourceColor
+import co.electriccoin.zcash.ui.design.util.StyledStringResource
+import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
-import co.electriccoin.zcash.ui.util.Quadruple
+import co.electriccoin.zcash.ui.util.Quintuple
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -38,7 +50,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ReviewTransactionViewModel(
+class ReviewTransactionVM(
+    getWalletAccounts: GetWalletAccountsUseCase,
     observeContactByAddress: ObserveContactByAddressUseCase,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     observeKeystoneSendTransactionProposal: ObserveProposalUseCase,
@@ -46,6 +59,7 @@ class ReviewTransactionViewModel(
     private val getExchangeRate: GetExchangeRateUseCase,
     private val navigationRouter: NavigationRouter,
     private val confirmProposal: ConfirmProposalUseCase,
+    private val cancelSwapQuote: CancelSwapQuoteUseCase
 ) : ViewModel() {
     private val isReceiverExpanded = MutableStateFlow(false)
 
@@ -66,25 +80,42 @@ class ReviewTransactionViewModel(
             observeKeystoneSendTransactionProposal.filterSendTransactions(),
             isReceiverExpanded,
             exchangeRate,
-        ) { wallet, zecSend, isReceiverExpanded, exchangeRate ->
-            Quadruple(wallet, zecSend, isReceiverExpanded, exchangeRate)
-        }.flatMapLatest { (selectedWallet, proposal, isReceiverExpanded, exchangeRate) ->
-            observeContactByAddress(proposal.destination.address).map { addressBookContact ->
-                if (proposal is Zip321TransactionProposal) {
-                    createZip321State(
-                        transactionProposal = proposal,
-                        addressBookContact = addressBookContact,
-                        selectedWallet = selectedWallet,
-                        isReceiverExpanded = isReceiverExpanded,
-                        exchangeRateState = exchangeRate
-                    )
+            getWalletAccounts.observe()
+        ) { wallet, zecSend, isReceiverExpanded, exchangeRate, accounts ->
+            Quintuple(wallet, zecSend, isReceiverExpanded, exchangeRate, accounts)
+        }.flatMapLatest { (selectedWallet, proposal, isReceiverExpanded, exchangeRate, accounts) ->
+            observeContactByAddress(
+                if (proposal is ExactOutputSwapTransactionProposal) {
+                    proposal.quote.quote.destinationAddress
                 } else {
-                    createState(
-                        transactionProposal = proposal,
-                        addressBookContact = addressBookContact,
-                        selectedWallet = selectedWallet,
-                        exchangeRateState = exchangeRate
-                    )
+                    proposal.destination.address
+                }
+            ).map { addressBookContact ->
+                when (proposal) {
+                    is ExactOutputSwapTransactionProposal ->
+                        createExactOutputState(
+                            transactionProposal = proposal,
+                            addressBookContact = addressBookContact,
+                            selectedWallet = selectedWallet,
+                        )
+
+                    is Zip321TransactionProposal ->
+                        createZip321State(
+                            transactionProposal = proposal,
+                            addressBookContact = addressBookContact,
+                            selectedWallet = selectedWallet,
+                            isReceiverExpanded = isReceiverExpanded,
+                            exchangeRateState = exchangeRate
+                        )
+
+                    else ->
+                        createState(
+                            transactionProposal = proposal,
+                            addressBookContact = addressBookContact,
+                            selectedWallet = selectedWallet,
+                            exchangeRateState = exchangeRate,
+                            accounts = accounts
+                        )
                 }
             }
         }.stateIn(
@@ -97,7 +128,8 @@ class ReviewTransactionViewModel(
         selectedWallet: WalletAccount,
         transactionProposal: SendTransactionProposal,
         addressBookContact: EnhancedABContact?,
-        exchangeRateState: ExchangeRateState
+        exchangeRateState: ExchangeRateState,
+        accounts: List<WalletAccount>?
     ) = ReviewTransactionState(
         title =
             when (selectedWallet) {
@@ -120,7 +152,7 @@ class ReviewTransactionViewModel(
                     title = stringRes(R.string.send_confirmation_address_from),
                     icon = selectedWallet.icon,
                     name = selectedWallet.name
-                ),
+                ).takeIf { (accounts?.size ?: 0) > 1 },
                 FinancialInfoState(
                     title = stringRes(R.string.send_amount_label),
                     amount = transactionProposal.amount
@@ -152,12 +184,110 @@ class ReviewTransactionViewModel(
                     },
                 onClick = ::onConfirmClick
             ),
-        negativeButton =
-            ButtonState(
-                text = stringRes(R.string.review_keystone_transaction_negative),
-                onClick = ::onCancelClick
-            ),
         onBack = ::onBack,
+    )
+
+    private fun createExactOutputState(
+        selectedWallet: WalletAccount,
+        transactionProposal: ExactOutputSwapTransactionProposal,
+        addressBookContact: EnhancedABContact?
+    ) = ReviewTransactionState(
+        title =
+            when (selectedWallet) {
+                is KeystoneAccount -> stringRes(R.string.review_keystone_transaction_title)
+                is ZashiAccount -> stringRes(R.string.send_stage_confirmation_title)
+            },
+        items =
+            listOfNotNull(
+                ExactOutputQuoteState(
+                    SwapQuoteHeaderState(
+                        SwapTokenAmountState(
+                            bigIcon = imageRes(R.drawable.ic_zec_round_full),
+                            smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
+                            title = stringRes(transactionProposal.quote.quote.amountInZatoshi, HIDDEN),
+                            subtitle =
+                                stringResByDynamicCurrencyNumber(
+                                    transactionProposal.quote.quote.amountInUsd,
+                                    FiatCurrency.USD.symbol
+                                )
+                        ),
+                        SwapTokenAmountState(
+                            bigIcon = transactionProposal.quote.destinationAsset.tokenIcon,
+                            smallIcon = transactionProposal.quote.destinationAsset.chainIcon,
+                            title = stringResByDynamicNumber(transactionProposal.quote.quote.amountOutFormatted),
+                            subtitle =
+                                stringResByDynamicCurrencyNumber(
+                                    transactionProposal.quote.quote.amountOutUsd,
+                                    FiatCurrency.USD.symbol
+                                )
+                        )
+                    )
+                ),
+                ReceiverState(
+                    title = stringRes(R.string.send_confirmation_address),
+                    name = addressBookContact?.name?.let { stringRes(it) },
+                    address = stringRes(transactionProposal.quote.destinationAddress)
+                ),
+                SenderState(
+                    title = stringRes(R.string.send_confirmation_address_from),
+                    icon = selectedWallet.icon,
+                    name = selectedWallet.name
+                ),
+                SimpleListItemState(
+                    title =
+                        StyledStringResource(
+                            resource = stringRes(R.string.send_amount_label),
+                            color = StringResourceColor.TERTIARY
+                        ),
+                    text =
+                        StyledStringResource(
+                            resource = stringRes(transactionProposal.quote.quote.amountInZatoshi)
+                        ),
+                    subtext = null
+                ),
+                SimpleListItemState(
+                    title =
+                        StyledStringResource(
+                            resource = stringRes(R.string.send_confirmation_fee),
+                            color = StringResourceColor.TERTIARY
+                        ),
+                    text =
+                        StyledStringResource(
+                            resource = stringRes(transactionProposal.totalFees)
+                        ),
+                    subtext = null
+                ),
+                DividerState,
+                SimpleListItemState(
+                    title =
+                        StyledStringResource(
+                            resource = stringRes(R.string.send_confirmation_total)
+                        ),
+                    text =
+                        StyledStringResource(
+                            resource = stringRes(transactionProposal.totalZatoshi)
+                        ),
+                    subtext =
+                        StyledStringResource(
+                            resource =
+                                stringResByDynamicCurrencyNumber(
+                                    amount = transactionProposal.totalUsd,
+                                    ticker = FiatCurrency.USD.symbol
+                                ),
+                            color = StringResourceColor.TERTIARY
+                        )
+                )
+            ),
+        primaryButton =
+            ButtonState(
+                text =
+                    when (selectedWallet) {
+                        is KeystoneAccount -> stringRes(R.string.send_confirmation_pay_with_keystone)
+                        is ZashiAccount -> stringRes(R.string.send_confirmation_pay)
+                    },
+                onClick = ::onConfirmClick
+            ),
+        onBack = ::onBackFromPay,
     )
 
     private fun createZip321State(
@@ -227,11 +357,6 @@ class ReviewTransactionViewModel(
                     },
                 onClick = ::onConfirmClick
             ),
-        negativeButton =
-            ButtonState(
-                text = stringRes(R.string.review_keystone_transaction_negative),
-                onClick = ::onCancelClick
-            ),
         onBack = ::onBack,
     )
 
@@ -239,7 +364,7 @@ class ReviewTransactionViewModel(
 
     private fun onBack() = viewModelScope.launch { cancelProposalFlow(clearSendForm = false) }
 
-    private fun onCancelClick() = viewModelScope.launch { cancelProposalFlow(clearSendForm = false) }
+    private fun onBackFromPay() = viewModelScope.launch { cancelSwapQuote() }
 
     private fun onConfirmClick() = viewModelScope.launch { confirmProposal() }
 

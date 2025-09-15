@@ -6,12 +6,11 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IntegrationsScreen() {
-    val vm = koinViewModel<IntegrationsVM> { parametersOf(true) }
+    val vm = koinViewModel<IntegrationsVM>()
     val state by vm.state.collectAsStateWithLifecycle()
     IntegrationsDialogView(state)
 }

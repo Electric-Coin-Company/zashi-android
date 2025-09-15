@@ -13,13 +13,13 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.type.AddressType
-import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.CompositeSwapQuote
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import org.zecdev.zip321.ZIP321
 import java.math.BigDecimal
@@ -41,14 +41,14 @@ interface ProposalDataSource {
     suspend fun createExactInputProposal(
         account: WalletAccount,
         send: ZecSend,
-        quote: CompositeSwapQuote
+        quote: CompositeSwapQuote,
     ): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactOutputProposal(
         account: WalletAccount,
         send: ZecSend,
-        quote: CompositeSwapQuote
+        quote: CompositeSwapQuote,
     ): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
@@ -139,7 +139,7 @@ class ProposalDataSourceImpl(
     override suspend fun createExactInputProposal(
         account: WalletAccount,
         send: ZecSend,
-        quote: CompositeSwapQuote
+        quote: CompositeSwapQuote,
     ): ExactInputSwapTransactionProposal =
         withContext(Dispatchers.IO) {
             getOrThrow {
@@ -148,7 +148,7 @@ class ProposalDataSourceImpl(
                     amount = send.amount,
                     memo = send.memo,
                     proposal = synchronizerProvider.getSynchronizer().proposeSend(account.sdkAccount, send),
-                    quote = quote
+                    quote = quote,
                 )
             }
         }
@@ -156,7 +156,7 @@ class ProposalDataSourceImpl(
     override suspend fun createExactOutputProposal(
         account: WalletAccount,
         send: ZecSend,
-        quote: CompositeSwapQuote
+        quote: CompositeSwapQuote,
     ): ExactOutputSwapTransactionProposal =
         withContext(Dispatchers.IO) {
             getOrThrow {
@@ -165,7 +165,7 @@ class ProposalDataSourceImpl(
                     amount = send.amount,
                     memo = send.memo,
                     proposal = synchronizerProvider.getSynchronizer().proposeSend(account.sdkAccount, send),
-                    quote = quote
+                    quote = quote,
                 )
             }
         }
@@ -242,42 +242,59 @@ class ProposalDataSourceImpl(
     ): SubmitResult =
         withContext(Dispatchers.IO) {
             val synchronizer = synchronizerProvider.getSdkSynchronizer()
+            val submitResults = block(synchronizer).toList()
 
-            val submitResults = mutableListOf<TransactionSubmitResult>()
+            val transactionCount = submitResults.size
+            var successCount = 0
+
+            val txIds = mutableListOf<String>()
+            val statuses = mutableListOf<String>()
+            var errCode = 0
+            var errDesc = ""
+            var resubmittableFailure = false
+
+            for (transactionSubmitResult in submitResults) {
+                when (transactionSubmitResult) {
+                    is TransactionSubmitResult.Success -> {
+                        successCount++
+                        txIds.add(transactionSubmitResult.txIdString())
+                        statuses.add("success")
+                    }
+
+                    is TransactionSubmitResult.Failure -> {
+                        if (transactionSubmitResult.grpcError) {
+                            txIds.add(transactionSubmitResult.txIdString())
+                            statuses.add(transactionSubmitResult.description.orEmpty())
+                            resubmittableFailure = true
+                        } else {
+                            txIds.add(transactionSubmitResult.txIdString())
+                            statuses.add(
+                                "code: ${transactionSubmitResult.code} " +
+                                    "desc: ${transactionSubmitResult.description}"
+                            )
+                            errCode = transactionSubmitResult.code
+                            errDesc = transactionSubmitResult.description.orEmpty()
+                        }
+                    }
+
+                    is TransactionSubmitResult.NotAttempted -> {
+                        txIds.add(transactionSubmitResult.txIdString())
+                        statuses.add("notAttempted")
+                    }
+                }
+            }
 
             val result =
-                runCatching {
-                    block(synchronizer).collect { submitResult ->
-                        Twig.info { "Transaction submit result: $submitResult" }
-                        submitResults.add(submitResult)
-                    }
-                    if (submitResults.find { it is TransactionSubmitResult.Failure } != null) {
-                        if (submitResults.size == 1) {
-                            val result = (submitResults[0] as TransactionSubmitResult.Failure)
-                            if (result.grpcError) {
-                                SubmitResult.SimpleTrxFailure.SimpleTrxFailureGrpc(result)
-                            } else {
-                                SubmitResult.SimpleTrxFailure.SimpleTrxFailureSubmit(result)
-                            }
+                when (successCount) {
+                    0 ->
+                        if (resubmittableFailure) {
+                            SubmitResult.GrpcFailure(txIds = txIds)
                         } else {
-                            SubmitResult.MultipleTrxFailure(submitResults)
+                            SubmitResult.Failure(txIds = txIds, code = errCode, description = errDesc)
                         }
-                    } else {
-                        // All transaction submissions were successful
-                        SubmitResult.Success(
-                            submitResults
-                                .filterIsInstance<TransactionSubmitResult.Success>()
-                                .map {
-                                    it.txIdString()
-                                }
-                        )
-                    }
-                }.onSuccess {
-                    Twig.debug { "Transactions submitted successfully" }
-                }.onFailure {
-                    Twig.error(it) { "Transactions submission failed" }
-                }.getOrElse {
-                    SubmitResult.SimpleTrxFailure.SimpleTrxFailureOther(it)
+
+                    transactionCount -> SubmitResult.Success(txIds = txIds)
+                    else -> SubmitResult.Partial(txIds = txIds, statuses = statuses)
                 }
 
             synchronizer.refreshTransactions()
@@ -320,6 +337,12 @@ sealed interface SwapTransactionProposal : SendTransactionProposal {
         get() = quote.getTotalFeesZatoshi(proposal)
     val totalFeesUsd: BigDecimal
         get() = quote.getTotalFeesUsd(proposal)
+
+    val totalZatoshi: Zatoshi
+        get() = quote.getTotalZatoshi(proposal)
+
+    val totalUsd: BigDecimal
+        get() = quote.getTotalUsd(proposal)
 }
 
 data class ShieldTransactionProposal(

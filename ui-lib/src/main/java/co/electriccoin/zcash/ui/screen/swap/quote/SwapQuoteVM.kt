@@ -145,8 +145,8 @@ internal data class SwapQuoteInternalState(
     val proposal: SwapTransactionProposal,
     val quote: CompositeSwapQuote,
 ) {
-    val zatoshiFee: Zatoshi = proposal.proposal.totalFeeRequired()
-    val zecFeeUsd: BigDecimal = quote.getZecFeeUsd(proposal.proposal)
+    // val zatoshiFee: Zatoshi = proposal.proposal.totalFeeRequired()
+    // val zecFeeUsd: BigDecimal = quote.getZecFeeUsd(proposal.proposal)
     val totalZec: BigDecimal = quote.getTotalZec(proposal.proposal)
     val totalUsd: BigDecimal = quote.getTotalUsd(proposal.proposal)
     val totalFeesZatoshi: Zatoshi = quote.getTotalFeesZatoshi(proposal.proposal)

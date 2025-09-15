@@ -8,7 +8,7 @@ import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
-import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionArgs
 
 class CreateProposalUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
@@ -28,7 +28,7 @@ class CreateProposalUseCase(
                 is ZashiAccount ->
                     zashiProposalRepository.createProposal(normalized)
             }
-            navigationRouter.forward(ReviewTransaction)
+            navigationRouter.forward(ReviewTransactionArgs)
         } catch (e: Exception) {
             keystoneProposalRepository.clear()
             zashiProposalRepository.clear()

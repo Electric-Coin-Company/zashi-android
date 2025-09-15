@@ -6,6 +6,8 @@ import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.SetSlippageUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -25,12 +27,12 @@ import java.math.MathContext
 
 @Suppress("TooManyFunctions")
 class SwapSlippageVM(
-    swapSlippageArgs: SwapSlippageArgs,
     getSlippage: GetSlippageUseCase,
+    private val args: SwapSlippageArgs,
     private val setSlippage: SetSlippageUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
-    private val fiatAmount = swapSlippageArgs.fiatAmount?.toBigDecimal()
+    private val fiatAmount = args.fiatAmount?.toBigDecimal()
 
     private val slippageSelection: MutableStateFlow<BigDecimal?> = MutableStateFlow(getSlippage())
 
@@ -90,7 +92,8 @@ class SwapSlippageVM(
         picker = slippagePickerState,
         info = slippageInfoState,
         primary = confirmButtonState,
-        onBack = ::onBack
+        onBack = ::onBack,
+        footer = stringRes(R.string.pay_slippage_footer).takeIf { args.mode == EXACT_OUTPUT }
     )
 
     private fun createButtonState(amount: BigDecimal?) =
@@ -107,7 +110,11 @@ class SwapSlippageVM(
         val result =
             when {
                 percent > BigDecimal("30") -> stringRes(R.string.swap_slippage_max_threshold)
-                fiatAmount == null -> stringRes(R.string.swap_slippage_info, percentString)
+                fiatAmount == null ->
+                    when (args.mode) {
+                        EXACT_INPUT -> stringRes(R.string.swap_slippage_info, percentString)
+                        EXACT_OUTPUT -> stringRes(R.string.pay_slippage_info, percentString)
+                    }
 
                 else -> {
                     val slippageFiat =
@@ -117,8 +124,11 @@ class SwapSlippageVM(
                         )
 
                     val slippageFiatString = stringResByDynamicCurrencyNumber(slippageFiat, FiatCurrency.USD.symbol)
-                    val infoString = percentString + stringRes(" (") + slippageFiatString + stringRes(") ")
-                    stringRes(R.string.swap_slippage_info, infoString)
+                    val infoString = percentString + stringRes(" (") + slippageFiatString + stringRes(")")
+                    when (args.mode) {
+                        EXACT_INPUT -> stringRes(R.string.swap_slippage_info, infoString)
+                        EXACT_OUTPUT -> stringRes(R.string.pay_slippage_info, infoString)
+                    }
                 }
             }
 

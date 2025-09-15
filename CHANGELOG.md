@@ -6,6 +6,12 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+### Added
+- New CrossPay feature available from Pay button via Homepage 
+
+### Changed
+- Updated design of Homepage navigation buttons
+
 ## [2.2.1 (1121)] - 2025-08-29
 
 ### Fixed

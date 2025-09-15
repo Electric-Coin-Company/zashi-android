@@ -22,7 +22,6 @@ import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
-import co.electriccoin.zcash.ui.NavigationTargets.ABOUT
 import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.CRASH_REPORTING_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
@@ -42,7 +41,8 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
-import co.electriccoin.zcash.ui.screen.about.WrapAbout
+import co.electriccoin.zcash.ui.screen.about.AboutArgs
+import co.electriccoin.zcash.ui.screen.about.AboutScreen
 import co.electriccoin.zcash.ui.screen.accountlist.AccountList
 import co.electriccoin.zcash.ui.screen.accountlist.AndroidAccountList
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
@@ -95,10 +95,12 @@ import co.electriccoin.zcash.ui.screen.home.syncing.AndroidWalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.AndroidWalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
-import co.electriccoin.zcash.ui.screen.integrations.AndroidIntegrations
-import co.electriccoin.zcash.ui.screen.integrations.Integrations
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsScreen
+import co.electriccoin.zcash.ui.screen.pay.PayArgs
+import co.electriccoin.zcash.ui.screen.pay.PayScreen
+import co.electriccoin.zcash.ui.screen.pay.info.PayInfoArgs
+import co.electriccoin.zcash.ui.screen.pay.info.PayInfoScreen
 import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.ReceiveArgs
@@ -111,7 +113,7 @@ import co.electriccoin.zcash.ui.screen.request.WrapRequest
 import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
-import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransaction
+import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressScreen
@@ -282,9 +284,8 @@ internal fun MainActivity.Navigation() {
                 }
             )
         }
-        composable(ABOUT) { WrapAbout(goBack = { navController.popBackStackJustOnce(ABOUT) }) }
+        composable<AboutArgs> { AboutScreen() }
         composable(WHATS_NEW) { WrapWhatsNew() }
-        composable<Integrations> { AndroidIntegrations() }
         dialogComposable<IntegrationsArgs> { IntegrationsScreen() }
         composable<ExchangeRateSettingsArgs> { ExchangeRateSettingsScreen() }
         composable(CRASH_REPORTING_OPT_IN) { AndroidCrashReportingOptIn() }
@@ -330,7 +331,7 @@ internal fun MainActivity.Navigation() {
         }
         composable<ConnectKeystone> { AndroidConnectKeystone() }
         composable<SelectKeystoneAccount> { AndroidSelectKeystoneAccount(it.toRoute()) }
-        composable<ReviewTransaction> { AndroidReviewTransaction() }
+        composable<ReviewTransactionArgs> { AndroidReviewTransaction() }
         composable<TransactionProgressArgs> { TransactionProgressScreen(it.toRoute()) }
         composable<TransactionHistory> { AndroidTransactionHistory() }
         dialogComposable<TransactionFiltersArgs> { TransactionFiltersScreen() }
@@ -368,6 +369,8 @@ internal fun MainActivity.Navigation() {
         dialogComposable<ShieldedAddressInfoArgs> { ShieldedAddressInfoScreen() }
         dialogComposable<TransparentAddressInfoArgs> { TransparentAddressInfoScreen() }
         composable<ExchangeRateOptInArgs> { ExchangeRateOptInScreen() }
+        composable<PayArgs> { PayScreen() }
+        dialogComposable<PayInfoArgs> { PayInfoScreen() }
     }
 }
 
@@ -471,7 +474,6 @@ fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: String) {
 }
 
 object NavigationTargets {
-    const val ABOUT = "about"
     const val DELETE_WALLET = "delete_wallet"
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val CHOOSE_SERVER = "choose_server"

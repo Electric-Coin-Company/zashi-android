@@ -6,90 +6,71 @@
     <string name="home_button_request">Solicitar</string>
     <string name="home_button_buy">Comprar</string>
     <string name="home_button_more">Más</string>
-    
-    <string name="home_message_backup_required_title">Respaldo de billetera requerido</string>
+    <string name="home_message_backup_required_title">Respaldo de la Wallet Requerido</string>
     <string name="home_message_backup_required_subtitle">Evita la posible pérdida de fondos</string>
-    <string name="home_message_backup_required_button">Comenzar</string>
-    
-    <string name="home_message_wallet_disconnected_title">Billetera desconectada</string>
-    <string name="home_message_wallet_disconnected_subtitle">Verifica tu conexión y vuelve a cargar Zashi</string>
-    
+    <string name="home_message_backup_required_button">Iniciar</string>
+    <string name="home_message_wallet_disconnected_title">Wallet Desconectada</string>
+    <string name="home_message_wallet_disconnected_subtitle">Revisa tu conexión y recarga Zashi</string>
     <string name="home_message_transparent_balance_subtitle">%s ZEC</string>
-    <string name="home_message_transparent_balance_title">Saldo transparente detectado</string>
+    <string name="home_message_transparent_balance_title">Balance Transparente Detectado</string>
     <string name="home_message_transparent_balance_button">Proteger</string>
-    
-    <string name="home_message_currency_conversion_title">Conversión de moneda</string>
+    <string name="home_message_currency_conversion_title">Conversión de Moneda</string>
     <string name="home_message_currency_conversion_subtitle">Activa para mostrar valores en USD</string>
-    <string name="home_message_currency_conversion_button">Comenzar</string>
-    
-    <string name="home_message_wallet_updating_title">Actualizando saldo…</string>
+    <string name="home_message_currency_conversion_button">Iniciar</string>
+    <string name="home_message_wallet_updating_title">Actualizando Balance…</string>
     <string name="home_message_wallet_updating_subtitle">Esperando que se procese la última transacción</string>
-    
-    <string name="home_message_restoring_title">Restaurando billetera • %1$.1f%% completado</string>
-    <string name="home_message_restoring_subtitle">Mantén Zashi abierto con la pantalla activa</string>
-    <string name="home_message_restoring_subtitle_spendable">Tus fondos protegidos ya se pueden usar</string>
-    
-    <string name="home_message_syncing_title">Sincronizando • %1$.1f%% completado</string>
-    <string name="home_message_syncing_subtitle">Tu billetera se está actualizando</string>
-    
+    <string name="home_message_restoring_title">Restaurando Wallet • %1$.1f%% Completado</string>
+    <string name="home_message_restoring_subtitle">Mantén Zashi abierto en la pantalla activa del teléfono</string>
+    <string name="home_message_restoring_subtitle_spendable">Tus fondos protegidos ya son utilizables</string>
+    <string name="home_message_syncing_title">Sincronizando • %1$.1f%% Completado</string>
+    <string name="home_message_syncing_subtitle">Tu wallet se está actualizando</string>
     <string name="home_message_error_title">Error al sincronizar</string>
-    <string name="home_message_error_subtitle">Intentando resolverlo</string>
-    
-    <string name="home_message_tor_title">Beta: Activar protección Tor</string>
+    <string name="home_message_error_subtitle">Intentando resolver</string>
+    <string name="home_message_tor_title">Beta: Activar Protección Tor</string>
     <string name="home_message_tor_subtitle">Protege tu dirección IP</string>
-    
-    <string name="home_info_backup_title">Respaldo requerido</string>
-    <string name="home_info_backup_subtitle_1">Evita la posible pérdida de fondos respaldando tu billetera de forma segura.</string>
+    <string name="home_info_backup_title">Respaldo Requerido</string>
+    <string name="home_info_backup_subtitle_1">Evita la posible pérdida de fondos respaldando tu wallet de forma segura.</string>
     <string name="home_info_backup_subtitle_2">Respalda el acceso a tus fondos guardando:</string>
-    <string name="home_info_backup_bullet_1">Frase secreta de recuperación (un conjunto único de 24 palabras en un orden específico)</string>
-    <string name="home_info_backup_bullet_2">Altura de cumpleaños de la billetera (bloque en el que se creó la billetera)</string>
-    <string name="home_info_backup_message_1">Si pierdes el acceso a la app o a tu dispositivo, conocer tu frase de recuperación secreta es la única forma de recuperar tus fondos. No podemos verla ni ayudarte a recuperarla.</string>
-    <string name="home_info_backup_message_2">Cualquiera que tenga acceso a tu frase secreta de recuperación tendrá control total sobre tu billetera. Mantenla segura y no se la muestres a nadie.</string>
-    <string name="home_info_backup_checkbox">He leído y comprendo los riesgos de no respaldar mi billetera.</string>
-    
+    <string name="home_info_backup_bullet_1">Frase Secreta de Recuperación (un conjunto único de 24 palabras en un orden exacto)</string>
+    <string name="home_info_backup_bullet_2">Altura de Bloque de Nacimiento de la Wallet (el bloque en el que se creó tu wallet)</string>
+    <string name="home_info_backup_message_1">En caso de perder acceso a la app o al dispositivo, conocer la Frase Secreta de Recuperación es la única forma de recuperar tus fondos. Nosotros no podemos verla ni ayudarte a recuperarla.</string>
+    <string name="home_info_backup_message_2">Cualquiera con acceso a tu Frase Secreta de Recuperación tendrá control total de tu wallet, así que guárdala de forma segura y nunca la compartas.</string>
+    <string name="home_info_backup_checkbox">He leído y entiendo los riesgos de no respaldar mi wallet.</string>
     <string name="home_info_transparent_not_now">Ahora no</string>
     <string name="home_info_transparent_checkbox">No volver a mostrar este mensaje.</string>
     <string name="home_info_transparent_balance_shield">Proteger</string>
-    <string name="home_info_transparent_title">Proteger siempre los fondos transparentes</string>
-    <string name="home_info_transparent_subtitle">Para proteger la privacidad del usuario, Zashi no permite gastar ZEC transparentes. Toca el botón "Proteger" para convertir tus fondos transparentes en privados y hacer que tu saldo total en Zashi sea privado.</string>
-    <string name="home_info_transparent_message">Esto creará una transacción de protección dentro de la billetera, consolidando tus fondos transparentes y protegidos. (Comisión típica: %s ZEC)</string>
+    <string name="home_info_transparent_title">Siempre Proteger Fondos Transparentes</string>
+    <string name="home_info_transparent_subtitle">Para proteger la privacidad del usuario, Zashi no permite gastar ZEC transparentes. Toca el botón "Proteger" abajo para hacer que tus fondos transparentes sean utilizables y tu balance total en Zashi sea privado.</string>
+    <string name="home_info_transparent_message">Esto creará una transacción de protección dentro de la wallet, consolidando tus fondos transparentes y protegidos. (Comisión típica: %s ZEC)</string>
     <string name="home_info_transparent_subheader">Transparente</string>
-    
-    <string name="home_info_disconnected_title">Billetera desconectada</string>
-    <string name="home_info_disconnected_subtitle">Parece que estás sin conexión. Restaura tu conexión a internet para usar la billetera Zashi.</string>
-    
-    <string name="home_info_restoring_title">Restauración de billetera en curso</string>
-    <string name="home_info_restoring_message">Zashi está escaneando la blockchain para recuperar tus transacciones. Las billeteras más antiguas pueden tardar horas en restaurarse. Sigue estos pasos para evitar interrupciones:</string>
-    <string name="home_info_restoring_bullet_1">Mantén la app Zashi abierta con la pantalla activa del teléfono.</string>
-    <string name="home_info_restoring_bullet_2">Para evitar que la pantalla se apague, desactiva el modo de ahorro de energía y mantén el teléfono conectado al cargador.</string>
-    <string name="home_info_restoring_note">No podrás usar los fondos hasta que la billetera esté completamente restaurada.</string>
-    
-    <string name="home_info_syncing_title">Sincronización de billetera en curso</string>
-    <string name="home_info_syncing_message">Zashi está escaneando la blockchain para encontrar tus transacciones más recientes y mostrar tus saldos correctamente. Mantén la app Zashi abierta con la pantalla activa para evitar interrupciones.</string>
-    
-    <string name="home_info_updating_title">Actualizando saldo</string>
-    <string name="home_info_updating_message">Tu última transacción está siendo minada y confirmada.</string>
-    
-    <string name="crash_report_detail_title">Ayuda a mejorar Zashi</string>
-    <string name="crash_report_detail_subtitle">Los reportes de fallos son una herramienta esencial para que los desarrolladores mejoren la calidad y confiabilidad de las apps. Son muy útiles para corregir errores que causan fallos.</string>
-    
+    <string name="home_info_disconnected_title">Wallet Desconectada</string>
+    <string name="home_info_disconnected_subtitle">Parece que estás sin conexión. Restaura tu conexión a internet para usar la wallet Zashi.</string>
+    <string name="home_info_restoring_title">Restauración de Wallet en Progreso</string>
+    <string name="home_info_restoring_message">Zashi está escaneando la blockchain para recuperar tus transacciones. Restaurar wallets antiguas puede tardar horas. Sigue estos pasos para evitar interrupciones:</string>
+    <string name="home_info_restoring_bullet_1">Mantén la app de Zashi abierta en la pantalla activa del teléfono.</string>
+    <string name="home_info_restoring_bullet_2">Para evitar que la pantalla se apague, desactiva el modo de ahorro de energía y mantén tu teléfono cargando.</string>
+    <string name="home_info_restoring_note">Los fondos no pueden usarse hasta que tu wallet esté restaurada.</string>
+    <string name="home_info_syncing_title">Sincronización de Wallet en Progreso</string>
+    <string name="home_info_syncing_message">Zashi está escaneando la blockchain para mostrar tus transacciones más recientes y asegurar que tus balances estén correctos. Mantén la app de Zashi abierta en la pantalla activa del teléfono para evitar interrupciones.</string>
+    <string name="home_info_updating_title">Actualizando Balance</string>
+    <string name="home_info_updating_message">Tu última transacción se está minando y confirmando.</string>
+    <string name="crash_report_detail_title">Ayuda a Mejorar Zashi</string>
+    <string name="crash_report_detail_subtitle">Los reportes de fallos son una herramienta esencial para que los desarrolladores mejoren la calidad y confiabilidad de las apps. Son muy útiles en la práctica para corregir errores que causan cierres inesperados.</string>
     <string name="crash_report_detail_item_title_2">¿Qué no se comparte?</string>
-    <string name="crash_report_detail_item_subtitle_1">Usamos Firebase Crashlytics para recopilar reportes de fallos. Incluyen información sobre la versión de la app, la hora del fallo y el rastreo del error, para saber en qué parte de la app ocurrió.</string>
-    <string name="crash_report_detail_item_subtitle_2">Zashi no tiene acceso a información sobre usuarios individuales, sus dispositivos, transacciones ni actividad dentro de la app.\nLos datos recolectados están completamente anonimizados.</string>
-    
+    <string name="crash_report_detail_item_subtitle_1">Usamos Firebase Crashlytics para recopilar reportes de fallos. Incluyen información sobre la versión de la app, la hora del fallo y el stack trace para identificar dónde ocurrió dentro de la app.</string>
+    <string name="crash_report_detail_item_subtitle_2">No hay información disponible (ni visible ni recolectada) para Zashi sobre usuarios individuales, sus dispositivos, transacciones o actividad en la app.\nLos datos recopilados están completamente anonimizados.</string>
     <string name="crash_report_detail_item_title_1">¿Qué se comparte?</string>
-    <string name="crash_report_detail_opt_out">No participar</string>
-    <string name="crash_report_detail_opt_in">Participar</string>
-    
+    <string name="crash_report_detail_opt_out">No aceptar</string>
+    <string name="crash_report_detail_opt_in">Aceptar</string>
     <string name="home_message_crash_reporting_title">Ayuda a mejorar Zashi</string>
-    <string name="home_message_crash_reporting_subtitle">Permitir el envío de reportes de fallos</string>
+    <string name="home_message_crash_reporting_subtitle">Permitir compartir reportes de fallos</string>
     <string name="home_message_crash_reporting_button">Revisar</string>
-    
-    <string name="balance_action_title">Saldo disponible</string>
+    <string name="balance_action_title">Balance Disponible</string>
     <string name="balance_action_all_shielded">Todos tus fondos están protegidos y disponibles.</string>
-    <string name="balance_action_pending">Las transacciones pendientes están siendo minadas y confirmadas.</string>
-    <string name="balance_action_syncing">Zashi está escaneando la blockchain para asegurarse de que tus saldos se muestren correctamente.</string>
-    <string name="balance_action_shield_message">Protege tu ZEC transparente para hacerlo utilizable y privado. Esto creará una transacción de protección dentro de la billetera, consolidando tus fondos transparentes y protegidos. (Comisión típica: %s ZEC)</string>
+    <string name="balance_action_pending">Pendiente de recibir el cambio de una transacción previa.</string>
+    <string name="balance_action_syncing">Zashi está escaneando la blockchain para asegurar que tus balances se muestren correctamente.</string>
+    <string name="balance_action_shield_message">Protege tu ZEC transparente para hacerlo utilizable y privado. Esto creará una transacción de protección dentro de la wallet, consolidando tus fondos transparentes y protegidos. (Comisión típica: %s ZEC)</string>
     <string name="balance_action_info_shielded">Protegido (Disponible)</string>
     <string name="balance_action_info_pending">Pendiente</string>
+    <string name="home_button_pay">Pagar</string>
 </resources>
