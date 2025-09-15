@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="swap_info_message">Intercambia ZEC protegidos por cualquier moneda o token compatible con NEAR.\n\nZashi es una billetera solo para ZEC, por lo que necesitarás una dirección de billetera válida del activo al que estás intercambiando.</string>
+    <string name="swap_info_message">Intercambia ZEC protegido por cualquier moneda o token compatible con NEAR.\n\nZashi es una wallet solo de ZEC, por lo que necesitarás una dirección de wallet válida para el activo al que haces el intercambio.</string>
     <string name="swap_info_title">Intercambiar con</string>
-    <string name="swap_select_token">Seleccionar activo</string>
-    <string name="swap_select_chain">Seleccionar cadena</string>
+    <string name="swap_select_token">Seleccionar Token</string>
+    <string name="swap_select_chain">Seleccionar Cadena</string>
     <string name="swap_search_hint">Buscar por nombre o ticker…</string>
     <string name="swap_slippage_title">Deslizamiento</string>
     <string name="swap_slippage_subtitle">Esta configuración determina la diferencia máxima permitida entre el precio esperado de un intercambio y el precio real que pagas, lo cual está fuera del control de Zashi.</string>
     <string name="swap_slippage_max_threshold">Por favor, ingresa un deslizamiento máximo de 30%%.</string>
     <string name="swap_slippage_info">Podrías recibir hasta %s menos de lo cotizado.</string>
+    <string name="pay_slippage_info">Podrías pagar hasta %s más, además de las comisiones de transacción.</string>
     <string name="swap_title">Intercambiar con</string>
     <string name="swap_from">De</string>
     <string name="swap_insufficient_funds">Fondos insuficientes</string>
-    <string name="swap_max_standalone">Gastable: </string>
-    <string name="swap_max">Gastable: %s</string>
+    <string name="swap_max_standalone">Disponible: </string>
+    <string name="swap_max">Disponible: %s</string>
     <string name="swap_to">A</string>
     <string name="swap_rate">Tasa</string>
     <string name="swap_zec_exchange_rate">1 ZEC = %s</string>
-    <string name="swap_slippage_tolerance">Tolerancia de deslizamiento</string>
+    <string name="swap_slippage_tolerance">Tolerancia al deslizamiento</string>
     <string name="swap_cancel_title">¿Estás seguro?</string>
     <string name="swap_cancel_subtitle">Si sales de esta pantalla, toda la información que ingresaste se perderá.</string>
     <string name="swap_cancel_negative">Cancelar intercambio</string>
     <string name="swap_cancel_positive">No cancelar</string>
     <string name="swap_quote_error_too_low_try_at_least">El monto es demasiado bajo para el puente, intenta al menos %s</string>
     <string name="swap_quote_error_too_low_try_higher">El monto es demasiado bajo para el puente, intenta con un monto mayor.</string>
-    <string name="swap_quote_error_getting_quote">Lo intentamos pero no pudimos obtener una cotización para un pago con tus parámetros. Puedes ajustar los detalles del pago o intentarlo más tarde.</string>
+    <string name="swap_quote_error_getting_quote">Lo intentamos, pero no pudimos obtener una cotización para un pago con tus parámetros. Puedes ajustar los detalles del pago o intentarlo de nuevo más tarde.</string>
     <string name="swap_quote_unavailable">Cotización no disponible</string>
     <string name="swap_quote_cancel_payment">Cancelar pago</string>
     <string name="swap_quote_edit_payment">Editar pago</string>
@@ -32,15 +33,14 @@
     <string name="swap_quote_from">Intercambiar de</string>
     <string name="swap_quote_to">Intercambiar a</string>
     <string name="swap_quote_total_fees">Comisiones totales</string>
-    <string name="swap_quote_max_slippage">Deslizamiento máx %s</string>
-    <string name="swap_quote_total_amount">Monto total</string>
+    <string name="swap_quote_max_slippage">Deslizamiento máximo %s</string>
+    <string name="swap_quote_total_amount">Monto Total</string>
     <string name="swap_quote_zashi">Zashi</string>
-    <string name="swap_quote_info">Podrías recibir hasta %s según el %s de deslizamiento que configuraste.</string>
+    <string name="swap_quote_info">Podrías recibir hasta %s basado en el deslizamiento de %s que configuraste.</string>
     <string name="swap_confirm">Obtener cotización</string>
-    <string name="swap_picker_select_chain">Seleccionar Activo</string>
+    <string name="swap_picker_select_chain">Seleccionar cadena</string>
     <string name="swap_slippage_custom">Personalizado</string>
-    <string name="pay_quote_title">Pay Now</string>
-    <string name="pay_from">Pay from</string>
-    <string name="pay_to">Pay to</string>
-    <string name="pay_slippage_info">You may pay up to %s more, in addition to transaction fees.</string>
+    <string name="pay_quote_title">Pagar Ahora</string>
+    <string name="pay_from">Pagar desde</string>
+    <string name="pay_to">Pagar a</string>
 </resources>

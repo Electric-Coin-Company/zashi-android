@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="pay_info_title">CrossPay with</string>
-    <string name="pay_info_subtitle">Make cross-chain payments in any NEAR-supported coin or token.\n\nIf the actual slippage and network conditions result in your recipient receiving less than the promised amount, your transaction will be reversed. You will receive a full refund minus network fees.</string>
-    <string name="pay_slippage_footer">Any unused portion of the slippage fee will be refunded if the swap executes with lower slippage than expected.</string>
+    <string name="pay_info_title">CrossPay con</string>
+    <string name="pay_info_subtitle">Haz pagos entre cadenas en cualquier moneda o token compatible con NEAR.\n\nSi el deslizamiento real y las condiciones de la red resultan en que tu destinatario reciba menos de la cantidad prometida, tu transacción será revertida. Recibirás un reembolso completo menos las comisiones de red.</string>
+    <string name="pay_slippage_footer">Cualquier parte no utilizada de la comisión por deslizamiento será reembolsada si el intercambio se ejecuta con un deslizamiento menor al esperado.</string>
 </resources>
