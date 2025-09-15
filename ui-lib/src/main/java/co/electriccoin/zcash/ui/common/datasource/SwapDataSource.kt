@@ -21,6 +21,7 @@ interface SwapDataSource {
         destinationAddress: String,
         destinationAsset: SwapAsset,
         slippage: BigDecimal,
+        affiliateAddress: String
     ): SwapQuote
 
     @Throws(ResponseException::class, IOException::class)

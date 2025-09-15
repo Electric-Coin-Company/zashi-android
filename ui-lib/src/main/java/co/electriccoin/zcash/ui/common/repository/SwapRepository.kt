@@ -5,6 +5,8 @@ import co.electriccoin.zcash.ui.common.datasource.SwapDataSource
 import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.SwapQuoteStatus
 import co.electriccoin.zcash.ui.common.model.SwapStatus
@@ -286,6 +288,11 @@ class SwapRepositoryImpl(
                             destinationAddress = address,
                             destinationAsset = destinationAsset,
                             slippage = slippage.value,
+                            affiliateAddress =
+                                when (mode) {
+                                    EXACT_INPUT -> "electriccoinco.near"
+                                    EXACT_OUTPUT -> "crosspay.near"
+                                }
                         )
                     quote.update { SwapQuoteData.Success(quote = result) }
                 } catch (e: Exception) {

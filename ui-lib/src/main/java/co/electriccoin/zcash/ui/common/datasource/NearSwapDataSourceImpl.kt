@@ -55,6 +55,7 @@ class NearSwapDataSourceImpl(
         destinationAddress: String,
         destinationAsset: SwapAsset,
         slippage: BigDecimal,
+        affiliateAddress: String
     ): SwapQuote {
         val decimals =
             when (swapMode) {
@@ -88,7 +89,7 @@ class NearSwapDataSourceImpl(
                 appFees =
                     listOf(
                         AppFee(
-                            recipient = "electriccoinco.near",
+                            recipient = affiliateAddress,
                             fee = AFFILIATE_FEE_BPS
                         )
                     )
