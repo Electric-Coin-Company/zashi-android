@@ -73,4 +73,5 @@
     <string name="balance_action_info_shielded">Protegido (Disponible)</string>
     <string name="balance_action_info_pending">Pendiente</string>
     <string name="home_button_pay">Pagar</string>
+    <string name="home_button_swap">Swap</string>
 </resources>
