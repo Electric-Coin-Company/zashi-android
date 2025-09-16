@@ -12,6 +12,13 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.3.0 (1160)] - 2025-09-15
+
+### Added:
+- CrossPay with Near Intents
+- Use shielded ZEC to make cross-chain payments with Zashi and Near Intents.
+- Accessible via the new Pay button on the home screen.
+
 ## [2.3.0 (1159)] - 2025-09-15
 
 ### Added:
