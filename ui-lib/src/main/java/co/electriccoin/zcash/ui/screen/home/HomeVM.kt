@@ -5,14 +5,20 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.DistributionDimension
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.WalletAccount
+import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.ShieldFundsInfoProvider
 import co.electriccoin.zcash.ui.common.repository.HomeMessageData
 import co.electriccoin.zcash.ui.common.usecase.ErrorArgs
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToNearPayUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
@@ -49,17 +55,20 @@ import kotlinx.coroutines.launch
 class HomeVM(
     getHomeMessage: GetHomeMessageUseCase,
     shieldFundsInfoProvider: ShieldFundsInfoProvider,
+    getWalletAccounts: GetWalletAccountsUseCase,
     private val navigationRouter: NavigationRouter,
     private val isRestoreSuccessDialogVisible: IsRestoreSuccessDialogVisibleUseCase,
     private val shieldFunds: ShieldFundsMessageUseCase,
     private val navigateToError: NavigateToErrorUseCase,
     private val navigateToReceive: NavigateToReceiveUseCase,
-    private val navigateToNearPay: NavigateToNearPayUseCase
+    private val navigateToNearPay: NavigateToNearPayUseCase,
+    private val getVersionInfoProvider: GetVersionInfoProvider,
+    private val navigateToSwap: NavigateToSwapUseCase
 ) : ViewModel() {
     private val messageState =
         combine(
             getHomeMessage.observe(),
-            shieldFundsInfoProvider.observe()
+            shieldFundsInfoProvider.observe(),
         ) { message, isShieldFundsInfoEnabled ->
             createMessageState(message, isShieldFundsInfoEnabled)
         }.stateIn(
@@ -90,17 +99,20 @@ class HomeVM(
             )
 
     val state: StateFlow<HomeState?> =
-        messageState
-            .map { messageState ->
-                createState(messageState)
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = null
-            )
+        combine(
+            messageState,
+            getWalletAccounts.observe()
+        ) { messageState, accounts ->
+            createState(messageState, accounts)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+            initialValue = null
+        )
 
     private fun createState(
         messageState: HomeMessageState?,
+        accounts: List<WalletAccount>?,
     ) = HomeState(
         firstButton =
             BigIconButtonState(
@@ -121,11 +133,27 @@ class HomeVM(
                 onClick = ::onPayButtonClick,
             ),
         fourthButton =
-            BigIconButtonState(
-                text = stringRes(R.string.home_button_more),
-                icon = R.drawable.ic_home_more,
-                onClick = ::onMoreButtonClick,
-            ),
+            if (getVersionInfoProvider().distributionDimension == DistributionDimension.FOSS) {
+                if (accounts.orEmpty().any { it is KeystoneAccount }) {
+                    BigIconButtonState(
+                        text = stringRes(R.string.home_button_swap),
+                        icon = R.drawable.ic_home_swap,
+                        onClick = ::onSwapButtonClick,
+                    )
+                } else {
+                    BigIconButtonState(
+                        text = stringRes(R.string.home_button_more),
+                        icon = R.drawable.ic_home_more,
+                        onClick = ::onMoreButtonClick,
+                    )
+                }
+            } else {
+                BigIconButtonState(
+                    text = stringRes(R.string.home_button_more),
+                    icon = R.drawable.ic_home_more,
+                    onClick = ::onMoreButtonClick,
+                )
+            },
         message = messageState
     )
 
@@ -207,6 +235,8 @@ class HomeVM(
     private fun onRestoreDialogSeenClick() = viewModelScope.launch { isRestoreSuccessDialogVisible.setSeen() }
 
     private fun onMoreButtonClick() = navigationRouter.forward(IntegrationsArgs)
+
+    private fun onSwapButtonClick() = navigateToSwap()
 
     private fun onSendButtonClick() = navigationRouter.forward(Send())
 
