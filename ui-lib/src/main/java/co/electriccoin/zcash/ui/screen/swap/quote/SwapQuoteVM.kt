@@ -81,14 +81,13 @@ internal class SwapQuoteVM(
     private fun createState(
         proposal: TransactionProposal?,
         quote: SwapQuoteData.Success
-    ): SwapQuoteState.Success {
-        return swapQuoteSuccessMapper.createState(
+    ): SwapQuoteState.Success =
+        swapQuoteSuccessMapper.createState(
             state = SwapQuoteInternalState(proposal as? SwapTransactionProposal, quote.quote),
             onBack = ::onBack,
             onSubmitQuoteClick = ::onSubmitQuoteClick,
             onNavigateToOnRampSwap = ::onNavigateToOnRampSwap
         )
-    }
 
     private fun onNavigateToOnRampSwap() = navigationRouter.forward(ORQuoteArgs)
 

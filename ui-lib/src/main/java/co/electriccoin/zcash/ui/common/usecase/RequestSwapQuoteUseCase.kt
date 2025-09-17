@@ -21,7 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import okhttp3.Dispatcher
 import java.math.BigDecimal
 
 class RequestSwapQuoteUseCase(
@@ -33,7 +32,6 @@ class RequestSwapQuoteUseCase(
     private val navigationRouter: NavigationRouter,
     private val navigateToErrorUseCase: NavigateToErrorUseCase,
 ) {
-
     suspend fun requestExactInput(
         amount: BigDecimal,
         address: String,

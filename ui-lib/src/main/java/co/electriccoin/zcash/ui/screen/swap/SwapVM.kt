@@ -30,7 +30,8 @@ import co.electriccoin.zcash.ui.design.util.combine
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
-import co.electriccoin.zcash.ui.screen.swap.Mode.*
+import co.electriccoin.zcash.ui.screen.swap.Mode.SWAP_FROM_ZEC
+import co.electriccoin.zcash.ui.screen.swap.Mode.SWAP_INTO_ZEC
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import kotlinx.coroutines.delay
@@ -59,7 +60,6 @@ internal class SwapVM(
     private val navigateToScanAddress: NavigateToScanGenericAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
 ) : ViewModel() {
-
     private val mode = MutableStateFlow(SWAP_FROM_ZEC)
 
     private val currencyType: MutableStateFlow<CurrencyType> = MutableStateFlow(CurrencyType.TOKEN)
@@ -279,16 +279,18 @@ internal class SwapVM(
         viewModelScope.launch {
             isRequestingQuote.update { true }
             when (mode.value) {
-                SWAP_FROM_ZEC -> requestSwapQuote.requestExactInput(
-                    amount = amount,
-                    address = address,
-                    canNavigateToSwapQuote = { !isCancelStateVisible.value }
-                )
-                SWAP_INTO_ZEC -> requestSwapQuote.requestExactInputIntoZec(
-                    amount = amount,
-                    refundAddress = address,
-                    canNavigateToSwapQuote = { !isCancelStateVisible.value }
-                )
+                SWAP_FROM_ZEC ->
+                    requestSwapQuote.requestExactInput(
+                        amount = amount,
+                        address = address,
+                        canNavigateToSwapQuote = { !isCancelStateVisible.value }
+                    )
+                SWAP_INTO_ZEC ->
+                    requestSwapQuote.requestExactInputIntoZec(
+                        amount = amount,
+                        refundAddress = address,
+                        canNavigateToSwapQuote = { !isCancelStateVisible.value }
+                    )
             }
             isRequestingQuote.update { false }
         }

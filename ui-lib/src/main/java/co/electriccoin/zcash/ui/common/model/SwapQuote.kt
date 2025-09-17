@@ -14,7 +14,6 @@ import java.math.BigDecimal
 import java.math.MathContext
 
 interface SwapQuote {
-
     val originAsset: SwapAsset
     val destinationAsset: SwapAsset
 
@@ -42,9 +41,13 @@ interface SwapQuote {
     val timestamp: Instant
 
     val slippage: BigDecimal
+
     fun getTotal(proposal: Proposal?): BigDecimal
+
     fun getTotalUsd(proposal: Proposal?): BigDecimal
+
     fun getTotalFeesUsd(proposal: Proposal?): BigDecimal
+
     fun getTotalFeesZatoshi(proposal: Proposal?): Zatoshi
 }
 
@@ -53,11 +56,11 @@ data class NearSwapQuote(
     override val originAsset: SwapAsset,
     override val destinationAsset: SwapAsset,
 ) : SwapQuote {
-
-    override val slippage: BigDecimal = BigDecimal(response.quoteRequest.slippageTolerance)
-        .divide(
-            BigDecimal("100", MathContext.DECIMAL128)
-        )
+    override val slippage: BigDecimal =
+        BigDecimal(response.quoteRequest.slippageTolerance)
+            .divide(
+                BigDecimal("100", MathContext.DECIMAL128)
+            )
 
     override val destinationAmountZatoshi: Zatoshi = Zatoshi(response.quote.amountIn.toLong())
 
@@ -92,29 +95,31 @@ data class NearSwapQuote(
 
     override val recipient: String = response.quoteRequest.recipient
 
-    override val affiliateFee: BigDecimal = response.quote.amountInFormatted
-        .multiply(
-            BigDecimal(AFFILIATE_FEE_BPS).divide(BigDecimal("10000"), MathContext.DECIMAL128),
-            MathContext.DECIMAL128
-        )
+    override val affiliateFee: BigDecimal =
+        response.quote.amountInFormatted
+            .multiply(
+                BigDecimal(AFFILIATE_FEE_BPS).divide(BigDecimal("10000"), MathContext.DECIMAL128),
+                MathContext.DECIMAL128
+            )
 
-    override val affiliateFeeZatoshi: Zatoshi = if (originAsset.tokenTicker.lowercase() == "zec") {
-        response.quote.amountInUsd
-            .coerceAtLeast(BigDecimal(0))
-            .multiply(
-                BigDecimal(AFFILIATE_FEE_BPS).divide(BigDecimal("10000"), MathContext.DECIMAL128),
-                MathContext.DECIMAL128
-            ).divide(zecExchangeRate, MathContext.DECIMAL128)
-            .convertZecToZatoshi()
-    } else {
-        response.quote.amountOutUsd
-            .coerceAtLeast(BigDecimal(0))
-            .multiply(
-                BigDecimal(AFFILIATE_FEE_BPS).divide(BigDecimal("10000"), MathContext.DECIMAL128),
-                MathContext.DECIMAL128
-            ).divide(zecExchangeRate, MathContext.DECIMAL128)
-            .convertZecToZatoshi()
-    }
+    override val affiliateFeeZatoshi: Zatoshi =
+        if (originAsset.tokenTicker.lowercase() == "zec") {
+            response.quote.amountInUsd
+                .coerceAtLeast(BigDecimal(0))
+                .multiply(
+                    BigDecimal(AFFILIATE_FEE_BPS).divide(BigDecimal("10000"), MathContext.DECIMAL128),
+                    MathContext.DECIMAL128
+                ).divide(zecExchangeRate, MathContext.DECIMAL128)
+                .convertZecToZatoshi()
+        } else {
+            response.quote.amountOutUsd
+                .coerceAtLeast(BigDecimal(0))
+                .multiply(
+                    BigDecimal(AFFILIATE_FEE_BPS).divide(BigDecimal("10000"), MathContext.DECIMAL128),
+                    MathContext.DECIMAL128
+                ).divide(zecExchangeRate, MathContext.DECIMAL128)
+                .convertZecToZatoshi()
+        }
 
     override val affiliateFeeUsd: BigDecimal =
         response.quote.amountInUsd
@@ -132,13 +137,15 @@ data class NearSwapQuote(
 
     override fun getTotalFeesUsd(proposal: Proposal?): BigDecimal = affiliateFeeUsd + getZecFeeUsd(proposal)
 
-    override fun getTotalFeesZatoshi(proposal: Proposal?): Zatoshi = (proposal?.totalFeeRequired() ?: Zatoshi.ZERO) +
-        affiliateFeeZatoshi
+    override fun getTotalFeesZatoshi(proposal: Proposal?): Zatoshi =
+        (proposal?.totalFeeRequired() ?: Zatoshi.ZERO) +
+            affiliateFeeZatoshi
 
     private fun getZecFee(proposal: Proposal?): BigDecimal? = proposal?.totalFeeRequired()?.convertZatoshiToZec()
 
     private fun getZecFeeUsd(proposal: Proposal?): BigDecimal =
         zecExchangeRate.multiply(
-            getZecFee(proposal) ?: BigDecimal.ZERO, MathContext.DECIMAL128
+            getZecFee(proposal) ?: BigDecimal.ZERO,
+            MathContext.DECIMAL128
         )
 }

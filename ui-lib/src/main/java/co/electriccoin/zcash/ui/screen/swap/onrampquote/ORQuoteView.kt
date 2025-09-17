@@ -75,9 +75,10 @@ fun ORQuoteView(state: ORQuoteState) {
             ZashiQr(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 state = QrState(qrData = state.qr),
-                colors = QrCodeDefaults.colors(
-                    border = Color.Unspecified
-                )
+                colors =
+                    QrCodeDefaults.colors(
+                        border = Color.Unspecified
+                    )
             )
             Spacer(12.dp)
             Row {
@@ -126,9 +127,10 @@ private fun BigIconButton(
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                modifier = Modifier
-                    .padding(start = 16.dp, top = 20.dp, end = 16.dp)
-                    .size(24.dp),
+                modifier =
+                    Modifier
+                        .padding(start = 16.dp, top = 20.dp, end = 16.dp)
+                        .size(24.dp),
                 painter = painterResource(state.icon),
                 contentDescription = state.text.getValue()
             )
@@ -149,13 +151,14 @@ private fun BigIconButton(
 @Composable
 fun Header(state: ORQuoteState) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(
-                onClick = state.onAmountClick,
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(
+                    onClick = state.onAmountClick,
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
+                ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -257,27 +260,31 @@ private fun TopAppBar(state: ORQuoteState) {
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    ORQuoteView(
-        state = ORQuoteState(
-            onBack = {},
-            info = IconButtonState(co.electriccoin.zcash.ui.R.drawable.ic_help) {},
-            bigIcon = imageRes(R.drawable.ic_token_placeholder),
-            smallIcon = imageRes(R.drawable.ic_chain_placeholder),
-            amount = stringResByNumber(100),
-            amountFiat = stringResByDynamicCurrencyNumber(100, "USD"),
-            onAmountClick = {},
-            qr = "qr",
-            copyButton = BigIconButtonState(stringRes("Copy"), co.electriccoin.zcash.ui.R.drawable.ic_copy) {},
-            shareButton = BigIconButtonState(
-                stringRes("Share QR"),
-                co.electriccoin.zcash.ui.R.drawable.ic_qr_code_other
-            ) {},
-            footer = stringRes(
-                "Use your USDC on Near wallet \n" +
-                    "to deposit funds. Depositing other assets may result in loss of funds."
-            ),
-            primaryButton = ButtonState(stringRes("I’ve sent the funds")),
+private fun Preview() =
+    ZcashTheme {
+        ORQuoteView(
+            state =
+                ORQuoteState(
+                    onBack = {},
+                    info = IconButtonState(co.electriccoin.zcash.ui.R.drawable.ic_help) {},
+                    bigIcon = imageRes(R.drawable.ic_token_placeholder),
+                    smallIcon = imageRes(R.drawable.ic_chain_placeholder),
+                    amount = stringResByNumber(100),
+                    amountFiat = stringResByDynamicCurrencyNumber(100, "USD"),
+                    onAmountClick = {},
+                    qr = "qr",
+                    copyButton = BigIconButtonState(stringRes("Copy"), co.electriccoin.zcash.ui.R.drawable.ic_copy) {},
+                    shareButton =
+                        BigIconButtonState(
+                            stringRes("Share QR"),
+                            co.electriccoin.zcash.ui.R.drawable.ic_qr_code_other
+                        ) {},
+                    footer =
+                        stringRes(
+                            "Use your USDC on Near wallet \n" +
+                                "to deposit funds. Depositing other assets may result in loss of funds."
+                        ),
+                    primaryButton = ButtonState(stringRes("I’ve sent the funds")),
+                )
         )
-    )
-}
+    }

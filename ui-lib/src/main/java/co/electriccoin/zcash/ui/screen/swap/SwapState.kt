@@ -33,7 +33,8 @@ internal data class SwapState(
     val changeModeButton: IconButtonState,
 ) {
     enum class AddressLocation {
-        TOP, BOTTOM
+        TOP,
+        BOTTOM
     }
 }
 

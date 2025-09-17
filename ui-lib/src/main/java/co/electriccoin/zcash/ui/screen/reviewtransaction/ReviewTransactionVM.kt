@@ -14,7 +14,6 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
-import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
@@ -50,7 +49,6 @@ class ReviewTransactionVM(
     private val getExchangeRate: GetExchangeRateUseCase,
     private val navigationRouter: NavigationRouter,
     private val confirmProposal: ConfirmProposalUseCase,
-    private val cancelSwapQuote: CancelSwapQuoteUseCase
 ) : ViewModel() {
     private val isReceiverExpanded = MutableStateFlow(false)
 
@@ -244,8 +242,6 @@ class ReviewTransactionVM(
     private fun onExpandReceiverClick() = isReceiverExpanded.update { !it }
 
     private fun onBack() = viewModelScope.launch { cancelProposalFlow(clearSendForm = false) }
-
-    private fun onBackFromPay() = viewModelScope.launch { cancelSwapQuote() }
 
     private fun onConfirmClick() = viewModelScope.launch { confirmProposal() }
 

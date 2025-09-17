@@ -282,13 +282,14 @@ class SwapRepositoryImpl(
                     val selectedAccount = accountDataSource.getSelectedAccount()
                     val result =
                         swapDataSource.requestQuote(
-                            swapMode = SwapMode.EXACT_INPUT,
+                            swapMode = EXACT_INPUT,
                             amount = amount,
                             refundAddress = refundAddress,
                             originAsset = originAsset,
                             destinationAddress = selectedAccount.transparent.address.address,
                             destinationAsset = destinationAsset,
                             slippage = slippage.value,
+                            affiliateAddress = "electriccoinco.near"
                         )
                     quote.update { SwapQuoteData.Success(quote = result) }
                 } catch (e: Exception) {

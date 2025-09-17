@@ -28,7 +28,7 @@ internal class SwapQuoteVMMapper {
         with(state) {
             return SwapQuoteState.Success(
                 title =
-                    when  {
+                    when {
                         quote.destinationAsset.tokenTicker.lowercase() == "zec" -> stringRes("Review Quote")
                         quote.type == EXACT_INPUT -> stringRes(R.string.swap_quote_title)
                         quote.type == EXACT_OUTPUT -> stringRes(R.string.pay_quote_title)
@@ -89,11 +89,12 @@ internal class SwapQuoteVMMapper {
             ).takeIf { quote.destinationAsset.tokenTicker.lowercase() != "zec" },
             SwapQuoteInfoItem(
                 description = stringRes(R.string.swap_quote_total_fees),
-                title = if (quote.destinationAsset.tokenTicker.lowercase() == "zec") {
-                    stringResByDynamicCurrencyNumber(totalFees, quote.originAsset.tokenTicker)
-                } else {
-                    stringRes(totalFeesZatoshi)
-                },
+                title =
+                    if (quote.destinationAsset.tokenTicker.lowercase() == "zec") {
+                        stringResByDynamicCurrencyNumber(totalFees, quote.originAsset.tokenTicker)
+                    } else {
+                        stringRes(totalFeesZatoshi)
+                    },
                 subtitle =
                     stringResByDynamicCurrencyNumber(totalFeesUsd, FiatCurrency.USD.symbol)
                         .takeIf {
@@ -109,20 +110,24 @@ internal class SwapQuoteVMMapper {
                             R.string.swap_quote_max_slippage,
                             stringResByNumber(quote.slippage, minDecimals = 0) + stringRes("%")
                         ),
-                    title = if (quote.destinationAsset.tokenTicker.lowercase() == "zec") {
-                        val slippageToken = quote.amountInFormatted
-                            .multiply(
-                                slippage,
-                                MathContext.DECIMAL128
-                            )
-                        stringResByDynamicCurrencyNumber(slippageToken, quote.destinationAsset.tokenTicker)
-                    } else {
-                        val slippageZatoshi = quote.amountInFormatted.multiply(
-                            slippage,
-                            MathContext.DECIMAL128
-                        ).convertZecToZatoshi()
-                        stringRes(slippageZatoshi)
-                    },
+                    title =
+                        if (quote.destinationAsset.tokenTicker.lowercase() == "zec") {
+                            val slippageToken =
+                                quote.amountInFormatted
+                                    .multiply(
+                                        slippage,
+                                        MathContext.DECIMAL128
+                                    )
+                            stringResByDynamicCurrencyNumber(slippageToken, quote.destinationAsset.tokenTicker)
+                        } else {
+                            val slippageZatoshi =
+                                quote.amountInFormatted
+                                    .multiply(
+                                        slippage,
+                                        MathContext.DECIMAL128
+                                    ).convertZecToZatoshi()
+                            stringRes(slippageZatoshi)
+                        },
                     subtitle =
                         stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol)
                             .takeIf {
@@ -141,8 +146,8 @@ internal class SwapQuoteVMMapper {
             subtitle = stringResByDynamicCurrencyNumber(totalUsd, FiatCurrency.USD.symbol)
         )
 
-    private fun SwapQuoteInternalState.createFromState(): SwapTokenAmountState {
-        return if (quote.destinationAsset.tokenTicker.lowercase() == "zec") {
+    private fun SwapQuoteInternalState.createFromState(): SwapTokenAmountState =
+        if (quote.destinationAsset.tokenTicker.lowercase() == "zec") {
             SwapTokenAmountState(
                 bigIcon = quote.originAsset.tokenIcon,
                 smallIcon = quote.originAsset.chainIcon,
@@ -157,10 +162,9 @@ internal class SwapQuoteVMMapper {
                 subtitle = stringResByDynamicCurrencyNumber(quote.amountInUsd, FiatCurrency.USD.symbol)
             )
         }
-    }
 
-    private fun SwapQuoteInternalState.createToState(): SwapTokenAmountState {
-        return if (quote.destinationAsset.tokenTicker.lowercase() == "zec") {
+    private fun SwapQuoteInternalState.createToState(): SwapTokenAmountState =
+        if (quote.destinationAsset.tokenTicker.lowercase() == "zec") {
             SwapTokenAmountState(
                 bigIcon = imageRes(R.drawable.ic_zec_round_full),
                 smallIcon = null,
@@ -181,5 +185,4 @@ internal class SwapQuoteVMMapper {
                 subtitle = stringResByDynamicCurrencyNumber(quote.amountOutUsd, FiatCurrency.USD.symbol)
             )
         }
-    }
 }
