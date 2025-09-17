@@ -1,10 +1,12 @@
 package co.electriccoin.zcash.ui.screen.swap.onrampquote
 
+import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
@@ -16,6 +18,7 @@ import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
+import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -41,7 +44,7 @@ class ORQuoteVM(
                     onBack = ::onBack,
                     info =
                         IconButtonState(
-                            icon = co.electriccoin.zcash.ui.R.drawable.ic_help,
+                            icon = R.drawable.ic_help,
                             onClick = ::onInfoClick
                         ),
                     bigIcon = quote.originAsset.tokenIcon,
@@ -53,19 +56,23 @@ class ORQuoteVM(
                     copyButton =
                         BigIconButtonState(
                             stringRes("Copy"),
-                            co.electriccoin.zcash.ui.R.drawable.ic_copy,
+                            R.drawable.ic_copy,
                             onClick = { onCopyAddressClick(quote.depositAddress) }
                         ),
                     shareButton =
                         BigIconButtonState(
                             stringRes("Share QR"),
-                            co.electriccoin.zcash.ui.R.drawable.ic_qr_code_other
+                            R.drawable.ic_qr_code_other
                         ) {},
-                    footer =
-                        stringRes(
-                            "Use your ${quote.originAsset.tokenTicker} on ${quote.originAsset.chainTicker} wallet \n" +
-                                "to deposit funds. Depositing other assets may result in loss of funds."
-                        ),
+                    footer = styledStringResource(
+                        R.string.swap_to_zec_footer,
+                        styledStringResource(
+                            resource = R.string.swap_to_zec_footer_bold,
+                            fontWeight = FontWeight.Bold,
+                            quote.originAsset.tokenTicker.uppercase(),
+                            quote.originAsset.chainTicker.uppercase()
+                        )
+                    ),
                     primaryButton =
                         ButtonState(
                             stringRes("I’ve sent the funds"),

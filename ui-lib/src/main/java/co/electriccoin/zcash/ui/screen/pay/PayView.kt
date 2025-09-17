@@ -66,14 +66,12 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.StringResourceColor
-import co.electriccoin.zcash.ui.design.util.StyledStringResource
-import co.electriccoin.zcash.ui.design.util.getColor
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
+import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.fixture.BalanceStateFixture
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidget
@@ -192,12 +190,6 @@ private fun ZecAmountText(state: PayState) {
             text = state.zecAmount.getValue(),
             style = ZashiTypography.textSm,
             fontWeight = FontWeight.Medium,
-            color =
-                if (state.zecAmount.color == StringResourceColor.NEGATIVE) {
-                    ZashiColors.Inputs.ErrorDefault.hint
-                } else {
-                    state.zecAmount.getColor()
-                }
         )
     }
 }
@@ -427,7 +419,7 @@ private fun Preview() {
                             icon = R.drawable.qr_code_icon,
                             onClick = {}
                         ),
-                    zecAmount = StyledStringResource(stringResByNumber(1)),
+                    zecAmount = styledStringResource(stringResByNumber(1)),
                     slippage =
                         ButtonState(
                             stringRes("1%"),
@@ -482,7 +474,7 @@ private fun ErrorPreview() {
                             icon = R.drawable.qr_code_icon,
                             onClick = {}
                         ),
-                    zecAmount = StyledStringResource(stringResByNumber(1)),
+                    zecAmount = styledStringResource(stringResByNumber(1)),
                     slippage =
                         ButtonState(
                             stringRes("1%"),

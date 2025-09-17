@@ -41,6 +41,7 @@ import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.QrCodeDefaults
 import co.electriccoin.zcash.ui.design.component.QrState
 import co.electriccoin.zcash.ui.design.component.Spacer
+import co.electriccoin.zcash.ui.design.component.ZashiAutoSizeText
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
 import co.electriccoin.zcash.ui.design.component.ZashiQr
@@ -51,12 +52,14 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.ImageResource
+import co.electriccoin.zcash.ui.design.util.StringResourceColor
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
+import co.electriccoin.zcash.ui.design.util.styledStringResource
 
 @Composable
 fun ORQuoteView(state: ORQuoteState) {
@@ -149,7 +152,7 @@ private fun BigIconButton(
 }
 
 @Composable
-fun Header(state: ORQuoteState) {
+private fun Header(state: ORQuoteState) {
     Column(
         modifier =
             Modifier
@@ -161,12 +164,22 @@ fun Header(state: ORQuoteState) {
                 ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Deposit Amount",
-            style = ZashiTypography.textMd,
-            fontWeight = FontWeight.Medium,
-            color = ZashiColors.Text.textPrimary
-        )
+        Row(
+            verticalAlignment = CenterVertically
+        ){
+            Text(
+                text = "Deposit Amount",
+                style = ZashiTypography.textMd,
+                fontWeight = FontWeight.Medium,
+                color = ZashiColors.Text.textPrimary
+            )
+            Spacer(14.dp)
+            Image(
+                painter = painterResource(id = co.electriccoin.zcash.ui.R.drawable.ic_copy_other),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(ZashiColors.Text.textPrimary)
+            )
+        }
         Spacer(4.dp)
         Row(
             verticalAlignment = CenterVertically
@@ -178,7 +191,6 @@ fun Header(state: ORQuoteState) {
                         painter = painterResource(state.bigIcon.resource),
                         contentDescription = null
                     )
-
                     if (state.smallIcon is ImageResource.ByDrawable) {
                         if (state.smallIcon.resource == R.drawable.ic_receive_shield) {
                             Image(
@@ -211,20 +223,21 @@ fun Header(state: ORQuoteState) {
                 }
                 Spacer(12.dp)
             }
-            Text(
+            ZashiAutoSizeText(
                 text = state.amount.getValue(),
                 style = ZashiTypography.header2,
                 fontWeight = FontWeight.SemiBold,
-                color = ZashiColors.Text.textPrimary
-            )
-            Spacer(12.dp)
-            Image(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(id = co.electriccoin.zcash.ui.R.drawable.ic_copy),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(ZashiColors.Text.textPrimary)
+                color = ZashiColors.Text.textPrimary,
+                maxLines = 1
             )
         }
+        ZashiAutoSizeText(
+            text = state.amountFiat.getValue(),
+            style = ZashiTypography.textLg,
+            fontWeight = FontWeight.Medium,
+            color = ZashiColors.Text.textTertiary,
+            maxLines = 1
+        )
     }
 }
 
@@ -269,7 +282,7 @@ private fun Preview() =
                     info = IconButtonState(co.electriccoin.zcash.ui.R.drawable.ic_help) {},
                     bigIcon = imageRes(R.drawable.ic_token_placeholder),
                     smallIcon = imageRes(R.drawable.ic_chain_placeholder),
-                    amount = stringResByNumber(100),
+                    amount = stringResByNumber(1000),
                     amountFiat = stringResByDynamicCurrencyNumber(100, "USD"),
                     onAmountClick = {},
                     qr = "qr",
@@ -279,11 +292,18 @@ private fun Preview() =
                             stringRes("Share QR"),
                             co.electriccoin.zcash.ui.R.drawable.ic_qr_code_other
                         ) {},
-                    footer =
-                        stringRes(
-                            "Use your USDC on Near wallet \n" +
-                                "to deposit funds. Depositing other assets may result in loss of funds."
-                        ),
+                    footer = styledStringResource(
+                        resource = co.electriccoin.zcash.ui.R.string.swap_to_zec_footer,
+                        color = StringResourceColor.PRIMARY,
+                        fontWeight = null,
+                        styledStringResource(
+                            resource = co.electriccoin.zcash.ui.R.string.swap_to_zec_footer_bold,
+                            color = StringResourceColor.PRIMARY,
+                            fontWeight = FontWeight.Bold,
+                            "ASSET",
+                            "CHAIN"
+                        )
+                    ),
                     primaryButton = ButtonState(stringRes("I’ve sent the funds")),
                 )
         )

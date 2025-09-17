@@ -75,7 +75,7 @@ class RequestSwapQuoteUseCase(
     ) = withContext(Dispatchers.Default) {
         requestQuote()
 
-        val result = swapRepository.quote.filter { it !is SwapQuoteData.Loading }.first()
+        val result = swapRepository.quote.filter { it !in listOf(null, SwapQuoteData.Loading) }.first()
 
         if (result is SwapQuoteData.Success) {
             try {

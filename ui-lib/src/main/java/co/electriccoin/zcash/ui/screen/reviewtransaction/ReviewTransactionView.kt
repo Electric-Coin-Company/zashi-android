@@ -57,7 +57,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
-import co.electriccoin.zcash.ui.design.util.StyledStringResource
+import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.getColor
 import co.electriccoin.zcash.ui.design.util.getValue
@@ -371,7 +371,6 @@ private fun ListItemWidget(state: SimpleListItemState) {
             text = state.title.getValue(),
             style = ZashiTypography.textSm,
             fontWeight = FontWeight.Medium,
-            color = state.title.getColor()
         )
 
         Column(
@@ -379,7 +378,6 @@ private fun ListItemWidget(state: SimpleListItemState) {
         ) {
             Text(
                 text = state.text.getValue(),
-                color = state.text.getColor(),
                 style = ZashiTypography.textSm,
                 fontWeight = FontWeight.Medium
             )
@@ -387,7 +385,6 @@ private fun ListItemWidget(state: SimpleListItemState) {
             if (state.subtext != null) {
                 Text(
                     text = state.subtext.getValue(),
-                    color = state.subtext.getColor(),
                     style = ZashiTypography.textXs,
                     fontWeight = FontWeight.Normal
                 )
@@ -680,32 +677,32 @@ private fun PayPreview() =
                             ),
                             SimpleListItemState(
                                 title =
-                                    StyledStringResource(
+                                    styledStringResource(
                                         stringRes("Amount"),
                                         StringResourceColor.TERTIARY
                                     ),
                                 text =
-                                    StyledStringResource(
-                                        stringRes(Zatoshi(0))
+                                    styledStringResource(
+                                        stringRes(Zatoshi(0)),
                                     ),
                                 subtext =
-                                    StyledStringResource(
+                                    styledStringResource(
                                         stringResByDynamicCurrencyNumber(0, FiatCurrency.USD.symbol),
                                         StringResourceColor.TERTIARY
                                     )
                             ),
                             SimpleListItemState(
                                 title =
-                                    StyledStringResource(
+                                    styledStringResource(
                                         stringRes("Fee"),
                                         StringResourceColor.TERTIARY
                                     ),
                                 text =
-                                    StyledStringResource(
+                                    styledStringResource(
                                         stringRes(Zatoshi(0))
                                     ),
                                 subtext =
-                                    StyledStringResource(
+                                    styledStringResource(
                                         stringResByDynamicCurrencyNumber(0, FiatCurrency.USD.symbol),
                                         StringResourceColor.TERTIARY
                                     )
@@ -713,15 +710,15 @@ private fun PayPreview() =
                             DividerState,
                             SimpleListItemState(
                                 title =
-                                    StyledStringResource(
+                                    styledStringResource(
                                         stringRes("Total")
                                     ),
                                 text =
-                                    StyledStringResource(
+                                    styledStringResource(
                                         stringRes(Zatoshi(0))
                                     ),
                                 subtext =
-                                    StyledStringResource(
+                                    styledStringResource(
                                         stringResByDynamicCurrencyNumber(0, FiatCurrency.USD.symbol),
                                     )
                             )

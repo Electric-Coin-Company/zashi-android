@@ -130,10 +130,9 @@ fun Transaction(
                 Spacer(Modifier.width(16.dp))
                 SelectionContainer {
                     Text(
-                        text =
-                            it.resource orHiddenString
-                                stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
-                        color = it.getColor(),
+                        text = it orHiddenString
+                            stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                        color = ZashiColors.Text.textPrimary,
                         style = ZashiTypography.textSm
                     )
                 }
