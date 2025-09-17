@@ -39,6 +39,7 @@ data class FailureTransactionState(
 @Immutable
 data class GrpcFailureTransactionState(
     val onCloseClick: () -> Unit,
+    val onViewTransactionClick: () -> Unit,
     override val onBack: () -> Unit
 ) : TransactionProgressState
 

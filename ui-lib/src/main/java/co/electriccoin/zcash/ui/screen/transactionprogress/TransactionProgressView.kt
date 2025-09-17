@@ -134,7 +134,8 @@ private fun Content(
 
         is GrpcFailureTransactionState ->
             GrpcFailureTransaction(
-                modifier = Modifier.scaffoldPadding(it)
+                state = state,
+                modifier = Modifier.scaffoldPadding(it),
             )
 
         is MultipleFailuresTransactionState ->
@@ -471,7 +472,7 @@ private fun FailureTransaction(
 }
 
 @Composable
-private fun GrpcFailureTransaction(modifier: Modifier = Modifier) {
+private fun GrpcFailureTransaction(state: GrpcFailureTransactionState, modifier: Modifier = Modifier) {
     ConstraintLayout(modifier = modifier.fillMaxSize()) {
         val (content, spaceTop) = createRefs()
 
@@ -530,6 +531,19 @@ private fun GrpcFailureTransaction(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = ZashiColors.Text.textPrimary
+            )
+
+            Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
+
+            ZashiButton(
+                state =
+                    ButtonState(
+                        text = stringRes(R.string.send_confirmation_failure_view_trx),
+                        onClick = state.onViewTransactionClick,
+                    ),
+                modifier =
+                    Modifier.wrapContentWidth(),
+                defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
             )
         }
     }
@@ -778,7 +792,8 @@ private fun GrpcFailurePreview() =
             state =
                 GrpcFailureTransactionState(
                     onCloseClick = {},
-                    onBack = {}
+                    onBack = {},
+                    onViewTransactionClick = {}
                 )
         )
     }
