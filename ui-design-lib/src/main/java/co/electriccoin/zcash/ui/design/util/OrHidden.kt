@@ -11,5 +11,5 @@ infix fun <T> T.orHidden(hidden: T): T = if (LocalBalancesAvailable.current) thi
 infix fun <T : StringResource> T.orHiddenString(hidden: T): String = (this orHidden hidden).getValue()
 
 @Composable
-infix fun <T : StyledStringResource> T.orHiddenString(hidden: StringResource) = (this.getValue() orHidden
-    buildAnnotatedString { append(hidden.getValue()) })
+infix fun <T : StyledStringResource> T.orHiddenString(hidden: StringResource) =
+    this.getValue() orHidden buildAnnotatedString { append(hidden.getValue()) }

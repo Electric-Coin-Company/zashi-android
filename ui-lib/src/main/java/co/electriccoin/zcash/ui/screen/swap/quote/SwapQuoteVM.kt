@@ -22,7 +22,7 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
-import co.electriccoin.zcash.ui.screen.swap.onrampquote.ORQuoteArgs
+import co.electriccoin.zcash.ui.screen.swap.orconfirmation.ORSwapConfirmationArgs
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -89,7 +89,7 @@ internal class SwapQuoteVM(
             onNavigateToOnRampSwap = ::onNavigateToOnRampSwap
         )
 
-    private fun onNavigateToOnRampSwap() = navigationRouter.forward(ORQuoteArgs)
+    private fun onNavigateToOnRampSwap() = navigationRouter.forward(ORSwapConfirmationArgs)
 
     private fun createErrorState(quote: SwapQuoteData.Error): SwapQuoteState.Error {
         val message =

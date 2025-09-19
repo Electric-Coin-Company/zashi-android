@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -20,10 +21,10 @@ import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.design.util.orHidden
+import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactiondetail.SendTransparentStateFixture
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailHeader
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailRowHeader
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumn
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumnState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoContainer
@@ -40,7 +41,7 @@ fun SendTransparent(
     ) {
         var isExpanded by rememberSaveable { mutableStateOf(false) }
 
-        TransactionDetailHeader(
+        TransactionDetailRowHeader(
             title = stringRes(R.string.transaction_detail_info_transaction_details),
             isExpanded = isExpanded,
             onButtonClick = { isExpanded = !isExpanded }
@@ -48,21 +49,21 @@ fun SendTransparent(
 
         Spacer(Modifier.height(8.dp))
         TransactionDetailInfoContainer {
-            TransactionDetailInfoRow(
-                modifier = Modifier.fillMaxWidth(),
-                state =
-                    TransactionDetailInfoRowState(
-                        title = stringRes(R.string.transaction_detail_info_sent_to),
-                        message =
-                            state.contact
-                                ?: (
-                                    state.addressAbbreviated orHidden
-                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder)
-                                ),
-                        trailingIcon = R.drawable.ic_transaction_detail_info_copy,
-                        onClick = state.onTransactionAddressClick
-                    )
-            )
+
+            CompositionLocalProvider(
+                LocalBalancesAvailable provides (state.contact != null || LocalBalancesAvailable.current)
+            ) {
+                TransactionDetailInfoRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    state =
+                        TransactionDetailInfoRowState(
+                            title = stringRes(R.string.transaction_detail_info_sent_to),
+                            message = state.contact ?: state.addressAbbreviated,
+                            trailingIcon = R.drawable.ic_transaction_detail_info_copy,
+                            onClick = state.onTransactionAddressClick
+                        )
+                )
+            }
 
             AnimatedVisibility(
                 visible = isExpanded,
@@ -76,9 +77,7 @@ fun SendTransparent(
                         state =
                             TransactionDetailInfoRowState(
                                 title = stringRes(R.string.transaction_detail_info_transaction_id),
-                                message =
-                                    state.transactionId orHidden
-                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                                message = state.transactionId,
                                 trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                                 onClick = state.onTransactionIdClick
                             )
@@ -89,31 +88,28 @@ fun SendTransparent(
                         state =
                             TransactionDetailInfoRowState(
                                 title = stringRes(R.string.transaction_detail_info_transaction_fee),
-                                message =
-                                    state.fee orHidden
-                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                                message = state.fee,
                             )
                     )
                     ZashiHorizontalDivider()
-                    TransactionDetailInfoRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        state =
-                            TransactionDetailInfoRowState(
-                                title =
-                                    if (state.isPending) {
-                                        stringRes(R.string.transaction_detail_info_transaction_status)
-                                    } else {
-                                        stringRes(R.string.transaction_detail_info_transaction_completed)
-                                    },
-                                message =
-                                    if (state.isPending) {
-                                        state.completedTimestamp
-                                    } else {
-                                        state.completedTimestamp orHidden
-                                            stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder)
-                                    }
-                            )
-                    )
+                    CompositionLocalProvider(
+                        LocalBalancesAvailable provides
+                            (state.isPending || LocalBalancesAvailable.current)
+                    ) {
+                        TransactionDetailInfoRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            state =
+                                TransactionDetailInfoRowState(
+                                    title =
+                                        if (state.isPending) {
+                                            stringRes(R.string.transaction_detail_info_transaction_status)
+                                        } else {
+                                            stringRes(R.string.transaction_detail_info_transaction_completed)
+                                        },
+                                    message = state.completedTimestamp
+                                )
+                        )
+                    }
                 }
             }
             if (state.note != null) {

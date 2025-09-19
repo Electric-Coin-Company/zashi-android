@@ -8,7 +8,6 @@ import co.electriccoin.zcash.ui.design.component.ChipButtonState
 import co.electriccoin.zcash.ui.design.component.SwapQuoteHeaderState
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
-import co.electriccoin.zcash.ui.design.util.styledStringResource
 
 data class ReviewTransactionState(
     val title: StringResource,

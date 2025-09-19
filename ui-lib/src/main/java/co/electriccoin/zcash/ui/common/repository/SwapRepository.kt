@@ -78,6 +78,7 @@ data class SwapAssetsData(
 
 data class SwapQuoteStatusData(
     val data: SwapQuoteStatus?,
+    val originAsset: SwapAsset?,
     val destinationAsset: SwapAsset?,
     val isLoading: Boolean,
     val error: Exception?,
@@ -203,6 +204,7 @@ class SwapRepositoryImpl(
                     SwapQuoteStatusData(
                         data = null,
                         isLoading = true,
+                        originAsset = null,
                         destinationAsset = null,
                         error = null
                     )
@@ -224,15 +226,17 @@ class SwapRepositoryImpl(
                 while (true) {
                     try {
                         val result = swapDataSource.checkSwapStatus(depositAddress)
+                        val originAsset = supportedTokens.find { it.assetId == result.originAssetId }
                         val destinationAsset = supportedTokens.find { it.assetId == result.destinationAssetId }
 
-                        if (destinationAsset == null) {
+                        if (destinationAsset == null || originAsset == null) {
                             data.update {
                                 it.copy(
                                     data = result,
                                     isLoading = false,
+                                    originAsset = null,
                                     destinationAsset = null,
-                                    error = IllegalStateException("No destination asset found")
+                                    error = IllegalStateException("No asset found")
                                 )
                             }
                             break
@@ -241,6 +245,7 @@ class SwapRepositoryImpl(
                                 it.copy(
                                     data = result,
                                     isLoading = false,
+                                    originAsset = originAsset,
                                     destinationAsset = destinationAsset,
                                     error = null
                                 )
@@ -265,11 +270,11 @@ class SwapRepositoryImpl(
 
     @Suppress("TooGenericExceptionCaught")
     override fun requestExactInputQuote(amount: BigDecimal, address: String) {
-        requestSwapFromZecQuote(amount, address, SwapMode.EXACT_INPUT)
+        requestSwapFromZecQuote(amount, address, EXACT_INPUT)
     }
 
     override fun requestExactOutputQuote(amount: BigDecimal, address: String) {
-        requestSwapFromZecQuote(amount, address, SwapMode.EXACT_OUTPUT)
+        requestSwapFromZecQuote(amount, address, EXACT_OUTPUT)
     }
 
     override fun requestExactInputIntoZec(amount: BigDecimal, refundAddress: String) {

@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.screen.transactiondetail
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,6 +44,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.asScaffoldPaddingValues
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -59,7 +61,6 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.info.SendTransparent
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.SendTransparentState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.Shielding
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ShieldingState
-import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailInfoState
 
 @Composable
 fun TransactionDetailView(
@@ -72,8 +73,8 @@ fun TransactionDetailView(
         topBar = {
             TransactionDetailTopAppBar(
                 onBack = state.onBack,
-                state = state,
-                mainAppBarState = mainAppBarState,
+                bookmarkButton = state.bookmarkButton,
+                appBarState = mainAppBarState,
             )
         }
     ) { paddingValues ->
@@ -92,7 +93,6 @@ fun TransactionDetailView(
                             start = 0.dp,
                             end = 0.dp
                         ),
-                iconState = getHeaderIconState(state.info),
                 state = state.header
             )
             Column(
@@ -163,33 +163,7 @@ private fun BottomBar(
         contentPadding = paddingValues.asScaffoldPaddingValues(top = 0.dp, bottom = 0.dp)
     ) {
         if (state.errorFooter != null) {
-            Image(
-                modifier =
-                    Modifier
-                        .size(16.dp)
-                        .align(Alignment.CenterHorizontally),
-                painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(ZashiColors.Text.textError)
-            )
-            Spacer(8.dp)
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = state.errorFooter.title.getValue(),
-                style = ZashiTypography.textSm,
-                fontWeight = FontWeight.Medium,
-                color = ZashiColors.Text.textError,
-                textAlign = TextAlign.Center
-            )
-            Spacer(4.dp)
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = state.errorFooter.subtitle.getValue(),
-                style = ZashiTypography.textSm,
-                color = ZashiColors.Text.textError,
-                textAlign = TextAlign.Center
-            )
-            Spacer(32.dp)
+            TransactionErrorFooter(state.errorFooter)
         }
 
         Row(
@@ -215,34 +189,57 @@ private fun BottomBar(
     }
 }
 
-fun getHeaderIconState(info: TransactionDetailInfoState): TransactionDetailIconHeaderState =
-    TransactionDetailIconHeaderState(
-        when (info) {
-            is ReceiveShieldedState,
-            is ReceiveTransparentState -> R.drawable.ic_transaction_detail_receive
-            is SendShieldedState,
-            is SendSwapState,
-            is SendTransparentState -> R.drawable.ic_transaction_detail_send
-            is ShieldingState -> R.drawable.ic_transaction_detail_shielding
-        }
-    )
+@Composable
+fun TransactionErrorFooter(errorFooter: ErrorFooter) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Image(
+            modifier =
+                Modifier
+                    .size(16.dp)
+                    .align(Alignment.CenterHorizontally),
+            painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(ZashiColors.Text.textError)
+        )
+        Spacer(8.dp)
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = errorFooter.title.getValue(),
+            style = ZashiTypography.textSm,
+            fontWeight = FontWeight.Medium,
+            color = ZashiColors.Text.textError,
+            textAlign = TextAlign.Center
+        )
+        Spacer(4.dp)
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = errorFooter.subtitle.getValue(),
+            style = ZashiTypography.textSm,
+            color = ZashiColors.Text.textError,
+            textAlign = TextAlign.Center
+        )
+        Spacer(32.dp)
+    }
+}
 
 @Composable
 private fun TransactionDetailTopAppBar(
     onBack: () -> Unit,
-    state: TransactionDetailState,
-    mainAppBarState: ZashiMainTopAppBarState?,
+    bookmarkButton: IconButtonState,
+    appBarState: ZashiMainTopAppBarState?,
 ) {
     ZashiSmallTopAppBar(
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
         },
         regularActions = {
-            mainAppBarState?.balanceVisibilityButton?.let {
+            appBarState?.balanceVisibilityButton?.let {
                 ZashiIconButton(it, modifier = Modifier.size(40.dp))
                 Spacer(Modifier.width(4.dp))
             }
-            ZashiIconButton(state.bookmarkButton, modifier = Modifier.size(40.dp))
+            ZashiIconButton(bookmarkButton, modifier = Modifier.size(40.dp))
             Spacer(Modifier.width(20.dp))
         },
         colors =
@@ -265,6 +262,7 @@ private fun SendShieldPreview() =
                         TransactionDetailHeaderState(
                             title = stringRes("Sent"),
                             amount = stringRes(Zatoshi(1000000), HIDDEN),
+                            icons = listOf(imageRes(R.drawable.ic_transaction_detail_send))
                         ),
                     info = SendShieldStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary"), ButtonStyle.DESTRUCTIVE1),
@@ -292,6 +290,7 @@ private fun SendTransparentPreview() =
                         TransactionDetailHeaderState(
                             title = stringRes("Sent"),
                             amount = stringRes(Zatoshi(1000000), HIDDEN),
+                            icons = listOf(imageRes(R.drawable.ic_transaction_detail_send))
                         ),
                     info = SendTransparentStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary")),
@@ -315,6 +314,7 @@ private fun ReceiveShieldPreview() =
                         TransactionDetailHeaderState(
                             title = stringRes("Sent"),
                             amount = stringRes(Zatoshi(1000000), HIDDEN),
+                            icons = listOf(imageRes(R.drawable.ic_transaction_detail_send))
                         ),
                     info = ReceiveShieldedStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary")),
@@ -338,6 +338,7 @@ private fun ReceiveTransparentPreview() =
                         TransactionDetailHeaderState(
                             title = stringRes("Sent"),
                             amount = stringRes(Zatoshi(1000000), HIDDEN),
+                            icons = listOf(imageRes(R.drawable.ic_transaction_detail_send))
                         ),
                     info = ReceiveTransparentStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary")),
@@ -361,6 +362,7 @@ private fun ShieldingPreview() =
                         TransactionDetailHeaderState(
                             title = stringRes("Sent"),
                             amount = stringRes(Zatoshi(1000000), HIDDEN),
+                            icons = listOf(imageRes(R.drawable.ic_transaction_detail_send))
                         ),
                     info = ShieldingStateFixture.new(),
                     primaryButton = ButtonState(stringRes("Primary")),

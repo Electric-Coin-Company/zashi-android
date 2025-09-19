@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap.onrampquote
+package co.electriccoin.zcash.ui.screen.swap.orconfirmation
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
@@ -8,12 +8,12 @@ import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ORQuoteScreen() {
-    val vm = koinViewModel<ORQuoteVM>()
+fun ORSwapConfirmationScreen() {
+    val vm = koinViewModel<ORSwapConfirmationVM>()
     val state by vm.state.collectAsStateWithLifecycle()
     BackHandler { state?.onBack?.invoke() }
-    state?.let { ORQuoteView(it) }
+    state?.let { ORSwapConfirmationView(it) }
 }
 
 @Serializable
-data object ORQuoteArgs
+data object ORSwapConfirmationArgs

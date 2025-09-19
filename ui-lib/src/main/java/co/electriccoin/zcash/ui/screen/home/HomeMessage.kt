@@ -43,6 +43,8 @@ import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedMessa
 import co.electriccoin.zcash.ui.screen.home.disconnected.WalletDisconnectedMessageState
 import co.electriccoin.zcash.ui.screen.home.error.WalletErrorMessage
 import co.electriccoin.zcash.ui.screen.home.error.WalletErrorMessageState
+import co.electriccoin.zcash.ui.screen.home.orswap.ORSwapMessage
+import co.electriccoin.zcash.ui.screen.home.orswap.ORSwapMessageState
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportMessage
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportMessageState
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringMessage
@@ -186,6 +188,13 @@ fun HomeMessage(
                     EnableTorMessage(
                         innerModifier = innerModifier,
                         state = normalizedState as EnableTorMessageState,
+                        contentPadding = contentPadding
+                    )
+
+                is ORSwapMessageState ->
+                    ORSwapMessage(
+                        innerModifier = innerModifier,
+                        state = normalizedState as ORSwapMessageState,
                         contentPadding = contentPadding
                     )
 

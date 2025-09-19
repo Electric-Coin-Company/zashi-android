@@ -9,10 +9,10 @@ import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.usecase.ListTransactionData
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
-import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDateTime
+import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionState
 import java.time.Instant
 import java.time.LocalDate
@@ -30,6 +30,7 @@ class TransactionHistoryMapper {
             icon = getIcon(data),
             providerIcon =
                 if (data.metadata.swapMetadata
+                        ?.provider
                         ?.provider
                         ?.startsWith("near") == true
                 ) {

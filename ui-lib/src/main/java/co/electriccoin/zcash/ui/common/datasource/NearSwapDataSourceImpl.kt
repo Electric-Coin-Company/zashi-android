@@ -1,11 +1,13 @@
 package co.electriccoin.zcash.ui.common.datasource
 
+import co.electriccoin.zcash.ui.common.model.DynamicSwapAsset
 import co.electriccoin.zcash.ui.common.model.NearSwapQuote
 import co.electriccoin.zcash.ui.common.model.NearSwapQuoteStatus
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.SwapQuoteStatus
+import co.electriccoin.zcash.ui.common.model.ZecSwapAsset
 import co.electriccoin.zcash.ui.common.model.near.AppFee
 import co.electriccoin.zcash.ui.common.model.near.QuoteRequest
 import co.electriccoin.zcash.ui.common.model.near.RecipientType
@@ -34,15 +36,29 @@ class NearSwapDataSourceImpl(
     override suspend fun getSupportedTokens(): List<SwapAsset> =
         withContext(Dispatchers.Default) {
             nearApiProvider.getSupportedTokens().map {
-                SwapAsset(
-                    tokenName = tokenNameProvider.getName(it.symbol),
-                    tokenIcon = tokenIconProvider.getIcon(it.symbol),
-                    blockchain = blockchainProvider.getBlockchain(it.blockchain),
-                    tokenTicker = it.symbol,
-                    usdPrice = it.price,
-                    assetId = it.assetId,
-                    decimals = it.decimals,
-                )
+                val blockchain = blockchainProvider.getBlockchain(it.blockchain)
+
+                if (blockchain.chainTicker.lowercase() == "zec" && it.symbol.lowercase() == "zec") {
+                    ZecSwapAsset(
+                        tokenName = tokenNameProvider.getName(it.symbol),
+                        tokenIcon = tokenIconProvider.getIcon(it.symbol),
+                        blockchain = blockchain,
+                        tokenTicker = it.symbol,
+                        usdPrice = it.price,
+                        assetId = it.assetId,
+                        decimals = it.decimals,
+                    )
+                } else {
+                    DynamicSwapAsset(
+                        tokenName = tokenNameProvider.getName(it.symbol),
+                        tokenIcon = tokenIconProvider.getIcon(it.symbol),
+                        blockchain = blockchain,
+                        tokenTicker = it.symbol,
+                        usdPrice = it.price,
+                        assetId = it.assetId,
+                        decimals = it.decimals,
+                    )
+                }
             }
         }
 

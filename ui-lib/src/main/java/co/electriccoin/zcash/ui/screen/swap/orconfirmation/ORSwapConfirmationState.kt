@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap.onrampquote
+package co.electriccoin.zcash.ui.screen.swap.orconfirmation
 
 import androidx.compose.runtime.Immutable
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
@@ -9,7 +9,7 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
 
 @Immutable
-data class ORQuoteState(
+data class ORSwapConfirmationState(
     val info: IconButtonState,
     val bigIcon: ImageResource,
     val smallIcon: ImageResource,

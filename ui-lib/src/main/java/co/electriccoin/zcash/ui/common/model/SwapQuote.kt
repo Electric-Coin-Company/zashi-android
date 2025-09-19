@@ -68,11 +68,7 @@ data class NearSwapQuote(
 
     override val destinationAddress: String = response.quoteRequest.recipient
 
-    private val tokenTicker = destinationAsset.tokenTicker.lowercase()
-
-    private val chainTicker = destinationAsset.chainTicker.lowercase()
-
-    override val provider: String = "near.$tokenTicker.$chainTicker"
+    override val provider = "near"
 
     override val type: SwapMode =
         when (response.quoteRequest.swapType) {

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
@@ -12,7 +13,7 @@ import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.design.util.orHidden
+import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactiondetail.ShieldingStateFixture
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumn
@@ -45,42 +46,36 @@ fun Shielding(
                 state =
                     TransactionDetailInfoRowState(
                         title = stringRes(R.string.transaction_detail_info_transaction_id),
-                        message =
-                            state.transactionId orHidden
-                                stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                        message = state.transactionId,
                         trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                         onClick = state.onTransactionIdClick
                     )
             )
             ZashiHorizontalDivider()
-            TransactionDetailInfoRow(
-                modifier = Modifier.fillMaxWidth(),
-                state =
-                    TransactionDetailInfoRowState(
-                        title =
-                            if (state.isPending) {
-                                stringRes(R.string.transaction_detail_info_transaction_status)
-                            } else {
-                                stringRes(R.string.transaction_detail_info_transaction_completed)
-                            },
-                        message =
-                            if (state.isPending) {
-                                state.completedTimestamp
-                            } else {
-                                state.completedTimestamp orHidden
-                                    stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder)
-                            },
-                    )
-            )
+            CompositionLocalProvider(
+                LocalBalancesAvailable provides (state.isPending || LocalBalancesAvailable.current)
+            ) {
+                TransactionDetailInfoRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    state =
+                        TransactionDetailInfoRowState(
+                            title =
+                                if (state.isPending) {
+                                    stringRes(R.string.transaction_detail_info_transaction_status)
+                                } else {
+                                    stringRes(R.string.transaction_detail_info_transaction_completed)
+                                },
+                            message = state.completedTimestamp,
+                        )
+                )
+            }
             ZashiHorizontalDivider()
             TransactionDetailInfoRow(
                 modifier = Modifier.fillMaxWidth(),
                 state =
                     TransactionDetailInfoRowState(
                         title = stringRes(R.string.transaction_detail_info_transaction_fee),
-                        message =
-                            state.fee orHidden
-                                stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                        message = state.fee,
                     )
             )
             if (state.note != null) {

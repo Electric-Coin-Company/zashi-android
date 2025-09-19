@@ -30,6 +30,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetFlexaStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetKeystoneStatusUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetORSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
@@ -94,6 +95,7 @@ import co.electriccoin.zcash.ui.common.usecase.ResetSharedPrefsDataUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RestoreWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveABContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.SaveORSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.SelectSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.SelectWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
@@ -236,4 +238,6 @@ val useCaseModule =
         factoryOf(::ValidateSwapABContactAddressUseCase)
         factoryOf(::NavigateToNearPayUseCase)
         factoryOf(::CanCreateABContactUseCase)
+        factoryOf(::SaveORSwapUseCase)
+        factoryOf(::GetORSwapQuoteUseCase)
     }

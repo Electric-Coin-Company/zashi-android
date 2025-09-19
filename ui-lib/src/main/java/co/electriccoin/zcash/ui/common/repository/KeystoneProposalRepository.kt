@@ -247,6 +247,8 @@ class KeystoneProposalRepositoryImpl(
                 metadataRepository.markTxAsSwap(
                     depositAddress = depositAddress,
                     provider = transactionProposal.quote.provider,
+                    tokenTicker = transactionProposal.quote.destinationAsset.tokenTicker,
+                    chainTicker = transactionProposal.quote.destinationAsset.chainTicker,
                     totalFees = transactionProposal.totalFees,
                     totalFeesUsd = transactionProposal.totalFeesUsd
                 )

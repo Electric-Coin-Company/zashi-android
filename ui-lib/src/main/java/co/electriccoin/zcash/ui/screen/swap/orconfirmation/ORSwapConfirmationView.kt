@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap.onrampquote
+package co.electriccoin.zcash.ui.screen.swap.orconfirmation
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -62,7 +62,7 @@ import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.design.util.styledStringResource
 
 @Composable
-fun ORQuoteView(state: ORQuoteState) {
+fun ORSwapConfirmationView(state: ORSwapConfirmationState) {
     BlankBgScaffold(
         topBar = { TopAppBar(state) }
     ) {
@@ -152,7 +152,7 @@ private fun BigIconButton(
 }
 
 @Composable
-private fun Header(state: ORQuoteState) {
+private fun Header(state: ORSwapConfirmationState) {
     Column(
         modifier =
             Modifier
@@ -166,7 +166,7 @@ private fun Header(state: ORQuoteState) {
     ) {
         Row(
             verticalAlignment = CenterVertically
-        ){
+        ) {
             Text(
                 text = "Deposit Amount",
                 style = ZashiTypography.textMd,
@@ -242,7 +242,7 @@ private fun Header(state: ORQuoteState) {
 }
 
 @Composable
-private fun TopAppBar(state: ORQuoteState) {
+private fun TopAppBar(state: ORSwapConfirmationState) {
     ZashiSmallTopAppBar(
         content = {
             Row(
@@ -275,9 +275,9 @@ private fun TopAppBar(state: ORQuoteState) {
 @Composable
 private fun Preview() =
     ZcashTheme {
-        ORQuoteView(
+        ORSwapConfirmationView(
             state =
-                ORQuoteState(
+                ORSwapConfirmationState(
                     onBack = {},
                     info = IconButtonState(co.electriccoin.zcash.ui.R.drawable.ic_help) {},
                     bigIcon = imageRes(R.drawable.ic_token_placeholder),
@@ -292,18 +292,17 @@ private fun Preview() =
                             stringRes("Share QR"),
                             co.electriccoin.zcash.ui.R.drawable.ic_qr_code_other
                         ) {},
-                    footer = styledStringResource(
-                        resource = co.electriccoin.zcash.ui.R.string.swap_to_zec_footer,
-                        color = StringResourceColor.PRIMARY,
-                        fontWeight = null,
+                    footer =
                         styledStringResource(
-                            resource = co.electriccoin.zcash.ui.R.string.swap_to_zec_footer_bold,
-                            color = StringResourceColor.PRIMARY,
-                            fontWeight = FontWeight.Bold,
-                            "ASSET",
-                            "CHAIN"
-                        )
-                    ),
+                            resource = co.electriccoin.zcash.ui.R.string.swap_to_zec_footer,
+                            styledStringResource(
+                                resource = co.electriccoin.zcash.ui.R.string.swap_to_zec_footer_bold,
+                                color = StringResourceColor.PRIMARY,
+                                fontWeight = FontWeight.Bold,
+                                "ASSET",
+                                "CHAIN"
+                            )
+                        ),
                     primaryButton = ButtonState(stringRes("I’ve sent the funds")),
                 )
         )

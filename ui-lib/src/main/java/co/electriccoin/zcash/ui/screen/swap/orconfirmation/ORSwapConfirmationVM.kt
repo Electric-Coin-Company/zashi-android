@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.swap.onrampquote
+package co.electriccoin.zcash.ui.screen.swap.orconfirmation
 
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.ViewModel
@@ -10,8 +10,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
-import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
+import co.electriccoin.zcash.ui.common.usecase.SaveORSwapUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
@@ -28,19 +28,19 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.math.BigDecimal
 
-class ORQuoteVM(
+class ORSwapConfirmationVM(
     swapRepository: SwapRepository,
-    private val cancelSwap: CancelSwapUseCase,
     private val cancelSwapQuote: CancelSwapQuoteUseCase,
     private val copyToClipboard: CopyToClipboardUseCase,
-    private val navigationRouter: NavigationRouter
+    private val navigationRouter: NavigationRouter,
+    private val saveORSwap: SaveORSwapUseCase
 ) : ViewModel() {
-    val state: StateFlow<ORQuoteState?> =
+    val state: StateFlow<ORSwapConfirmationState?> =
         swapRepository.quote
             .filterIsInstance<SwapQuoteData.Success>()
             .map { it.quote }
             .map { quote ->
-                ORQuoteState(
+                ORSwapConfirmationState(
                     onBack = ::onBack,
                     info =
                         IconButtonState(
@@ -64,15 +64,16 @@ class ORQuoteVM(
                             stringRes("Share QR"),
                             R.drawable.ic_qr_code_other
                         ) {},
-                    footer = styledStringResource(
-                        R.string.swap_to_zec_footer,
+                    footer =
                         styledStringResource(
-                            resource = R.string.swap_to_zec_footer_bold,
-                            fontWeight = FontWeight.Bold,
-                            quote.originAsset.tokenTicker.uppercase(),
-                            quote.originAsset.chainTicker.uppercase()
-                        )
-                    ),
+                            R.string.swap_to_zec_footer,
+                            styledStringResource(
+                                resource = R.string.swap_to_zec_footer_bold,
+                                fontWeight = FontWeight.Bold,
+                                quote.originAsset.tokenTicker.uppercase(),
+                                quote.originAsset.chainTicker.uppercase()
+                            )
+                        ),
                     primaryButton =
                         ButtonState(
                             stringRes("I’ve sent the funds"),
@@ -99,7 +100,7 @@ class ORQuoteVM(
 
     private fun onBack() = cancelSwapQuote()
 
-    private fun onSentFundsClick() = cancelSwap()
+    private fun onSentFundsClick() = saveORSwap()
 
     private fun onInfoClick() = navigationRouter.forward(SwapInfoArgs)
 }
