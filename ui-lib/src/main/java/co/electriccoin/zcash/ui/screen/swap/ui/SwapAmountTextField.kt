@@ -145,7 +145,8 @@ private fun SwapTextFieldCard(
                                     modifier = Modifier.fillMaxWidth(),
                                     style = ZashiTypography.header4,
                                     fontWeight = FontWeight.SemiBold,
-                                    textAlign = TextAlign.End
+                                    textAlign = TextAlign.End,
+                                    contentAlignment = CenterEnd
                                 )
                             }
                         } else {
@@ -217,9 +218,9 @@ private fun SwapTextFieldCard(
 }
 
 @Composable
-private fun SpendableBalanceButton(
-    state: SwapAmountTextFieldState
-) {
+private fun SpendableBalanceButton(state: SwapAmountTextFieldState) {
+    if (state.max == null) return
+
     Row(
         modifier =
             Modifier.clickable(
@@ -245,7 +246,7 @@ private fun SpendableBalanceButton(
 @Immutable
 data class SwapAmountTextFieldState(
     val title: StringResource,
-    val max: ButtonState,
+    val max: ButtonState?,
     val error: StringResource?,
     val token: AssetCardState,
     val textFieldPrefix: ImageResource?,

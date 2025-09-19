@@ -288,10 +288,9 @@ internal class PayVM(
     private fun onRequestSwapQuoteClick(amount: BigDecimal, address: String) =
         viewModelScope.launch {
             isRequestingQuote.update { true }
-            requestSwapQuote(
+            requestSwapQuote.requestExactOutput(
                 amount = amount,
                 address = address,
-                mode = SwapMode.EXACT_OUTPUT,
                 canNavigateToSwapQuote = { !isCancelStateVisible.value }
             )
             isRequestingQuote.update { false }

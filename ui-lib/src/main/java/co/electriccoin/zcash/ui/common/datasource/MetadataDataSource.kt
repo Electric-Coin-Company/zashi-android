@@ -8,6 +8,7 @@ import co.electriccoin.zcash.ui.common.model.BookmarkMetadata
 import co.electriccoin.zcash.ui.common.model.Metadata
 import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMetadata
+import co.electriccoin.zcash.ui.common.model.SwapProvider
 import co.electriccoin.zcash.ui.common.model.SwapsMetadata
 import co.electriccoin.zcash.ui.common.provider.MetadataProvider
 import co.electriccoin.zcash.ui.common.provider.MetadataStorageProvider
@@ -42,10 +43,14 @@ interface MetadataDataSource {
     suspend fun markTxAsSwap(
         depositAddress: String,
         provider: String,
+        tokenTicker: String,
+        chainTicker: String,
         totalFees: Zatoshi,
         totalFeesUsd: BigDecimal,
         key: MetadataKey
     )
+
+    suspend fun deleteSwap(depositAddress: String, key: MetadataKey)
 
     suspend fun addSwapAssetToHistory(
         tokenTicker: String,
@@ -129,6 +134,8 @@ class MetadataDataSourceImpl(
     override suspend fun markTxAsSwap(
         depositAddress: String,
         provider: String,
+        tokenTicker: String,
+        chainTicker: String,
         totalFees: Zatoshi,
         totalFeesUsd: BigDecimal,
         key: MetadataKey
@@ -136,9 +143,30 @@ class MetadataDataSourceImpl(
         addSwapMetadata(
             depositAddress = depositAddress,
             provider = provider,
+            tokenTicker = tokenTicker,
+            chainTicker = chainTicker,
             totalFees = totalFees,
             totalFeesUsd = totalFeesUsd,
             key = key
+        )
+    }
+
+    override suspend fun deleteSwap(depositAddress: String, key: MetadataKey) {
+        updateMetadata(
+            key = key,
+            transform = { metadata ->
+                metadata.copy(
+                    swaps =
+                        metadata.swaps.copy(
+                            swapIds =
+                                metadata.swaps.swapIds
+                                    .toMutableList()
+                                    .apply {
+                                        removeIf { it.depositAddress == depositAddress }
+                                    }.toList()
+                        ),
+                )
+            }
         )
     }
 
@@ -234,6 +262,8 @@ class MetadataDataSourceImpl(
     private suspend fun addSwapMetadata(
         depositAddress: String,
         provider: String,
+        tokenTicker: String,
+        chainTicker: String,
         totalFees: Zatoshi,
         totalFeesUsd: BigDecimal,
         key: MetadataKey
@@ -251,7 +281,12 @@ class MetadataDataSourceImpl(
                                         lastUpdated = Instant.now(),
                                         totalFees = totalFees,
                                         totalFeesUsd = totalFeesUsd,
-                                        provider = provider
+                                        provider =
+                                            SwapProvider(
+                                                provider = provider,
+                                                token = tokenTicker,
+                                                chain = chainTicker
+                                            )
                                     )
                                 }
                     ),

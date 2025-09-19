@@ -44,4 +44,7 @@
     <string name="pay_quote_title">Pay Now</string>
     <string name="pay_from">Pay from</string>
     <string name="pay_to">Pay to</string>
+    <string name="swap_to_zec_footer">Use your %s wallet \n to deposit funds. Depositing other assets may result in
+        loss of funds.</string>
+    <string name="swap_to_zec_footer_bold">%s on %s</string>
 </resources>

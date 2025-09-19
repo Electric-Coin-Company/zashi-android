@@ -25,7 +25,7 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
-fun TransactionDetailHeader(
+fun TransactionDetailRowHeader(
     title: StringResource,
     isExpanded: Boolean,
     onButtonClick: () -> Unit,

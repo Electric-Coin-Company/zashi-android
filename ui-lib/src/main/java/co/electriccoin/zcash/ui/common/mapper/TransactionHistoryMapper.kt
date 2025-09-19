@@ -9,10 +9,10 @@ import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.usecase.ListTransactionData
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
-import co.electriccoin.zcash.ui.design.util.StyledStringResource
 import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDateTime
+import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionState
 import java.time.Instant
 import java.time.LocalDate
@@ -30,6 +30,7 @@ class TransactionHistoryMapper {
             icon = getIcon(data),
             providerIcon =
                 if (data.metadata.swapMetadata
+                        ?.provider
                         ?.provider
                         ?.startsWith("near") == true
                 ) {
@@ -116,15 +117,16 @@ class TransactionHistoryMapper {
         when (data.transaction) {
             is SendTransaction.Success,
             is SendTransaction.Pending ->
-                StyledStringResource(
+                styledStringResource(
                     stringRes(
                         R.string.transaction_history_minus,
-                        stringRes(data.transaction.amount, HIDDEN)
-                    )
+                        stringRes(data.transaction.amount, HIDDEN),
+                    ),
+                    StringResourceColor.PRIMARY
                 )
 
             is SendTransaction.Failed ->
-                StyledStringResource(
+                styledStringResource(
                     stringRes(
                         R.string.transaction_history_minus,
                         stringRes(data.transaction.amount, HIDDEN)
@@ -133,7 +135,7 @@ class TransactionHistoryMapper {
                 )
 
             is ReceiveTransaction.Success ->
-                StyledStringResource(
+                styledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
                         stringRes(data.transaction.amount, HIDDEN)
@@ -142,15 +144,16 @@ class TransactionHistoryMapper {
                 )
 
             is ReceiveTransaction.Pending ->
-                StyledStringResource(
+                styledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
                         stringRes(data.transaction.amount, HIDDEN)
                     ),
+                    StringResourceColor.PRIMARY
                 )
 
             is ReceiveTransaction.Failed ->
-                StyledStringResource(
+                styledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
                         stringRes(data.transaction.amount, HIDDEN)
@@ -160,15 +163,16 @@ class TransactionHistoryMapper {
 
             is ShieldTransaction.Success,
             is ShieldTransaction.Pending ->
-                StyledStringResource(
+                styledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
                         stringRes(data.transaction.amount, HIDDEN)
-                    )
+                    ),
+                    StringResourceColor.PRIMARY
                 )
 
             is ShieldTransaction.Failed ->
-                StyledStringResource(
+                styledStringResource(
                     stringRes(
                         R.string.transaction_history_plus,
                         stringRes(data.transaction.amount, HIDDEN)

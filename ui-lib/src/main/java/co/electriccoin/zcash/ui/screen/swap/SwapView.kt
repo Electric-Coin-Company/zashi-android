@@ -33,7 +33,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.key.NativeKeyEvent
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,6 +59,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiChipButton
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
 import co.electriccoin.zcash.ui.design.component.ZashiImageButton
+import co.electriccoin.zcash.ui.design.component.ZashiInfoText
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.listitem.SimpleListItemState
@@ -73,15 +73,15 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
+import co.electriccoin.zcash.ui.screen.swap.SwapState.AddressLocation.BOTTOM
+import co.electriccoin.zcash.ui.screen.swap.SwapState.AddressLocation.TOP
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountText
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextField
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
 
 @Composable
-internal fun SwapView(
-    state: SwapState,
-) {
+internal fun SwapView(state: SwapState) {
     val focusRequester = remember { FocusRequester() }
     var hasBeenAutofocused by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -105,15 +105,26 @@ internal fun SwapView(
                 state = state.amountTextField,
                 focusRequester = focusRequester
             )
-            Spacer(16.dp)
+
+            if (state.addressLocation == TOP) {
+                Spacer(10.dp)
+                AddressTextField(state = state)
+                Spacer(12.dp)
+            } else {
+                Spacer(16.dp)
+            }
+
             SlippageSeparator(
-                // state = state
+                state = state
             )
             Spacer(14.dp)
             SwapAmountText(state = state.amountText)
 
-            Spacer(10.dp)
-            AddressTextField(state = state)
+            if (state.addressLocation == BOTTOM) {
+                Spacer(10.dp)
+                AddressTextField(state = state)
+            }
+
             Spacer(22.dp)
 
             SlippageButton(
@@ -130,6 +141,12 @@ internal fun SwapView(
             Spacer(1f)
             if (state.errorFooter != null) {
                 SwapErrorFooter(state.errorFooter)
+                Spacer(24.dp)
+            } else if (state.footer != null) {
+                ZashiInfoText(
+                    text = state.footer.getValue()
+                )
+                Spacer(24.dp)
             }
             if (state.primaryButton != null) {
                 ZashiButton(
@@ -198,7 +215,7 @@ fun SlippageButton(state: ButtonState, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SlippageSeparator(
-    // state: SwapState,
+    state: SwapState,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -210,15 +227,15 @@ private fun SlippageSeparator(
             color = ZashiColors.Utility.Gray.utilityGray100
         )
 
-        // ZashiImageButton(state.changeModeButton)
+        ZashiImageButton(state.changeModeButton)
 
-        Image(
-            modifier = Modifier.size(36.dp),
-            painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_arrow_narrow_down),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(ZashiColors.Text.textDisabled),
-            contentScale = ContentScale.Inside
-        )
+        // Image(
+        //     modifier = Modifier.size(36.dp),
+        //     painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_arrow_narrow_down),
+        //     contentDescription = null,
+        //     colorFilter = ColorFilter.tint(ZashiColors.Text.textDisabled),
+        //     contentScale = ContentScale.Inside
+        // )
 
         ZashiHorizontalDivider(
             modifier = Modifier.weight(1f),
@@ -266,7 +283,11 @@ private fun TopAppBar(state: SwapState) {
 @Composable
 private fun ColumnScope.AddressTextField(state: SwapState) {
     Text(
-        text = stringResource(co.electriccoin.zcash.ui.design.R.string.general_address),
+        text =
+            when (state.addressLocation) {
+                TOP -> "Refund Address"
+                BOTTOM -> stringResource(co.electriccoin.zcash.ui.design.R.string.general_address)
+            },
         style = ZashiTypography.textSm,
         fontWeight = FontWeight.Medium
     )
@@ -430,7 +451,13 @@ private fun Preview() {
                             title = stringRes("Swap with"),
                             icon = R.drawable.ic_near_logo
                         ),
-                    errorFooter = null
+                    footer =
+                        stringRes(
+                            "NEAR only supports swaps to a transparent address. Zashi will prompt you to shield your funds upon receipt."
+                        ),
+                    errorFooter = null,
+                    addressLocation = BOTTOM,
+                    changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {}
                 )
         )
     }
@@ -519,6 +546,9 @@ private fun UnexpectedErrorPreview() {
                             stringRes("Try again"),
                             style = ButtonStyle.DESTRUCTIVE1
                         ),
+                    footer = null,
+                    addressLocation = BOTTOM,
+                    changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {}
                 )
         )
     }
@@ -602,7 +632,10 @@ private fun ServiceUnavailableErrorPreview() {
                             title = stringRes("The service is unavailable"),
                             subtitle = stringRes("Please try again later."),
                         ),
-                    primaryButton = null
+                    primaryButton = null,
+                    footer = null,
+                    addressLocation = BOTTOM,
+                    changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {}
                 )
         )
     }

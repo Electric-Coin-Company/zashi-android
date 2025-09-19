@@ -38,11 +38,22 @@ interface MetadataRepository {
 
     fun markTxMemoAsRead(txId: String)
 
-    fun markTxAsSwap(depositAddress: String, provider: String, totalFees: Zatoshi, totalFeesUsd: BigDecimal)
+    fun markTxAsSwap(
+        depositAddress: String,
+        provider: String,
+        tokenTicker: String,
+        chainTicker: String,
+        totalFees: Zatoshi,
+        totalFeesUsd: BigDecimal
+    )
+
+    fun deleteSwap(depositAddress: String)
 
     fun addSwapAssetToHistory(tokenTicker: String, chainTicker: String)
 
     fun observeTransactionMetadata(transaction: Transaction): Flow<TransactionMetadata>
+
+    fun observeORSwapMetadata(): Flow<List<SwapMetadata>?>
 
     fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?>
 }
@@ -94,17 +105,26 @@ class MetadataRepositoryImpl(
     override fun markTxAsSwap(
         depositAddress: String,
         provider: String,
+        tokenTicker: String,
+        chainTicker: String,
         totalFees: Zatoshi,
         totalFeesUsd: BigDecimal
     ) = updateMetadata {
         metadataDataSource.markTxAsSwap(
             depositAddress = depositAddress,
             provider = provider,
+            tokenTicker = tokenTicker,
+            chainTicker = chainTicker,
             totalFees = totalFees,
             totalFeesUsd = totalFeesUsd,
             key = it
         )
     }
+
+    override fun deleteSwap(depositAddress: String) =
+        updateMetadata {
+            metadataDataSource.deleteSwap(depositAddress = depositAddress, key = it)
+        }
 
     override fun addSwapAssetToHistory(tokenTicker: String, chainTicker: String) =
         updateMetadata {
@@ -132,6 +152,18 @@ class MetadataRepositoryImpl(
                 )
             }.distinctUntilChanged()
     }
+
+    override fun observeORSwapMetadata(): Flow<List<SwapMetadata>?> =
+        metadata
+            .map { metadata ->
+                metadata
+                    ?.accountMetadata
+                    ?.swaps
+                    ?.swapIds
+                    ?.filter { swap ->
+                        swap.provider.token.lowercase() == "zec" && swap.provider.chain.lowercase() == "zec"
+                    }
+            }.distinctUntilChanged()
 
     override fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?> =
         metadata

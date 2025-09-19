@@ -41,7 +41,6 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.Itemizable
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
-import co.electriccoin.zcash.ui.design.util.getColor
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orHiddenString
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -131,9 +130,9 @@ fun Transaction(
                 SelectionContainer {
                     Text(
                         text =
-                            it.resource orHiddenString
+                            it orHiddenString
                                 stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
-                        color = it.getColor(),
+                        color = ZashiColors.Text.textPrimary,
                         style = ZashiTypography.textSm
                     )
                 }

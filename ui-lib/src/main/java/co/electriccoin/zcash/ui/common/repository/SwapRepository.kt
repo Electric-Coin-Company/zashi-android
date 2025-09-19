@@ -50,6 +50,8 @@ interface SwapRepository {
 
     fun requestExactOutputQuote(amount: BigDecimal, address: String)
 
+    fun requestExactInputIntoZec(amount: BigDecimal, refundAddress: String)
+
     fun clear()
 
     fun clearQuote()
@@ -76,6 +78,7 @@ data class SwapAssetsData(
 
 data class SwapQuoteStatusData(
     val data: SwapQuoteStatus?,
+    val originAsset: SwapAsset?,
     val destinationAsset: SwapAsset?,
     val isLoading: Boolean,
     val error: Exception?,
@@ -201,6 +204,7 @@ class SwapRepositoryImpl(
                     SwapQuoteStatusData(
                         data = null,
                         isLoading = true,
+                        originAsset = null,
                         destinationAsset = null,
                         error = null
                     )
@@ -222,15 +226,17 @@ class SwapRepositoryImpl(
                 while (true) {
                     try {
                         val result = swapDataSource.checkSwapStatus(depositAddress)
+                        val originAsset = supportedTokens.find { it.assetId == result.originAssetId }
                         val destinationAsset = supportedTokens.find { it.assetId == result.destinationAssetId }
 
-                        if (destinationAsset == null) {
+                        if (destinationAsset == null || originAsset == null) {
                             data.update {
                                 it.copy(
                                     data = result,
                                     isLoading = false,
+                                    originAsset = null,
                                     destinationAsset = null,
-                                    error = IllegalStateException("No destination asset found")
+                                    error = IllegalStateException("No asset found")
                                 )
                             }
                             break
@@ -239,6 +245,7 @@ class SwapRepositoryImpl(
                                 it.copy(
                                     data = result,
                                     isLoading = false,
+                                    originAsset = originAsset,
                                     destinationAsset = destinationAsset,
                                     error = null
                                 )
@@ -263,15 +270,41 @@ class SwapRepositoryImpl(
 
     @Suppress("TooGenericExceptionCaught")
     override fun requestExactInputQuote(amount: BigDecimal, address: String) {
-        requestQuote(amount, address, SwapMode.EXACT_INPUT)
+        requestSwapFromZecQuote(amount, address, EXACT_INPUT)
     }
 
     override fun requestExactOutputQuote(amount: BigDecimal, address: String) {
-        requestQuote(amount, address, SwapMode.EXACT_OUTPUT)
+        requestSwapFromZecQuote(amount, address, EXACT_OUTPUT)
+    }
+
+    override fun requestExactInputIntoZec(amount: BigDecimal, refundAddress: String) {
+        requestQuoteJob =
+            scope.launch {
+                quote.update { SwapQuoteData.Loading }
+                val originAsset = selectedAsset.value ?: return@launch
+                val destinationAsset = assets.value.zecAsset ?: return@launch
+                try {
+                    val selectedAccount = accountDataSource.getSelectedAccount()
+                    val result =
+                        swapDataSource.requestQuote(
+                            swapMode = EXACT_INPUT,
+                            amount = amount,
+                            refundAddress = refundAddress,
+                            originAsset = originAsset,
+                            destinationAddress = selectedAccount.transparent.address.address,
+                            destinationAsset = destinationAsset,
+                            slippage = slippage.value,
+                            affiliateAddress = "electriccoinco.near"
+                        )
+                    quote.update { SwapQuoteData.Success(quote = result) }
+                } catch (e: Exception) {
+                    quote.update { SwapQuoteData.Error(e) }
+                }
+            }
     }
 
     @Suppress("TooGenericExceptionCaught")
-    private fun requestQuote(amount: BigDecimal, address: String, mode: SwapMode) {
+    private fun requestSwapFromZecQuote(amount: BigDecimal, address: String, mode: SwapMode) {
         requestQuoteJob =
             scope.launch {
                 quote.update { SwapQuoteData.Loading }
@@ -283,7 +316,7 @@ class SwapRepositoryImpl(
                         swapDataSource.requestQuote(
                             swapMode = mode,
                             amount = amount,
-                            originAddress = selectedAccount.transparent.address.address,
+                            refundAddress = selectedAccount.transparent.address.address,
                             originAsset = originAsset,
                             destinationAddress = address,
                             destinationAsset = destinationAsset,

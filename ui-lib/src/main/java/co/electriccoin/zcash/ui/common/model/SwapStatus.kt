@@ -4,4 +4,6 @@ enum class SwapStatus {
     PENDING,
     SUCCESS,
     REFUNDED,
+    FAILED,
+    PROCESSING
 }

@@ -5,6 +5,7 @@ package co.electriccoin.zcash.ui.common.model
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.serialization.BigDecimalSerializer
 import co.electriccoin.zcash.ui.common.serialization.InstantSerializer
+import co.electriccoin.zcash.ui.common.serialization.SwapProviderSerializer
 import co.electriccoin.zcash.ui.common.serialization.ZatoshiSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
@@ -86,5 +87,14 @@ data class SwapMetadata(
     @Serializable(BigDecimalSerializer::class)
     val totalFeesUsd: BigDecimal,
     @SerialName("provider")
+    @Serializable(SwapProviderSerializer::class)
+    val provider: SwapProvider,
+)
+
+@JsonIgnoreUnknownKeys
+@Serializable
+data class SwapProvider(
     val provider: String,
+    val token: String,
+    val chain: String,
 )

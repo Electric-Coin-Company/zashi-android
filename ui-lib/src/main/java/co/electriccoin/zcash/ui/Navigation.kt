@@ -137,8 +137,12 @@ import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactArgs
 import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactScreen
 import co.electriccoin.zcash.ui.screen.swap.ab.SelectABSwapRecipientArgs
 import co.electriccoin.zcash.ui.screen.swap.ab.SelectSwapABRecipientScreen
+import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailArgs
+import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailScreen
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoScreen
+import co.electriccoin.zcash.ui.screen.swap.orconfirmation.ORSwapConfirmationArgs
+import co.electriccoin.zcash.ui.screen.swap.orconfirmation.ORSwapConfirmationScreen
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerScreen
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerArgs
@@ -371,6 +375,8 @@ internal fun MainActivity.Navigation() {
         composable<ExchangeRateOptInArgs> { ExchangeRateOptInScreen() }
         composable<PayArgs> { PayScreen() }
         dialogComposable<PayInfoArgs> { PayInfoScreen() }
+        composable<ORSwapConfirmationArgs> { ORSwapConfirmationScreen() }
+        composable<SwapDetailArgs> { SwapDetailScreen(it.toRoute()) }
     }
 }
 

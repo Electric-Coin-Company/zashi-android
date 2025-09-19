@@ -50,6 +50,8 @@ import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.swap.SwapVM
 import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactVM
 import co.electriccoin.zcash.ui.screen.swap.ab.SelectSwapABRecipientVM
+import co.electriccoin.zcash.ui.screen.swap.orconfirmation.ORSwapConfirmationVM
+import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerVM
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteVM
@@ -137,4 +139,6 @@ val viewModelModule =
         viewModelOf(::AddSwapABContactVM)
         viewModelOf(::AddGenericABContactVM)
         viewModelOf(::UpdateGenericABContactVM)
+        viewModelOf(::ORSwapConfirmationVM)
+        viewModelOf(::SwapDetailVM)
     }

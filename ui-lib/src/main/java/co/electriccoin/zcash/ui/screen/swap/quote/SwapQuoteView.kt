@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +35,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.ZashiSwapQuoteHeader
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.ImageResource
@@ -141,13 +143,15 @@ private fun Success(
             textAlign = TextAlign.Center
         )
         Spacer(24.dp)
-        ZashiSwapQuoteHeader(
-            state =
-                SwapQuoteHeaderState(
-                    from = state.from,
-                    to = state.to
-                )
-        )
+        CompositionLocalProvider(LocalBalancesAvailable provides true) {
+            ZashiSwapQuoteHeader(
+                state =
+                    SwapQuoteHeaderState(
+                        from = state.from,
+                        to = state.to
+                    )
+            )
+        }
         Spacer(32.dp)
         state.items.forEachIndexed { index, item ->
             if (index != 0) {

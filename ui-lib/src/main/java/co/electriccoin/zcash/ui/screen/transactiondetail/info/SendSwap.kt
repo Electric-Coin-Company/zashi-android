@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,10 +37,9 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.orHidden
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailHeader
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailRowHeader
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumn
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumnState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoContainer
@@ -57,13 +57,11 @@ fun SendSwap(
         modifier = modifier
     ) {
         var isExpanded by rememberSaveable { mutableStateOf(false) }
-
         ZashiSwapQuoteHeader(
-            state = state.quoteHeader,
-            balancesAvailable = LocalBalancesAvailable.current
+            state = state.quoteHeader
         )
         Spacer(20.dp)
-        TransactionDetailHeader(
+        TransactionDetailRowHeader(
             title = stringRes(R.string.transaction_detail_info_transaction_details),
             isExpanded = isExpanded,
             onButtonClick = { isExpanded = !isExpanded }
@@ -84,9 +82,7 @@ fun SendSwap(
                 state =
                     TransactionDetailInfoRowState(
                         title = stringRes(R.string.transaction_detail_info_sent_to),
-                        message =
-                            state.depositAddress orHidden
-                                stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                        message = state.depositAddress,
                         trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                         onClick = state.onDepositAddressClick
                     ),
@@ -115,11 +111,7 @@ fun SendSwap(
                             state =
                                 TransactionDetailInfoRowState(
                                     title = stringRes(R.string.transaction_detail_info_recipient),
-                                    message =
-                                        state.recipientAddress orHidden
-                                            stringRes(
-                                                co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder
-                                            ),
+                                    message = state.recipientAddress,
                                     trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                                     onClick = state.onRecipientAddressClick
                                 )
@@ -131,9 +123,7 @@ fun SendSwap(
                         state =
                             TransactionDetailInfoRowState(
                                 title = stringRes(R.string.transaction_detail_info_transaction_id),
-                                message =
-                                    state.transactionId orHidden
-                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                                message = state.transactionId,
                                 trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                                 onClick = state.onTransactionIdClick
                             )
@@ -145,11 +135,23 @@ fun SendSwap(
                             state =
                                 TransactionDetailInfoRowState(
                                     title = stringRes(R.string.transaction_detail_info_total_fees),
-                                    message =
-                                        state.totalFees orHidden
-                                            stringRes(
-                                                co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder
-                                            ),
+                                    message = state.totalFees,
+                                )
+                        )
+                    }
+                    ZashiHorizontalDivider()
+                    CompositionLocalProvider(LocalBalancesAvailable provides true) {
+                        TransactionDetailInfoRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            state =
+                                TransactionDetailInfoRowState(
+                                    title =
+                                        if (state.isSlippageRealized) {
+                                            stringRes(R.string.transaction_detail_info_realized_slippage)
+                                        } else {
+                                            stringRes(R.string.transaction_detail_info_max_slippage)
+                                        },
+                                    message = state.maxSlippage,
                                 )
                         )
                     }
@@ -158,24 +160,8 @@ fun SendSwap(
                         modifier = Modifier.fillMaxWidth(),
                         state =
                             TransactionDetailInfoRowState(
-                                title =
-                                    if (state.isSlippageRealized) {
-                                        stringRes(R.string.transaction_detail_info_realized_slippage)
-                                    } else {
-                                        stringRes(R.string.transaction_detail_info_max_slippage)
-                                    },
-                                message = state.maxSlippage,
-                            )
-                    )
-                    ZashiHorizontalDivider()
-                    TransactionDetailInfoRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        state =
-                            TransactionDetailInfoRowState(
                                 title = stringRes(R.string.transaction_detail_info_timestamp),
-                                message =
-                                    state.completedTimestamp orHidden
-                                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                                message = state.completedTimestamp,
                             )
                     )
                 }
@@ -246,11 +232,7 @@ private fun Preview() =
                 state =
                     SendSwapState(
                         status = SwapStatus.REFUNDED,
-                        quoteHeader =
-                            SwapQuoteHeaderState(
-                                from = null,
-                                to = null
-                            ),
+                        quoteHeader = SwapQuoteHeaderState(from = null, to = null),
                         depositAddress = stringResByAddress(value = "Address", abbreviated = true),
                         totalFees = stringRes(Zatoshi(0)),
                         recipientAddress = null,

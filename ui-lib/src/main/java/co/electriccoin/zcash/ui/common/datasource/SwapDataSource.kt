@@ -16,7 +16,7 @@ interface SwapDataSource {
     suspend fun requestQuote(
         swapMode: SwapMode,
         amount: BigDecimal,
-        originAddress: String,
+        refundAddress: String,
         originAsset: SwapAsset,
         destinationAddress: String,
         destinationAsset: SwapAsset,
