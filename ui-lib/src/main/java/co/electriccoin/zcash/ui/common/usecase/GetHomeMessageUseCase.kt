@@ -76,62 +76,28 @@ class GetHomeMessageUseCase(
     @Suppress("MagicNumber")
     private val runtimeMessage =
         channelFlow {
-            var firstSyncing: WalletSnapshot? = null
-            launch {
-                walletSnapshotDataSource
-                    .observe()
-                    .collect { walletSnapshot ->
-                        val result =
-                            when {
-                                walletSnapshot == null -> null
-                                walletSnapshot.synchronizerError != null &&
-                                    !(
-                                        walletSnapshot.synchronizerError is SynchronizerError.Processor &&
-                                            walletSnapshot.synchronizerError.error is CancellationException
-                                    ) ->
-                                    HomeMessageData.Error(walletSnapshot.synchronizerError)
+            var firstSyncingMessage: HomeMessageData.Syncing? = null
+            combine(
+                shieldFundsRepository.availability,
+                walletSnapshotDataSource.observe()
+            ) { availability, walletSnapshot ->
+                availability to walletSnapshot
+            }.collect { (availability, walletSnapshot) ->
+                if (walletSnapshot == null) {
+                    send(null)
+                    return@collect
+                }
 
-                                walletSnapshot.status == Synchronizer.Status.DISCONNECTED ->
-                                    HomeMessageData.Disconnected
+                val message = createSynchronizerErrorMessage(walletSnapshot)
+                    ?: createDisconnectedMessage(walletSnapshot)
+                    ?: createSyncingMessage(walletSnapshot, syncMessageShownBefore = firstSyncingMessage != null)
+                    ?: createShieldFundsMessage(availability)
 
-                                walletSnapshot.status in
-                                    listOf(
-                                        Synchronizer.Status.SYNCING,
-                                        Synchronizer.Status.STOPPED
-                                    ) -> {
-                                    val progress = walletSnapshot.progress.decimal * 100f
-                                    if (walletSnapshot.restoringState == WalletRestoringState.RESTORING) {
-                                        HomeMessageData.Restoring(
-                                            isSpendable = walletSnapshot.isSpendable,
-                                            progress = progress
-                                        )
-                                    } else {
-                                        HomeMessageData.Syncing(progress = progress)
-                                    }
-                                }
+                if (message is HomeMessageData.Syncing && firstSyncingMessage == null) {
+                    firstSyncingMessage = message
+                }
 
-                                else -> null
-                            }
-
-                        if (result is HomeMessageData.Syncing) {
-                            if (firstSyncing == null) {
-                                firstSyncing = walletSnapshot
-                            }
-
-                            if ((firstSyncing?.progress?.decimal ?: 0f) >= .95f) {
-                                send(null)
-                            } else {
-                                send(result)
-                            }
-                        } else {
-                            firstSyncing = null
-                            send(result)
-                        }
-                    }
-            }
-
-            awaitClose {
-                // do nothing
+                send(message)
             }
         }
 
@@ -167,14 +133,12 @@ class GetHomeMessageUseCase(
             runtimeMessage,
             backupFlow,
             isExchangeRateMessageVisible,
-            shieldFundsRepository.availability,
             isCrashReportMessageVisible,
-        ) { status, runtimeMessage, backup, isCCAvailable, shieldFunds, isCrashReportingEnabled ->
+        ) { status, runtimeMessage, backup, isCCAvailable, isCrashReportingEnabled ->
             createMessage(
                 status = status,
                 runtimeMessage = runtimeMessage,
                 backup = backup,
-                shieldFunds = shieldFunds,
                 isCurrencyConversionEnabled = isCCAvailable,
                 isCrashReportingVisible = isCrashReportingEnabled,
             )
@@ -193,14 +157,12 @@ class GetHomeMessageUseCase(
         status: Synchronizer.Status?,
         runtimeMessage: RuntimeMessage?,
         backup: WalletBackupData,
-        shieldFunds: ShieldFundsData,
         isCurrencyConversionEnabled: Boolean,
         isCrashReportingVisible: Boolean,
     ) = when {
         status == null || status == Synchronizer.Status.INITIALIZING -> null
         runtimeMessage != null -> runtimeMessage
         backup is WalletBackupData.Available -> HomeMessageData.Backup
-        shieldFunds is ShieldFundsData.Available -> HomeMessageData.ShieldFunds(shieldFunds.amount)
         isCurrencyConversionEnabled -> HomeMessageData.EnableCurrencyConversion
         isCrashReportingVisible -> HomeMessageData.CrashReport
         else -> null
@@ -242,6 +204,48 @@ class GetHomeMessageUseCase(
 
         return result
     }
+
+
+    private fun createSynchronizerErrorMessage(walletSnapshot: WalletSnapshot): HomeMessageData.Error? {
+        if (walletSnapshot.synchronizerError == null ||
+            (walletSnapshot.synchronizerError is SynchronizerError.Processor &&
+                walletSnapshot.synchronizerError.error is CancellationException)
+        ) return null
+
+        return HomeMessageData.Error(walletSnapshot.synchronizerError)
+    }
+
+    private fun createDisconnectedMessage(walletSnapshot: WalletSnapshot): HomeMessageData.Disconnected? {
+        return if (walletSnapshot.status == Synchronizer.Status.DISCONNECTED) {
+            HomeMessageData.Disconnected
+        } else {
+            null
+        }
+    }
+
+    private fun createSyncingMessage(
+        walletSnapshot: WalletSnapshot,
+        syncMessageShownBefore: Boolean
+    ): RuntimeMessage? {
+        if (walletSnapshot.status != Synchronizer.Status.SYNCING) return null
+
+        val progress = walletSnapshot.progress.decimal * 100f
+        return if (walletSnapshot.restoringState == WalletRestoringState.RESTORING) {
+            HomeMessageData.Restoring(walletSnapshot.isSpendable, progress)
+        } else {
+            if (syncMessageShownBefore) {
+                if (progress >= .95f) null else HomeMessageData.Syncing(progress = progress)
+            } else {
+                HomeMessageData.Syncing(progress = progress)
+            }
+        }
+    }
+
+    private fun createShieldFundsMessage(availability: ShieldFundsData): HomeMessageData.ShieldFunds? {
+        if (availability !is ShieldFundsData.Available) return null
+        return HomeMessageData.ShieldFunds(zatoshi = availability.amount)
+    }
+
 }
 
 @Suppress("UNCHECKED_CAST", "MagicNumber")

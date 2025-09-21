@@ -54,22 +54,17 @@ class HomeMessageCacheRepositoryImpl(
 sealed interface HomeMessageData {
     val priority: Int
 
-    data class Error(
-        val synchronizerError: SynchronizerError
-    ) : RuntimeMessage()
+    data class Error(val synchronizerError: SynchronizerError) : RuntimeMessage()
 
     data object Disconnected : RuntimeMessage()
 
-    data class Restoring(
-        val isSpendable: Boolean,
-        val progress: Float
-    ) : RuntimeMessage()
+    data class Restoring(val isSpendable: Boolean, val progress: Float) : RuntimeMessage()
 
-    data class Syncing(
-        val progress: Float
-    ) : RuntimeMessage()
+    data class Syncing(val progress: Float) : RuntimeMessage()
 
     data object Updating : RuntimeMessage()
+
+    data class ShieldFunds(val zatoshi: Zatoshi) : RuntimeMessage()
 
     // data object EnableTor : Prioritized {
     //     override val priority: Int = 5
@@ -77,12 +72,6 @@ sealed interface HomeMessageData {
 
     data object Backup : Prioritized {
         override val priority: Int = 4
-    }
-
-    data class ShieldFunds(
-        val zatoshi: Zatoshi
-    ) : Prioritized {
-        override val priority: Int = 3
     }
 
     data object EnableCurrencyConversion : Prioritized {
