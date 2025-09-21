@@ -17,7 +17,6 @@ import co.electriccoin.zcash.ui.common.usecase.ShareQRUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
-import co.electriccoin.zcash.ui.design.util.QrCodeColors
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
@@ -51,11 +50,7 @@ class ORSwapConfirmationVM(
             .map { quote ->
                 ORSwapConfirmationState(
                     onBack = ::onBack,
-                    info =
-                        IconButtonState(
-                            icon = R.drawable.ic_help,
-                            onClick = ::onInfoClick
-                        ),
+                    info = IconButtonState(icon = co.electriccoin.zcash.ui.design.R.drawable.ic_info, onClick = ::onInfoClick),
                     bigIcon = quote.originAsset.tokenIcon,
                     smallIcon = quote.originAsset.chainIcon,
                     amount = stringResByNumber(quote.amountInFormatted),
@@ -73,18 +68,15 @@ class ORSwapConfirmationVM(
                         BigIconButtonState(
                             text = stringRes("Share QR"),
                             icon = R.drawable.ic_qr_code_other,
-                            onClick = {}
+                            onClick = {
+                                onShareClick(
+                                    qrData = quote.depositAddress,
+                                    amount = quote.amountInFormatted,
+                                    tokenTicker = quote.originAsset.tokenTicker,
+                                    chainTicker = quote.originAsset.chainTicker
+                                )
+                            }
                         ),
-                    onShareClick = { colors, pixels ->
-                        onShareClick(
-                            colors = colors,
-                            pixels = pixels,
-                            data = quote.depositAddress,
-                            amount = quote.amountInFormatted,
-                            tokenTicker = quote.originAsset.tokenTicker,
-                            chainTicker = quote.originAsset.chainTicker
-                        )
-                    },
                     footer =
                         styledStringResource(
                             R.string.swap_to_zec_footer,
@@ -126,30 +118,24 @@ class ORSwapConfirmationVM(
     private fun onInfoClick() = navigationRouter.forward(SwapInfoArgs)
 
     private fun onShareClick(
-        colors: QrCodeColors,
-        pixels: Int,
-        data: String,
+        qrData: String,
         amount: BigDecimal,
         tokenTicker: String,
         chainTicker: String
-    ): Job {
-        return viewModelScope.launch {
-            val shareText = stringRes(
-                R.string.swap_to_zec_share_text,
-                stringResByNumber(amount),
-                tokenTicker.uppercase(),
-                chainTicker.uppercase()
-            ).getString(context)
+    ) = viewModelScope.launch {
+        val shareText = stringRes(
+            R.string.swap_to_zec_share_text,
+            stringResByNumber(amount),
+            tokenTicker.uppercase(),
+            chainTicker.uppercase()
+        ).getString(context)
 
-            shareQR(
-                qrData = data,
-                qrSizePx = pixels,
-                qrColors = colors,
-                shareText = shareText,
-                sharePickerText = "Swap Deposit Address",
-                filenamePrefix = "swap_deposit_address_"
-            )
-        }
+        shareQR(
+            qrData = qrData,
+            shareText = shareText,
+            sharePickerText = "Swap Deposit Address",
+            filenamePrefix = "swap_deposit_address_"
+        )
     }
 }
 

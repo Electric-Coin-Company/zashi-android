@@ -27,7 +27,6 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -62,17 +61,12 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.design.util.styledStringResource
-import co.electriccoin.zcash.ui.screen.request.view.DEFAULT_QR_CODE_SIZE
-import kotlin.math.roundToInt
 
 @Composable
 fun ORSwapConfirmationView(state: ORSwapConfirmationState) {
     BlankBgScaffold(
         topBar = { TopAppBar(state) }
     ) {
-        val sizePixels = with(LocalDensity.current) { DEFAULT_QR_CODE_SIZE.toPx() }.roundToInt()
-        val colors = QrCodeDefaults.colors()
-
         Column(
             modifier =
                 Modifier
@@ -115,11 +109,7 @@ fun ORSwapConfirmationView(state: ORSwapConfirmationState) {
                 Spacer(8.dp)
                 BigIconButton(
                     modifier = Modifier.weight(1f),
-                    state = state.shareButton.copy(
-                        onClick = {
-                            state.onShareClick(colors, sizePixels)
-                        }
-                    )
+                    state = state.shareButton
                 )
             }
             Spacer(24.dp)
@@ -320,7 +310,6 @@ private fun Preview() =
                             stringRes("Share QR"),
                             co.electriccoin.zcash.ui.R.drawable.ic_qr_code_other
                         ) {},
-                    onShareClick = { _, _ -> },
                     footer =
                         styledStringResource(
                             resource = co.electriccoin.zcash.ui.R.string.swap_to_zec_footer,

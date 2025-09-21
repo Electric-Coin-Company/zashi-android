@@ -21,7 +21,6 @@ data class ORSwapConfirmationState(
     val address: StringResource,
     val copyButton: BigIconButtonState,
     val shareButton: BigIconButtonState,
-    val onShareClick: (colors: QrCodeColors, pixels: Int) -> Unit,
     val footer: StyledStringResource,
     val primaryButton: ButtonState,
     val onBack: () -> Unit
