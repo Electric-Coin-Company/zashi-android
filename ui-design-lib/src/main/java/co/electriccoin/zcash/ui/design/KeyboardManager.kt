@@ -7,6 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,9 +26,13 @@ import kotlin.time.Duration.Companion.seconds
 @Stable
 class KeyboardManager(
     isOpen: Boolean,
-    private val softwareKeyboardController: SoftwareKeyboardController?
+    private val rootSoftwareKeyboardController: SoftwareKeyboardController?,
 ) {
     private var targetState = MutableStateFlow(isOpen)
+
+    private var otherWindowsSoftwareKeyboardController by mutableStateOf<SoftwareKeyboardController?>(null)
+
+    val controller by derivedStateOf { otherWindowsSoftwareKeyboardController ?: rootSoftwareKeyboardController }
 
     var isOpen by mutableStateOf(isOpen)
         private set
@@ -35,7 +40,7 @@ class KeyboardManager(
     suspend fun close() {
         if (targetState.value) {
             withTimeoutOrNull(.5.seconds) {
-                softwareKeyboardController?.hide()
+                controller?.hide()
                 targetState.filter { !it }.first()
             }
         }
@@ -50,14 +55,26 @@ class KeyboardManager(
         targetState.update { false }
         isOpen = false
     }
+
+    fun onDialogOpened(controller: SoftwareKeyboardController) {
+        this.otherWindowsSoftwareKeyboardController = controller
+    }
+
+    fun onDialogClosed(controller: SoftwareKeyboardController) {
+        if (otherWindowsSoftwareKeyboardController === controller) {
+            this.otherWindowsSoftwareKeyboardController = null
+        }
+    }
 }
 
 @Composable
 fun rememberKeyboardManager(): KeyboardManager {
     val isKeyboardOpen by rememberKeyboardState()
-    val softwareKeyboardController = LocalSoftwareKeyboardController.current
-    val keyboardManager = remember { KeyboardManager(isKeyboardOpen, softwareKeyboardController) }
-    LaunchedEffect(isKeyboardOpen) {
+    val rootSoftwareKeyboardController = LocalSoftwareKeyboardController.current
+    val keyboardManager = remember(rootSoftwareKeyboardController) {
+        KeyboardManager(isKeyboardOpen, rootSoftwareKeyboardController)
+    }
+    LaunchedEffect(isKeyboardOpen, keyboardManager.controller) {
         if (isKeyboardOpen) {
             keyboardManager.onKeyboardOpened()
         } else {
