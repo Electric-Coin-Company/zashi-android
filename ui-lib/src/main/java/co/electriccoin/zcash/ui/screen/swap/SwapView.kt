@@ -20,12 +20,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -81,15 +77,8 @@ import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
 
 @Composable
-internal fun SwapView(state: SwapState) {
-    val focusRequester = remember { FocusRequester() }
-    var hasBeenAutofocused by rememberSaveable { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        if (!hasBeenAutofocused) {
-            focusRequester.requestFocus()
-            hasBeenAutofocused = true
-        }
-    }
+internal fun SwapView(state: SwapState, onSideEffect: (amountFocusRequester: FocusRequester) -> Unit = { }) {
+    val amountFocusRequester = remember { FocusRequester() }
 
     BlankBgScaffold(
         topBar = { TopAppBar(state) }
@@ -103,7 +92,7 @@ internal fun SwapView(state: SwapState) {
         ) {
             SwapAmountTextField(
                 state = state.amountTextField,
-                focusRequester = focusRequester
+                focusRequester = amountFocusRequester
             )
 
             if (state.addressLocation == TOP) {
@@ -154,6 +143,10 @@ internal fun SwapView(state: SwapState) {
                     state = state.primaryButton
                 )
             }
+        }
+
+        SideEffect {
+            onSideEffect(amountFocusRequester)
         }
     }
 }

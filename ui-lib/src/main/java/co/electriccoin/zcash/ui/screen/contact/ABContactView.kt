@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -47,9 +48,10 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 @Composable
 fun ABContactView(
     state: ABContactState,
-    addressFocusRequester: FocusRequester = remember { FocusRequester() },
-    nameFocusRequester: FocusRequester = remember { FocusRequester() }
+    onSideEffect: (nameFocusRequester: FocusRequester, addressFocusRequester: FocusRequester) -> Unit = { _, _ -> }
 ) {
+    val addressFocusRequester = remember { FocusRequester() }
+    val nameFocusRequester = remember { FocusRequester() }
     BlankBgScaffold(
         topBar = {
             ContactTopAppBar(onBack = state.onBack, state = state)
@@ -65,6 +67,10 @@ fun ABContactView(
             addressFocusRequester = addressFocusRequester,
             nameFocusRequester = nameFocusRequester
         )
+
+        SideEffect {
+            onSideEffect(nameFocusRequester, addressFocusRequester)
+        }
     }
 }
 
