@@ -26,7 +26,7 @@
     <string name="swap_quote_error_too_low_try_at_least">Amount is too low for bridge, try at least %s</string>
     <string name="swap_quote_error_too_low_try_higher">Amount is too low for bridge, try higher amount.</string>
     <string name="swap_quote_error_getting_quote">We tried but couldn\’t get a quote for a payment with your
-        parameters. You can try to adjust the payment details or try again later.</string>
+        parameters. You can try to adjust the slippage or try again later.</string>
     <string name="swap_quote_unavailable">Quote Unavailable</string>
     <string name="swap_quote_cancel_payment">Cancel payment</string>
     <string name="swap_quote_edit_payment">Edit payment</string>
