@@ -134,13 +134,7 @@ fun SwapDetailView(
                         }
                     }
                     ZashiHorizontalDivider()
-                    CompositionLocalProvider(
-                        LocalBalancesAvailable provides
-                            (state.status.status in listOf(null, SwapStatus.PENDING, SwapStatus.PROCESSING) ||
-                                LocalBalancesAvailable.current)
-                    ) {
-                        TransactionDetailInfoRow(state = state.timestamp)
-                    }
+                    TransactionDetailInfoRow(state = state.timestamp)
                 }
             }
             BottomBar(

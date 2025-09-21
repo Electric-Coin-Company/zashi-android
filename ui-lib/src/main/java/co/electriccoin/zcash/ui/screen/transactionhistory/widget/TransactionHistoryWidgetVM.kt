@@ -11,12 +11,13 @@ import co.electriccoin.zcash.ui.common.model.DistributionDimension
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.repository.Transaction
-import co.electriccoin.zcash.ui.common.usecase.GetTransactionsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetActivitiesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailArgs
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
 import kotlinx.coroutines.flow.SharingStarted
@@ -26,7 +27,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class TransactionHistoryWidgetVM(
-    getTransactions: GetTransactionsUseCase,
+    getActivities: GetActivitiesUseCase,
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     private val transactionHistoryMapper: TransactionHistoryMapper,
     private val navigationRouter: NavigationRouter,
@@ -37,7 +38,7 @@ class TransactionHistoryWidgetVM(
 ) : ViewModel() {
     val state =
         combine(
-            getTransactions.observe(),
+            getActivities.observe(),
             getWalletRestoringState.observe(),
         ) { transactions, restoringState ->
             when {
@@ -76,6 +77,7 @@ class TransactionHistoryWidgetVM(
                                         data = transaction,
                                         restoreTimestamp = restoreTimestampDataSource.getOrCreate(),
                                         onTransactionClick = ::onTransactionClick,
+                                        onSwapClick = ::onSwapClick
                                     )
                                 }
                     )
@@ -85,6 +87,8 @@ class TransactionHistoryWidgetVM(
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = TransactionHistoryWidgetState.Loading
         )
+
+    private fun onSwapClick(depositAddress: String) = navigationRouter.forward(SwapDetailArgs(depositAddress))
 
     private fun onTransactionClick(transaction: Transaction) {
         navigationRouter.forward(TransactionDetailArgs(transaction.id.txIdString()))

@@ -6,12 +6,14 @@ import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
 import co.electriccoin.zcash.ui.common.repository.SendTransaction
 import co.electriccoin.zcash.ui.common.repository.ShieldTransaction
 import co.electriccoin.zcash.ui.common.repository.Transaction
-import co.electriccoin.zcash.ui.common.usecase.ListTransactionData
+import co.electriccoin.zcash.ui.common.usecase.ActivityData
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
 import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDateTime
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionState
 import java.time.Instant
@@ -21,14 +23,29 @@ import java.time.temporal.ChronoUnit
 
 class TransactionHistoryMapper {
     fun createTransactionState(
-        data: ListTransactionData,
+        data: ActivityData,
         restoreTimestamp: Instant,
-        onTransactionClick: (Transaction) -> Unit
-    ): TransactionState =
-        TransactionState(
+        onTransactionClick: (Transaction) -> Unit,
+        onSwapClick: (depositAddress: String) -> Unit
+    ): TransactionState = when (data) {
+        is ActivityData.BySwap -> TransactionState(
+            key = data.swap.depositAddress,
+            bigIcon = R.drawable.ic_activity_swap,
+            smallIcon = R.drawable.ic_transaction_provider_near,
+            title = stringRes("Swap"),
+            subtitle = getSubtitle(data.swap.lastUpdated),
+            isShielded = false,
+            value = styledStringResource(
+                stringResByDynamicCurrencyNumber(data.swap.totalFeesUsd, "ZEC"),
+                StringResourceColor.PRIMARY
+            ),
+            onClick = { onSwapClick(data.swap.depositAddress) },
+            isUnread = false
+        )
+        is ActivityData.ByTransaction -> TransactionState(
             key = data.transaction.id.txIdString(),
-            icon = getIcon(data),
-            providerIcon =
+            bigIcon = getIcon(data),
+            smallIcon =
                 if (data.metadata.swapMetadata
                         ?.provider
                         ?.provider
@@ -39,15 +56,16 @@ class TransactionHistoryMapper {
                     null
                 },
             title = getTitle(data),
-            subtitle = getSubtitle(data),
+            subtitle = getSubtitle(data.transaction.timestamp),
             isShielded = isShielded(data),
             value = getValue(data),
             onClick = { onTransactionClick(data.transaction) },
             isUnread = isUnread(data, restoreTimestamp)
         )
+    }
 
     private fun isUnread(
-        data: ListTransactionData,
+        data: ActivityData.ByTransaction,
         restoreTimestamp: Instant,
     ): Boolean {
         val transactionDateTime = data.transaction.timestamp?.atZone(ZoneId.systemDefault())
@@ -63,7 +81,7 @@ class TransactionHistoryMapper {
         }
     }
 
-    private fun getIcon(data: ListTransactionData) =
+    private fun getIcon(data: ActivityData.ByTransaction) =
         when (data.transaction) {
             is SendTransaction.Success -> R.drawable.ic_transaction_sent
             is SendTransaction.Pending -> R.drawable.ic_transaction_send_pending
@@ -76,7 +94,7 @@ class TransactionHistoryMapper {
             is ShieldTransaction.Failed -> R.drawable.ic_transaction_shield_failed
         }
 
-    private fun getTitle(data: ListTransactionData) =
+    private fun getTitle(data: ActivityData.ByTransaction) =
         when (data.transaction) {
             is SendTransaction.Success -> stringRes(R.string.transaction_history_sent)
             is SendTransaction.Pending -> stringRes(R.string.transaction_history_sending)
@@ -89,8 +107,8 @@ class TransactionHistoryMapper {
             is ShieldTransaction.Failed -> stringRes(R.string.transaction_history_shielding_failed)
         }
 
-    private fun getSubtitle(data: ListTransactionData): StringResource? {
-        val timestamp = data.transaction.timestamp ?: return null
+    private fun getSubtitle(timestamp: Instant?): StringResource? {
+        if (timestamp == null) return null
         val transactionDate = timestamp.atZone(ZoneId.systemDefault())
         val daysBetween = ChronoUnit.DAYS.between(transactionDate.toLocalDate(), LocalDate.now())
         return when {
@@ -107,13 +125,13 @@ class TransactionHistoryMapper {
         }
     }
 
-    private fun isShielded(data: ListTransactionData) =
+    private fun isShielded(data: ActivityData.ByTransaction) =
         data.transaction
             .transactionOutputs
             .none { output -> output.pool == TransactionPool.TRANSPARENT } &&
             data.transaction !is ShieldTransaction
 
-    private fun getValue(data: ListTransactionData) =
+    private fun getValue(data: ActivityData.ByTransaction) =
         when (data.transaction) {
             is SendTransaction.Success,
             is SendTransaction.Pending ->

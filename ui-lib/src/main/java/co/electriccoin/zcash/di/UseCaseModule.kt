@@ -23,9 +23,10 @@ import co.electriccoin.zcash.ui.common.usecase.FlipTransactionBookmarkUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABContactByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABSwapContactsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetActivitiesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCoinbaseStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetConfigurationUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredActivitiesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetFlexaStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
@@ -161,7 +162,7 @@ val useCaseModule =
         singleOf(::ObserveClearSendUseCase)
         singleOf(::PrefillSendUseCase)
         factoryOf(::GetTransactionsUseCase)
-        factoryOf(::GetCurrentFilteredTransactionsUseCase) onClose ::closeableCallback
+        factoryOf(::GetCurrentFilteredActivitiesUseCase) onClose ::closeableCallback
         factoryOf(::CreateProposalUseCase)
         factoryOf(::OnZip321ScannedUseCase)
         factoryOf(::OnAddressScannedUseCase)
@@ -242,4 +243,5 @@ val useCaseModule =
         factoryOf(::SaveORSwapUseCase)
         factoryOf(::GetORSwapQuoteUseCase)
         factoryOf(::ShareQRUseCase)
+        factoryOf(::GetActivitiesUseCase)
     }

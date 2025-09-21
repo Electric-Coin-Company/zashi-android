@@ -13,17 +13,15 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import java.time.Instant
 
-class GetActivityUseCase(
+class GetActivitiesUseCase(
     private val transactionRepository: TransactionRepository,
     private val metadataRepository: MetadataRepository,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun observe() =
-        combine(
-            observeTransactions(),
-            observeSwaps()
-        ) { transactions, swaps ->
+        combine(observeTransactions(), observeSwaps()) { transactions, swaps ->
             if (transactions == null || swaps == null) {
                 null
             } else {
@@ -32,8 +30,8 @@ class GetActivityUseCase(
         }.map {
             it?.sortedByDescending { activity ->
                 when (activity) {
-                    is ActivityData.TransactionItem -> activity.transaction.timestamp
-                    is ActivityData.SwapItem -> activity.swap.lastUpdated
+                    is ActivityData.ByTransaction -> activity.transaction.timestamp
+                    is ActivityData.BySwap -> activity.swap.lastUpdated
                 }
             }
         }
@@ -52,10 +50,7 @@ class GetActivityUseCase(
                             metadataRepository
                                 .observeTransactionMetadata(it)
                                 .mapLatest { metadata ->
-                                    ActivityData.TransactionItem(
-                                        transaction = it,
-                                        metadata = metadata
-                                    )
+                                    ActivityData.ByTransaction(transaction = it, metadata = metadata)
                                 }
                         }.combineToFlow()
                 }
@@ -66,20 +61,20 @@ class GetActivityUseCase(
             .observeORSwapMetadata()
             .map {
                 it?.map { metadata ->
-                    ActivityData.SwapItem(
-                        swap = metadata
-                    )
+                    ActivityData.BySwap(swap = metadata)
                 }
             }
 }
 
 sealed interface ActivityData {
-    data class TransactionItem(
-        val transaction: Transaction,
-        val metadata: TransactionMetadata
-    ) : ActivityData
 
-    data class SwapItem(
-        val swap: SwapMetadata
-    ) : ActivityData
+    val timestamp: Instant?
+
+    data class ByTransaction(val transaction: Transaction, val metadata: TransactionMetadata) : ActivityData {
+        override val timestamp = transaction.timestamp
+    }
+
+    data class BySwap(val swap: SwapMetadata) : ActivityData {
+        override val timestamp = swap.lastUpdated
+    }
 }

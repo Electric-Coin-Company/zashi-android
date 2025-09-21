@@ -61,7 +61,7 @@ import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInVM
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsVM
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailVM
 import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersVM
-import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryViewModel
+import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryVM
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetVM
 import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNoteViewModel
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressVM
@@ -103,7 +103,7 @@ val viewModelModule =
         viewModelOf(::TransactionFiltersVM)
         viewModelOf(::TransactionProgressVM)
         viewModelOf(::TransactionHistoryWidgetVM)
-        viewModelOf(::TransactionHistoryViewModel)
+        viewModelOf(::TransactionHistoryVM)
         viewModelOf(::TransactionDetailVM)
         viewModelOf(::AddressBookVM)
         viewModelOf(::SelectRecipientVM)

@@ -18,11 +18,12 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.loadingImageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
+import co.electriccoin.zcash.ui.design.util.stringResByDateTime
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
-import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailHeaderState
 import co.electriccoin.zcash.ui.screen.transactiondetail.CommonTransactionDetailMapper
+import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailHeaderState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRowState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailSwapStatusRowState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailSwapStatusRowState.Mode.SWAP_INTO_ZEC
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import java.time.ZoneId
 
 class SwapDetailVM(
     getORSwapQuote: GetORSwapQuoteUseCase,
@@ -67,7 +69,14 @@ class SwapDetailVM(
                     maxSlippage = createSlippageState(swapData),
                     timestamp = TransactionDetailInfoRowState(
                         title = stringRes(R.string.transaction_detail_info_timestamp),
-                        message = mapper.createTransactionDetailTimestamp(swapData.data?.data?.timestamp),
+                        message = swapData.data?.data?.timestamp
+                            ?.atZone(ZoneId.systemDefault())
+                            ?.let {
+                                stringResByDateTime(
+                                    zonedDateTime = it,
+                                    useFullFormat = true
+                                )
+                            },
                     ),
                     errorFooter = mapper.createTransactionDetailErrorFooter(swapData.data?.error),
                     primaryButton = createPrimaryButtonState(swapData, swapData.data?.error),

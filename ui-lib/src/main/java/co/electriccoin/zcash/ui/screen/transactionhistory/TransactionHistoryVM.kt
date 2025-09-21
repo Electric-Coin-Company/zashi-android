@@ -9,14 +9,15 @@ import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
+import co.electriccoin.zcash.ui.common.usecase.ActivityData
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFulltextFiltersUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredActivitiesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
-import co.electriccoin.zcash.ui.common.usecase.ListTransactionData
 import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailArgs
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersArgs
 import kotlinx.coroutines.Dispatchers
@@ -33,8 +34,8 @@ import java.time.YearMonth
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-class TransactionHistoryViewModel(
-    getCurrentFilteredTransactions: GetCurrentFilteredTransactionsUseCase,
+class TransactionHistoryVM(
+    getCurrentActivities: GetCurrentFilteredActivitiesUseCase,
     getTransactionFilters: GetTransactionFiltersUseCase,
     transactionFilterRepository: TransactionFilterRepository,
     private val applyTransactionFulltextFilters: ApplyTransactionFulltextFiltersUseCase,
@@ -62,25 +63,25 @@ class TransactionHistoryViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     val state =
         combine(
-            getCurrentFilteredTransactions.observe(),
+            getCurrentActivities.observe(),
             getTransactionFilters.observe(),
-        ) { transactions, filters ->
-            transactions to filters
-        }.mapLatest { (transactions, filters) ->
+        ) { activities, filters ->
+            activities to filters
+        }.mapLatest { (activities, filters) ->
             when {
-                transactions == null ->
+                activities == null ->
                     createLoadingState(
                         filtersSize = filters.size,
                     )
 
-                transactions.isEmpty() ->
+                activities.isEmpty() ->
                     createEmptyState(
                         filtersSize = filters.size,
                     )
 
                 else ->
                     createDataState(
-                        transactions = transactions,
+                        transactions = activities,
                         filtersSize = filters.size,
                         restoreTimestamp = restoreTimestampDataSource.getOrCreate()
                     )
@@ -101,7 +102,7 @@ class TransactionHistoryViewModel(
     }
 
     private fun createDataState(
-        transactions: List<ListTransactionData>,
+        transactions: List<ActivityData>,
         filtersSize: Int,
         restoreTimestamp: Instant,
     ): TransactionHistoryState.Data {
@@ -111,7 +112,7 @@ class TransactionHistoryViewModel(
             transactions
                 .groupBy {
                     val other =
-                        it.transaction.timestamp
+                        it.timestamp
                             ?.atZone(ZoneId.systemDefault())
                             ?.toLocalDate() ?: now
                     when {
@@ -140,13 +141,14 @@ class TransactionHistoryViewModel(
                             key = headerId,
                         ),
                     ) +
-                        transactions.map { transaction ->
+                        transactions.map { activity ->
                             TransactionHistoryItem.Transaction(
                                 state =
                                     transactionHistoryMapper.createTransactionState(
-                                        data = transaction,
+                                        data = activity,
+                                        restoreTimestamp = restoreTimestamp,
                                         onTransactionClick = ::onTransactionClick,
-                                        restoreTimestamp = restoreTimestamp
+                                        onSwapClick = ::onSwapClick
                                     )
                             )
                         }
@@ -215,6 +217,9 @@ class TransactionHistoryViewModel(
     private fun onTransactionClick(transaction: Transaction) {
         navigationRouter.forward(TransactionDetailArgs(transaction.id.txIdString()))
     }
+
+    private fun onSwapClick(depositAddress: String) = navigationRouter.forward(SwapDetailArgs(depositAddress))
+
 
     private fun onTransactionFiltersClicked() = navigationRouter.forward(TransactionFiltersArgs)
 }
