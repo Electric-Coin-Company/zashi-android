@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.swap.orconfirmation
 
+import android.content.Context
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,20 +13,26 @@ import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveORSwapUseCase
+import co.electriccoin.zcash.ui.common.usecase.ShareQRUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
+import co.electriccoin.zcash.ui.design.util.QrCodeColors
+import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
 class ORSwapConfirmationVM(
@@ -33,7 +40,9 @@ class ORSwapConfirmationVM(
     private val cancelSwapQuote: CancelSwapQuoteUseCase,
     private val copyToClipboard: CopyToClipboardUseCase,
     private val navigationRouter: NavigationRouter,
-    private val saveORSwap: SaveORSwapUseCase
+    private val saveORSwap: SaveORSwapUseCase,
+    private val shareQR: ShareQRUseCase,
+    private val context: Context
 ) : ViewModel() {
     val state: StateFlow<ORSwapConfirmationState?> =
         swapRepository.quote
@@ -53,17 +62,29 @@ class ORSwapConfirmationVM(
                     amountFiat = stringResByDynamicCurrencyNumber(quote.amountInUsd, FiatCurrency.USD.symbol),
                     onAmountClick = { onAmountClick(quote.amountInFormatted) },
                     qr = quote.depositAddress,
+                    address = stringResByAddress(quote.depositAddress, true),
                     copyButton =
                         BigIconButtonState(
-                            stringRes("Copy"),
-                            R.drawable.ic_copy,
+                            text = stringRes("Copy"),
+                            icon = R.drawable.ic_copy,
                             onClick = { onCopyAddressClick(quote.depositAddress) }
                         ),
                     shareButton =
                         BigIconButtonState(
-                            stringRes("Share QR"),
-                            R.drawable.ic_qr_code_other
-                        ) {},
+                            text = stringRes("Share QR"),
+                            icon = R.drawable.ic_qr_code_other,
+                            onClick = {}
+                        ),
+                    onShareClick = { colors, pixels ->
+                        onShareClick(
+                            colors = colors,
+                            pixels = pixels,
+                            data = quote.depositAddress,
+                            amount = quote.amountInFormatted,
+                            tokenTicker = quote.originAsset.tokenTicker,
+                            chainTicker = quote.originAsset.chainTicker
+                        )
+                    },
                     footer =
                         styledStringResource(
                             R.string.swap_to_zec_footer,
@@ -76,7 +97,7 @@ class ORSwapConfirmationVM(
                         ),
                     primaryButton =
                         ButtonState(
-                            stringRes("I’ve sent the funds"),
+                            text = stringRes("I’ve sent the funds"),
                             onClick = ::onSentFundsClick
                         ),
                 )
@@ -88,13 +109,13 @@ class ORSwapConfirmationVM(
 
     private fun onAmountClick(amountInFormatted: BigDecimal) =
         copyToClipboard(
-            tag = "deposit address",
+            tag = "Swap Amount",
             value = amountInFormatted.toPlainString()
         )
 
     private fun onCopyAddressClick(depositAddress: String) =
         copyToClipboard(
-            tag = "deposit address",
+            tag = "Swap Deposit Address",
             value = depositAddress
         )
 
@@ -103,4 +124,32 @@ class ORSwapConfirmationVM(
     private fun onSentFundsClick() = saveORSwap()
 
     private fun onInfoClick() = navigationRouter.forward(SwapInfoArgs)
+
+    private fun onShareClick(
+        colors: QrCodeColors,
+        pixels: Int,
+        data: String,
+        amount: BigDecimal,
+        tokenTicker: String,
+        chainTicker: String
+    ): Job {
+        return viewModelScope.launch {
+            val shareText = stringRes(
+                R.string.swap_to_zec_share_text,
+                stringResByNumber(amount),
+                tokenTicker.uppercase(),
+                chainTicker.uppercase()
+            ).getString(context)
+
+            shareQR(
+                qrData = data,
+                qrSizePx = pixels,
+                qrColors = colors,
+                shareText = shareText,
+                sharePickerText = "Swap Deposit Address",
+                filenamePrefix = "swap_deposit_address_"
+            )
+        }
+    }
 }
+

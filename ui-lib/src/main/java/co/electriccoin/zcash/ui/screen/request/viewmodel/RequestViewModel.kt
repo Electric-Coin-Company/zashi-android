@@ -53,7 +53,7 @@ class RequestViewModel(
     exchangeRateRepository: ExchangeRateRepository,
     getZcashCurrency: GetZcashCurrencyProvider,
     getMonetarySeparators: GetMonetarySeparatorProvider,
-    shareImageBitmap: ShareImageUseCase,
+    private val shareImageBitmap: ShareImageUseCase,
     zip321BuildUriUseCase: Zip321BuildUriUseCase,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val navigationRouter: NavigationRouter,
@@ -148,7 +148,6 @@ class RequestViewModel(
                                 colors = colors,
                                 pixels = pixels,
                                 requestUri = uri,
-                                shareImageBitmap = shareImageBitmap
                             )
                         },
                         onBack = ::onBack,
@@ -315,7 +314,6 @@ class RequestViewModel(
         colors: QrCodeColors,
         pixels: Int,
         requestUri: String,
-        shareImageBitmap: ShareImageUseCase,
     ) = viewModelScope.launch {
         bitmapForData(
             value = requestUri,
@@ -323,7 +321,7 @@ class RequestViewModel(
             colors = colors,
         ).filterNotNull()
             .collect { bitmap ->
-                onRequestQrCodeShare(bitmap, shareImageBitmap)
+                onRequestQrCodeShare(bitmap)
             }
     }
 
@@ -471,24 +469,19 @@ class RequestViewModel(
         }
     }
 
-    private fun onRequestQrCodeShare(
-        bitmap: ImageBitmap,
-        shareImageBitmap: ShareImageUseCase,
-    ) = viewModelScope.launch {
-        shareImageBitmap(
+    private fun onRequestQrCodeShare(bitmap: ImageBitmap) = viewModelScope.launch {
+        val shareResult = shareImageBitmap(
             shareImageBitmap = bitmap.asAndroidBitmap(),
             filePrefix = TEMP_FILE_NAME_PREFIX,
             fileSuffix = TEMP_FILE_NAME_SUFFIX,
             shareText = application.getString(R.string.request_qr_code_share_chooser_text),
             sharePickerText = application.getString(R.string.request_qr_code_share_chooser_title),
-        ).collect { shareResult ->
-            if (shareResult) {
-                Twig.info { "Sharing the request QR code was successful" }
-                shareResultCommand.emit(true)
-            } else {
-                Twig.info { "Sharing the request QR code failed" }
-                shareResultCommand.emit(false)
-            }
+        )
+
+        if (shareResult) {
+            shareResultCommand.emit(true)
+        } else {
+            shareResultCommand.emit(false)
         }
     }
 

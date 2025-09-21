@@ -47,4 +47,5 @@
     <string name="swap_to_zec_footer">Use your %s wallet \n to deposit funds. Depositing other assets may result in
         loss of funds.</string>
     <string name="swap_to_zec_footer_bold">%s on %s</string>
+    <string name="swap_to_zec_share_text">Send %s %s on %s to the deposit address to receive ZEC in Zashi.</string>
 </resources>

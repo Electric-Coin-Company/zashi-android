@@ -19,7 +19,7 @@ class ShareImageUseCase(
     private val context: Context,
     private val versionInfoProvider: GetVersionInfoProvider
 ) {
-    operator fun invoke(
+    suspend operator fun invoke(
         shareImageBitmap: Bitmap,
         shareText: String? = null,
         sharePickerText: String,
@@ -35,7 +35,7 @@ class ShareImageUseCase(
         sharePickerText = sharePickerText,
     )
 
-    private fun shareData(
+    private suspend fun shareData(
         context: Context,
         shareImageBitmap: Bitmap,
         shareText: String?,
@@ -43,47 +43,41 @@ class ShareImageUseCase(
         versionInfo: VersionInfo,
         filePrefix: String,
         fileSuffix: String,
-    ): Flow<Boolean> =
-        callbackFlow {
-            // Initialize cache directory
-            val cacheDir = context.getInternalCacheDirSuspend(CACHE_SUBDIR)
+    ): Boolean {
+        // Initialize cache directory
+        val cacheDir = context.getInternalCacheDirSuspend(CACHE_SUBDIR)
 
-            // Save the bitmap to a temporary file in the cache directory
-            val bitmapFile =
-                withContext(Dispatchers.IO) {
-                    File
-                        .createTempFile(
-                            filePrefix,
-                            fileSuffix,
-                            cacheDir,
-                        ).also {
-                            it.storeBitmap(shareImageBitmap)
-                        }
-                }
-
-            // Example of the expected temporary file path:
-            // /data/user/0/co.electriccoin.zcash.debug/cache/zashi_qr_images/
-            // zcash_address_qr_6455164324646067652.png
-
-            val shareIntent =
-                FileShareUtil.newShareContentIntent(
-                    context = context,
-                    dataFilePath = bitmapFile.absolutePath,
-                    fileType = FileShareUtil.ZASHI_QR_CODE_MIME_TYPE,
-                    shareText = shareText,
-                    sharePickerText = sharePickerText,
-                    versionInfo = versionInfo,
-                )
-            runCatching {
-                context.startActivity(shareIntent)
-                trySend(true)
-            }.onFailure {
-                trySend(false)
+        // Save the bitmap to a temporary file in the cache directory
+        val bitmapFile =
+            withContext(Dispatchers.IO) {
+                File
+                    .createTempFile(
+                        filePrefix,
+                        fileSuffix,
+                        cacheDir,
+                    ).also {
+                        it.storeBitmap(shareImageBitmap)
+                    }
             }
-            awaitClose {
-                // No resources to release
-            }
-        }
+
+        // Example of the expected temporary file path:
+        // /data/user/0/co.electriccoin.zcash.debug/cache/zashi_qr_images/
+        // zcash_address_qr_6455164324646067652.png
+
+        val shareIntent =
+            FileShareUtil.newShareContentIntent(
+                context = context,
+                dataFilePath = bitmapFile.absolutePath,
+                fileType = FileShareUtil.ZASHI_QR_CODE_MIME_TYPE,
+                shareText = shareText,
+                sharePickerText = sharePickerText,
+                versionInfo = versionInfo,
+            )
+        return runCatching {
+            context.startActivity(shareIntent)
+            true
+        }.getOrElse { false }
+    }
 
     private suspend fun File.storeBitmap(bitmap: Bitmap) =
         withContext(Dispatchers.IO) {

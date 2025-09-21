@@ -22,10 +22,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,12 +62,17 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.design.util.styledStringResource
+import co.electriccoin.zcash.ui.screen.request.view.DEFAULT_QR_CODE_SIZE
+import kotlin.math.roundToInt
 
 @Composable
 fun ORSwapConfirmationView(state: ORSwapConfirmationState) {
     BlankBgScaffold(
         topBar = { TopAppBar(state) }
     ) {
+        val sizePixels = with(LocalDensity.current) { DEFAULT_QR_CODE_SIZE.toPx() }.roundToInt()
+        val colors = QrCodeDefaults.colors()
+
         Column(
             modifier =
                 Modifier
@@ -76,13 +83,29 @@ fun ORSwapConfirmationView(state: ORSwapConfirmationState) {
             Header(state)
             Spacer(12.dp)
             ZashiQr(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
+                modifier = Modifier.align(CenterHorizontally),
                 state = QrState(qrData = state.qr),
                 colors =
                     QrCodeDefaults.colors(
                         border = Color.Unspecified
                     )
             )
+            Surface(
+                modifier = Modifier.align(CenterHorizontally),
+                shape = CircleShape,
+                color = ZashiColors.Surfaces.bgSecondary
+            ) {
+                Box(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                ) {
+                    Text(
+                        text = state.address.getValue(),
+                        style = ZashiTypography.textSm,
+                        fontWeight = FontWeight.Medium,
+                        color = ZashiColors.Text.textPrimary
+                    )
+                }
+            }
             Spacer(12.dp)
             Row {
                 BigIconButton(
@@ -92,7 +115,11 @@ fun ORSwapConfirmationView(state: ORSwapConfirmationState) {
                 Spacer(8.dp)
                 BigIconButton(
                     modifier = Modifier.weight(1f),
-                    state = state.shareButton
+                    state = state.shareButton.copy(
+                        onClick = {
+                            state.onShareClick(colors, sizePixels)
+                        }
+                    )
                 )
             }
             Spacer(24.dp)
@@ -126,7 +153,7 @@ private fun BigIconButton(
         border = BorderStroke(1.dp, ZashiColors.Utility.Gray.utilityGray100),
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Image(
@@ -162,7 +189,7 @@ private fun Header(state: ORSwapConfirmationState) {
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
                 ),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = CenterHorizontally
     ) {
         Row(
             verticalAlignment = CenterVertically
@@ -279,19 +306,21 @@ private fun Preview() =
             state =
                 ORSwapConfirmationState(
                     onBack = {},
-                    info = IconButtonState(co.electriccoin.zcash.ui.R.drawable.ic_help) {},
+                    info = IconButtonState(R.drawable.ic_info) {},
                     bigIcon = imageRes(R.drawable.ic_token_placeholder),
                     smallIcon = imageRes(R.drawable.ic_chain_placeholder),
                     amount = stringResByNumber(1000),
                     amountFiat = stringResByDynamicCurrencyNumber(100, "USD"),
                     onAmountClick = {},
                     qr = "qr",
+                    address = stringRes("Some address"),
                     copyButton = BigIconButtonState(stringRes("Copy"), co.electriccoin.zcash.ui.R.drawable.ic_copy) {},
                     shareButton =
                         BigIconButtonState(
                             stringRes("Share QR"),
                             co.electriccoin.zcash.ui.R.drawable.ic_qr_code_other
                         ) {},
+                    onShareClick = { _, _ -> },
                     footer =
                         styledStringResource(
                             resource = co.electriccoin.zcash.ui.R.string.swap_to_zec_footer,

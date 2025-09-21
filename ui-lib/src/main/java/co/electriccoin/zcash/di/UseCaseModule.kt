@@ -116,6 +116,7 @@ import co.electriccoin.zcash.ui.common.usecase.ViewTransactionDetailAfterSuccess
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
+import co.electriccoin.zcash.ui.common.usecase.ShareQRUseCase
 import co.electriccoin.zcash.ui.util.closeableCallback
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
@@ -240,4 +241,5 @@ val useCaseModule =
         factoryOf(::CanCreateABContactUseCase)
         factoryOf(::SaveORSwapUseCase)
         factoryOf(::GetORSwapQuoteUseCase)
+        factoryOf(::ShareQRUseCase)
     }
