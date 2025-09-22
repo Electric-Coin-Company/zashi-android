@@ -99,7 +99,7 @@ class TransactionRepositoryImpl(
                                 when {
                                     transaction.isShielding ->
                                         ShieldTransaction.Failed(
-                                            timestamp = createTimestamp(transaction) ?: Instant.now(),
+                                            timestamp = createTimestamp(transaction),
                                             transactionOutputs = synchronizer.getTransactionOutputs(transaction),
                                             amount = transaction.totalSpent,
                                             id = transaction.txId,
@@ -111,7 +111,7 @@ class TransactionRepositoryImpl(
 
                                     transaction.isSentTransaction ->
                                         SendTransaction.Failed(
-                                            timestamp = createTimestamp(transaction) ?: Instant.now(),
+                                            timestamp = createTimestamp(transaction),
                                             transactionOutputs = synchronizer.getTransactionOutputs(transaction),
                                             amount = transaction.netValue,
                                             id = transaction.txId,
@@ -123,7 +123,7 @@ class TransactionRepositoryImpl(
 
                                     else ->
                                         ReceiveTransaction.Failed(
-                                            timestamp = createTimestamp(transaction) ?: Instant.now(),
+                                            timestamp = createTimestamp(transaction),
                                             transactionOutputs = synchronizer.getTransactionOutputs(transaction),
                                             amount = transaction.netValue,
                                             id = transaction.txId,
@@ -137,7 +137,7 @@ class TransactionRepositoryImpl(
                                 when {
                                     transaction.isShielding ->
                                         ShieldTransaction.Success(
-                                            timestamp = createTimestamp(transaction) ?: Instant.now(),
+                                            timestamp = createTimestamp(transaction),
                                             transactionOutputs = synchronizer.getTransactionOutputs(transaction),
                                             amount = transaction.totalSpent,
                                             id = transaction.txId,
@@ -149,7 +149,7 @@ class TransactionRepositoryImpl(
 
                                     transaction.isSentTransaction ->
                                         SendTransaction.Success(
-                                            timestamp = createTimestamp(transaction) ?: Instant.now(),
+                                            timestamp = createTimestamp(transaction),
                                             transactionOutputs = synchronizer.getTransactionOutputs(transaction),
                                             amount = transaction.netValue,
                                             id = transaction.txId,
@@ -161,7 +161,7 @@ class TransactionRepositoryImpl(
 
                                     else ->
                                         ReceiveTransaction.Success(
-                                            timestamp = createTimestamp(transaction) ?: Instant.now(),
+                                            timestamp = createTimestamp(transaction),
                                             transactionOutputs = synchronizer.getTransactionOutputs(transaction),
                                             amount = transaction.netValue,
                                             id = transaction.txId,
@@ -218,16 +218,14 @@ class TransactionRepositoryImpl(
                 initialValue = null
             )
 
-    private fun createTransactionState(
-        minedHeight: BlockHeight?
-    ): TransactionState? {
+    private fun createTransactionState(minedHeight: BlockHeight?): TransactionState? {
         return if (minedHeight != null) return Confirmed else null
     }
 
-    private fun createTimestamp(transaction: TransactionOverview): Instant? =
-        transaction.blockTimeEpochSeconds?.let {
-            Instant.ofEpochSecond(it)
-        }
+    private fun createTimestamp(overview: TransactionOverview): Instant? {
+        if (overview.blockTimeEpochSeconds == null && overview.minedHeight == null) return Instant.now()
+        return overview.blockTimeEpochSeconds?.let { Instant.ofEpochSecond(it) }
+    }
 
     override suspend fun getMemos(transaction: Transaction): List<String> =
         withContext(Dispatchers.IO) {
@@ -287,7 +285,7 @@ sealed interface SendTransaction : Transaction {
     data class Success(
         override val id: TransactionId,
         override val amount: Zatoshi,
-        override val timestamp: Instant,
+        override val timestamp: Instant?,
         override val memoCount: Int,
         override val fee: Zatoshi?,
         override val transactionOutputs: List<TransactionOutput>,
@@ -309,7 +307,7 @@ sealed interface SendTransaction : Transaction {
     data class Failed(
         override val id: TransactionId,
         override val amount: Zatoshi,
-        override val timestamp: Instant,
+        override val timestamp: Instant?,
         override val memoCount: Int,
         override val fee: Zatoshi?,
         override val transactionOutputs: List<TransactionOutput>,
@@ -325,7 +323,7 @@ sealed interface ReceiveTransaction : Transaction {
     data class Success(
         override val id: TransactionId,
         override val amount: Zatoshi,
-        override val timestamp: Instant,
+        override val timestamp: Instant?,
         override val memoCount: Int,
         override val transactionOutputs: List<TransactionOutput>,
         override val overview: TransactionOverview,
@@ -345,7 +343,7 @@ sealed interface ReceiveTransaction : Transaction {
     data class Failed(
         override val id: TransactionId,
         override val amount: Zatoshi,
-        override val timestamp: Instant,
+        override val timestamp: Instant?,
         override val memoCount: Int,
         override val transactionOutputs: List<TransactionOutput>,
         override val overview: TransactionOverview,
@@ -357,7 +355,7 @@ sealed interface ShieldTransaction : Transaction {
     data class Success(
         override val id: TransactionId,
         override val amount: Zatoshi,
-        override val timestamp: Instant,
+        override val timestamp: Instant?,
         override val memoCount: Int,
         override val fee: Zatoshi?,
         override val transactionOutputs: List<TransactionOutput>,
@@ -380,7 +378,7 @@ sealed interface ShieldTransaction : Transaction {
         override val id: TransactionId,
         override val amount: Zatoshi,
         override val memoCount: Int,
-        override val timestamp: Instant,
+        override val timestamp: Instant?,
         override val transactionOutputs: List<TransactionOutput>,
         override val fee: Zatoshi?,
         override val overview: TransactionOverview,
