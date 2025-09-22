@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -60,9 +61,11 @@ class GetTransactionDetailByIdUseCase(
 
             val metadataFlow =
                 transactionFlow
+                    .distinctUntilChangedBy { it.id to it.recipient }
                     .flatMapLatest {
                         metadataRepository.observeTransactionMetadata(it)
                     }
+                    .distinctUntilChanged()
 
             val contactFlow =
                 transactionFlow
@@ -87,8 +90,9 @@ class GetTransactionDetailByIdUseCase(
                                     flowOf(null)
                                 } else {
                                     transactionFlow
-                                        .flatMapLatest {
-                                            val depositAddress = it.recipient?.address
+                                        .map { it.recipient?.address }
+                                        .distinctUntilChanged()
+                                        .flatMapLatest { depositAddress ->
                                             if (depositAddress == null) {
                                                 flowOf(null)
                                             } else {
@@ -97,6 +101,7 @@ class GetTransactionDetailByIdUseCase(
                                         }
                                 }
                             }
+                            .distinctUntilChanged()
                     }
 
             combine(

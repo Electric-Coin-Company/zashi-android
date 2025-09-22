@@ -49,10 +49,7 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDe
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailSwapStatusRowState
 
 @Composable
-fun SendSwap(
-    state: SendSwapState,
-    modifier: Modifier = Modifier
-) {
+fun SendSwap(state: SendSwapState, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
     ) {
