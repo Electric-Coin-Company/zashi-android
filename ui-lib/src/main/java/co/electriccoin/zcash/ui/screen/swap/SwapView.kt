@@ -222,14 +222,6 @@ private fun SlippageSeparator(
 
         ZashiImageButton(state.changeModeButton)
 
-        // Image(
-        //     modifier = Modifier.size(36.dp),
-        //     painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_arrow_narrow_down),
-        //     contentDescription = null,
-        //     colorFilter = ColorFilter.tint(ZashiColors.Text.textDisabled),
-        //     contentScale = ContentScale.Inside
-        // )
-
         ZashiHorizontalDivider(
             modifier = Modifier.weight(1f),
             color = ZashiColors.Utility.Gray.utilityGray100
@@ -247,16 +239,10 @@ private fun TopAppBar(state: SwapState) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = state.appBarState.title.getValue(),
+                    text = stringResource(R.string.swap_title).uppercase(),
                     style = ZashiTypography.textMd,
                     fontWeight = FontWeight.SemiBold,
                     color = ZashiColors.Text.textPrimary
-                )
-                Spacer(8.dp)
-                Image(
-                    modifier = Modifier.height(16.dp),
-                    painter = painterResource(state.appBarState.icon),
-                    contentDescription = null
                 )
             }
         },
@@ -439,11 +425,6 @@ private fun Preview() {
                             icon = R.drawable.send_address_book,
                             onClick = {}
                         ),
-                    appBarState =
-                        SwapAppBarState(
-                            title = stringRes("Swap with"),
-                            icon = R.drawable.ic_near_logo
-                        ),
                     footer =
                         stringRes(
                             "NEAR only supports swaps to a transparent address. Zashi will prompt you to shield your funds upon receipt."
@@ -523,11 +504,6 @@ private fun UnexpectedErrorPreview() {
                         IconButtonState(
                             icon = R.drawable.send_address_book,
                             onClick = {}
-                        ),
-                    appBarState =
-                        SwapAppBarState(
-                            title = stringRes("Swap with"),
-                            icon = R.drawable.ic_near_logo
                         ),
                     errorFooter =
                         SwapErrorFooterState(
@@ -614,11 +590,6 @@ private fun ServiceUnavailableErrorPreview() {
                         IconButtonState(
                             icon = R.drawable.send_address_book,
                             onClick = {}
-                        ),
-                    appBarState =
-                        SwapAppBarState(
-                            title = stringRes("Swap with"),
-                            icon = R.drawable.ic_near_logo
                         ),
                     errorFooter =
                         SwapErrorFooterState(

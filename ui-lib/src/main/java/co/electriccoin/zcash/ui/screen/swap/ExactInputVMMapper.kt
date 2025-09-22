@@ -104,11 +104,6 @@ internal class ExactInputVMMapper {
                     onClick = onAddressBookClick,
                     isEnabled = !state.isRequestingQuote
                 ),
-            appBarState =
-                SwapAppBarState(
-                    title = stringRes(R.string.swap_title),
-                    icon = R.drawable.ic_near_logo
-                ),
             errorFooter = createErrorFooterState(state),
             primaryButton =
                 createPrimaryButtonState(

@@ -73,7 +73,6 @@ class GetHomeMessageUseCase(
             }
         }.distinctUntilChanged()
 
-    @Suppress("MagicNumber")
     private val runtimeMessage =
         channelFlow {
             var firstSyncingMessage: HomeMessageData.Syncing? = null
@@ -95,6 +94,8 @@ class GetHomeMessageUseCase(
 
                 if (message is HomeMessageData.Syncing && firstSyncingMessage == null) {
                     firstSyncingMessage = message
+                } else if (message !is HomeMessageData.Syncing) {
+                    firstSyncingMessage = null
                 }
 
                 send(message)
@@ -233,7 +234,7 @@ class GetHomeMessageUseCase(
         return if (walletSnapshot.restoringState == WalletRestoringState.RESTORING) {
             HomeMessageData.Restoring(walletSnapshot.isSpendable, progress)
         } else {
-            if (syncMessageShownBefore) {
+            if (!syncMessageShownBefore) {
                 if (progress >= .95f) null else HomeMessageData.Syncing(progress = progress)
             } else {
                 HomeMessageData.Syncing(progress = progress)

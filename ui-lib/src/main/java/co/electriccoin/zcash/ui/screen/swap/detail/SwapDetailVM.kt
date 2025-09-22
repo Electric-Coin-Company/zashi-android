@@ -18,9 +18,8 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.loadingImageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
+import co.electriccoin.zcash.ui.design.util.stringResByCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDateTime
-import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
-import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.screen.transactiondetail.CommonTransactionDetailMapper
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailHeaderState
@@ -92,7 +91,7 @@ class SwapDetailVM(
         TransactionDetailInfoRowState(
             title = stringRes(R.string.transaction_detail_info_total_fees),
             message = if (swapData.data?.data?.amountInFee != null && swapData.data.originAsset != null) {
-                stringResByDynamicCurrencyNumber(
+                stringResByCurrencyNumber(
                     amount = swapData.data.data.amountInFee,
                     ticker = swapData.data.originAsset.tokenTicker.uppercase()
                 )
@@ -146,7 +145,7 @@ class SwapDetailVM(
                 PROCESSING -> stringRes("Swap Processing")
                 null -> null
             },
-            amount = swapData.data?.data?.amountOutFormatted?.let { stringResByDynamicNumber(it) },
+            amount = swapData.data?.data?.amountOutFormatted?.let { stringResByNumber(it) },
             icons = listOf(
                 swapData.data?.originAsset?.tokenIcon ?: loadingImageRes(),
                 imageRes(R.drawable.ic_swap_detail),

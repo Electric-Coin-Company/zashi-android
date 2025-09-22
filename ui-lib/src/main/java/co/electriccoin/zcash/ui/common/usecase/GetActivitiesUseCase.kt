@@ -21,7 +21,7 @@ class GetActivitiesUseCase(
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun observe() =
-        combine(observeTransactions(), observeSwaps()) { transactions, swaps ->
+        combine(observeTransactions(), observeIntoZecSwaps()) { transactions, swaps ->
             if (transactions == null || swaps == null) {
                 null
             } else {
@@ -56,13 +56,17 @@ class GetActivitiesUseCase(
                 }
             }
 
-    private fun observeSwaps() =
+    private fun observeIntoZecSwaps() =
         metadataRepository
             .observeORSwapMetadata()
-            .map {
-                it?.map { metadata ->
-                    ActivityData.BySwap(swap = metadata)
-                }
+            .map { swapMetadata ->
+                swapMetadata
+                    ?.filter {
+                        it.provider.token.lowercase() == "zec" && it.provider.chain.lowercase() == "zec"
+                    }
+                    ?.map { metadata ->
+                        ActivityData.BySwap(swap = metadata)
+                    }
             }
 }
 

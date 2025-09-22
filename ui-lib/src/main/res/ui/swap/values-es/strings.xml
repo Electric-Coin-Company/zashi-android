@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="swap_info_message">Intercambia ZEC protegido por cualquier moneda o token compatible con NEAR.\n\nZashi es una wallet solo de ZEC, por lo que necesitarás una dirección de wallet válida para el activo al que haces el intercambio.</string>
+    <string name="swap_info_message">Swap ZEC with any NEAR-supported coin or token.\n\nZashi is a ZEC-only wallet,
+        so you’ll need a valid wallet address for the asset you’re swapping to.\n\nSwapping to ZEC requires a valid refund address and using a 3rd party wallet to deposit funds in the cryptocurrency you are swapping from.</string>
     <string name="swap_info_title">Intercambiar con</string>
     <string name="swap_select_token">Seleccionar Token</string>
     <string name="swap_select_chain">Seleccionar Cadena</string>
@@ -10,7 +11,7 @@
     <string name="swap_slippage_max_threshold">Por favor, ingresa un deslizamiento máximo de 30%%.</string>
     <string name="swap_slippage_info">Podrías recibir hasta %s menos de lo cotizado.</string>
     <string name="pay_slippage_info">Podrías pagar hasta %s más, además de las comisiones de transacción.</string>
-    <string name="swap_title">Intercambiar con</string>
+    <string name="swap_title">Intercambiar</string>
     <string name="swap_from">De</string>
     <string name="swap_insufficient_funds">Fondos insuficientes</string>
     <string name="swap_max_standalone">Disponible: </string>

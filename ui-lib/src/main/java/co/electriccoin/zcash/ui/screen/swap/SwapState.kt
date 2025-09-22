@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.swap
 
-import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ChipButtonState
@@ -15,7 +14,6 @@ import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
 
 @Immutable
 internal data class SwapState(
-    val appBarState: SwapAppBarState,
     val swapInfoButton: IconButtonState,
     val amountTextField: SwapAmountTextFieldState,
     val slippage: ButtonState,
@@ -42,12 +40,6 @@ internal data class SwapState(
 data class SwapErrorFooterState(
     val title: StringResource,
     val subtitle: StringResource,
-)
-
-@Immutable
-internal data class SwapAppBarState(
-    val title: StringResource,
-    @DrawableRes val icon: Int,
 )
 
 @Immutable

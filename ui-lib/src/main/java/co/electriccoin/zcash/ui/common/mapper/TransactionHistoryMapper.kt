@@ -13,7 +13,6 @@ import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDateTime
-import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionState
 import java.time.Instant
@@ -32,11 +31,11 @@ class TransactionHistoryMapper {
             key = data.swap.depositAddress,
             bigIcon = R.drawable.ic_activity_swap,
             smallIcon = R.drawable.ic_transaction_provider_near,
-            title = stringRes("Swap"),
+            title = stringRes(R.string.transaction_history_swapped),
             subtitle = getSubtitle(data.swap.lastUpdated),
             isShielded = false,
             value = styledStringResource(
-                stringResByDynamicCurrencyNumber(data.swap.totalFeesUsd, "ZEC"),
+                stringResByCurrencyNumber(data.swap.totalFeesUsd, "ZEC"),
                 StringResourceColor.PRIMARY
             ),
             onClick = { onSwapClick(data.swap.depositAddress) },
@@ -44,17 +43,8 @@ class TransactionHistoryMapper {
         )
         is ActivityData.ByTransaction -> TransactionState(
             key = data.transaction.id.txIdString(),
-            bigIcon = getIcon(data),
-            smallIcon =
-                if (data.metadata.swapMetadata
-                        ?.provider
-                        ?.provider
-                        ?.startsWith("near") == true
-                ) {
-                    R.drawable.ic_transaction_provider_near
-                } else {
-                    null
-                },
+            bigIcon = getBigIcon(data),
+            smallIcon = getSmallIcon(data),
             title = getTitle(data),
             subtitle = getSubtitle(data.transaction.timestamp),
             isShielded = isShielded(data),
@@ -64,10 +54,7 @@ class TransactionHistoryMapper {
         )
     }
 
-    private fun isUnread(
-        data: ActivityData.ByTransaction,
-        restoreTimestamp: Instant,
-    ): Boolean {
+    private fun isUnread(data: ActivityData.ByTransaction, restoreTimestamp: Instant, ): Boolean {
         val transactionDateTime = data.transaction.timestamp?.atZone(ZoneId.systemDefault())
         val hasMemo = data.transaction.memoCount > 0
         val transactionDate = transactionDateTime?.toLocalDate() ?: LocalDate.now()
@@ -81,30 +68,62 @@ class TransactionHistoryMapper {
         }
     }
 
-    private fun getIcon(data: ActivityData.ByTransaction) =
-        when (data.transaction) {
-            is SendTransaction.Success -> R.drawable.ic_transaction_sent
-            is SendTransaction.Pending -> R.drawable.ic_transaction_send_pending
-            is SendTransaction.Failed -> R.drawable.ic_transaction_send_failed
+    private fun getBigIcon(data: ActivityData.ByTransaction) =
+        when (val transaction = data.transaction) {
             is ReceiveTransaction.Success -> R.drawable.ic_transaction_received
             is ReceiveTransaction.Pending -> R.drawable.ic_transaction_receive_pending
             is ReceiveTransaction.Failed -> R.drawable.ic_transaction_receive_pending
             is ShieldTransaction.Success -> R.drawable.ic_transaction_shielded
             is ShieldTransaction.Pending -> R.drawable.ic_transaction_shield_pending
             is ShieldTransaction.Failed -> R.drawable.ic_transaction_shield_failed
+            is SendTransaction -> {
+                val swapMetadata = data.metadata.swapMetadata
+                if (swapMetadata != null && swapMetadata.provider.token == "zec") {
+                    R.drawable.ic_activity_swap
+                } else if (swapMetadata != null) {
+                    R.drawable.ic_activity_crosspay
+                } else {
+                    when (transaction) {
+                        is SendTransaction.Success -> R.drawable.ic_transaction_sent
+                        is SendTransaction.Pending -> R.drawable.ic_transaction_send_pending
+                        is SendTransaction.Failed -> R.drawable.ic_transaction_send_failed
+                    }
+                }
+            }
         }
 
+    private fun getSmallIcon(data: ActivityData.ByTransaction): Int? = if (data.metadata.swapMetadata
+            ?.provider
+            ?.provider
+            ?.startsWith("near") == true
+    ) {
+        R.drawable.ic_transaction_provider_near
+    } else {
+        null
+    }
+
     private fun getTitle(data: ActivityData.ByTransaction) =
-        when (data.transaction) {
-            is SendTransaction.Success -> stringRes(R.string.transaction_history_sent)
-            is SendTransaction.Pending -> stringRes(R.string.transaction_history_sending)
-            is SendTransaction.Failed -> stringRes(R.string.transaction_history_sending_failed)
+        when (val transaction = data.transaction) {
             is ReceiveTransaction.Success -> stringRes(R.string.transaction_history_received)
             is ReceiveTransaction.Pending -> stringRes(R.string.transaction_history_receiving)
             is ReceiveTransaction.Failed -> stringRes(R.string.transaction_history_receiving_failed)
             is ShieldTransaction.Success -> stringRes(R.string.transaction_history_shielded)
             is ShieldTransaction.Pending -> stringRes(R.string.transaction_history_shielding)
             is ShieldTransaction.Failed -> stringRes(R.string.transaction_history_shielding_failed)
+            is SendTransaction -> {
+                val swapMetadata = data.metadata.swapMetadata
+                if (swapMetadata != null && swapMetadata.provider.token.lowercase() == "zec") {
+                    stringRes(R.string.transaction_history_swapped)
+                } else if (swapMetadata != null) {
+                    stringRes(R.string.transaction_history_paid)
+                } else {
+                    when (transaction) {
+                        is SendTransaction.Success -> stringRes(R.string.transaction_history_sent)
+                        is SendTransaction.Pending -> stringRes(R.string.transaction_history_sending)
+                        is SendTransaction.Failed -> stringRes(R.string.transaction_history_sending_failed)
+                    }
+                }
+            }
         }
 
     private fun getSubtitle(timestamp: Instant?): StringResource? {
