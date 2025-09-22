@@ -43,10 +43,10 @@ class SwapAssetPickerVM(
             getSwapAssets.observe(),
             metadataRepository.observeLastUsedAssetHistory(),
             searchText
-        ) { assets, latestAssets, text ->
+        ) { assets, latestUsedAssets, text ->
             filterSwapAssets(
                 assets = assets,
-                latestAssets = latestAssets,
+                latestUsedAssets = latestUsedAssets,
                 text = text,
                 onlyChainTicker = args.chainTicker
             )
@@ -87,7 +87,7 @@ class SwapAssetPickerVM(
                             stringRes(co.electriccoin.zcash.ui.design.R.string.general_error_message),
                             ButtonState(
                                 text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_try_again),
-                                onClick = ::onRetry
+                                onClick = ::onRetryClick
                             )
                         )
                 },
@@ -108,5 +108,5 @@ class SwapAssetPickerVM(
 
     private fun onBack() = navigationRouter.back()
 
-    private fun onRetry() = swapRepository.requestRefreshAssets()
+    private fun onRetryClick() = swapRepository.requestRefreshAssets()
 }
