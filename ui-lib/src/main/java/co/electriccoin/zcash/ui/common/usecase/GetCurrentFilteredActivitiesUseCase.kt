@@ -7,6 +7,7 @@ import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
 import co.electriccoin.zcash.ui.common.repository.SendTransaction
+import co.electriccoin.zcash.ui.common.repository.ShieldTransaction
 import co.electriccoin.zcash.ui.common.repository.TransactionFilter
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
@@ -90,6 +91,7 @@ class GetCurrentFilteredActivitiesUseCase(
     private val transactionsFilteredByFulltext: Flow<List<FilterActivityData>?> =
         transactionFilterRepository
             .fulltextFilter
+            .map { it?.trim() }
             .debounce(.69.seconds)
             .distinctUntilChanged()
             .flatMapLatest { fulltextFilter ->
@@ -245,13 +247,25 @@ class GetCurrentFilteredActivitiesUseCase(
     private fun hasAmountWithFulltext(activity: FilterActivityData, fulltextFilter: String): Boolean {
         return when (activity) {
             is FilterActivityData.BySwap -> {
-                val text = stringResByNumber(activity.activity.swap.totalFeesUsd).getString(context)
-                text.contains(fulltextFilter.trim(), ignoreCase = true)
+                val text = (stringResByNumber(activity.activity.swap.totalFeesUsd) + stringRes(" ZEC"))
+                    .getString(context)
+                text.contains(fulltextFilter, ignoreCase = true)
             }
 
             is FilterActivityData.ByTransaction -> {
-                val text = stringRes(activity.activity.transaction.amount, HIDDEN).getString(context)
-                text.contains(fulltextFilter.trim(), ignoreCase = true)
+                val text = if (activity.activity.transaction is SendTransaction &&
+                    (activity.activity.metadata.swapMetadata == null ||
+                        activity.activity.metadata.swapMetadata
+                            .provider.token.lowercase() != "zec")
+                ) {
+                    (stringRes("- ") +
+                        stringRes(activity.activity.transaction.amount, HIDDEN) + stringRes(" ZEC"))
+                        .getString(context)
+                } else {
+                    (stringRes(activity.activity.transaction.amount, HIDDEN) + stringRes(" ZEC"))
+                        .getString(context)
+                }
+                text.contains(fulltextFilter, ignoreCase = true)
             }
         }
     }
