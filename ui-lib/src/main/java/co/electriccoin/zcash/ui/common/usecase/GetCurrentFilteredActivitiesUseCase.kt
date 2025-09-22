@@ -14,7 +14,7 @@ import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.combineToFlow
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
+import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.util.CloseableScopeHolder
 import co.electriccoin.zcash.ui.util.CloseableScopeHolderImpl
 import kotlinx.coroutines.Dispatchers
@@ -245,13 +245,13 @@ class GetCurrentFilteredActivitiesUseCase(
     private fun hasAmountWithFulltext(activity: FilterActivityData, fulltextFilter: String): Boolean {
         return when (activity) {
             is FilterActivityData.BySwap -> {
-                val text = stringResByDynamicNumber(activity.activity.swap.totalFeesUsd).getString(context)
-                text.contains(fulltextFilter, ignoreCase = true)
+                val text = stringResByNumber(activity.activity.swap.totalFeesUsd).getString(context)
+                text.contains(fulltextFilter.trim(), ignoreCase = true)
             }
 
             is FilterActivityData.ByTransaction -> {
                 val text = stringRes(activity.activity.transaction.amount, HIDDEN).getString(context)
-                text.contains(fulltextFilter, ignoreCase = true)
+                text.contains(fulltextFilter.trim(), ignoreCase = true)
             }
         }
     }
