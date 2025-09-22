@@ -5,10 +5,11 @@ import cash.z.ecc.android.sdk.model.FiatCurrency
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
+import co.electriccoin.zcash.ui.common.model.getQuoteChainIcon
+import co.electriccoin.zcash.ui.common.model.getQuoteTokenIcon
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
 import co.electriccoin.zcash.ui.design.util.StringResource
-import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
@@ -147,42 +148,21 @@ internal class SwapQuoteVMMapper {
         )
 
     private fun SwapQuoteInternalState.createFromState(): SwapTokenAmountState =
-        if (quote.destinationAsset.tokenTicker.lowercase() == "zec") {
-            SwapTokenAmountState(
-                bigIcon = quote.originAsset.tokenIcon,
-                smallIcon = quote.originAsset.chainIcon,
-                title = stringResByDynamicNumber(quote.amountInFormatted),
-                subtitle = stringResByDynamicCurrencyNumber(quote.amountInUsd, FiatCurrency.USD.symbol)
-            )
-        } else {
-            SwapTokenAmountState(
-                bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
-                title = stringResByDynamicNumber(quote.amountInFormatted),
-                subtitle = stringResByDynamicCurrencyNumber(quote.amountInUsd, FiatCurrency.USD.symbol)
-            )
-        }
+        SwapTokenAmountState(
+            bigIcon = quote.originAsset.getQuoteTokenIcon(),
+            smallIcon = quote.originAsset.getQuoteChainIcon(isOriginAsset = true),
+            title = stringResByDynamicNumber(quote.amountInFormatted),
+            subtitle = stringResByDynamicCurrencyNumber(quote.amountInUsd, FiatCurrency.USD.symbol)
+        )
 
     private fun SwapQuoteInternalState.createToState(): SwapTokenAmountState =
-        if (quote.destinationAsset.tokenTicker.lowercase() == "zec") {
-            SwapTokenAmountState(
-                bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                smallIcon = null,
-                title =
-                    stringResByDynamicNumber(
-                        quote.amountOutFormatted.setScale(quote.destinationAsset.decimals, RoundingMode.DOWN),
-                    ),
-                subtitle = stringResByDynamicCurrencyNumber(quote.amountOutUsd, FiatCurrency.USD.symbol)
-            )
-        } else {
-            SwapTokenAmountState(
-                bigIcon = quote.destinationAsset.tokenIcon,
-                smallIcon = quote.destinationAsset.chainIcon,
-                title =
-                    stringResByDynamicNumber(
-                        quote.amountOutFormatted.setScale(quote.destinationAsset.decimals, RoundingMode.DOWN),
-                    ),
-                subtitle = stringResByDynamicCurrencyNumber(quote.amountOutUsd, FiatCurrency.USD.symbol)
-            )
-        }
+        SwapTokenAmountState(
+            bigIcon = quote.destinationAsset.getQuoteTokenIcon(),
+            smallIcon = quote.destinationAsset.getQuoteChainIcon(isOriginAsset = false),
+            title =
+                stringResByDynamicNumber(
+                    quote.amountOutFormatted.setScale(quote.destinationAsset.decimals, RoundingMode.DOWN),
+                ),
+            subtitle = stringResByDynamicCurrencyNumber(quote.amountOutUsd, FiatCurrency.USD.symbol)
+        )
 }

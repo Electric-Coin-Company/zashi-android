@@ -46,7 +46,7 @@ fun SwapAsset.getQuoteChainIcon(
     is ZecSwapAsset -> if (isOriginAsset) {
         imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield)
     } else {
-        null
+        imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_unshielded)
     }
 }
 

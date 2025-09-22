@@ -344,7 +344,7 @@ internal class ExactInputVMMapper {
                         AssetCardState.Data(
                             ticker = stringRes(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
                             bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                            smallIcon = null,
+                            smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_unshielded),
                             onClick = null
                         )
                 },
