@@ -17,6 +17,7 @@ import co.electriccoin.zcash.ui.common.usecase.ShareQRUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
+import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
@@ -72,7 +73,7 @@ class ORSwapConfirmationVM(
                                     qrData = quote.depositAddress,
                                     amount = quote.amountInFormatted,
                                     tokenTicker = quote.originAsset.tokenTicker,
-                                    chainTicker = quote.originAsset.chainTicker
+                                    chainName = quote.originAsset.chainName
                                 )
                             }
                         ),
@@ -82,8 +83,8 @@ class ORSwapConfirmationVM(
                             styledStringResource(
                                 resource = R.string.swap_to_zec_footer_bold,
                                 fontWeight = FontWeight.Bold,
-                                quote.originAsset.tokenTicker.uppercase(),
-                                quote.originAsset.chainTicker.uppercase()
+                                quote.originAsset.tokenTicker,
+                                quote.originAsset.chainName
                             )
                         ),
                     primaryButton =
@@ -120,13 +121,13 @@ class ORSwapConfirmationVM(
         qrData: String,
         amount: BigDecimal,
         tokenTicker: String,
-        chainTicker: String
+        chainName: StringResource
     ) = viewModelScope.launch {
         val shareText = stringRes(
             R.string.swap_to_zec_share_text,
             stringResByNumber(amount),
             tokenTicker.uppercase(),
-            chainTicker.uppercase()
+            chainName
         ).getString(context)
 
         shareQR(

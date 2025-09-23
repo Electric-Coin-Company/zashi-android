@@ -71,10 +71,7 @@ class MetadataSerializer {
                             totalFeesUsd = it.totalFeesUsd,
                             lastUpdated = it.lastUpdated,
                             fromAsset = MetadataSimpleSwapAssetV3(token = "zec", chain = "zec"),
-                            toAsset = MetadataSimpleSwapAssetV3(
-                                token = it.provider.token.lowercase(),
-                                chain = it.provider.chain.lowercase()
-                            ),
+                            toAsset = MetadataSimpleSwapAssetV3(token = it.provider.token, chain = it.provider.chain),
                             exactInput = null,
                             status = null,
                             amountOutFormatted = null
