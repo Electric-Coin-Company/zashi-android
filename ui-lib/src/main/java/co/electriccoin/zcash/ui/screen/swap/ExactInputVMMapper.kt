@@ -52,7 +52,8 @@ internal class ExactInputVMMapper {
         onAddressBookClick: () -> Unit,
         onDeleteSelectedContactClick: () -> Unit,
         onBalanceButtonClick: () -> Unit,
-        onChangeButtonClick: () -> Unit
+        onChangeButtonClick: () -> Unit,
+        onAddressClick: () -> Unit,
     ): SwapState {
         val state = ExactInputInternalState(internalState)
         val textFieldState =
@@ -126,7 +127,11 @@ internal class ExactInputVMMapper {
                 IconButtonState(
                     icon = R.drawable.ic_swap_change_mode,
                     onClick = onChangeButtonClick
-                )
+                ),
+            onAddressClick = when (state.mode) {
+                SWAP_FROM_ZEC -> null
+                SWAP_INTO_ZEC -> onAddressClick
+            }
         )
     }
 

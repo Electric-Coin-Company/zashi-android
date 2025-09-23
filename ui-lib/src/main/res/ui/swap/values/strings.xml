@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="swap_info_message">Swap ZEC with any NEAR-supported coin or token.\n\nZashi is a ZEC-only wallet,
-        so you’ll need a valid wallet address for the asset you’re swapping to.\n\nSwapping to ZEC requires a valid refund address and using a 3rd party wallet to deposit funds in the cryptocurrency you are swapping from.</string>
+    <string name="swap_info_message">Swap ZEC with any NEAR-supported token.\n\nIf swapping TO ZEC, you will send
+        funds from a 3rd party wallet and provide an address where change can be refunded.\n\nIf swapping FROM ZEC, you
+        must provide a valid address for the asset you are swapping to.</string>
     <string name="swap_info_title">Swap with</string>
     <string name="swap_select_token">Select Token</string>
     <string name="swap_select_chain">Select Chain</string>
@@ -48,5 +49,14 @@
     <string name="swap_to_zec_footer">Use your %s wallet \n to deposit funds. Depositing other assets may result in
         loss of funds.</string>
     <string name="swap_to_zec_footer_bold">%s on %s</string>
-    <string name="swap_to_zec_share_text">Send %s %s on %s to the deposit address to receive ZEC in Zashi.</string>
+    <string name="swap_to_zec_share_text">Deposit address for %s %s on %s swap to ZEC in Zashi</string>
+    <string name="swap_refund_address">Refund Address</string>
+    <string name="swap_refund_address_info_title">Refund Address</string>
+    <string name="swap_refund_address_info_message_empty">If the swap fails or market conditions change, your
+        transaction
+        may be refunded minus the transaction fees.\n\nThe refunded amount will be returned to your wallet in the
+        source currency. Please enter a valid address to avoid loss of funds.</string>
+    <string name="swap_refund_address_info_message">If the swap fails or market conditions change, your transaction
+        may be refunded minus the transaction fees.\n\nThe refunded amount will be returned to your wallet in the
+        source currency - %s on %s. Please enter a valid address to avoid loss of funds.</string>
 </resources>

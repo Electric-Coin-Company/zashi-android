@@ -141,6 +141,8 @@ import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailArgs
 import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailScreen
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoScreen
+import co.electriccoin.zcash.ui.screen.swap.info.SwapRefundAddressInfoArgs
+import co.electriccoin.zcash.ui.screen.swap.info.SwapRefundAddressInfoScreen
 import co.electriccoin.zcash.ui.screen.swap.orconfirmation.ORSwapConfirmationArgs
 import co.electriccoin.zcash.ui.screen.swap.orconfirmation.ORSwapConfirmationScreen
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
@@ -377,6 +379,7 @@ internal fun MainActivity.Navigation() {
         dialogComposable<PayInfoArgs> { PayInfoScreen() }
         composable<ORSwapConfirmationArgs> { ORSwapConfirmationScreen() }
         composable<SwapDetailArgs> { SwapDetailScreen(it.toRoute()) }
+        dialogComposable<SwapRefundAddressInfoArgs> { SwapRefundAddressInfoScreen() }
     }
 }
 
