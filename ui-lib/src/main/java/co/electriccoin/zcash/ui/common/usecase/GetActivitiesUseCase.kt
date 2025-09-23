@@ -1,10 +1,10 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import co.electriccoin.zcash.ui.common.model.SwapMetadata
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
+import co.electriccoin.zcash.ui.common.repository.TransactionSwapMetadata
 import co.electriccoin.zcash.ui.design.util.combineToFlow
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -59,14 +59,8 @@ class GetActivitiesUseCase(
     private fun observeIntoZecSwaps() =
         metadataRepository
             .observeORSwapMetadata()
-            .map { swapMetadata ->
-                swapMetadata
-                    ?.filter {
-                        it.provider.token.lowercase() == "zec" && it.provider.chain.lowercase() == "zec"
-                    }
-                    ?.map { metadata ->
-                        ActivityData.BySwap(swap = metadata)
-                    }
+            .map {
+                it?.map { metadata -> ActivityData.BySwap(swap = metadata) }
             }
 }
 
@@ -78,7 +72,7 @@ sealed interface ActivityData {
         override val timestamp = transaction.timestamp
     }
 
-    data class BySwap(val swap: SwapMetadata) : ActivityData {
+    data class BySwap(val swap: TransactionSwapMetadata) : ActivityData {
         override val timestamp = swap.lastUpdated
     }
 }

@@ -31,11 +31,11 @@ internal class SwapQuoteVMMapper {
                 title =
                     when {
                         quote.destinationAsset.tokenTicker.lowercase() == "zec" -> stringRes("Review Quote")
-                        quote.type == EXACT_INPUT -> stringRes(R.string.swap_quote_title)
-                        quote.type == EXACT_OUTPUT -> stringRes(R.string.pay_quote_title)
+                        quote.mode == EXACT_INPUT -> stringRes(R.string.swap_quote_title)
+                        quote.mode == EXACT_OUTPUT -> stringRes(R.string.pay_quote_title)
                         else -> throw IllegalStateException("Unknown swap mode")
                     },
-                rotateIcon = quote.type == EXACT_OUTPUT,
+                rotateIcon = quote.mode == EXACT_OUTPUT,
                 from = createFromState(),
                 to = createToState(),
                 items = createItems(),
@@ -58,7 +58,7 @@ internal class SwapQuoteVMMapper {
 
     @Suppress("MagicNumber")
     private fun SwapQuoteInternalState.createInfoText(): StringResource? {
-        if (quote.type == EXACT_OUTPUT) return null
+        if (quote.mode == EXACT_OUTPUT) return null
         val slippageUsd = quote.amountOutUsd.multiply(quote.slippage.divide(BigDecimal(100)))
         return stringRes(
             R.string.swap_quote_info,
@@ -72,7 +72,7 @@ internal class SwapQuoteVMMapper {
         listOfNotNull(
             SwapQuoteInfoItem(
                 description =
-                    when (quote.type) {
+                    when (quote.mode) {
                         EXACT_INPUT -> stringRes(R.string.swap_quote_from)
                         EXACT_OUTPUT -> stringRes(R.string.pay_from)
                     },
@@ -81,7 +81,7 @@ internal class SwapQuoteVMMapper {
             ).takeIf { quote.destinationAsset.tokenTicker.lowercase() != "zec" },
             SwapQuoteInfoItem(
                 description =
-                    when (quote.type) {
+                    when (quote.mode) {
                         EXACT_INPUT -> stringRes(R.string.swap_quote_to)
                         EXACT_OUTPUT -> stringRes(R.string.pay_to)
                     },
@@ -99,10 +99,10 @@ internal class SwapQuoteVMMapper {
                 subtitle =
                     stringResByDynamicCurrencyNumber(totalFeesUsd, FiatCurrency.USD.symbol)
                         .takeIf {
-                            quote.type == EXACT_INPUT && quote.destinationAsset.tokenTicker.lowercase() != "zec"
+                            quote.mode == EXACT_INPUT && quote.destinationAsset.tokenTicker.lowercase() != "zec"
                         }
             ),
-            if (quote.type == EXACT_OUTPUT) {
+            if (quote.mode == EXACT_OUTPUT) {
                 val slippage = quote.slippage.divide(BigDecimal(100))
                 val slippageUsd = quote.amountOutUsd.multiply(slippage)
                 SwapQuoteInfoItem(
@@ -132,7 +132,7 @@ internal class SwapQuoteVMMapper {
                     subtitle =
                         stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol)
                             .takeIf {
-                                quote.type == EXACT_INPUT && quote.destinationAsset.tokenTicker.lowercase() != "zec"
+                                quote.mode == EXACT_INPUT && quote.destinationAsset.tokenTicker.lowercase() != "zec"
                             }
                 )
             } else {

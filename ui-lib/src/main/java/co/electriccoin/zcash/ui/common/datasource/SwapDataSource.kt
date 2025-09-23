@@ -27,8 +27,8 @@ interface SwapDataSource {
     @Throws(ResponseException::class, IOException::class)
     suspend fun submitDepositTransaction(txHash: String, depositAddress: String)
 
-    @Throws(ResponseException::class, IOException::class)
-    suspend fun checkSwapStatus(depositAddress: String): SwapQuoteStatus
+    @Throws(ResponseException::class, IOException::class, TokenNotFoundException::class)
+    suspend fun checkSwapStatus(depositAddress: String, supportedTokens: List<SwapAsset>): SwapQuoteStatus
 }
 
 class QuoteLowAmountException(
@@ -36,3 +36,5 @@ class QuoteLowAmountException(
     val amount: BigDecimal?,
     val amountFormatted: BigDecimal?
 ) : Exception()
+
+class TokenNotFoundException(tokenId: String): Exception("Token $tokenId not found")

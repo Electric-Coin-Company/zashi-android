@@ -14,7 +14,7 @@ import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDateTime
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
-import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
+import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import io.ktor.client.plugins.ResponseException
 import io.ktor.http.HttpStatusCode
 import java.time.Instant
@@ -75,20 +75,19 @@ class CommonTransactionDetailMapper {
         destinationAsset: SwapAsset?
     ): SwapQuoteHeaderState {
         if (swap == null) return SwapQuoteHeaderState(null, null)
-
         return SwapQuoteHeaderState(
             from =
                 SwapTokenAmountState(
                     bigIcon = originAsset?.getQuoteTokenIcon(),
                     smallIcon = originAsset?.getQuoteChainIcon(isOriginAsset = true),
-                    title = stringResByDynamicNumber(swap.amountInFormatted),
+                    title = stringResByNumber(swap.amountInFormatted),
                     subtitle = stringResByDynamicCurrencyNumber(swap.amountInUsd, FiatCurrency.USD.symbol)
                 ),
             to =
                 SwapTokenAmountState(
                     bigIcon = destinationAsset?.getQuoteTokenIcon(),
                     smallIcon = destinationAsset?.getQuoteChainIcon(isOriginAsset = false),
-                    title = stringResByDynamicNumber(swap.amountOutFormatted),
+                    title = stringResByNumber(swap.amountOutFormatted),
                     subtitle = stringResByDynamicCurrencyNumber(swap.amountOutUsd, FiatCurrency.USD.symbol)
                 )
         )

@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.common.model.SwapStatus.FAILED
+import co.electriccoin.zcash.ui.common.model.SwapStatus.INCOMPLETE_DEPOSIT
 import co.electriccoin.zcash.ui.common.model.SwapStatus.PENDING
 import co.electriccoin.zcash.ui.common.model.SwapStatus.PROCESSING
 import co.electriccoin.zcash.ui.common.model.SwapStatus.REFUNDED
@@ -87,6 +88,7 @@ private fun StatusChip(state: TransactionDetailSwapStatusRowState) {
     ZashiBadge(
         text =
             when (state.status) {
+                INCOMPLETE_DEPOSIT,
                 PENDING -> if (state.mode == SWAP_INTO_ZEC) {
                     "Pending deposit"
                 } else {
@@ -101,10 +103,12 @@ private fun StatusChip(state: TransactionDetailSwapStatusRowState) {
                 } else {
                     stringResource(R.string.swap_detail_pending)
                 }
+
             },
         colors =
             when (state.status) {
                 PROCESSING -> ZashiBadgeDefaults.hyperBlueColors()
+                INCOMPLETE_DEPOSIT,
                 PENDING -> if (state.mode == SWAP_INTO_ZEC) {
                     ZashiBadgeDefaults.warningColors()
                 } else {

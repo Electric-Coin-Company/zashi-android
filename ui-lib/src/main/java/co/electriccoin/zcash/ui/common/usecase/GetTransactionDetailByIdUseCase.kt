@@ -83,10 +83,10 @@ class GetTransactionDetailByIdUseCase(
                     .onStart { emit(Unit) }
                     .flatMapLatest {
                         metadataFlow
-                            .map { it.swapMetadata }
+                            .map { it.swapMetadata != null }
                             .distinctUntilChanged()
-                            .flatMapLatest { swapMetadata ->
-                                if (swapMetadata == null) {
+                            .flatMapLatest { hasMetadata ->
+                                if (!hasMetadata) {
                                     flowOf(null)
                                 } else {
                                     transactionFlow

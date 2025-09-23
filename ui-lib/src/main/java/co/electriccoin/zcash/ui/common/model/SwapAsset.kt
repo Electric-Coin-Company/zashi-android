@@ -14,10 +14,12 @@ sealed interface SwapAsset {
     val assetId: String
     val decimals: Int
     val blockchain: SwapAssetBlockchain
+
     val chainTicker: String
         get() = blockchain.chainTicker
     val chainName: StringResource
         get() = blockchain.chainName
+
     val chainIcon: ImageResource
         get() = blockchain.chainIcon
 }

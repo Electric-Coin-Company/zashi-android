@@ -256,7 +256,7 @@ class GetCurrentFilteredActivitiesUseCase(
                 val text = if (activity.activity.transaction is SendTransaction &&
                     (activity.activity.metadata.swapMetadata == null ||
                         activity.activity.metadata.swapMetadata
-                            .provider.token.lowercase() != "zec")
+                            .destination.tokenTicker.lowercase() != "zec")
                 ) {
                     (stringRes("- ") +
                         stringRes(activity.activity.transaction.amount, HIDDEN) + stringRes(" ZEC"))
@@ -289,7 +289,6 @@ class GetCurrentFilteredActivitiesUseCase(
 
     private fun hasMemoInFilteredIds(memoTxIds: List<TransactionId>?, activity: FilterActivityData): Boolean {
         if (activity !is FilterActivityData.ByTransaction) return false
-
         return memoTxIds?.contains(activity.activity.transaction.id) ?: false
     }
 }

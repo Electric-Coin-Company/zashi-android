@@ -6,9 +6,12 @@ import co.electriccoin.zcash.ui.common.datasource.MetadataDataSource
 import co.electriccoin.zcash.ui.common.datasource.toSimpleAssetSet
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
-import co.electriccoin.zcash.ui.common.model.SwapMetadata
+import co.electriccoin.zcash.ui.common.model.SwapAsset
+import co.electriccoin.zcash.ui.common.model.SwapMode
+import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.model.metadata.SwapMetadataV3
 import co.electriccoin.zcash.ui.common.provider.MetadataKeyStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
@@ -28,6 +31,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.math.BigDecimal
+import java.time.Instant
 
 interface MetadataRepository {
     fun flipTxBookmark(txId: String)
@@ -41,10 +45,19 @@ interface MetadataRepository {
     fun markTxAsSwap(
         depositAddress: String,
         provider: String,
-        tokenTicker: String,
-        chainTicker: String,
+        origin: SwapAsset,
+        destination: SwapAsset,
         totalFees: Zatoshi,
-        totalFeesUsd: BigDecimal
+        totalFeesUsd: BigDecimal,
+        amountOutFormatted: BigDecimal,
+        mode: SwapMode,
+        status: SwapStatus,
+    )
+
+    fun updateSwap(
+        depositAddress: String,
+        amountOutFormatted: BigDecimal,
+        status: SwapStatus,
     )
 
     fun deleteSwap(depositAddress: String)
@@ -53,7 +66,7 @@ interface MetadataRepository {
 
     fun observeTransactionMetadata(transaction: Transaction): Flow<TransactionMetadata>
 
-    fun observeORSwapMetadata(): Flow<List<SwapMetadata>?>
+    fun observeORSwapMetadata(): Flow<List<TransactionSwapMetadata>?>
 
     fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?>
 }
@@ -105,18 +118,37 @@ class MetadataRepositoryImpl(
     override fun markTxAsSwap(
         depositAddress: String,
         provider: String,
-        tokenTicker: String,
-        chainTicker: String,
+        origin: SwapAsset,
+        destination: SwapAsset,
         totalFees: Zatoshi,
-        totalFeesUsd: BigDecimal
+        totalFeesUsd: BigDecimal,
+        amountOutFormatted: BigDecimal,
+        mode: SwapMode,
+        status: SwapStatus,
     ) = updateMetadata {
         metadataDataSource.markTxAsSwap(
             depositAddress = depositAddress,
             provider = provider,
-            tokenTicker = tokenTicker,
-            chainTicker = chainTicker,
             totalFees = totalFees,
             totalFeesUsd = totalFeesUsd,
+            amountOutFormatted = amountOutFormatted,
+            key = it,
+            origin = SimpleSwapAsset(tokenTicker = origin.tokenTicker, chainTicker = origin.chainTicker),
+            destination = SimpleSwapAsset(tokenTicker = destination.tokenTicker, chainTicker = destination.chainTicker),
+            mode = mode,
+            status = status,
+        )
+    }
+
+    override fun updateSwap(
+        depositAddress: String,
+        amountOutFormatted: BigDecimal,
+        status: SwapStatus
+    ) = updateMetadata {
+        metadataDataSource.updateSwap(
+            depositAddress = depositAddress,
+            amountOutFormatted = amountOutFormatted,
+            status = status,
             key = it
         )
     }
@@ -148,22 +180,51 @@ class MetadataRepositoryImpl(
                     isBookmarked = accountMetadata?.bookmarked?.find { it.txId == txId }?.isBookmarked == true,
                     isRead = accountMetadata?.read?.any { it == txId } == true,
                     note = accountMetadata?.annotations?.find { it.txId == txId }?.content,
-                    swapMetadata = swapMetadata,
+                    swapMetadata = swapMetadata?.toBusinessObject()
                 )
             }.distinctUntilChanged()
     }
 
-    override fun observeORSwapMetadata(): Flow<List<SwapMetadata>?> =
+    private fun SwapMetadataV3.toBusinessObject(): TransactionSwapMetadata = TransactionSwapMetadata(
+        depositAddress = depositAddress,
+        lastUpdated = lastUpdated,
+        origin = fromAsset.let {
+            SimpleSwapAsset(
+                tokenTicker = it.token,
+                chainTicker = it.chain
+            )
+        },
+        destination = toAsset.let {
+            SimpleSwapAsset(
+                tokenTicker = it.token,
+                chainTicker = it.chain
+            )
+        },
+        mode = when (exactInput) {
+            true -> SwapMode.EXACT_INPUT
+            false -> SwapMode.EXACT_OUTPUT
+            null -> SwapMode.EXACT_INPUT
+        },
+        status = status ?: SwapStatus.PENDING,
+        amountOutFormatted = amountOutFormatted ?: BigDecimal(0),
+        provider = provider,
+        totalFees = totalFees,
+        totalFeesUsd = totalFeesUsd,
+    )
+
+    override fun observeORSwapMetadata(): Flow<List<TransactionSwapMetadata>?> =
         metadata
             .map { metadata ->
                 metadata
                     ?.accountMetadata
                     ?.swaps
                     ?.swapIds
-                    ?.filter { swap ->
-                        swap.provider.token.lowercase() == "zec" && swap.provider.chain.lowercase() == "zec"
+                    ?.filter {
+                        it.toAsset.token.lowercase() == "zec" && it.toAsset.chain.lowercase() == "zec"
                     }
-            }.distinctUntilChanged()
+                    ?.map { it.toBusinessObject() }
+            }
+            .distinctUntilChanged()
 
     override fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?> =
         metadata
@@ -214,5 +275,18 @@ data class TransactionMetadata(
     val isBookmarked: Boolean,
     val isRead: Boolean,
     val note: String?,
-    val swapMetadata: SwapMetadata?
+    val swapMetadata: TransactionSwapMetadata?
+)
+
+data class TransactionSwapMetadata(
+    val depositAddress: String,
+    val provider: String,
+    val totalFees: Zatoshi,
+    val totalFeesUsd: BigDecimal,
+    val lastUpdated: Instant,
+    val origin: SimpleSwapAsset,
+    val destination: SimpleSwapAsset,
+    val mode: SwapMode,
+    val status: SwapStatus,
+    val amountOutFormatted: BigDecimal,
 )

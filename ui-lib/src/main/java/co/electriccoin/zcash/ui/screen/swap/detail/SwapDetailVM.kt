@@ -6,6 +6,7 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapStatus.FAILED
+import co.electriccoin.zcash.ui.common.model.SwapStatus.INCOMPLETE_DEPOSIT
 import co.electriccoin.zcash.ui.common.model.SwapStatus.PENDING
 import co.electriccoin.zcash.ui.common.model.SwapStatus.PROCESSING
 import co.electriccoin.zcash.ui.common.model.SwapStatus.REFUNDED
@@ -138,7 +139,9 @@ class SwapDetailVM(
     private fun createTransactionHeaderState(swapData: SwapData): TransactionDetailHeaderState =
         TransactionDetailHeaderState(
             title = when (swapData.data?.data?.status) {
+                INCOMPLETE_DEPOSIT,
                 PENDING -> stringRes("Swap Pending")
+
                 SUCCESS -> stringRes("Swap Success")
                 REFUNDED -> stringRes("Swap Refunded")
                 FAILED -> stringRes("Swap Failed")

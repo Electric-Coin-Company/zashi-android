@@ -24,7 +24,7 @@ import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
-import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
+import co.electriccoin.zcash.ui.design.util.stringResByCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.design.util.stringResByTransactionId
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
@@ -147,7 +147,7 @@ class TransactionDetailVM(
                                 transaction.swap.data
                                     ?.refundedFormatted
                                     ?.let {
-                                        stringResByDynamicCurrencyNumber(amount = it, ticker = "ZEC")
+                                        stringResByCurrencyNumber(amount = it, ticker = "ZEC")
                                     }?.takeIf {
                                         transaction.swap.data.status == SwapStatus.REFUNDED
                                     },

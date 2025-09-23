@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common.repository
 
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.SwapDataSource
+import co.electriccoin.zcash.ui.common.datasource.TokenNotFoundException
 import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
@@ -78,11 +79,12 @@ data class SwapAssetsData(
 
 data class SwapQuoteStatusData(
     val data: SwapQuoteStatus?,
-    val originAsset: SwapAsset?,
-    val destinationAsset: SwapAsset?,
     val isLoading: Boolean,
     val error: Exception?,
-)
+) {
+    val originAsset = data?.swapQuote?.originAsset
+    val destinationAsset = data?.swapQuote?.destinationAsset
+}
 
 class SwapRepositoryImpl(
     private val swapDataSource: SwapDataSource,
@@ -204,8 +206,6 @@ class SwapRepositoryImpl(
                     SwapQuoteStatusData(
                         data = null,
                         isLoading = true,
-                        originAsset = null,
-                        destinationAsset = null,
                         error = null
                     )
                 )
@@ -225,35 +225,30 @@ class SwapRepositoryImpl(
 
                 while (true) {
                     try {
-                        val result = swapDataSource.checkSwapStatus(depositAddress)
-                        val originAsset = supportedTokens.find { it.assetId == result.originAssetId }
-                        val destinationAsset = supportedTokens.find { it.assetId == result.destinationAssetId }
-
-                        if (destinationAsset == null || originAsset == null) {
-                            data.update {
-                                it.copy(
-                                    data = result,
-                                    isLoading = false,
-                                    originAsset = null,
-                                    destinationAsset = null,
-                                    error = IllegalStateException("No asset found")
-                                )
-                            }
-                            break
-                        } else {
-                            data.update {
-                                it.copy(
-                                    data = result,
-                                    isLoading = false,
-                                    originAsset = originAsset,
-                                    destinationAsset = destinationAsset,
-                                    error = null
-                                )
-                            }
-                            if (result.status in listOf(SwapStatus.SUCCESS, SwapStatus.REFUNDED)) {
-                                break
-                            }
+                        val result = swapDataSource.checkSwapStatus(depositAddress, supportedTokens)
+                        metadataRepository.updateSwap(
+                            depositAddress = depositAddress,
+                            amountOutFormatted = result.amountOutFormatted,
+                            status = result.status,
+                        )
+                        data.update {
+                            it.copy(
+                                data = result,
+                                isLoading = false,
+                                error = null
+                            )
                         }
+                        if (result.status in listOf(SwapStatus.SUCCESS, SwapStatus.REFUNDED)) {
+                            break
+                        }
+                    } catch (e: TokenNotFoundException) {
+                        data.update {
+                            it.copy(
+                                isLoading = false,
+                                error = e
+                            )
+                        }
+                        break
                     } catch (e: Exception) {
                         data.update { it.copy(isLoading = false, error = e) }
                         break

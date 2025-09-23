@@ -15,6 +15,7 @@ import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.SwapQuote
+import co.electriccoin.zcash.ui.common.model.SwapStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -154,10 +155,13 @@ class ZashiProposalRepositoryImpl(
                 metadataRepository.markTxAsSwap(
                     depositAddress = depositAddress,
                     provider = transactionProposal.quote.provider,
-                    tokenTicker = transactionProposal.quote.destinationAsset.tokenTicker,
-                    chainTicker = transactionProposal.quote.destinationAsset.chainTicker,
                     totalFees = transactionProposal.totalFees,
-                    totalFeesUsd = transactionProposal.totalFeesUsd
+                    totalFeesUsd = transactionProposal.totalFeesUsd,
+                    amountOutFormatted = transactionProposal.quote.amountOutFormatted,
+                    origin = transactionProposal.quote.originAsset,
+                    destination = transactionProposal.quote.destinationAsset,
+                    mode = transactionProposal.quote.mode,
+                    status = SwapStatus.PENDING
                 )
                 txIds.forEach { submitDepositTransaction(it, transactionProposal) }
             }

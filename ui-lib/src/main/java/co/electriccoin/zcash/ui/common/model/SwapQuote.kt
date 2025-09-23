@@ -21,7 +21,7 @@ interface SwapQuote {
     val depositAddress: String
     val destinationAddress: String
     val provider: String
-    val type: SwapMode
+    val mode: SwapMode
     val zecExchangeRate: BigDecimal
 
     val amountIn: BigDecimal
@@ -58,9 +58,7 @@ data class NearSwapQuote(
 ) : SwapQuote {
     override val slippage: BigDecimal =
         BigDecimal(response.quoteRequest.slippageTolerance)
-            .divide(
-                BigDecimal("100", MathContext.DECIMAL128)
-            )
+            .divide(BigDecimal("100", MathContext.DECIMAL128))
 
     override val destinationAmountZatoshi: Zatoshi = Zatoshi(response.quote.amountIn.toLong())
 
@@ -70,7 +68,7 @@ data class NearSwapQuote(
 
     override val provider = "near"
 
-    override val type: SwapMode =
+    override val mode: SwapMode =
         when (response.quoteRequest.swapType) {
             EXACT_INPUT -> SwapMode.EXACT_INPUT
             EXACT_OUTPUT -> SwapMode.EXACT_OUTPUT

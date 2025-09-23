@@ -1,11 +1,11 @@
 @file:OptIn(ExperimentalSerializationApi::class)
 
-package co.electriccoin.zcash.ui.common.model
+package co.electriccoin.zcash.ui.common.model.metadata.v2
 
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.serialization.BigDecimalSerializer
 import co.electriccoin.zcash.ui.common.serialization.InstantSerializer
-import co.electriccoin.zcash.ui.common.serialization.SwapProviderSerializer
+import co.electriccoin.zcash.ui.common.serialization.METADATA_SERIALIZATION_V2
 import co.electriccoin.zcash.ui.common.serialization.ZatoshiSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
@@ -16,32 +16,19 @@ import java.time.Instant
 
 @JsonIgnoreUnknownKeys
 @Serializable
-data class Metadata(
+data class MetadataV2(
     @SerialName("version")
-    val version: Int,
+    val version: Int = METADATA_SERIALIZATION_V2,
     @SerialName("lastUpdated")
     @Serializable(InstantSerializer::class)
     val lastUpdated: Instant,
     @SerialName("accountMetadata")
-    val accountMetadata: AccountMetadata
+    val accountMetadata: AccountMetadataV2
 )
 
 @JsonIgnoreUnknownKeys
 @Serializable
-data class AccountMetadata(
-    @SerialName("bookmarked")
-    val bookmarked: List<BookmarkMetadata>,
-    @SerialName("read")
-    val read: List<String>,
-    @SerialName("annotations")
-    val annotations: List<AnnotationMetadata>,
-    @SerialName("swaps")
-    val swaps: SwapsMetadata = SwapsMetadata(swapIds = emptyList(), lastUsedAssetHistory = emptySet()),
-)
-
-@JsonIgnoreUnknownKeys
-@Serializable
-data class BookmarkMetadata(
+data class BookmarkMetadataV2(
     @SerialName("txId")
     val txId: String,
     @SerialName("lastUpdated")
@@ -53,7 +40,7 @@ data class BookmarkMetadata(
 
 @JsonIgnoreUnknownKeys
 @Serializable
-data class AnnotationMetadata(
+data class AnnotationMetadataV2(
     @SerialName("txId")
     val txId: String,
     @SerialName("content")
@@ -65,16 +52,29 @@ data class AnnotationMetadata(
 
 @JsonIgnoreUnknownKeys
 @Serializable
-data class SwapsMetadata(
+data class AccountMetadataV2(
+    @SerialName("bookmarked")
+    val bookmarked: List<BookmarkMetadataV2>,
+    @SerialName("read")
+    val read: List<String>,
+    @SerialName("annotations")
+    val annotations: List<AnnotationMetadataV2>,
+    @SerialName("swaps")
+    val swaps: SwapsMetadataV2 = SwapsMetadataV2(swapIds = emptyList(), lastUsedAssetHistory = emptySet()),
+)
+
+@JsonIgnoreUnknownKeys
+@Serializable
+data class SwapsMetadataV2(
     @SerialName("swapIds")
-    val swapIds: List<SwapMetadata>,
+    val swapIds: List<SwapMetadataV2>,
     @SerialName("lastUsedAssetHistory")
     val lastUsedAssetHistory: Set<String>
 )
 
 @JsonIgnoreUnknownKeys
 @Serializable
-data class SwapMetadata(
+data class SwapMetadataV2(
     @SerialName("depositAddress")
     val depositAddress: String,
     @SerialName("lastUpdated")
@@ -87,13 +87,13 @@ data class SwapMetadata(
     @Serializable(BigDecimalSerializer::class)
     val totalFeesUsd: BigDecimal,
     @SerialName("provider")
-    @Serializable(SwapProviderSerializer::class)
-    val provider: SwapProvider,
+    @Serializable(SwapProviderV2Serializer::class)
+    val provider: SwapProviderV2,
 )
 
 @JsonIgnoreUnknownKeys
 @Serializable
-data class SwapProvider(
+data class SwapProviderV2(
     val provider: String,
     val token: String,
     val chain: String,

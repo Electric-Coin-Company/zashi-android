@@ -35,7 +35,7 @@ class TransactionHistoryMapper {
             subtitle = getSubtitle(data.swap.lastUpdated),
             isShielded = false,
             value = styledStringResource(
-                stringResByCurrencyNumber(data.swap.totalFeesUsd, "ZEC"),
+                stringResByCurrencyNumber(data.swap.amountOutFormatted, "ZEC"),
                 StringResourceColor.PRIMARY
             ),
             onClick = { onSwapClick(data.swap.depositAddress) },
@@ -83,7 +83,6 @@ class TransactionHistoryMapper {
         }
 
     private fun getSmallIcon(data: ActivityData.ByTransaction): Int? = if (data.metadata.swapMetadata
-            ?.provider
             ?.provider
             ?.startsWith("near") == true
     ) {

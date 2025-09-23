@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.transactiondetail
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -100,10 +99,7 @@ fun TransactionDetailView(
                     Modifier
                         .weight(1f)
                         .verticalScroll(scrollState)
-                        .scaffoldPadding(
-                            paddingValues,
-                            top = 24.dp
-                        ),
+                        .scaffoldPadding(paddingValues, top = 24.dp),
             ) {
                 when (state.info) {
                     is ReceiveShieldedState ->

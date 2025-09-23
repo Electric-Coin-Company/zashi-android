@@ -109,7 +109,7 @@ class RequestSwapQuoteUseCase(
 
             when (accountDataSource.getSelectedAccount()) {
                 is KeystoneAccount -> {
-                    when (quote.type) {
+                    when (quote.mode) {
                         EXACT_INPUT ->
                             keystoneProposalRepository.createExactInputSwapProposal(send, quote)
 
@@ -120,7 +120,7 @@ class RequestSwapQuoteUseCase(
                 }
 
                 is ZashiAccount ->
-                    when (quote.type) {
+                    when (quote.mode) {
                         EXACT_INPUT ->
                             zashiProposalRepository.createExactInputSwapProposal(send, quote)
 

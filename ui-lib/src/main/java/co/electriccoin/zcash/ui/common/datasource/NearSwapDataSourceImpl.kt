@@ -43,7 +43,7 @@ class NearSwapDataSourceImpl(
                         tokenName = tokenNameProvider.getName(it.symbol),
                         tokenIcon = tokenIconProvider.getIcon(it.symbol),
                         blockchain = blockchain,
-                        tokenTicker = it.symbol,
+                        tokenTicker = it.symbol.lowercase(),
                         usdPrice = it.price,
                         assetId = it.assetId,
                         decimals = it.decimals,
@@ -53,7 +53,7 @@ class NearSwapDataSourceImpl(
                         tokenName = tokenNameProvider.getName(it.symbol),
                         tokenIcon = tokenIconProvider.getIcon(it.symbol),
                         blockchain = blockchain,
-                        tokenTicker = it.symbol,
+                        tokenTicker = it.symbol.lowercase(),
                         usdPrice = it.price,
                         assetId = it.assetId,
                         decimals = it.decimals,
@@ -157,9 +157,19 @@ class NearSwapDataSourceImpl(
         )
     }
 
-    override suspend fun checkSwapStatus(depositAddress: String): SwapQuoteStatus {
+    override suspend fun checkSwapStatus(depositAddress: String, supportedTokens: List<SwapAsset>): SwapQuoteStatus {
         val response = this.nearApiProvider.checkSwapStatus(depositAddress)
-        return NearSwapQuoteStatus(response = response)
+        val originAsset =
+            supportedTokens.find { it.assetId == response.quoteResponse.quoteRequest.originAsset }
+                ?: throw TokenNotFoundException(response.quoteResponse.quoteRequest.originAsset)
+        val destinationAsset =
+            supportedTokens.find { it.assetId == response.quoteResponse.quoteRequest.destinationAsset }
+                ?: throw TokenNotFoundException(response.quoteResponse.quoteRequest.destinationAsset)
+        return NearSwapQuoteStatus(
+            response = response,
+            origin = originAsset,
+            destination = destinationAsset,
+        )
     }
 }
 

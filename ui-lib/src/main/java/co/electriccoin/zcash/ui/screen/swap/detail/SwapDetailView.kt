@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -58,10 +57,11 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.ErrorFooter
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailHeader
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailHeaderState
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionErrorFooter
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailRowHeader
+import co.electriccoin.zcash.ui.screen.transactiondetail.info.SwapRefundedInfo
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoContainer
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRow
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRowState
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailRowHeader
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailSwapStatusRow
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailSwapStatusRowState
 
@@ -92,27 +92,22 @@ fun SwapDetailView(
                         ),
                 state = state.transactionHeader
             )
-            Spacer(24.dp)
-            ZashiSwapQuoteHeader(
-                state.quoteHeader,
-                modifier = Modifier.padding(horizontal = 24.dp),
-            )
             var isExpanded by rememberSaveable { mutableStateOf(false) }
-            Spacer(24.dp)
-            TransactionDetailRowHeader(
-                modifier = Modifier.padding(horizontal = 24.dp),
-                title = stringRes("Swap Details"),
-                isExpanded = isExpanded,
-                onButtonClick = { isExpanded = !isExpanded }
-            )
-            Spacer(8.dp)
             Column(
                 modifier =
                     Modifier
                         .weight(1f)
                         .verticalScroll(scrollState)
-                        .scaffoldPadding(paddingValues, top = 0.dp),
+                        .scaffoldPadding(paddingValues, top = 24.dp),
             ) {
+                ZashiSwapQuoteHeader(state.quoteHeader)
+                Spacer(20.dp)
+                TransactionDetailRowHeader(
+                    title = stringRes("Swap Details"),
+                    isExpanded = isExpanded,
+                    onButtonClick = { isExpanded = !isExpanded }
+                )
+                Spacer(8.dp)
                 TransactionDetailInfoContainer {
                     TransactionDetailSwapStatusRow(state = state.status)
                     AnimatedVisibility(
@@ -135,6 +130,10 @@ fun SwapDetailView(
                     }
                     ZashiHorizontalDivider()
                     TransactionDetailInfoRow(state = state.timestamp)
+                }
+                if (state.status.status == SwapStatus.REFUNDED) {
+                    Spacer(8.dp)
+                    SwapRefundedInfo()
                 }
             }
             BottomBar(
@@ -224,7 +223,7 @@ private fun Preview() =
                 ),
                 status = TransactionDetailSwapStatusRowState(
                     title = stringRes("Status"),
-                    status = SwapStatus.PENDING,
+                    status = SwapStatus.REFUNDED,
                 ),
                 depositTo = TransactionDetailInfoRowState(
                     title = stringRes("Deposit to"),

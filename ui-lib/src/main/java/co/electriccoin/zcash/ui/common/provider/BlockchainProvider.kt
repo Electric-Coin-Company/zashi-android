@@ -21,7 +21,7 @@ class BlockchainProviderImpl(
     @Suppress("CyclomaticComplexMethod")
     override fun getBlockchain(ticker: String): SwapAssetBlockchain =
         SwapAssetBlockchain(
-            chainTicker = ticker,
+            chainTicker = ticker.lowercase(),
             chainName =
                 when (ticker.lowercase()) {
                     "arb" -> stringRes("Arbitrum")

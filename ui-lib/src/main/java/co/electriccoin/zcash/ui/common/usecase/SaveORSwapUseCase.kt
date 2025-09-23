@@ -2,10 +2,12 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailArgs
+import java.math.BigDecimal
 
 class SaveORSwapUseCase(
     private val swapRepository: SwapRepository,
@@ -18,12 +20,14 @@ class SaveORSwapUseCase(
             metadataRepository.markTxAsSwap(
                 depositAddress = quote.depositAddress,
                 provider = quote.provider,
-                tokenTicker = quote.destinationAsset.tokenTicker,
-                chainTicker = quote.destinationAsset.chainTicker,
                 totalFees = Zatoshi(0),
-                totalFeesUsd = quote.amountOutFormatted
+                totalFeesUsd = BigDecimal(0),
+                amountOutFormatted = quote.amountOutFormatted,
+                mode = quote.mode,
+                status = SwapStatus.PENDING,
+                origin = quote.originAsset,
+                destination = quote.destinationAsset
             )
-
             swapRepository.clear()
             navigationRouter.replaceAll(SwapDetailArgs(quote.depositAddress))
         }

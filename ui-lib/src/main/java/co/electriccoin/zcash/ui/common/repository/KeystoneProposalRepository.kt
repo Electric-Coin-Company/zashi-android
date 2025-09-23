@@ -15,6 +15,7 @@ import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedE
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.SwapQuote
+import co.electriccoin.zcash.ui.common.model.SwapStatus
 import com.keystone.sdk.KeystoneSDK
 import com.keystone.sdk.KeystoneZcashSDK
 import com.sparrowwallet.hummingbird.UR
@@ -243,14 +244,16 @@ class KeystoneProposalRepositoryImpl(
                         is SubmitResult.Partial -> result.txIds
                         is SubmitResult.Success -> result.txIds
                     }.filter { it.isNotEmpty() }
-                val depositAddress = transactionProposal.destination.address
                 metadataRepository.markTxAsSwap(
-                    depositAddress = depositAddress,
+                    depositAddress = transactionProposal.destination.address,
                     provider = transactionProposal.quote.provider,
-                    tokenTicker = transactionProposal.quote.destinationAsset.tokenTicker,
-                    chainTicker = transactionProposal.quote.destinationAsset.chainTicker,
                     totalFees = transactionProposal.totalFees,
-                    totalFeesUsd = transactionProposal.totalFeesUsd
+                    totalFeesUsd = transactionProposal.totalFeesUsd,
+                    amountOutFormatted = transactionProposal.quote.amountOutFormatted,
+                    mode = transactionProposal.quote.mode,
+                    status = SwapStatus.PENDING,
+                    origin = transactionProposal.quote.originAsset,
+                    destination = transactionProposal.quote.destinationAsset
                 )
                 txIds.forEach { submitDepositTransaction(it, transactionProposal) }
             }

@@ -23,7 +23,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.design.component.BlankSurface
@@ -125,17 +124,15 @@ fun SendSwap(state: SendSwapState, modifier: Modifier = Modifier) {
                                 onClick = state.onTransactionIdClick
                             )
                     )
-                    if (state.totalFees != null) {
-                        ZashiHorizontalDivider()
-                        TransactionDetailInfoRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            state =
-                                TransactionDetailInfoRowState(
-                                    title = stringRes(R.string.transaction_detail_info_total_fees),
-                                    message = state.totalFees,
-                                )
-                        )
-                    }
+                    ZashiHorizontalDivider()
+                    TransactionDetailInfoRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        state =
+                            TransactionDetailInfoRowState(
+                                title = stringRes(R.string.transaction_detail_info_total_fees),
+                                message = state.totalFees,
+                            )
+                    )
                     ZashiHorizontalDivider()
                     CompositionLocalProvider(LocalBalancesAvailable provides true) {
                         TransactionDetailInfoRow(
@@ -178,13 +175,13 @@ fun SendSwap(state: SendSwapState, modifier: Modifier = Modifier) {
         }
         if (state.status == SwapStatus.REFUNDED) {
             Spacer(8.dp)
-            RefundedInfo()
+            SwapRefundedInfo()
         }
     }
 }
 
 @Composable
-private fun RefundedInfo() {
+fun SwapRefundedInfo() {
     ZashiCard(
         modifier = Modifier.fillMaxWidth(),
         colors =
@@ -231,7 +228,7 @@ private fun Preview() =
                         status = SwapStatus.REFUNDED,
                         quoteHeader = SwapQuoteHeaderState(from = null, to = null),
                         depositAddress = stringResByAddress(value = "Address", abbreviated = true),
-                        totalFees = stringRes(Zatoshi(0)),
+                        totalFees = null,
                         recipientAddress = null,
                         transactionId = stringRes("Transaction ID"),
                         refundedAmount = stringRes("Refunded amount"),
