@@ -19,7 +19,7 @@
     </aapt:attr>
   </path>
   <path
-      android:pathData="M20,25.833V14.167M20,14.167L14.167,20M20,14.167L25.834,20"
+      android:pathData="M14.167,20H25.834M25.834,20L20,14.167M25.834,20L20,25.833"
       android:strokeLineJoin="round"
       android:strokeWidth="1.66667"
       android:fillColor="#00000000"

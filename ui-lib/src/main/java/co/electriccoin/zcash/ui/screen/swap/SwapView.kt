@@ -306,7 +306,7 @@ private fun ColumnScope.AddressTextField(state: SwapState) {
             if (state.addressContact == null) {
                 {
                     Text(
-                        text = stringResource(co.electriccoin.zcash.ui.design.R.string.general_enter_address),
+                        text = state.addressPlaceholder.getValue(),
                         style = ZashiTypography.textMd,
                         color = ZashiColors.Inputs.Default.text
                     )
@@ -450,7 +450,8 @@ private fun Preview() {
                     errorFooter = null,
                     addressLocation = BOTTOM,
                     changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {},
-                    onAddressClick = null
+                    onAddressClick = null,
+                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
                 )
         )
     }
@@ -537,7 +538,8 @@ private fun UnexpectedErrorPreview() {
                     footer = null,
                     addressLocation = BOTTOM,
                     changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {},
-                    onAddressClick = null
+                    onAddressClick = null,
+                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
                 )
         )
     }
@@ -620,7 +622,8 @@ private fun ServiceUnavailableErrorPreview() {
                     footer = null,
                     addressLocation = BOTTOM,
                     changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {},
-                    onAddressClick = null
+                    onAddressClick = null,
+                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
                 )
         )
     }

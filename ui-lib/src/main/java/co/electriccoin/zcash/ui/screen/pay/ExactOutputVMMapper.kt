@@ -92,6 +92,13 @@ internal class ExactOutputVMMapper {
                 ),
             isABHintVisible = state.isABHintVisible,
             onBack = onBack,
+            addressPlaceholder = state.asset
+                ?.let {
+                    stringRes(
+                        co.electriccoin.zcash.ui.design.R.string.general_enter_address_partial,
+                        it.chainName
+                    )
+                } ?: stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
         )
     }
 

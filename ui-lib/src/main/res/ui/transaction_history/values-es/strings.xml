@@ -30,5 +30,11 @@
     <string name="transaction_history_shielding_failed">Error al proteger</string>
 
     <string name="transaction_history_paid">Paid</string>
+    <string name="transaction_history_paying">Paying…</string>
+    <string name="transaction_history_payment_failed">Payment Failed</string>
+    <string name="transaction_history_payment_refunded">Payment Refunded</string>
     <string name="transaction_history_swapped">Swapped</string>
+    <string name="transaction_history_swapping">Swapping…</string>
+    <string name="transaction_history_swap_failed">Swap Failed</string>
+    <string name="transaction_history_swap_refunded">Swap Refunded</string>
 </resources>

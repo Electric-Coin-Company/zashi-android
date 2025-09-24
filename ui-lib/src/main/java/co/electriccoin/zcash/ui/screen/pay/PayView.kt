@@ -322,7 +322,7 @@ private fun AddressTextField(
             if (state.abContact == null) {
                 {
                     Text(
-                        text = stringResource(co.electriccoin.zcash.ui.design.R.string.general_enter_address),
+                        text = state.addressPlaceholder.getValue(),
                         style = ZashiTypography.textMd,
                         color = ZashiColors.Inputs.Default.text
                     )
@@ -430,7 +430,8 @@ private fun Preview() {
                         ButtonState(
                             stringRes("Primary"),
                         ),
-                    isABHintVisible = true
+                    isABHintVisible = true,
+                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
                 )
         )
     }
@@ -486,7 +487,8 @@ private fun ErrorPreview() {
                             subtitle = stringRes("Please check your connection and try again."),
                         ),
                     primaryButton = null,
-                    isABHintVisible = true
+                    isABHintVisible = true,
+                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
                 )
         )
     }

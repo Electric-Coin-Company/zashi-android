@@ -26,6 +26,7 @@
     <string name="general_confirm">Confirmar</string>
     <string name="general_address">Dirección</string>
     <string name="general_enter_address">Ingresa la dirección…</string>
+    <string name="general_enter_address_partial">%s la dirección…</string>
 
     <string name="common_empty_screen_title">Sin resultados</string>
     <string name="common_empty_screen_subtitle">Lo intentamos pero no pudimos encontrar nada.</string>

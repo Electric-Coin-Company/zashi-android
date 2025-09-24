@@ -131,7 +131,14 @@ internal class ExactInputVMMapper {
             onAddressClick = when (state.mode) {
                 SWAP_FROM_ZEC -> null
                 SWAP_INTO_ZEC -> onAddressClick
-            }
+            },
+            addressPlaceholder = state.swapAsset
+                ?.let {
+                    stringRes(
+                        co.electriccoin.zcash.ui.design.R.string.general_enter_address_partial,
+                        it.chainName
+                    )
+                } ?: stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
         )
     }
 

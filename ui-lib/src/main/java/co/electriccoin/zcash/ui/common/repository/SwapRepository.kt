@@ -230,6 +230,9 @@ class SwapRepositoryImpl(
                             depositAddress = depositAddress,
                             amountOutFormatted = result.amountOutFormatted,
                             status = result.status,
+                            mode = result.mode,
+                            origin = result.swapQuote.originAsset,
+                            destination = result.swapQuote.destinationAsset
                         )
                         data.update {
                             it.copy(

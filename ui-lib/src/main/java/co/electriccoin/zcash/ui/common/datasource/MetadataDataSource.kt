@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.common.datasource
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
+import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.common.model.metadata.AccountMetadataV3
@@ -14,7 +15,6 @@ import co.electriccoin.zcash.ui.common.model.metadata.SwapMetadataV3
 import co.electriccoin.zcash.ui.common.model.metadata.SwapsMetadataV3
 import co.electriccoin.zcash.ui.common.provider.MetadataProvider
 import co.electriccoin.zcash.ui.common.provider.MetadataStorageProvider
-import co.electriccoin.zcash.ui.common.serialization.METADATA_SERIALIZATION_V3
 import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -59,6 +59,9 @@ interface MetadataDataSource {
         depositAddress: String,
         amountOutFormatted: BigDecimal,
         status: SwapStatus,
+        mode: SwapMode,
+        origin: SimpleSwapAsset,
+        destination: SimpleSwapAsset,
         key: MetadataKey
     )
 
@@ -191,7 +194,10 @@ class MetadataDataSourceImpl(
         depositAddress: String,
         amountOutFormatted: BigDecimal,
         status: SwapStatus,
-        key: MetadataKey
+        mode: SwapMode,
+        origin: SimpleSwapAsset,
+        destination: SimpleSwapAsset,
+        key: MetadataKey,
     ) {
         mutex.withLock {
             updateMetadata(
@@ -206,6 +212,13 @@ class MetadataDataSourceImpl(
                                             it.copy(
                                                 status = status,
                                                 amountOutFormatted = amountOutFormatted,
+                                                exactInput = mode == SwapMode.EXACT_INPUT,
+                                                fromAsset = MetadataSimpleSwapAssetV3(
+                                                    token = origin.tokenTicker, chain = origin.chainTicker
+                                                ),
+                                                toAsset = MetadataSimpleSwapAssetV3(
+                                                    token = destination.tokenTicker, chain = destination.chainTicker
+                                                )
                                             )
                                         }
                             ),
