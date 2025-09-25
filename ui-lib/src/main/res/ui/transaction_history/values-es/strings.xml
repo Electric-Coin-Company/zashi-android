@@ -37,4 +37,6 @@
     <string name="transaction_history_swapping">Swapping…</string>
     <string name="transaction_history_swap_failed">Swap Failed</string>
     <string name="transaction_history_swap_refunded">Swap Refunded</string>
+    <string name="transaction_history_swap_expired">Swap Expired</string>
+    <string name="transaction_history_payment_expired">Payment Expired</string>
 </resources>

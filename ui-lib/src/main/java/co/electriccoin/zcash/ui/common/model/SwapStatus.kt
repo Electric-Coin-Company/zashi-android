@@ -6,5 +6,6 @@ enum class SwapStatus {
     SUCCESS,
     REFUNDED,
     FAILED,
-    PROCESSING
+    PROCESSING,
+    EXPIRED
 }

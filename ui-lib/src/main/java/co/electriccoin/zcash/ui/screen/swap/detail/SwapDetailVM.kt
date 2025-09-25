@@ -5,12 +5,8 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.SwapStatus.FAILED
-import co.electriccoin.zcash.ui.common.model.SwapStatus.INCOMPLETE_DEPOSIT
-import co.electriccoin.zcash.ui.common.model.SwapStatus.PENDING
-import co.electriccoin.zcash.ui.common.model.SwapStatus.PROCESSING
-import co.electriccoin.zcash.ui.common.model.SwapStatus.REFUNDED
-import co.electriccoin.zcash.ui.common.model.SwapStatus.SUCCESS
+import co.electriccoin.zcash.ui.common.model.SwapStatus
+import co.electriccoin.zcash.ui.common.model.SwapStatus.*
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetORSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.SwapData
@@ -139,10 +135,12 @@ class SwapDetailVM(
     private fun createTransactionHeaderState(swapData: SwapData): TransactionDetailHeaderState =
         TransactionDetailHeaderState(
             title = when (swapData.data?.data?.status) {
+                EXPIRED -> stringRes("Swap Expired")
+
                 INCOMPLETE_DEPOSIT,
                 PENDING -> stringRes("Swap Pending")
 
-                SUCCESS -> stringRes("Swap Success")
+                SUCCESS -> stringRes("Swap Completed")
                 REFUNDED -> stringRes("Swap Refunded")
                 FAILED -> stringRes("Swap Failed")
                 PROCESSING -> stringRes("Swap Processing")

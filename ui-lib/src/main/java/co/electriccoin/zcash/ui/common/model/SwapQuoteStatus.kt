@@ -13,6 +13,7 @@ import kotlinx.datetime.toJavaInstant
 import java.math.BigDecimal
 import java.math.MathContext
 import java.time.Instant
+import kotlin.time.Duration.Companion.minutes
 
 interface SwapQuoteStatus {
 
@@ -62,17 +63,25 @@ data class NearSwapQuoteStatus(
     override val originAssetId: String = origin.assetId
     override val destinationAssetId: String = destination.assetId
 
-    override val status: SwapStatus =
-        when (response.status) {
-            KNOWN_DEPOSIT_TX -> SwapStatus.PENDING
-            PENDING_DEPOSIT -> SwapStatus.PENDING
-            INCOMPLETE_DEPOSIT -> SwapStatus.INCOMPLETE_DEPOSIT
-            PROCESSING -> SwapStatus.PROCESSING
-            SUCCESS -> SwapStatus.SUCCESS
-            REFUNDED -> SwapStatus.REFUNDED
-            FAILED -> SwapStatus.FAILED
-            null -> SwapStatus.PENDING
+    override val status: SwapStatus
+        get() = if (
+            response.status == PENDING_DEPOSIT &&
+            Instant.now() > (response.quoteResponse.quote.deadline - 5.minutes).toJavaInstant()
+        ) {
+            SwapStatus.EXPIRED
+        } else {
+            when (response.status) {
+                KNOWN_DEPOSIT_TX -> SwapStatus.PENDING
+                PENDING_DEPOSIT -> SwapStatus.PENDING
+                INCOMPLETE_DEPOSIT -> SwapStatus.INCOMPLETE_DEPOSIT
+                PROCESSING -> SwapStatus.PROCESSING
+                SUCCESS -> SwapStatus.SUCCESS
+                REFUNDED -> SwapStatus.REFUNDED
+                FAILED -> SwapStatus.FAILED
+                null -> SwapStatus.PENDING
+            }
         }
+
     override val isSlippageRealized: Boolean = response.swapDetails?.slippage != null
 
     @Suppress("MagicNumber")

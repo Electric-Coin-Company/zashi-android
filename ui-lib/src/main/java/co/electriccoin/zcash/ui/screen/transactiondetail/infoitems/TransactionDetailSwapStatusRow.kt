@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapStatus
+import co.electriccoin.zcash.ui.common.model.SwapStatus.EXPIRED
 import co.electriccoin.zcash.ui.common.model.SwapStatus.FAILED
 import co.electriccoin.zcash.ui.common.model.SwapStatus.INCOMPLETE_DEPOSIT
 import co.electriccoin.zcash.ui.common.model.SwapStatus.PENDING
@@ -88,6 +89,7 @@ private fun StatusChip(state: TransactionDetailSwapStatusRowState) {
     ZashiBadge(
         text =
             when (state.status) {
+                EXPIRED -> "Expired"
                 INCOMPLETE_DEPOSIT,
                 PENDING -> if (state.mode == SWAP_INTO_ZEC) {
                     "Pending deposit"
@@ -116,6 +118,8 @@ private fun StatusChip(state: TransactionDetailSwapStatusRowState) {
                 }
 
                 SUCCESS -> ZashiBadgeDefaults.successColors()
+
+                EXPIRED,
                 REFUNDED,
                 FAILED -> ZashiBadgeDefaults.errorColors()
             },

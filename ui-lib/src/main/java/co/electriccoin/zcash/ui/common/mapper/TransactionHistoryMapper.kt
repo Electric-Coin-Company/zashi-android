@@ -4,6 +4,7 @@ import cash.z.ecc.android.sdk.model.TransactionPool
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
+import co.electriccoin.zcash.ui.common.model.SwapStatus.EXPIRED
 import co.electriccoin.zcash.ui.common.model.SwapStatus.FAILED
 import co.electriccoin.zcash.ui.common.model.SwapStatus.INCOMPLETE_DEPOSIT
 import co.electriccoin.zcash.ui.common.model.SwapStatus.PENDING
@@ -68,6 +69,7 @@ class TransactionHistoryMapper {
             PENDING,
             SUCCESS -> StringResourceColor.PRIMARY
 
+            EXPIRED,
             REFUNDED,
             FAILED -> StringResourceColor.NEGATIVE
         }
@@ -82,6 +84,8 @@ class TransactionHistoryMapper {
             SUCCESS -> R.string.transaction_history_swapped
             REFUNDED -> R.string.transaction_history_swap_refunded
             FAILED -> R.string.transaction_history_swap_failed
+
+            EXPIRED -> R.string.transaction_history_swap_expired
         }
     )
 
@@ -91,6 +95,8 @@ class TransactionHistoryMapper {
         PENDING -> R.drawable.ic_transaction_swapping
 
         SUCCESS -> R.drawable.ic_transaction_swapped
+
+        EXPIRED,
         REFUNDED,
         FAILED -> R.drawable.ic_transaction_swap_failed
     }
@@ -125,25 +131,36 @@ class TransactionHistoryMapper {
                         is SendTransaction.Failed -> R.drawable.ic_transaction_send_failed
                     }
                 } else {
-                    when (data.metadata.swapMetadata.mode) {
-                        EXACT_INPUT -> when (data.metadata.swapMetadata.status) {
-                            INCOMPLETE_DEPOSIT,
-                            PROCESSING,
-                            PENDING -> R.drawable.ic_transaction_swapping
-
-                            SUCCESS -> R.drawable.ic_transaction_swapped
-                            REFUNDED,
-                            FAILED -> R.drawable.ic_transaction_swap_failed
+                    if (transaction is SendTransaction.Failed) {
+                        when (data.metadata.swapMetadata.mode) {
+                            EXACT_INPUT -> R.drawable.ic_transaction_swap_failed
+                            EXACT_OUTPUT -> R.drawable.ic_transaction_pay_failed
                         }
+                    } else {
+                        when (data.metadata.swapMetadata.mode) {
+                            EXACT_INPUT -> when (data.metadata.swapMetadata.status) {
+                                INCOMPLETE_DEPOSIT,
+                                PROCESSING,
+                                PENDING -> R.drawable.ic_transaction_swapping
 
-                        EXACT_OUTPUT -> when (data.metadata.swapMetadata.status) {
-                            INCOMPLETE_DEPOSIT,
-                            PROCESSING,
-                            PENDING -> R.drawable.ic_transaction_paying
+                                SUCCESS -> R.drawable.ic_transaction_swapped
 
-                            SUCCESS -> R.drawable.ic_transaction_paid
-                            REFUNDED,
-                            FAILED -> R.drawable.ic_transaction_pay_failed
+                                EXPIRED,
+                                REFUNDED,
+                                FAILED -> R.drawable.ic_transaction_swap_failed
+                            }
+
+                            EXACT_OUTPUT -> when (data.metadata.swapMetadata.status) {
+                                INCOMPLETE_DEPOSIT,
+                                PROCESSING,
+                                PENDING -> R.drawable.ic_transaction_paying
+
+                                SUCCESS -> R.drawable.ic_transaction_paid
+
+                                EXPIRED,
+                                REFUNDED,
+                                FAILED -> R.drawable.ic_transaction_pay_failed
+                            }
                         }
                     }
                 }
@@ -166,25 +183,34 @@ class TransactionHistoryMapper {
                         is SendTransaction.Failed -> stringRes(R.string.transaction_history_sending_failed)
                     }
                 } else {
-                    when (data.metadata.swapMetadata.mode) {
-                        EXACT_INPUT -> when (data.metadata.swapMetadata.status) {
-                            INCOMPLETE_DEPOSIT,
-                            PROCESSING,
-                            PENDING -> stringRes(R.string.transaction_history_swapping)
-
-                            SUCCESS -> stringRes(R.string.transaction_history_swapped)
-                            REFUNDED -> stringRes(R.string.transaction_history_swap_refunded)
-                            FAILED -> stringRes(R.string.transaction_history_swap_failed)
+                    if (transaction is SendTransaction.Failed) {
+                        when (data.metadata.swapMetadata.mode) {
+                            EXACT_INPUT -> stringRes(R.string.transaction_history_swap_failed)
+                            EXACT_OUTPUT -> stringRes(R.string.transaction_history_payment_failed)
                         }
+                    } else {
+                        when (data.metadata.swapMetadata.mode) {
+                            EXACT_INPUT -> when (data.metadata.swapMetadata.status) {
+                                INCOMPLETE_DEPOSIT,
+                                PROCESSING,
+                                PENDING -> stringRes(R.string.transaction_history_swapping)
 
-                        EXACT_OUTPUT -> when (data.metadata.swapMetadata.status) {
-                            INCOMPLETE_DEPOSIT,
-                            PROCESSING,
-                            PENDING -> stringRes(R.string.transaction_history_paying)
+                                SUCCESS -> stringRes(R.string.transaction_history_swapped)
+                                REFUNDED -> stringRes(R.string.transaction_history_swap_refunded)
+                                FAILED -> stringRes(R.string.transaction_history_swap_failed)
+                                EXPIRED -> stringRes(R.string.transaction_history_swap_expired)
+                            }
 
-                            SUCCESS -> stringRes(R.string.transaction_history_paid)
-                            REFUNDED -> stringRes(R.string.transaction_history_payment_refunded)
-                            FAILED -> stringRes(R.string.transaction_history_payment_failed)
+                            EXACT_OUTPUT -> when (data.metadata.swapMetadata.status) {
+                                INCOMPLETE_DEPOSIT,
+                                PROCESSING,
+                                PENDING -> stringRes(R.string.transaction_history_paying)
+
+                                SUCCESS -> stringRes(R.string.transaction_history_paid)
+                                REFUNDED -> stringRes(R.string.transaction_history_payment_refunded)
+                                FAILED -> stringRes(R.string.transaction_history_payment_failed)
+                                EXPIRED -> stringRes(R.string.transaction_history_payment_expired)
+                            }
                         }
                     }
                 }
@@ -253,6 +279,7 @@ class TransactionHistoryMapper {
                     SUCCESS,
                     PROCESSING -> StringResourceColor.PRIMARY
 
+                    EXPIRED,
                     REFUNDED,
                     FAILED -> StringResourceColor.NEGATIVE
                 }
