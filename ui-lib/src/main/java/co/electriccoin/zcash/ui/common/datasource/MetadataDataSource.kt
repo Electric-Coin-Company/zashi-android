@@ -65,7 +65,7 @@ interface MetadataDataSource {
         key: MetadataKey
     )
 
-    suspend fun deleteSwap(depositAddress: String, key: MetadataKey)
+    // suspend fun deleteSwap(depositAddress: String, key: MetadataKey)
 
     suspend fun addSwapAssetToHistory(
         tokenTicker: String,
@@ -228,24 +228,24 @@ class MetadataDataSourceImpl(
         }
     }
 
-    override suspend fun deleteSwap(depositAddress: String, key: MetadataKey) {
-        updateMetadata(
-            key = key,
-            transform = { metadata ->
-                metadata.copy(
-                    swaps =
-                        metadata.swaps.copy(
-                            swapIds =
-                                metadata.swaps.swapIds
-                                    .toMutableList()
-                                    .apply {
-                                        removeIf { it.depositAddress == depositAddress }
-                                    }.toList()
-                        ),
-                )
-            }
-        )
-    }
+    // override suspend fun deleteSwap(depositAddress: String, key: MetadataKey) {
+    //     updateMetadata(
+    //         key = key,
+    //         transform = { metadata ->
+    //             metadata.copy(
+    //                 swaps =
+    //                     metadata.swaps.copy(
+    //                         swapIds =
+    //                             metadata.swaps.swapIds
+    //                                 .toMutableList()
+    //                                 .apply {
+    //                                     removeIf { it.depositAddress == depositAddress }
+    //                                 }.toList()
+    //                     ),
+    //             )
+    //         }
+    //     )
+    // }
 
     override suspend fun addSwapAssetToHistory(
         tokenTicker: String,

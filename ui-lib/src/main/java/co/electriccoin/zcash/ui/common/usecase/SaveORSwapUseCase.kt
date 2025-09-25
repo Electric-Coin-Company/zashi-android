@@ -6,7 +6,6 @@ import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
-import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailArgs
 import java.math.BigDecimal
 
 class SaveORSwapUseCase(
@@ -29,7 +28,7 @@ class SaveORSwapUseCase(
                 destination = quote.destinationAsset
             )
             swapRepository.clear()
-            navigationRouter.replaceAll(SwapDetailArgs(quote.depositAddress))
+            navigationRouter.backToRoot()
         }
     }
 }

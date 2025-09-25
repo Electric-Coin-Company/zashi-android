@@ -63,7 +63,7 @@ interface MetadataRepository {
         destination: SwapAsset,
     )
 
-    fun deleteSwap(depositAddress: String)
+    // fun deleteSwap(depositAddress: String)
 
     fun addSwapAssetToHistory(tokenTicker: String, chainTicker: String)
 
@@ -162,10 +162,10 @@ class MetadataRepositoryImpl(
         )
     }
 
-    override fun deleteSwap(depositAddress: String) =
-        updateMetadata {
-            metadataDataSource.deleteSwap(depositAddress = depositAddress, key = it)
-        }
+    // override fun deleteSwap(depositAddress: String) =
+    //     updateMetadata {
+    //         metadataDataSource.deleteSwap(depositAddress = depositAddress, key = it)
+    //     }
 
     override fun addSwapAssetToHistory(tokenTicker: String, chainTicker: String) =
         updateMetadata {
@@ -214,7 +214,7 @@ class MetadataRepositoryImpl(
             false -> SwapMode.EXACT_OUTPUT
             null -> SwapMode.EXACT_INPUT
         },
-        status = status ?: SwapStatus.PENDING,
+        status = status ?: SwapStatus.SUCCESS,
         amountOutFormatted = amountOutFormatted ?: BigDecimal(0),
         provider = provider,
         totalFees = totalFees,

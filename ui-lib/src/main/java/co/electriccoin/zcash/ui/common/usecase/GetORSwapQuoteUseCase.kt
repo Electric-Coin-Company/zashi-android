@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class GetORSwapQuoteUseCase(
     private val swapRepository: SwapRepository,
-    private val metadataRepository: MetadataRepository
+    // private val metadataRepository: MetadataRepository
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun observe(depositAddress: String) =
@@ -39,11 +39,11 @@ class GetORSwapQuoteUseCase(
                     .flatMapLatest {
                         swapRepository
                             .observeSwapStatus(depositAddress)
-                            .onEach {
-                                if (it.data?.status in listOf(SwapStatus.SUCCESS, SwapStatus.REFUNDED, SwapStatus.FAILED)) {
-                                    metadataRepository.deleteSwap(depositAddress)
-                                }
-                            }
+                            // .onEach {
+                            //     if (it.data?.status in listOf(SwapStatus.SUCCESS, SwapStatus.REFUNDED, SwapStatus.FAILED)) {
+                            //         metadataRepository.deleteSwap(depositAddress)
+                            //     }
+                            // }
                     }
 
             swapFlow
