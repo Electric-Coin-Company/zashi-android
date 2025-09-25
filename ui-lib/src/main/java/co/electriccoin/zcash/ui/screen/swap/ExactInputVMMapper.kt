@@ -376,7 +376,7 @@ internal class ExactInputVMMapper {
                         } else {
                             stringResByDynamicCurrencyNumber(
                                 state.getDestinationAssetAmount() ?: 0,
-                                state.swapAsset.tokenTicker
+                                state.destinationAsset?.tokenTicker.orEmpty()
                             )
                         }
                     }
