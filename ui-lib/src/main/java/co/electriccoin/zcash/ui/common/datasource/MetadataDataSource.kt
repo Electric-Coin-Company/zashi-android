@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.common.datasource
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
-import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.common.model.metadata.AccountMetadataV3
@@ -173,12 +172,16 @@ class MetadataDataSourceImpl(
                                             totalFees = totalFees,
                                             totalFeesUsd = totalFeesUsd,
                                             provider = provider,
-                                            fromAsset = MetadataSimpleSwapAssetV3(
-                                                token = origin.tokenTicker, chain = origin.chainTicker
-                                            ),
-                                            toAsset = MetadataSimpleSwapAssetV3(
-                                                token = destination.tokenTicker, chain = destination.chainTicker
-                                            ),
+                                            fromAsset =
+                                                MetadataSimpleSwapAssetV3(
+                                                    token = origin.tokenTicker,
+                                                    chain = origin.chainTicker
+                                                ),
+                                            toAsset =
+                                                MetadataSimpleSwapAssetV3(
+                                                    token = destination.tokenTicker,
+                                                    chain = destination.chainTicker
+                                                ),
                                             exactInput = mode == SwapMode.EXACT_INPUT,
                                             status = status,
                                             amountOutFormatted = amountOutFormatted,
@@ -213,12 +216,16 @@ class MetadataDataSourceImpl(
                                                 status = status,
                                                 amountOutFormatted = amountOutFormatted,
                                                 exactInput = mode == SwapMode.EXACT_INPUT,
-                                                fromAsset = MetadataSimpleSwapAssetV3(
-                                                    token = origin.tokenTicker, chain = origin.chainTicker
-                                                ),
-                                                toAsset = MetadataSimpleSwapAssetV3(
-                                                    token = destination.tokenTicker, chain = destination.chainTicker
-                                                )
+                                                fromAsset =
+                                                    MetadataSimpleSwapAssetV3(
+                                                        token = origin.tokenTicker,
+                                                        chain = origin.chainTicker
+                                                    ),
+                                                toAsset =
+                                                    MetadataSimpleSwapAssetV3(
+                                                        token = destination.tokenTicker,
+                                                        chain = destination.chainTicker
+                                                    )
                                             )
                                         }
                             ),

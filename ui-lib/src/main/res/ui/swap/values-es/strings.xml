@@ -58,4 +58,16 @@
     <string name="swap_refund_address_info_message">If the swap fails or market conditions change, your transaction
         may be refunded minus the transaction fees.\n\nThe refunded amount will be returned to your wallet in the
         source currency - %s on %s. Please enter a valid address to avoid loss of funds.</string>
+    <string name="swap_detail_row_header">Swap Details</string>
+    <string name="swap_detail_row_deposit_to">Deposit to</string>
+    <string name="swap_detail_title_swap_expired">Swap Expired</string>
+    <string name="swap_detail_title_swap_pending">Swap Pending</string>
+    <string name="swap_detail_title_swap_completed">Swap Completed</string>
+    <string name="swap_detail_title_swap_refunded">Swap Refunded</string>
+    <string name="swap_detail_title_swap_failed">Swap Failed</string>
+    <string name="swap_detail_title_swap_processing">Swap Processing</string>
+    <string name="swap_confirmation_title">Swap</string>
+    <string name="swap_confirmation_subtitle">Deposit Amount</string>
+    <string name="swap_confirmation_primary_button">I’ve sent the funds</string>
+    <string name="swap_into_zec_footer">NEAR only supports swaps to a transparent address. Zashi will prompt you to shield your funds upon receipt.</string>
 </resources>

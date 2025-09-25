@@ -6,7 +6,7 @@ import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapQuoteStatus
 import co.electriccoin.zcash.ui.common.model.getQuoteChainIcon
 import co.electriccoin.zcash.ui.common.model.getQuoteTokenIcon
-import co.electriccoin.zcash.ui.common.usecase.SwapHandle
+import co.electriccoin.zcash.ui.common.usecase.ReloadHandle
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ButtonStyle
 import co.electriccoin.zcash.ui.design.component.SwapQuoteHeaderState
@@ -21,7 +21,6 @@ import java.time.Instant
 import java.time.ZoneId
 
 class CommonTransactionDetailMapper {
-
     fun createTransactionDetailTimestamp(timestamp: Instant?) =
         timestamp
             ?.atZone(ZoneId.systemDefault())
@@ -35,8 +34,9 @@ class CommonTransactionDetailMapper {
     fun createTransactionDetailErrorFooter(error: Exception?): ErrorFooter? {
         if (error == null) return null
 
-        val isServiceUnavailableError = error is ResponseException &&
-            error.response.status == HttpStatusCode.ServiceUnavailable
+        val isServiceUnavailableError =
+            error is ResponseException &&
+                error.response.status == HttpStatusCode.ServiceUnavailable
 
         return ErrorFooter(
             title =
@@ -54,16 +54,17 @@ class CommonTransactionDetailMapper {
         )
     }
 
-    fun createTransactionDetailErrorButtonState(error: Exception?, swapHandle: SwapHandle): ButtonState? {
-        val isServiceUnavailableError = error is ResponseException &&
-            error.response.status == HttpStatusCode.ServiceUnavailable
+    fun createTransactionDetailErrorButtonState(error: Exception?, reloadHandle: ReloadHandle): ButtonState? {
+        val isServiceUnavailableError =
+            error is ResponseException &&
+                error.response.status == HttpStatusCode.ServiceUnavailable
 
         return if (isServiceUnavailableError) {
             null
         } else {
             ButtonState(
                 text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_try_again),
-                onClick = { swapHandle.requestReload() },
+                onClick = { reloadHandle.requestReload() },
                 style = ButtonStyle.DESTRUCTIVE1
             )
         }

@@ -15,16 +15,18 @@ class ShareQRUseCase(
         sharePickerText: String,
         filenamePrefix: String
     ) = withContext(Dispatchers.Default) {
-        val qrCodePixelArray = JvmQrCodeGenerator.generate(
-            data = qrData,
-            sizePixels = QR_SIZE_PX
-        )
-        val bitmap = AndroidQrCodeImageGenerator.generate(
-            bitArray = qrCodePixelArray,
-            sizePixels = QR_SIZE_PX,
-            background = WHITE,
-            foreground = BLACK,
-        )
+        val qrCodePixelArray =
+            JvmQrCodeGenerator.generate(
+                data = qrData,
+                sizePixels = QR_SIZE_PX
+            )
+        val bitmap =
+            AndroidQrCodeImageGenerator.generate(
+                bitArray = qrCodePixelArray,
+                sizePixels = QR_SIZE_PX,
+                background = WHITE,
+                foreground = BLACK,
+            )
         shareImageBitmap(
             shareImageBitmap = bitmap.asAndroidBitmap(),
             filePrefix = filenamePrefix,

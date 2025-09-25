@@ -37,4 +37,6 @@ class QuoteLowAmountException(
     val amountFormatted: BigDecimal?
 ) : Exception()
 
-class TokenNotFoundException(tokenId: String): Exception("Token $tokenId not found")
+class TokenNotFoundException(
+    tokenId: String
+) : Exception("Token $tokenId not found")

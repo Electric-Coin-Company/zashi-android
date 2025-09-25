@@ -36,21 +36,24 @@ data class ZecSwapAsset(
     val alternativeTokenIcon: ImageResource = imageRes(R.drawable.ic_zec_round_full)
 }
 
-fun SwapAsset.getQuoteTokenIcon(): ImageResource = when (this) {
-    is DynamicSwapAsset -> this.tokenIcon
-    is ZecSwapAsset -> this.alternativeTokenIcon
-}
+fun SwapAsset.getQuoteTokenIcon(): ImageResource =
+    when (this) {
+        is DynamicSwapAsset -> this.tokenIcon
+        is ZecSwapAsset -> this.alternativeTokenIcon
+    }
 
 fun SwapAsset.getQuoteChainIcon(
     isOriginAsset: Boolean
-): ImageResource? = when (this) {
-    is DynamicSwapAsset -> this.chainIcon
-    is ZecSwapAsset -> if (isOriginAsset) {
-        imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield)
-    } else {
-        imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_unshielded)
+): ImageResource? =
+    when (this) {
+        is DynamicSwapAsset -> this.chainIcon
+        is ZecSwapAsset ->
+            if (isOriginAsset) {
+                imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield)
+            } else {
+                imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_unshielded)
+            }
     }
-}
 
 data class DynamicSwapAsset(
     override val tokenTicker: String,

@@ -469,21 +469,23 @@ class RequestViewModel(
         }
     }
 
-    private fun onRequestQrCodeShare(bitmap: ImageBitmap) = viewModelScope.launch {
-        val shareResult = shareImageBitmap(
-            shareImageBitmap = bitmap.asAndroidBitmap(),
-            filePrefix = TEMP_FILE_NAME_PREFIX,
-            fileSuffix = TEMP_FILE_NAME_SUFFIX,
-            shareText = application.getString(R.string.request_qr_code_share_chooser_text),
-            sharePickerText = application.getString(R.string.request_qr_code_share_chooser_title),
-        )
+    private fun onRequestQrCodeShare(bitmap: ImageBitmap) =
+        viewModelScope.launch {
+            val shareResult =
+                shareImageBitmap(
+                    shareImageBitmap = bitmap.asAndroidBitmap(),
+                    filePrefix = TEMP_FILE_NAME_PREFIX,
+                    fileSuffix = TEMP_FILE_NAME_SUFFIX,
+                    shareText = application.getString(R.string.request_qr_code_share_chooser_text),
+                    sharePickerText = application.getString(R.string.request_qr_code_share_chooser_title),
+                )
 
-        if (shareResult) {
-            shareResultCommand.emit(true)
-        } else {
-            shareResultCommand.emit(false)
+            if (shareResult) {
+                shareResultCommand.emit(true)
+            } else {
+                shareResultCommand.emit(false)
+            }
         }
-    }
 
     private fun bitmapForData(
         value: String,

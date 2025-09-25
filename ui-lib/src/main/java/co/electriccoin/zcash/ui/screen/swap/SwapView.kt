@@ -263,11 +263,17 @@ private fun TopAppBar(state: SwapState) {
 @Composable
 private fun ColumnScope.AddressTextField(state: SwapState) {
     Row(
-        modifier = Modifier then if (state.onAddressClick == null) Modifier else Modifier.clickable(
-            onClick = state.onAddressClick,
-            indication = null,
-            interactionSource = remember { MutableInteractionSource() }
-        ),
+        modifier =
+            Modifier then
+                if (state.onAddressClick == null) {
+                    Modifier
+                } else {
+                    Modifier.clickable(
+                        onClick = state.onAddressClick,
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    )
+                },
         verticalAlignment = CenterVertically
     ) {
         Text(
@@ -445,7 +451,8 @@ private fun Preview() {
                         ),
                     footer =
                         stringRes(
-                            "NEAR only supports swaps to a transparent address. Zashi will prompt you to shield your funds upon receipt."
+                            "NEAR only supports swaps to a transparent address. " +
+                                "Zashi will prompt you to shield your funds upon receipt."
                         ),
                     errorFooter = null,
                     addressLocation = BOTTOM,

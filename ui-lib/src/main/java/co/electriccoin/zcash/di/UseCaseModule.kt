@@ -105,6 +105,7 @@ import co.electriccoin.zcash.ui.common.usecase.SendTransactionAgainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
+import co.electriccoin.zcash.ui.common.usecase.ShareQRUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateABContactUseCase
@@ -117,7 +118,6 @@ import co.electriccoin.zcash.ui.common.usecase.ViewTransactionDetailAfterSuccess
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
-import co.electriccoin.zcash.ui.common.usecase.ShareQRUseCase
 import co.electriccoin.zcash.ui.util.closeableCallback
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf

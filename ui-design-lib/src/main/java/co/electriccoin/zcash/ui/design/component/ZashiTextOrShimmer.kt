@@ -22,18 +22,18 @@ import com.valentinilk.shimmer.shimmer
 @Composable
 fun ZashiTextOrShimmer(
     text: String?,
+    modifier: Modifier = Modifier,
     shimmerWidth: Dp = 40.dp,
-    modifier: Modifier = Modifier.Companion,
-    color: Color = Color.Companion.Unspecified,
-    fontSize: TextUnit = TextUnit.Companion.Unspecified,
+    color: Color = Color.Unspecified,
+    fontSize: TextUnit = TextUnit.Unspecified,
     fontStyle: FontStyle? = null,
     fontWeight: FontWeight? = null,
     fontFamily: FontFamily? = null,
-    letterSpacing: TextUnit = TextUnit.Companion.Unspecified,
+    letterSpacing: TextUnit = TextUnit.Unspecified,
     textDecoration: TextDecoration? = null,
     textAlign: TextAlign? = null,
-    lineHeight: TextUnit = TextUnit.Companion.Unspecified,
-    overflow: TextOverflow = TextOverflow.Companion.Clip,
+    lineHeight: TextUnit = TextUnit.Unspecified,
+    overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
@@ -61,14 +61,15 @@ fun ZashiTextOrShimmer(
             style = style,
         )
     } else {
-        val style = style.merge(
-            fontWeight = fontWeight,
-            fontSize = fontSize,
-            fontFamily = fontFamily,
-            letterSpacing = letterSpacing,
-            textAlign = textAlign ?: TextAlign.Companion.Unspecified,
-            lineHeight = lineHeight,
-        )
+        val style =
+            style.merge(
+                fontWeight = fontWeight,
+                fontSize = fontSize,
+                fontFamily = fontFamily,
+                letterSpacing = letterSpacing,
+                textAlign = textAlign ?: TextAlign.Companion.Unspecified,
+                lineHeight = lineHeight,
+            )
         Box(
             modifier = modifier.shimmer(rememberZashiShimmer())
         ) {

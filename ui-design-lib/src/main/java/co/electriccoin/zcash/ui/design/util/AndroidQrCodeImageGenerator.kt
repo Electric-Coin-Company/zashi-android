@@ -12,10 +12,11 @@ object AndroidQrCodeImageGenerator : QrCodeImageGenerator {
         sizePixels: Int,
         colors: QrCodeColors
     ): ImageBitmap {
-        val colorArray = bitArray.toThemeColorArray(
-            foreground = colors.foreground.toArgb(),
-            background = colors.background.toArgb()
-        )
+        val colorArray =
+            bitArray.toThemeColorArray(
+                foreground = colors.foreground.toArgb(),
+                background = colors.background.toArgb()
+            )
         return Bitmap
             .createBitmap(colorArray, sizePixels, sizePixels, Bitmap.Config.ARGB_8888)
             .asImageBitmap()

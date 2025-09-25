@@ -106,4 +106,7 @@ data class SwapMetadataV3(
     val amountOutFormatted: BigDecimal?,
 )
 
-data class MetadataSimpleSwapAssetV3(val token: String, val chain: String)
+data class MetadataSimpleSwapAssetV3(
+    val token: String,
+    val chain: String
+)

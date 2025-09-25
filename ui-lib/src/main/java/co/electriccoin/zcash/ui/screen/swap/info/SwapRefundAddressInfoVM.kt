@@ -16,27 +16,28 @@ class SwapRefundAddressInfoVM(
     getSelectedSwapAsset: GetSelectedSwapAssetUseCase,
     private val navigationRouter: NavigationRouter
 ) : ViewModel() {
-    val state = getSelectedSwapAsset
-        .observe()
-        .map {
-            SwapRefundAddressInfoState(
-                message = if (it != null) {
-                    stringRes(
-                        R.string.swap_refund_address_info_message,
-                        it.tokenTicker,
-                        it.chainName
-                    )
-                } else {
-                    stringRes(R.string.swap_refund_address_info_message_empty)
-                },
-                onBack = ::onBack
+    val state =
+        getSelectedSwapAsset
+            .observe()
+            .map {
+                SwapRefundAddressInfoState(
+                    message =
+                        if (it != null) {
+                            stringRes(
+                                R.string.swap_refund_address_info_message,
+                                it.tokenTicker,
+                                it.chainName
+                            )
+                        } else {
+                            stringRes(R.string.swap_refund_address_info_message_empty)
+                        },
+                    onBack = ::onBack
+                )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
             )
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
 
     private fun onBack() = navigationRouter.back()
 }

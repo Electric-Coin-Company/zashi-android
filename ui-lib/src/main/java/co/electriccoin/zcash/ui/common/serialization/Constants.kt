@@ -10,8 +10,11 @@ internal const val ADDRESS_BOOK_FILE_IDENTIFIER_SIZE = 32
 internal const val ADDRESS_BOOK_SALT_SIZE = 32
 internal val ADDRESS_BOOK_BYTE_ORDER = ByteOrder.BIG_ENDIAN
 
-internal const val METADATA_SERIALIZATION_V1 = 1
-internal const val METADATA_SERIALIZATION_V2 = 1
+/**
+ * V1 and V2 did not need migration because we only added new fields which is perfectly well handled by
+ * kotlinx.serialization.
+ */
+internal const val METADATA_SERIALIZATION_V1_V2 = 1
 internal const val METADATA_SERIALIZATION_V3 = 3
 internal const val METADATA_ENCRYPTION_V1 = 1
 internal const val METADATA_SALT_SIZE = 32

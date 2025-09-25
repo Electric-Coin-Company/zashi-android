@@ -82,6 +82,7 @@ fun TransactionDetailSwapStatusRow(
     }
 }
 
+@Suppress("CyclomaticComplexMethod")
 @Composable
 private fun StatusChip(state: TransactionDetailSwapStatusRowState) {
     if (state.status == null) return
@@ -89,33 +90,35 @@ private fun StatusChip(state: TransactionDetailSwapStatusRowState) {
     ZashiBadge(
         text =
             when (state.status) {
-                EXPIRED -> "Expired"
+                EXPIRED -> stringResource(R.string.swap_detail_expired)
                 INCOMPLETE_DEPOSIT,
-                PENDING -> if (state.mode == SWAP_INTO_ZEC) {
-                    "Pending deposit"
-                } else {
-                    stringResource(R.string.swap_detail_pending)
-                }
+                PENDING ->
+                    if (state.mode == SWAP_INTO_ZEC) {
+                        stringResource(R.string.swap_detail_pending_deposit)
+                    } else {
+                        stringResource(R.string.swap_detail_pending)
+                    }
 
                 SUCCESS -> stringResource(R.string.swap_detail_completed)
                 REFUNDED -> stringResource(R.string.swap_detail_refunded)
                 FAILED -> stringResource(R.string.swap_detail_failed)
-                PROCESSING -> if (state.mode == SWAP_INTO_ZEC) {
-                    "Processing"
-                } else {
-                    stringResource(R.string.swap_detail_pending)
-                }
-
+                PROCESSING ->
+                    if (state.mode == SWAP_INTO_ZEC) {
+                        stringResource(R.string.swap_detail_title_swap_processing)
+                    } else {
+                        stringResource(R.string.swap_detail_pending)
+                    }
             },
         colors =
             when (state.status) {
                 PROCESSING -> ZashiBadgeDefaults.hyperBlueColors()
                 INCOMPLETE_DEPOSIT,
-                PENDING -> if (state.mode == SWAP_INTO_ZEC) {
-                    ZashiBadgeDefaults.warningColors()
-                } else {
-                    ZashiBadgeDefaults.hyperBlueColors()
-                }
+                PENDING ->
+                    if (state.mode == SWAP_INTO_ZEC) {
+                        ZashiBadgeDefaults.warningColors()
+                    } else {
+                        ZashiBadgeDefaults.hyperBlueColors()
+                    }
 
                 SUCCESS -> ZashiBadgeDefaults.successColors()
 
@@ -134,7 +137,8 @@ data class TransactionDetailSwapStatusRowState(
     val mode: Mode = SWAP_FROM_ZEC,
 ) {
     enum class Mode {
-        SWAP_FROM_ZEC, SWAP_INTO_ZEC
+        SWAP_FROM_ZEC,
+        SWAP_INTO_ZEC
     }
 }
 

@@ -16,7 +16,6 @@ import java.time.Instant
 import kotlin.time.Duration.Companion.minutes
 
 interface SwapQuoteStatus {
-
     val swapQuote: SwapQuote
 
     val timestamp: Instant
@@ -51,12 +50,12 @@ data class NearSwapQuoteStatus(
     val origin: SwapAsset,
     val destination: SwapAsset
 ) : SwapQuoteStatus {
-
-    override val swapQuote: SwapQuote = NearSwapQuote(
-        response = response.quoteResponse,
-        originAsset = origin,
-        destinationAsset = destination,
-    )
+    override val swapQuote: SwapQuote =
+        NearSwapQuote(
+            response = response.quoteResponse,
+            originAsset = origin,
+            destinationAsset = destination,
+        )
 
     override val timestamp: Instant = response.quoteResponse.timestamp.toJavaInstant()
 
@@ -64,32 +63,35 @@ data class NearSwapQuoteStatus(
     override val destinationAssetId: String = destination.assetId
 
     override val status: SwapStatus
-        get() = if (
-            response.status == PENDING_DEPOSIT &&
-            Instant.now() > (response.quoteResponse.quote.deadline - 5.minutes).toJavaInstant()
-        ) {
-            SwapStatus.EXPIRED
-        } else {
-            when (response.status) {
-                KNOWN_DEPOSIT_TX -> SwapStatus.PENDING
-                PENDING_DEPOSIT -> SwapStatus.PENDING
-                INCOMPLETE_DEPOSIT -> SwapStatus.INCOMPLETE_DEPOSIT
-                PROCESSING -> SwapStatus.PROCESSING
-                SUCCESS -> SwapStatus.SUCCESS
-                REFUNDED -> SwapStatus.REFUNDED
-                FAILED -> SwapStatus.FAILED
-                null -> SwapStatus.PENDING
+        get() =
+            if (
+                response.status == PENDING_DEPOSIT &&
+                Instant.now() > (response.quoteResponse.quote.deadline - 5.minutes).toJavaInstant()
+            ) {
+                SwapStatus.EXPIRED
+            } else {
+                when (response.status) {
+                    KNOWN_DEPOSIT_TX -> SwapStatus.PENDING
+                    PENDING_DEPOSIT -> SwapStatus.PENDING
+                    INCOMPLETE_DEPOSIT -> SwapStatus.INCOMPLETE_DEPOSIT
+                    PROCESSING -> SwapStatus.PROCESSING
+                    SUCCESS -> SwapStatus.SUCCESS
+                    REFUNDED -> SwapStatus.REFUNDED
+                    FAILED -> SwapStatus.FAILED
+                    null -> SwapStatus.PENDING
+                }
             }
-        }
 
     override val isSlippageRealized: Boolean = response.swapDetails?.slippage != null
 
     @Suppress("MagicNumber")
-    override val maxSlippage: BigDecimal = response.swapDetails?.slippage
-        ?.let {
-            BigDecimal(it).divide(BigDecimal(100), MathContext.DECIMAL128)
-        }
-        ?: swapQuote.slippage
+    override val maxSlippage: BigDecimal =
+        response.swapDetails
+            ?.slippage
+            ?.let {
+                BigDecimal(it).divide(BigDecimal(100), MathContext.DECIMAL128)
+            }
+            ?: swapQuote.slippage
 
     override val recipient: String = swapQuote.recipient
 

@@ -220,7 +220,6 @@ class TransactionHistoryVM(
 
     private fun onSwapClick(depositAddress: String) = navigationRouter.forward(SwapDetailArgs(depositAddress))
 
-
     private fun onTransactionFiltersClicked() = navigationRouter.forward(TransactionFiltersArgs)
 }
 

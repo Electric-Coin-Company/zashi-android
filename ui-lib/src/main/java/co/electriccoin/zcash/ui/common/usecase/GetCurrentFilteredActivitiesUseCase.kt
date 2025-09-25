@@ -7,7 +7,6 @@ import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
 import co.electriccoin.zcash.ui.common.repository.SendTransaction
-import co.electriccoin.zcash.ui.common.repository.ShieldTransaction
 import co.electriccoin.zcash.ui.common.repository.TransactionFilter
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
@@ -50,7 +49,8 @@ class GetCurrentFilteredActivitiesUseCase(
 ) : CloseableScopeHolder by CloseableScopeHolderImpl(coroutineContext = Dispatchers.IO) {
     @OptIn(ExperimentalCoroutinesApi::class)
     private val detailedCurrentTransactions =
-        getActivities.observe()
+        getActivities
+            .observe()
             .flatMapLatest { activities ->
                 val enhancedTransactions =
                     activities
@@ -68,7 +68,8 @@ class GetCurrentFilteredActivitiesUseCase(
                                             )
                                         )
                                     } else {
-                                        addressBookRepository.observeContactByAddress(recipient.address)
+                                        addressBookRepository
+                                            .observeContactByAddress(recipient.address)
                                             .map { contact ->
                                                 FilterActivityData.ByTransaction(
                                                     activity = activity,
@@ -170,7 +171,7 @@ class GetCurrentFilteredActivitiesUseCase(
         return memoPass && unreadPass && bookmarkPass && notesPass
     }
 
-    @Suppress
+    @Suppress("CyclomaticComplexMethod")
     private fun filterBySentReceivedSwap(
         filters: List<TransactionFilter>,
         activity: FilterActivityData
@@ -180,20 +181,23 @@ class GetCurrentFilteredActivitiesUseCase(
             TransactionFilter.SWAP in filters
         ) {
             when {
-                TransactionFilter.SENT in filters && when (activity) {
-                    is FilterActivityData.BySwap -> false
-                    is FilterActivityData.ByTransaction -> activity.activity.transaction is SendTransaction
-                } -> true
+                TransactionFilter.SENT in filters &&
+                    when (activity) {
+                        is FilterActivityData.BySwap -> false
+                        is FilterActivityData.ByTransaction -> activity.activity.transaction is SendTransaction
+                    } -> true
 
-                TransactionFilter.RECEIVED in filters && when (activity) {
-                    is FilterActivityData.BySwap -> false
-                    is FilterActivityData.ByTransaction -> activity.activity.transaction is ReceiveTransaction
-                } -> true
+                TransactionFilter.RECEIVED in filters &&
+                    when (activity) {
+                        is FilterActivityData.BySwap -> false
+                        is FilterActivityData.ByTransaction -> activity.activity.transaction is ReceiveTransaction
+                    } -> true
 
-                TransactionFilter.SWAP in filters && when (activity) {
-                    is FilterActivityData.BySwap -> true
-                    is FilterActivityData.ByTransaction -> activity.activity.metadata.swapMetadata != null
-                } -> true
+                TransactionFilter.SWAP in filters &&
+                    when (activity) {
+                        is FilterActivityData.BySwap -> true
+                        is FilterActivityData.ByTransaction -> activity.activity.metadata.swapMetadata != null
+                    } -> true
 
                 else -> false
             }
@@ -222,13 +226,11 @@ class GetCurrentFilteredActivitiesUseCase(
         }
     }
 
-    private fun isBookmark(activity: FilterActivityData): Boolean {
-        return activity is FilterActivityData.ByTransaction && activity.activity.metadata.isBookmarked
-    }
+    private fun isBookmark(activity: FilterActivityData): Boolean =
+        activity is FilterActivityData.ByTransaction && activity.activity.metadata.isBookmarked
 
-    private fun hasNotes(activity: FilterActivityData): Boolean {
-        return activity is FilterActivityData.ByTransaction && activity.activity.metadata.note != null
-    }
+    private fun hasNotes(activity: FilterActivityData): Boolean =
+        activity is FilterActivityData.ByTransaction && activity.activity.metadata.note != null
 
     private fun hasNotesWithFulltext(
         activity: FilterActivityData,
@@ -244,43 +246,49 @@ class GetCurrentFilteredActivitiesUseCase(
             ?: false
     }
 
-    private fun hasAmountWithFulltext(activity: FilterActivityData, fulltextFilter: String): Boolean {
-        return when (activity) {
+    private fun hasAmountWithFulltext(activity: FilterActivityData, fulltextFilter: String): Boolean =
+        when (activity) {
             is FilterActivityData.BySwap -> {
-                val text = (stringResByNumber(activity.activity.swap.totalFeesUsd) + stringRes(" ZEC"))
-                    .getString(context)
+                val text =
+                    (stringResByNumber(activity.activity.swap.totalFeesUsd) + stringRes(" ZEC"))
+                        .getString(context)
                 text.contains(fulltextFilter, ignoreCase = true)
             }
 
             is FilterActivityData.ByTransaction -> {
-                val text = if (activity.activity.transaction is SendTransaction &&
-                    (activity.activity.metadata.swapMetadata == null ||
-                        activity.activity.metadata.swapMetadata
-                            .destination.tokenTicker.lowercase() != "zec")
-                ) {
-                    (stringRes("- ") +
-                        stringRes(activity.activity.transaction.amount, HIDDEN) + stringRes(" ZEC"))
-                        .getString(context)
-                } else {
-                    (stringRes(activity.activity.transaction.amount, HIDDEN) + stringRes(" ZEC"))
-                        .getString(context)
-                }
+                val text =
+                    if (activity.activity.transaction is SendTransaction &&
+                        (
+                            activity.activity.metadata.swapMetadata == null ||
+                                activity.activity.metadata.swapMetadata
+                                    .destination.tokenTicker
+                                    .lowercase() != "zec"
+                        )
+                    ) {
+                        (
+                            stringRes("- ") +
+                                stringRes(activity.activity.transaction.amount, HIDDEN) + stringRes(" ZEC")
+                        ).getString(context)
+                    } else {
+                        (stringRes(activity.activity.transaction.amount, HIDDEN) + stringRes(" ZEC"))
+                            .getString(context)
+                    }
                 text.contains(fulltextFilter, ignoreCase = true)
             }
         }
-    }
 
-    private fun hasAddressWithFulltext(transaction: FilterActivityData, fulltextFilter: String): Boolean {
-        return when (transaction) {
-            is FilterActivityData.BySwap -> transaction.activity.swap.depositAddress
-                .contains(fulltextFilter, true)
+    private fun hasAddressWithFulltext(transaction: FilterActivityData, fulltextFilter: String): Boolean =
+        when (transaction) {
+            is FilterActivityData.BySwap ->
+                transaction.activity.swap.depositAddress
+                    .contains(fulltextFilter, true)
 
             is FilterActivityData.ByTransaction -> {
-                transaction.activity.transaction.recipient?.address
+                transaction.activity.transaction.recipient
+                    ?.address
                     ?.contains(fulltextFilter, ignoreCase = true) ?: false
             }
         }
-    }
 
     private fun hasContactInAddressBookWithFulltext(activity: FilterActivityData, fulltextFilter: String): Boolean {
         if (activity !is FilterActivityData.ByTransaction) return false
@@ -294,7 +302,6 @@ class GetCurrentFilteredActivitiesUseCase(
 }
 
 private sealed interface FilterActivityData {
-
     val activity: ActivityData
 
     data class ByTransaction(
@@ -302,7 +309,9 @@ private sealed interface FilterActivityData {
         val contact: EnhancedABContact?,
     ) : FilterActivityData
 
-    data class BySwap(override val activity: ActivityData.BySwap) : FilterActivityData
+    data class BySwap(
+        override val activity: ActivityData.BySwap
+    ) : FilterActivityData
 }
 
 private const val MIN_TEXT_FILTER_LENGTH = 3

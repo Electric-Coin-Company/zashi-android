@@ -65,8 +65,9 @@ fun TransactionDetailInfoRow(
             ) {
                 Text(
                     maxLines = 1,
-                    text = state.message orHiddenString
-                        stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
+                    text =
+                        state.message orHiddenString
+                            stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                     style = ZashiTypography.textSm,
                     color = ZashiColors.Text.textPrimary,
                     fontWeight = FontWeight.Medium,
@@ -111,8 +112,8 @@ fun TransactionDetailInfoRow(
 @Composable
 fun TransactionDetailRowSurface(
     onClick: (() -> Unit)?,
-    modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
     val clickModifier =

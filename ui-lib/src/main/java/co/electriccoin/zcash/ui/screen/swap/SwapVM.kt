@@ -33,7 +33,6 @@ import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.screen.swap.Mode.SWAP_FROM_ZEC
 import co.electriccoin.zcash.ui.screen.swap.Mode.SWAP_INTO_ZEC
 import co.electriccoin.zcash.ui.screen.swap.info.SwapRefundAddressInfoArgs
-import co.electriccoin.zcash.ui.screen.swap.info.SwapRefundAddressInfoView
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import kotlinx.coroutines.delay

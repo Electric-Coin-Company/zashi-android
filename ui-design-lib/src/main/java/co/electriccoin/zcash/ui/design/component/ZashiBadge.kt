@@ -136,7 +136,6 @@ object ZashiBadgeDefaults {
         text = text,
         container = background,
     )
-
 }
 
 @PreviewScreens

@@ -7,9 +7,6 @@ import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.util.FileShareUtil
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import java.io.File
 

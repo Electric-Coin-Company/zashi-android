@@ -65,10 +65,13 @@ fun SwapRefundAddressInfoView(state: SwapRefundAddressInfoState?) {
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    SwapRefundAddressInfoView(
-        state = SwapRefundAddressInfoState(
-        message = stringRes(R.string.swap_refund_address_info_message),
-        onBack = {}
-    ))
-}
+private fun Preview() =
+    ZcashTheme {
+        SwapRefundAddressInfoView(
+            state =
+                SwapRefundAddressInfoState(
+                    message = stringRes(R.string.swap_refund_address_info_message),
+                    onBack = {}
+                )
+        )
+    }

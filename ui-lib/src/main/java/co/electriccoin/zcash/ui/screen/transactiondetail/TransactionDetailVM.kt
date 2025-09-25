@@ -123,11 +123,12 @@ class TransactionDetailVM(
                         val recipient = transaction.swap.data?.recipient
                         SendSwapState(
                             status = transaction.swap.data?.status,
-                            quoteHeader = mapper.createTransactionDetailQuoteHeaderState(
-                                swap = transaction.swap.data,
-                                originAsset = transaction.swap.originAsset,
-                                destinationAsset = transaction.swap.destinationAsset
-                            ),
+                            quoteHeader =
+                                mapper.createTransactionDetailQuoteHeaderState(
+                                    swap = transaction.swap.data,
+                                    originAsset = transaction.swap.originAsset,
+                                    destinationAsset = transaction.swap.destinationAsset
+                                ),
                             depositAddress =
                                 stringResByAddress(
                                     value = transaction.recipient?.address.orEmpty(),
@@ -197,10 +198,11 @@ class TransactionDetailVM(
                     else ->
                         SendShieldedState(
                             contact = transaction.contact?.let { stringRes(it.name) },
-                            address = stringResByAddress(
-                                value = transaction.recipient?.address.orEmpty(),
-                                abbreviated = true
-                            ),
+                            address =
+                                stringResByAddress(
+                                    value = transaction.recipient?.address.orEmpty(),
+                                    abbreviated = true
+                                ),
                             transactionId =
                                 stringResByTransactionId(
                                     value = transaction.transaction.id.txIdString(),
@@ -320,7 +322,7 @@ class TransactionDetailVM(
             data.swap?.error != null && data.swap.data != null ->
                 mapper.createTransactionDetailErrorButtonState(
                     error = data.swap.error,
-                    swapHandle = data.swapHandle
+                    reloadHandle = data.reloadHandle
                 )
 
             data.swap != null -> null
@@ -391,20 +393,21 @@ class TransactionDetailVM(
                 },
             amount =
                 stringRes(data.transaction.amount, HIDDEN),
-            icons = listOf(
-                imageRes(
-                    when (info) {
-                        is ReceiveShieldedState,
-                        is ReceiveTransparentState -> R.drawable.ic_transaction_detail_receive
+            icons =
+                listOf(
+                    imageRes(
+                        when (info) {
+                            is ReceiveShieldedState,
+                            is ReceiveTransparentState -> R.drawable.ic_transaction_detail_receive
 
-                        is SendShieldedState,
-                        is SendSwapState,
-                        is SendTransparentState -> R.drawable.ic_transaction_detail_send
+                            is SendShieldedState,
+                            is SendSwapState,
+                            is SendTransparentState -> R.drawable.ic_transaction_detail_send
 
-                        is ShieldingState -> R.drawable.ic_transaction_detail_shielding
-                    }
+                            is ShieldingState -> R.drawable.ic_transaction_detail_shielding
+                        }
+                    )
                 )
-            )
         )
 
     private fun onBack() = navigationRouter.back()

@@ -110,9 +110,10 @@ fun SwapAssetPickerView(state: SwapAssetPickerState?) {
                         )
             ) {
                 SearchTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp),
                     innerState = innerState
                 )
 

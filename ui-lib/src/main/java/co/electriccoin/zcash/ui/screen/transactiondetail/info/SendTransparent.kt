@@ -24,12 +24,12 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactiondetail.SendTransparentStateFixture
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailRowHeader
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumn
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumnState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoContainer
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRow
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRowState
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailRowHeader
 
 @Composable
 fun SendTransparent(
@@ -49,7 +49,6 @@ fun SendTransparent(
 
         Spacer(Modifier.height(8.dp))
         TransactionDetailInfoContainer {
-
             CompositionLocalProvider(
                 LocalBalancesAvailable provides (state.contact != null || LocalBalancesAvailable.current)
             ) {

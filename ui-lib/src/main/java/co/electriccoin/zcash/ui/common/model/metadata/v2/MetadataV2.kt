@@ -5,8 +5,9 @@ package co.electriccoin.zcash.ui.common.model.metadata.v2
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.serialization.BigDecimalSerializer
 import co.electriccoin.zcash.ui.common.serialization.InstantSerializer
-import co.electriccoin.zcash.ui.common.serialization.METADATA_SERIALIZATION_V2
+import co.electriccoin.zcash.ui.common.serialization.METADATA_SERIALIZATION_V1_V2
 import co.electriccoin.zcash.ui.common.serialization.ZatoshiSerializer
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -18,7 +19,8 @@ import java.time.Instant
 @Serializable
 data class MetadataV2(
     @SerialName("version")
-    val version: Int = METADATA_SERIALIZATION_V2,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
+    val version: Int = METADATA_SERIALIZATION_V1_V2,
     @SerialName("lastUpdated")
     @Serializable(InstantSerializer::class)
     val lastUpdated: Instant,

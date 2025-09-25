@@ -118,27 +118,25 @@ internal class ExactInputVMMapper {
                     SWAP_FROM_ZEC -> SwapState.AddressLocation.BOTTOM
                     SWAP_INTO_ZEC -> SwapState.AddressLocation.TOP
                 },
-            footer =
-                stringRes(
-                    "NEAR only supports swaps to a transparent address. Zashi will prompt you to shield " +
-                        "your funds upon receipt."
-                ).takeIf { state.mode == SWAP_INTO_ZEC },
+            footer = stringRes(R.string.swap_into_zec_footer,).takeIf { state.mode == SWAP_INTO_ZEC },
             changeModeButton =
                 IconButtonState(
                     icon = R.drawable.ic_swap_change_mode,
                     onClick = onChangeButtonClick
                 ),
-            onAddressClick = when (state.mode) {
-                SWAP_FROM_ZEC -> null
-                SWAP_INTO_ZEC -> onAddressClick
-            },
-            addressPlaceholder = state.swapAsset
-                ?.let {
-                    stringRes(
-                        co.electriccoin.zcash.ui.design.R.string.general_enter_address_partial,
-                        it.chainName
-                    )
-                } ?: stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
+            onAddressClick =
+                when (state.mode) {
+                    SWAP_FROM_ZEC -> null
+                    SWAP_INTO_ZEC -> onAddressClick
+                },
+            addressPlaceholder =
+                state.swapAsset
+                    ?.let {
+                        stringRes(
+                            co.electriccoin.zcash.ui.design.R.string.general_enter_address_partial,
+                            it.chainName
+                        )
+                    } ?: stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
         )
     }
 

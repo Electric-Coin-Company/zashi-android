@@ -86,6 +86,7 @@ data class SwapQuoteStatusData(
     val destinationAsset = data?.swapQuote?.destinationAsset
 }
 
+@Suppress("TooManyFunctions")
 class SwapRepositoryImpl(
     private val swapDataSource: SwapDataSource,
     private val accountDataSource: AccountDataSource,
@@ -266,7 +267,6 @@ class SwapRepositoryImpl(
         }
     }
 
-    @Suppress("TooGenericExceptionCaught")
     override fun requestExactInputQuote(amount: BigDecimal, address: String) {
         requestSwapFromZecQuote(amount, address, EXACT_INPUT)
     }
@@ -275,6 +275,7 @@ class SwapRepositoryImpl(
         requestSwapFromZecQuote(amount, address, EXACT_OUTPUT)
     }
 
+    @Suppress("TooGenericExceptionCaught")
     override fun requestExactInputIntoZec(amount: BigDecimal, refundAddress: String) {
         requestQuoteJob =
             scope.launch {

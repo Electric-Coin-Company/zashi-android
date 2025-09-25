@@ -65,14 +65,18 @@ class GetActivitiesUseCase(
 }
 
 sealed interface ActivityData {
-
     val timestamp: Instant?
 
-    data class ByTransaction(val transaction: Transaction, val metadata: TransactionMetadata) : ActivityData {
+    data class ByTransaction(
+        val transaction: Transaction,
+        val metadata: TransactionMetadata
+    ) : ActivityData {
         override val timestamp = transaction.timestamp
     }
 
-    data class BySwap(val swap: TransactionSwapMetadata) : ActivityData {
+    data class BySwap(
+        val swap: TransactionSwapMetadata
+    ) : ActivityData {
         override val timestamp = swap.lastUpdated
     }
 }

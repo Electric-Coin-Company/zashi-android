@@ -5,8 +5,13 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.SwapStatus
-import co.electriccoin.zcash.ui.common.model.SwapStatus.*
+import co.electriccoin.zcash.ui.common.model.SwapStatus.EXPIRED
+import co.electriccoin.zcash.ui.common.model.SwapStatus.FAILED
+import co.electriccoin.zcash.ui.common.model.SwapStatus.INCOMPLETE_DEPOSIT
+import co.electriccoin.zcash.ui.common.model.SwapStatus.PENDING
+import co.electriccoin.zcash.ui.common.model.SwapStatus.PROCESSING
+import co.electriccoin.zcash.ui.common.model.SwapStatus.REFUNDED
+import co.electriccoin.zcash.ui.common.model.SwapStatus.SUCCESS
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetORSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.SwapData
@@ -42,38 +47,45 @@ class SwapDetailVM(
             .observe(args.depositAddress)
             .map { swapData ->
                 SwapDetailState(
-                    quoteHeader = mapper
-                        .createTransactionDetailQuoteHeaderState(
-                            swap = swapData.data?.data,
-                            originAsset = swapData.data?.originAsset,
-                            destinationAsset = swapData.data?.destinationAsset
-                        ),
+                    quoteHeader =
+                        mapper
+                            .createTransactionDetailQuoteHeaderState(
+                                swap = swapData.data?.data,
+                                originAsset = swapData.data?.originAsset,
+                                destinationAsset = swapData.data?.destinationAsset
+                            ),
                     transactionHeader = createTransactionHeaderState(swapData),
-                    status = TransactionDetailSwapStatusRowState(
-                        title = stringRes(R.string.transaction_detail_info_transaction_status),
-                        status = swapData.data?.data?.status,
-                        mode = SWAP_INTO_ZEC
-                    ),
-                    depositTo = TransactionDetailInfoRowState(
-                        title = stringRes("Deposit to"),
-                        message = stringResByAddress(args.depositAddress, true),
-                        trailingIcon = R.drawable.ic_transaction_detail_info_copy,
-                        onClick = ::onCopyDepositAddressClick
-                    ),
+                    status =
+                        TransactionDetailSwapStatusRowState(
+                            title = stringRes(R.string.transaction_detail_info_transaction_status),
+                            status = swapData.data?.data?.status,
+                            mode = SWAP_INTO_ZEC
+                        ),
+                    depositTo =
+                        TransactionDetailInfoRowState(
+                            title = stringRes(R.string.swap_detail_row_deposit_to),
+                            message = stringResByAddress(args.depositAddress, true),
+                            trailingIcon = R.drawable.ic_transaction_detail_info_copy,
+                            onClick = ::onCopyDepositAddressClick
+                        ),
                     recipient = createRecipientState(swapData),
                     totalFees = createTotalFeesState(swapData),
                     maxSlippage = createSlippageState(swapData),
-                    timestamp = TransactionDetailInfoRowState(
-                        title = stringRes(R.string.transaction_detail_info_timestamp),
-                        message = swapData.data?.data?.timestamp
-                            ?.atZone(ZoneId.systemDefault())
-                            ?.let {
-                                stringResByDateTime(
-                                    zonedDateTime = it,
-                                    useFullFormat = true
-                                )
-                            },
-                    ),
+                    timestamp =
+                        TransactionDetailInfoRowState(
+                            title = stringRes(R.string.transaction_detail_info_timestamp),
+                            message =
+                                swapData.data
+                                    ?.data
+                                    ?.timestamp
+                                    ?.atZone(ZoneId.systemDefault())
+                                    ?.let {
+                                        stringResByDateTime(
+                                            zonedDateTime = it,
+                                            useFullFormat = true
+                                        )
+                                    },
+                        ),
                     errorFooter = mapper.createTransactionDetailErrorFooter(swapData.data?.error),
                     primaryButton = createPrimaryButtonState(swapData, swapData.data?.error),
                     onBack = ::onBack
@@ -87,77 +99,95 @@ class SwapDetailVM(
     private fun createTotalFeesState(swapData: SwapData): TransactionDetailInfoRowState =
         TransactionDetailInfoRowState(
             title = stringRes(R.string.transaction_detail_info_total_fees),
-            message = if (swapData.data?.data?.amountInFee != null && swapData.data.originAsset != null) {
-                stringResByCurrencyNumber(
-                    amount = swapData.data.data.amountInFee,
-                    ticker = swapData.data.originAsset.tokenTicker.uppercase()
-                )
-            } else {
-                null
-            }
+            message =
+                if (swapData.data?.data?.amountInFee != null && swapData.data.originAsset != null) {
+                    stringResByCurrencyNumber(
+                        amount = swapData.data.data.amountInFee,
+                        ticker =
+                            swapData.data.originAsset.tokenTicker
+                                .uppercase()
+                    )
+                } else {
+                    null
+                }
         )
 
     private fun createRecipientState(swapData: SwapData): TransactionDetailInfoRowState =
         TransactionDetailInfoRowState(
             title = stringRes(R.string.transaction_detail_info_recipient),
-            message = swapData.data?.data?.recipient?.let { stringResByAddress(it, true) },
+            message =
+                swapData.data
+                    ?.data
+                    ?.recipient
+                    ?.let { stringResByAddress(it, true) },
             trailingIcon = R.drawable.ic_transaction_detail_info_copy,
-            onClick = if (swapData.data?.data?.recipient != null) {
-                { onCopyRecipientAddressClick(swapData.data.data.recipient) }
-            } else {
-                null
-            }
+            onClick =
+                if (swapData.data?.data?.recipient != null) {
+                    { onCopyRecipientAddressClick(swapData.data.data.recipient) }
+                } else {
+                    null
+                }
         )
 
-    private fun createSlippageState(swapData: SwapData): TransactionDetailInfoRowState = TransactionDetailInfoRowState(
-        title = if (swapData.data?.data?.isSlippageRealized == true) {
-            stringRes(R.string.transaction_detail_info_realized_slippage)
-        } else {
-            stringRes(R.string.transaction_detail_info_max_slippage)
-        },
-        message = swapData.data?.data?.maxSlippage?.let {
-            stringResByNumber(it, 0) + stringRes("%")
-        },
-    )
+    private fun createSlippageState(swapData: SwapData): TransactionDetailInfoRowState =
+        TransactionDetailInfoRowState(
+            title =
+                if (swapData.data?.data?.isSlippageRealized == true) {
+                    stringRes(R.string.transaction_detail_info_realized_slippage)
+                } else {
+                    stringRes(R.string.transaction_detail_info_max_slippage)
+                },
+            message =
+                swapData.data?.data?.maxSlippage?.let {
+                    stringResByNumber(it, 0) + stringRes("%")
+                },
+        )
 
     private fun createPrimaryButtonState(
         swapData: SwapData,
         error: Exception?
-    ): ButtonState? = if (swapData.data?.error != null && swapData.data.data == null) {
-        mapper.createTransactionDetailErrorButtonState(
-            error = error,
-            swapHandle = swapData.handle
-        )
-    } else {
-        null
-    }
+    ): ButtonState? =
+        if (swapData.data?.error != null && swapData.data.data == null) {
+            mapper.createTransactionDetailErrorButtonState(
+                error = error,
+                reloadHandle = swapData.handle
+            )
+        } else {
+            null
+        }
 
     private fun createTransactionHeaderState(swapData: SwapData): TransactionDetailHeaderState =
         TransactionDetailHeaderState(
-            title = when (swapData.data?.data?.status) {
-                EXPIRED -> stringRes("Swap Expired")
+            title =
+                when (swapData.data?.data?.status) {
+                    EXPIRED -> stringRes(R.string.swap_detail_title_swap_expired)
 
-                INCOMPLETE_DEPOSIT,
-                PENDING -> stringRes("Swap Pending")
+                    INCOMPLETE_DEPOSIT,
+                    PENDING -> stringRes(R.string.swap_detail_title_swap_pending)
 
-                SUCCESS -> stringRes("Swap Completed")
-                REFUNDED -> stringRes("Swap Refunded")
-                FAILED -> stringRes("Swap Failed")
-                PROCESSING -> stringRes("Swap Processing")
-                null -> null
-            },
-            amount = swapData.data?.data?.amountOutFormatted?.let { stringResByNumber(it) },
-            icons = listOf(
-                swapData.data?.originAsset?.tokenIcon ?: loadingImageRes(),
-                imageRes(R.drawable.ic_swap_detail),
-                imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
-            )
+                    SUCCESS -> stringRes(R.string.swap_detail_title_swap_completed)
+                    REFUNDED -> stringRes(R.string.swap_detail_title_swap_refunded)
+                    FAILED -> stringRes(R.string.swap_detail_title_swap_failed)
+                    PROCESSING -> stringRes(R.string.swap_detail_title_swap_processing)
+                    null -> null
+                },
+            amount =
+                swapData.data
+                    ?.data
+                    ?.amountOutFormatted
+                    ?.let { stringResByNumber(it) },
+            icons =
+                listOf(
+                    swapData.data?.originAsset?.tokenIcon ?: loadingImageRes(),
+                    imageRes(R.drawable.ic_swap_detail),
+                    imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                )
         )
 
     private fun onBack() = navigationRouter.back()
 
-    private fun onCopyDepositAddressClick() = copyToClipboard("deposit Address", args.depositAddress)
+    private fun onCopyDepositAddressClick() = copyToClipboard("Deposit Address", args.depositAddress)
 
     private fun onCopyRecipientAddressClick(recipient: String) =
-        copyToClipboard("recipient Address", recipient)
+        copyToClipboard("Recipient Address", recipient)
 }

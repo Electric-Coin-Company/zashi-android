@@ -45,6 +45,7 @@ import co.electriccoin.zcash.ui.design.util.loadingImageRes
 import co.electriccoin.zcash.ui.design.util.orHiddenString
 import co.electriccoin.zcash.ui.design.util.stringRes
 
+@Suppress("MagicNumber")
 @Composable
 fun TransactionDetailHeader(
     state: TransactionDetailHeaderState,
@@ -69,48 +70,49 @@ fun TransactionDetailHeader(
 
             state.icons.forEachIndexed { index, icon ->
 
-                val cutout = if (state.icons.size <= 1 || state.icons.lastIndex == index) {
-                    Modifier
-                } else {
-                    Modifier
-                        .graphicsLayer {
-                            compositingStrategy = CompositingStrategy.Offscreen
-                        }
-                        .drawWithContent {
-                            drawContent()
-                            drawCircle(
-                                color = Color(0xFFFFFFFF),
-                                radius = size.width / 2f,
-                                center = Offset(x = size.width * iconCutoutOffset, y = size.height / 2f),
-                                blendMode = BlendMode.DstOut
-                            )
-                        }
-                        .background(Color.Transparent)
-                }
+                val cutout =
+                    if (state.icons.size <= 1 || state.icons.lastIndex == index) {
+                        Modifier
+                    } else {
+                        Modifier
+                            .graphicsLayer {
+                                compositingStrategy = CompositingStrategy.Offscreen
+                            }.drawWithContent {
+                                drawContent()
+                                drawCircle(
+                                    color = Color(0xFFFFFFFF),
+                                    radius = size.width / 2f,
+                                    center = Offset(x = size.width * iconCutoutOffset, y = size.height / 2f),
+                                    blendMode = BlendMode.DstOut
+                                )
+                            }.background(Color.Transparent)
+                    }
 
-                val offset = if (index == 0) {
-                    Modifier
-                } else {
-                    Modifier.offset(x = -(iconSize * iconHorizontalOffset) * index)
-                }
+                val offset =
+                    if (index == 0) {
+                        Modifier
+                    } else {
+                        Modifier.offset(x = -(iconSize * iconHorizontalOffset) * index)
+                    }
 
                 val modifier = offset then cutout
 
                 when (icon) {
-                    is ImageResource.ByDrawable -> icon.Compose(
-                        modifier = modifier then if (state.icons.size > 1) Modifier.size(iconSize) else Modifier,
-                    )
+                    is ImageResource.ByDrawable ->
+                        icon.Compose(
+                            modifier = modifier then if (state.icons.size > 1) Modifier.size(iconSize) else Modifier,
+                        )
 
-                    is ImageResource.Loading -> icon.ComposeAsShimmerCircle(
-                        modifier = modifier,
-                        size = iconSize
-                    )
+                    is ImageResource.Loading ->
+                        icon.ComposeAsShimmerCircle(
+                            modifier = modifier,
+                            size = iconSize
+                        )
 
                     is ImageResource.DisplayString -> {
                         // do nothing
                     }
                 }
-
             }
         }
         Spacer(Modifier.height(10.dp))
@@ -125,12 +127,13 @@ fun TransactionDetailHeader(
         SelectionContainer {
             Row {
                 ZashiTextOrShimmer(
-                    text = if (state.amount == null) {
-                        null
-                    } else {
-                        state.amount orHiddenString
-                            stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder)
-                    },
+                    text =
+                        if (state.amount == null) {
+                            null
+                        } else {
+                            state.amount orHiddenString
+                                stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder)
+                        },
                     shimmerWidth = 178.dp,
                     style = ZashiTypography.header3,
                     fontWeight = FontWeight.SemiBold,
@@ -166,11 +169,12 @@ private fun Preview() =
                     TransactionDetailHeaderState(
                         title = stringRes("Sending"),
                         amount = stringRes(Zatoshi(100000000), HIDDEN),
-                        icons = listOf(
-                            imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
-                            imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
-                            imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
-                        )
+                        icons =
+                            listOf(
+                                imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
+                                imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
+                                imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
+                            )
                     )
             )
         }
@@ -186,13 +190,13 @@ private fun LoadingPreview() =
                     TransactionDetailHeaderState(
                         title = null,
                         amount = null,
-                        icons = listOf(
-                            loadingImageRes(),
-                            imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
-                            imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
-                        )
+                        icons =
+                            listOf(
+                                loadingImageRes(),
+                                imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
+                                imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_zec),
+                            )
                     )
             )
         }
     }
-

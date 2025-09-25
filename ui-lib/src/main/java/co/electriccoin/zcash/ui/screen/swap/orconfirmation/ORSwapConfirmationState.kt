@@ -5,7 +5,6 @@ import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.ImageResource
-import co.electriccoin.zcash.ui.design.util.QrCodeColors
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
 

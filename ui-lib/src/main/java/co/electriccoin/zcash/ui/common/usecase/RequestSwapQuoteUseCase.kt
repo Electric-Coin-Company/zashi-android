@@ -68,6 +68,7 @@ class RequestSwapQuoteUseCase(
         )
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private suspend fun requestQuote(
         requestQuote: suspend () -> Unit,
         createProposal: Boolean,

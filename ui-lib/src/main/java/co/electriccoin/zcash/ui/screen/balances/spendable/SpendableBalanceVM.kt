@@ -115,7 +115,8 @@ class SpendableBalanceVM(
                     stringRes(account.spendableShieldedBalance)
             ),
             when {
-                account.totalShieldedBalance > account.spendableShieldedBalance && account.isShieldedPending &&
+                account.totalShieldedBalance > account.spendableShieldedBalance &&
+                    account.isShieldedPending &&
                     hasPendingTransaction ->
                     SpendableBalanceRowState(
                         title = stringRes(R.string.balance_action_info_pending),

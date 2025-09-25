@@ -24,7 +24,6 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactiondetail.SendShieldStateFixture
-import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailRowHeader
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumn
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoColumnState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoContainer
@@ -32,6 +31,7 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDe
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRow
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRowState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailMemo
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailRowHeader
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailTitleHeader
 
 @Composable

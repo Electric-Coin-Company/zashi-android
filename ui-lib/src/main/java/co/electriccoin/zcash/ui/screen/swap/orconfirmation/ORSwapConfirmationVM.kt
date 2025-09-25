@@ -50,7 +50,11 @@ class ORSwapConfirmationVM(
             .map { quote ->
                 ORSwapConfirmationState(
                     onBack = ::onBack,
-                    info = IconButtonState(icon = co.electriccoin.zcash.ui.design.R.drawable.ic_info, onClick = ::onInfoClick),
+                    info =
+                        IconButtonState(
+                            icon = co.electriccoin.zcash.ui.design.R.drawable.ic_info,
+                            onClick = ::onInfoClick,
+                        ),
                     bigIcon = quote.originAsset.tokenIcon,
                     smallIcon = quote.originAsset.chainIcon,
                     amount = stringResByNumber(quote.amountInFormatted),
@@ -60,13 +64,13 @@ class ORSwapConfirmationVM(
                     address = stringResByAddress(quote.depositAddress, true),
                     copyButton =
                         BigIconButtonState(
-                            text = stringRes("Copy"),
+                            text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_copy),
                             icon = R.drawable.ic_copy,
                             onClick = { onCopyAddressClick(quote.depositAddress) }
                         ),
                     shareButton =
                         BigIconButtonState(
-                            text = stringRes("Share QR"),
+                            text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_share_qr),
                             icon = R.drawable.ic_qr_code_other,
                             onClick = {
                                 onShareClick(
@@ -89,7 +93,7 @@ class ORSwapConfirmationVM(
                         ),
                     primaryButton =
                         ButtonState(
-                            text = stringRes("I’ve sent the funds"),
+                            text = stringRes(R.string.swap_confirmation_primary_button),
                             onClick = ::onSentFundsClick
                         ),
                 )
@@ -123,12 +127,13 @@ class ORSwapConfirmationVM(
         tokenTicker: String,
         chainName: StringResource
     ) = viewModelScope.launch {
-        val shareText = stringRes(
-            R.string.swap_to_zec_share_text,
-            stringResByNumber(amount),
-            tokenTicker.uppercase(),
-            chainName
-        ).getString(context)
+        val shareText =
+            stringRes(
+                R.string.swap_to_zec_share_text,
+                stringResByNumber(amount),
+                tokenTicker.uppercase(),
+                chainName
+            ).getString(context)
 
         shareQR(
             qrData = qrData,
@@ -138,4 +143,3 @@ class ORSwapConfirmationVM(
         )
     }
 }
-

@@ -74,6 +74,7 @@ interface MetadataRepository {
     fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?>
 }
 
+@Suppress("TooManyFunctions")
 class MetadataRepositoryImpl(
     private val accountDataSource: AccountDataSource,
     private val metadataDataSource: MetadataDataSource,
@@ -194,32 +195,36 @@ class MetadataRepositoryImpl(
             }.distinctUntilChanged()
     }
 
-    private fun SwapMetadataV3.toBusinessObject(): TransactionSwapMetadata = TransactionSwapMetadata(
-        depositAddress = depositAddress,
-        lastUpdated = lastUpdated,
-        origin = fromAsset.let {
-            SimpleSwapAsset(
-                tokenTicker = it.token,
-                chainTicker = it.chain
-            )
-        },
-        destination = toAsset.let {
-            SimpleSwapAsset(
-                tokenTicker = it.token,
-                chainTicker = it.chain
-            )
-        },
-        mode = when (exactInput) {
-            true -> SwapMode.EXACT_INPUT
-            false -> SwapMode.EXACT_OUTPUT
-            null -> SwapMode.EXACT_INPUT
-        },
-        status = status ?: SwapStatus.SUCCESS,
-        amountOutFormatted = amountOutFormatted ?: BigDecimal(0),
-        provider = provider,
-        totalFees = totalFees,
-        totalFeesUsd = totalFeesUsd,
-    )
+    private fun SwapMetadataV3.toBusinessObject(): TransactionSwapMetadata =
+        TransactionSwapMetadata(
+            depositAddress = depositAddress,
+            lastUpdated = lastUpdated,
+            origin =
+                fromAsset.let {
+                    SimpleSwapAsset(
+                        tokenTicker = it.token,
+                        chainTicker = it.chain
+                    )
+                },
+            destination =
+                toAsset.let {
+                    SimpleSwapAsset(
+                        tokenTicker = it.token,
+                        chainTicker = it.chain
+                    )
+                },
+            mode =
+                when (exactInput) {
+                    true -> SwapMode.EXACT_INPUT
+                    false -> SwapMode.EXACT_OUTPUT
+                    null -> SwapMode.EXACT_INPUT
+                },
+            status = status ?: SwapStatus.SUCCESS,
+            amountOutFormatted = amountOutFormatted ?: BigDecimal(0),
+            provider = provider,
+            totalFees = totalFees,
+            totalFeesUsd = totalFeesUsd,
+        )
 
     override fun observeORSwapMetadata(): Flow<List<TransactionSwapMetadata>?> =
         metadata
@@ -230,10 +235,8 @@ class MetadataRepositoryImpl(
                     ?.swapIds
                     ?.filter {
                         it.toAsset.token.lowercase() == "zec" && it.toAsset.chain.lowercase() == "zec"
-                    }
-                    ?.map { it.toBusinessObject() }
-            }
-            .distinctUntilChanged()
+                    }?.map { it.toBusinessObject() }
+            }.distinctUntilChanged()
 
     override fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?> =
         metadata

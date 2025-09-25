@@ -8,10 +8,9 @@ import androidx.compose.ui.focus.FocusRequester
  * @return true if the focus was successfully requested, false if the focus request was canceled or null if request
  * focus failed
  */
-fun FocusRequester.tryRequestFocus(): Boolean? {
-    return try {
+fun FocusRequester.tryRequestFocus(): Boolean? =
+    try {
         requestFocus()
     } catch (_: IllegalStateException) {
         null
     }
-}

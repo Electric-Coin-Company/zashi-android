@@ -71,9 +71,10 @@ class KeyboardManager(
 fun rememberKeyboardManager(): KeyboardManager {
     val isKeyboardOpen by rememberKeyboardState()
     val rootSoftwareKeyboardController = LocalSoftwareKeyboardController.current
-    val keyboardManager = remember(rootSoftwareKeyboardController) {
-        KeyboardManager(isKeyboardOpen, rootSoftwareKeyboardController)
-    }
+    val keyboardManager =
+        remember(rootSoftwareKeyboardController) {
+            KeyboardManager(isKeyboardOpen, rootSoftwareKeyboardController)
+        }
     LaunchedEffect(isKeyboardOpen, keyboardManager.controller) {
         if (isKeyboardOpen) {
             keyboardManager.onKeyboardOpened()

@@ -44,7 +44,6 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
-import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.asScaffoldPaddingValues
 import co.electriccoin.zcash.ui.design.util.imageRes
@@ -52,6 +51,7 @@ import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.transactiondetail.ErrorFooter
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailHeader
@@ -103,7 +103,7 @@ fun SwapDetailView(
                 ZashiSwapQuoteHeader(state.quoteHeader)
                 Spacer(20.dp)
                 TransactionDetailRowHeader(
-                    title = stringRes("Swap Details"),
+                    title = stringRes(R.string.swap_detail_row_header),
                     isExpanded = isExpanded,
                     onButtonClick = { isExpanded = !isExpanded }
                 )
@@ -194,67 +194,84 @@ private fun TopAppBar(state: SwapDetailState, appBarState: ZashiMainTopAppBarSta
 private fun Preview() =
     ZcashTheme {
         SwapDetailView(
-            state = SwapDetailState(
-                quoteHeader =
-                    SwapQuoteHeaderState(
-                        from =
-                            SwapTokenAmountState(
-                                bigIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_placeholder),
-                                smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
-                                title = stringResByDynamicCurrencyNumber(0.000000421423154, "", TickerLocation.HIDDEN),
-                                subtitle = stringResByDynamicCurrencyNumber(0.0000000000000021312, "$")
-                            ),
-                        to =
-                            SwapTokenAmountState(
-                                bigIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_placeholder),
-                                smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
-                                title = stringResByDynamicCurrencyNumber(0.000000421423154, "", TickerLocation.HIDDEN),
-                                subtitle = stringResByDynamicCurrencyNumber(0.0000000000000021312, "$")
-                            )
-                    ),
-                transactionHeader = TransactionDetailHeaderState(
-                    title = stringRes("Swap pending"),
-                    amount = stringRes(Zatoshi(1000000), HIDDEN),
-                    icons = listOf(
-                        imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
-                        imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
-                        imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
-                    )
+            state =
+                SwapDetailState(
+                    quoteHeader =
+                        SwapQuoteHeaderState(
+                            from =
+                                SwapTokenAmountState(
+                                    bigIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_placeholder),
+                                    smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
+                                    title = stringResByDynamicNumber(0.000000421423154),
+                                    subtitle =
+                                        stringResByDynamicCurrencyNumber(
+                                            0.0000000000000021312,
+                                            "$",
+                                        )
+                                ),
+                            to =
+                                SwapTokenAmountState(
+                                    bigIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_placeholder),
+                                    smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
+                                    title = stringResByDynamicNumber(0.000000421423154),
+                                    subtitle =
+                                        stringResByDynamicCurrencyNumber(
+                                            0.0000000000000021312,
+                                            "$",
+                                        )
+                                )
+                        ),
+                    transactionHeader =
+                        TransactionDetailHeaderState(
+                            title = stringRes("Swap pending"),
+                            amount = stringRes(Zatoshi(1000000), HIDDEN),
+                            icons =
+                                listOf(
+                                    imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                                    imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                                    imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                                )
+                        ),
+                    status =
+                        TransactionDetailSwapStatusRowState(
+                            title = stringRes("Status"),
+                            status = SwapStatus.REFUNDED,
+                        ),
+                    depositTo =
+                        TransactionDetailInfoRowState(
+                            title = stringRes("Deposit to"),
+                            message = stringRes("depositTo"),
+                            trailingIcon = R.drawable.ic_transaction_detail_info_copy,
+                        ),
+                    recipient =
+                        TransactionDetailInfoRowState(
+                            title = stringRes("Recipient"),
+                            message = stringRes("recipient"),
+                            trailingIcon = R.drawable.ic_transaction_detail_info_copy,
+                        ),
+                    totalFees =
+                        TransactionDetailInfoRowState(
+                            title = stringRes("Total fees"),
+                            message = stringRes("totalFees"),
+                        ),
+                    maxSlippage =
+                        TransactionDetailInfoRowState(
+                            title = stringRes("Max slippage"),
+                            message = stringRes("maxSlippage"),
+                        ),
+                    timestamp =
+                        TransactionDetailInfoRowState(
+                            title = stringRes("Timestamp"),
+                            message = stringRes("timestamp"),
+                        ),
+                    errorFooter =
+                        ErrorFooter(
+                            stringRes("Title"),
+                            stringRes("Subtitle"),
+                        ),
+                    primaryButton = ButtonState(stringRes("Primary"), ButtonStyle.DESTRUCTIVE1),
+                    onBack = {},
                 ),
-                status = TransactionDetailSwapStatusRowState(
-                    title = stringRes("Status"),
-                    status = SwapStatus.REFUNDED,
-                ),
-                depositTo = TransactionDetailInfoRowState(
-                    title = stringRes("Deposit to"),
-                    message = stringRes("depositTo"),
-                    trailingIcon = R.drawable.ic_transaction_detail_info_copy,
-                ),
-                recipient = TransactionDetailInfoRowState(
-                    title = stringRes("Recipient"),
-                    message = stringRes("recipient"),
-                    trailingIcon = R.drawable.ic_transaction_detail_info_copy,
-                ),
-                totalFees = TransactionDetailInfoRowState(
-                    title = stringRes("Total fees"),
-                    message = stringRes("totalFees"),
-                ),
-                maxSlippage = TransactionDetailInfoRowState(
-                    title = stringRes("Max slippage"),
-                    message = stringRes("maxSlippage"),
-                ),
-                timestamp = TransactionDetailInfoRowState(
-                    title = stringRes("Timestamp"),
-                    message = stringRes("timestamp"),
-                ),
-                errorFooter =
-                    ErrorFooter(
-                        stringRes("Title"),
-                        stringRes("Subtitle"),
-                    ),
-                primaryButton = ButtonState(stringRes("Primary"), ButtonStyle.DESTRUCTIVE1),
-                onBack = {},
-            ),
             appBarState = ZashiMainTopAppBarStateFixture.new()
         )
     }

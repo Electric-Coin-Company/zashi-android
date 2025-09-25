@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -185,7 +186,7 @@ private fun Header(state: ORSwapConfirmationState) {
             verticalAlignment = CenterVertically
         ) {
             Text(
-                text = "Deposit Amount",
+                text = stringResource(co.electriccoin.zcash.ui.R.string.swap_confirmation_subtitle),
                 style = ZashiTypography.textMd,
                 fontWeight = FontWeight.Medium,
                 color = ZashiColors.Text.textPrimary
@@ -268,7 +269,7 @@ private fun TopAppBar(state: ORSwapConfirmationState) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "SWAP",
+                    text = stringResource(co.electriccoin.zcash.ui.R.string.swap_confirmation_title).uppercase(),
                     style = ZashiTypography.textMd,
                     fontWeight = FontWeight.SemiBold,
                     color = ZashiColors.Text.textPrimary

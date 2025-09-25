@@ -20,6 +20,7 @@ import java.math.MathContext
 import java.math.RoundingMode
 
 internal class SwapQuoteVMMapper {
+    @Suppress("UseCheckOrError")
     fun createState(
         state: SwapQuoteInternalState,
         onBack: () -> Unit,

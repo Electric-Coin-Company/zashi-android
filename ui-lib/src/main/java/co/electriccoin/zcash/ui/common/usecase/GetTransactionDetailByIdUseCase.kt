@@ -38,8 +38,8 @@ class GetTransactionDetailByIdUseCase(
         channelFlow {
             val requestSwipeReloadPipeline = MutableSharedFlow<Unit>()
 
-            val swapHandle =
-                object : SwapHandle {
+            val reloadHandle =
+                object : ReloadHandle {
                     override fun requestReload() {
                         launch {
                             requestSwipeReloadPipeline.emit(Unit)
@@ -64,8 +64,7 @@ class GetTransactionDetailByIdUseCase(
                     .distinctUntilChangedBy { it.id to it.recipient }
                     .flatMapLatest {
                         metadataRepository.observeTransactionMetadata(it)
-                    }
-                    .distinctUntilChanged()
+                    }.distinctUntilChanged()
 
             val contactFlow =
                 transactionFlow
@@ -100,8 +99,7 @@ class GetTransactionDetailByIdUseCase(
                                             }
                                         }
                                 }
-                            }
-                            .distinctUntilChanged()
+                            }.distinctUntilChanged()
                     }
 
             combine(
@@ -117,7 +115,7 @@ class GetTransactionDetailByIdUseCase(
                     contact = contact,
                     metadata = metadata,
                     swap = swap,
-                    swapHandle = swapHandle
+                    reloadHandle = reloadHandle
                 )
             }.collect {
                 send(it)
@@ -135,11 +133,11 @@ data class DetailedTransactionData(
     val contact: EnhancedABContact?,
     val metadata: TransactionMetadata,
     val swap: SwapQuoteStatusData?,
-    val swapHandle: SwapHandle
+    val reloadHandle: ReloadHandle
 ) {
     val recipient = transaction.recipient
 }
 
-interface SwapHandle {
+interface ReloadHandle {
     fun requestReload()
 }
