@@ -13,8 +13,9 @@ import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
-import co.electriccoin.zcash.ui.common.model.CompositeSwapQuote
 import co.electriccoin.zcash.ui.common.model.SubmitResult
+import co.electriccoin.zcash.ui.common.model.SwapQuote
+import co.electriccoin.zcash.ui.common.model.SwapStatus
 import com.keystone.sdk.KeystoneSDK
 import com.keystone.sdk.KeystoneZcashSDK
 import com.sparrowwallet.hummingbird.UR
@@ -44,13 +45,13 @@ interface KeystoneProposalRepository {
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactInputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactOutputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
@@ -122,7 +123,7 @@ class KeystoneProposalRepositoryImpl(
 
     override suspend fun createExactInputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactInputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactInputProposal(
@@ -134,7 +135,7 @@ class KeystoneProposalRepositoryImpl(
 
     override suspend fun createExactOutputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactOutputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactOutputProposal(
@@ -243,12 +244,16 @@ class KeystoneProposalRepositoryImpl(
                         is SubmitResult.Partial -> result.txIds
                         is SubmitResult.Success -> result.txIds
                     }.filter { it.isNotEmpty() }
-                val depositAddress = transactionProposal.destination.address
                 metadataRepository.markTxAsSwap(
-                    depositAddress = depositAddress,
+                    depositAddress = transactionProposal.destination.address,
                     provider = transactionProposal.quote.provider,
                     totalFees = transactionProposal.totalFees,
-                    totalFeesUsd = transactionProposal.totalFeesUsd
+                    totalFeesUsd = transactionProposal.totalFeesUsd,
+                    amountOutFormatted = transactionProposal.quote.amountOutFormatted,
+                    mode = transactionProposal.quote.mode,
+                    status = SwapStatus.PENDING,
+                    origin = transactionProposal.quote.originAsset,
+                    destination = transactionProposal.quote.destinationAsset
                 )
                 txIds.forEach { submitDepositTransaction(it, transactionProposal) }
             }

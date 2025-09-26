@@ -165,7 +165,7 @@ class RestoreSeedViewModel(
         state: SeedWordInnerTextFieldState
     ) {
         if (BuildConfig.DEBUG) {
-            val seed = validateSeed(state.value.split(" "))
+            val seed = validateSeed(state.value.trim().split(" "))
             if (seed != null) {
                 prefillSeed(seed)
             } else {

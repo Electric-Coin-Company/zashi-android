@@ -50,4 +50,6 @@ data class QuoteDetails(
     // @SerialName("minAmountOut")
     // @Serializable(with = BigDecimalSerializer::class)
     // val minAmountOut: BigDecimal,
+    @SerialName("deadline")
+    val deadline: Instant
 )

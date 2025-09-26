@@ -25,7 +25,7 @@ import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetailViewModel
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptInViewModel
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfoViewModel
-import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoViewModel
+import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoVM
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsVM
 import co.electriccoin.zcash.ui.screen.pay.PayVM
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
@@ -45,11 +45,14 @@ import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignIn
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel.SelectKeystoneAccountViewModel
 import co.electriccoin.zcash.ui.screen.send.SendViewModel
 import co.electriccoin.zcash.ui.screen.settings.SettingsViewModel
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionVM
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.swap.SwapVM
 import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactVM
 import co.electriccoin.zcash.ui.screen.swap.ab.SelectSwapABRecipientVM
+import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailVM
+import co.electriccoin.zcash.ui.screen.swap.info.SwapRefundAddressInfoVM
+import co.electriccoin.zcash.ui.screen.swap.orconfirmation.ORSwapConfirmationVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerVM
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteVM
@@ -59,7 +62,7 @@ import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInVM
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsVM
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailVM
 import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersVM
-import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryViewModel
+import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryVM
 import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetVM
 import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNoteViewModel
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressVM
@@ -93,7 +96,7 @@ val viewModelModule =
         viewModelOf(::SendViewModel)
         viewModelOf(::WalletBackupViewModel)
         viewModelOf(::FeedbackViewModel)
-        viewModelOf(::SignKeystoneTransactionViewModel)
+        viewModelOf(::SignKeystoneTransactionVM)
         viewModelOf(::AccountListViewModel)
         viewModelOf(::ZashiTopAppBarVM)
         viewModelOf(::SelectKeystoneAccountViewModel)
@@ -101,7 +104,7 @@ val viewModelModule =
         viewModelOf(::TransactionFiltersVM)
         viewModelOf(::TransactionProgressVM)
         viewModelOf(::TransactionHistoryWidgetVM)
-        viewModelOf(::TransactionHistoryViewModel)
+        viewModelOf(::TransactionHistoryVM)
         viewModelOf(::TransactionDetailVM)
         viewModelOf(::AddressBookVM)
         viewModelOf(::SelectRecipientVM)
@@ -113,7 +116,7 @@ val viewModelModule =
         viewModelOf(::RestoreBDHeightViewModel)
         viewModelOf(::RestoreBDDateViewModel)
         viewModelOf(::RestoreBDEstimationViewModel)
-        viewModelOf(::ShieldFundsInfoViewModel)
+        viewModelOf(::ShieldFundsInfoVM)
         viewModelOf(::WalletBackupInfoViewModel)
         viewModelOf(::ExchangeRateSettingsVM)
         viewModelOf(::WalletBackupDetailViewModel)
@@ -137,4 +140,7 @@ val viewModelModule =
         viewModelOf(::AddSwapABContactVM)
         viewModelOf(::AddGenericABContactVM)
         viewModelOf(::UpdateGenericABContactVM)
+        viewModelOf(::ORSwapConfirmationVM)
+        viewModelOf(::SwapDetailVM)
+        viewModelOf(::SwapRefundAddressInfoVM)
     }

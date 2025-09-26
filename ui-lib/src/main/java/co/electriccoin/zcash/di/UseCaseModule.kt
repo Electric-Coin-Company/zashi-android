@@ -23,14 +23,15 @@ import co.electriccoin.zcash.ui.common.usecase.FlipTransactionBookmarkUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABContactByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABSwapContactsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetActivitiesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetCoinbaseStatusUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetCompositeSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetConfigurationUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredTransactionsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredActivitiesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetFlexaStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetKeystoneStatusUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetORSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
@@ -95,6 +96,7 @@ import co.electriccoin.zcash.ui.common.usecase.ResetSharedPrefsDataUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RestoreWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveABContactUseCase
+import co.electriccoin.zcash.ui.common.usecase.SaveORSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.SelectSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.SelectWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
@@ -103,6 +105,7 @@ import co.electriccoin.zcash.ui.common.usecase.SendTransactionAgainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
+import co.electriccoin.zcash.ui.common.usecase.ShareQRUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateABContactUseCase
@@ -159,7 +162,7 @@ val useCaseModule =
         singleOf(::ObserveClearSendUseCase)
         singleOf(::PrefillSendUseCase)
         factoryOf(::GetTransactionsUseCase)
-        factoryOf(::GetCurrentFilteredTransactionsUseCase) onClose ::closeableCallback
+        factoryOf(::GetCurrentFilteredActivitiesUseCase) onClose ::closeableCallback
         factoryOf(::CreateProposalUseCase)
         factoryOf(::OnZip321ScannedUseCase)
         factoryOf(::OnAddressScannedUseCase)
@@ -228,7 +231,6 @@ val useCaseModule =
         factoryOf(::GetTotalSpendableBalanceUseCase)
         factoryOf(::IsABContactHintVisibleUseCase)
         factoryOf(::RequestSwapQuoteUseCase)
-        factoryOf(::GetCompositeSwapQuoteUseCase)
         factoryOf(::CancelSwapQuoteUseCase)
         factoryOf(::NavigateToSwapQuoteIfAvailableUseCase)
         singleOf(::NavigateToScanGenericAddressUseCase)
@@ -238,4 +240,8 @@ val useCaseModule =
         factoryOf(::ValidateSwapABContactAddressUseCase)
         factoryOf(::NavigateToNearPayUseCase)
         factoryOf(::CanCreateABContactUseCase)
+        factoryOf(::SaveORSwapUseCase)
+        factoryOf(::GetORSwapQuoteUseCase)
+        factoryOf(::ShareQRUseCase)
+        factoryOf(::GetActivitiesUseCase)
     }

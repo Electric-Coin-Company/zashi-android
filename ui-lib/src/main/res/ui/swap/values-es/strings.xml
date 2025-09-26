@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="swap_info_message">Intercambia ZEC protegido por cualquier moneda o token compatible con NEAR.\n\nZashi es una wallet solo de ZEC, por lo que necesitarás una dirección de wallet válida para el activo al que haces el intercambio.</string>
+    <string name="swap_info_message">Swap ZEC with any NEAR-supported token.\n\nIf swapping TO ZEC, you will send
+        funds from a 3rd party wallet and provide an address where change can be refunded.\n\nIf swapping FROM ZEC, you
+        must provide a valid address for the asset you are swapping to.</string>
     <string name="swap_info_title">Intercambiar con</string>
     <string name="swap_select_token">Seleccionar Token</string>
     <string name="swap_select_chain">Seleccionar Cadena</string>
@@ -10,7 +12,7 @@
     <string name="swap_slippage_max_threshold">Por favor, ingresa un deslizamiento máximo de 30%%.</string>
     <string name="swap_slippage_info">Podrías recibir hasta %s menos de lo cotizado.</string>
     <string name="pay_slippage_info">Podrías pagar hasta %s más, además de las comisiones de transacción.</string>
-    <string name="swap_title">Intercambiar con</string>
+    <string name="swap_title">Intercambiar</string>
     <string name="swap_from">De</string>
     <string name="swap_insufficient_funds">Fondos insuficientes</string>
     <string name="swap_max_standalone">Disponible: </string>
@@ -43,4 +45,29 @@
     <string name="pay_quote_title">Pagar Ahora</string>
     <string name="pay_from">Pagar desde</string>
     <string name="pay_to">Pagar a</string>
+    <string name="swap_to_zec_footer">Use your %s wallet \n to deposit funds. Depositing other assets may result in
+        loss of funds.</string>
+    <string name="swap_to_zec_footer_bold">%s on %s</string>
+    <string name="swap_to_zec_share_text">Deposit address for %s %s on %s swap to ZEC in Zashi</string>
+    <string name="swap_refund_address">Refund Address</string>
+    <string name="swap_refund_address_info_title">Refund Address</string>
+    <string name="swap_refund_address_info_message_empty">If the swap fails or market conditions change, your
+        transaction
+        may be refunded minus the transaction fees.\n\nThe refunded amount will be returned to your wallet in the
+        source currency. Please enter a valid address to avoid loss of funds.</string>
+    <string name="swap_refund_address_info_message">If the swap fails or market conditions change, your transaction
+        may be refunded minus the transaction fees.\n\nThe refunded amount will be returned to your wallet in the
+        source currency - %s on %s. Please enter a valid address to avoid loss of funds.</string>
+    <string name="swap_detail_row_header">Swap Details</string>
+    <string name="swap_detail_row_deposit_to">Deposit to</string>
+    <string name="swap_detail_title_swap_expired">Swap Expired</string>
+    <string name="swap_detail_title_swap_pending">Swap Pending</string>
+    <string name="swap_detail_title_swap_completed">Swap Completed</string>
+    <string name="swap_detail_title_swap_refunded">Swap Refunded</string>
+    <string name="swap_detail_title_swap_failed">Swap Failed</string>
+    <string name="swap_detail_title_swap_processing">Swap Processing</string>
+    <string name="swap_confirmation_title">Swap</string>
+    <string name="swap_confirmation_subtitle">Deposit Amount</string>
+    <string name="swap_confirmation_primary_button">I’ve sent the funds</string>
+    <string name="swap_into_zec_footer">NEAR only supports swaps to a transparent address. Zashi will prompt you to shield your funds upon receipt.</string>
 </resources>

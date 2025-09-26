@@ -24,23 +24,26 @@ class BlockchainProviderImpl(
             chainTicker = ticker,
             chainName =
                 when (ticker.lowercase()) {
+                    "aptos" -> stringRes("Aptos")
                     "arb" -> stringRes("Arbitrum")
+                    "avax" -> stringRes("Avalanche")
                     "base" -> stringRes("Base")
                     "bera" -> stringRes("Bera")
+                    "bsc" -> stringRes("BNB Chain")
                     "btc" -> stringRes("Bitcoin")
+                    "cardano" -> stringRes("Cardano")
                     "doge" -> stringRes("Doge")
                     "eth" -> stringRes("Ethereum")
                     "gnosis" -> stringRes("Gnosis")
                     "near" -> stringRes("Near")
-                    "sol" -> stringRes("Solana")
-                    "tron" -> stringRes("Tron")
-                    "xrp" -> stringRes("Ripple")
-                    "avax" -> stringRes("Avalanche")
-                    "bsc" -> stringRes("BNB Chain")
                     "op" -> stringRes("Optimism")
                     "pol" -> stringRes("Polygon")
-                    "ton" -> stringRes("TON")
+                    "sol" -> stringRes("Solana")
+                    "stellar" -> stringRes("Stellar")
                     "sui" -> stringRes("SUI")
+                    "ton" -> stringRes("TON")
+                    "tron" -> stringRes("Tron")
+                    "xrp" -> stringRes("Ripple")
                     "zec" -> stringRes("ZEC")
                     else -> stringRes(ticker)
                 },
@@ -60,15 +63,24 @@ class BlockchainProviderImpl(
 
     override fun getHardcodedBlockchains(): List<SwapAssetBlockchain> =
         listOf(
+            "aptos",
             "arb",
+            "avax",
             "base",
             "bera",
+            "bsc",
             "btc",
+            "cardano",
             "doge",
             "eth",
             "gnosis",
             "near",
+            "op",
+            "pol",
             "sol",
+            "stellar",
+            "sui",
+            "ton",
             "tron",
             "xrp",
         ).map { getBlockchain(it) }

@@ -41,7 +41,6 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.Itemizable
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
-import co.electriccoin.zcash.ui.design.util.getColor
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orHiddenString
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -72,16 +71,16 @@ fun Transaction(
         ) {
             Box {
                 Image(
-                    painter = painterResource(state.icon),
+                    painter = painterResource(state.bigIcon),
                     contentDescription = null
                 )
-                if (state.providerIcon != null) {
+                if (state.smallIcon != null) {
                     Image(
                         modifier =
                             Modifier
                                 .align(Alignment.BottomEnd)
                                 .offset(8.dp, 8.dp),
-                        painter = painterResource(state.providerIcon),
+                        painter = painterResource(state.smallIcon),
                         contentDescription = null
                     )
                 }
@@ -131,9 +130,9 @@ fun Transaction(
                 SelectionContainer {
                     Text(
                         text =
-                            it.resource orHiddenString
+                            it orHiddenString
                                 stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
-                        color = it.getColor(),
+                        color = ZashiColors.Text.textPrimary,
                         style = ZashiTypography.textSm
                     )
                 }
@@ -144,8 +143,8 @@ fun Transaction(
 
 data class TransactionState(
     override val key: Any,
-    @DrawableRes val icon: Int,
-    @DrawableRes val providerIcon: Int?,
+    @DrawableRes val bigIcon: Int,
+    @DrawableRes val smallIcon: Int?,
     val title: StringResource,
     val subtitle: StringResource?,
     val isShielded: Boolean,

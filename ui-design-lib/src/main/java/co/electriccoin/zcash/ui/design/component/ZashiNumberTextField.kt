@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalConfiguration
@@ -199,6 +200,7 @@ object ZashiNumberTextFieldDefaults {
         style: TextStyle = ZashiTypography.textMd,
         fontWeight: FontWeight = FontWeight.Normal,
         textAlign: TextAlign = TextAlign.Start,
+        contentAlignment: Alignment = Alignment.CenterStart,
         text: String = stringResByDynamicNumber(0).getValue()
     ) {
         ZashiAutoSizeText(
@@ -208,6 +210,7 @@ object ZashiNumberTextFieldDefaults {
             fontWeight = fontWeight,
             textAlign = textAlign,
             maxLines = 1,
+            contentAlignment = contentAlignment
         )
     }
 }

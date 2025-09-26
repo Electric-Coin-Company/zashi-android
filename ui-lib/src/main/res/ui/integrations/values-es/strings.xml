@@ -14,5 +14,5 @@
     <string name="integrations_disabled_info_flexa">Cambia de Keystone a Zashi para usar Flexa.</string>
     <string name="integrations_dialog_more_options">Más opciones</string>
     <string name="integrations_near_swap">Intercambiar ZEC con NEAR Intents</string>
-    <string name="integrations_near_swap_message">Intercambia ZEC protegidos por cualquier criptomoneda compatible.</string>
+    <string name="integrations_near_swap_message">Swap ZEC with other cryptocurrencies.</string>
 </resources>

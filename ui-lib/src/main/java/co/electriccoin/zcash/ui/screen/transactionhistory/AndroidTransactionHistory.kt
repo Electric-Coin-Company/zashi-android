@@ -10,16 +10,12 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AndroidTransactionHistory() {
-    val viewModel = koinViewModel<TransactionHistoryViewModel>()
+    val vm = koinViewModel<TransactionHistoryVM>()
     val mainTopAppBarViewModel = koinActivityViewModel<ZashiTopAppBarVM>()
     val mainAppBarState by mainTopAppBarViewModel.state.collectAsStateWithLifecycle()
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    val searchState by viewModel.search.collectAsStateWithLifecycle()
-
-    BackHandler {
-        state.onBack()
-    }
-
+    val state by vm.state.collectAsStateWithLifecycle()
+    val searchState by vm.search.collectAsStateWithLifecycle()
+    BackHandler { state.onBack() }
     TransactionHistoryView(
         state = state,
         search = searchState,

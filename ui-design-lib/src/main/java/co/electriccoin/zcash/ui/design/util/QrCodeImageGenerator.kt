@@ -8,4 +8,11 @@ interface QrCodeImageGenerator {
         sizePixels: Int,
         colors: QrCodeColors
     ): ImageBitmap
+
+    fun generate(
+        bitArray: BooleanArray,
+        sizePixels: Int,
+        background: Int,
+        foreground: Int,
+    ): ImageBitmap
 }

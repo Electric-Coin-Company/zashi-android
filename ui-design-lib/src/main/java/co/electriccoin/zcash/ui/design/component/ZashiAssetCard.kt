@@ -84,7 +84,9 @@ private fun Data(state: AssetCardState.Data, modifier: Modifier = Modifier) {
                 )
 
                 if (state.smallIcon is ImageResource.ByDrawable) {
-                    if (state.smallIcon.resource == R.drawable.ic_receive_shield) {
+                    if (state.smallIcon.resource in
+                        listOf(R.drawable.ic_receive_shield, R.drawable.ic_zec_unshielded)
+                    ) {
                         Image(
                             modifier =
                                 Modifier

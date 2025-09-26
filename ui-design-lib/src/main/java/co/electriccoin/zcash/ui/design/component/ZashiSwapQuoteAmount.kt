@@ -69,7 +69,7 @@ private fun Loading() {
             Box(
                 modifier =
                     Modifier
-                        .offset(2.dp, 2.dp)
+                        .offset(4.dp, 4.dp)
                         .size(12.dp)
                         .border(1.dp, ZashiColors.Surfaces.bgSecondary, CircleShape)
                         .align(Alignment.BottomEnd)
@@ -122,15 +122,15 @@ private fun Data(state: SwapTokenAmountState) {
                 )
 
                 if (state.smallIcon is ImageResource.ByDrawable) {
-                    if (state.smallIcon.resource ==
-                        R.drawable.ic_receive_shield
+                    if (state.smallIcon.resource in
+                        listOf(R.drawable.ic_receive_shield, R.drawable.ic_zec_unshielded)
                     ) {
                         Image(
                             modifier =
                                 Modifier
                                     .size(12.dp)
                                     .align(Alignment.BottomEnd)
-                                    .offset(4.dp, 2.dp),
+                                    .offset(4.dp, 4.dp),
                             painter = painterResource(state.smallIcon.resource),
                             contentDescription = null,
                         )

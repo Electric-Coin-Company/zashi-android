@@ -1,11 +1,13 @@
 package co.electriccoin.zcash.ui.common.datasource
 
+import co.electriccoin.zcash.ui.common.model.DynamicSwapAsset
 import co.electriccoin.zcash.ui.common.model.NearSwapQuote
 import co.electriccoin.zcash.ui.common.model.NearSwapQuoteStatus
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.SwapQuoteStatus
+import co.electriccoin.zcash.ui.common.model.ZecSwapAsset
 import co.electriccoin.zcash.ui.common.model.near.AppFee
 import co.electriccoin.zcash.ui.common.model.near.QuoteRequest
 import co.electriccoin.zcash.ui.common.model.near.RecipientType
@@ -34,15 +36,29 @@ class NearSwapDataSourceImpl(
     override suspend fun getSupportedTokens(): List<SwapAsset> =
         withContext(Dispatchers.Default) {
             nearApiProvider.getSupportedTokens().map {
-                SwapAsset(
-                    tokenName = tokenNameProvider.getName(it.symbol),
-                    tokenIcon = tokenIconProvider.getIcon(it.symbol),
-                    blockchain = blockchainProvider.getBlockchain(it.blockchain),
-                    tokenTicker = it.symbol,
-                    usdPrice = it.price,
-                    assetId = it.assetId,
-                    decimals = it.decimals,
-                )
+                val blockchain = blockchainProvider.getBlockchain(it.blockchain)
+
+                if (blockchain.chainTicker.lowercase() == "zec" && it.symbol.lowercase() == "zec") {
+                    ZecSwapAsset(
+                        tokenName = tokenNameProvider.getName(it.symbol),
+                        tokenIcon = tokenIconProvider.getIcon(it.symbol),
+                        blockchain = blockchain,
+                        tokenTicker = it.symbol,
+                        usdPrice = it.price,
+                        assetId = it.assetId,
+                        decimals = it.decimals,
+                    )
+                } else {
+                    DynamicSwapAsset(
+                        tokenName = tokenNameProvider.getName(it.symbol),
+                        tokenIcon = tokenIconProvider.getIcon(it.symbol),
+                        blockchain = blockchain,
+                        tokenTicker = it.symbol,
+                        usdPrice = it.price,
+                        assetId = it.assetId,
+                        decimals = it.decimals,
+                    )
+                }
             }
         }
 
@@ -50,7 +66,7 @@ class NearSwapDataSourceImpl(
     override suspend fun requestQuote(
         swapMode: SwapMode,
         amount: BigDecimal,
-        originAddress: String,
+        refundAddress: String,
         originAsset: SwapAsset,
         destinationAddress: String,
         destinationAsset: SwapAsset,
@@ -65,7 +81,7 @@ class NearSwapDataSourceImpl(
 
         val shifted = amount.movePointRight(decimals)
         val integer = shifted.toBigInteger().toBigDecimal()
-        val normalizedAmount = shifted.round(MathContext(integer.precision(), RoundingMode.HALF_EVEN))
+        val normalizedAmount = shifted.round(MathContext(integer.precision(), RoundingMode.HALF_UP))
 
         val request =
             QuoteRequest(
@@ -80,7 +96,7 @@ class NearSwapDataSourceImpl(
                 depositType = RefundType.ORIGIN_CHAIN,
                 destinationAsset = destinationAsset.assetId,
                 amount = normalizedAmount,
-                refundTo = originAddress,
+                refundTo = refundAddress,
                 refundType = RefundType.ORIGIN_CHAIN,
                 recipient = destinationAddress,
                 recipientType = RecipientType.DESTINATION_CHAIN,
@@ -96,7 +112,11 @@ class NearSwapDataSourceImpl(
             )
 
         return try {
-            NearSwapQuote(nearApiProvider.requestQuote(request))
+            NearSwapQuote(
+                response = nearApiProvider.requestQuote(request),
+                originAsset = originAsset,
+                destinationAsset = destinationAsset
+            )
         } catch (e: ResponseWithErrorException) {
             when {
                 e.error.message.startsWith("Amount is too low for bridge, try at least") -> {
@@ -137,9 +157,19 @@ class NearSwapDataSourceImpl(
         )
     }
 
-    override suspend fun checkSwapStatus(depositAddress: String): SwapQuoteStatus {
+    override suspend fun checkSwapStatus(depositAddress: String, supportedTokens: List<SwapAsset>): SwapQuoteStatus {
         val response = this.nearApiProvider.checkSwapStatus(depositAddress)
-        return NearSwapQuoteStatus(response = response)
+        val originAsset =
+            supportedTokens.find { it.assetId == response.quoteResponse.quoteRequest.originAsset }
+                ?: throw TokenNotFoundException(response.quoteResponse.quoteRequest.originAsset)
+        val destinationAsset =
+            supportedTokens.find { it.assetId == response.quoteResponse.quoteRequest.destinationAsset }
+                ?: throw TokenNotFoundException(response.quoteResponse.quoteRequest.destinationAsset)
+        return NearSwapQuoteStatus(
+            response = response,
+            origin = originAsset,
+            destination = destinationAsset,
+        )
     }
 }
 

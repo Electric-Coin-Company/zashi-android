@@ -13,7 +13,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapStatus
+import co.electriccoin.zcash.ui.common.model.SwapStatus.EXPIRED
+import co.electriccoin.zcash.ui.common.model.SwapStatus.FAILED
+import co.electriccoin.zcash.ui.common.model.SwapStatus.INCOMPLETE_DEPOSIT
 import co.electriccoin.zcash.ui.common.model.SwapStatus.PENDING
+import co.electriccoin.zcash.ui.common.model.SwapStatus.PROCESSING
 import co.electriccoin.zcash.ui.common.model.SwapStatus.REFUNDED
 import co.electriccoin.zcash.ui.common.model.SwapStatus.SUCCESS
 import co.electriccoin.zcash.ui.design.component.BlankSurface
@@ -31,16 +35,20 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailSwapStatusRowState.Mode.SWAP_FROM_ZEC
+import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailSwapStatusRowState.Mode.SWAP_INTO_ZEC
 import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun TransactionDetailSwapStatusRow(
     state: TransactionDetailSwapStatusRowState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 20.dp, vertical = 14.dp),
 ) {
     TransactionDetailRowSurface(
         onClick = null,
         modifier = modifier,
+        contentPadding = contentPadding
     ) {
         Text(
             modifier = Modifier.weight(1f),
@@ -51,7 +59,7 @@ fun TransactionDetailSwapStatusRow(
         )
         if (state.status != null) {
             Spacer(Modifier.width(16.dp))
-            StatusChip(state.status)
+            StatusChip(state)
         } else {
             Spacer(Modifier.width(16.dp))
             Box(
@@ -74,24 +82,49 @@ fun TransactionDetailSwapStatusRow(
     }
 }
 
+@Suppress("CyclomaticComplexMethod")
 @Composable
-private fun StatusChip(swapStatus: SwapStatus) {
+private fun StatusChip(state: TransactionDetailSwapStatusRowState) {
+    if (state.status == null) return
+
     ZashiBadge(
         text =
-            when (swapStatus) {
-                // INCOMPLETE_DEPOSIT -> stringResource(R.string.swap_detail_incomplete_deposit)
-                PENDING -> stringResource(R.string.swap_detail_pending)
+            when (state.status) {
+                EXPIRED -> stringResource(R.string.swap_detail_expired)
+                INCOMPLETE_DEPOSIT,
+                PENDING ->
+                    if (state.mode == SWAP_INTO_ZEC) {
+                        stringResource(R.string.swap_detail_pending_deposit)
+                    } else {
+                        stringResource(R.string.swap_detail_pending)
+                    }
+
                 SUCCESS -> stringResource(R.string.swap_detail_completed)
                 REFUNDED -> stringResource(R.string.swap_detail_refunded)
-                // FAILED -> stringResource(R.string.swap_detail_failed)
+                FAILED -> stringResource(R.string.swap_detail_failed)
+                PROCESSING ->
+                    if (state.mode == SWAP_INTO_ZEC) {
+                        stringResource(R.string.swap_detail_processing)
+                    } else {
+                        stringResource(R.string.swap_detail_pending)
+                    }
             },
         colors =
-            when (swapStatus) {
-                PENDING -> ZashiBadgeDefaults.hyperBlueColors()
+            when (state.status) {
+                PROCESSING -> ZashiBadgeDefaults.hyperBlueColors()
+                INCOMPLETE_DEPOSIT,
+                PENDING ->
+                    if (state.mode == SWAP_INTO_ZEC) {
+                        ZashiBadgeDefaults.warningColors()
+                    } else {
+                        ZashiBadgeDefaults.hyperBlueColors()
+                    }
+
                 SUCCESS -> ZashiBadgeDefaults.successColors()
-                // INCOMPLETE_DEPOSIT,
-                REFUNDED -> ZashiBadgeDefaults.errorColors()
-                // FAILED -> ZashiBadgeDefaults.errorColors()
+
+                EXPIRED,
+                REFUNDED,
+                FAILED -> ZashiBadgeDefaults.errorColors()
             },
         contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp)
     )
@@ -101,7 +134,13 @@ private fun StatusChip(swapStatus: SwapStatus) {
 data class TransactionDetailSwapStatusRowState(
     val title: StringResource,
     val status: SwapStatus?,
-)
+    val mode: Mode = SWAP_FROM_ZEC,
+) {
+    enum class Mode {
+        SWAP_FROM_ZEC,
+        SWAP_INTO_ZEC
+    }
+}
 
 @PreviewScreens
 @Composable

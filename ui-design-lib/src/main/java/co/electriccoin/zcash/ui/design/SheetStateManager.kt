@@ -19,7 +19,7 @@ class SheetStateManager {
     }
 
     fun onSheetDisposed(sheetState: SheetState) {
-        if (this.sheetState == sheetState) {
+        if (this.sheetState === sheetState) {
             this.sheetState = null
         }
     }

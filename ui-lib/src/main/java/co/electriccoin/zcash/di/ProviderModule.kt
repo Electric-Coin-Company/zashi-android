@@ -28,6 +28,8 @@ import co.electriccoin.zcash.ui.common.provider.SelectedAccountUUIDProvider
 import co.electriccoin.zcash.ui.common.provider.SelectedAccountUUIDProviderImpl
 import co.electriccoin.zcash.ui.common.provider.ShieldFundsInfoProvider
 import co.electriccoin.zcash.ui.common.provider.ShieldFundsInfoProviderImpl
+import co.electriccoin.zcash.ui.common.provider.SimpleSwapAssetProvider
+import co.electriccoin.zcash.ui.common.provider.SimpleSwapAssetProviderImpl
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProviderImpl
 import co.electriccoin.zcash.ui.common.provider.TokenIconProvider
@@ -77,4 +79,5 @@ val providerModule =
         singleOf(::TokenNameProviderImpl) bind TokenNameProvider::class
         singleOf(::KtorNearApiProvider) bind NearApiProvider::class
         factoryOf(::HttpClientProviderImpl) bind HttpClientProvider::class
+        factoryOf(::SimpleSwapAssetProviderImpl) bind SimpleSwapAssetProvider::class
     }

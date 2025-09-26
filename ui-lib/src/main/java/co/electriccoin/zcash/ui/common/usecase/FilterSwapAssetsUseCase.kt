@@ -11,7 +11,7 @@ class FilterSwapAssetsUseCase(
 ) {
     operator fun invoke(
         assets: SwapAssetsData,
-        latestAssets: Set<SimpleSwapAsset>?,
+        latestUsedAssets: Set<SimpleSwapAsset>?,
         text: String,
         onlyChainTicker: String?,
     ): SwapAssetsData {
@@ -26,7 +26,7 @@ class FilterSwapAssetsUseCase(
                         } else {
                             it.chainTicker.lowercase() == onlyChainTicker.lowercase()
                         }
-                    }.reorderByLatestAssets(latestAssets)
+                    }.reorderByLatestAssets(latestUsedAssets)
             } else {
                 val sorted =
                     assets.data
@@ -37,7 +37,7 @@ class FilterSwapAssetsUseCase(
                                 it.chainTicker.lowercase() == onlyChainTicker.lowercase()
                             }
                         }.sortedBy { it.tokenTicker.replace("$", "") }
-                        .reorderByLatestAssets(latestAssets)
+                        .reorderByLatestAssets(latestUsedAssets)
 
                 buildSet {
                     addAll(sorted.filter { it.tokenTicker.startsWith(text, ignoreCase = true) })

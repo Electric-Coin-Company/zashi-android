@@ -41,4 +41,7 @@
     <string name="swap_detail_completed">Completed</string>
     <string name="swap_detail_refunded">Refunded</string>
     <string name="swap_detail_failed">Failed</string>
+    <string name="swap_detail_expired">Expired</string>
+    <string name="swap_detail_pending_deposit">Pending deposit</string>
+    <string name="swap_detail_processing">Processing</string>
 </resources>
