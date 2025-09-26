@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.signkeystonetransaction.state
+package co.electriccoin.zcash.ui.screen.signkeystonetransaction
 
 import androidx.annotation.DrawableRes
 import co.electriccoin.zcash.ui.design.component.ButtonState

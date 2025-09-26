@@ -25,7 +25,7 @@ import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetailViewModel
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptInViewModel
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfoViewModel
-import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoViewModel
+import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoVM
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsVM
 import co.electriccoin.zcash.ui.screen.pay.PayVM
 import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
@@ -45,7 +45,7 @@ import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignIn
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel.SelectKeystoneAccountViewModel
 import co.electriccoin.zcash.ui.screen.send.SendViewModel
 import co.electriccoin.zcash.ui.screen.settings.SettingsViewModel
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel.SignKeystoneTransactionViewModel
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionVM
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.swap.SwapVM
 import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactVM
@@ -96,7 +96,7 @@ val viewModelModule =
         viewModelOf(::SendViewModel)
         viewModelOf(::WalletBackupViewModel)
         viewModelOf(::FeedbackViewModel)
-        viewModelOf(::SignKeystoneTransactionViewModel)
+        viewModelOf(::SignKeystoneTransactionVM)
         viewModelOf(::AccountListViewModel)
         viewModelOf(::ZashiTopAppBarVM)
         viewModelOf(::SelectKeystoneAccountViewModel)
@@ -116,7 +116,7 @@ val viewModelModule =
         viewModelOf(::RestoreBDHeightViewModel)
         viewModelOf(::RestoreBDDateViewModel)
         viewModelOf(::RestoreBDEstimationViewModel)
-        viewModelOf(::ShieldFundsInfoViewModel)
+        viewModelOf(::ShieldFundsInfoVM)
         viewModelOf(::WalletBackupInfoViewModel)
         viewModelOf(::ExchangeRateSettingsVM)
         viewModelOf(::WalletBackupDetailViewModel)

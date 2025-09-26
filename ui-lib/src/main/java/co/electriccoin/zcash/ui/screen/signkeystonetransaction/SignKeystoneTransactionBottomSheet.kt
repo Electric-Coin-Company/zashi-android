@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.signkeystonetransaction.view
+package co.electriccoin.zcash.ui.screen.signkeystonetransaction
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column

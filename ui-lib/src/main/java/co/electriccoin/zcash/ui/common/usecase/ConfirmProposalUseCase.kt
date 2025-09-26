@@ -13,7 +13,7 @@ import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionArgs
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressArgs
 
 class ConfirmProposalUseCase(
@@ -45,7 +45,7 @@ class ConfirmProposalUseCase(
                 )
             }
             when (accountDataSource.getSelectedAccount()) {
-                is KeystoneAccount -> navigationRouter.replace(SignKeystoneTransaction)
+                is KeystoneAccount -> navigationRouter.replace(SignKeystoneTransactionArgs)
                 is ZashiAccount -> {
                     zashiProposalRepository.submitTransaction()
                     navigationRouter.forward(TransactionProgressArgs)

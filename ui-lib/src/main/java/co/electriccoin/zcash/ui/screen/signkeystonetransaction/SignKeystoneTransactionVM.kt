@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.signkeystonetransaction.viewmodel
+package co.electriccoin.zcash.ui.screen.signkeystonetransaction
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,9 +16,6 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.scankeystone.ScanKeystonePCZTRequest
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.state.SignKeystoneTransactionState
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.state.ZashiAccountInfoListItemState
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.view.SignKeystoneTransactionBottomSheetState
 import com.sparrowwallet.hummingbird.UREncoder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +29,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-class SignKeystoneTransactionViewModel(
+class SignKeystoneTransactionVM(
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     observeProposalUseCase: ObserveProposalUseCase,
     private val navigationRouter: NavigationRouter,

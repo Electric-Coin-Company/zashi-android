@@ -129,8 +129,8 @@ import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccou
 import co.electriccoin.zcash.ui.screen.send.Send
 import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeystoneTransaction
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionScreen
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionArgs
 import co.electriccoin.zcash.ui.screen.swap.SwapArgs
 import co.electriccoin.zcash.ui.screen.swap.SwapScreen
 import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactArgs
@@ -297,7 +297,7 @@ internal fun MainActivity.Navigation() {
         composable(CRASH_REPORTING_OPT_IN) { AndroidCrashReportingOptIn() }
         composable<ScanKeystoneSignInRequest> { WrapScanKeystoneSignInRequest() }
         composable<ScanKeystonePCZTRequest> { WrapScanKeystonePCZTRequest() }
-        composable<SignKeystoneTransaction> { AndroidSignKeystoneTransaction() }
+        composable<SignKeystoneTransactionArgs> { SignKeystoneTransactionScreen() }
         dialogComposable<AccountList> { AndroidAccountList() }
         composable<ScanArgs> { ScanZashiAddressScreen(it.toRoute()) }
         composable(EXPORT_PRIVATE_DATA) {

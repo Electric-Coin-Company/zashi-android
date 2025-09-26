@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.signkeystonetransaction.view
+package co.electriccoin.zcash.ui.screen.signkeystonetransaction
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
@@ -40,8 +40,6 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.state.SignKeystoneTransactionState
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.state.ZashiAccountInfoListItemState
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
