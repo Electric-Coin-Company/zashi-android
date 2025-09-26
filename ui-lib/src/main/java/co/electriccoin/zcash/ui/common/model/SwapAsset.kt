@@ -28,10 +28,10 @@ data class ZecSwapAsset(
     override val tokenTicker: String,
     override val tokenName: StringResource,
     override val tokenIcon: ImageResource,
+    override val blockchain: SwapAssetBlockchain,
     override val usdPrice: BigDecimal?,
     override val assetId: String,
     override val decimals: Int,
-    override val blockchain: SwapAssetBlockchain,
 ) : SwapAsset {
     val alternativeTokenIcon: ImageResource = imageRes(R.drawable.ic_zec_round_full)
 }

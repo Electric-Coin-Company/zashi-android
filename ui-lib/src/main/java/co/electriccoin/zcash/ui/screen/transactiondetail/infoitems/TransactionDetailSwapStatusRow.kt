@@ -104,7 +104,7 @@ private fun StatusChip(state: TransactionDetailSwapStatusRowState) {
                 FAILED -> stringResource(R.string.swap_detail_failed)
                 PROCESSING ->
                     if (state.mode == SWAP_INTO_ZEC) {
-                        stringResource(R.string.swap_detail_title_swap_processing)
+                        stringResource(R.string.swap_detail_processing)
                     } else {
                         stringResource(R.string.swap_detail_pending)
                     }

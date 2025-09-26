@@ -7,6 +7,7 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
 import co.electriccoin.zcash.ui.common.repository.SendTransaction
@@ -22,6 +23,7 @@ import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.imageRes
+import co.electriccoin.zcash.ui.design.util.loadingImageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.design.util.stringResByCurrencyNumber
@@ -377,8 +379,11 @@ class TransactionDetailVM(
         sendTransactionAgain(transaction)
     }
 
-    private fun createTransactionHeaderState(data: DetailedTransactionData, info: TransactionDetailInfoState) =
-        TransactionDetailHeaderState(
+    private fun createTransactionHeaderState(
+        data: DetailedTransactionData,
+        info: TransactionDetailInfoState
+    ): TransactionDetailHeaderState {
+        return TransactionDetailHeaderState(
             title =
                 when (data.transaction) {
                     is SendTransaction.Success -> stringRes(R.string.transaction_detail_sent)
@@ -394,21 +399,39 @@ class TransactionDetailVM(
             amount =
                 stringRes(data.transaction.amount, HIDDEN),
             icons =
-                listOf(
-                    imageRes(
-                        when (info) {
-                            is ReceiveShieldedState,
-                            is ReceiveTransparentState -> R.drawable.ic_transaction_detail_receive
+                when (info) {
+                    is ReceiveShieldedState,
+                    is ReceiveTransparentState -> {
+                        listOf(
+                            imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                            imageRes(R.drawable.ic_transaction_received)
+                        )
+                    }
 
-                            is SendShieldedState,
-                            is SendSwapState,
-                            is SendTransparentState -> R.drawable.ic_transaction_detail_send
-
-                            is ShieldingState -> R.drawable.ic_transaction_detail_shielding
-                        }
+                    is SendSwapState -> listOf(
+                        data.metadata.swapMetadata?.origin?.tokenIcon ?: loadingImageRes(),
+                        when (data.metadata.swapMetadata?.mode) {
+                            SwapMode.EXACT_INPUT -> imageRes(R.drawable.ic_transaction_sent)
+                            SwapMode.EXACT_OUTPUT -> imageRes(R.drawable.ic_transaction_paid)
+                            null -> imageRes(R.drawable.ic_transaction_sent)
+                        },
+                        data.metadata.swapMetadata?.destination?.tokenIcon ?: loadingImageRes()
                     )
-                )
+
+                    is SendShieldedState,
+                    is SendTransparentState -> listOf(
+                        imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                        imageRes(R.drawable.ic_transaction_sent)
+                    )
+
+                    is ShieldingState -> listOf(
+                        imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                        imageRes(R.drawable.ic_transaction_shielded),
+                        imageRes(R.drawable.ic_transaction_detail_shielded),
+                    )
+                }
         )
+    }
 
     private fun onBack() = navigationRouter.back()
 

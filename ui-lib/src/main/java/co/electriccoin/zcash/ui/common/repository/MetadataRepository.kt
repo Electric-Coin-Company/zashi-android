@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.common.repository
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.MetadataDataSource
-import co.electriccoin.zcash.ui.common.datasource.toSimpleAssetSet
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapAsset
@@ -14,6 +13,7 @@ import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.model.metadata.SwapMetadataV3
 import co.electriccoin.zcash.ui.common.provider.MetadataKeyStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
+import co.electriccoin.zcash.ui.common.provider.SimpleSwapAssetProvider
 import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -80,6 +80,7 @@ class MetadataRepositoryImpl(
     private val metadataDataSource: MetadataDataSource,
     private val metadataKeyStorageProvider: MetadataKeyStorageProvider,
     private val persistableWalletProvider: PersistableWalletProvider,
+    private val simpleSwapAssetProvider: SimpleSwapAssetProvider
 ) : MetadataRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -137,8 +138,10 @@ class MetadataRepositoryImpl(
             totalFeesUsd = totalFeesUsd,
             amountOutFormatted = amountOutFormatted,
             key = it,
-            origin = SimpleSwapAsset(tokenTicker = origin.tokenTicker, chainTicker = origin.chainTicker),
-            destination = SimpleSwapAsset(tokenTicker = destination.tokenTicker, chainTicker = destination.chainTicker),
+            origin = simpleSwapAssetProvider
+                .getSimpleAsset(tokenTicker = origin.tokenTicker, chainTicker = origin.chainTicker),
+            destination = simpleSwapAssetProvider
+                .getSimpleAsset(tokenTicker = destination.tokenTicker, chainTicker = destination.chainTicker),
             mode = mode,
             status = status,
         )
@@ -157,8 +160,10 @@ class MetadataRepositoryImpl(
             amountOutFormatted = amountOutFormatted,
             status = status,
             mode = mode,
-            origin = SimpleSwapAsset(tokenTicker = origin.tokenTicker, chainTicker = origin.chainTicker),
-            destination = SimpleSwapAsset(tokenTicker = destination.tokenTicker, chainTicker = destination.chainTicker),
+            origin = simpleSwapAssetProvider
+                .getSimpleAsset(tokenTicker = origin.tokenTicker, chainTicker = origin.chainTicker),
+            destination = simpleSwapAssetProvider
+                .getSimpleAsset(tokenTicker = destination.tokenTicker, chainTicker = destination.chainTicker),
             key = it
         )
     }
@@ -201,17 +206,11 @@ class MetadataRepositoryImpl(
             lastUpdated = lastUpdated,
             origin =
                 fromAsset.let {
-                    SimpleSwapAsset(
-                        tokenTicker = it.token,
-                        chainTicker = it.chain
-                    )
+                    simpleSwapAssetProvider.getSimpleAsset(tokenTicker = it.token, chainTicker = it.chain)
                 },
             destination =
                 toAsset.let {
-                    SimpleSwapAsset(
-                        tokenTicker = it.token,
-                        chainTicker = it.chain
-                    )
+                    simpleSwapAssetProvider.getSimpleAsset(tokenTicker = it.token, chainTicker = it.chain)
                 },
             mode =
                 when (exactInput) {
@@ -281,6 +280,13 @@ class MetadataRepositoryImpl(
             newKey
         }
     }
+
+    private fun Set<String>.toSimpleAssetSet() =
+        this
+            .map {
+                val data = it.split(":")
+                simpleSwapAssetProvider.getSimpleAsset(data[0], data[1])
+            }.toSet()
 }
 
 data class TransactionMetadata(

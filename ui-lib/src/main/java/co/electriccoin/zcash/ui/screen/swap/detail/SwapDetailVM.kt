@@ -179,7 +179,7 @@ class SwapDetailVM(
             icons =
                 listOf(
                     swapData.data?.originAsset?.tokenIcon ?: loadingImageRes(),
-                    imageRes(R.drawable.ic_swap_detail),
+                    imageRes(R.drawable.ic_transaction_received),
                     imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
                 )
         )

@@ -68,43 +68,27 @@ class TransactionHistoryMapper {
         styledStringResource(
             stringResByCurrencyNumber(data.swap.amountOutFormatted, "ZEC"),
             when (data.swap.status) {
-                INCOMPLETE_DEPOSIT,
-                PROCESSING,
-                PENDING,
-                SUCCESS -> StringResourceColor.PRIMARY
-
-                EXPIRED,
-                REFUNDED,
-                FAILED -> StringResourceColor.NEGATIVE
+                INCOMPLETE_DEPOSIT, PROCESSING, PENDING, SUCCESS -> StringResourceColor.PRIMARY
+                EXPIRED, REFUNDED, FAILED -> StringResourceColor.NEGATIVE
             }
         )
 
     private fun getSwapTitle(data: ActivityData.BySwap): StringResource =
         stringRes(
             when (data.swap.status) {
-                INCOMPLETE_DEPOSIT,
-                PROCESSING,
-                PENDING -> R.string.transaction_history_swapping
-
+                INCOMPLETE_DEPOSIT, PROCESSING, PENDING -> R.string.transaction_history_swapping
                 SUCCESS -> R.string.transaction_history_swapped
                 REFUNDED -> R.string.transaction_history_swap_refunded
                 FAILED -> R.string.transaction_history_swap_failed
-
                 EXPIRED -> R.string.transaction_history_swap_expired
             }
         )
 
     private fun getSwapBigIcon(data: ActivityData.BySwap): Int =
         when (data.swap.status) {
-            INCOMPLETE_DEPOSIT,
-            PROCESSING,
-            PENDING -> R.drawable.ic_transaction_swapping
-
-            SUCCESS -> R.drawable.ic_transaction_swapped
-
-            EXPIRED,
-            REFUNDED,
-            FAILED -> R.drawable.ic_transaction_swap_failed
+            INCOMPLETE_DEPOSIT, PROCESSING, PENDING -> R.drawable.ic_transaction_receive_pending
+            SUCCESS -> R.drawable.ic_transaction_received
+            EXPIRED, REFUNDED, FAILED -> R.drawable.ic_transaction_receive_failed
         }
 
     private fun isTransactionUnread(data: ActivityData.ByTransaction, restoreTimestamp: Instant): Boolean {
@@ -140,35 +124,23 @@ class TransactionHistoryMapper {
                 } else {
                     if (transaction is SendTransaction.Failed) {
                         when (data.metadata.swapMetadata.mode) {
-                            EXACT_INPUT -> R.drawable.ic_transaction_swap_failed
+                            EXACT_INPUT -> R.drawable.ic_transaction_send_failed
                             EXACT_OUTPUT -> R.drawable.ic_transaction_pay_failed
                         }
                     } else {
                         when (data.metadata.swapMetadata.mode) {
                             EXACT_INPUT ->
                                 when (data.metadata.swapMetadata.status) {
-                                    INCOMPLETE_DEPOSIT,
-                                    PROCESSING,
-                                    PENDING -> R.drawable.ic_transaction_swapping
-
-                                    SUCCESS -> R.drawable.ic_transaction_swapped
-
-                                    EXPIRED,
-                                    REFUNDED,
-                                    FAILED -> R.drawable.ic_transaction_swap_failed
+                                    INCOMPLETE_DEPOSIT, PROCESSING, PENDING -> R.drawable.ic_transaction_send_pending
+                                    SUCCESS -> R.drawable.ic_transaction_sent
+                                    EXPIRED, REFUNDED, FAILED -> R.drawable.ic_transaction_send_failed
                                 }
 
                             EXACT_OUTPUT ->
                                 when (data.metadata.swapMetadata.status) {
-                                    INCOMPLETE_DEPOSIT,
-                                    PROCESSING,
-                                    PENDING -> R.drawable.ic_transaction_paying
-
+                                    INCOMPLETE_DEPOSIT, PROCESSING, PENDING -> R.drawable.ic_transaction_paying
                                     SUCCESS -> R.drawable.ic_transaction_paid
-
-                                    EXPIRED,
-                                    REFUNDED,
-                                    FAILED -> R.drawable.ic_transaction_pay_failed
+                                    EXPIRED, REFUNDED, FAILED -> R.drawable.ic_transaction_pay_failed
                                 }
                         }
                     }

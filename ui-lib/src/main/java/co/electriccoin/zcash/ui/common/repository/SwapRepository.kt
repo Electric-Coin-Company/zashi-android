@@ -11,6 +11,7 @@ import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.SwapQuoteStatus
 import co.electriccoin.zcash.ui.common.model.SwapStatus
+import co.electriccoin.zcash.ui.common.provider.SimpleSwapAssetProvider
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -91,6 +92,7 @@ class SwapRepositoryImpl(
     private val swapDataSource: SwapDataSource,
     private val accountDataSource: AccountDataSource,
     private val metadataRepository: MetadataRepository,
+    private val simpleSwapAssetProvider: SimpleSwapAssetProvider
 ) : SwapRepository {
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
@@ -170,7 +172,8 @@ class SwapRepositoryImpl(
                         .observeLastUsedAssetHistory()
                         .filterNotNull()
                         .first()
-                        .firstOrNull() ?: SimpleSwapAsset(tokenTicker = "usdc", chainTicker = "near")
+                        .firstOrNull() ?: simpleSwapAssetProvider
+                        .getSimpleAsset(tokenTicker = "usdc", chainTicker = "near")
                 val foundAssetToSelect =
                     filtered
                         .find {

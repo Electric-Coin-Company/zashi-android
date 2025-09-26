@@ -14,6 +14,7 @@ import co.electriccoin.zcash.ui.common.model.metadata.SwapMetadataV3
 import co.electriccoin.zcash.ui.common.model.metadata.SwapsMetadataV3
 import co.electriccoin.zcash.ui.common.provider.MetadataProvider
 import co.electriccoin.zcash.ui.common.provider.MetadataStorageProvider
+import co.electriccoin.zcash.ui.common.provider.SimpleSwapAssetProvider
 import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -77,6 +78,7 @@ interface MetadataDataSource {
 class MetadataDataSourceImpl(
     private val metadataStorageProvider: MetadataStorageProvider,
     private val metadataProvider: MetadataProvider,
+    private val simpleSwapAssetProvider: SimpleSwapAssetProvider,
 ) : MetadataDataSource {
     private val mutex = Mutex()
 
@@ -348,11 +350,7 @@ class MetadataDataSourceImpl(
         key: MetadataKey
     ) = updateMetadata(key) { metadata ->
         val current = metadata.swaps.lastUsedAssetHistory.toSimpleAssetSet()
-        val newAsset =
-            SimpleSwapAsset(
-                tokenTicker = tokenTicker.lowercase(),
-                chainTicker = chainTicker.lowercase()
-            )
+        val newAsset = simpleSwapAssetProvider.getSimpleAsset(tokenTicker = tokenTicker, chainTicker = chainTicker)
 
         val newList = current.toMutableList()
         if (newList.contains(newAsset)) newList.remove(newAsset)
@@ -389,6 +387,13 @@ class MetadataDataSourceImpl(
 
         metadataUpdatePipeline.emit(key to updatedMetadata)
     }
+
+    private fun Set<String>.toSimpleAssetSet() =
+        this
+            .map {
+                val data = it.split(":")
+                simpleSwapAssetProvider.getSimpleAsset(data[0], data[1])
+            }.toSet()
 }
 
 private fun defaultAccountMetadata() =
@@ -442,15 +447,5 @@ private fun <T : Any> List<T>.update(predicate: (T) -> Boolean, transform: (T) -
         this
     }
 }
-
-fun Set<String>.toSimpleAssetSet() =
-    this
-        .map {
-            val data = it.split(":")
-            SimpleSwapAsset(
-                tokenTicker = data[0],
-                chainTicker = data[1]
-            )
-        }.toSet()
 
 private const val MAX_SWAP_ASSETS_IN_HISTORY = 10
