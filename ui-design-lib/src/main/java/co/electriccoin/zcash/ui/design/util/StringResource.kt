@@ -19,7 +19,6 @@ import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 import java.text.DateFormat
-import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.time.YearMonth
 import java.time.ZonedDateTime
@@ -242,7 +241,6 @@ private fun StringResource.ByCurrencyNumber.convertCurrencyNumber(locale: Locale
 private fun convertNumberToString(amount: Number, locale: Locale, minDecimals: Int): String {
     val bigDecimalAmount = amount.toBigDecimal().stripTrailingZeros()
     val maxFractionDigits = bigDecimalAmount.scale().coerceAtLeast(minDecimals)
-    val symbols = DecimalFormatSymbols(locale)
     val formatter =
         NumberFormat.getInstance(locale).apply {
             roundingMode = RoundingMode.HALF_EVEN
@@ -250,7 +248,7 @@ private fun convertNumberToString(amount: Number, locale: Locale, minDecimals: I
             minimumFractionDigits = minDecimals
             minimumIntegerDigits = 1
         }
-    return formatter.format(bigDecimalAmount).replace(symbols.groupingSeparator, ' ')
+    return formatter.format(bigDecimalAmount)
 }
 
 private fun StringResource.ByDynamicCurrencyNumber.convertDynamicCurrencyNumber(locale: Locale): String {
@@ -269,7 +267,6 @@ private fun convertDynamicNumberToString(number: Number, locale: Locale): String
     val bigDecimalAmount = number.toBigDecimal()
     val dynamicAmount = bigDecimalAmount.stripFractionsDynamically(2)
     val maxDecimals = if (bigDecimalAmount.scale() > 0) bigDecimalAmount.scale() else 0
-    val symbols = DecimalFormatSymbols(locale)
     val formatter =
         NumberFormat.getInstance(locale).apply {
             roundingMode = RoundingMode.HALF_EVEN
@@ -277,7 +274,7 @@ private fun convertDynamicNumberToString(number: Number, locale: Locale): String
             minimumFractionDigits = 2
             minimumIntegerDigits = 1
         }
-    return formatter.format(dynamicAmount).replace(symbols.groupingSeparator, ' ')
+    return formatter.format(dynamicAmount)
 }
 
 private fun Number.toBigDecimal() =

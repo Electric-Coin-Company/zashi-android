@@ -21,7 +21,7 @@
     <string name="home_message_wallet_updating_subtitle">Esperando que se procese la última transacción</string>
     <string name="home_message_restoring_title">Restaurando Wallet • %1$.1f%% Completado</string>
     <string name="home_message_restoring_subtitle">Mantén Zashi abierto en la pantalla activa del teléfono</string>
-    <string name="home_message_restoring_subtitle_spendable">Tus fondos protegidos ya son utilizables</string>
+    <string name="home_message_restoring_subtitle_spendable">Tus fondos están listos para ser utilizados ahora</string>
     <string name="home_message_syncing_title">Sincronizando • %1$.1f%% Completado</string>
     <string name="home_message_syncing_subtitle">Tu wallet se está actualizando</string>
     <string name="home_message_error_title">Error al sincronizar</string>
