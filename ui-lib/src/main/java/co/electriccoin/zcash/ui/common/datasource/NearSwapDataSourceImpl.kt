@@ -81,7 +81,7 @@ class NearSwapDataSourceImpl(
 
         val shifted = amount.movePointRight(decimals)
         val integer = shifted.toBigInteger().toBigDecimal()
-        val normalizedAmount = shifted.round(MathContext(integer.precision(), RoundingMode.HALF_EVEN))
+        val normalizedAmount = shifted.round(MathContext(integer.precision(), RoundingMode.HALF_UP))
 
         val request =
             QuoteRequest(
