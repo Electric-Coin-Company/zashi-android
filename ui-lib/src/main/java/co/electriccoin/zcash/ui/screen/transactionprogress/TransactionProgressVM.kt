@@ -61,7 +61,7 @@ class TransactionProgressVM(
                             createPartialFailureTransactionState(supportContacted, result)
 
                         is SubmitResult.GrpcFailure ->
-                            createGrpcFailureTransactionState()
+                            createGrpcFailureTransactionState(result)
 
                         is SubmitResult.Failure ->
                             createFailureTransactionState(proposal, result)
@@ -101,10 +101,11 @@ class TransactionProgressVM(
         transactionIds = result.txIds
     )
 
-    private fun createGrpcFailureTransactionState() =
+    private fun createGrpcFailureTransactionState(result: SubmitResult.GrpcFailure) =
         GrpcFailureTransactionState(
             onBack = ::onViewTransactions,
-            onCloseClick = ::onViewTransactions
+            onCloseClick = ::onViewTransactions,
+            onViewTransactionClick = { result.txIds.firstOrNull()?.let { onViewTransactionDetailClick(it) } }
         )
 
     private suspend fun createSuccessfulTransactionState(
@@ -186,9 +187,7 @@ class TransactionProgressVM(
     ) = FailureTransactionState(
         onBack = ::onBackToSendForm,
         onCloseClick = ::onBackToSendForm,
-        onViewTransactionClick = {
-            result.txIds.firstOrNull()?.let { onViewTransactionDetailClick(it) }
-        },
+        onViewTransactionClick = { result.txIds.firstOrNull()?.let { onViewTransactionDetailClick(it) } },
         onReportClick = {
             viewModelScope.launch {
                 sendEmailUseCase(result)
