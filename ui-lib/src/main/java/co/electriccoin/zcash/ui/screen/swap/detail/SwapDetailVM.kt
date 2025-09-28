@@ -47,6 +47,7 @@ class SwapDetailVM(
             .observe(args.depositAddress)
             .map { swapData ->
                 SwapDetailState(
+                    transactionHeader = createTransactionHeaderState(swapData),
                     quoteHeader =
                         mapper
                             .createTransactionDetailQuoteHeaderState(
@@ -54,7 +55,6 @@ class SwapDetailVM(
                                 originAsset = swapData.data?.originAsset,
                                 destinationAsset = swapData.data?.destinationAsset
                             ),
-                    transactionHeader = createTransactionHeaderState(swapData),
                     status =
                         TransactionDetailSwapStatusRowState(
                             title = stringRes(R.string.transaction_detail_info_transaction_status),
@@ -163,12 +163,12 @@ class SwapDetailVM(
                     EXPIRED -> stringRes(R.string.swap_detail_title_swap_expired)
 
                     INCOMPLETE_DEPOSIT,
+                    PROCESSING,
                     PENDING -> stringRes(R.string.swap_detail_title_swap_pending)
 
                     SUCCESS -> stringRes(R.string.swap_detail_title_swap_completed)
                     REFUNDED -> stringRes(R.string.swap_detail_title_swap_refunded)
                     FAILED -> stringRes(R.string.swap_detail_title_swap_failed)
-                    PROCESSING -> stringRes(R.string.swap_detail_title_swap_processing)
                     null -> null
                 },
             amount =

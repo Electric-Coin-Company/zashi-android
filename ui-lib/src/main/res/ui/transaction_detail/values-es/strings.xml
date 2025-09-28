@@ -44,4 +44,6 @@
     <string name="swap_detail_expired">Expired</string>
     <string name="swap_detail_pending_deposit">Pending deposit</string>
     <string name="swap_detail_processing">Processing</string>
+    <string name="transaction_detail_swapping">Swapping</string>
+    <string name="transaction_detail_paying">Paying</string>
 </resources>

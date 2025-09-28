@@ -8,7 +8,16 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapMode
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.SwapStatus
+import co.electriccoin.zcash.ui.common.model.SwapStatus.EXPIRED
+import co.electriccoin.zcash.ui.common.model.SwapStatus.FAILED
+import co.electriccoin.zcash.ui.common.model.SwapStatus.INCOMPLETE_DEPOSIT
+import co.electriccoin.zcash.ui.common.model.SwapStatus.PENDING
+import co.electriccoin.zcash.ui.common.model.SwapStatus.PROCESSING
+import co.electriccoin.zcash.ui.common.model.SwapStatus.REFUNDED
+import co.electriccoin.zcash.ui.common.model.SwapStatus.SUCCESS
 import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
 import co.electriccoin.zcash.ui.common.repository.SendTransaction
 import co.electriccoin.zcash.ui.common.repository.ShieldTransaction
@@ -384,18 +393,56 @@ class TransactionDetailVM(
         info: TransactionDetailInfoState
     ): TransactionDetailHeaderState {
         return TransactionDetailHeaderState(
-            title =
-                when (data.transaction) {
-                    is SendTransaction.Success -> stringRes(R.string.transaction_detail_sent)
-                    is SendTransaction.Pending -> stringRes(R.string.transaction_detail_sending)
-                    is SendTransaction.Failed -> stringRes(R.string.transaction_detail_send_failed)
-                    is ReceiveTransaction.Success -> stringRes(R.string.transaction_detail_received)
-                    is ReceiveTransaction.Pending -> stringRes(R.string.transaction_detail_receiving)
-                    is ReceiveTransaction.Failed -> stringRes(R.string.transaction_detail_receive_failed)
-                    is ShieldTransaction.Success -> stringRes(R.string.transaction_detail_shielded)
-                    is ShieldTransaction.Pending -> stringRes(R.string.transaction_detail_shielding)
-                    is ShieldTransaction.Failed -> stringRes(R.string.transaction_detail_shielding_failed)
-                },
+            title = when (val transaction = data.transaction) {
+                is ReceiveTransaction.Success -> stringRes(R.string.transaction_history_received)
+                is ReceiveTransaction.Pending -> stringRes(R.string.transaction_detail_receiving)
+                is ReceiveTransaction.Failed -> stringRes(R.string.transaction_history_receiving_failed)
+                is ShieldTransaction.Success -> stringRes(R.string.transaction_history_shielded)
+                is ShieldTransaction.Pending -> stringRes(R.string.transaction_detail_shielding)
+                is ShieldTransaction.Failed -> stringRes(R.string.transaction_history_shielding_failed)
+                is SendTransaction -> {
+                    if (data.metadata.swapMetadata == null) {
+                        when (transaction) {
+                            is SendTransaction.Success -> stringRes(R.string.transaction_history_sent)
+                            is SendTransaction.Pending -> stringRes(R.string.transaction_detail_sending)
+                            is SendTransaction.Failed -> stringRes(R.string.transaction_history_sending_failed)
+                        }
+                    } else {
+                        if (transaction is SendTransaction.Failed) {
+                            when (data.metadata.swapMetadata.mode) {
+                                EXACT_INPUT -> stringRes(R.string.transaction_history_swap_failed)
+                                EXACT_OUTPUT -> stringRes(R.string.transaction_history_payment_failed)
+                            }
+                        } else {
+                            when (data.metadata.swapMetadata.mode) {
+                                EXACT_INPUT ->
+                                    when (data.metadata.swapMetadata.status) {
+                                        INCOMPLETE_DEPOSIT,
+                                        PROCESSING,
+                                        PENDING -> stringRes(R.string.transaction_detail_swapping)
+
+                                        SUCCESS -> stringRes(R.string.transaction_history_swapped)
+                                        REFUNDED -> stringRes(R.string.transaction_history_swap_refunded)
+                                        FAILED -> stringRes(R.string.transaction_history_swap_failed)
+                                        EXPIRED -> stringRes(R.string.transaction_history_swap_expired)
+                                    }
+
+                                EXACT_OUTPUT ->
+                                    when (data.metadata.swapMetadata.status) {
+                                        INCOMPLETE_DEPOSIT,
+                                        PROCESSING,
+                                        PENDING -> stringRes(R.string.transaction_detail_paying)
+
+                                        SUCCESS -> stringRes(R.string.transaction_history_paid)
+                                        REFUNDED -> stringRes(R.string.transaction_history_payment_refunded)
+                                        FAILED -> stringRes(R.string.transaction_history_payment_failed)
+                                        EXPIRED -> stringRes(R.string.transaction_history_payment_expired)
+                                    }
+                            }
+                        }
+                    }
+                }
+            },
             amount =
                 stringRes(data.transaction.amount, HIDDEN),
             icons =
