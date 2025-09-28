@@ -234,7 +234,7 @@ class MetadataRepositoryImpl(
                     ?.swaps
                     ?.swapIds
                     ?.map { it.toBusinessObject() }
-                    ?.filter { it.origin is ZecSimpleSwapAsset }
+                    ?.filter { it.destination is ZecSimpleSwapAsset }
             }.distinctUntilChanged()
 
     override fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?> =
