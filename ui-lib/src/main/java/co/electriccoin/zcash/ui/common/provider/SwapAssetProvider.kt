@@ -26,25 +26,26 @@ class SwapAssetProviderImpl(
         usdPrice: BigDecimal?,
         assetId: String,
         decimals: Int,
-    ): SwapAsset = if (tokenTicker.lowercase() == "zec" && chainTicker.lowercase() == "zec") {
-        ZecSwapAsset(
-            tokenName = tokenNameProvider.getName(tokenTicker),
-            tokenIcon = tokenIconProvider.getIcon(tokenTicker),
-            blockchain = blockchainProvider.getBlockchain(chainTicker),
-            tokenTicker = tokenTicker,
-            usdPrice = usdPrice,
-            assetId = assetId,
-            decimals = decimals,
-        )
-    } else {
-        DynamicSwapAsset(
-            tokenName = tokenNameProvider.getName(tokenTicker),
-            tokenIcon = tokenIconProvider.getIcon(tokenTicker),
-            blockchain = blockchainProvider.getBlockchain(chainTicker),
-            tokenTicker = tokenTicker,
-            usdPrice = usdPrice,
-            assetId = assetId,
-            decimals = decimals,
-        )
-    }
+    ): SwapAsset =
+        if (tokenTicker.lowercase() == "zec" && chainTicker.lowercase() == "zec") {
+            ZecSwapAsset(
+                tokenName = tokenNameProvider.getName(tokenTicker),
+                tokenIcon = tokenIconProvider.getIcon(tokenTicker),
+                blockchain = blockchainProvider.getBlockchain(chainTicker),
+                tokenTicker = tokenTicker,
+                usdPrice = usdPrice,
+                assetId = assetId,
+                decimals = decimals,
+            )
+        } else {
+            DynamicSwapAsset(
+                tokenName = tokenNameProvider.getName(tokenTicker),
+                tokenIcon = tokenIconProvider.getIcon(tokenTicker),
+                blockchain = blockchainProvider.getBlockchain(chainTicker),
+                tokenTicker = tokenTicker,
+                usdPrice = usdPrice,
+                assetId = assetId,
+                decimals = decimals,
+            )
+        }
 }

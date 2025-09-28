@@ -391,58 +391,59 @@ class TransactionDetailVM(
     private fun createTransactionHeaderState(
         data: DetailedTransactionData,
         info: TransactionDetailInfoState
-    ): TransactionDetailHeaderState {
-        return TransactionDetailHeaderState(
-            title = when (val transaction = data.transaction) {
-                is ReceiveTransaction.Success -> stringRes(R.string.transaction_history_received)
-                is ReceiveTransaction.Pending -> stringRes(R.string.transaction_detail_receiving)
-                is ReceiveTransaction.Failed -> stringRes(R.string.transaction_history_receiving_failed)
-                is ShieldTransaction.Success -> stringRes(R.string.transaction_history_shielded)
-                is ShieldTransaction.Pending -> stringRes(R.string.transaction_detail_shielding)
-                is ShieldTransaction.Failed -> stringRes(R.string.transaction_history_shielding_failed)
-                is SendTransaction -> {
-                    if (data.metadata.swapMetadata == null) {
-                        when (transaction) {
-                            is SendTransaction.Success -> stringRes(R.string.transaction_history_sent)
-                            is SendTransaction.Pending -> stringRes(R.string.transaction_detail_sending)
-                            is SendTransaction.Failed -> stringRes(R.string.transaction_history_sending_failed)
-                        }
-                    } else {
-                        if (transaction is SendTransaction.Failed) {
-                            when (data.metadata.swapMetadata.mode) {
-                                EXACT_INPUT -> stringRes(R.string.transaction_history_swap_failed)
-                                EXACT_OUTPUT -> stringRes(R.string.transaction_history_payment_failed)
+    ): TransactionDetailHeaderState =
+        TransactionDetailHeaderState(
+            title =
+                when (val transaction = data.transaction) {
+                    is ReceiveTransaction.Success -> stringRes(R.string.transaction_history_received)
+                    is ReceiveTransaction.Pending -> stringRes(R.string.transaction_detail_receiving)
+                    is ReceiveTransaction.Failed -> stringRes(R.string.transaction_history_receiving_failed)
+                    is ShieldTransaction.Success -> stringRes(R.string.transaction_history_shielded)
+                    is ShieldTransaction.Pending -> stringRes(R.string.transaction_detail_shielding)
+                    is ShieldTransaction.Failed -> stringRes(R.string.transaction_history_shielding_failed)
+                    is SendTransaction -> {
+                        if (data.metadata.swapMetadata == null) {
+                            when (transaction) {
+                                is SendTransaction.Success -> stringRes(R.string.transaction_history_sent)
+                                is SendTransaction.Pending -> stringRes(R.string.transaction_detail_sending)
+                                is SendTransaction.Failed -> stringRes(R.string.transaction_history_sending_failed)
                             }
                         } else {
-                            when (data.metadata.swapMetadata.mode) {
-                                EXACT_INPUT ->
-                                    when (data.metadata.swapMetadata.status) {
-                                        INCOMPLETE_DEPOSIT,
-                                        PROCESSING,
-                                        PENDING -> stringRes(R.string.transaction_detail_swapping)
+                            if (transaction is SendTransaction.Failed) {
+                                when (data.metadata.swapMetadata.mode) {
+                                    EXACT_INPUT -> stringRes(R.string.transaction_history_swap_failed)
+                                    EXACT_OUTPUT -> stringRes(R.string.transaction_history_payment_failed)
+                                }
+                            } else {
+                                when (data.metadata.swapMetadata.mode) {
+                                    EXACT_INPUT ->
+                                        when (data.metadata.swapMetadata.status) {
+                                            INCOMPLETE_DEPOSIT,
+                                            PROCESSING,
+                                            PENDING -> stringRes(R.string.transaction_detail_swapping)
 
-                                        SUCCESS -> stringRes(R.string.transaction_history_swapped)
-                                        REFUNDED -> stringRes(R.string.transaction_history_swap_refunded)
-                                        FAILED -> stringRes(R.string.transaction_history_swap_failed)
-                                        EXPIRED -> stringRes(R.string.transaction_history_swap_expired)
-                                    }
+                                            SUCCESS -> stringRes(R.string.transaction_history_swapped)
+                                            REFUNDED -> stringRes(R.string.transaction_history_swap_refunded)
+                                            FAILED -> stringRes(R.string.transaction_history_swap_failed)
+                                            EXPIRED -> stringRes(R.string.transaction_history_swap_expired)
+                                        }
 
-                                EXACT_OUTPUT ->
-                                    when (data.metadata.swapMetadata.status) {
-                                        INCOMPLETE_DEPOSIT,
-                                        PROCESSING,
-                                        PENDING -> stringRes(R.string.transaction_detail_paying)
+                                    EXACT_OUTPUT ->
+                                        when (data.metadata.swapMetadata.status) {
+                                            INCOMPLETE_DEPOSIT,
+                                            PROCESSING,
+                                            PENDING -> stringRes(R.string.transaction_detail_paying)
 
-                                        SUCCESS -> stringRes(R.string.transaction_history_paid)
-                                        REFUNDED -> stringRes(R.string.transaction_history_payment_refunded)
-                                        FAILED -> stringRes(R.string.transaction_history_payment_failed)
-                                        EXPIRED -> stringRes(R.string.transaction_history_payment_expired)
-                                    }
+                                            SUCCESS -> stringRes(R.string.transaction_history_paid)
+                                            REFUNDED -> stringRes(R.string.transaction_history_payment_refunded)
+                                            FAILED -> stringRes(R.string.transaction_history_payment_failed)
+                                            EXPIRED -> stringRes(R.string.transaction_history_payment_expired)
+                                        }
+                                }
                             }
                         }
                     }
-                }
-            },
+                },
             amount =
                 stringRes(data.transaction.amount, HIDDEN),
             icons =
@@ -455,30 +456,36 @@ class TransactionDetailVM(
                         )
                     }
 
-                    is SendSwapState -> listOf(
-                        data.metadata.swapMetadata?.origin?.tokenIcon ?: loadingImageRes(),
-                        when (data.metadata.swapMetadata?.mode) {
-                            SwapMode.EXACT_INPUT -> imageRes(R.drawable.ic_transaction_sent)
-                            SwapMode.EXACT_OUTPUT -> imageRes(R.drawable.ic_transaction_paid)
-                            null -> imageRes(R.drawable.ic_transaction_sent)
-                        },
-                        data.metadata.swapMetadata?.destination?.tokenIcon ?: loadingImageRes()
-                    )
+                    is SendSwapState ->
+                        listOf(
+                            data.metadata.swapMetadata
+                                ?.origin
+                                ?.tokenIcon ?: loadingImageRes(),
+                            when (data.metadata.swapMetadata?.mode) {
+                                SwapMode.EXACT_INPUT -> imageRes(R.drawable.ic_transaction_sent)
+                                SwapMode.EXACT_OUTPUT -> imageRes(R.drawable.ic_transaction_paid)
+                                null -> imageRes(R.drawable.ic_transaction_sent)
+                            },
+                            data.metadata.swapMetadata
+                                ?.destination
+                                ?.tokenIcon ?: loadingImageRes()
+                        )
 
                     is SendShieldedState,
-                    is SendTransparentState -> listOf(
-                        imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
-                        imageRes(R.drawable.ic_transaction_sent)
-                    )
+                    is SendTransparentState ->
+                        listOf(
+                            imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                            imageRes(R.drawable.ic_transaction_sent)
+                        )
 
-                    is ShieldingState -> listOf(
-                        imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
-                        imageRes(R.drawable.ic_transaction_shielded),
-                        imageRes(R.drawable.ic_transaction_detail_shielded),
-                    )
+                    is ShieldingState ->
+                        listOf(
+                            imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                            imageRes(R.drawable.ic_transaction_shielded),
+                            imageRes(R.drawable.ic_transaction_detail_shielded),
+                        )
                 }
         )
-    }
 
     private fun onBack() = navigationRouter.back()
 

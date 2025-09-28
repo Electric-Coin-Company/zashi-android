@@ -139,10 +139,12 @@ class MetadataRepositoryImpl(
             totalFeesUsd = totalFeesUsd,
             amountOutFormatted = amountOutFormatted,
             key = it,
-            origin = simpleSwapAssetProvider
-                .get(tokenTicker = origin.tokenTicker, chainTicker = origin.chainTicker),
-            destination = simpleSwapAssetProvider
-                .get(tokenTicker = destination.tokenTicker, chainTicker = destination.chainTicker),
+            origin =
+                simpleSwapAssetProvider
+                    .get(tokenTicker = origin.tokenTicker, chainTicker = origin.chainTicker),
+            destination =
+                simpleSwapAssetProvider
+                    .get(tokenTicker = destination.tokenTicker, chainTicker = destination.chainTicker),
             mode = mode,
             status = status,
         )
@@ -161,10 +163,12 @@ class MetadataRepositoryImpl(
             amountOutFormatted = amountOutFormatted,
             status = status,
             mode = mode,
-            origin = simpleSwapAssetProvider
-                .get(tokenTicker = origin.tokenTicker, chainTicker = origin.chainTicker),
-            destination = simpleSwapAssetProvider
-                .get(tokenTicker = destination.tokenTicker, chainTicker = destination.chainTicker),
+            origin =
+                simpleSwapAssetProvider
+                    .get(tokenTicker = origin.tokenTicker, chainTicker = origin.chainTicker),
+            destination =
+                simpleSwapAssetProvider
+                    .get(tokenTicker = destination.tokenTicker, chainTicker = destination.chainTicker),
             key = it
         )
     }

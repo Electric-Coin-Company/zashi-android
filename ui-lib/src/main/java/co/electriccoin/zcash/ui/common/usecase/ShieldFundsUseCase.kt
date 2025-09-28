@@ -29,22 +29,23 @@ class ShieldFundsUseCase(
 
     operator fun invoke(closeCurrentScreen: Boolean) {
         if (job?.isActive == true) return
-        job = scope.launch {
-            messageAvailabilityDataSource.onShieldingInitiated()
+        job =
+            scope.launch {
+                messageAvailabilityDataSource.onShieldingInitiated()
 
-            when (accountDataSource.getSelectedAccount()) {
-                is KeystoneAccount -> {
-                    createKeystoneShieldProposal()
-                }
-
-                is ZashiAccount -> {
-                    if (closeCurrentScreen) {
-                        navigationRouter.back()
+                when (accountDataSource.getSelectedAccount()) {
+                    is KeystoneAccount -> {
+                        createKeystoneShieldProposal()
                     }
-                    shieldZashiFunds()
+
+                    is ZashiAccount -> {
+                        if (closeCurrentScreen) {
+                            navigationRouter.back()
+                        }
+                        shieldZashiFunds()
+                    }
                 }
             }
-        }
     }
 
     @Suppress("TooGenericExceptionCaught")

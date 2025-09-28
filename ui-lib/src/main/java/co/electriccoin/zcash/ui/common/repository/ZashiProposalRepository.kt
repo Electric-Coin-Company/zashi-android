@@ -160,24 +160,25 @@ class ZashiProposalRepositoryImpl(
             .async {
                 submitState.update { SubmitProposalState.Submitting }
                 try {
-                    val result = proposalDataSource.submitTransaction(
-                        proposal = transactionProposal.proposal,
-                        usk = zashiSpendingKeyDataSource.getZashiSpendingKey()
-                    )
+                    val result =
+                        proposalDataSource.submitTransaction(
+                            proposal = transactionProposal.proposal,
+                            usk = zashiSpendingKeyDataSource.getZashiSpendingKey()
+                        )
                     runSwapPipeline(transactionProposal, result)
                     submitState.update { SubmitProposalState.Result(result) }
                     result
                 } catch (e: Exception) {
-                    val result = SubmitResult.Failure(
-                        txIds = emptyList(),
-                        code = 0,
-                        description = e.message
-                    )
+                    val result =
+                        SubmitResult.Failure(
+                            txIds = emptyList(),
+                            code = 0,
+                            description = e.message
+                        )
                     submitState.update { SubmitProposalState.Result(result) }
                     throw e
                 }
-            }
-            .await()
+            }.await()
     }
 
     private fun runSwapPipeline(transactionProposal: TransactionProposal, result: SubmitResult) =

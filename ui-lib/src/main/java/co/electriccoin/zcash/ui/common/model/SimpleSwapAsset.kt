@@ -51,4 +51,3 @@ data class ZecSimpleSwapAsset(
 //                 imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_unshielded)
 //             }
 //     }
-
