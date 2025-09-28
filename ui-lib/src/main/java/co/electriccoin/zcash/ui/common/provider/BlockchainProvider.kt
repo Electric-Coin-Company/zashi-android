@@ -1,26 +1,26 @@
 package co.electriccoin.zcash.ui.common.provider
 
 import android.content.Context
-import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
+import co.electriccoin.zcash.ui.common.model.SwapBlockchain
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 interface BlockchainProvider {
-    fun getBlockchain(ticker: String): SwapAssetBlockchain
+    fun getBlockchain(ticker: String): SwapBlockchain
 
-    fun getHardcodedBlockchains(): List<SwapAssetBlockchain>
+    fun getHardcodedBlockchains(): List<SwapBlockchain>
 
-    fun getZcashBlockchain(): SwapAssetBlockchain
+    fun getZcashBlockchain(): SwapBlockchain
 }
 
 class BlockchainProviderImpl(
     private val context: Context
 ) : BlockchainProvider {
     @Suppress("CyclomaticComplexMethod")
-    override fun getBlockchain(ticker: String): SwapAssetBlockchain =
-        SwapAssetBlockchain(
+    override fun getBlockchain(ticker: String): SwapBlockchain =
+        SwapBlockchain(
             chainTicker = ticker,
             chainName =
                 when (ticker.lowercase()) {
@@ -61,7 +61,7 @@ class BlockchainProviderImpl(
         return if (id == 0) imageRes(R.drawable.ic_chain_placeholder) else imageRes(id)
     }
 
-    override fun getHardcodedBlockchains(): List<SwapAssetBlockchain> =
+    override fun getHardcodedBlockchains(): List<SwapBlockchain> =
         listOf(
             "aptos",
             "arb",
@@ -85,5 +85,5 @@ class BlockchainProviderImpl(
             "xrp",
         ).map { getBlockchain(it) }
 
-    override fun getZcashBlockchain(): SwapAssetBlockchain = getBlockchain("zec")
+    override fun getZcashBlockchain(): SwapBlockchain = getBlockchain("zec")
 }

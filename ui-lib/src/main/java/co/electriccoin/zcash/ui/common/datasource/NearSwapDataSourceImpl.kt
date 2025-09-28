@@ -1,24 +1,20 @@
 package co.electriccoin.zcash.ui.common.datasource
 
-import co.electriccoin.zcash.ui.common.model.DynamicSwapAsset
 import co.electriccoin.zcash.ui.common.model.NearSwapQuote
 import co.electriccoin.zcash.ui.common.model.NearSwapQuoteStatus
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.SwapQuoteStatus
-import co.electriccoin.zcash.ui.common.model.ZecSwapAsset
 import co.electriccoin.zcash.ui.common.model.near.AppFee
 import co.electriccoin.zcash.ui.common.model.near.QuoteRequest
 import co.electriccoin.zcash.ui.common.model.near.RecipientType
 import co.electriccoin.zcash.ui.common.model.near.RefundType
 import co.electriccoin.zcash.ui.common.model.near.SubmitDepositTransactionRequest
 import co.electriccoin.zcash.ui.common.model.near.SwapType
-import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
 import co.electriccoin.zcash.ui.common.provider.NearApiProvider
 import co.electriccoin.zcash.ui.common.provider.ResponseWithErrorException
-import co.electriccoin.zcash.ui.common.provider.TokenIconProvider
-import co.electriccoin.zcash.ui.common.provider.TokenNameProvider
+import co.electriccoin.zcash.ui.common.provider.SwapAssetProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
@@ -28,37 +24,19 @@ import java.math.RoundingMode
 import kotlin.time.Duration.Companion.minutes
 
 class NearSwapDataSourceImpl(
-    private val blockchainProvider: BlockchainProvider,
-    private val tokenIconProvider: TokenIconProvider,
-    private val tokenNameProvider: TokenNameProvider,
     private val nearApiProvider: NearApiProvider,
+    private val swapAssetProvider: SwapAssetProvider,
 ) : SwapDataSource {
     override suspend fun getSupportedTokens(): List<SwapAsset> =
         withContext(Dispatchers.Default) {
             nearApiProvider.getSupportedTokens().map {
-                val blockchain = blockchainProvider.getBlockchain(it.blockchain)
-
-                if (blockchain.chainTicker.lowercase() == "zec" && it.symbol.lowercase() == "zec") {
-                    ZecSwapAsset(
-                        tokenName = tokenNameProvider.getName(it.symbol),
-                        tokenIcon = tokenIconProvider.getIcon(it.symbol),
-                        blockchain = blockchain,
-                        tokenTicker = it.symbol,
-                        usdPrice = it.price,
-                        assetId = it.assetId,
-                        decimals = it.decimals,
-                    )
-                } else {
-                    DynamicSwapAsset(
-                        tokenName = tokenNameProvider.getName(it.symbol),
-                        tokenIcon = tokenIconProvider.getIcon(it.symbol),
-                        blockchain = blockchain,
-                        tokenTicker = it.symbol,
-                        usdPrice = it.price,
-                        assetId = it.assetId,
-                        decimals = it.decimals,
-                    )
-                }
+                swapAssetProvider.get(
+                    tokenTicker = it.symbol,
+                    chainTicker = it.blockchain,
+                    usdPrice = it.price,
+                    assetId = it.assetId,
+                    decimals = it.decimals
+                )
             }
         }
 

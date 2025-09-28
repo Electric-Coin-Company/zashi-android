@@ -10,6 +10,7 @@ import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.model.ZecSimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.metadata.SwapMetadataV3
 import co.electriccoin.zcash.ui.common.provider.MetadataKeyStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
@@ -139,9 +140,9 @@ class MetadataRepositoryImpl(
             amountOutFormatted = amountOutFormatted,
             key = it,
             origin = simpleSwapAssetProvider
-                .getSimpleAsset(tokenTicker = origin.tokenTicker, chainTicker = origin.chainTicker),
+                .get(tokenTicker = origin.tokenTicker, chainTicker = origin.chainTicker),
             destination = simpleSwapAssetProvider
-                .getSimpleAsset(tokenTicker = destination.tokenTicker, chainTicker = destination.chainTicker),
+                .get(tokenTicker = destination.tokenTicker, chainTicker = destination.chainTicker),
             mode = mode,
             status = status,
         )
@@ -161,9 +162,9 @@ class MetadataRepositoryImpl(
             status = status,
             mode = mode,
             origin = simpleSwapAssetProvider
-                .getSimpleAsset(tokenTicker = origin.tokenTicker, chainTicker = origin.chainTicker),
+                .get(tokenTicker = origin.tokenTicker, chainTicker = origin.chainTicker),
             destination = simpleSwapAssetProvider
-                .getSimpleAsset(tokenTicker = destination.tokenTicker, chainTicker = destination.chainTicker),
+                .get(tokenTicker = destination.tokenTicker, chainTicker = destination.chainTicker),
             key = it
         )
     }
@@ -206,11 +207,11 @@ class MetadataRepositoryImpl(
             lastUpdated = lastUpdated,
             origin =
                 fromAsset.let {
-                    simpleSwapAssetProvider.getSimpleAsset(tokenTicker = it.token, chainTicker = it.chain)
+                    simpleSwapAssetProvider.get(tokenTicker = it.token, chainTicker = it.chain)
                 },
             destination =
                 toAsset.let {
-                    simpleSwapAssetProvider.getSimpleAsset(tokenTicker = it.token, chainTicker = it.chain)
+                    simpleSwapAssetProvider.get(tokenTicker = it.token, chainTicker = it.chain)
                 },
             mode =
                 when (exactInput) {
@@ -232,9 +233,8 @@ class MetadataRepositoryImpl(
                     ?.accountMetadata
                     ?.swaps
                     ?.swapIds
-                    ?.filter {
-                        it.toAsset.token.lowercase() == "zec" && it.toAsset.chain.lowercase() == "zec"
-                    }?.map { it.toBusinessObject() }
+                    ?.map { it.toBusinessObject() }
+                    ?.filter { it.origin is ZecSimpleSwapAsset }
             }.distinctUntilChanged()
 
     override fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?> =
@@ -285,7 +285,7 @@ class MetadataRepositoryImpl(
         this
             .map {
                 val data = it.split(":")
-                simpleSwapAssetProvider.getSimpleAsset(data[0], data[1])
+                simpleSwapAssetProvider.get(tokenTicker = data[0], chainTicker = data[1])
             }.toSet()
 }
 

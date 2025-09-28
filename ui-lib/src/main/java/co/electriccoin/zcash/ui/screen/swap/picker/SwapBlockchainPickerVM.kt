@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
+import co.electriccoin.zcash.ui.common.model.SwapBlockchain
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.FilterSwapBlockchainsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
@@ -111,7 +111,7 @@ class SwapBlockchainPickerVM(
 
     private fun onSearchTextChange(new: String) = searchText.update { new }
 
-    private fun onBlockchainClick(asset: SwapAssetBlockchain) =
+    private fun onBlockchainClick(asset: SwapBlockchain) =
         viewModelScope.launch { navigateToSelectSwapBlockchain.onSelected(asset, args) }
 
     private fun onBack() = viewModelScope.launch { navigateToSelectSwapBlockchain.onSelectionCancelled(args) }

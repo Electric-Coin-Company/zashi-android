@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import android.content.Context
-import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
+import co.electriccoin.zcash.ui.common.model.SwapBlockchain
 import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
 import co.electriccoin.zcash.ui.common.repository.SwapAssetsData
 import co.electriccoin.zcash.ui.design.util.getString
@@ -32,6 +32,6 @@ class FilterSwapBlockchainsUseCase(
 }
 
 data class SwapBlockchainData(
-    val data: List<SwapAssetBlockchain>?,
+    val data: List<SwapBlockchain>?,
     val isLoading: Boolean,
 )

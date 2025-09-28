@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.common.usecase
 import android.content.Context
 import cash.z.ecc.android.sdk.model.TransactionId
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
+import co.electriccoin.zcash.ui.common.model.ZecSimpleSwapAsset
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
@@ -261,8 +262,7 @@ class GetCurrentFilteredActivitiesUseCase(
                         (
                             activity.activity.metadata.swapMetadata == null ||
                                 activity.activity.metadata.swapMetadata
-                                    .destination.tokenTicker
-                                    .lowercase() != "zec"
+                                    .destination !is ZecSimpleSwapAsset
                         )
                     ) {
                         (

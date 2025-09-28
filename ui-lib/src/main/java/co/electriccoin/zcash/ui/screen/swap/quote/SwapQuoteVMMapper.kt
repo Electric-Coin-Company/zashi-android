@@ -5,6 +5,7 @@ import cash.z.ecc.android.sdk.model.FiatCurrency
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
+import co.electriccoin.zcash.ui.common.model.ZecSwapAsset
 import co.electriccoin.zcash.ui.common.model.getQuoteChainIcon
 import co.electriccoin.zcash.ui.common.model.getQuoteTokenIcon
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -31,7 +32,7 @@ internal class SwapQuoteVMMapper {
             return SwapQuoteState.Success(
                 title =
                     when {
-                        quote.destinationAsset.tokenTicker.lowercase() == "zec" -> stringRes("Review Quote")
+                        quote.destinationAsset is ZecSwapAsset -> stringRes(R.string.swap_quote_review)
                         quote.mode == EXACT_INPUT -> stringRes(R.string.swap_quote_title)
                         quote.mode == EXACT_OUTPUT -> stringRes(R.string.pay_quote_title)
                         else -> throw IllegalStateException("Unknown swap mode")
@@ -47,7 +48,7 @@ internal class SwapQuoteVMMapper {
                     ButtonState(
                         text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_confirm),
                         onClick = {
-                            if (quote.destinationAsset.tokenTicker.lowercase() == "zec") {
+                            if (quote.destinationAsset is ZecSwapAsset) {
                                 onNavigateToOnRampSwap()
                             } else {
                                 onSubmitQuoteClick()
@@ -79,7 +80,7 @@ internal class SwapQuoteVMMapper {
                     },
                 title = stringRes(R.string.swap_quote_zashi),
                 subtitle = null
-            ).takeIf { quote.destinationAsset.tokenTicker.lowercase() != "zec" },
+            ).takeIf { quote.destinationAsset !is ZecSwapAsset },
             SwapQuoteInfoItem(
                 description =
                     when (quote.mode) {
@@ -88,11 +89,11 @@ internal class SwapQuoteVMMapper {
                     },
                 title = stringResByAddress(quote.recipient, true),
                 subtitle = null
-            ).takeIf { quote.destinationAsset.tokenTicker.lowercase() != "zec" },
+            ).takeIf { quote.destinationAsset !is ZecSwapAsset },
             SwapQuoteInfoItem(
                 description = stringRes(R.string.swap_quote_total_fees),
                 title =
-                    if (quote.destinationAsset.tokenTicker.lowercase() == "zec") {
+                    if (quote.destinationAsset is ZecSwapAsset) {
                         stringResByDynamicCurrencyNumber(totalFees, quote.originAsset.tokenTicker)
                     } else {
                         stringRes(totalFeesZatoshi)
@@ -100,7 +101,7 @@ internal class SwapQuoteVMMapper {
                 subtitle =
                     stringResByDynamicCurrencyNumber(totalFeesUsd, FiatCurrency.USD.symbol)
                         .takeIf {
-                            quote.mode == EXACT_INPUT && quote.destinationAsset.tokenTicker.lowercase() != "zec"
+                            quote.mode == EXACT_INPUT && quote.destinationAsset !is ZecSwapAsset
                         }
             ),
             if (quote.mode == EXACT_OUTPUT) {
@@ -113,7 +114,7 @@ internal class SwapQuoteVMMapper {
                             stringResByNumber(quote.slippage, minDecimals = 0) + stringRes("%")
                         ),
                     title =
-                        if (quote.destinationAsset.tokenTicker.lowercase() == "zec") {
+                        if (quote.destinationAsset is ZecSwapAsset) {
                             val slippageToken =
                                 quote.amountInFormatted
                                     .multiply(
@@ -133,7 +134,7 @@ internal class SwapQuoteVMMapper {
                     subtitle =
                         stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol)
                             .takeIf {
-                                quote.mode == EXACT_INPUT && quote.destinationAsset.tokenTicker.lowercase() != "zec"
+                                quote.mode == EXACT_INPUT && quote.destinationAsset !is ZecSwapAsset
                             }
                 )
             } else {

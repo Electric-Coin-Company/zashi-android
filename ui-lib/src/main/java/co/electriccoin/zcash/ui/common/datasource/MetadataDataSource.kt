@@ -350,7 +350,7 @@ class MetadataDataSourceImpl(
         key: MetadataKey
     ) = updateMetadata(key) { metadata ->
         val current = metadata.swaps.lastUsedAssetHistory.toSimpleAssetSet()
-        val newAsset = simpleSwapAssetProvider.getSimpleAsset(tokenTicker = tokenTicker, chainTicker = chainTicker)
+        val newAsset = simpleSwapAssetProvider.get(tokenTicker = tokenTicker, chainTicker = chainTicker)
 
         val newList = current.toMutableList()
         if (newList.contains(newAsset)) newList.remove(newAsset)
@@ -392,7 +392,7 @@ class MetadataDataSourceImpl(
         this
             .map {
                 val data = it.split(":")
-                simpleSwapAssetProvider.getSimpleAsset(data[0], data[1])
+                simpleSwapAssetProvider.get(data[0], data[1])
             }.toSet()
 }
 

@@ -13,10 +13,11 @@ sealed interface SwapAsset {
     val usdPrice: BigDecimal?
     val assetId: String
     val decimals: Int
-    val blockchain: SwapAssetBlockchain
+    val blockchain: SwapBlockchain
 
     val chainTicker: String
         get() = blockchain.chainTicker
+
     val chainName: StringResource
         get() = blockchain.chainName
 
@@ -24,11 +25,21 @@ sealed interface SwapAsset {
         get() = blockchain.chainIcon
 }
 
+data class DynamicSwapAsset(
+    override val tokenTicker: String,
+    override val tokenName: StringResource,
+    override val tokenIcon: ImageResource,
+    override val usdPrice: BigDecimal?,
+    override val assetId: String,
+    override val decimals: Int,
+    override val blockchain: SwapBlockchain,
+) : SwapAsset
+
 data class ZecSwapAsset(
     override val tokenTicker: String,
     override val tokenName: StringResource,
     override val tokenIcon: ImageResource,
-    override val blockchain: SwapAssetBlockchain,
+    override val blockchain: SwapBlockchain,
     override val usdPrice: BigDecimal?,
     override val assetId: String,
     override val decimals: Int,
@@ -42,9 +53,7 @@ fun SwapAsset.getQuoteTokenIcon(): ImageResource =
         is ZecSwapAsset -> this.alternativeTokenIcon
     }
 
-fun SwapAsset.getQuoteChainIcon(
-    isOriginAsset: Boolean
-): ImageResource? =
+fun SwapAsset.getQuoteChainIcon(isOriginAsset: Boolean): ImageResource? =
     when (this) {
         is DynamicSwapAsset -> this.chainIcon
         is ZecSwapAsset ->
@@ -54,19 +63,3 @@ fun SwapAsset.getQuoteChainIcon(
                 imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_unshielded)
             }
     }
-
-data class DynamicSwapAsset(
-    override val tokenTicker: String,
-    override val tokenName: StringResource,
-    override val tokenIcon: ImageResource,
-    override val usdPrice: BigDecimal?,
-    override val assetId: String,
-    override val decimals: Int,
-    override val blockchain: SwapAssetBlockchain,
-) : SwapAsset
-
-data class SwapAssetBlockchain(
-    val chainTicker: String,
-    val chainName: StringResource,
-    val chainIcon: ImageResource,
-)

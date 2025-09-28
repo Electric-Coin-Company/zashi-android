@@ -5,7 +5,7 @@ import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.LocalAddressBookDataSource
 import co.electriccoin.zcash.ui.common.model.AddressBook
 import co.electriccoin.zcash.ui.common.model.AddressBookContact
-import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
+import co.electriccoin.zcash.ui.common.model.SwapBlockchain
 import co.electriccoin.zcash.ui.common.provider.AddressBookKeyStorageProvider
 import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
@@ -48,7 +48,7 @@ interface AddressBookRepository {
 
 data class EnhancedABContact(
     val contact: AddressBookContact,
-    val blockchain: SwapAssetBlockchain?
+    val blockchain: SwapBlockchain?
 ) {
     val name = contact.name
     val address = contact.address

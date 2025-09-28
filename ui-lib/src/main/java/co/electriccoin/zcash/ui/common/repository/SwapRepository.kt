@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.common.repository
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.SwapDataSource
 import co.electriccoin.zcash.ui.common.datasource.TokenNotFoundException
-import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
@@ -11,6 +10,7 @@ import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.SwapQuoteStatus
 import co.electriccoin.zcash.ui.common.model.SwapStatus
+import co.electriccoin.zcash.ui.common.model.ZecSwapAsset
 import co.electriccoin.zcash.ui.common.provider.SimpleSwapAssetProvider
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
@@ -135,9 +135,7 @@ class SwapRepositoryImpl(
     private suspend fun refreshAssetsInternal() {
         suspend fun findZecSwapAsset(assets: List<SwapAsset>) =
             withContext(Dispatchers.Default) {
-                assets.find { asset ->
-                    asset.tokenTicker.lowercase() == "zec" && asset.chainTicker.lowercase() == "zec"
-                }
+                assets.find { asset -> asset is ZecSwapAsset }
             }
 
         suspend fun filterSwapAssets(assets: List<SwapAsset>) =
@@ -147,7 +145,7 @@ class SwapRepositoryImpl(
                     .apply {
                         removeIf {
                             val usdPrice = it.usdPrice
-                            it.tokenTicker.lowercase() == "zec" || usdPrice == null || usdPrice.toFloat() == 0f
+                            it is ZecSwapAsset || usdPrice == null || usdPrice.toFloat() == 0f
                         }
                     }.toList()
             }
@@ -173,12 +171,12 @@ class SwapRepositoryImpl(
                         .filterNotNull()
                         .first()
                         .firstOrNull() ?: simpleSwapAssetProvider
-                        .getSimpleAsset(tokenTicker = "usdc", chainTicker = "near")
+                        .get(tokenTicker = "usdc", chainTicker = "near")
                 val foundAssetToSelect =
                     filtered
                         .find {
-                            it.tokenTicker.lowercase() == assetToSelect.tokenTicker &&
-                                it.chainTicker == assetToSelect.chainTicker
+                            it.tokenTicker.lowercase() == assetToSelect.tokenTicker.lowercase() &&
+                                it.chainTicker.lowercase() == assetToSelect.chainTicker.lowercase()
                         }
 
                 if (foundAssetToSelect != null) {

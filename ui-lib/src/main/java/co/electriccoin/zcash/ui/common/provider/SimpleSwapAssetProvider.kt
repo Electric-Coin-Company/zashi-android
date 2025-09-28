@@ -1,9 +1,11 @@
 package co.electriccoin.zcash.ui.common.provider
 
+import co.electriccoin.zcash.ui.common.model.DynamicSimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.SimpleSwapAsset
+import co.electriccoin.zcash.ui.common.model.ZecSimpleSwapAsset
 
 interface SimpleSwapAssetProvider {
-    fun getSimpleAsset(tokenTicker: String, chainTicker: String): SimpleSwapAsset
+    fun get(tokenTicker: String, chainTicker: String): SimpleSwapAsset
 }
 
 class SimpleSwapAssetProviderImpl(
@@ -11,11 +13,20 @@ class SimpleSwapAssetProviderImpl(
     private val tokenNameProvider: TokenNameProvider,
     private val blockchainProvider: BlockchainProvider,
 ) : SimpleSwapAssetProvider {
-    override fun getSimpleAsset(tokenTicker: String, chainTicker: String): SimpleSwapAsset =
-        SimpleSwapAsset(
-            tokenName = tokenNameProvider.getName(tokenTicker),
-            tokenIcon = tokenIconProvider.getIcon(tokenTicker),
-            blockchain = blockchainProvider.getBlockchain(chainTicker),
-            tokenTicker = tokenTicker,
-        )
+    override fun get(tokenTicker: String, chainTicker: String): SimpleSwapAsset =
+        if (tokenTicker.lowercase() == "zec" && chainTicker.lowercase() == "zec") {
+            ZecSimpleSwapAsset(
+                tokenName = tokenNameProvider.getName(tokenTicker),
+                tokenIcon = tokenIconProvider.getIcon(tokenTicker),
+                blockchain = blockchainProvider.getBlockchain(chainTicker),
+                tokenTicker = tokenTicker,
+            )
+        } else {
+            DynamicSimpleSwapAsset(
+                tokenName = tokenNameProvider.getName(tokenTicker),
+                tokenIcon = tokenIconProvider.getIcon(tokenTicker),
+                blockchain = blockchainProvider.getBlockchain(chainTicker),
+                tokenTicker = tokenTicker,
+            )
+        }
 }

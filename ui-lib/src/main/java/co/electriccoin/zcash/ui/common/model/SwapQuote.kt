@@ -97,7 +97,7 @@ data class NearSwapQuote(
             )
 
     override val affiliateFeeZatoshi: Zatoshi =
-        if (originAsset.tokenTicker.lowercase() == "zec") {
+        if (originAsset is ZecSwapAsset) {
             response.quote.amountInUsd
                 .coerceAtLeast(BigDecimal(0))
                 .multiply(

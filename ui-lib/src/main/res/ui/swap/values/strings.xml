@@ -32,6 +32,7 @@
     <string name="swap_quote_unavailable">Quote Unavailable</string>
     <string name="swap_quote_cancel_payment">Cancel payment</string>
     <string name="swap_quote_edit_payment">Edit payment</string>
+    <string name="swap_quote_review">Review Quote</string>
     <string name="swap_quote_title">Swap Now</string>
     <string name="swap_quote_from">Swap from</string>
     <string name="swap_quote_to">Swap to</string>
