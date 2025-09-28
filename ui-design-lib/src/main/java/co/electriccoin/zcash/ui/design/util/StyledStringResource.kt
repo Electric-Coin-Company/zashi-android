@@ -93,6 +93,7 @@ fun styledStringResource(
         args = args.toList()
     )
 
+@Suppress("SpreadOperator")
 @Composable
 fun StyledStringResource.getValue() =
     when (this) {

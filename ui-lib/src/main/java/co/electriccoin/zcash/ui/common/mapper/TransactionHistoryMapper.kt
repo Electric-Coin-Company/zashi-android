@@ -226,6 +226,7 @@ class TransactionHistoryMapper {
             .none { output -> output.pool == TransactionPool.TRANSPARENT } &&
             data.transaction !is ShieldTransaction
 
+    @Suppress("CyclomaticComplexMethod")
     private fun getTransactionValue(data: ActivityData.ByTransaction): StyledStringResource {
         val stringRes =
             when (data.transaction) {

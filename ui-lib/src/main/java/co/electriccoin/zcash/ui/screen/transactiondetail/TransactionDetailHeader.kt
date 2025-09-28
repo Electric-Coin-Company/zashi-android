@@ -95,17 +95,23 @@ fun TransactionDetailHeader(
                         Modifier.offset(x = -(iconSize * iconHorizontalOffset) * index)
                     }
 
-                val modifier = offset then cutout
+                val iconModifier = offset then cutout
 
                 when (icon) {
                     is ImageResource.ByDrawable ->
                         icon.Compose(
-                            modifier = modifier then if (state.icons.size > 1) Modifier.size(iconSize) else Modifier,
+                            modifier =
+                                iconModifier then
+                                    if (state.icons.size > 1) {
+                                        Modifier.size(iconSize)
+                                    } else {
+                                        Modifier
+                                    },
                         )
 
                     is ImageResource.Loading ->
                         icon.ComposeAsShimmerCircle(
-                            modifier = modifier,
+                            modifier = iconModifier,
                             size = iconSize
                         )
 

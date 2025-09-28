@@ -594,19 +594,25 @@ private data class ExactInputInternalState(
     fun getZecToDestinationAssetExchangeRate(): BigDecimal? {
         if (originAsset == null || destinationAsset == null) return null
 
-        when (mode) {
+        return when (mode) {
             SWAP_FROM_ZEC -> {
                 val zecUsdPrice = originAsset.usdPrice
                 val assetUsdPrice = destinationAsset.usdPrice
-                if (zecUsdPrice == null || assetUsdPrice == null) return null
-                return zecUsdPrice.divide(assetUsdPrice, MathContext.DECIMAL128)
+                if (zecUsdPrice == null || assetUsdPrice == null) {
+                    null
+                } else {
+                    zecUsdPrice.divide(assetUsdPrice, MathContext.DECIMAL128)
+                }
             }
 
             SWAP_INTO_ZEC -> {
                 val zecUsdPrice = destinationAsset.usdPrice
                 val assetUsdPrice = originAsset.usdPrice
-                if (zecUsdPrice == null || assetUsdPrice == null) return null
-                return zecUsdPrice.divide(assetUsdPrice, MathContext.DECIMAL128)
+                if (zecUsdPrice == null || assetUsdPrice == null) {
+                    null
+                } else {
+                    zecUsdPrice.divide(assetUsdPrice, MathContext.DECIMAL128)
+                }
             }
         }
     }

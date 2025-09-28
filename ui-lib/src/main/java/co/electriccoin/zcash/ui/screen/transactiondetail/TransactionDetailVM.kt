@@ -388,6 +388,7 @@ class TransactionDetailVM(
         sendTransactionAgain(transaction)
     }
 
+    @Suppress("CyclomaticComplexMethod")
     private fun createTransactionHeaderState(
         data: DetailedTransactionData,
         info: TransactionDetailInfoState

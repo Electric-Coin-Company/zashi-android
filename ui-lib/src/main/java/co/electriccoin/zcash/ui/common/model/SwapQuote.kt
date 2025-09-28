@@ -125,15 +125,14 @@ data class NearSwapQuote(
 
     override val timestamp: Instant = response.timestamp
 
-    override fun getTotal(proposal: Proposal?): BigDecimal = amountInFormatted + (getZecFee(proposal) ?: BigDecimal.ZERO)
+    override fun getTotal(proposal: Proposal?) = amountInFormatted + (getZecFee(proposal) ?: BigDecimal.ZERO)
 
-    override fun getTotalUsd(proposal: Proposal?): BigDecimal = amountInUsd + getZecFeeUsd(proposal)
+    override fun getTotalUsd(proposal: Proposal?) = amountInUsd + getZecFeeUsd(proposal)
 
-    override fun getTotalFeesUsd(proposal: Proposal?): BigDecimal = affiliateFeeUsd + getZecFeeUsd(proposal)
+    override fun getTotalFeesUsd(proposal: Proposal?) = affiliateFeeUsd + getZecFeeUsd(proposal)
 
     override fun getTotalFeesZatoshi(proposal: Proposal?): Zatoshi =
-        (proposal?.totalFeeRequired() ?: Zatoshi.ZERO) +
-            affiliateFeeZatoshi
+        (proposal?.totalFeeRequired() ?: Zatoshi.ZERO) + affiliateFeeZatoshi
 
     private fun getZecFee(proposal: Proposal?): BigDecimal? = proposal?.totalFeeRequired()?.convertZatoshiToZec()
 

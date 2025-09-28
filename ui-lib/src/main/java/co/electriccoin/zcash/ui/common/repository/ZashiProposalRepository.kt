@@ -128,10 +128,10 @@ class ZashiProposalRepositoryImpl(
         }
     }
 
-    @Suppress("UseCheckOrError", "ThrowingExceptionsWithoutMessageOrCause")
+    @Suppress("TooGenericExceptionCaught")
     override fun submitTransaction() {
         submitJob?.cancel()
-        val transactionProposal = transactionProposal.value ?: throw IllegalStateException()
+        val transactionProposal = checkNotNull(transactionProposal.value)
         submitJob =
             scope.launch {
                 submitState.update { SubmitProposalState.Submitting }
@@ -153,9 +153,10 @@ class ZashiProposalRepositoryImpl(
             }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     override suspend fun submitTransactionAndGet(): SubmitResult {
         submitJob?.cancel()
-        val transactionProposal = transactionProposal.value ?: throw IllegalStateException()
+        val transactionProposal = checkNotNull(transactionProposal.value)
         return scope
             .async {
                 submitState.update { SubmitProposalState.Submitting }
