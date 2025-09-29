@@ -61,7 +61,7 @@ internal class SwapVM(
     private val navigateToScanAddress: NavigateToScanGenericAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
 ) : ViewModel() {
-    private val mode = MutableStateFlow(SWAP_FROM_ZEC)
+    private val mode = MutableStateFlow(SWAP_INTO_ZEC)
 
     private val currencyType: MutableStateFlow<CurrencyType> = MutableStateFlow(CurrencyType.TOKEN)
 
