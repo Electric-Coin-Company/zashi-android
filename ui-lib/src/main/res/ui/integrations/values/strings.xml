@@ -15,4 +15,5 @@
     <string name="integrations_dialog_more_options">More Options</string>
     <string name="integrations_near_swap">Swap ZEC with NEAR Intents</string>
     <string name="integrations_near_swap_message">Swap ZEC with other cryptocurrencies.</string>
+    <string name="integrations_coinbase_subtitle_disabled">Coinbase Onramp is temporarily unavailable.</string>
 </resources>
