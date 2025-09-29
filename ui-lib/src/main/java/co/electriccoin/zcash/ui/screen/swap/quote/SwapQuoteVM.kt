@@ -9,6 +9,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.QuoteLowAmountException
 import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.provider.ResponseWithErrorException
@@ -54,11 +56,7 @@ internal class SwapQuoteVM(
             when (quote) {
                 SwapQuoteData.Loading -> null
                 is SwapQuoteData.Error -> createErrorState(quote)
-                is SwapQuoteData.Success ->
-                    createState(
-                        proposal = proposal,
-                        quote = quote
-                    )
+                is SwapQuoteData.Success -> createState(proposal, quote)
             }
         }.stateIn(
             scope = viewModelScope,
@@ -106,7 +104,10 @@ internal class SwapQuoteVM(
 
                 quote.exception is QuoteLowAmountException -> stringRes(R.string.swap_quote_error_too_low_try_higher)
                 quote.exception is ResponseWithErrorException -> stringRes(quote.exception.error.message)
-                else -> stringRes(R.string.swap_quote_error_getting_quote)
+                else -> when (quote.mode) {
+                    EXACT_INPUT -> stringRes(R.string.swap_quote_error_getting_quote_swap)
+                    EXACT_OUTPUT -> stringRes(R.string.swap_quote_error_getting_quote)
+                }
             }
 
         return SwapQuoteState.Error(
@@ -115,12 +116,18 @@ internal class SwapQuoteVM(
             subtitle = message,
             negativeButton =
                 ButtonState(
-                    text = stringRes(R.string.swap_quote_cancel_payment),
+                    text = when (quote.mode) {
+                        EXACT_INPUT -> stringRes(R.string.swap_quote_cancel_swap)
+                        EXACT_OUTPUT -> stringRes(R.string.swap_quote_cancel_payment)
+                    },
                     onClick = ::onCancelPaymentClick
                 ),
             positiveButton =
                 ButtonState(
-                    text = stringRes(R.string.swap_quote_edit_payment),
+                    text = when (quote.mode) {
+                        EXACT_INPUT -> stringRes(R.string.swap_quote_edit_swap)
+                        EXACT_OUTPUT -> stringRes(R.string.swap_quote_edit_payment)
+                    },
                     onClick = ::onEditPaymentClick
                 ),
             onBack = ::onBackDuringError

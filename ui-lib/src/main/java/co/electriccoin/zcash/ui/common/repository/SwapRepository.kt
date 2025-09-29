@@ -65,6 +65,7 @@ sealed interface SwapQuoteData {
     ) : SwapQuoteData
 
     data class Error(
+        val mode: SwapMode,
         val exception: Exception
     ) : SwapQuoteData
 
@@ -298,7 +299,7 @@ class SwapRepositoryImpl(
                         )
                     quote.update { SwapQuoteData.Success(quote = result) }
                 } catch (e: Exception) {
-                    quote.update { SwapQuoteData.Error(e) }
+                    quote.update { SwapQuoteData.Error(EXACT_INPUT, e) }
                 }
             }
     }
@@ -329,7 +330,7 @@ class SwapRepositoryImpl(
                         )
                     quote.update { SwapQuoteData.Success(quote = result) }
                 } catch (e: Exception) {
-                    quote.update { SwapQuoteData.Error(e) }
+                    quote.update { SwapQuoteData.Error(SwapMode.EXACT_OUTPUT, e) }
                 }
             }
     }
