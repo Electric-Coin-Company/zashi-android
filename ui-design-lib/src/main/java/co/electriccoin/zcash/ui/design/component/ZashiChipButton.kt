@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -14,6 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,11 +46,13 @@ fun ZashiChipButton(
     textStyle: TextStyle = ZashiChipButtonDefaults.textStyle,
     endIconSpacer: Dp = ZashiChipButtonDefaults.endIconSpacer,
 ) {
+    val normalizedColor by animateColorAsState(color)
+    val normalizedTextColor by animateColorAsState(textStyle.color)
     Surface(
         modifier = modifier,
         shape = shape,
         border = border,
-        color = color,
+        color = normalizedColor,
     ) {
         Row(
             modifier =
@@ -68,6 +72,7 @@ fun ZashiChipButton(
             Text(
                 text = state.text.getValue(),
                 style = textStyle,
+                color = normalizedTextColor
             )
             if (state.endIcon != null) {
                 Spacer(Modifier.width(endIconSpacer))

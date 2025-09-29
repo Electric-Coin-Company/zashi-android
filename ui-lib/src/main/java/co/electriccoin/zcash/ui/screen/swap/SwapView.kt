@@ -99,7 +99,7 @@ internal fun SwapView(state: SwapState, onSideEffect: (amountFocusRequester: Foc
             if (state.addressLocation == TOP) {
                 Spacer(10.dp)
                 AddressTextField(state = state)
-                Spacer(12.dp)
+                Spacer(16.dp)
             } else {
                 Spacer(16.dp)
             }

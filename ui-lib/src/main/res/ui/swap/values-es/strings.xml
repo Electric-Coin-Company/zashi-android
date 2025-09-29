@@ -43,7 +43,7 @@
     <string name="swap_quote_info">Podrías recibir hasta %s basado en el slippage de %s que configuraste.</string>
     <string name="swap_confirm">Obtener cotización</string>
     <string name="swap_picker_select_chain">Seleccionar red</string>
-    <string name="swap_slippage_custom">Personalizado</string>
+    <string name="swap_slippage_custom">Otro</string>
     <string name="pay_quote_title">Pagar ahora</string>
     <string name="pay_from">Pagar desde</string>
     <string name="pay_to">Pagar a</string>
@@ -57,7 +57,7 @@
     <string name="swap_detail_row_header">Detalles del swap</string>
     <string name="swap_detail_row_deposit_to">Depositar en</string>
     <string name="swap_detail_title_swap_expired">Swap expirado</string>
-    <string name="swap_detail_title_swap_pending">Swap pendiente</string>
+    <string name="swap_detail_title_swap_pending">Haciendo swap</string>
     <string name="swap_detail_title_swap_completed">Swap realizado</string>
     <string name="swap_detail_title_swap_refunded">Swap reembolsado</string>
     <string name="swap_detail_title_swap_failed">Swap fallido</string>
