@@ -104,10 +104,11 @@ internal class SwapQuoteVM(
 
                 quote.exception is QuoteLowAmountException -> stringRes(R.string.swap_quote_error_too_low_try_higher)
                 quote.exception is ResponseWithErrorException -> stringRes(quote.exception.error.message)
-                else -> when (quote.mode) {
-                    EXACT_INPUT -> stringRes(R.string.swap_quote_error_getting_quote_swap)
-                    EXACT_OUTPUT -> stringRes(R.string.swap_quote_error_getting_quote)
-                }
+                else ->
+                    when (quote.mode) {
+                        EXACT_INPUT -> stringRes(R.string.swap_quote_error_getting_quote_swap)
+                        EXACT_OUTPUT -> stringRes(R.string.swap_quote_error_getting_quote)
+                    }
             }
 
         return SwapQuoteState.Error(
@@ -116,18 +117,20 @@ internal class SwapQuoteVM(
             subtitle = message,
             negativeButton =
                 ButtonState(
-                    text = when (quote.mode) {
-                        EXACT_INPUT -> stringRes(R.string.swap_quote_cancel_swap)
-                        EXACT_OUTPUT -> stringRes(R.string.swap_quote_cancel_payment)
-                    },
+                    text =
+                        when (quote.mode) {
+                            EXACT_INPUT -> stringRes(R.string.swap_quote_cancel_swap)
+                            EXACT_OUTPUT -> stringRes(R.string.swap_quote_cancel_payment)
+                        },
                     onClick = ::onCancelPaymentClick
                 ),
             positiveButton =
                 ButtonState(
-                    text = when (quote.mode) {
-                        EXACT_INPUT -> stringRes(R.string.swap_quote_edit_swap)
-                        EXACT_OUTPUT -> stringRes(R.string.swap_quote_edit_payment)
-                    },
+                    text =
+                        when (quote.mode) {
+                            EXACT_INPUT -> stringRes(R.string.swap_quote_edit_swap)
+                            EXACT_OUTPUT -> stringRes(R.string.swap_quote_edit_payment)
+                        },
                     onClick = ::onEditPaymentClick
                 ),
             onBack = ::onBackDuringError
