@@ -265,7 +265,7 @@ private fun StringResource.ByDynamicNumber.convertDynamicNumber(locale: Locale):
 
 private fun convertDynamicNumberToString(number: Number, locale: Locale): String {
     val bigDecimalAmount = number.toBigDecimal()
-    val dynamicAmount = bigDecimalAmount.stripFractionsDynamically(2)
+    val dynamicAmount = bigDecimalAmount.stripFractionsDynamically()
     val maxDecimals = if (bigDecimalAmount.scale() > 0) bigDecimalAmount.scale() else 0
     val formatter =
         NumberFormat.getInstance(locale).apply {
@@ -349,28 +349,25 @@ private const val ADDRESS_MAX_LENGTH_ABBREVIATED = 20
 enum class TickerLocation { BEFORE, AFTER, HIDDEN }
 
 @Suppress("ReturnCount")
-private fun BigDecimal.stripFractionsDynamically(minDecimals: Int): BigDecimal {
-    val threshold = BigDecimal(".5")
+private fun BigDecimal.stripFractionsDynamically(): BigDecimal {
+    val tolerance = BigDecimal(".005")
+    val minDecimals = 2
+    val maxDecimals = 8
+
     val original = this.stripTrailingZeros()
-    val scale = original.scale()
+    val originalScale = original.scale()
+    if (originalScale <= minDecimals) return original.setScale(maxDecimals, RoundingMode.HALF_EVEN)
 
-    if (scale <= minDecimals) return this
+    for (scale in minDecimals..maxDecimals) {
+        val rounded = original.setScale(scale, RoundingMode.HALF_EVEN)
 
-    var current = this
+        val diff = original
+            .minus(rounded)
+            .divide(original, MathContext.DECIMAL128)
+            .abs(MathContext.DECIMAL128)
 
-    for (i in 1..scale - minDecimals) {
-        val next = BigDecimal(original.toPlainString().dropLast(i))
-
-        val diff =
-            BigDecimal("100")
-                .minus(
-                    next
-                        .divide(original, MathContext.DECIMAL128)
-                        .multiply(BigDecimal("100"), MathContext.DECIMAL128)
-                )
-
-        if (diff > threshold) return current else current = next
+        if (diff <= tolerance) return rounded
     }
 
-    return current
+    return original.setScale(maxDecimals, RoundingMode.HALF_EVEN)
 }
