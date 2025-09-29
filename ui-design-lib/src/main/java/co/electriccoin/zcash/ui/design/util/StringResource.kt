@@ -348,7 +348,7 @@ private const val ADDRESS_MAX_LENGTH_ABBREVIATED = 20
 
 enum class TickerLocation { BEFORE, AFTER, HIDDEN }
 
-@Suppress("ReturnCount")
+@Suppress("ReturnCount", "MagicNumber")
 private fun BigDecimal.stripFractionsDynamically(): BigDecimal {
     val tolerance = BigDecimal(".005")
     val minDecimals = 2
@@ -361,10 +361,11 @@ private fun BigDecimal.stripFractionsDynamically(): BigDecimal {
     for (scale in minDecimals..maxDecimals) {
         val rounded = original.setScale(scale, RoundingMode.HALF_EVEN)
 
-        val diff = original
-            .minus(rounded)
-            .divide(original, MathContext.DECIMAL128)
-            .abs(MathContext.DECIMAL128)
+        val diff =
+            original
+                .minus(rounded)
+                .divide(original, MathContext.DECIMAL128)
+                .abs(MathContext.DECIMAL128)
 
         if (diff <= tolerance) return rounded
     }
