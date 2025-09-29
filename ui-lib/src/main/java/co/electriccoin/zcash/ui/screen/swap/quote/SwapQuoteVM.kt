@@ -103,7 +103,10 @@ internal class SwapQuoteVM(
                     )
 
                 quote.exception is QuoteLowAmountException -> stringRes(R.string.swap_quote_error_too_low_try_higher)
-                quote.exception is ResponseWithErrorException -> stringRes(quote.exception.error.message)
+                quote.exception is ResponseWithErrorException &&
+                    !quote.exception.error.message.contains("failed to get quote", ignoreCase = true) ->
+                    stringRes(quote.exception.error.message)
+
                 else ->
                     when (quote.mode) {
                         EXACT_INPUT -> stringRes(R.string.swap_quote_error_getting_quote_swap)
