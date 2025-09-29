@@ -117,11 +117,12 @@ private fun Data(state: AssetCardState.Data, modifier: Modifier = Modifier) {
             }
             Spacer(8.dp)
         }
-        Text(
+        ZashiAutoSizeText(
             text = state.ticker.getValue(),
             style = ZashiTypography.textSm,
             color = ZashiColors.Text.textPrimary,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
         )
         Spacer(4.dp)
         if (state.onClick != null && state.isEnabled) {
