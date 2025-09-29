@@ -50,7 +50,7 @@ class RestoreBDEstimationViewModel(
 
     private fun onRestoreClick() {
         restoreWallet(
-            seedPhrase = SeedPhrase.new(args.seed),
+            seedPhrase = SeedPhrase.new(args.seed.trim()),
             birthday = BlockHeight.new(args.blockHeight)
         )
     }
