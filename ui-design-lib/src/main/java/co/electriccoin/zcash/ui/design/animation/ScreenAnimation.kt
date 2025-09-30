@@ -18,14 +18,14 @@ object ScreenAnimation {
     fun AnimatedContentTransitionScope<NavBackStackEntry>.exitTransition() =
         slideOutOfContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Start,
-            targetOffset = { it / 2 },
+            targetOffset = { it - (it * .775f).toInt() },
             animationSpec = tween()
         )
 
     fun AnimatedContentTransitionScope<NavBackStackEntry>.popEnterTransition() =
         slideIntoContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.End,
-            initialOffset = { it / 2 },
+            initialOffset = { it - (it * .775f).toInt() },
             animationSpec = tween()
         )
 
@@ -36,8 +36,5 @@ object ScreenAnimation {
             animationSpec = tween()
         )
 
-    private fun <T> tween(): TweenSpec<T> =
-        tween(
-            durationMillis = DURATION
-        )
+    private fun <T> tween(): TweenSpec<T> = tween(durationMillis = DURATION)
 }
