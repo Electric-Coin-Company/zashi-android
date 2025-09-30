@@ -20,7 +20,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneOffset
-import java.util.TimeZone
 
 class GetActivitiesUseCase(
     private val transactionRepository: TransactionRepository,
@@ -39,8 +38,10 @@ class GetActivitiesUseCase(
                     ) + swaps
             }
         }.map {
-            val endOfDay = LocalDateTime
-                .of(LocalDate.now(), LocalTime.MAX).toInstant(ZoneOffset.UTC)
+            val endOfDay =
+                LocalDateTime
+                    .of(LocalDate.now(), LocalTime.MAX)
+                    .toInstant(ZoneOffset.UTC)
 
             it?.sortedByDescending { activity ->
                 when (activity) {
