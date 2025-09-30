@@ -84,7 +84,9 @@ private fun Data(state: AssetCardState.Data, modifier: Modifier = Modifier) {
                 )
 
                 if (state.smallIcon is ImageResource.ByDrawable) {
-                    if (state.smallIcon.resource == R.drawable.ic_receive_shield) {
+                    if (state.smallIcon.resource in
+                        listOf(R.drawable.ic_receive_shield, R.drawable.ic_zec_unshielded)
+                    ) {
                         Image(
                             modifier =
                                 Modifier
@@ -115,11 +117,12 @@ private fun Data(state: AssetCardState.Data, modifier: Modifier = Modifier) {
             }
             Spacer(8.dp)
         }
-        Text(
+        ZashiAutoSizeText(
             text = state.ticker.getValue(),
             style = ZashiTypography.textSm,
             color = ZashiColors.Text.textPrimary,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
         )
         Spacer(4.dp)
         if (state.onClick != null && state.isEnabled) {

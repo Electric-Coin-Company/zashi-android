@@ -79,7 +79,7 @@ class RestoreBDHeightViewModel(
 
     private fun onRestoreClick() {
         restoreWallet(
-            seedPhrase = SeedPhrase.new(restoreBDHeight.seed),
+            seedPhrase = SeedPhrase.new(restoreBDHeight.seed.trim()),
             birthday = blockHeightText.value.toLongOrNull()?.let { BlockHeight.new(it) }
         )
     }

@@ -10,7 +10,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AndroidShieldFundsInfo() {
-    val vm = koinViewModel<ShieldFundsInfoViewModel>()
+    val vm = koinViewModel<ShieldFundsInfoVM>()
     val state by vm.state.collectAsStateWithLifecycle()
     ShieldFundsInfoView(state)
 }

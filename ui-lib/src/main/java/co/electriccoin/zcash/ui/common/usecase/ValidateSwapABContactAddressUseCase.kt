@@ -1,6 +1,6 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
+import co.electriccoin.zcash.ui.common.model.SwapBlockchain
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import kotlinx.coroutines.flow.filterNotNull
@@ -11,7 +11,7 @@ class ValidateSwapABContactAddressUseCase(
 ) {
     suspend operator fun invoke(
         address: String,
-        blockchain: SwapAssetBlockchain?,
+        blockchain: SwapBlockchain?,
         exclude: EnhancedABContact? = null
     ): ContactAddressValidationResult =
         when {

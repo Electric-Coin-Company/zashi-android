@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
+import co.electriccoin.zcash.ui.common.model.SwapBlockchain
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerArgs
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
@@ -11,7 +11,7 @@ class NavigateToSelectSwapBlockchainUseCase(
 ) {
     private val pipeline = MutableSharedFlow<SelectSwapBlockchainPipelineResult>()
 
-    suspend operator fun invoke(): SwapAssetBlockchain? {
+    suspend operator fun invoke(): SwapBlockchain? {
         val args = SwapBlockchainPickerArgs()
         navigationRouter.forward(args)
         val result = pipeline.first { it.args.requestId == args.requestId }
@@ -26,7 +26,7 @@ class NavigateToSelectSwapBlockchainUseCase(
         navigationRouter.back()
     }
 
-    suspend fun onSelected(blockchain: SwapAssetBlockchain, args: SwapBlockchainPickerArgs) {
+    suspend fun onSelected(blockchain: SwapBlockchain, args: SwapBlockchainPickerArgs) {
         pipeline.emit(
             SelectSwapBlockchainPipelineResult.Scanned(
                 blockchain = blockchain,
@@ -45,7 +45,7 @@ private sealed interface SelectSwapBlockchainPipelineResult {
     ) : SelectSwapBlockchainPipelineResult
 
     data class Scanned(
-        val blockchain: SwapAssetBlockchain,
+        val blockchain: SwapBlockchain,
         override val args: SwapBlockchainPickerArgs
     ) : SelectSwapBlockchainPipelineResult
 }

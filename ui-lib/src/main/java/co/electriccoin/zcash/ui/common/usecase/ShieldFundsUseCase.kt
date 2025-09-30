@@ -7,14 +7,12 @@ import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
-import co.electriccoin.zcash.ui.common.repository.SubmitProposalState
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionArgs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class ShieldFundsUseCase(
@@ -27,35 +25,34 @@ class ShieldFundsUseCase(
 ) {
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
+    private var job: Job? = null
+
     operator fun invoke(closeCurrentScreen: Boolean) {
-        scope.launch {
-            messageAvailabilityDataSource.onShieldingInitiated()
+        if (job?.isActive == true) return
+        job =
+            scope.launch {
+                messageAvailabilityDataSource.onShieldingInitiated()
 
-            when (accountDataSource.getSelectedAccount()) {
-                is KeystoneAccount -> {
-                    createKeystoneShieldProposal()
-                }
-
-                is ZashiAccount -> {
-                    if (closeCurrentScreen) {
-                        navigationRouter.back()
+                when (accountDataSource.getSelectedAccount()) {
+                    is KeystoneAccount -> {
+                        createKeystoneShieldProposal()
                     }
-                    shieldZashiFunds()
+
+                    is ZashiAccount -> {
+                        if (closeCurrentScreen) {
+                            navigationRouter.back()
+                        }
+                        shieldZashiFunds()
+                    }
                 }
             }
-        }
     }
 
     @Suppress("TooGenericExceptionCaught")
     private suspend fun shieldZashiFunds() {
         try {
             zashiProposalRepository.createShieldProposal()
-            zashiProposalRepository.submitTransaction()
-            val result =
-                zashiProposalRepository.submitState
-                    .filterIsInstance<SubmitProposalState.Result>()
-                    .first()
-                    .submitResult
+            val result = zashiProposalRepository.submitTransactionAndGet()
 
             when (result) {
                 is SubmitResult.Failure,
@@ -78,7 +75,7 @@ class ShieldFundsUseCase(
         try {
             keystoneProposalRepository.createShieldProposal()
             keystoneProposalRepository.createPCZTFromProposal()
-            navigationRouter.forward(SignKeystoneTransaction)
+            navigationRouter.forward(SignKeystoneTransactionArgs)
         } catch (e: Exception) {
             keystoneProposalRepository.clear()
             navigateToError(ErrorArgs.ShieldingGeneralError(e))

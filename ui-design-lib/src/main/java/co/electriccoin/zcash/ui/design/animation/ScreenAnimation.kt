@@ -3,11 +3,7 @@ package co.electriccoin.zcash.ui.design.animation
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.tween
-import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavBackStackEntry
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.DurationUnit
 
 object ScreenAnimation {
     private const val DURATION = 400
@@ -16,32 +12,29 @@ object ScreenAnimation {
         slideIntoContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Start,
             initialOffset = { it },
-            animationSpec = tween(duration = DURATION.milliseconds)
+            animationSpec = tween()
         )
 
     fun AnimatedContentTransitionScope<NavBackStackEntry>.exitTransition() =
         slideOutOfContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.Start,
-            targetOffset = { it },
-            animationSpec = tween(duration = DURATION.milliseconds)
+            targetOffset = { it - (it * .775f).toInt() },
+            animationSpec = tween()
         )
 
     fun AnimatedContentTransitionScope<NavBackStackEntry>.popEnterTransition() =
         slideIntoContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.End,
-            initialOffset = { it },
-            animationSpec = tween(duration = DURATION.milliseconds)
+            initialOffset = { it - (it * .775f).toInt() },
+            animationSpec = tween()
         )
 
     fun AnimatedContentTransitionScope<NavBackStackEntry>.popExitTransition() =
         slideOutOfContainer(
             towards = AnimatedContentTransitionScope.SlideDirection.End,
             targetOffset = { it },
-            animationSpec = tween(duration = DURATION.milliseconds)
+            animationSpec = tween()
         )
-}
 
-private fun tween(duration: Duration): TweenSpec<IntOffset> =
-    tween(
-        durationMillis = duration.toInt(DurationUnit.MILLISECONDS)
-    )
+    private fun <T> tween(): TweenSpec<T> = tween(durationMillis = DURATION)
+}

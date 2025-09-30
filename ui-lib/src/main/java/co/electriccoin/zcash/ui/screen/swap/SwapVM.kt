@@ -30,6 +30,9 @@ import co.electriccoin.zcash.ui.design.util.combine
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
+import co.electriccoin.zcash.ui.screen.swap.Mode.SWAP_FROM_ZEC
+import co.electriccoin.zcash.ui.screen.swap.Mode.SWAP_INTO_ZEC
+import co.electriccoin.zcash.ui.screen.swap.info.SwapRefundAddressInfoArgs
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import kotlinx.coroutines.delay
@@ -58,6 +61,8 @@ internal class SwapVM(
     private val navigateToScanAddress: NavigateToScanGenericAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
 ) : ViewModel() {
+    private val mode = MutableStateFlow(SWAP_INTO_ZEC)
+
     private val currencyType: MutableStateFlow<CurrencyType> = MutableStateFlow(CurrencyType.TOKEN)
 
     private val addressText: MutableStateFlow<String> = MutableStateFlow("")
@@ -109,7 +114,8 @@ internal class SwapVM(
             getSwapAssetsUseCase.observe(),
             isRequestingQuote,
             selectedContact,
-            getSelectedWalletAccount.observe()
+            getSelectedWalletAccount.observe(),
+            mode
         ) {
             address,
             amount,
@@ -119,7 +125,8 @@ internal class SwapVM(
             swapAssets,
             isRequestingQuote,
             selectedContact,
-            account
+            account,
+            mode
             ->
             InternalStateImpl(
                 swapAsset = asset,
@@ -130,7 +137,8 @@ internal class SwapVM(
                 swapAssets = swapAssets,
                 isRequestingQuote = isRequestingQuote,
                 selectedContact = selectedContact,
-                account = account
+                account = account,
+                mode = mode
             )
         }
 
@@ -159,12 +167,25 @@ internal class SwapVM(
             onQrCodeScannerClick = ::onQrCodeScannerClick,
             onAddressBookClick = ::onAddressBookClick,
             onDeleteSelectedContactClick = ::onDeleteSelectedContactClick,
-            onBalanceButtonClick = ::onBalanceButtonClick
+            onBalanceButtonClick = ::onBalanceButtonClick,
+            onChangeButtonClick = ::onChangeButtonClick,
+            onAddressClick = ::onAddressClick
         )
 
     private fun onBalanceButtonClick() {
         // navigationRouter.forward(SpendableBalanceArgs)
     }
+
+    private fun onChangeButtonClick() {
+        mode.update {
+            when (it) {
+                SWAP_FROM_ZEC -> SWAP_INTO_ZEC
+                SWAP_INTO_ZEC -> SWAP_FROM_ZEC
+            }
+        }
+    }
+
+    private fun onAddressClick() = navigationRouter.forward(SwapRefundAddressInfoArgs)
 
     private fun onDeleteSelectedContactClick() = selectedContact.update { null }
 
@@ -261,12 +282,20 @@ internal class SwapVM(
     private fun onRequestSwapQuoteClick(amount: BigDecimal, address: String) =
         viewModelScope.launch {
             isRequestingQuote.update { true }
-            requestSwapQuote(
-                amount = amount,
-                address = address,
-                mode = SwapMode.EXACT_INPUT,
-                canNavigateToSwapQuote = { !isCancelStateVisible.value }
-            )
+            when (mode.value) {
+                SWAP_FROM_ZEC ->
+                    requestSwapQuote.requestExactInput(
+                        amount = amount,
+                        address = address,
+                        canNavigateToSwapQuote = { !isCancelStateVisible.value }
+                    )
+                SWAP_INTO_ZEC ->
+                    requestSwapQuote.requestExactInputIntoZec(
+                        amount = amount,
+                        refundAddress = address,
+                        canNavigateToSwapQuote = { !isCancelStateVisible.value }
+                    )
+            }
             isRequestingQuote.update { false }
         }
 
@@ -285,6 +314,8 @@ internal class SwapVM(
 
 internal enum class CurrencyType { TOKEN, FIAT }
 
+internal enum class Mode { SWAP_FROM_ZEC, SWAP_INTO_ZEC }
+
 internal interface InternalState {
     val account: WalletAccount?
     val swapAsset: SwapAsset?
@@ -295,6 +326,7 @@ internal interface InternalState {
     val swapAssets: SwapAssetsData
     val isRequestingQuote: Boolean
     val selectedContact: EnhancedABContact?
+    val mode: Mode
 
     val totalSpendableBalance: Zatoshi
         get() = account?.spendableShieldedBalance ?: Zatoshi(0)
@@ -310,4 +342,5 @@ internal data class InternalStateImpl(
     override val swapAssets: SwapAssetsData,
     override val isRequestingQuote: Boolean,
     override val selectedContact: EnhancedABContact?,
+    override val mode: Mode,
 ) : InternalState

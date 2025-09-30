@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.common.usecase
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapAsset
-import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
+import co.electriccoin.zcash.ui.common.model.SwapBlockchain
 import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
 import co.electriccoin.zcash.ui.common.repository.BiometricsCancelledException
@@ -66,7 +66,7 @@ class NavigateToSelectABSwapRecipientUseCase(
     }
 
     @Suppress("CyclomaticComplexMethod", "ReturnCount")
-    private fun getSwapAssetByBlockchainTicker(blockchain: SwapAssetBlockchain?): SwapAsset? {
+    private fun getSwapAssetByBlockchainTicker(blockchain: SwapBlockchain?): SwapAsset? {
         if (blockchain == null) return null
 
         val foundAssetsWithChain =

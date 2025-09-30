@@ -2,17 +2,25 @@ package co.electriccoin.zcash.ui.screen.transactiondetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.TransactionPool
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.SwapMode
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.SwapStatus
+import co.electriccoin.zcash.ui.common.model.SwapStatus.EXPIRED
+import co.electriccoin.zcash.ui.common.model.SwapStatus.FAILED
+import co.electriccoin.zcash.ui.common.model.SwapStatus.INCOMPLETE_DEPOSIT
+import co.electriccoin.zcash.ui.common.model.SwapStatus.PENDING
+import co.electriccoin.zcash.ui.common.model.SwapStatus.PROCESSING
+import co.electriccoin.zcash.ui.common.model.SwapStatus.REFUNDED
+import co.electriccoin.zcash.ui.common.model.SwapStatus.SUCCESS
 import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
 import co.electriccoin.zcash.ui.common.repository.SendTransaction
 import co.electriccoin.zcash.ui.common.repository.ShieldTransaction
-import co.electriccoin.zcash.ui.common.repository.SwapQuoteStatusData
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.DetailedTransactionData
 import co.electriccoin.zcash.ui.common.usecase.FlipTransactionBookmarkUseCase
@@ -20,18 +28,14 @@ import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendTransactionAgainUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.ButtonStyle
 import co.electriccoin.zcash.ui.design.component.IconButtonState
-import co.electriccoin.zcash.ui.design.component.SwapQuoteHeaderState
-import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.imageRes
+import co.electriccoin.zcash.ui.design.util.loadingImageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
-import co.electriccoin.zcash.ui.design.util.stringResByDateTime
-import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
-import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
+import co.electriccoin.zcash.ui.design.util.stringResByCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.design.util.stringResByTransactionId
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
@@ -45,8 +49,6 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailI
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemoState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemosState
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
-import io.ktor.client.plugins.ResponseException
-import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -57,7 +59,6 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.ZoneId
 
 @Suppress("TooManyFunctions")
 class TransactionDetailVM(
@@ -68,6 +69,7 @@ class TransactionDetailVM(
     private val navigationRouter: NavigationRouter,
     private val sendTransactionAgain: SendTransactionAgainUseCase,
     private val flipTransactionBookmark: FlipTransactionBookmarkUseCase,
+    private val mapper: CommonTransactionDetailMapper
 ) : ViewModel() {
     private val transaction =
         getTransactionDetailById
@@ -83,10 +85,11 @@ class TransactionDetailVM(
         transaction
             .filterNotNull()
             .mapLatest { transaction ->
+                var info = createTransactionInfoState(transaction)
                 TransactionDetailState(
                     onBack = ::onBack,
-                    header = createTransactionHeaderState(transaction),
-                    info = createTransactionInfoState(transaction),
+                    info = info,
+                    header = createTransactionHeaderState(transaction, info),
                     primaryButton = createPrimaryButtonState(transaction),
                     secondaryButton = createSecondaryButtonState(transaction),
                     bookmarkButton =
@@ -131,7 +134,12 @@ class TransactionDetailVM(
                         val recipient = transaction.swap.data?.recipient
                         SendSwapState(
                             status = transaction.swap.data?.status,
-                            quoteHeader = createQuoteHeaderState(transaction.swap),
+                            quoteHeader =
+                                mapper.createTransactionDetailQuoteHeaderState(
+                                    swap = transaction.swap.data,
+                                    originAsset = transaction.swap.originAsset,
+                                    destinationAsset = transaction.swap.destinationAsset
+                                ),
                             depositAddress =
                                 stringResByAddress(
                                     value = transaction.recipient?.address.orEmpty(),
@@ -151,7 +159,7 @@ class TransactionDetailVM(
                                 transaction.swap.data
                                     ?.refundedFormatted
                                     ?.let {
-                                        stringResByDynamicCurrencyNumber(amount = it, ticker = "ZEC")
+                                        stringResByCurrencyNumber(amount = it, ticker = "ZEC")
                                     }?.takeIf {
                                         transaction.swap.data.status == SwapStatus.REFUNDED
                                     },
@@ -181,8 +189,8 @@ class TransactionDetailVM(
                     transaction.recipient is WalletAddress.Transparent ->
                         SendTransparentState(
                             contact = transaction.contact?.let { stringRes(it.name) },
-                            address = createAddressStringRes(transaction),
-                            addressAbbreviated = createAbbreviatedAddressStringRes(transaction),
+                            address = stringResByAddress(transaction.recipient.address, false),
+                            addressAbbreviated = stringResByAddress(transaction.recipient.address, true),
                             transactionId =
                                 stringResByTransactionId(
                                     value = transaction.transaction.id.txIdString(),
@@ -201,7 +209,11 @@ class TransactionDetailVM(
                     else ->
                         SendShieldedState(
                             contact = transaction.contact?.let { stringRes(it.name) },
-                            address = createAbbreviatedAddressStringRes(transaction),
+                            address =
+                                stringResByAddress(
+                                    value = transaction.recipient?.address.orEmpty(),
+                                    abbreviated = true
+                                ),
                             transactionId =
                                 stringResByTransactionId(
                                     value = transaction.transaction.id.txIdString(),
@@ -289,27 +301,6 @@ class TransactionDetailVM(
             }
         }
 
-    private fun createQuoteHeaderState(swap: SwapQuoteStatusData): SwapQuoteHeaderState {
-        if (swap.data == null) return SwapQuoteHeaderState(null, null)
-
-        return SwapQuoteHeaderState(
-            from =
-                SwapTokenAmountState(
-                    bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                    smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
-                    title = stringRes(swap.data.amountInZatoshi, HIDDEN),
-                    subtitle = stringResByDynamicCurrencyNumber(swap.data.amountInUsd, FiatCurrency.USD.symbol)
-                ),
-            to =
-                SwapTokenAmountState(
-                    bigIcon = swap.destinationAsset?.tokenIcon,
-                    smallIcon = swap.destinationAsset?.chainIcon,
-                    title = stringResByDynamicNumber(swap.data.amountOutFormatted),
-                    subtitle = stringResByDynamicCurrencyNumber(swap.data.amountOutUsd, FiatCurrency.USD.symbol)
-                )
-        )
-    }
-
     private fun createFeeStringRes(data: DetailedTransactionData): StringResource {
         val feePaid =
             data.transaction.fee.takeIf { data.transaction !is ReceiveTransaction }
@@ -322,27 +313,8 @@ class TransactionDetailVM(
         }
     }
 
-    private fun createAddressStringRes(transaction: DetailedTransactionData) =
-        stringResByAddress(
-            value = transaction.recipient?.address.orEmpty(),
-            abbreviated = false
-        )
-
-    private fun createAbbreviatedAddressStringRes(transaction: DetailedTransactionData) =
-        stringResByAddress(
-            value = transaction.recipient?.address.orEmpty(),
-            abbreviated = true
-        )
-
     private fun createTimestampStringRes(data: DetailedTransactionData) =
-        data.transaction.timestamp
-            ?.atZone(ZoneId.systemDefault())
-            ?.let {
-                stringResByDateTime(
-                    zonedDateTime = it,
-                    useFullFormat = true
-                )
-            } ?: stringRes(R.string.transaction_detail_pending)
+        mapper.createTransactionDetailTimestamp(data.transaction.timestamp)
 
     private fun isPending(data: DetailedTransactionData) = data.transaction.timestamp == null
 
@@ -353,50 +325,20 @@ class TransactionDetailVM(
         )
     }
 
-    private fun createErrorFooter(data: DetailedTransactionData): ErrorFooter? {
-        if (data.swap?.error == null) return null
-
-        val isServiceUnavailableError =
-            data.swap.error is ResponseException &&
-                data.swap.error.response.status == HttpStatusCode.ServiceUnavailable
-
-        return ErrorFooter(
-            title =
-                if (isServiceUnavailableError) {
-                    stringRes(co.electriccoin.zcash.ui.design.R.string.general_service_unavailable)
-                } else {
-                    stringRes(co.electriccoin.zcash.ui.design.R.string.general_unexpected_error)
-                },
-            subtitle =
-                if (isServiceUnavailableError) {
-                    stringRes(co.electriccoin.zcash.ui.design.R.string.general_please_try_again)
-                } else {
-                    stringRes(co.electriccoin.zcash.ui.design.R.string.general_check_connection)
-                }
-        )
-    }
+    private fun createErrorFooter(data: DetailedTransactionData): ErrorFooter? =
+        mapper.createTransactionDetailErrorFooter(data.swap?.error)
 
     private fun createPrimaryButtonState(data: DetailedTransactionData): ButtonState? =
         when {
-            data.swap?.error != null -> {
-                val isServiceUnavailableError =
-                    data.swap.error is ResponseException &&
-                        data.swap.error.response.status == HttpStatusCode.ServiceUnavailable
-
-                if (isServiceUnavailableError) {
-                    null
-                } else {
-                    ButtonState(
-                        text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_try_again),
-                        onClick = { data.swapHandle.requestReload() },
-                        style = ButtonStyle.DESTRUCTIVE1
-                    )
-                }
-            }
+            data.swap?.error != null && data.swap.data != null ->
+                mapper.createTransactionDetailErrorButtonState(
+                    error = data.swap.error,
+                    reloadHandle = data.reloadHandle
+                )
 
             data.swap != null -> null
 
-            data.contact == null -> {
+            data.contact == null ->
                 if (data.transaction is SendTransaction) {
                     ButtonState(
                         text = stringRes(R.string.transaction_detail_save_address),
@@ -405,9 +347,8 @@ class TransactionDetailVM(
                 } else {
                     null
                 }
-            }
 
-            else -> {
+            else ->
                 if (data.transaction is SendTransaction) {
                     ButtonState(
                         text = stringRes(R.string.transaction_detail_send_again),
@@ -416,7 +357,6 @@ class TransactionDetailVM(
                 } else {
                     null
                 }
-            }
         }
 
     private fun createSecondaryButtonState(transaction: DetailedTransactionData): ButtonState? {
@@ -448,27 +388,107 @@ class TransactionDetailVM(
         sendTransactionAgain(transaction)
     }
 
-    private fun createTransactionHeaderState(data: DetailedTransactionData) =
+    @Suppress("CyclomaticComplexMethod")
+    private fun createTransactionHeaderState(
+        data: DetailedTransactionData,
+        info: TransactionDetailInfoState
+    ): TransactionDetailHeaderState =
         TransactionDetailHeaderState(
             title =
-                when (data.transaction) {
-                    is SendTransaction.Success -> stringRes(R.string.transaction_detail_sent)
-                    is SendTransaction.Pending -> stringRes(R.string.transaction_detail_sending)
-                    is SendTransaction.Failed -> stringRes(R.string.transaction_detail_send_failed)
-                    is ReceiveTransaction.Success -> stringRes(R.string.transaction_detail_received)
+                when (val transaction = data.transaction) {
+                    is ReceiveTransaction.Success -> stringRes(R.string.transaction_history_received)
                     is ReceiveTransaction.Pending -> stringRes(R.string.transaction_detail_receiving)
-                    is ReceiveTransaction.Failed -> stringRes(R.string.transaction_detail_receive_failed)
-                    is ShieldTransaction.Success -> stringRes(R.string.transaction_detail_shielded)
+                    is ReceiveTransaction.Failed -> stringRes(R.string.transaction_history_receiving_failed)
+                    is ShieldTransaction.Success -> stringRes(R.string.transaction_history_shielded)
                     is ShieldTransaction.Pending -> stringRes(R.string.transaction_detail_shielding)
-                    is ShieldTransaction.Failed -> stringRes(R.string.transaction_detail_shielding_failed)
+                    is ShieldTransaction.Failed -> stringRes(R.string.transaction_history_shielding_failed)
+                    is SendTransaction -> {
+                        if (data.metadata.swapMetadata == null) {
+                            when (transaction) {
+                                is SendTransaction.Success -> stringRes(R.string.transaction_history_sent)
+                                is SendTransaction.Pending -> stringRes(R.string.transaction_detail_sending)
+                                is SendTransaction.Failed -> stringRes(R.string.transaction_history_sending_failed)
+                            }
+                        } else {
+                            if (transaction is SendTransaction.Failed) {
+                                when (data.metadata.swapMetadata.mode) {
+                                    EXACT_INPUT -> stringRes(R.string.transaction_history_swap_failed)
+                                    EXACT_OUTPUT -> stringRes(R.string.transaction_history_payment_failed)
+                                }
+                            } else {
+                                when (data.metadata.swapMetadata.mode) {
+                                    EXACT_INPUT ->
+                                        when (data.metadata.swapMetadata.status) {
+                                            INCOMPLETE_DEPOSIT,
+                                            PROCESSING,
+                                            PENDING -> stringRes(R.string.transaction_detail_swapping)
+
+                                            SUCCESS -> stringRes(R.string.transaction_history_swapped)
+                                            REFUNDED -> stringRes(R.string.transaction_history_swap_refunded)
+                                            FAILED -> stringRes(R.string.transaction_history_swap_failed)
+                                            EXPIRED -> stringRes(R.string.transaction_history_swap_expired)
+                                        }
+
+                                    EXACT_OUTPUT ->
+                                        when (data.metadata.swapMetadata.status) {
+                                            INCOMPLETE_DEPOSIT,
+                                            PROCESSING,
+                                            PENDING -> stringRes(R.string.transaction_detail_paying)
+
+                                            SUCCESS -> stringRes(R.string.transaction_history_paid)
+                                            REFUNDED -> stringRes(R.string.transaction_history_payment_refunded)
+                                            FAILED -> stringRes(R.string.transaction_history_payment_failed)
+                                            EXPIRED -> stringRes(R.string.transaction_history_payment_expired)
+                                        }
+                                }
+                            }
+                        }
+                    }
                 },
             amount =
-                stringRes(data.transaction.amount, HIDDEN)
+                stringRes(data.transaction.amount, HIDDEN),
+            icons =
+                when (info) {
+                    is ReceiveShieldedState,
+                    is ReceiveTransparentState -> {
+                        listOf(
+                            imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                            imageRes(R.drawable.ic_transaction_received)
+                        )
+                    }
+
+                    is SendSwapState ->
+                        listOf(
+                            data.metadata.swapMetadata
+                                ?.origin
+                                ?.tokenIcon ?: loadingImageRes(),
+                            when (data.metadata.swapMetadata?.mode) {
+                                SwapMode.EXACT_INPUT -> imageRes(R.drawable.ic_transaction_sent)
+                                SwapMode.EXACT_OUTPUT -> imageRes(R.drawable.ic_transaction_paid)
+                                null -> imageRes(R.drawable.ic_transaction_sent)
+                            },
+                            data.metadata.swapMetadata
+                                ?.destination
+                                ?.tokenIcon ?: loadingImageRes()
+                        )
+
+                    is SendShieldedState,
+                    is SendTransparentState ->
+                        listOf(
+                            imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                            imageRes(R.drawable.ic_transaction_sent)
+                        )
+
+                    is ShieldingState ->
+                        listOf(
+                            imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
+                            imageRes(R.drawable.ic_transaction_shielded),
+                            imageRes(R.drawable.ic_transaction_detail_shielded),
+                        )
+                }
         )
 
-    private fun onBack() {
-        navigationRouter.back()
-    }
+    private fun onBack() = navigationRouter.back()
 
     private fun onBookmarkClick() =
         viewModelScope.launch {

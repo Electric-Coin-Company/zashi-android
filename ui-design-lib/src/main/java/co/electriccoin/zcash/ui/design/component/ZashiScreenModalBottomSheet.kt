@@ -19,9 +19,11 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindowProvider
+import co.electriccoin.zcash.ui.design.LocalKeyboardManager
 import co.electriccoin.zcash.ui.design.LocalSheetStateManager
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,6 +61,8 @@ fun <T : ModalBottomSheetState> ZashiScreenModalBottomSheet(
                 LaunchedEffect(Unit) {
                     sheetState.show()
                 }
+
+                HookupKeyboardController()
             },
             onDismissRequest = it.onBack,
             contentWindowInsets = contentWindowInsets
@@ -85,8 +89,26 @@ fun ZashiScreenModalBottomSheet(
         sheetState = sheetState,
         content = {
             content()
+            HookupKeyboardController()
         },
     )
+}
+
+@Composable
+private fun HookupKeyboardController() {
+    val softwareKeyboardController = LocalSoftwareKeyboardController.current
+    val keyboardManager = LocalKeyboardManager.current
+    DisposableEffect(softwareKeyboardController, keyboardManager) {
+        if (softwareKeyboardController != null) {
+            keyboardManager.onDialogOpened(softwareKeyboardController)
+        }
+
+        onDispose {
+            if (softwareKeyboardController != null) {
+                keyboardManager.onDialogClosed(softwareKeyboardController)
+            }
+        }
+    }
 }
 
 @Composable

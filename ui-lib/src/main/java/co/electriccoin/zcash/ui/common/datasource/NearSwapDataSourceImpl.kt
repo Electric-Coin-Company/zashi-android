@@ -12,11 +12,9 @@ import co.electriccoin.zcash.ui.common.model.near.RecipientType
 import co.electriccoin.zcash.ui.common.model.near.RefundType
 import co.electriccoin.zcash.ui.common.model.near.SubmitDepositTransactionRequest
 import co.electriccoin.zcash.ui.common.model.near.SwapType
-import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
 import co.electriccoin.zcash.ui.common.provider.NearApiProvider
 import co.electriccoin.zcash.ui.common.provider.ResponseWithErrorException
-import co.electriccoin.zcash.ui.common.provider.TokenIconProvider
-import co.electriccoin.zcash.ui.common.provider.TokenNameProvider
+import co.electriccoin.zcash.ui.common.provider.SwapAssetProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
@@ -26,22 +24,18 @@ import java.math.RoundingMode
 import kotlin.time.Duration.Companion.minutes
 
 class NearSwapDataSourceImpl(
-    private val blockchainProvider: BlockchainProvider,
-    private val tokenIconProvider: TokenIconProvider,
-    private val tokenNameProvider: TokenNameProvider,
     private val nearApiProvider: NearApiProvider,
+    private val swapAssetProvider: SwapAssetProvider,
 ) : SwapDataSource {
     override suspend fun getSupportedTokens(): List<SwapAsset> =
         withContext(Dispatchers.Default) {
             nearApiProvider.getSupportedTokens().map {
-                SwapAsset(
-                    tokenName = tokenNameProvider.getName(it.symbol),
-                    tokenIcon = tokenIconProvider.getIcon(it.symbol),
-                    blockchain = blockchainProvider.getBlockchain(it.blockchain),
+                swapAssetProvider.get(
                     tokenTicker = it.symbol,
+                    chainTicker = it.blockchain,
                     usdPrice = it.price,
                     assetId = it.assetId,
-                    decimals = it.decimals,
+                    decimals = it.decimals
                 )
             }
         }
@@ -50,7 +44,7 @@ class NearSwapDataSourceImpl(
     override suspend fun requestQuote(
         swapMode: SwapMode,
         amount: BigDecimal,
-        originAddress: String,
+        refundAddress: String,
         originAsset: SwapAsset,
         destinationAddress: String,
         destinationAsset: SwapAsset,
@@ -65,7 +59,7 @@ class NearSwapDataSourceImpl(
 
         val shifted = amount.movePointRight(decimals)
         val integer = shifted.toBigInteger().toBigDecimal()
-        val normalizedAmount = shifted.round(MathContext(integer.precision(), RoundingMode.HALF_EVEN))
+        val normalizedAmount = shifted.round(MathContext(integer.precision(), RoundingMode.DOWN))
 
         val request =
             QuoteRequest(
@@ -80,7 +74,7 @@ class NearSwapDataSourceImpl(
                 depositType = RefundType.ORIGIN_CHAIN,
                 destinationAsset = destinationAsset.assetId,
                 amount = normalizedAmount,
-                refundTo = originAddress,
+                refundTo = refundAddress,
                 refundType = RefundType.ORIGIN_CHAIN,
                 recipient = destinationAddress,
                 recipientType = RecipientType.DESTINATION_CHAIN,
@@ -96,7 +90,11 @@ class NearSwapDataSourceImpl(
             )
 
         return try {
-            NearSwapQuote(nearApiProvider.requestQuote(request))
+            NearSwapQuote(
+                response = nearApiProvider.requestQuote(request),
+                originAsset = originAsset,
+                destinationAsset = destinationAsset
+            )
         } catch (e: ResponseWithErrorException) {
             when {
                 e.error.message.startsWith("Amount is too low for bridge, try at least") -> {
@@ -137,9 +135,19 @@ class NearSwapDataSourceImpl(
         )
     }
 
-    override suspend fun checkSwapStatus(depositAddress: String): SwapQuoteStatus {
+    override suspend fun checkSwapStatus(depositAddress: String, supportedTokens: List<SwapAsset>): SwapQuoteStatus {
         val response = this.nearApiProvider.checkSwapStatus(depositAddress)
-        return NearSwapQuoteStatus(response = response)
+        val originAsset =
+            supportedTokens.find { it.assetId == response.quoteResponse.quoteRequest.originAsset }
+                ?: throw TokenNotFoundException(response.quoteResponse.quoteRequest.originAsset)
+        val destinationAsset =
+            supportedTokens.find { it.assetId == response.quoteResponse.quoteRequest.destinationAsset }
+                ?: throw TokenNotFoundException(response.quoteResponse.quoteRequest.destinationAsset)
+        return NearSwapQuoteStatus(
+            response = response,
+            origin = originAsset,
+            destination = destinationAsset,
+        )
     }
 }
 

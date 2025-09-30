@@ -15,6 +15,7 @@ import co.electriccoin.zcash.ui.screen.swap.SwapErrorFooterState
 internal data class PayState(
     val info: IconButtonState,
     val address: TextFieldState,
+    val addressPlaceholder: StringResource,
     val asset: AssetCardState,
     val abContact: ChipButtonState? = null,
     val abButton: IconButtonState,

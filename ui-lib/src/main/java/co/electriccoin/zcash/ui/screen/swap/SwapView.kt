@@ -2,6 +2,8 @@ package co.electriccoin.zcash.ui.screen.swap
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +13,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -20,12 +21,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -33,7 +30,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.key.NativeKeyEvent
 import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,6 +56,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiChipButton
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
 import co.electriccoin.zcash.ui.design.component.ZashiImageButton
+import co.electriccoin.zcash.ui.design.component.ZashiInfoText
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.component.listitem.SimpleListItemState
@@ -73,23 +70,16 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
+import co.electriccoin.zcash.ui.screen.swap.SwapState.AddressLocation.BOTTOM
+import co.electriccoin.zcash.ui.screen.swap.SwapState.AddressLocation.TOP
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountText
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextField
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
 
 @Composable
-internal fun SwapView(
-    state: SwapState,
-) {
-    val focusRequester = remember { FocusRequester() }
-    var hasBeenAutofocused by rememberSaveable { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        if (!hasBeenAutofocused) {
-            focusRequester.requestFocus()
-            hasBeenAutofocused = true
-        }
-    }
+internal fun SwapView(state: SwapState, onSideEffect: (amountFocusRequester: FocusRequester) -> Unit = { }) {
+    val amountFocusRequester = remember { FocusRequester() }
 
     BlankBgScaffold(
         topBar = { TopAppBar(state) }
@@ -103,17 +93,28 @@ internal fun SwapView(
         ) {
             SwapAmountTextField(
                 state = state.amountTextField,
-                focusRequester = focusRequester
+                focusRequester = amountFocusRequester
             )
-            Spacer(16.dp)
+
+            if (state.addressLocation == TOP) {
+                Spacer(10.dp)
+                AddressTextField(state = state)
+                Spacer(16.dp)
+            } else {
+                Spacer(16.dp)
+            }
+
             SlippageSeparator(
-                // state = state
+                state = state
             )
             Spacer(14.dp)
             SwapAmountText(state = state.amountText)
 
-            Spacer(10.dp)
-            AddressTextField(state = state)
+            if (state.addressLocation == BOTTOM) {
+                Spacer(10.dp)
+                AddressTextField(state = state)
+            }
+
             Spacer(22.dp)
 
             SlippageButton(
@@ -130,6 +131,12 @@ internal fun SwapView(
             Spacer(1f)
             if (state.errorFooter != null) {
                 SwapErrorFooter(state.errorFooter)
+                Spacer(24.dp)
+            } else if (state.footer != null) {
+                ZashiInfoText(
+                    text = state.footer.getValue()
+                )
+                Spacer(24.dp)
             }
             if (state.primaryButton != null) {
                 ZashiButton(
@@ -137,6 +144,10 @@ internal fun SwapView(
                     state = state.primaryButton
                 )
             }
+        }
+
+        SideEffect {
+            onSideEffect(amountFocusRequester)
         }
     }
 }
@@ -198,7 +209,7 @@ fun SlippageButton(state: ButtonState, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SlippageSeparator(
-    // state: SwapState,
+    state: SwapState,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -210,15 +221,7 @@ private fun SlippageSeparator(
             color = ZashiColors.Utility.Gray.utilityGray100
         )
 
-        // ZashiImageButton(state.changeModeButton)
-
-        Image(
-            modifier = Modifier.size(36.dp),
-            painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_arrow_narrow_down),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(ZashiColors.Text.textDisabled),
-            contentScale = ContentScale.Inside
-        )
+        ZashiImageButton(state.changeModeButton)
 
         ZashiHorizontalDivider(
             modifier = Modifier.weight(1f),
@@ -237,16 +240,10 @@ private fun TopAppBar(state: SwapState) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = state.appBarState.title.getValue(),
+                    text = stringResource(R.string.swap_title).uppercase(),
                     style = ZashiTypography.textMd,
                     fontWeight = FontWeight.SemiBold,
                     color = ZashiColors.Text.textPrimary
-                )
-                Spacer(8.dp)
-                Image(
-                    modifier = Modifier.height(16.dp),
-                    painter = painterResource(state.appBarState.icon),
-                    contentDescription = null
                 )
             }
         },
@@ -265,11 +262,38 @@ private fun TopAppBar(state: SwapState) {
 
 @Composable
 private fun ColumnScope.AddressTextField(state: SwapState) {
-    Text(
-        text = stringResource(co.electriccoin.zcash.ui.design.R.string.general_address),
-        style = ZashiTypography.textSm,
-        fontWeight = FontWeight.Medium
-    )
+    Row(
+        modifier =
+            Modifier then
+                if (state.onAddressClick == null) {
+                    Modifier
+                } else {
+                    Modifier.clickable(
+                        onClick = state.onAddressClick,
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    )
+                },
+        verticalAlignment = CenterVertically
+    ) {
+        Text(
+            text =
+                when (state.addressLocation) {
+                    TOP -> stringResource(R.string.swap_refund_address)
+                    BOTTOM -> stringResource(co.electriccoin.zcash.ui.design.R.string.general_address)
+                },
+            style = ZashiTypography.textSm,
+            fontWeight = FontWeight.Medium
+        )
+        if (state.onAddressClick != null) {
+            Spacer(4.dp)
+            Image(
+                modifier = Modifier.size(16.dp),
+                painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_info),
+                contentDescription = null,
+            )
+        }
+    }
     Spacer(6.dp)
     ZashiAddressTextField(
         state = state.address,
@@ -288,7 +312,7 @@ private fun ColumnScope.AddressTextField(state: SwapState) {
             if (state.addressContact == null) {
                 {
                     Text(
-                        text = stringResource(co.electriccoin.zcash.ui.design.R.string.general_enter_address),
+                        text = state.addressPlaceholder.getValue(),
                         style = ZashiTypography.textMd,
                         color = ZashiColors.Inputs.Default.text
                     )
@@ -425,12 +449,16 @@ private fun Preview() {
                             icon = R.drawable.send_address_book,
                             onClick = {}
                         ),
-                    appBarState =
-                        SwapAppBarState(
-                            title = stringRes("Swap with"),
-                            icon = R.drawable.ic_near_logo
+                    footer =
+                        stringRes(
+                            "NEAR only supports swaps to a transparent address. " +
+                                "Zashi will prompt you to shield your funds upon receipt."
                         ),
-                    errorFooter = null
+                    errorFooter = null,
+                    addressLocation = BOTTOM,
+                    changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {},
+                    onAddressClick = null,
+                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
                 )
         )
     }
@@ -504,11 +532,6 @@ private fun UnexpectedErrorPreview() {
                             icon = R.drawable.send_address_book,
                             onClick = {}
                         ),
-                    appBarState =
-                        SwapAppBarState(
-                            title = stringRes("Swap with"),
-                            icon = R.drawable.ic_near_logo
-                        ),
                     errorFooter =
                         SwapErrorFooterState(
                             title = stringRes("Unexpected error"),
@@ -519,6 +542,11 @@ private fun UnexpectedErrorPreview() {
                             stringRes("Try again"),
                             style = ButtonStyle.DESTRUCTIVE1
                         ),
+                    footer = null,
+                    addressLocation = BOTTOM,
+                    changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {},
+                    onAddressClick = null,
+                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
                 )
         )
     }
@@ -592,17 +620,17 @@ private fun ServiceUnavailableErrorPreview() {
                             icon = R.drawable.send_address_book,
                             onClick = {}
                         ),
-                    appBarState =
-                        SwapAppBarState(
-                            title = stringRes("Swap with"),
-                            icon = R.drawable.ic_near_logo
-                        ),
                     errorFooter =
                         SwapErrorFooterState(
                             title = stringRes("The service is unavailable"),
                             subtitle = stringRes("Please try again later."),
                         ),
-                    primaryButton = null
+                    primaryButton = null,
+                    footer = null,
+                    addressLocation = BOTTOM,
+                    changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {},
+                    onAddressClick = null,
+                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
                 )
         )
     }

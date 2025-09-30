@@ -4,11 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.QuoteLowAmountException
 import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
-import co.electriccoin.zcash.ui.common.model.CompositeSwapQuote
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
+import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
+import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.provider.ResponseWithErrorException
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
@@ -16,17 +19,17 @@ import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetCompositeSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
-import co.electriccoin.zcash.ui.common.usecase.SwapQuoteCompositeData
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
+import co.electriccoin.zcash.ui.screen.swap.orconfirmation.ORSwapConfirmationArgs
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -37,27 +40,23 @@ import kotlin.time.Duration.Companion.minutes
 
 internal class SwapQuoteVM(
     observeProposal: ObserveProposalUseCase,
-    getCompositeSwapQuote: GetCompositeSwapQuoteUseCase,
     applicationStateProvider: ApplicationStateProvider,
     private val swapRepository: SwapRepository,
     private val cancelSwapQuote: CancelSwapQuoteUseCase,
     private val cancelSwap: CancelSwapUseCase,
     private val swapQuoteSuccessMapper: SwapQuoteVMMapper,
     private val confirmProposal: ConfirmProposalUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     val state: StateFlow<SwapQuoteState?> =
         combine(
-            getCompositeSwapQuote.observe(),
+            swapRepository.quote.filterNotNull(),
             observeProposal.observeNullable(),
         ) { quote, proposal ->
             when (quote) {
-                SwapQuoteCompositeData.Loading -> null
-                is SwapQuoteCompositeData.Error -> createErrorState(quote)
-                is SwapQuoteCompositeData.Success ->
-                    createState(
-                        proposal = proposal,
-                        quote = quote
-                    )
+                SwapQuoteData.Loading -> null
+                is SwapQuoteData.Error -> createErrorState(quote)
+                is SwapQuoteData.Success -> createState(proposal, quote)
             }
         }.stateIn(
             scope = viewModelScope,
@@ -79,22 +78,18 @@ internal class SwapQuoteVM(
 
     private fun createState(
         proposal: TransactionProposal?,
-        quote: SwapQuoteCompositeData.Success
-    ): SwapQuoteState.Success? {
-        val swapQuote = quote.quote
-        return when {
-            proposal is SwapTransactionProposal ->
-                swapQuoteSuccessMapper.createState(
-                    state = SwapQuoteInternalState(proposal, swapQuote),
-                    onBack = ::onBack,
-                    onSubmitQuoteClick = ::onSubmitQuoteClick,
-                )
+        quote: SwapQuoteData.Success
+    ): SwapQuoteState.Success =
+        swapQuoteSuccessMapper.createState(
+            state = SwapQuoteInternalState(proposal as? SwapTransactionProposal, quote.quote),
+            onBack = ::onBack,
+            onSubmitQuoteClick = ::onSubmitQuoteClick,
+            onNavigateToOnRampSwap = ::onNavigateToOnRampSwap
+        )
 
-            else -> null
-        }
-    }
+    private fun onNavigateToOnRampSwap() = navigationRouter.forward(ORSwapConfirmationArgs)
 
-    private fun createErrorState(quote: SwapQuoteCompositeData.Error): SwapQuoteState.Error {
+    private fun createErrorState(quote: SwapQuoteData.Error): SwapQuoteState.Error {
         val message =
             when {
                 quote.exception is QuoteLowAmountException &&
@@ -108,8 +103,16 @@ internal class SwapQuoteVM(
                     )
 
                 quote.exception is QuoteLowAmountException -> stringRes(R.string.swap_quote_error_too_low_try_higher)
-                quote.exception is ResponseWithErrorException -> stringRes(quote.exception.error.message)
-                else -> stringRes(R.string.swap_quote_error_getting_quote)
+                quote.exception is ResponseWithErrorException &&
+                    !quote.exception.error.message
+                        .contains("failed to get quote", ignoreCase = true) ->
+                    stringRes(quote.exception.error.message)
+
+                else ->
+                    when (quote.mode) {
+                        EXACT_INPUT -> stringRes(R.string.swap_quote_error_getting_quote_swap)
+                        EXACT_OUTPUT -> stringRes(R.string.swap_quote_error_getting_quote)
+                    }
             }
 
         return SwapQuoteState.Error(
@@ -118,12 +121,20 @@ internal class SwapQuoteVM(
             subtitle = message,
             negativeButton =
                 ButtonState(
-                    text = stringRes(R.string.swap_quote_cancel_payment),
+                    text =
+                        when (quote.mode) {
+                            EXACT_INPUT -> stringRes(R.string.swap_quote_cancel_swap)
+                            EXACT_OUTPUT -> stringRes(R.string.swap_quote_cancel_payment)
+                        },
                     onClick = ::onCancelPaymentClick
                 ),
             positiveButton =
                 ButtonState(
-                    text = stringRes(R.string.swap_quote_edit_payment),
+                    text =
+                        when (quote.mode) {
+                            EXACT_INPUT -> stringRes(R.string.swap_quote_edit_swap)
+                            EXACT_OUTPUT -> stringRes(R.string.swap_quote_edit_payment)
+                        },
                     onClick = ::onEditPaymentClick
                 ),
             onBack = ::onBackDuringError
@@ -142,13 +153,12 @@ internal class SwapQuoteVM(
 }
 
 internal data class SwapQuoteInternalState(
-    val proposal: SwapTransactionProposal,
-    val quote: CompositeSwapQuote,
+    val proposal: SwapTransactionProposal?,
+    val quote: SwapQuote,
 ) {
-    // val zatoshiFee: Zatoshi = proposal.proposal.totalFeeRequired()
-    // val zecFeeUsd: BigDecimal = quote.getZecFeeUsd(proposal.proposal)
-    val totalZec: BigDecimal = quote.getTotalZec(proposal.proposal)
-    val totalUsd: BigDecimal = quote.getTotalUsd(proposal.proposal)
-    val totalFeesZatoshi: Zatoshi = quote.getTotalFeesZatoshi(proposal.proposal)
-    val totalFeesUsd: BigDecimal = quote.getTotalFeesUsd(proposal.proposal)
+    val total: BigDecimal = quote.getTotal(proposal?.proposal)
+    val totalUsd: BigDecimal = quote.getTotalUsd(proposal?.proposal)
+    val totalFees = quote.affiliateFee
+    val totalFeesZatoshi: Zatoshi = quote.getTotalFeesZatoshi(proposal?.proposal)
+    val totalFeesUsd: BigDecimal = quote.getTotalFeesUsd(proposal?.proposal)
 }

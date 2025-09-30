@@ -11,8 +11,8 @@ import co.electriccoin.zcash.ui.common.usecase.GetTransactionMetadataUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
-import co.electriccoin.zcash.ui.design.util.StyledStringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
 import co.electriccoin.zcash.ui.screen.transactionnote.model.TransactionNoteState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -64,8 +64,8 @@ internal class TransactionNoteViewModel(
                     onValueChange = ::onNoteTextChanged
                 ),
             noteCharacters =
-                StyledStringResource(
-                    resource = stringRes(R.string.transaction_note_max_length, noteText.length.toString()),
+                styledStringResource(
+                    stringResource = stringRes(R.string.transaction_note_max_length, noteText.length.toString()),
                     color = if (isNoteTextTooLong) StringResourceColor.NEGATIVE else StringResourceColor.PRIMARY
                 ),
             primaryButton =

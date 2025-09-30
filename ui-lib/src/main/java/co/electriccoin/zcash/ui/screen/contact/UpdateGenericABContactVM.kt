@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.SwapAssetBlockchain
+import co.electriccoin.zcash.ui.common.model.SwapBlockchain
 import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.ContactAddressValidationResult
@@ -48,7 +48,7 @@ class UpdateGenericABContactVM(
     private val originalContact = MutableStateFlow<EnhancedABContact?>(null)
     private val contactAddress = MutableStateFlow("")
     private val contactName = MutableStateFlow("")
-    private val selectedBlockchain = MutableStateFlow<SwapAssetBlockchain?>(null)
+    private val selectedBlockchain = MutableStateFlow<SwapBlockchain?>(null)
 
     private val isUpdatingContact = MutableStateFlow(false)
     private val isDeletingContact = MutableStateFlow(false)

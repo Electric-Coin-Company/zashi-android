@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -37,8 +38,8 @@ class GetTransactionDetailByIdUseCase(
         channelFlow {
             val requestSwipeReloadPipeline = MutableSharedFlow<Unit>()
 
-            val swapHandle =
-                object : SwapHandle {
+            val reloadHandle =
+                object : ReloadHandle {
                     override fun requestReload() {
                         launch {
                             requestSwipeReloadPipeline.emit(Unit)
@@ -60,9 +61,10 @@ class GetTransactionDetailByIdUseCase(
 
             val metadataFlow =
                 transactionFlow
+                    .distinctUntilChangedBy { it.id to it.recipient }
                     .flatMapLatest {
                         metadataRepository.observeTransactionMetadata(it)
-                    }
+                    }.distinctUntilChanged()
 
             val contactFlow =
                 transactionFlow
@@ -80,15 +82,16 @@ class GetTransactionDetailByIdUseCase(
                     .onStart { emit(Unit) }
                     .flatMapLatest {
                         metadataFlow
-                            .map { it.swapMetadata }
+                            .map { it.swapMetadata != null }
                             .distinctUntilChanged()
-                            .flatMapLatest { swapMetadata ->
-                                if (swapMetadata == null) {
+                            .flatMapLatest { hasMetadata ->
+                                if (!hasMetadata) {
                                     flowOf(null)
                                 } else {
                                     transactionFlow
-                                        .flatMapLatest {
-                                            val depositAddress = it.recipient?.address
+                                        .map { it.recipient?.address }
+                                        .distinctUntilChanged()
+                                        .flatMapLatest { depositAddress ->
                                             if (depositAddress == null) {
                                                 flowOf(null)
                                             } else {
@@ -96,7 +99,7 @@ class GetTransactionDetailByIdUseCase(
                                             }
                                         }
                                 }
-                            }
+                            }.distinctUntilChanged()
                     }
 
             combine(
@@ -112,7 +115,7 @@ class GetTransactionDetailByIdUseCase(
                     contact = contact,
                     metadata = metadata,
                     swap = swap,
-                    swapHandle = swapHandle
+                    reloadHandle = reloadHandle
                 )
             }.collect {
                 send(it)
@@ -130,11 +133,11 @@ data class DetailedTransactionData(
     val contact: EnhancedABContact?,
     val metadata: TransactionMetadata,
     val swap: SwapQuoteStatusData?,
-    val swapHandle: SwapHandle
+    val reloadHandle: ReloadHandle
 ) {
     val recipient = transaction.recipient
 }
 
-interface SwapHandle {
+interface ReloadHandle {
     fun requestReload()
 }

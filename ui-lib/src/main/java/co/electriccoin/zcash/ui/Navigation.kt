@@ -129,16 +129,22 @@ import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccou
 import co.electriccoin.zcash.ui.screen.send.Send
 import co.electriccoin.zcash.ui.screen.send.WrapSend
 import co.electriccoin.zcash.ui.screen.settings.WrapSettings
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.AndroidSignKeystoneTransaction
-import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransaction
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionArgs
+import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionScreen
 import co.electriccoin.zcash.ui.screen.swap.SwapArgs
 import co.electriccoin.zcash.ui.screen.swap.SwapScreen
 import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactArgs
 import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactScreen
 import co.electriccoin.zcash.ui.screen.swap.ab.SelectABSwapRecipientArgs
 import co.electriccoin.zcash.ui.screen.swap.ab.SelectSwapABRecipientScreen
+import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailArgs
+import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailScreen
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoScreen
+import co.electriccoin.zcash.ui.screen.swap.info.SwapRefundAddressInfoArgs
+import co.electriccoin.zcash.ui.screen.swap.info.SwapRefundAddressInfoScreen
+import co.electriccoin.zcash.ui.screen.swap.orconfirmation.ORSwapConfirmationArgs
+import co.electriccoin.zcash.ui.screen.swap.orconfirmation.ORSwapConfirmationScreen
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerArgs
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerScreen
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerArgs
@@ -291,7 +297,7 @@ internal fun MainActivity.Navigation() {
         composable(CRASH_REPORTING_OPT_IN) { AndroidCrashReportingOptIn() }
         composable<ScanKeystoneSignInRequest> { WrapScanKeystoneSignInRequest() }
         composable<ScanKeystonePCZTRequest> { WrapScanKeystonePCZTRequest() }
-        composable<SignKeystoneTransaction> { AndroidSignKeystoneTransaction() }
+        composable<SignKeystoneTransactionArgs> { SignKeystoneTransactionScreen() }
         dialogComposable<AccountList> { AndroidAccountList() }
         composable<ScanArgs> { ScanZashiAddressScreen(it.toRoute()) }
         composable(EXPORT_PRIVATE_DATA) {
@@ -371,6 +377,9 @@ internal fun MainActivity.Navigation() {
         composable<ExchangeRateOptInArgs> { ExchangeRateOptInScreen() }
         composable<PayArgs> { PayScreen() }
         dialogComposable<PayInfoArgs> { PayInfoScreen() }
+        composable<ORSwapConfirmationArgs> { ORSwapConfirmationScreen() }
+        composable<SwapDetailArgs> { SwapDetailScreen(it.toRoute()) }
+        dialogComposable<SwapRefundAddressInfoArgs> { SwapRefundAddressInfoScreen() }
     }
 }
 

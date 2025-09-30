@@ -221,12 +221,6 @@ class HomeVM(
                     onButtonClick = ::onCrashReportMessageClick
                 )
 
-            // HomeMessageData.EnableTor ->
-            //     EnableTorMessageState(
-            //         onClick = ::onEnableTorMessageClick,
-            //         onButtonClick = ::onEnableTorMessageClick,
-            //     )
-
             null -> null
         }
 

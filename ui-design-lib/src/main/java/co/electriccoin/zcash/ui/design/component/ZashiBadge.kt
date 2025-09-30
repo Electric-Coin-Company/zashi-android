@@ -125,6 +125,17 @@ object ZashiBadgeDefaults {
         text = text,
         container = background,
     )
+
+    @Composable
+    fun warningColors(
+        border: Color = ZashiColors.Utility.WarningYellow.utilityOrange200,
+        text: Color = ZashiColors.Utility.WarningYellow.utilityOrange700,
+        background: Color = ZashiColors.Utility.WarningYellow.utilityOrange50,
+    ) = ZashiBadgeColors(
+        border = border,
+        text = text,
+        container = background,
+    )
 }
 
 @PreviewScreens

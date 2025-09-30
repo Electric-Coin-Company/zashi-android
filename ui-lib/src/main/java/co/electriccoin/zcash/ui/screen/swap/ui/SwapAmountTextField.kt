@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -114,12 +115,13 @@ private fun SwapTextFieldCard(
                 verticalAlignment = CenterVertically
             ) {
                 Box(
-                    modifier = Modifier.weight(.45f)
+                    modifier = Modifier.weight(.425f)
                 ) {
                     ZashiAssetCard(
                         state = state.token
                     )
                 }
+                Spacer(modifier = Modifier.weight(.025f))
                 ZashiNumberTextField(
                     state = state.textField,
                     interactionSource = textFieldInteractionSource,
@@ -145,7 +147,8 @@ private fun SwapTextFieldCard(
                                     modifier = Modifier.fillMaxWidth(),
                                     style = ZashiTypography.header4,
                                     fontWeight = FontWeight.SemiBold,
-                                    textAlign = TextAlign.End
+                                    textAlign = TextAlign.End,
+                                    contentAlignment = CenterEnd
                                 )
                             }
                         } else {
@@ -217,9 +220,9 @@ private fun SwapTextFieldCard(
 }
 
 @Composable
-private fun SpendableBalanceButton(
-    state: SwapAmountTextFieldState
-) {
+private fun SpendableBalanceButton(state: SwapAmountTextFieldState) {
+    if (state.max == null) return
+
     Row(
         modifier =
             Modifier.clickable(
@@ -245,7 +248,7 @@ private fun SpendableBalanceButton(
 @Immutable
 data class SwapAmountTextFieldState(
     val title: StringResource,
-    val max: ButtonState,
+    val max: ButtonState?,
     val error: StringResource?,
     val token: AssetCardState,
     val textFieldPrefix: ImageResource?,

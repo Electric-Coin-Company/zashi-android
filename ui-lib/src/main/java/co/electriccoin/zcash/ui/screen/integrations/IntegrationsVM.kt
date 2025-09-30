@@ -5,17 +5,18 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.DistributionDimension
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.usecase.GetCoinbaseStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetFlexaStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetKeystoneStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapUseCase
 import co.electriccoin.zcash.ui.common.usecase.Status
 import co.electriccoin.zcash.ui.common.usecase.Status.DISABLED
@@ -42,8 +43,9 @@ class IntegrationsVM(
     getFlexaStatus: GetFlexaStatusUseCase,
     getKeystoneStatus: GetKeystoneStatusUseCase,
     private val navigationRouter: NavigationRouter,
-    private val navigateToCoinbase: NavigateToCoinbaseUseCase,
+    // private val navigateToCoinbase: NavigateToCoinbaseUseCase,
     private val navigateToSwap: NavigateToSwapUseCase,
+    private val getVersionInfo: GetVersionInfoProvider
 ) : ViewModel() {
     private val isRestoring = getWalletRestoringState.observe().map { it == WalletRestoringState.RESTORING }
 
@@ -60,7 +62,7 @@ class IntegrationsVM(
                 getZcashCurrency = getZcashCurrency,
                 selectedAccount = selectedAccount,
                 flexaStatus = flexaStatus,
-                coinbaseStatus = coinbaseStatus,
+                // coinbaseStatus = coinbaseStatus,
                 keystoneStatus = keystoneStatus,
             )
         }.stateIn(
@@ -74,7 +76,7 @@ class IntegrationsVM(
         getZcashCurrency: GetZcashCurrencyProvider,
         selectedAccount: WalletAccount?,
         flexaStatus: Status,
-        coinbaseStatus: Status,
+        // coinbaseStatus: Status,
         keystoneStatus: Status
     ) = IntegrationsState(
         disabledInfo =
@@ -108,18 +110,27 @@ class IntegrationsVM(
                     subtitle = stringRes(R.string.integrations_flexa_subtitle),
                     onClick = ::onFlexaClicked
                 ).takeIf { flexaStatus != UNAVAILABLE },
+                // ListItemState(
+                //     // Set the wallet currency by app build is more future-proof, although we hide it from
+                //     // the UI in the Testnet build
+                //     bigIcon = imageRes(R.drawable.ic_integrations_coinbase),
+                //     title = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
+                //     subtitle =
+                //         stringRes(
+                //             R.string.integrations_coinbase_subtitle,
+                //             getZcashCurrency.getLocalizedName()
+                //         ),
+                //     onClick = ::onBuyWithCoinbaseClicked
+                // ).takeIf { coinbaseStatus != UNAVAILABLE },
                 ListItemState(
                     // Set the wallet currency by app build is more future-proof, although we hide it from
                     // the UI in the Testnet build
-                    bigIcon = imageRes(R.drawable.ic_integrations_coinbase),
+                    bigIcon = imageRes(R.drawable.ic_integrations_coinbase_disabled),
                     title = stringRes(R.string.integrations_coinbase, getZcashCurrency.getLocalizedName()),
-                    subtitle =
-                        stringRes(
-                            R.string.integrations_coinbase_subtitle,
-                            getZcashCurrency.getLocalizedName()
-                        ),
-                    onClick = ::onBuyWithCoinbaseClicked
-                ).takeIf { coinbaseStatus != UNAVAILABLE },
+                    subtitle = stringRes(R.string.integrations_coinbase_subtitle_disabled),
+                    isEnabled = false,
+                    onClick = null,
+                ).takeIf { getVersionInfo().distributionDimension != DistributionDimension.FOSS },
                 ListItemState(
                     title = stringRes(R.string.integrations_keystone),
                     subtitle = stringRes(R.string.integrations_keystone_subtitle),
@@ -133,7 +144,7 @@ class IntegrationsVM(
 
     private fun onBack() = navigationRouter.back()
 
-    private fun onBuyWithCoinbaseClicked() = viewModelScope.launch { navigateToCoinbase() }
+    // private fun onBuyWithCoinbaseClicked() = viewModelScope.launch { navigateToCoinbase() }
 
     private fun onConnectKeystoneClick() = viewModelScope.launch { navigationRouter.replace(ConnectKeystone) }
 

@@ -5,31 +5,37 @@ import cash.z.ecc.android.sdk.model.FiatCurrency
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
+import co.electriccoin.zcash.ui.common.model.ZecSwapAsset
+import co.electriccoin.zcash.ui.common.model.getQuoteChainIcon
+import co.electriccoin.zcash.ui.common.model.getQuoteTokenIcon
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
 import co.electriccoin.zcash.ui.design.util.StringResource
-import co.electriccoin.zcash.ui.design.util.TickerLocation
-import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import java.math.BigDecimal
+import java.math.MathContext
 import java.math.RoundingMode
 
 internal class SwapQuoteVMMapper {
+    @Suppress("UseCheckOrError")
     fun createState(
         state: SwapQuoteInternalState,
         onBack: () -> Unit,
-        onSubmitQuoteClick: () -> Unit
+        onSubmitQuoteClick: () -> Unit,
+        onNavigateToOnRampSwap: () -> Unit
     ): SwapQuoteState.Success =
         with(state) {
             return SwapQuoteState.Success(
                 title =
-                    when (quote.mode) {
-                        EXACT_INPUT -> stringRes(R.string.swap_quote_title)
-                        EXACT_OUTPUT -> stringRes(R.string.pay_quote_title)
+                    when {
+                        quote.destinationAsset is ZecSwapAsset -> stringRes(R.string.swap_quote_review)
+                        quote.mode == EXACT_INPUT -> stringRes(R.string.swap_quote_title)
+                        quote.mode == EXACT_OUTPUT -> stringRes(R.string.pay_quote_title)
+                        else -> throw IllegalStateException("Unknown swap mode")
                     },
                 rotateIcon = quote.mode == EXACT_OUTPUT,
                 from = createFromState(),
@@ -41,15 +47,21 @@ internal class SwapQuoteVMMapper {
                 primaryButton =
                     ButtonState(
                         text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_confirm),
-                        onClick = onSubmitQuoteClick
+                        onClick = {
+                            if (quote.destinationAsset is ZecSwapAsset) {
+                                onNavigateToOnRampSwap()
+                            } else {
+                                onSubmitQuoteClick()
+                            }
+                        }
                     )
             )
         }
 
     @Suppress("MagicNumber")
     private fun SwapQuoteInternalState.createInfoText(): StringResource? {
-        if (quote.quote.type == EXACT_OUTPUT) return null
-        val slippageUsd = quote.quote.amountOutUsd.multiply(quote.slippage.divide(BigDecimal(100)))
+        if (quote.mode == EXACT_OUTPUT) return null
+        val slippageUsd = quote.amountOutUsd.multiply(quote.slippage.divide(BigDecimal(100)))
         return stringRes(
             R.string.swap_quote_info,
             stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol),
@@ -68,7 +80,7 @@ internal class SwapQuoteVMMapper {
                     },
                 title = stringRes(R.string.swap_quote_zashi),
                 subtitle = null
-            ),
+            ).takeIf { quote.destinationAsset !is ZecSwapAsset },
             SwapQuoteInfoItem(
                 description =
                     when (quote.mode) {
@@ -77,31 +89,52 @@ internal class SwapQuoteVMMapper {
                     },
                 title = stringResByAddress(quote.recipient, true),
                 subtitle = null
-            ),
+            ).takeIf { quote.destinationAsset !is ZecSwapAsset },
             SwapQuoteInfoItem(
                 description = stringRes(R.string.swap_quote_total_fees),
-                title = stringRes(totalFeesZatoshi),
+                title =
+                    if (quote.destinationAsset is ZecSwapAsset) {
+                        stringResByDynamicCurrencyNumber(totalFees, quote.originAsset.tokenTicker)
+                    } else {
+                        stringRes(totalFeesZatoshi)
+                    },
                 subtitle =
                     stringResByDynamicCurrencyNumber(totalFeesUsd, FiatCurrency.USD.symbol)
                         .takeIf {
-                            quote.mode == EXACT_INPUT
+                            quote.mode == EXACT_INPUT && quote.destinationAsset !is ZecSwapAsset
                         }
             ),
-            if (quote.quote.type == EXACT_OUTPUT) {
+            if (quote.mode == EXACT_OUTPUT) {
                 val slippage = quote.slippage.divide(BigDecimal(100))
-                val slippageZatoshi = quote.amountInZec.multiply(slippage).convertZecToZatoshi()
-                val slippageUsd = quote.quote.amountOutUsd.multiply(slippage)
+                val slippageUsd = quote.amountOutUsd.multiply(slippage)
                 SwapQuoteInfoItem(
                     description =
                         stringRes(
                             R.string.swap_quote_max_slippage,
                             stringResByNumber(quote.slippage, minDecimals = 0) + stringRes("%")
                         ),
-                    title = stringRes(slippageZatoshi),
+                    title =
+                        if (quote.destinationAsset is ZecSwapAsset) {
+                            val slippageToken =
+                                quote.amountInFormatted
+                                    .multiply(
+                                        slippage,
+                                        MathContext.DECIMAL128
+                                    )
+                            stringResByDynamicCurrencyNumber(slippageToken, quote.destinationAsset.tokenTicker)
+                        } else {
+                            val slippageZatoshi =
+                                quote.amountInFormatted
+                                    .multiply(
+                                        slippage,
+                                        MathContext.DECIMAL128
+                                    ).convertZecToZatoshi()
+                            stringRes(slippageZatoshi)
+                        },
                     subtitle =
                         stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol)
                             .takeIf {
-                                quote.mode == EXACT_INPUT
+                                quote.mode == EXACT_INPUT && quote.destinationAsset !is ZecSwapAsset
                             }
                 )
             } else {
@@ -112,25 +145,25 @@ internal class SwapQuoteVMMapper {
     private fun SwapQuoteInternalState.createTotalAmountState(): SwapQuoteInfoItem =
         SwapQuoteInfoItem(
             description = stringRes(R.string.swap_quote_total_amount),
-            title = stringRes(totalZec.convertZecToZatoshi()),
+            title = stringResByDynamicCurrencyNumber(total, quote.originAsset.tokenTicker),
             subtitle = stringResByDynamicCurrencyNumber(totalUsd, FiatCurrency.USD.symbol)
         )
 
     private fun SwapQuoteInternalState.createFromState(): SwapTokenAmountState =
         SwapTokenAmountState(
-            bigIcon = imageRes(R.drawable.ic_zec_round_full),
-            smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
-            title = stringRes(quote.amountInZatoshi, TickerLocation.HIDDEN),
+            bigIcon = quote.originAsset.getQuoteTokenIcon(),
+            smallIcon = quote.originAsset.getQuoteChainIcon(isOriginAsset = true),
+            title = stringResByDynamicNumber(quote.amountInFormatted),
             subtitle = stringResByDynamicCurrencyNumber(quote.amountInUsd, FiatCurrency.USD.symbol)
         )
 
     private fun SwapQuoteInternalState.createToState(): SwapTokenAmountState =
         SwapTokenAmountState(
-            bigIcon = quote.destinationAsset.tokenIcon,
-            smallIcon = quote.destinationAsset.chainIcon,
+            bigIcon = quote.destinationAsset.getQuoteTokenIcon(),
+            smallIcon = quote.destinationAsset.getQuoteChainIcon(isOriginAsset = false),
             title =
                 stringResByDynamicNumber(
-                    quote.amountOutFormatted.setScale(quote.amountOutDecimals, RoundingMode.DOWN),
+                    quote.amountOutFormatted.setScale(quote.destinationAsset.decimals, RoundingMode.DOWN),
                 ),
             subtitle = stringResByDynamicCurrencyNumber(quote.amountOutUsd, FiatCurrency.USD.symbol)
         )

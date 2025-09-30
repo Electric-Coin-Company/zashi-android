@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
@@ -37,17 +37,20 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.orHiddenString
 import co.electriccoin.zcash.ui.design.util.stringRes
 import com.valentinilk.shimmer.shimmer
 
 @Composable
 fun TransactionDetailInfoRow(
     state: TransactionDetailInfoRowState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 20.dp, vertical = 14.dp),
 ) {
     TransactionDetailRowSurface(
         onClick = state.onClick,
         modifier = modifier,
+        contentPadding = contentPadding
     ) {
         Text(
             maxLines = 1,
@@ -62,7 +65,9 @@ fun TransactionDetailInfoRow(
             ) {
                 Text(
                     maxLines = 1,
-                    text = state.message.getValue(),
+                    text =
+                        state.message orHiddenString
+                            stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                     style = ZashiTypography.textSm,
                     color = ZashiColors.Text.textPrimary,
                     fontWeight = FontWeight.Medium,
@@ -107,13 +112,14 @@ fun TransactionDetailInfoRow(
 @Composable
 fun TransactionDetailRowSurface(
     onClick: (() -> Unit)?,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit,
 ) {
     val clickModifier =
         if (onClick != null) {
             Modifier.clickable(
-                indication = ripple(),
+                indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = onClick,
                 role = Role.Button,
@@ -123,7 +129,7 @@ fun TransactionDetailRowSurface(
         }
 
     Row(
-        modifier = modifier then clickModifier then Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
+        modifier = modifier then clickModifier then Modifier.padding(contentPadding),
         verticalAlignment = Alignment.CenterVertically
     ) {
         content()

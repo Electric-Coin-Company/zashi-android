@@ -1,6 +1,6 @@
 package co.electriccoin.zcash.ui.common.provider
 
-import co.electriccoin.zcash.ui.common.model.Metadata
+import co.electriccoin.zcash.ui.common.model.metadata.MetadataV3
 import co.electriccoin.zcash.ui.common.serialization.metada.MetadataEncryptor
 import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
 import java.io.File
@@ -8,14 +8,14 @@ import java.io.File
 interface MetadataProvider {
     fun writeMetadataToFile(
         file: File,
-        metadata: Metadata,
+        metadata: MetadataV3,
         metadataKey: MetadataKey
     )
 
     fun readMetadataFromFile(
         file: File,
         addressBookKey: MetadataKey
-    ): Metadata
+    ): MetadataV3
 }
 
 class MetadataProviderImpl(
@@ -23,7 +23,7 @@ class MetadataProviderImpl(
 ) : MetadataProvider {
     override fun writeMetadataToFile(
         file: File,
-        metadata: Metadata,
+        metadata: MetadataV3,
         metadataKey: MetadataKey
     ) {
         file.outputStream().buffered().use { stream ->
@@ -39,7 +39,7 @@ class MetadataProviderImpl(
     override fun readMetadataFromFile(
         file: File,
         addressBookKey: MetadataKey
-    ): Metadata =
+    ): MetadataV3 =
         file.inputStream().use { stream ->
             metadataEncryptor.decrypt(
                 key = addressBookKey,

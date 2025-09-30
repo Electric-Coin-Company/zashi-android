@@ -13,12 +13,14 @@ import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
-import co.electriccoin.zcash.ui.common.model.CompositeSwapQuote
 import co.electriccoin.zcash.ui.common.model.SubmitResult
+import co.electriccoin.zcash.ui.common.model.SwapQuote
+import co.electriccoin.zcash.ui.common.model.SwapStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -40,13 +42,13 @@ interface ZashiProposalRepository {
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactInputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactOutputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
@@ -54,6 +56,9 @@ interface ZashiProposalRepository {
 
     @Throws(IllegalStateException::class)
     fun submitTransaction()
+
+    @Throws(IllegalStateException::class)
+    suspend fun submitTransactionAndGet(): SubmitResult
 
     suspend fun getTransactionProposal(): TransactionProposal
 
@@ -93,7 +98,7 @@ class ZashiProposalRepositoryImpl(
 
     override suspend fun createExactInputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactInputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactInputProposal(
@@ -105,7 +110,7 @@ class ZashiProposalRepositoryImpl(
 
     override suspend fun createExactOutputSwapProposal(
         zecSend: ZecSend,
-        quote: CompositeSwapQuote,
+        quote: SwapQuote,
     ): ExactOutputSwapTransactionProposal =
         createProposalInternal {
             proposalDataSource.createExactOutputProposal(
@@ -123,21 +128,58 @@ class ZashiProposalRepositoryImpl(
         }
     }
 
-    @Suppress("UseCheckOrError", "ThrowingExceptionsWithoutMessageOrCause")
+    @Suppress("TooGenericExceptionCaught")
     override fun submitTransaction() {
         submitJob?.cancel()
-        val transactionProposal = transactionProposal.value ?: throw IllegalStateException()
+        val transactionProposal = checkNotNull(transactionProposal.value)
         submitJob =
             scope.launch {
                 submitState.update { SubmitProposalState.Submitting }
                 val result =
-                    proposalDataSource.submitTransaction(
-                        proposal = transactionProposal.proposal,
-                        usk = zashiSpendingKeyDataSource.getZashiSpendingKey()
-                    )
+                    try {
+                        proposalDataSource.submitTransaction(
+                            proposal = transactionProposal.proposal,
+                            usk = zashiSpendingKeyDataSource.getZashiSpendingKey()
+                        )
+                    } catch (e: Exception) {
+                        SubmitResult.Failure(
+                            txIds = emptyList(),
+                            code = 0,
+                            description = e.message
+                        )
+                    }
                 runSwapPipeline(transactionProposal, result)
                 submitState.update { SubmitProposalState.Result(result) }
             }
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    override suspend fun submitTransactionAndGet(): SubmitResult {
+        submitJob?.cancel()
+        val transactionProposal = checkNotNull(transactionProposal.value)
+        return scope
+            .async {
+                submitState.update { SubmitProposalState.Submitting }
+                try {
+                    val result =
+                        proposalDataSource.submitTransaction(
+                            proposal = transactionProposal.proposal,
+                            usk = zashiSpendingKeyDataSource.getZashiSpendingKey()
+                        )
+                    runSwapPipeline(transactionProposal, result)
+                    submitState.update { SubmitProposalState.Result(result) }
+                    result
+                } catch (e: Exception) {
+                    val result =
+                        SubmitResult.Failure(
+                            txIds = emptyList(),
+                            code = 0,
+                            description = e.message
+                        )
+                    submitState.update { SubmitProposalState.Result(result) }
+                    throw e
+                }
+            }.await()
     }
 
     private fun runSwapPipeline(transactionProposal: TransactionProposal, result: SubmitResult) =
@@ -155,7 +197,12 @@ class ZashiProposalRepositoryImpl(
                     depositAddress = depositAddress,
                     provider = transactionProposal.quote.provider,
                     totalFees = transactionProposal.totalFees,
-                    totalFeesUsd = transactionProposal.totalFeesUsd
+                    totalFeesUsd = transactionProposal.totalFeesUsd,
+                    amountOutFormatted = transactionProposal.quote.amountOutFormatted,
+                    origin = transactionProposal.quote.originAsset,
+                    destination = transactionProposal.quote.destinationAsset,
+                    mode = transactionProposal.quote.mode,
+                    status = SwapStatus.PENDING
                 )
                 txIds.forEach { submitDepositTransaction(it, transactionProposal) }
             }

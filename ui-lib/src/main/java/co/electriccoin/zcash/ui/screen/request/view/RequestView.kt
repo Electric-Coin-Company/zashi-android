@@ -191,7 +191,7 @@ private fun RequestBottomBar(
     }
 }
 
-private val DEFAULT_QR_CODE_SIZE = 320.dp
+val DEFAULT_QR_CODE_SIZE = 320.dp
 
 @Composable
 private fun RequestContents(

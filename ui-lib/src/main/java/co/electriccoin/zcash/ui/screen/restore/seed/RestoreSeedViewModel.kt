@@ -24,11 +24,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
@@ -87,12 +89,8 @@ class RestoreSeedViewModel(
     private val validSeed =
         seedWords
             .map { fields ->
-                validateSeed(fields.map { it.innerState.value })
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = null
-            )
+                validateSeed(fields.map { it.innerState.value.trim() })
+            }
 
     val state: StateFlow<RestoreSeedState?> =
         combine(seedWords, seedValidations, validSeed) { words, seedValidations, validation ->
@@ -156,8 +154,10 @@ class RestoreSeedViewModel(
     }
 
     private fun onNextClicked() {
-        val seed = validSeed.value ?: return
-        navigationRouter.forward(RestoreBDHeight(seed.joinToString()))
+        viewModelScope.launch {
+            val seed = validSeed.first() ?: return@launch
+            navigationRouter.forward(RestoreBDHeight(seed.joinToString()))
+        }
     }
 
     private fun onValueChange(
@@ -165,7 +165,7 @@ class RestoreSeedViewModel(
         state: SeedWordInnerTextFieldState
     ) {
         if (BuildConfig.DEBUG) {
-            val seed = validateSeed(state.value.split(" "))
+            val seed = validateSeed(state.value.trim().split(" "))
             if (seed != null) {
                 prefillSeed(seed)
             } else {

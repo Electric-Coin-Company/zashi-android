@@ -27,10 +27,9 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.StyledStringResource
-import co.electriccoin.zcash.ui.design.util.getColor
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.screen.transactionnote.model.TransactionNoteState
 
 @Composable
@@ -82,7 +81,6 @@ private fun BottomSheetContent(state: TransactionNoteState) {
             modifier = Modifier.padding(horizontal = 24.dp),
             text = state.noteCharacters.getValue(),
             style = ZashiTypography.textSm,
-            color = state.noteCharacters.getColor()
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -133,7 +131,7 @@ private fun Preview() =
                     title = stringRes("Title"),
                     note = TextFieldState(stringRes("")) {},
                     noteCharacters =
-                        StyledStringResource(
+                        styledStringResource(
                             stringRes("x/y characters")
                         ),
                     primaryButton = null,

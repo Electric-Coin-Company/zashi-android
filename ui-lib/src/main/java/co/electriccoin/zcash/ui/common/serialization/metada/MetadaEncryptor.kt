@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.common.serialization.metada
 
-import co.electriccoin.zcash.ui.common.model.Metadata
+import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.model.metadata.MetadataV3
 import co.electriccoin.zcash.ui.common.serialization.BaseSerializer
 import co.electriccoin.zcash.ui.common.serialization.METADATA_ENCRYPTION_V1
 import co.electriccoin.zcash.ui.common.serialization.METADATA_SALT_SIZE
@@ -17,14 +18,14 @@ interface MetadataEncryptor {
     fun encrypt(
         key: MetadataKey,
         outputStream: OutputStream,
-        data: Metadata
+        data: MetadataV3
     )
 
     @Throws(DecryptionException::class)
     fun decrypt(
         key: MetadataKey,
         inputStream: InputStream
-    ): Metadata
+    ): MetadataV3
 }
 
 class MetadataEncryptorImpl(
@@ -37,7 +38,7 @@ class MetadataEncryptorImpl(
     override fun encrypt(
         key: MetadataKey,
         outputStream: OutputStream,
-        data: Metadata
+        data: MetadataV3
     ) {
         // Generate a fresh one-time key for this ciphertext.
         val salt = Random.randBytes(saltSize)
@@ -62,7 +63,7 @@ class MetadataEncryptorImpl(
     override fun decrypt(
         key: MetadataKey,
         inputStream: InputStream
-    ): Metadata {
+    ): MetadataV3 {
         val version = inputStream.readInt() // read encryption version
         if (version != this.version) {
             throw UnknownEncryptionVersionException()
@@ -85,24 +86,23 @@ class MetadataEncryptorImpl(
     private fun decrypt(
         key: ChaCha20Poly1305Key?,
         ciphertext: ByteArray
-    ): Metadata? {
+    ): MetadataV3? {
         if (key == null) return null
 
         return runCatching {
             val cipher = ChaCha20Poly1305.create(key)
             val plaintext = cipher.decrypt(ciphertext, null)
             plaintext.inputStream().use { stream -> deserialize(stream) }
+        }.onFailure {
+            Twig.error(it) { "Failed to deserialize metadata" }
         }.getOrNull()
     }
 
-    private fun serialize(
-        outputStream: ByteArrayOutputStream,
-        data: Metadata
-    ) {
+    private fun serialize(outputStream: ByteArrayOutputStream, data: MetadataV3) {
         metadataSerializer.serialize(outputStream, data)
     }
 
-    private fun deserialize(inputStream: ByteArrayInputStream): Metadata = metadataSerializer.deserialize(inputStream)
+    private fun deserialize(inputStream: ByteArrayInputStream): MetadataV3 = metadataSerializer.deserialize(inputStream)
 }
 
 class DecryptionException : Exception()

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.imageRes
@@ -26,31 +24,29 @@ import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 @Composable
 fun ZashiSwapQuoteHeader(
     state: SwapQuoteHeaderState,
-    balancesAvailable: Boolean = true
+    modifier: Modifier = Modifier
 ) {
-    CompositionLocalProvider(
-        LocalBalancesAvailable provides balancesAvailable
+    Box(
+        modifier = modifier
     ) {
-        Box {
-            Row {
-                ZashiSwapQuoteAmount(modifier = Modifier.weight(1f), state = state.from)
-                Spacer(8.dp)
-                ZashiSwapQuoteAmount(modifier = Modifier.weight(1f), state = state.to)
-            }
-            Surface(
-                modifier = Modifier.align(Alignment.Center),
-                shape = CircleShape,
-                color = ZashiColors.Surfaces.bgPrimary,
-                shadowElevation = 2.dp
+        Row {
+            ZashiSwapQuoteAmount(modifier = Modifier.weight(1f), state = state.from)
+            Spacer(8.dp)
+            ZashiSwapQuoteAmount(modifier = Modifier.weight(1f), state = state.to)
+        }
+        Surface(
+            modifier = Modifier.align(Alignment.Center),
+            shape = CircleShape,
+            color = ZashiColors.Surfaces.bgPrimary,
+            shadowElevation = 2.dp
+        ) {
+            Box(
+                Modifier.padding(8.dp)
             ) {
-                Box(
-                    Modifier.padding(8.dp)
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_arrow_right),
-                        contentDescription = null
-                    )
-                }
+                Image(
+                    painter = painterResource(R.drawable.ic_arrow_right),
+                    contentDescription = null
+                )
             }
         }
     }
