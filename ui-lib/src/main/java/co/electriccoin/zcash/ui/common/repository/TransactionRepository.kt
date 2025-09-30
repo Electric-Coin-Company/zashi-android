@@ -222,10 +222,8 @@ class TransactionRepositoryImpl(
         return if (minedHeight != null) return Confirmed else null
     }
 
-    private fun createTimestamp(overview: TransactionOverview): Instant? {
-        if (overview.blockTimeEpochSeconds == null && overview.minedHeight == null) return Instant.now()
-        return overview.blockTimeEpochSeconds?.let { Instant.ofEpochSecond(it) }
-    }
+    private fun createTimestamp(overview: TransactionOverview): Instant? =
+        overview.blockTimeEpochSeconds?.let { Instant.ofEpochSecond(it) }
 
     override suspend fun getMemos(transaction: Transaction): List<String> =
         withContext(Dispatchers.IO) {

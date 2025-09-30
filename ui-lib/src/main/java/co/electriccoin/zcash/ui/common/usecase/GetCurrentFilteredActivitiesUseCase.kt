@@ -47,7 +47,7 @@ class GetCurrentFilteredActivitiesUseCase(
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val addressBookRepository: AddressBookRepository,
     private val context: Context,
-) : CloseableScopeHolder by CloseableScopeHolderImpl(coroutineContext = Dispatchers.IO) {
+) : CloseableScopeHolder by CloseableScopeHolderImpl(coroutineContext = Dispatchers.Default) {
     @OptIn(ExperimentalCoroutinesApi::class)
     private val detailedCurrentTransactions =
         getActivities
