@@ -27,10 +27,10 @@ class AddressBookSerializer : BaseSerializer() {
     }
 
     fun deserializeAddressBook(inputStream: InputStream): AddressBook =
-        when (val version = inputStream.readInt()) {
+        when (inputStream.readInt()) {
             ADDRESS_BOOK_SERIALIZATION_V1 ->
                 AddressBook(
-                    version = version,
+                    version = ADDRESS_BOOK_SERIALIZATION_V1,
                     lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
                     contacts =
                         inputStream.readInt().let { contactsSize ->
@@ -47,7 +47,7 @@ class AddressBookSerializer : BaseSerializer() {
 
             ADDRESS_BOOK_SERIALIZATION_V2 ->
                 AddressBook(
-                    version = version,
+                    version = ADDRESS_BOOK_SERIALIZATION_V2,
                     lastUpdated = inputStream.readLong().let { Instant.fromEpochMilliseconds(it) },
                     contacts =
                         inputStream.readInt().let { contactsSize ->

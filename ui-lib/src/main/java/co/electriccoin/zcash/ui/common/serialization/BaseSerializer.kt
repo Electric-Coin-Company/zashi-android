@@ -28,6 +28,7 @@ abstract class BaseSerializer {
 
     protected fun InputStream.readString(): String {
         val size = this.readInt()
+        if (size == 0) return ""
         val buffer = ByteArray(size)
         require(this.read(buffer) == buffer.size)
         return String(buffer)
