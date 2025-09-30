@@ -62,7 +62,7 @@
         source currency - %s on %s. Please enter a valid address to avoid loss of funds.</string>
     <string name="swap_detail_row_header">Swap Details</string>
     <string name="swap_detail_row_deposit_to">Deposit to</string>
-    <string name="swap_detail_title_swap_expired">Expired</string>
+    <string name="swap_detail_title_swap_expired">Swap Expired</string>
     <string name="swap_detail_title_swap_pending">Swapping</string>
     <string name="swap_detail_title_swap_completed">Swapped</string>
     <string name="swap_detail_title_swap_refunded">Swap Refunded</string>
