@@ -12,6 +12,17 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.4.0 (1225)] - 2025-09-30
+
+### Añadido:
+- ¡La función de swap hacia ZEC que estaban esperando! Con el apoyo de Near Intents.
+- Usa Zashi para intercambiar cualquier criptomoneda compatible hacia Zcash.
+- Deposita fondos con cualquiera de tus billeteras favoritas.
+- Recibe ZEC en Zashi y protégelos.
+- Consulta las transacciones entrantes más rápido con la detección de mempool.
+- Confirma tu cambio más rápido con 3 confirmaciones
+
+
 ## [2.4.0 (1223)] - 2025-09-30
 
 ### Añadido:

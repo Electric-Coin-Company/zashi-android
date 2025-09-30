@@ -6,6 +6,11 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.0 (1225)] - 2025-09-30
+
+### Fixed:
+- Fixed an issue where storing empty string in AB resulted in data loss
+
 ## [2.4.0 (1223)] - 2025-09-30
 
 ### Added:
