@@ -6,7 +6,7 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
-import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
+import co.electriccoin.zcash.ui.common.mapper.ActivityMapper
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.repository.Transaction
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 class TransactionHistoryWidgetVM(
     getActivities: GetActivitiesUseCase,
     getWalletRestoringState: GetWalletRestoringStateUseCase,
-    private val transactionHistoryMapper: TransactionHistoryMapper,
+    private val activityMapper: ActivityMapper,
     private val navigationRouter: NavigationRouter,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val navigateToRequestShielded: NavigateToRequestShieldedUseCase,
@@ -72,7 +72,7 @@ class TransactionHistoryWidgetVM(
                             transactions
                                 .take(MAX_TRANSACTION_COUNT)
                                 .map { transaction ->
-                                    transactionHistoryMapper.createTransactionState(
+                                    activityMapper.createTransactionState(
                                         data = transaction,
                                         restoreTimestamp = restoreTimestampDataSource.getOrCreate(),
                                         onTransactionClick = ::onTransactionClick,

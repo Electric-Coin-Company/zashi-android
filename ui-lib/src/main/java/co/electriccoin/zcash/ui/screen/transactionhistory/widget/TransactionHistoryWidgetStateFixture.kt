@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.transactionhistory.widget
 
-import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionStateFixture

@@ -1,6 +1,6 @@
 package co.electriccoin.zcash.di
 
-import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
+import co.electriccoin.zcash.ui.common.mapper.ActivityMapper
 import co.electriccoin.zcash.ui.screen.pay.ExactOutputVMMapper
 import co.electriccoin.zcash.ui.screen.swap.ExactInputVMMapper
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteVMMapper
@@ -10,7 +10,7 @@ import org.koin.dsl.module
 
 val mapperModule =
     module {
-        factoryOf(::TransactionHistoryMapper)
+        factoryOf(::ActivityMapper)
         factoryOf(::ExactOutputVMMapper)
         factoryOf(::ExactInputVMMapper)
         factoryOf(::SwapQuoteVMMapper)
