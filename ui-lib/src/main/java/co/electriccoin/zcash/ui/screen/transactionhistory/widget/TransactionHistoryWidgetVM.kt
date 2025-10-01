@@ -8,11 +8,9 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.mapper.ActivityMapper
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
-import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.usecase.GetActivitiesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -32,8 +30,8 @@ class TransactionHistoryWidgetVM(
     private val navigationRouter: NavigationRouter,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val navigateToRequestShielded: NavigateToRequestShieldedUseCase,
-    private val navigateToCoinbase: NavigateToCoinbaseUseCase,
-    private val getVersionInfoProvider: GetVersionInfoProvider,
+    // private val navigateToCoinbase: NavigateToCoinbaseUseCase,
+    // private val getVersionInfoProvider: GetVersionInfoProvider,
 ) : ViewModel() {
     val state =
         combine(

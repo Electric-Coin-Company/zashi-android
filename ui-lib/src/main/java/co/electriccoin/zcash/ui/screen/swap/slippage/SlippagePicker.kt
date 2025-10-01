@@ -297,8 +297,7 @@ private fun Button(
                     onClick = onClick,
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
-                )
-                .padding(vertical = 8.dp),
+                ).padding(vertical = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
         val color by animateColorAsState(
@@ -340,8 +339,7 @@ private fun Indicator(
                     .background(
                         shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg),
                         color = ZashiColors.Switcher.selectedBg,
-                    )
-                    .border(
+                    ).border(
                         border = BorderStroke(1.dp, ZashiColors.Switcher.selectedStroke),
                         shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg)
                     )
