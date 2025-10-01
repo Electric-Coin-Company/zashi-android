@@ -221,7 +221,7 @@ private fun StringResource.ByNumber.convertNumber(locale: Locale): String =
     convertNumberToString(number, locale, minDecimals)
 
 private fun StringResource.ByZatoshi.convertZatoshi(): String {
-    val amount = this.zatoshi.convertZatoshiToZecString()
+    val amount = this.zatoshi.convertZatoshiToZecString(maxDecimals = 8)
     return when (this.tickerLocation) {
         TickerLocation.BEFORE -> "ZEC $amount"
         TickerLocation.AFTER -> "$amount ZEC"
