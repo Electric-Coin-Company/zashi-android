@@ -89,11 +89,12 @@ class IntegrationsVM(
         items =
             listOfNotNull(
                 ListItemState(
-                    bigIcon = if (isRestoring) {
-                        imageRes(R.drawable.ic_integrations_near_disabled)
-                    } else {
-                        imageRes(R.drawable.ic_integrations_near)
-                    },
+                    bigIcon =
+                        if (isRestoring) {
+                            imageRes(R.drawable.ic_integrations_near_disabled)
+                        } else {
+                            imageRes(R.drawable.ic_integrations_near)
+                        },
                     title = stringRes(R.string.integrations_near_swap),
                     subtitle = stringRes(R.string.integrations_near_swap_message),
                     onClick = ::onNearSwapClick,
