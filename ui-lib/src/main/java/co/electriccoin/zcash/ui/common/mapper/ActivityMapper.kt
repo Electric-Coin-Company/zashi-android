@@ -29,7 +29,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
-class TransactionHistoryMapper {
+class ActivityMapper {
     fun createTransactionState(
         data: ActivityData,
         restoreTimestamp: Instant,

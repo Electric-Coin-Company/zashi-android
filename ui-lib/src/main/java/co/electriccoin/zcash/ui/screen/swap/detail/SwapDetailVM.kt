@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.common.model.SwapStatus.PENDING
 import co.electriccoin.zcash.ui.common.model.SwapStatus.PROCESSING
 import co.electriccoin.zcash.ui.common.model.SwapStatus.REFUNDED
 import co.electriccoin.zcash.ui.common.model.SwapStatus.SUCCESS
+import co.electriccoin.zcash.ui.common.model.ZecSwapAsset
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetORSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.SwapData
@@ -51,14 +52,14 @@ class SwapDetailVM(
                     quoteHeader =
                         mapper
                             .createTransactionDetailQuoteHeaderState(
-                                swap = swapData.data?.data,
-                                originAsset = swapData.data?.originAsset,
-                                destinationAsset = swapData.data?.destinationAsset
+                                swap = swapData.status,
+                                originAsset = swapData.status?.quote?.originAsset,
+                                destinationAsset = swapData.status?.quote?.destinationAsset
                             ),
                     status =
                         TransactionDetailSwapStatusRowState(
                             title = stringRes(R.string.transaction_detail_info_transaction_status),
-                            status = swapData.data?.data?.status,
+                            status = swapData.status?.status,
                             mode = SWAP_INTO_ZEC
                         ),
                     depositTo =
@@ -75,8 +76,7 @@ class SwapDetailVM(
                         TransactionDetailInfoRowState(
                             title = stringRes(R.string.transaction_detail_info_timestamp),
                             message =
-                                swapData.data
-                                    ?.data
+                                swapData.status
                                     ?.timestamp
                                     ?.atZone(ZoneId.systemDefault())
                                     ?.let {
@@ -86,8 +86,8 @@ class SwapDetailVM(
                                         )
                                     },
                         ),
-                    errorFooter = mapper.createTransactionDetailErrorFooter(swapData.data?.error),
-                    primaryButton = createPrimaryButtonState(swapData, swapData.data?.error),
+                    errorFooter = mapper.createTransactionDetailErrorFooter(swapData.error),
+                    primaryButton = createPrimaryButtonState(swapData, swapData.error),
                     onBack = ::onBack
                 )
             }.stateIn(
@@ -100,13 +100,17 @@ class SwapDetailVM(
         TransactionDetailInfoRowState(
             title = stringRes(R.string.transaction_detail_info_total_fees),
             message =
-                if (swapData.data?.data?.amountInFee != null && swapData.data.originAsset != null) {
-                    stringResByCurrencyNumber(
-                        amount = swapData.data.data.amountInFee,
-                        ticker =
-                            swapData.data.originAsset.tokenTicker
-                                .uppercase()
-                    )
+                if (swapData.status != null) {
+                    val text =
+                        stringResByCurrencyNumber(
+                            amount = swapData.status.amountInFee,
+                            ticker = swapData.status.quote.originAsset.tokenTicker
+                        )
+                    if (swapData.status.quote.destinationAsset is ZecSwapAsset) {
+                        stringRes("~") + text
+                    } else {
+                        text
+                    }
                 } else {
                     null
                 }
@@ -116,14 +120,13 @@ class SwapDetailVM(
         TransactionDetailInfoRowState(
             title = stringRes(R.string.transaction_detail_info_recipient),
             message =
-                swapData.data
-                    ?.data
+                swapData.status
                     ?.recipient
                     ?.let { stringResByAddress(it, true) },
             trailingIcon = R.drawable.ic_transaction_detail_info_copy,
             onClick =
-                if (swapData.data?.data?.recipient != null) {
-                    { onCopyRecipientAddressClick(swapData.data.data.recipient) }
+                if (swapData.status?.recipient != null) {
+                    { onCopyRecipientAddressClick(swapData.status.recipient) }
                 } else {
                     null
                 }
@@ -132,13 +135,13 @@ class SwapDetailVM(
     private fun createSlippageState(swapData: SwapData): TransactionDetailInfoRowState =
         TransactionDetailInfoRowState(
             title =
-                if (swapData.data?.data?.isSlippageRealized == true) {
+                if (swapData.status?.isSlippageRealized == true) {
                     stringRes(R.string.transaction_detail_info_realized_slippage)
                 } else {
                     stringRes(R.string.transaction_detail_info_max_slippage)
                 },
             message =
-                swapData.data?.data?.maxSlippage?.let {
+                swapData.status?.maxSlippage?.let {
                     stringResByNumber(it, 0) + stringRes("%")
                 },
         )
@@ -147,7 +150,7 @@ class SwapDetailVM(
         swapData: SwapData,
         error: Exception?
     ): ButtonState? =
-        if (swapData.data?.error != null && swapData.data.data == null) {
+        if (swapData.error != null && swapData.status == null) {
             mapper.createTransactionDetailErrorButtonState(
                 error = error,
                 reloadHandle = swapData.handle
@@ -159,7 +162,7 @@ class SwapDetailVM(
     private fun createTransactionHeaderState(swapData: SwapData): TransactionDetailHeaderState =
         TransactionDetailHeaderState(
             title =
-                when (swapData.data?.data?.status) {
+                when (swapData.status?.status) {
                     EXPIRED -> stringRes(R.string.swap_detail_title_swap_expired)
 
                     INCOMPLETE_DEPOSIT,
@@ -172,13 +175,15 @@ class SwapDetailVM(
                     null -> null
                 },
             amount =
-                swapData.data
-                    ?.data
+                swapData.status
                     ?.amountOutFormatted
                     ?.let { stringResByNumber(it) },
             icons =
                 listOf(
-                    swapData.data?.originAsset?.tokenIcon ?: loadingImageRes(),
+                    swapData.status
+                        ?.quote
+                        ?.originAsset
+                        ?.tokenIcon ?: loadingImageRes(),
                     imageRes(R.drawable.ic_transaction_received),
                     imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
                 )

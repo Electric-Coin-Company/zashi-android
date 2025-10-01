@@ -16,7 +16,7 @@ import java.time.Instant
 import kotlin.time.Duration.Companion.minutes
 
 interface SwapQuoteStatus {
-    val swapQuote: SwapQuote
+    val quote: SwapQuote
 
     val timestamp: Instant
 
@@ -50,7 +50,7 @@ data class NearSwapQuoteStatus(
     val origin: SwapAsset,
     val destination: SwapAsset
 ) : SwapQuoteStatus {
-    override val swapQuote: SwapQuote =
+    override val quote: SwapQuote =
         NearSwapQuote(
             response = response.quoteResponse,
             originAsset = origin,
@@ -91,15 +91,15 @@ data class NearSwapQuoteStatus(
             ?.let {
                 BigDecimal(it).divide(BigDecimal(100), MathContext.DECIMAL128)
             }
-            ?: swapQuote.slippage
+            ?: quote.slippage
 
-    override val recipient: String = swapQuote.recipient
+    override val recipient: String = quote.recipient
 
-    override val mode: SwapMode = swapQuote.mode
+    override val mode: SwapMode = quote.mode
 
-    override val amountIn: BigDecimal = response.swapDetails?.amountIn ?: swapQuote.amountIn
+    override val amountIn: BigDecimal = response.swapDetails?.amountIn ?: quote.amountIn
 
-    override val amountInFormatted: BigDecimal = response.swapDetails?.amountInFormatted ?: swapQuote.amountInFormatted
+    override val amountInFormatted: BigDecimal = response.swapDetails?.amountInFormatted ?: quote.amountInFormatted
 
     override val amountInFee: BigDecimal =
         amountInFormatted
@@ -108,14 +108,14 @@ data class NearSwapQuoteStatus(
                 MathContext.DECIMAL128
             )
 
-    override val amountInUsd: BigDecimal = response.swapDetails?.amountInUsd ?: swapQuote.amountInUsd
+    override val amountInUsd: BigDecimal = response.swapDetails?.amountInUsd ?: quote.amountInUsd
 
-    override val amountOut: BigDecimal = response.swapDetails?.amountOut ?: swapQuote.amountOut
+    override val amountOut: BigDecimal = response.swapDetails?.amountOut ?: quote.amountOut
 
     override val amountOutFormatted: BigDecimal =
-        response.swapDetails?.amountOutFormatted ?: swapQuote.amountOutFormatted
+        response.swapDetails?.amountOutFormatted ?: quote.amountOutFormatted
 
-    override val amountOutUsd: BigDecimal = response.swapDetails?.amountOutUsd ?: swapQuote.amountOutUsd
+    override val amountOutUsd: BigDecimal = response.swapDetails?.amountOutUsd ?: quote.amountOutUsd
 
     override val refunded: BigDecimal? = response.swapDetails?.refundedAmount
 

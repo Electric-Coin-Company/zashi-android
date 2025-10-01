@@ -27,7 +27,16 @@ sealed interface StyledStringResource {
         val fontWeight: FontWeight?,
         val args: List<Any>
     ) : StyledStringResource
+
+    operator fun plus(
+        other: StyledStringResource
+    ): StyledStringResource = CompositeStyledStringResource(listOf(this, other))
 }
+
+@Immutable
+private data class CompositeStyledStringResource(
+    val resources: List<StyledStringResource>
+) : StyledStringResource
 
 @Stable
 fun styledStringResource(
@@ -118,6 +127,7 @@ fun StyledStringResource.getValue() =
                                     ).getValue()
 
                                 is StyledStringResource.ByStringResource -> arg.resource.getValue()
+                                is CompositeStyledStringResource -> arg.convertComposite()
                             }
                         }
 
@@ -158,6 +168,17 @@ fun StyledStringResource.getValue() =
                     }
                 }
             }
+        }
+
+        is CompositeStyledStringResource -> convertComposite()
+    }
+
+@Composable
+private fun CompositeStyledStringResource.convertComposite(): AnnotatedString =
+    buildAnnotatedString {
+        resources.forEach {
+            val value: AnnotatedString = it.getValue()
+            append(value)
         }
     }
 

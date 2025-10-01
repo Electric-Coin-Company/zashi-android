@@ -6,7 +6,7 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
-import co.electriccoin.zcash.ui.common.mapper.TransactionHistoryMapper
+import co.electriccoin.zcash.ui.common.mapper.ActivityMapper
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
 import co.electriccoin.zcash.ui.common.usecase.ActivityData
@@ -39,7 +39,7 @@ class TransactionHistoryVM(
     getTransactionFilters: GetTransactionFiltersUseCase,
     transactionFilterRepository: TransactionFilterRepository,
     private val applyTransactionFulltextFilters: ApplyTransactionFulltextFiltersUseCase,
-    private val transactionHistoryMapper: TransactionHistoryMapper,
+    private val activityMapper: ActivityMapper,
     private val navigationRouter: NavigationRouter,
     private val resetTransactionFilters: ResetTransactionFiltersUseCase,
     private val restoreTimestampDataSource: RestoreTimestampDataSource
@@ -144,7 +144,7 @@ class TransactionHistoryVM(
                         transactions.map { activity ->
                             TransactionHistoryItem.Transaction(
                                 state =
-                                    transactionHistoryMapper.createTransactionState(
+                                    activityMapper.createTransactionState(
                                         data = activity,
                                         restoreTimestamp = restoreTimestamp,
                                         onTransactionClick = ::onTransactionClick,

@@ -131,12 +131,12 @@ class TransactionDetailVM(
             is SendTransaction -> {
                 when {
                     transaction.swap != null -> {
-                        val recipient = transaction.swap.data?.recipient
+                        val recipient = transaction.swap.status?.recipient
                         SendSwapState(
-                            status = transaction.swap.data?.status,
+                            status = transaction.swap.status?.status,
                             quoteHeader =
                                 mapper.createTransactionDetailQuoteHeaderState(
-                                    swap = transaction.swap.data,
+                                    swap = transaction.swap.status,
                                     originAsset = transaction.swap.originAsset,
                                     destinationAsset = transaction.swap.destinationAsset
                                 ),
@@ -156,12 +156,12 @@ class TransactionDetailVM(
                                     abbreviated = true
                                 ),
                             refundedAmount =
-                                transaction.swap.data
+                                transaction.swap.status
                                     ?.refundedFormatted
                                     ?.let {
                                         stringResByCurrencyNumber(amount = it, ticker = "ZEC")
                                     }?.takeIf {
-                                        transaction.swap.data.status == SwapStatus.REFUNDED
+                                        transaction.swap.status.status == SwapStatus.REFUNDED
                                     },
                             onTransactionIdClick = {
                                 onCopyToClipboard(transaction.transaction.id.txIdString())
@@ -176,11 +176,11 @@ class TransactionDetailVM(
                                     { onCopyToClipboard(recipient) }
                                 },
                             maxSlippage =
-                                transaction.swap.data?.maxSlippage?.let {
+                                transaction.swap.status?.maxSlippage?.let {
                                     stringResByNumber(it, 0) + stringRes("%")
                                 },
                             note = transaction.metadata.note?.let { stringRes(it) },
-                            isSlippageRealized = transaction.swap.data?.isSlippageRealized == true,
+                            isSlippageRealized = transaction.swap.status?.isSlippageRealized == true,
                             isPending = isPending(transaction),
                             completedTimestamp = createTimestampStringRes(transaction),
                         )
@@ -330,7 +330,7 @@ class TransactionDetailVM(
 
     private fun createPrimaryButtonState(data: DetailedTransactionData): ButtonState? =
         when {
-            data.swap?.error != null && data.swap.data != null ->
+            data.swap?.error != null && data.swap.status != null ->
                 mapper.createTransactionDetailErrorButtonState(
                     error = data.swap.error,
                     reloadHandle = data.reloadHandle

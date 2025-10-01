@@ -80,12 +80,12 @@ data class SwapAssetsData(
 )
 
 data class SwapQuoteStatusData(
-    val data: SwapQuoteStatus?,
+    val status: SwapQuoteStatus?,
     val isLoading: Boolean,
     val error: Exception?,
 ) {
-    val originAsset = data?.swapQuote?.originAsset
-    val destinationAsset = data?.swapQuote?.destinationAsset
+    val originAsset = status?.quote?.originAsset
+    val destinationAsset = status?.quote?.destinationAsset
 }
 
 @Suppress("TooManyFunctions")
@@ -207,7 +207,7 @@ class SwapRepositoryImpl(
             val data =
                 MutableStateFlow(
                     SwapQuoteStatusData(
-                        data = null,
+                        status = null,
                         isLoading = true,
                         error = null
                     )
@@ -234,12 +234,12 @@ class SwapRepositoryImpl(
                             amountOutFormatted = result.amountOutFormatted,
                             status = result.status,
                             mode = result.mode,
-                            origin = result.swapQuote.originAsset,
-                            destination = result.swapQuote.destinationAsset
+                            origin = result.quote.originAsset,
+                            destination = result.quote.destinationAsset
                         )
                         data.update {
                             it.copy(
-                                data = result,
+                                status = result,
                                 isLoading = false,
                                 error = null
                             )

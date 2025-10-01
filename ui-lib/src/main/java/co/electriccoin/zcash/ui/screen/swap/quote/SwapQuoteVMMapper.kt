@@ -101,41 +101,28 @@ internal class SwapQuoteVMMapper {
                 subtitle =
                     stringResByDynamicCurrencyNumber(totalFeesUsd, FiatCurrency.USD.symbol)
                         .takeIf {
-                            quote.mode == EXACT_INPUT && quote.destinationAsset !is ZecSwapAsset
+                            quote.mode == EXACT_OUTPUT
                         }
             ),
             if (quote.mode == EXACT_OUTPUT) {
-                val slippage = quote.slippage.divide(BigDecimal(100))
+                val slippage = quote.slippage.divide(BigDecimal("100"))
                 val slippageUsd = quote.amountOutUsd.multiply(slippage)
+                val slippageZatoshi =
+                    quote.amountInFormatted
+                        .multiply(
+                            slippage,
+                            MathContext.DECIMAL128
+                        ).convertZecToZatoshi()
+
                 SwapQuoteInfoItem(
                     description =
                         stringRes(
                             R.string.swap_quote_max_slippage,
                             stringResByNumber(quote.slippage, minDecimals = 0) + stringRes("%")
                         ),
-                    title =
-                        if (quote.destinationAsset is ZecSwapAsset) {
-                            val slippageToken =
-                                quote.amountInFormatted
-                                    .multiply(
-                                        slippage,
-                                        MathContext.DECIMAL128
-                                    )
-                            stringResByDynamicCurrencyNumber(slippageToken, quote.destinationAsset.tokenTicker)
-                        } else {
-                            val slippageZatoshi =
-                                quote.amountInFormatted
-                                    .multiply(
-                                        slippage,
-                                        MathContext.DECIMAL128
-                                    ).convertZecToZatoshi()
-                            stringRes(slippageZatoshi)
-                        },
+                    title = stringRes(slippageZatoshi),
                     subtitle =
                         stringResByDynamicCurrencyNumber(slippageUsd, FiatCurrency.USD.symbol)
-                            .takeIf {
-                                quote.mode == EXACT_INPUT && quote.destinationAsset !is ZecSwapAsset
-                            }
                 )
             } else {
                 null

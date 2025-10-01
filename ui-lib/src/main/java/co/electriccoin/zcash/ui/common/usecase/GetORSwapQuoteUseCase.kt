@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.usecase
 
+import co.electriccoin.zcash.ui.common.model.SwapQuoteStatus
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteStatusData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,9 +40,9 @@ class GetORSwapQuoteUseCase(
                     }
 
             swapFlow
-                .map { swap ->
+                .map { status ->
                     SwapData(
-                        data = swap,
+                        data = status,
                         handle = reloadHandle
                     )
                 }.collect {
@@ -55,6 +56,10 @@ class GetORSwapQuoteUseCase(
 }
 
 data class SwapData(
-    val data: SwapQuoteStatusData?,
+    val data: SwapQuoteStatusData,
     val handle: ReloadHandle
-)
+) {
+    val status: SwapQuoteStatus? = data.status
+    val isLoading: Boolean = data.isLoading
+    val error: Exception? = data.error
+}

@@ -10,7 +10,7 @@ class SuffixVisualTransformation(
 ) : VisualTransformation {
     @Suppress("ReturnCount")
     override fun filter(text: AnnotatedString): TransformedText {
-        val result = if (text.isEmpty()) text else text + AnnotatedString(suffix)
+        val result = text + AnnotatedString(suffix)
 
         val textWithSuffixMapping =
             object : OffsetMapping {

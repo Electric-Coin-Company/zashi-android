@@ -22,6 +22,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +35,7 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -83,19 +85,19 @@ fun SlippagePicker(
         )
     }
 
+    LaunchedEffect(isTextFieldFocused) {
+        if (isTextFieldFocused) {
+            state.onAmountChange(textFieldInnerState.amount)
+        }
+    }
+
     val textFieldState by remember {
         derivedStateOf {
             NumberTextFieldState(
                 innerState = textFieldInnerState,
                 onValueChange = {
-                    val normalized =
-                        if (it.innerTextFieldState.value.isEmpty()) {
-                            it.copy(amount = BigDecimal(0))
-                        } else {
-                            it
-                        }
-                    textFieldInnerState = normalized
-                    state.onAmountChange(normalized.amount)
+                    textFieldInnerState = it
+                    state.onAmountChange(it.amount)
                 }
             )
         }
@@ -184,7 +186,12 @@ fun SlippagePicker(
                     } else {
                         null
                     },
-                visualTransformation = SuffixVisualTransformation("%"),
+                visualTransformation =
+                    if (isTextFieldFocused || selection is Selection.ByTextField) {
+                        SuffixVisualTransformation("%")
+                    } else {
+                        VisualTransformation.None
+                    },
                 contentPadding = PaddingValues(top = 16.dp),
             )
         }

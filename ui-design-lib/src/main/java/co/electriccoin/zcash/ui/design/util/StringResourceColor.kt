@@ -6,6 +6,7 @@ import co.electriccoin.zcash.ui.design.util.StringResourceColor.HINT_ERROR
 import co.electriccoin.zcash.ui.design.util.StringResourceColor.NEGATIVE
 import co.electriccoin.zcash.ui.design.util.StringResourceColor.POSITIVE
 import co.electriccoin.zcash.ui.design.util.StringResourceColor.PRIMARY
+import co.electriccoin.zcash.ui.design.util.StringResourceColor.QUARTERNARY
 import co.electriccoin.zcash.ui.design.util.StringResourceColor.TERTIARY
 
 enum class StringResourceColor {
@@ -13,7 +14,8 @@ enum class StringResourceColor {
     TERTIARY,
     POSITIVE,
     NEGATIVE,
-    HINT_ERROR
+    HINT_ERROR,
+    QUARTERNARY
 }
 
 @Composable
@@ -24,4 +26,5 @@ fun StringResourceColor.getColor() =
         POSITIVE -> ZashiColors.Utility.SuccessGreen.utilitySuccess700
         NEGATIVE -> ZashiColors.Text.textError
         HINT_ERROR -> ZashiColors.Inputs.ErrorDefault.hint
+        QUARTERNARY -> ZashiColors.Text.textQuaternary
     }
