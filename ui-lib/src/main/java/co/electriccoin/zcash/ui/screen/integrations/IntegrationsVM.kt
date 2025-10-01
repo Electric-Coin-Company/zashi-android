@@ -89,10 +89,15 @@ class IntegrationsVM(
         items =
             listOfNotNull(
                 ListItemState(
-                    bigIcon = imageRes(R.drawable.ic_integrations_near),
+                    bigIcon = if (isRestoring) {
+                        imageRes(R.drawable.ic_integrations_near_disabled)
+                    } else {
+                        imageRes(R.drawable.ic_integrations_near)
+                    },
                     title = stringRes(R.string.integrations_near_swap),
                     subtitle = stringRes(R.string.integrations_near_swap_message),
                     onClick = ::onNearSwapClick,
+                    isEnabled = isRestoring.not(),
                 ),
                 ListItemState(
                     // Set the wallet currency by app build is more future-proof, although we hide it from
