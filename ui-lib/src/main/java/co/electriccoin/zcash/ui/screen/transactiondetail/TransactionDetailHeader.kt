@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
@@ -22,28 +21,29 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cash.z.ecc.android.sdk.model.Zatoshi
+import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.ZashiTextOrShimmer
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.Compose
 import co.electriccoin.zcash.ui.design.util.ComposeAsShimmerCircle
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.StringResourceColor.QUARTERNARY
 import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.loadingImageRes
 import co.electriccoin.zcash.ui.design.util.orHiddenString
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.styledStringResource
 
 @Suppress("MagicNumber")
 @Composable
@@ -137,22 +137,16 @@ fun TransactionDetailHeader(
                         if (state.amount == null) {
                             null
                         } else {
-                            state.amount orHiddenString
-                                stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder)
+                            val header =
+                                styledStringResource(state.amount) +
+                                    styledStringResource(stringRes(" ZEC"), color = QUARTERNARY)
+                            header orHiddenString stringRes(R.string.hide_balance_placeholder)
                         },
                     shimmerWidth = 178.dp,
                     style = ZashiTypography.header3,
                     fontWeight = FontWeight.SemiBold,
                     color = ZashiColors.Text.textPrimary
                 )
-                if (state.amount != null && LocalBalancesAvailable.current) {
-                    Text(
-                        text = stringResource(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
-                        style = ZashiTypography.header3,
-                        fontWeight = FontWeight.SemiBold,
-                        color = ZashiColors.Text.textQuaternary
-                    )
-                }
             }
         }
     }

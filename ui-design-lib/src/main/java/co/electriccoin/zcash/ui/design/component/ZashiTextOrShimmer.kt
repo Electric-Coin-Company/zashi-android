@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -38,6 +39,68 @@ fun ZashiTextOrShimmer(
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
+    style: TextStyle = LocalTextStyle.current
+) {
+    if (text != null) {
+        Text(
+            text = text,
+            modifier = modifier,
+            color = color,
+            fontSize = fontSize,
+            fontStyle = fontStyle,
+            fontWeight = fontWeight,
+            fontFamily = fontFamily,
+            letterSpacing = letterSpacing,
+            textDecoration = textDecoration,
+            textAlign = textAlign,
+            lineHeight = lineHeight,
+            overflow = overflow,
+            softWrap = softWrap,
+            maxLines = maxLines,
+            minLines = minLines,
+            onTextLayout = onTextLayout,
+            style = style,
+        )
+    } else {
+        val style =
+            style.merge(
+                fontWeight = fontWeight,
+                fontSize = fontSize,
+                fontFamily = fontFamily,
+                letterSpacing = letterSpacing,
+                textAlign = textAlign ?: TextAlign.Companion.Unspecified,
+                lineHeight = lineHeight,
+            )
+        Box(
+            modifier = modifier.shimmer(rememberZashiShimmer())
+        ) {
+            ShimmerRectangle(
+                width = shimmerWidth,
+                height = measureTextStyle(style).size.heightDp
+            )
+        }
+    }
+}
+
+@Composable
+fun ZashiTextOrShimmer(
+    text: AnnotatedString?,
+    modifier: Modifier = Modifier,
+    shimmerWidth: Dp = 40.dp,
+    color: Color = Color.Unspecified,
+    fontSize: TextUnit = TextUnit.Unspecified,
+    fontStyle: FontStyle? = null,
+    fontWeight: FontWeight? = null,
+    fontFamily: FontFamily? = null,
+    letterSpacing: TextUnit = TextUnit.Unspecified,
+    textDecoration: TextDecoration? = null,
+    textAlign: TextAlign? = null,
+    lineHeight: TextUnit = TextUnit.Unspecified,
+    overflow: TextOverflow = TextOverflow.Clip,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
+    onTextLayout: ((TextLayoutResult) -> Unit) = {},
     style: TextStyle = LocalTextStyle.current
 ) {
     if (text != null) {
