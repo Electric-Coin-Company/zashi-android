@@ -19,6 +19,7 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.design.util.styledStringResource
@@ -106,7 +107,7 @@ internal class ExactOutputVMMapper {
     private fun createZecAmount(state: ExactOutputInternalState): StyledStringResource {
         val zatoshi = state.getZatoshi()
         return styledStringResource(
-            stringResource = stringRes(state.getZatoshi() ?: Zatoshi(0)),
+            stringResource = stringResByDynamicCurrencyNumber(state.getZec() ?: BigDecimal(0), "ZEC"),
             color =
                 if (zatoshi != null && state.totalSpendableBalance < zatoshi) {
                     StringResourceColor.HINT_ERROR
@@ -423,6 +424,17 @@ private data class ExactOutputInternalState(
                 .multiply(asset.usdPrice, MathContext.DECIMAL128)
                 .divide(swapAssets.zecAsset.usdPrice, MathContext.DECIMAL128)
                 .convertZecToZatoshi()
+        }
+    }
+
+    fun getZec(): BigDecimal? {
+        val amountToken = getOriginTokenAmount()
+        return if (swapAssets.zecAsset?.usdPrice == null || asset?.usdPrice == null || amountToken == null) {
+            null
+        } else {
+            amountToken
+                .multiply(asset.usdPrice, MathContext.DECIMAL128)
+                .divide(swapAssets.zecAsset.usdPrice, MathContext.DECIMAL128)
         }
     }
 }

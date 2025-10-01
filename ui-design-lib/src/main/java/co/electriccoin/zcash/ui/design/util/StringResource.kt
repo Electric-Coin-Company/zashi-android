@@ -264,12 +264,12 @@ private fun StringResource.ByDynamicNumber.convertDynamicNumber(locale: Locale):
     convertDynamicNumberToString(number, locale)
 
 private fun convertDynamicNumberToString(number: Number, locale: Locale): String {
-    val bigDecimalAmount = number.toBigDecimal()
+    val bigDecimalAmount = number.toBigDecimal().stripTrailingZeros()
     val dynamicAmount = bigDecimalAmount.stripFractionsDynamically()
     val maxDecimals = if (bigDecimalAmount.scale() > 0) bigDecimalAmount.scale() else 0
     val formatter =
         NumberFormat.getInstance(locale).apply {
-            roundingMode = RoundingMode.HALF_EVEN
+            roundingMode = RoundingMode.DOWN
             maximumFractionDigits = maxDecimals.coerceAtLeast(2)
             minimumFractionDigits = 2
             minimumIntegerDigits = 1

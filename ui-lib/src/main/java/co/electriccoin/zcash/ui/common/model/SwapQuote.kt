@@ -98,12 +98,12 @@ data class NearSwapQuote(
 
     override val affiliateFeeZatoshi: Zatoshi =
         if (originAsset is ZecSwapAsset) {
-            response.quote.amountInUsd
+            response.quote.amountInFormatted
                 .coerceAtLeast(BigDecimal(0))
                 .multiply(
                     BigDecimal(AFFILIATE_FEE_BPS).divide(BigDecimal("10000"), MathContext.DECIMAL128),
                     MathContext.DECIMAL128
-                ).divide(zecExchangeRate, MathContext.DECIMAL128)
+                )
                 .convertZecToZatoshi()
         } else {
             response.quote.amountOutUsd
@@ -137,8 +137,5 @@ data class NearSwapQuote(
     private fun getZecFee(proposal: Proposal?): BigDecimal? = proposal?.totalFeeRequired()?.convertZatoshiToZec()
 
     private fun getZecFeeUsd(proposal: Proposal?): BigDecimal =
-        zecExchangeRate.multiply(
-            getZecFee(proposal) ?: BigDecimal.ZERO,
-            MathContext.DECIMAL128
-        )
+        zecExchangeRate.multiply(getZecFee(proposal) ?: BigDecimal.ZERO, MathContext.DECIMAL128)
 }
