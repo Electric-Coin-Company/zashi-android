@@ -103,8 +103,7 @@ data class NearSwapQuote(
                 .multiply(
                     BigDecimal(AFFILIATE_FEE_BPS).divide(BigDecimal("10000"), MathContext.DECIMAL128),
                     MathContext.DECIMAL128
-                )
-                .convertZecToZatoshi()
+                ).convertZecToZatoshi()
         } else {
             response.quote.amountOutUsd
                 .coerceAtLeast(BigDecimal(0))
