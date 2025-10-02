@@ -25,8 +25,6 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ButtonState
-import co.electriccoin.zcash.ui.design.component.ZashiButton
-import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -121,13 +119,13 @@ private fun LazyListScope.transactionHistoryEmptyWidget(state: TransactionHistor
                         style = ZashiTypography.textSm,
                     )
                 }
-                state.sendTransaction?.let {
-                    Spacer(Modifier.height(20.dp))
-                    ZashiButton(
-                        state = it,
-                        defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors(),
-                    )
-                }
+                // state.sendTransaction?.let {
+                //     Spacer(Modifier.height(20.dp))
+                //     ZashiButton(
+                //         state = it,
+                //         defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors(),
+                //     )
+                // }
             }
         }
     }
