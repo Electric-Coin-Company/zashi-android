@@ -9,7 +9,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 ## [2.4.1 (1239)] - 2025-10-02
 
 ### Fixed:
-- Get some zec now navigates to request zec
+- Get some zec on transaction widget is now hidden
 - Zatoshi now shows all 8 decimals instead of rounding them to 6
 - Swap in integrations is now disabled while restoring is in progress
 - Slippage text field now updates slippage value immediately when focused
