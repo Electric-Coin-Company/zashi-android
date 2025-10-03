@@ -6,6 +6,11 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.1 (1240)] - 2025-10-03
+
+### Fixed:
+- Copy update in swap quote bottom sheet footer
+
 ## [2.4.1 (1239)] - 2025-10-02
 
 ### Fixed:
