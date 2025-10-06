@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -191,7 +192,7 @@ private fun getQrCode(
     colors: QrCodeColors
 ): ImageBitmap {
     val qrCodePixelArray = JvmQrCodeGenerator.generate(address, size)
-    return AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size, colors)
+    return AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size, colors).asImageBitmap()
 }
 
 object ZashiQrDefaults {

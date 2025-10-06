@@ -29,8 +29,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -43,7 +41,6 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.OldZashiBottomBar
-import co.electriccoin.zcash.ui.design.component.QrCodeDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
 import co.electriccoin.zcash.ui.design.component.ZashiBadgeColors
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -54,14 +51,10 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
-import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
-import co.electriccoin.zcash.ui.design.util.QrCodeColors
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
 import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeType
 import kotlinx.coroutines.runBlocking
-import kotlin.math.roundToInt
 
 @Composable
 @PreviewScreens
@@ -117,17 +110,6 @@ internal fun QrCodeView(
             CircularScreenProgressIndicator()
         }
         is QrCodeState.Prepared -> {
-            val sizePixels = with(LocalDensity.current) { DEFAULT_QR_CODE_SIZE.toPx() }.roundToInt()
-            val colors = QrCodeDefaults.colors()
-            val qrCodeImage =
-                remember {
-                    qrCodeForAddress(
-                        address = state.walletAddress.address,
-                        size = sizePixels,
-                        colors = colors
-                    )
-                }
-
             BlankBgScaffold(
                 topBar = {
                     QrCodeTopAppBar(
@@ -138,7 +120,6 @@ internal fun QrCodeView(
                 bottomBar = {
                     QrCodeBottomBar(
                         state = state,
-                        qrCodeImage = qrCodeImage
                     )
                 }
             ) { paddingValues ->
@@ -188,13 +169,12 @@ private fun QrCodeTopAppBar(
 @Composable
 private fun QrCodeBottomBar(
     state: QrCodeState.Prepared,
-    qrCodeImage: ImageBitmap,
 ) {
     OldZashiBottomBar {
         ZashiButton(
             text = stringResource(id = R.string.qr_code_share_btn),
             icon = R.drawable.ic_share,
-            onClick = { state.onQrCodeShare(qrCodeImage) },
+            onClick = { state.onQrCodeShare(state.walletAddress.address) },
             modifier =
                 Modifier
                     .padding(horizontal = 24.dp)
@@ -433,21 +413,3 @@ private fun ColumnScope.QrCode(
         modifier = modifier.align(CenterHorizontally),
     )
 }
-
-private fun qrCodeForAddress(
-    address: String,
-    size: Int,
-    colors: QrCodeColors,
-): ImageBitmap {
-    // In the future, use actual/expect to switch QR code generator implementations for multiplatform
-
-    // Note that our implementation has an extra array copy to BooleanArray, which is a cross-platform
-    // representation.  This should have minimal performance impact since the QR code is relatively
-    // small and we only generate QR codes infrequently.
-
-    val qrCodePixelArray = JvmQrCodeGenerator.generate(address, size)
-
-    return AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size, colors)
-}
-
-private val DEFAULT_QR_CODE_SIZE = 320.dp
