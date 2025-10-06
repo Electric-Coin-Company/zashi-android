@@ -1,8 +1,6 @@
 package co.electriccoin.zcash.ui.screen.request.viewmodel
 
 import android.app.Application
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
@@ -17,12 +15,9 @@ import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
-import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
+import co.electriccoin.zcash.ui.common.usecase.ShareQRUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
-import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
-import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
-import co.electriccoin.zcash.ui.design.util.QrCodeColors
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
@@ -34,14 +29,10 @@ import co.electriccoin.zcash.ui.screen.request.model.Request
 import co.electriccoin.zcash.ui.screen.request.model.RequestCurrency
 import co.electriccoin.zcash.ui.screen.request.model.RequestStage
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -53,10 +44,10 @@ class RequestViewModel(
     exchangeRateRepository: ExchangeRateRepository,
     getZcashCurrency: GetZcashCurrencyProvider,
     getMonetarySeparators: GetMonetarySeparatorProvider,
-    private val shareImageBitmap: ShareImageUseCase,
     zip321BuildUriUseCase: Zip321BuildUriUseCase,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val navigationRouter: NavigationRouter,
+    private val shareQR: ShareQRUseCase,
 ) : ViewModel() {
     companion object {
         private const val MAX_ZCASH_SUPPLY = 21_000_000
@@ -144,11 +135,22 @@ class RequestViewModel(
                         walletAddress = walletAddress,
                         request = request,
                         onQrCodeShare = { colors, pixels, uri ->
-                            onShareQrCode(
-                                colors = colors,
-                                pixels = pixels,
-                                requestUri = uri,
-                            )
+                            viewModelScope.launch {
+                                shareQR(
+                                    qrData = uri,
+                                    shareText =
+                                        application.getString(R.string.request_qr_code_share_chooser_text),
+                                    sharePickerText =
+                                        application.getString(R.string.request_qr_code_share_chooser_title),
+                                    filenamePrefix = TEMP_FILE_NAME_PREFIX,
+                                    centerIcon =
+                                        when (account) {
+                                            is KeystoneAccount ->
+                                                co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr_white
+                                            is ZashiAccount -> R.drawable.logo_zec_fill_stroke_white
+                                        }
+                                )
+                            }
                         },
                         onBack = ::onBack,
                         onClose = ::onClose,
@@ -161,8 +163,6 @@ class RequestViewModel(
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = RequestState.Loading
         )
-
-    val shareResultCommand = MutableSharedFlow<Boolean>()
 
     private fun onNextClick(
         walletAddress: WalletAddress,
@@ -310,21 +310,6 @@ class RequestViewModel(
         } ?: newAmount
     }
 
-    private fun onShareQrCode(
-        colors: QrCodeColors,
-        pixels: Int,
-        requestUri: String,
-    ) = viewModelScope.launch {
-        bitmapForData(
-            value = requestUri,
-            size = pixels,
-            colors = colors,
-        ).filterNotNull()
-            .collect { bitmap ->
-                onRequestQrCodeShare(bitmap)
-            }
-    }
-
     internal fun onBack() {
         when (stage.value) {
             RequestStage.AMOUNT -> navigationRouter.back()
@@ -468,47 +453,6 @@ class RequestViewModel(
             )
         }
     }
-
-    private fun onRequestQrCodeShare(bitmap: ImageBitmap) =
-        viewModelScope.launch {
-            val shareResult =
-                shareImageBitmap(
-                    shareImageBitmap = bitmap.asAndroidBitmap(),
-                    filePrefix = TEMP_FILE_NAME_PREFIX,
-                    fileSuffix = TEMP_FILE_NAME_SUFFIX,
-                    shareText = application.getString(R.string.request_qr_code_share_chooser_text),
-                    sharePickerText = application.getString(R.string.request_qr_code_share_chooser_title),
-                )
-
-            if (shareResult) {
-                shareResultCommand.emit(true)
-            } else {
-                shareResultCommand.emit(false)
-            }
-        }
-
-    private fun bitmapForData(
-        value: String,
-        size: Int,
-        colors: QrCodeColors
-    ) = callbackFlow {
-        viewModelScope.launch {
-            // In the future, use actual/expect to switch QR code generator implementations for multiplatform
-
-            // Note that our implementation has an extra array copy to BooleanArray, which is a cross-platform
-            // representation.  This should have minimal performance impact since the QR code is relatively
-            // small and we only generate QR codes infrequently.
-
-            val qrCodePixelArray = JvmQrCodeGenerator.generate(value, size)
-            val bitmap = AndroidQrCodeImageGenerator.generate(qrCodePixelArray, size, colors)
-
-            trySend(bitmap)
-        }
-        awaitClose {
-            // No resources to release
-        }
-    }
 }
 
 private const val TEMP_FILE_NAME_PREFIX = "zip_321_request_qr_" // NON-NLS
-private const val TEMP_FILE_NAME_SUFFIX = ".png" // NON-NLS

@@ -30,7 +30,6 @@ import co.electriccoin.zcash.ui.NavigationTargets.NOT_ENOUGH_SPACE
 import co.electriccoin.zcash.ui.NavigationTargets.QR_CODE
 import co.electriccoin.zcash.ui.NavigationTargets.REQUEST
 import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
-import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.common.compose.LocalNavController
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
@@ -75,7 +74,8 @@ import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInScree
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsArgs
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsScreen
 import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
-import co.electriccoin.zcash.ui.screen.feedback.WrapFeedback
+import co.electriccoin.zcash.ui.screen.feedback.FeedbackArgs
+import co.electriccoin.zcash.ui.screen.feedback.FeedbackScreen
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.home.AndroidHome
 import co.electriccoin.zcash.ui.screen.home.Home
@@ -261,7 +261,8 @@ internal fun MainActivity.Navigation() {
                         navHostController = navController,
                         protectedDestination = DELETE_WALLET,
                         protectedUseCase = AuthenticationUseCase.DeleteWallet,
-                        setCheckedProperty = setDeleteWalletAuthentication
+                        setCheckedProperty = setDeleteWalletAuthentication,
+                        navigationRouter = navigationRouter
                     )
                 }
 
@@ -270,14 +271,15 @@ internal fun MainActivity.Navigation() {
                         navHostController = navController,
                         protectedDestination = EXPORT_PRIVATE_DATA,
                         protectedUseCase = AuthenticationUseCase.ExportPrivateData,
-                        setCheckedProperty = setExportPrivateDataAuthentication
+                        setCheckedProperty = setExportPrivateDataAuthentication,
+                        navigationRouter = navigationRouter
                     )
                 }
             }
         }
         composable(CHOOSE_SERVER) { WrapChooseServer() }
         composable<WalletBackup> { AndroidWalletBackup(it.toRoute()) }
-        composable(SUPPORT) { WrapFeedback() }
+        composable<FeedbackArgs> { FeedbackScreen() }
         composable(DELETE_WALLET) {
             WrapDeleteWallet(
                 goBack = {
@@ -410,6 +412,7 @@ private fun MainActivity.NavigationHome(navController: NavHostController) {
 @Composable
 private fun MainActivity.ShowSystemAuthentication(
     navHostController: NavHostController,
+    navigationRouter: NavigationRouter,
     protectedDestination: String,
     protectedUseCase: AuthenticationUseCase,
     setCheckedProperty: (Boolean) -> Unit,
@@ -417,7 +420,7 @@ private fun MainActivity.ShowSystemAuthentication(
     WrapAuthentication(
         goSupport = {
             setCheckedProperty(false)
-            navHostController.navigateJustOnce(SUPPORT)
+            navigationRouter.forward(FeedbackArgs)
         },
         onSuccess = {
             navHostController.navigateJustOnce(protectedDestination)
@@ -490,7 +493,6 @@ object NavigationTargets {
     const val QR_CODE = "qr_code"
     const val REQUEST = "request"
     const val SETTINGS = "settings"
-    const val SUPPORT = "support"
     const val WHATS_NEW = "whats_new"
     const val CRASH_REPORTING_OPT_IN = "crash_reporting_opt_in"
 }

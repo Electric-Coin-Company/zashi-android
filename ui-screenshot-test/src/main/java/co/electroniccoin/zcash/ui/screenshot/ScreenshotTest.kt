@@ -46,6 +46,7 @@ import co.electriccoin.zcash.ui.design.component.UiMode
 import co.electriccoin.zcash.ui.screen.about.AboutArgs
 import co.electriccoin.zcash.ui.screen.authentication.view.AnimationConstants.WELCOME_ANIM_TEST_TAG
 import co.electriccoin.zcash.ui.screen.balances.BalanceTag
+import co.electriccoin.zcash.ui.screen.feedback.FeedbackArgs
 import co.electriccoin.zcash.ui.screen.home.HomeTags
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightTags
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedTag
@@ -384,7 +385,7 @@ class ScreenshotTest : UiTestPrerequisites() {
         navigateTo(WalletBackup(false))
         seedScreenshots(resContext, tag, composeTestRule)
 
-        navigateTo(NavigationTargets.SUPPORT)
+        navigateTo(FeedbackArgs)
         supportScreenshots(resContext, tag, composeTestRule)
 
         navigateTo(NavigationTargets.EXPORT_PRIVATE_DATA)

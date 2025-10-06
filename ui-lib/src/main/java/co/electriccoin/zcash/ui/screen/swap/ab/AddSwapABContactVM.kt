@@ -64,7 +64,7 @@ class AddSwapABContactVM(
                         stringRes(R.string.contact_address_error_invalid)
 
                     ContactAddressValidationResult.NotUnique ->
-                        stringRes(R.string.contact_address_error_not_unique)
+                        stringRes(R.string.contact_chain_address_error_not_unique)
 
                     ContactAddressValidationResult.Valid -> null
                 }

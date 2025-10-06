@@ -84,7 +84,12 @@ class AddGenericABContactVM(
 
             when (validation) {
                 ContactAddressValidationResult.Invalid -> stringRes(R.string.contact_address_error_invalid)
-                ContactAddressValidationResult.NotUnique -> stringRes(R.string.contact_address_error_not_unique)
+                ContactAddressValidationResult.NotUnique ->
+                    if (blockchain == null || blockchain == zcashBlockchain) {
+                        stringRes(R.string.contact_address_error_not_unique)
+                    } else {
+                        stringRes(R.string.contact_chain_address_error_not_unique)
+                    }
                 ContactAddressValidationResult.Valid -> null
                 null -> null
             }

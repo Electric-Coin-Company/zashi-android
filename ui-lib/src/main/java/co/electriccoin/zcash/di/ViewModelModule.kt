@@ -18,7 +18,7 @@ import co.electriccoin.zcash.ui.screen.crashreporting.viewmodel.CrashReportingVi
 import co.electriccoin.zcash.ui.screen.error.ErrorViewModel
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInVM
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsVM
-import co.electriccoin.zcash.ui.screen.feedback.viewmodel.FeedbackViewModel
+import co.electriccoin.zcash.ui.screen.feedback.FeedbackVM
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.home.HomeVM
 import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupDetailViewModel
@@ -95,7 +95,7 @@ val viewModelModule =
         viewModelOf(::FlexaViewModel)
         viewModelOf(::SendViewModel)
         viewModelOf(::WalletBackupViewModel)
-        viewModelOf(::FeedbackViewModel)
+        viewModelOf(::FeedbackVM)
         viewModelOf(::SignKeystoneTransactionVM)
         viewModelOf(::AccountListViewModel)
         viewModelOf(::ZashiTopAppBarVM)

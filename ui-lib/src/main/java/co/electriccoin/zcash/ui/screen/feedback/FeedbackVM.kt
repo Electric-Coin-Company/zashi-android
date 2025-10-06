@@ -1,18 +1,15 @@
-package co.electriccoin.zcash.ui.screen.feedback.viewmodel
+package co.electriccoin.zcash.ui.screen.feedback
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.usecase.SendSupportEmailUseCase
 import co.electriccoin.zcash.ui.design.component.AlertDialogState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.feedback.model.FeedbackEmoji
-import co.electriccoin.zcash.ui.screen.feedback.model.FeedbackEmojiState
-import co.electriccoin.zcash.ui.screen.feedback.model.FeedbackState
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -22,14 +19,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class FeedbackViewModel(
-    private val sendSupportEmail: SendSupportEmailUseCase
+class FeedbackVM(
+    private val sendSupportEmail: SendSupportEmailUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     private val feedback = MutableStateFlow("")
     private val selectedEmoji = MutableStateFlow(FeedbackEmoji.FIFTH)
     private val isDialogShown = MutableStateFlow(false)
-
-    val onBackNavigationCommand = MutableSharedFlow<Unit>()
 
     val state =
         combine(feedback, selectedEmoji) { feedbackText, emoji ->
@@ -77,18 +73,10 @@ class FeedbackViewModel(
     private fun onConfirmSendFeedback() =
         viewModelScope.launch {
             isDialogShown.update { false }
-            sendSupportEmail(
-                emoji = selectedEmoji.value,
-                message = stringRes(feedback.value)
-            )
+            sendSupportEmail(emoji = selectedEmoji.value, message = stringRes(feedback.value))
         }
 
-    private fun onSendClicked() {
-        isDialogShown.update { true }
-    }
+    private fun onSendClicked() = isDialogShown.update { true }
 
-    private fun onBack() =
-        viewModelScope.launch {
-            onBackNavigationCommand.emit(Unit)
-        }
+    private fun onBack() = navigationRouter.back()
 }

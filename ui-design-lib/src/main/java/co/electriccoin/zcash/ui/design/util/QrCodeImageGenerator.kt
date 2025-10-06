@@ -1,18 +1,18 @@
 package co.electriccoin.zcash.ui.design.util
 
-import androidx.compose.ui.graphics.ImageBitmap
+import android.graphics.Bitmap
 
 interface QrCodeImageGenerator {
     fun generate(
         bitArray: BooleanArray,
         sizePixels: Int,
         colors: QrCodeColors
-    ): ImageBitmap
+    ): Bitmap
 
     fun generate(
         bitArray: BooleanArray,
         sizePixels: Int,
         background: Int,
         foreground: Int,
-    ): ImageBitmap
+    ): Bitmap
 }

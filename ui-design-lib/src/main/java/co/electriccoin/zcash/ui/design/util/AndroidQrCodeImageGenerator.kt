@@ -2,8 +2,6 @@ package co.electriccoin.zcash.ui.design.util
 
 import android.graphics.Bitmap
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 
 object AndroidQrCodeImageGenerator : QrCodeImageGenerator {
@@ -11,7 +9,7 @@ object AndroidQrCodeImageGenerator : QrCodeImageGenerator {
         bitArray: BooleanArray,
         sizePixels: Int,
         colors: QrCodeColors
-    ): ImageBitmap {
+    ): Bitmap {
         val colorArray =
             bitArray.toThemeColorArray(
                 foreground = colors.foreground.toArgb(),
@@ -19,7 +17,6 @@ object AndroidQrCodeImageGenerator : QrCodeImageGenerator {
             )
         return Bitmap
             .createBitmap(colorArray, sizePixels, sizePixels, Bitmap.Config.ARGB_8888)
-            .asImageBitmap()
     }
 
     override fun generate(
@@ -27,11 +24,10 @@ object AndroidQrCodeImageGenerator : QrCodeImageGenerator {
         sizePixels: Int,
         background: Int,
         foreground: Int
-    ): ImageBitmap {
+    ): Bitmap {
         val colorArray = bitArray.toThemeColorArray(foreground = foreground, background = background)
         return Bitmap
             .createBitmap(colorArray, sizePixels, sizePixels, Bitmap.Config.ARGB_8888)
-            .asImageBitmap()
     }
 }
 

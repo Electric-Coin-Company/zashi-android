@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.feedback.view
+package co.electriccoin.zcash.ui.screen.feedback
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,8 +36,10 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.OverlappingIconsState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiOverlappingIcons
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
@@ -46,16 +48,12 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.dimensions.ZashiDimensions
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.feedback.model.FeedbackEmoji
-import co.electriccoin.zcash.ui.screen.feedback.model.FeedbackEmojiState
-import co.electriccoin.zcash.ui.screen.feedback.model.FeedbackState
 
 @Composable
-fun FeedbackView(
-    state: FeedbackState,
-) {
+fun FeedbackView(state: FeedbackState) {
     Scaffold(
         topBar = {
             SupportTopAppBar(
@@ -95,9 +93,15 @@ private fun SupportMainContent(
             .verticalScroll(rememberScrollState())
             .then(modifier),
     ) {
-        Image(
-            painter = painterResource(R.drawable.ic_feedback),
-            contentDescription = null,
+        ZashiOverlappingIcons(
+            state =
+                OverlappingIconsState(
+                    icons =
+                        listOf(
+                            imageRes(R.drawable.ic_feedback),
+                            imageRes(R.drawable.ic_feedback_zec)
+                        )
+                )
         )
 
         Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacing3xl))
