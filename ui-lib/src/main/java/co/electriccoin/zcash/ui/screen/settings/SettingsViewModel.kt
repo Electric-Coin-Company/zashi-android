@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.NavigationTargets.SUPPORT
 import co.electriccoin.zcash.ui.NavigationTargets.WHATS_NEW
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
@@ -13,6 +12,7 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.about.AboutArgs
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsArgs
+import co.electriccoin.zcash.ui.screen.feedback.FeedbackArgs
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -65,7 +65,7 @@ class SettingsViewModel(
 
     private fun onAboutUsClick() = navigationRouter.forward(AboutArgs)
 
-    private fun onSendUsFeedbackClick() = navigationRouter.forward(SUPPORT)
+    private fun onSendUsFeedbackClick() = navigationRouter.forward(FeedbackArgs)
 
     private fun onAddressBookClick() = viewModelScope.launch { navigateToAddressBook() }
 

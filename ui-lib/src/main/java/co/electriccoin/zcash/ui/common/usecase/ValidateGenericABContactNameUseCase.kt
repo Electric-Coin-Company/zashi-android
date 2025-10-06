@@ -12,7 +12,7 @@ class ValidateGenericABContactNameUseCase(
         name: String,
         exclude: EnhancedABContact? = null
     ) = when {
-        name.length > CONTACT_NAME_MAX_LENGTH -> ValidateContactNameResult.TooLong
+        name.trim().length > CONTACT_NAME_MAX_LENGTH -> ValidateContactNameResult.TooLong
         addressBookRepository.contacts
             .filterNotNull()
             .first()
