@@ -215,7 +215,8 @@ class ChooseServerVM(
                 onValueChange = ::onCustomEndpointTextChanged,
             ),
         badge = if (isSelectedEndpointCustom) stringRes(R.string.choose_server_active) else null,
-        isExpanded = isCustomEndpointExpanded
+        isExpanded = isCustomEndpointExpanded,
+        key = "custom",
     )
 
     private fun createDefaultServerState(
@@ -229,7 +230,8 @@ class ChooseServerVM(
                 (userEndpointSelection == null && selectedEndpoint == endpoint)
 
         return ServerState.Default(
-            RadioButtonState(
+            key = "default_${endpoint.host}_${endpoint.port}",
+            radioButtonState = RadioButtonState(
                 text = stringRes(R.string.choose_server_full_server_name, endpoint.host, endpoint.port),
                 isChecked = isEndpointChecked,
                 onClick = { onEndpointClicked(endpoint) },

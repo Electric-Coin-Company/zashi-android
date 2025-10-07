@@ -86,7 +86,7 @@ class NearSwapDataSourceImpl(
                             recipient = affiliateAddress,
                             fee = AFFILIATE_FEE_BPS
                         )
-                    )
+                    ),
             )
 
         return try {

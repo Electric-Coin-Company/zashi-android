@@ -42,22 +42,22 @@ sealed interface ServerState : Itemizable {
 
     @Immutable
     data class Default(
+        override val key: Any,
         val radioButtonState: RadioButtonState,
         val badge: StringResource?,
     ) : ServerState {
         override val contentType: Any = "Default"
-        override val key: Any = contentType
     }
 
     @Immutable
     data class Custom(
+        override val key: Any,
         val radioButtonState: RadioButtonState,
         val newServerTextFieldState: TextFieldState,
         val badge: StringResource?,
         val isExpanded: Boolean,
     ) : ServerState {
         override val contentType: Any = "Custom"
-        override val key: Any = contentType
     }
 }
 

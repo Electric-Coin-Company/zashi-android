@@ -73,6 +73,7 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
+import java.util.UUID
 
 @Composable
 fun ChooseServerView(state: ChooseServerState?) {
@@ -95,22 +96,22 @@ fun ChooseServerView(state: ChooseServerState?) {
         }
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(bottom = paddingValues.calculateBottomPadding()),
             contentPadding =
                 PaddingValues(
                     top = paddingValues.calculateTopPadding() + ZcashTheme.dimens.spacingDefault,
-                    bottom = paddingValues.calculateBottomPadding() + ZcashTheme.dimens.spacingDefault,
+                    bottom = ZcashTheme.dimens.spacingDefault,
                 )
         ) {
             if (state.fastest.servers.isEmpty() && state.fastest.isLoading) {
-                item {
+                item(
+                    key = "fastest_loading",
+                    contentType = "fastest_loading"
+                ) {
                     ServerLoading()
                 }
             } else if (state.fastest.servers.isNotEmpty()) {
                 serverListItems(state.fastest)
-                item {
-                    Spacer(modifier = Modifier.height(32.dp))
-                }
             }
 
             serverListItems(state.other)
@@ -216,7 +217,16 @@ private fun ChooseServerTopAppBar(
 
 @Suppress("LongMethod")
 private fun LazyListScope.serverListItems(state: ServerListState) {
-    item {
+    item(
+        key = when (state) {
+            is ServerListState.Fastest -> "fastest_header"
+            is ServerListState.Other -> "other_header"
+        },
+        contentType = when (state) {
+            is ServerListState.Fastest -> "fastest_header"
+            is ServerListState.Other -> "other_header"
+        }
+    ) {
         when (state) {
             is ServerListState.Fastest -> FastestServersHeader(state = state)
             is ServerListState.Other -> OtherServersHeader(state = state)
@@ -226,6 +236,7 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
     itemsIndexed(
         items = state.servers,
         contentType = { _, item -> item.contentType },
+        key = { _, item -> item.key }
     ) { index, item ->
         when (item) {
             is ServerState.Custom ->
@@ -288,6 +299,8 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
             Spacer(modifier = Modifier.height(4.dp))
             ZashiHorizontalDivider()
             Spacer(modifier = Modifier.height(4.dp))
+        } else if (index == state.servers.lastIndex && state is ServerListState.Fastest) {
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
@@ -451,6 +464,7 @@ private fun ChooseServerPreview(
                 if (showFastestServerLoading) {
                     (1..3).map {
                         ServerState.Default(
+                            key = UUID.randomUUID().toString(),
                             RadioButtonState(
                                 text = stringRes("Some Server"),
                                 isChecked = selectionIndex == it,
@@ -459,7 +473,7 @@ private fun ChooseServerPreview(
                                 },
                                 subtitle = null,
                             ),
-                            badge = null
+                            badge = null,
                         )
                     }
                 } else {
@@ -483,6 +497,7 @@ private fun ChooseServerPreview(
                             (4..<12).map {
                                 if (it == 5) {
                                     ServerState.Custom(
+                                        key = UUID.randomUUID().toString(),
                                         RadioButtonState(
                                             text = stringRes("Custom Server"),
                                             isChecked = selectionIndex == it,
@@ -501,6 +516,7 @@ private fun ChooseServerPreview(
                                     )
                                 } else {
                                     ServerState.Default(
+                                        key = UUID.randomUUID().toString(),
                                         RadioButtonState(
                                             text = stringRes("Some Server"),
                                             isChecked = selectionIndex == it,
