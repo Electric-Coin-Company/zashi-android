@@ -17,6 +17,7 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerArgs
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsArgs
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsArgs
 import kotlinx.collections.immutable.toImmutableList
@@ -112,7 +113,7 @@ class AdvancedSettingsVM(
 
     fun onBack() = navigationRouter.back()
 
-    private fun onChooseServerClick() = navigationRouter.forward(NavigationTargets.CHOOSE_SERVER)
+    private fun onChooseServerClick() = navigationRouter.forward(ChooseServerArgs)
 
     private fun onCurrencyConversionClick() = navigationRouter.forward(ExchangeRateSettingsArgs)
 

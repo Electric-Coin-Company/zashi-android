@@ -48,7 +48,9 @@ data class QuoteRequest(
     @SerialName("quoteWaitingTimeMs")
     val quoteWaitingTimeMs: Int? = null,
     @SerialName("appFees")
-    val appFees: List<AppFee>
+    val appFees: List<AppFee>,
+    @SerialName("referral")
+    val referral: String? = null
 )
 
 @JsonIgnoreUnknownKeys
