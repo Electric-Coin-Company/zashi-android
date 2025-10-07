@@ -22,7 +22,6 @@ import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationArgs.ADDRESS_TYPE
-import co.electriccoin.zcash.ui.NavigationTargets.CHOOSE_SERVER
 import co.electriccoin.zcash.ui.NavigationTargets.CRASH_REPORTING_OPT_IN
 import co.electriccoin.zcash.ui.NavigationTargets.DELETE_WALLET
 import co.electriccoin.zcash.ui.NavigationTargets.EXPORT_PRIVATE_DATA
@@ -54,7 +53,8 @@ import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceArgs
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceScreen
-import co.electriccoin.zcash.ui.screen.chooseserver.WrapChooseServer
+import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerArgs
+import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerScreen
 import co.electriccoin.zcash.ui.screen.connectkeystone.AndroidConnectKeystone
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import co.electriccoin.zcash.ui.screen.contact.AddGenericABContactArgs
@@ -277,7 +277,7 @@ internal fun MainActivity.Navigation() {
                 }
             }
         }
-        composable(CHOOSE_SERVER) { WrapChooseServer() }
+        composable<ChooseServerArgs> { ChooseServerScreen() }
         composable<WalletBackup> { AndroidWalletBackup(it.toRoute()) }
         composable<FeedbackArgs> { FeedbackScreen() }
         composable(DELETE_WALLET) {
@@ -488,7 +488,6 @@ fun NavHostController.popBackStackJustOnce(currentRouteToBePopped: String) {
 object NavigationTargets {
     const val DELETE_WALLET = "delete_wallet"
     const val EXPORT_PRIVATE_DATA = "export_private_data"
-    const val CHOOSE_SERVER = "choose_server"
     const val NOT_ENOUGH_SPACE = "not_enough_space"
     const val QR_CODE = "qr_code"
     const val REQUEST = "request"

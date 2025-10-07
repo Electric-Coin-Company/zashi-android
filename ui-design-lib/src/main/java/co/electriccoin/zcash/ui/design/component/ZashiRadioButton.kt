@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,9 +44,10 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Suppress("LongParameterList", "LongMethod")
 @Composable
-fun RadioButton(
+fun ZashiRadioButton(
     state: RadioButtonState,
     modifier: Modifier = Modifier,
+    isRippleEnabled: Boolean = true,
     checkedContent: @Composable () -> Unit = { RadioButtonCheckedContent(state) },
     uncheckedContent: @Composable () -> Unit = { RadioButtonUncheckedContent(state) },
     trailingContent: @Composable (RowScope.() -> Unit)? = null,
@@ -56,7 +58,7 @@ fun RadioButton(
             modifier
                 .clip(RoundedCornerShape(12.dp))
                 .clickable(
-                    indication = ripple(),
+                    indication = if (isRippleEnabled) ripple() else null,
                     interactionSource = remember { MutableInteractionSource() },
                     onClick = state.onClick,
                     role = Role.Button,
@@ -150,6 +152,7 @@ private fun RadioButtonIndicator(
     }
 }
 
+@Immutable
 data class RadioButtonState(
     val text: StringResource,
     val isChecked: Boolean,
@@ -165,7 +168,7 @@ private fun RadioButtonPreview() =
         BlankBgColumn {
             var isChecked by remember { mutableStateOf(false) }
 
-            RadioButton(
+            ZashiRadioButton(
                 modifier = Modifier.fillMaxWidth(),
                 state =
                     RadioButtonState(
@@ -177,7 +180,7 @@ private fun RadioButtonPreview() =
                     Text(text = "Trailing text")
                 }
             )
-            RadioButton(
+            ZashiRadioButton(
                 state =
                     RadioButtonState(
                         text = stringRes("test"),

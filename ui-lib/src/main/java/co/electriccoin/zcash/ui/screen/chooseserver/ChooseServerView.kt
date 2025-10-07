@@ -54,13 +54,13 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
 import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.component.OldZashiBottomBar
-import co.electriccoin.zcash.ui.design.component.RadioButton
 import co.electriccoin.zcash.ui.design.component.RadioButtonCheckedContent
 import co.electriccoin.zcash.ui.design.component.RadioButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiBadge
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
+import co.electriccoin.zcash.ui.design.component.ZashiRadioButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldDefaults
@@ -75,10 +75,7 @@ import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
-fun ChooseServerView(
-    state: ChooseServerState?,
-    onBack: () -> Unit,
-) {
+fun ChooseServerView(state: ChooseServerState?) {
     if (state == null) {
         CircularScreenProgressIndicator()
         return
@@ -88,7 +85,7 @@ fun ChooseServerView(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             ChooseServerTopAppBar(
-                onBack = onBack,
+                onBack = state.onBack,
             )
         },
         bottomBar = {
@@ -248,7 +245,7 @@ private fun LazyListScope.serverListItems(state: ServerListState) {
                 )
 
             is ServerState.Default ->
-                RadioButton(
+                ZashiRadioButton(
                     state = item.radioButtonState,
                     modifier =
                         Modifier
@@ -357,9 +354,10 @@ private fun CustomServerRadioButton(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        RadioButton(
+        ZashiRadioButton(
             state = state.radioButtonState,
             modifier = Modifier.fillMaxWidth(),
+            isRippleEnabled = false,
             checkedContent = {
                 if (state.badge == null) {
                     RadioButtonCheckedContent(state.radioButtonState)
@@ -521,9 +519,9 @@ private fun ChooseServerPreview(
                         text = stringRes("Save Button"),
                         onClick = {},
                     ),
-                dialogState = dialogState
+                dialogState = dialogState,
+                onBack = {}
             ),
-        onBack = {},
     )
 }
 

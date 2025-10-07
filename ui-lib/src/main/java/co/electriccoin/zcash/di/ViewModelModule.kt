@@ -10,7 +10,7 @@ import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientVM
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsVM
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetVM
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceVM
-import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerViewModel
+import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerVM
 import co.electriccoin.zcash.ui.screen.contact.AddGenericABContactVM
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactVM
 import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactVM
@@ -84,7 +84,7 @@ val viewModelModule =
         viewModelOf(::SupportViewModel)
         viewModelOf(::RestoreSuccessViewModel)
         viewModelOf(::WhatsNewViewModel)
-        viewModelOf(::ChooseServerViewModel)
+        viewModelOf(::ChooseServerVM)
         viewModelOf(::ReceiveVM)
         viewModelOf(::QrCodeViewModel)
         viewModelOf(::RequestViewModel)

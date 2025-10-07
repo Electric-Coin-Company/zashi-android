@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
@@ -28,7 +29,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @Suppress("TooManyFunctions", "LongParameterList")
-class ChooseServerViewModel(
+class ChooseServerVM(
     application: Application,
     observeFastestServers: ObserveFastestServersUseCase,
     getSelectedEndpoint: GetSelectedEndpointUseCase,
@@ -36,6 +37,7 @@ class ChooseServerViewModel(
     private val refreshFastestServersUseCase: RefreshFastestServersUseCase,
     private val persistEndpoint: PersistEndpointUseCase,
     private val validateEndpoint: ValidateEndpointUseCase,
+    private val navigationRouter: NavigationRouter,
 ) : AndroidViewModel(application) {
     private val userCustomEndpointText = MutableStateFlow<String?>(null)
 
@@ -119,6 +121,7 @@ class ChooseServerViewModel(
                         val isSelectedEndpointCustom = !getAvailableServers().contains(selectedEndpoint)
                         if (isSelectedEndpointCustom) selectedEndpoint else null
                     }
+
                     is Selection.Endpoint -> userEndpointSelection.endpoint
                     null -> null
                 }
@@ -132,9 +135,11 @@ class ChooseServerViewModel(
                             isSelectedEndpointCustom &&
                                 selectedEndpoint?.generateUserString() !=
                                 userCustomEndpointText -> true
+
                             else -> false
                         }
                     }
+
                     is Selection.Endpoint -> false
                     null -> false
                 }
@@ -150,8 +155,7 @@ class ChooseServerViewModel(
         }
 
     val state =
-        combine(fastest, other, buttonState, dialogState) {
-            fastest,
+        combine(fastest, other, buttonState, dialogState) { fastest,
             all,
             buttonState,
             dialogState
@@ -165,10 +169,16 @@ class ChooseServerViewModel(
                 other = all,
                 saveButton = buttonState,
                 dialogState = dialogState,
+                onBack = ::onBack
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT), null)
 
-    fun canGoBack(): Boolean = isSaveInProgress.value.not()
+    private fun onBack() {
+        val canGoBack = isSaveInProgress.value.not()
+        if (canGoBack) {
+            navigationRouter.back()
+        }
+    }
 
     private fun createCustomServerState(
         userEndpointSelection: Selection?,
