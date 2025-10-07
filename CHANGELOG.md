@@ -6,6 +6,14 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.2 (1248)] - 2025-10-07
+
+### Changed:
+- We removed lwd servers from the server list because they will stop being supported soon.
+- Referral parameter is now added when creating near swap quote
+- Receive QR and Request ZEC QR now show icons when sharing QR with other apps
+- Error updated for not unique chain and address pair in AB
+
 ## [2.4.1 (1240)] - 2025-10-03
 
 ### Fixed:
