@@ -19,14 +19,6 @@ class GetDefaultServersProvider(
                 LightWalletEndpoint(ZR_HOST_SA, ZR_PORT, true),
                 LightWalletEndpoint(ZR_HOST_EU, ZR_PORT, true),
                 LightWalletEndpoint(ZR_HOST_AP, ZR_PORT, true),
-                LightWalletEndpoint(YW_HOST_1, YW_PORT, true),
-                LightWalletEndpoint(YW_HOST_2, YW_PORT, true),
-                LightWalletEndpoint(YW_HOST_3, YW_PORT, true),
-                LightWalletEndpoint(YW_HOST_4, YW_PORT, true),
-                LightWalletEndpoint(YW_HOST_5, YW_PORT, true),
-                LightWalletEndpoint(YW_HOST_6, YW_PORT, true),
-                LightWalletEndpoint(YW_HOST_7, YW_PORT, true),
-                LightWalletEndpoint(YW_HOST_8, YW_PORT, true),
             )
         } else {
             listOf(LightWalletEndpoint.Testnet)
@@ -44,13 +36,3 @@ private const val ZR_HOST_SA = "sa.zec.rocks" // NON-NLS
 private const val ZR_HOST_EU = "eu.zec.rocks" // NON-NLS
 private const val ZR_HOST_AP = "ap.zec.rocks" // NON-NLS
 private const val ZR_PORT = 443
-
-private const val YW_HOST_1 = "lwd1.zcash-infra.com" // NON-NLS
-private const val YW_HOST_2 = "lwd2.zcash-infra.com" // NON-NLS
-private const val YW_HOST_3 = "lwd3.zcash-infra.com" // NON-NLS
-private const val YW_HOST_4 = "lwd4.zcash-infra.com" // NON-NLS
-private const val YW_HOST_5 = "lwd5.zcash-infra.com" // NON-NLS
-private const val YW_HOST_6 = "lwd6.zcash-infra.com" // NON-NLS
-private const val YW_HOST_7 = "lwd7.zcash-infra.com" // NON-NLS
-private const val YW_HOST_8 = "lwd8.zcash-infra.com" // NON-NLS
-private const val YW_PORT = 9067
