@@ -87,6 +87,7 @@ class NearSwapDataSourceImpl(
                             fee = AFFILIATE_FEE_BPS
                         )
                     ),
+                referral = "zashi"
             )
 
         return try {
