@@ -12,6 +12,14 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.4.2 (1248)] - 2025-10-07
+
+### Cambiado:
+- Eliminamos los servidores lwd de la lista de servidores porque pronto dejarán de recibir soporte.
+
+### Corregido:
+- Solucionamos algunos problemas de interfaz de usuario.
+
 ## [2.4.1 (1240)] - 2025-10-03
 
 ### Añadido:

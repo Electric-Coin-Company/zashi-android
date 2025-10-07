@@ -1,0 +1,4 @@
+Changed:
+- We removed lwd servers from the server list because they will stop being supported soon.
+Fixed:
+- We fixed a few UI issues.
