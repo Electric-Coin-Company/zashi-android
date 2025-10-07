@@ -155,7 +155,8 @@ class ChooseServerVM(
         }
 
     val state =
-        combine(fastest, other, buttonState, dialogState) { fastest,
+        combine(fastest, other, buttonState, dialogState) {
+            fastest,
             all,
             buttonState,
             dialogState
@@ -231,12 +232,18 @@ class ChooseServerVM(
 
         return ServerState.Default(
             key = "default_${endpoint.host}_${endpoint.port}",
-            radioButtonState = RadioButtonState(
-                text = stringRes(R.string.choose_server_full_server_name, endpoint.host, endpoint.port),
-                isChecked = isEndpointChecked,
-                onClick = { onEndpointClicked(endpoint) },
-                subtitle = if (endpoint == defaultEndpoint) stringRes(R.string.choose_server_save_default) else null,
-            ),
+            radioButtonState =
+                RadioButtonState(
+                    text = stringRes(R.string.choose_server_full_server_name, endpoint.host, endpoint.port),
+                    isChecked = isEndpointChecked,
+                    onClick = { onEndpointClicked(endpoint) },
+                    subtitle =
+                        if (endpoint == defaultEndpoint) {
+                            stringRes(R.string.choose_server_save_default)
+                        } else {
+                            null
+                        },
+                ),
             badge = if (endpoint == selectedEndpoint) stringRes(R.string.choose_server_active) else null,
         )
     }

@@ -215,17 +215,19 @@ private fun ChooseServerTopAppBar(
     )
 }
 
-@Suppress("LongMethod")
+@Suppress("LongMethod", "CyclomaticComplexMethod")
 private fun LazyListScope.serverListItems(state: ServerListState) {
     item(
-        key = when (state) {
-            is ServerListState.Fastest -> "fastest_header"
-            is ServerListState.Other -> "other_header"
-        },
-        contentType = when (state) {
-            is ServerListState.Fastest -> "fastest_header"
-            is ServerListState.Other -> "other_header"
-        }
+        key =
+            when (state) {
+                is ServerListState.Fastest -> "fastest_header"
+                is ServerListState.Other -> "other_header"
+            },
+        contentType =
+            when (state) {
+                is ServerListState.Fastest -> "fastest_header"
+                is ServerListState.Other -> "other_header"
+            }
     ) {
         when (state) {
             is ServerListState.Fastest -> FastestServersHeader(state = state)

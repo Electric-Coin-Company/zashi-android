@@ -39,7 +39,6 @@ sealed interface ServerListState {
 
 @Immutable
 sealed interface ServerState : Itemizable {
-
     @Immutable
     data class Default(
         override val key: Any,
@@ -66,5 +65,8 @@ sealed interface ServerDialogState {
     val state: AlertDialogState
 
     @Immutable
-    data class Validation(override val state: AlertDialogState, val reason: StringResource?) : ServerDialogState
+    data class Validation(
+        override val state: AlertDialogState,
+        val reason: StringResource?
+    ) : ServerDialogState
 }
