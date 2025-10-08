@@ -141,11 +141,6 @@ jobs:
       - name: Build Store (Solana dApps) APK
         timeout-minutes: 25
         env:
-          # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
-          # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
-          # Note that these properties are not currently used due to #1033
-          # ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
-          # ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH: ${{ steps.auth_google_play.outputs.credentials_file_path }}
           ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_TRACK: internal
           ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_STATUS: completed
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ format('{0}/release.jks', env.home) }}
