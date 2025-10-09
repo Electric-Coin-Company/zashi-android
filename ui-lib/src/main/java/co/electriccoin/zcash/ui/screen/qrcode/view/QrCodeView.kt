@@ -403,11 +403,6 @@ private fun ColumnScope.QrCode(
                     when (preparedState.qrCodeType) {
                         QrCodeType.ZASHI -> R.drawable.logo_zec_fill_stroke
                         QrCodeType.KEYSTONE -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr
-                    },
-                fullscreenCenterImageResId =
-                    when (preparedState.qrCodeType) {
-                        QrCodeType.ZASHI -> R.drawable.logo_zec_fill_stroke_white
-                        QrCodeType.KEYSTONE -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr_white
                     }
             ),
         modifier = modifier.align(CenterHorizontally),

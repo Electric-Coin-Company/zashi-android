@@ -118,19 +118,8 @@ class RequestViewModel(
                     RequestState.QrCode(
                         icon =
                             when (account) {
-                                is KeystoneAccount ->
-                                    co.electriccoin.zcash.ui.design.R.drawable
-                                        .ic_item_keystone_qr
-
+                                is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr
                                 is ZashiAccount -> R.drawable.logo_zec_fill_stroke
-                            },
-                        fullScreenIcon =
-                            when (account) {
-                                is KeystoneAccount ->
-                                    co.electriccoin.zcash.ui.design.R.drawable
-                                        .ic_item_keystone_qr_white
-
-                                is ZashiAccount -> R.drawable.logo_zec_fill_stroke_white
                             },
                         walletAddress = walletAddress,
                         request = request,
@@ -146,8 +135,9 @@ class RequestViewModel(
                                     centerIcon =
                                         when (account) {
                                             is KeystoneAccount ->
-                                                co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr_white
-                                            is ZashiAccount -> R.drawable.logo_zec_fill_stroke_white
+                                                co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr
+
+                                            is ZashiAccount -> R.drawable.logo_zec_fill_stroke
                                         }
                                 )
                             }

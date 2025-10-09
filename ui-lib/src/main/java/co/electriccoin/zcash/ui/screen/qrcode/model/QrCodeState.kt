@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.qrcode.model
 
+import androidx.annotation.DrawableRes
 import cash.z.ecc.android.sdk.model.WalletAddress
 import co.electriccoin.zcash.ui.design.component.QrState
 import co.electriccoin.zcash.ui.design.util.StringResource
@@ -16,13 +17,11 @@ sealed class QrCodeState {
     ) : QrCodeState() {
         fun toQrState(
             contentDescription: StringResource? = null,
-            centerImageResId: Int? = null,
-            fullscreenCenterImageResId: Int? = null
+            @DrawableRes centerImageResId: Int? = null
         ) = QrState(
             qrData = walletAddress.address,
             contentDescription = contentDescription,
-            centerImageResId = centerImageResId,
-            fullscreenCenterImageResId = fullscreenCenterImageResId
+            centerImage = centerImageResId
         )
     }
 }

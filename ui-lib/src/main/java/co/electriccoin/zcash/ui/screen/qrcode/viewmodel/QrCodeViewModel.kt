@@ -52,9 +52,9 @@ class QrCodeViewModel(
                                     filenamePrefix = "zcash_address_qr_",
                                     centerIcon =
                                         when (account) {
-                                            is ZashiAccount -> R.drawable.logo_zec_fill_stroke_white
+                                            is ZashiAccount -> R.drawable.logo_zec_fill_stroke
                                             is KeystoneAccount ->
-                                                co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr_white
+                                                co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr
                                         },
                                 )
                             }
