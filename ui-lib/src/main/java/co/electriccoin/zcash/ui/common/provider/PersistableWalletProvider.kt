@@ -6,6 +6,7 @@ import co.electriccoin.zcash.preference.api.PreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.PreferenceDefault
 import co.electriccoin.zcash.preference.model.entry.PreferenceKey
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.json.JSONObject
 
 interface PersistableWalletProvider {
@@ -24,6 +25,15 @@ class PersistableWalletProviderImpl(
     private val persistableWalletStorageProvider = PersistableWalletStorageProviderImpl(preferenceHolder)
 
     override val persistableWallet: Flow<PersistableWallet?> = persistableWalletStorageProvider.observe()
+        .map { wallet ->
+            wallet?.copy(
+                seedPhrase = wallet.seedPhrase.copy(
+                    split = wallet.seedPhrase.split.mapIndexed { index, word ->
+                        word.trim()
+                    }
+                )
+            )
+        }
 
     override suspend fun store(persistableWallet: PersistableWallet) {
         persistableWalletStorageProvider.store(persistableWallet)
