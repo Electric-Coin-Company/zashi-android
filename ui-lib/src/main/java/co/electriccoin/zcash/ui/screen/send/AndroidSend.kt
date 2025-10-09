@@ -3,6 +3,7 @@
 package co.electriccoin.zcash.ui.screen.send
 
 import android.content.pm.PackageManager
+import androidx.activity.compose.BackHandler
 import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -78,6 +79,8 @@ internal fun WrapSend(args: Send) {
     val balanceState = balanceWidgetVM.state.collectAsStateWithLifecycle().value
 
     val exchangeRateState = exchangeRateRepository.state.collectAsStateWithLifecycle().value
+
+    BackHandler { navigationRouter.back() }
 
     WrapSend(
         balanceWidgetState = balanceState,

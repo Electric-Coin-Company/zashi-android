@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.swap.detail
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -15,6 +16,7 @@ fun SwapDetailScreen(args: SwapDetailArgs) {
     val topAppBarViewModel = koinActivityViewModel<ZashiTopAppBarVM>()
     val appBarState by topAppBarViewModel.state.collectAsStateWithLifecycle()
     val state by vm.state.collectAsStateWithLifecycle()
+    BackHandler { state?.onBack() }
     state?.let { SwapDetailView(it, appBarState) }
 }
 
