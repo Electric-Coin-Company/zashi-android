@@ -10,13 +10,13 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
 import co.electriccoin.zcash.ui.screen.request.view.RequestView
-import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
+import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestVM
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
 internal fun WrapRequest(addressType: Int) {
-    val requestViewModel = koinViewModel<RequestViewModel> { parametersOf(addressType) }
+    val requestViewModel = koinViewModel<RequestVM> { parametersOf(addressType) }
     val requestState by requestViewModel.state.collectAsStateWithLifecycle()
 
     val snackbarHostState = remember { SnackbarHostState() }

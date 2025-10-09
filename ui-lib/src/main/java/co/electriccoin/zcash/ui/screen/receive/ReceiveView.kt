@@ -221,7 +221,6 @@ private fun AddressPanel(
                         .fillMaxWidth()
                         .padding(top = ZcashTheme.dimens.spacingDefault)
             ) {
-
                 if (state.isShielded) {
                     ReceiveIconButton(
                         containerColor = buttonColor,

@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @Suppress("TooManyFunctions")
-class RequestViewModel(
+class RequestVM(
     private val addressTypeOrdinal: Int,
     private val application: Application,
     exchangeRateRepository: ExchangeRateRepository,
@@ -119,7 +119,12 @@ class RequestViewModel(
                         icon =
                             when (account) {
                                 is KeystoneAccount -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr
-                                is ZashiAccount -> R.drawable.logo_zec_fill_stroke
+                                is ZashiAccount ->
+                                    if (walletAddress is WalletAddress.Transparent) {
+                                        R.drawable.ic_zec_qr_transparent
+                                    } else {
+                                        R.drawable.ic_zec_qr_shielded
+                                    }
                             },
                         walletAddress = walletAddress,
                         request = request,
@@ -137,7 +142,12 @@ class RequestViewModel(
                                             is KeystoneAccount ->
                                                 co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr
 
-                                            is ZashiAccount -> R.drawable.logo_zec_fill_stroke
+                                            is ZashiAccount ->
+                                                if (walletAddress is WalletAddress.Transparent) {
+                                                    R.drawable.ic_zec_qr_transparent
+                                                } else {
+                                                    R.drawable.ic_zec_qr_shielded
+                                                }
                                         }
                                 )
                             }

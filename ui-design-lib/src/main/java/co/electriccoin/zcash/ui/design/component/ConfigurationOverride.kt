@@ -19,9 +19,10 @@ fun ConfigurationOverride(
 ) {
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
-    val newConfiguration = remember(configuration) {
-        configuration.createConfiguration(isDarkTheme)
-    }
+    val newConfiguration =
+        remember(configuration) {
+            configuration.createConfiguration(isDarkTheme)
+        }
     val newContext by remember(context) {
         derivedStateOf {
             context.createConfigurationContext(newConfiguration)
@@ -35,4 +36,3 @@ fun ConfigurationOverride(
         content()
     }
 }
-

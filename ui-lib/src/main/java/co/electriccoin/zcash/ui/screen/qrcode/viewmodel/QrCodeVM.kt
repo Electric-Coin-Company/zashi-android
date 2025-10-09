@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
@@ -22,7 +23,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class QrCodeViewModel(
+class QrCodeVM(
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val addressTypeOrdinal: Int,
     private val application: Application,
@@ -52,7 +53,12 @@ class QrCodeViewModel(
                                     filenamePrefix = "zcash_address_qr_",
                                     centerIcon =
                                         when (account) {
-                                            is ZashiAccount -> R.drawable.logo_zec_fill_stroke
+                                            is ZashiAccount ->
+                                                if (walletAddress is WalletAddress.Transparent) {
+                                                    R.drawable.ic_zec_qr_transparent
+                                                } else {
+                                                    R.drawable.ic_zec_qr_shielded
+                                                }
                                             is KeystoneAccount ->
                                                 co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr
                                         },

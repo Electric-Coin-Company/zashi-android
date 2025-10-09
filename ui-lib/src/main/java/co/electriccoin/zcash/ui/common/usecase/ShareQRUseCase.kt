@@ -7,9 +7,9 @@ import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.ContextCompat
-import co.electriccoin.zcash.ui.design.util.createConfiguration
 import co.electriccoin.zcash.ui.design.util.AndroidQrCodeImageGenerator
 import co.electriccoin.zcash.ui.design.util.JvmQrCodeGenerator
+import co.electriccoin.zcash.ui.design.util.createConfiguration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -54,9 +54,10 @@ class ShareQRUseCase(
         }
 
         shareImageBitmap(
-            shareImageBitmap = bitmap.let {
-                if (centerIcon != null) it.copy(Bitmap.Config.ARGB_8888, false) else it
-            },
+            shareImageBitmap =
+                bitmap.let {
+                    if (centerIcon != null) it.copy(Bitmap.Config.ARGB_8888, false) else it
+                },
             filePrefix = filenamePrefix,
             fileSuffix = ".png",
             shareText = shareText,

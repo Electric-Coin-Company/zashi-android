@@ -7,18 +7,19 @@ import android.content.res.Configuration
  */
 fun Configuration.createConfiguration(
     isDarkTheme: Boolean?
-): Configuration = Configuration(this).apply {
-    when (isDarkTheme) {
-        true -> {
-            uiMode = Configuration.UI_MODE_NIGHT_YES
-        }
+): Configuration =
+    Configuration(this).apply {
+        when (isDarkTheme) {
+            true -> {
+                uiMode = Configuration.UI_MODE_NIGHT_YES
+            }
 
-        false -> {
-            uiMode = Configuration.UI_MODE_NIGHT_NO
-        }
+            false -> {
+                uiMode = Configuration.UI_MODE_NIGHT_NO
+            }
 
-        null -> {
-            // do not override
+            null -> {
+                // do not override
+            }
         }
     }
-}

@@ -240,7 +240,7 @@ fun UnifiedQrCodePanel(
         horizontalAlignment = CenterHorizontally
     ) {
         QrCode(
-            preparedState = state,
+            state = state,
             modifier =
                 Modifier
                     .padding(horizontal = 24.dp),
@@ -325,7 +325,7 @@ fun TransparentQrCodePanel(
         horizontalAlignment = CenterHorizontally
     ) {
         QrCode(
-            preparedState = state,
+            state = state,
             modifier =
                 Modifier
                     .padding(horizontal = 24.dp),
@@ -384,24 +384,29 @@ fun TransparentQrCodePanel(
 
 @Composable
 private fun ColumnScope.QrCode(
-    preparedState: QrCodeState.Prepared,
+    state: QrCodeState.Prepared,
     modifier: Modifier = Modifier
 ) {
     ZashiQr(
         state =
-            preparedState.toQrState(
+            state.toQrState(
                 contentDescription =
                     stringRes(
-                        when (preparedState.walletAddress) {
+                        when (state.walletAddress) {
                             is WalletAddress.Unified -> R.string.qr_code_unified_content_description
                             is WalletAddress.Sapling -> R.string.qr_code_sapling_content_description
                             is WalletAddress.Transparent -> R.string.qr_code_transparent_content_description
-                            else -> error("Unsupported address type: ${preparedState.walletAddress}")
+                            else -> error("Unsupported address type: ${state.walletAddress}")
                         }
                     ),
                 centerImageResId =
-                    when (preparedState.qrCodeType) {
-                        QrCodeType.ZASHI -> R.drawable.logo_zec_fill_stroke
+                    when (state.qrCodeType) {
+                        QrCodeType.ZASHI ->
+                            if (state.walletAddress is WalletAddress.Transparent) {
+                                R.drawable.ic_zec_qr_transparent
+                            } else {
+                                R.drawable.ic_zec_qr_shielded
+                            }
                         QrCodeType.KEYSTONE -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr
                     }
             ),
