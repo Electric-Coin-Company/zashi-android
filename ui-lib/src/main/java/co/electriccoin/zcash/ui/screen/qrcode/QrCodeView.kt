@@ -398,14 +398,10 @@ private fun ColumnScope.QrCode(
                         }
                     ),
                 centerImageResId =
-                    when (state.qrCodeType) {
-                        QrCodeType.ZASHI ->
-                            if (state.walletAddress is WalletAddress.Transparent) {
-                                R.drawable.ic_zec_qr_transparent
-                            } else {
-                                R.drawable.ic_zec_qr_shielded
-                            }
-                        QrCodeType.KEYSTONE -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr
+                    if (state.walletAddress is WalletAddress.Transparent) {
+                        R.drawable.ic_zec_qr_transparent
+                    } else {
+                        R.drawable.ic_zec_qr_shielded
                     }
             ),
         modifier = modifier.align(CenterHorizontally),

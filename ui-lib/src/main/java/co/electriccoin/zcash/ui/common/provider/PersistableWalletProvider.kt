@@ -24,16 +24,20 @@ class PersistableWalletProviderImpl(
 ) : PersistableWalletProvider {
     private val persistableWalletStorageProvider = PersistableWalletStorageProviderImpl(preferenceHolder)
 
-    override val persistableWallet: Flow<PersistableWallet?> = persistableWalletStorageProvider.observe()
-        .map { wallet ->
-            wallet?.copy(
-                seedPhrase = wallet.seedPhrase.copy(
-                    split = wallet.seedPhrase.split.mapIndexed { index, word ->
-                        word.trim()
-                    }
+    override val persistableWallet: Flow<PersistableWallet?> =
+        persistableWalletStorageProvider
+            .observe()
+            .map { wallet ->
+                wallet?.copy(
+                    seedPhrase =
+                        wallet.seedPhrase.copy(
+                            split =
+                                wallet.seedPhrase.split.mapIndexed { index, word ->
+                                    word.trim()
+                                }
+                        )
                 )
-            )
-        }
+            }
 
     override suspend fun store(persistableWallet: PersistableWallet) {
         persistableWalletStorageProvider.store(persistableWallet)

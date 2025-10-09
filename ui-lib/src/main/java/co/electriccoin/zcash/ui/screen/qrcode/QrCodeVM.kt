@@ -50,15 +50,10 @@ class QrCodeVM(
                                     sharePickerText = context.getString(R.string.qr_code_share_chooser_title),
                                     filenamePrefix = "zcash_address_qr_",
                                     centerIcon =
-                                        when (account) {
-                                            is ZashiAccount ->
-                                                if (walletAddress is WalletAddress.Transparent) {
-                                                    R.drawable.ic_zec_qr_transparent
-                                                } else {
-                                                    R.drawable.ic_zec_qr_shielded
-                                                }
-                                            is KeystoneAccount ->
-                                                co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr
+                                        if (walletAddress is WalletAddress.Transparent) {
+                                            R.drawable.ic_zec_qr_transparent
+                                        } else {
+                                            R.drawable.ic_zec_qr_shielded
                                         },
                                 )
                             }
