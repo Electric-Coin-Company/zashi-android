@@ -101,7 +101,7 @@ import co.electriccoin.zcash.ui.screen.pay.PayArgs
 import co.electriccoin.zcash.ui.screen.pay.PayScreen
 import co.electriccoin.zcash.ui.screen.pay.info.PayInfoArgs
 import co.electriccoin.zcash.ui.screen.pay.info.PayInfoScreen
-import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
+import co.electriccoin.zcash.ui.screen.qrcode.QrCodeScreen
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.ReceiveArgs
 import co.electriccoin.zcash.ui.screen.receive.ReceiveScreen
@@ -109,7 +109,7 @@ import co.electriccoin.zcash.ui.screen.receive.info.ShieldedAddressInfoArgs
 import co.electriccoin.zcash.ui.screen.receive.info.ShieldedAddressInfoScreen
 import co.electriccoin.zcash.ui.screen.receive.info.TransparentAddressInfoArgs
 import co.electriccoin.zcash.ui.screen.receive.info.TransparentAddressInfoScreen
-import co.electriccoin.zcash.ui.screen.request.WrapRequest
+import co.electriccoin.zcash.ui.screen.request.RequestScreen
 import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
@@ -328,14 +328,14 @@ internal fun MainActivity.Navigation() {
             arguments = listOf(navArgument(ADDRESS_TYPE) { type = NavType.IntType })
         ) { backStackEntry ->
             val addressType = backStackEntry.arguments?.getInt(ADDRESS_TYPE) ?: ReceiveAddressType.Unified.ordinal
-            WrapQrCode(addressType)
+            QrCodeScreen(addressType)
         }
         composable(
             route = "$REQUEST/{$ADDRESS_TYPE}",
             arguments = listOf(navArgument(ADDRESS_TYPE) { type = NavType.IntType })
         ) { backStackEntry ->
             val addressType = backStackEntry.arguments?.getInt(ADDRESS_TYPE) ?: ReceiveAddressType.Unified.ordinal
-            WrapRequest(addressType)
+            RequestScreen(addressType)
         }
         composable<ConnectKeystone> { AndroidConnectKeystone() }
         composable<SelectKeystoneAccount> { AndroidSelectKeystoneAccount(it.toRoute()) }

@@ -1,6 +1,6 @@
 @file:Suppress("TooManyFunctions")
 
-package co.electriccoin.zcash.ui.screen.qrcode.view
+package co.electriccoin.zcash.ui.screen.qrcode
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -52,8 +52,6 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
-import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeType
 import kotlinx.coroutines.runBlocking
 
 @Composable

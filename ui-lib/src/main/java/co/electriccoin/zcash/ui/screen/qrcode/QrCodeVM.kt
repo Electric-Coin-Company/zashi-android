@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.qrcode.viewmodel
+package co.electriccoin.zcash.ui.screen.qrcode
 
 import android.app.Application
 import android.content.Context
@@ -14,8 +14,6 @@ import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareQRUseCase
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
-import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
-import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeType
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
