@@ -31,16 +31,7 @@ object StandardPreferenceKeys {
             PreferenceKey("IS_APP_ACCESS_AUTHENTICATION"),
             true
         )
-    val IS_DELETE_WALLET_AUTHENTICATION =
-        BooleanPreferenceDefault(
-            PreferenceKey("IS_DELETE_WALLET_AUTHENTICATION"),
-            true
-        )
-    val IS_EXPORT_PRIVATE_DATA_AUTHENTICATION =
-        BooleanPreferenceDefault(
-            PreferenceKey("IS_EXPORT_PRIVATE_DATA_AUTHENTICATION"),
-            true
-        )
+
     val IS_HIDE_BALANCES =
         BooleanPreferenceDefault(
             PreferenceKey("IS_HIDE_BALANCES"),

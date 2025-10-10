@@ -12,6 +12,7 @@ import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.di.koinActivityViewModel
+import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.common.model.VersionInfo
@@ -23,19 +24,16 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 
 @Composable
-internal fun WrapExportPrivateData(
-    goBack: () -> Unit,
-    onConfirm: () -> Unit
-) {
+internal fun WrapExportPrivateData() {
     val walletViewModel = koinActivityViewModel<WalletViewModel>()
-
     val synchronizer = walletViewModel.synchronizer.collectAsStateWithLifecycle().value
-
+    val navigationRouter = koinInject<NavigationRouter>()
     WrapExportPrivateData(
-        goBack = goBack,
-        onShare = onConfirm,
+        goBack = { navigationRouter.back() },
+        onShare = { navigationRouter.back() },
         synchronizer = synchronizer,
     )
 }

@@ -37,10 +37,10 @@ class TransactionHistoryWidgetVM(
         combine(
             getActivities.observe(),
             getWalletRestoringState.observe(),
-        ) { transactions, restoringState ->
+        ) { activities, restoringState ->
             when {
-                transactions == null -> TransactionHistoryWidgetState.Loading
-                transactions.isEmpty() ->
+                activities == null -> TransactionHistoryWidgetState.Loading
+                activities.isEmpty() ->
                     TransactionHistoryWidgetState.Empty(
                         subtitle =
                             stringRes(R.string.transaction_history_widget_empty_subtitle)
@@ -63,11 +63,11 @@ class TransactionHistoryWidgetVM(
                                         text = stringRes(R.string.transaction_history_widget_header_button),
                                         onClick = ::onSeeAllTransactionsClick
                                     ).takeIf {
-                                        transactions.size > MAX_TRANSACTION_COUNT
+                                        activities.size > MAX_TRANSACTION_COUNT
                                     }
                             ),
                         transactions =
-                            transactions
+                            activities
                                 .take(MAX_TRANSACTION_COUNT)
                                 .map { transaction ->
                                     activityMapper.createTransactionState(
