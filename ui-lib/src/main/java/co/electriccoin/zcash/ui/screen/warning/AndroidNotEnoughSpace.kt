@@ -10,18 +10,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.compose.LocalActivity
 import co.electriccoin.zcash.ui.screen.warning.view.NotEnoughSpaceView
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.util.SettingsUtil
 import kotlinx.coroutines.launch
 
 @Composable
-fun MainActivity.WrapNotEnoughSpace(
+fun WrapNotEnoughSpace(
     goPrevious: () -> Unit,
     goSettings: () -> Unit
 ) {
+    val activity = LocalActivity.current
     val storageCheckViewModel = koinActivityViewModel<StorageCheckViewModel>()
 
     val isEnoughFreeSpace = storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle().value
@@ -33,7 +34,7 @@ fun MainActivity.WrapNotEnoughSpace(
     val spaceAvailableMegabytes = storageCheckViewModel.spaceAvailableMegabytes.collectAsStateWithLifecycle()
 
     BackHandler {
-        finish()
+        activity.finish()
     }
 
     WrapNotEnoughFreeSpace(

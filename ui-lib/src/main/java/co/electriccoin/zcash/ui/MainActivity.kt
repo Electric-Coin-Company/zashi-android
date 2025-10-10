@@ -40,7 +40,6 @@ import co.electriccoin.zcash.ui.screen.authentication.RETRY_TRIGGER_DELAY
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
 import co.electriccoin.zcash.ui.screen.authentication.view.AnimationConstants
 import co.electriccoin.zcash.ui.screen.authentication.view.WelcomeAnimationAutostart
-import co.electriccoin.zcash.ui.screen.onboarding.OnboardingNavigation
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScan
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.work.WorkIds
@@ -239,21 +238,7 @@ class MainActivity : FragmentActivity() {
     @Composable
     private fun MainContent() {
         val secretState by walletViewModel.secretState.collectAsStateWithLifecycle()
-
-        when (secretState) {
-            SecretState.NONE -> {
-                OnboardingNavigation()
-            }
-
-            SecretState.READY -> {
-                Navigation()
-            }
-
-            SecretState.LOADING -> {
-                // For now, keep displaying splash screen using condition above.
-                // In the future, we might consider displaying something different here.
-            }
-        }
+        RootNavGraph(secretState, walletViewModel, storageCheckViewModel)
     }
 
     private fun monitorForBackgroundSync() {

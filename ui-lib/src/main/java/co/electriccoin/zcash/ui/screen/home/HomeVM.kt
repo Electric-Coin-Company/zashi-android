@@ -157,8 +157,8 @@ class HomeVM(
         message = messageState
     )
 
-    private fun createMessageState(it: HomeMessageData?, isShieldFundsInfoEnabled: Boolean) =
-        when (it) {
+    private fun createMessageState(data: HomeMessageData?, isShieldFundsInfoEnabled: Boolean) =
+        when (data) {
             is HomeMessageData.Backup ->
                 WalletBackupMessageState(
                     onClick = ::onWalletBackupMessageClick,
@@ -178,19 +178,19 @@ class HomeVM(
 
             is HomeMessageData.Error ->
                 WalletErrorMessageState(
-                    onClick = { onWalletErrorMessageClick(it) }
+                    onClick = { onWalletErrorMessageClick(data) }
                 )
 
             is HomeMessageData.Restoring ->
                 WalletRestoringMessageState(
-                    isSpendable = it.isSpendable,
-                    progress = it.progress,
+                    isSpendable = data.isSpendable,
+                    progress = data.progress,
                     onClick = ::onWalletRestoringMessageClick
                 )
 
             is HomeMessageData.Syncing ->
                 WalletSyncingMessageState(
-                    progress = it.progress,
+                    progress = data.progress,
                     onClick = ::onWalletSyncingMessageClick
                 )
 
@@ -199,7 +199,7 @@ class HomeVM(
                     subtitle =
                         stringRes(
                             R.string.home_message_transparent_balance_subtitle,
-                            stringRes(it.zatoshi, HIDDEN)
+                            stringRes(data.zatoshi, HIDDEN)
                         ),
                     onClick =
                         if (isShieldFundsInfoEnabled) {
