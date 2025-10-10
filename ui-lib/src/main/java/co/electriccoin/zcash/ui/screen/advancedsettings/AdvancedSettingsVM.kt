@@ -11,6 +11,8 @@ import co.electriccoin.zcash.ui.common.model.DistributionDimension
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToExportPrivateDataUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToResetWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToTaxExportUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToWalletBackupUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -34,6 +36,8 @@ class AdvancedSettingsVM(
     private val navigateToTaxExport: NavigateToTaxExportUseCase,
     private val navigateToWalletBackup: NavigateToWalletBackupUseCase,
     private val getVersionInfo: GetVersionInfoProvider,
+    private val navigateToResetWallet: NavigateToResetWalletUseCase,
+    private val navigateToExportPrivateData: NavigateToExportPrivateDataUseCase
 ) : ViewModel() {
     private val versionInfo by lazy { getVersionInfo() }
 
@@ -61,7 +65,7 @@ class AdvancedSettingsVM(
                     ListItemState(
                         title = stringRes(R.string.advanced_settings_export),
                         bigIcon = imageRes(R.drawable.ic_advanced_settings_export),
-                        onClick = {}
+                        onClick = ::onExportPrivateDataClick
                     ),
                     ListItemState(
                         title = stringRes(R.string.advanced_settings_tax),
@@ -105,7 +109,7 @@ class AdvancedSettingsVM(
             deleteButton =
                 ButtonState(
                     text = stringRes(R.string.advanced_settings_delete_button),
-                    onClick = {}
+                    onClick = ::onResetWalletClick,
                 ),
         )
 
@@ -119,13 +123,14 @@ class AdvancedSettingsVM(
 
     private fun onCrashReportingClick() = navigationRouter.forward(NavigationTargets.CRASH_REPORTING_OPT_IN)
 
-    private fun onTaxExportClick() =
-        viewModelScope.launch {
-            navigateToTaxExport()
-        }
+    private fun onTaxExportClick() = viewModelScope.launch { navigateToTaxExport() }
 
     private fun onSeedRecoveryClick() =
         viewModelScope.launch {
             navigateToWalletBackup(isOpenedFromSeedBackupInfo = false)
         }
+
+    private fun onExportPrivateDataClick() = viewModelScope.launch { navigateToExportPrivateData() }
+
+    private fun onResetWalletClick() = viewModelScope.launch { navigateToResetWallet() }
 }

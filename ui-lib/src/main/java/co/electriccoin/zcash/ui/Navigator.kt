@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui
 
 import android.annotation.SuppressLint
-import androidx.activity.ComponentActivity
+import android.app.Activity
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.serialization.generateHashCode
@@ -21,7 +21,7 @@ interface Navigator {
 }
 
 class NavigatorImpl(
-    private val activity: ComponentActivity,
+    private val activity: Activity,
     private val navController: NavHostController,
     private val flexaViewModel: FlexaViewModel,
     private val keyboardManager: KeyboardManager,
@@ -51,10 +51,12 @@ class NavigatorImpl(
     }
 
     private fun backToRoot() {
-        navController.popBackStack(
-            destinationId = navController.graph.startDestinationId,
-            inclusive = false
-        )
+        navController.currentDestination?.parent?.startDestinationId?.let {
+            navController.popBackStack(
+                destinationId = it,
+                inclusive = false
+            )
+        }
     }
 
     private fun replaceAll(command: NavigationCommand.ReplaceAll) {
@@ -62,10 +64,12 @@ class NavigatorImpl(
             when (route) {
                 co.electriccoin.zcash.ui.screen.flexa.Flexa -> {
                     if (index == 0) {
-                        navController.popBackStack(
-                            route = navController.graph.startDestinationId,
-                            inclusive = false
-                        )
+                        navController.currentDestination?.parent?.startDestinationId?.let {
+                            navController.popBackStack(
+                                route = it,
+                                inclusive = false
+                            )
+                        }
                     }
 
                     if (index != command.routes.lastIndex) {
@@ -77,10 +81,12 @@ class NavigatorImpl(
 
                 is ExternalUrl -> {
                     if (index == 0) {
-                        navController.popBackStack(
-                            route = navController.graph.startDestinationId,
-                            inclusive = false
-                        )
+                        navController.currentDestination?.parent?.startDestinationId?.let {
+                            navController.popBackStack(
+                                route = it,
+                                inclusive = false
+                            )
+                        }
                     }
 
                     if (index != command.routes.lastIndex) {
@@ -94,8 +100,10 @@ class NavigatorImpl(
                 else -> {
                     navController.executeNavigation(route = route) {
                         if (index == 0) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = false
+                            navController.currentDestination?.parent?.startDestinationId?.let {
+                                popUpTo(it) {
+                                    inclusive = false
+                                }
                             }
                         }
                     }

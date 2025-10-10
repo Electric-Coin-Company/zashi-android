@@ -41,10 +41,10 @@ class ActivityWidgetVM(
             // updateSwapActivityMetadata.uiPipeline.onStart { emit(Unit) },
             getActivities.observe(),
             getWalletRestoringState.observe(),
-        ) { transactions, restoringState ->
+        ) { activities, restoringState ->
             when {
-                transactions == null -> ActivityWidgetState.Loading
-                transactions.isEmpty() ->
+                activities == null -> ActivityWidgetState.Loading
+                activities.isEmpty() ->
                     ActivityWidgetState.Empty(
                         subtitle =
                             stringRes(R.string.transaction_history_widget_empty_subtitle)
@@ -67,11 +67,11 @@ class ActivityWidgetVM(
                                         text = stringRes(R.string.transaction_history_widget_header_button),
                                         onClick = ::onSeeAllTransactionsClick
                                     ).takeIf {
-                                        transactions.size > MAX_TRANSACTION_COUNT
+                                        activities.size > MAX_TRANSACTION_COUNT
                                     }
                             ),
                         transactions =
-                            transactions
+                            activities
                                 .take(MAX_TRANSACTION_COUNT)
                                 .map { transaction ->
                                     activityMapper.createTransactionState(
