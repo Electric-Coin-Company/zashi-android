@@ -51,6 +51,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
+import co.electriccoin.zcash.ui.common.usecase.IsScreenTimeoutDisabledDuringRestoreUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsTorEnabledUseCase
 import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
@@ -244,4 +245,5 @@ val useCaseModule =
         factoryOf(::GetORSwapQuoteUseCase)
         factoryOf(::ShareQRUseCase)
         factoryOf(::GetActivitiesUseCase)
+        factoryOf(::IsScreenTimeoutDisabledDuringRestoreUseCase)
     }

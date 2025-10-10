@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.selectkeystoneaccount
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -12,7 +13,7 @@ import org.koin.core.parameter.parametersOf
 fun AndroidSelectKeystoneAccount(args: SelectKeystoneAccount) {
     val viewModel = koinViewModel<SelectKeystoneAccountViewModel> { parametersOf(args) }
     val state by viewModel.state.collectAsStateWithLifecycle()
-
+    BackHandler { state?.onBackClick() }
     state?.let {
         SelectKeystoneAccountView(state = it)
     }

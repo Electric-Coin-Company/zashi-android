@@ -61,8 +61,8 @@ val LocalZashiCircularProgressIndicatorColors = compositionLocalOf<ZashiCircular
 object ZashiCircularProgressIndicatorDefaults {
     @Composable
     fun colors(
-        progressColor: Color = ZashiColors.Utility.Purple.utilityPurple400,
-        trackColor: Color = ZashiColors.Utility.Purple.utilityPurple50
+        progressColor: Color = ZashiColors.Utility.Purple.utilityPurple50,
+        trackColor: Color = ZashiColors.Utility.Purple.utilityPurple400
     ) = ZashiCircularProgressIndicatorColors(
         progressColor = progressColor,
         trackColor = trackColor

@@ -22,7 +22,7 @@ data class SignKeystoneTransactionState(
         return QrState(
             qrData = qrData,
             contentDescription = contentDescription,
-            centerImageResId = centerImageResId
+            centerImage = centerImageResId
         )
     }
 }

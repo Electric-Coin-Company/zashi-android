@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @Suppress("TooManyFunctions")
-class RequestViewModel(
+class RequestVM(
     private val addressTypeOrdinal: Int,
     private val application: Application,
     exchangeRateRepository: ExchangeRateRepository,
@@ -117,20 +117,10 @@ class RequestViewModel(
                 RequestStage.QR_CODE -> {
                     RequestState.QrCode(
                         icon =
-                            when (account) {
-                                is KeystoneAccount ->
-                                    co.electriccoin.zcash.ui.design.R.drawable
-                                        .ic_item_keystone_qr
-
-                                is ZashiAccount -> R.drawable.logo_zec_fill_stroke
-                            },
-                        fullScreenIcon =
-                            when (account) {
-                                is KeystoneAccount ->
-                                    co.electriccoin.zcash.ui.design.R.drawable
-                                        .ic_item_keystone_qr_white
-
-                                is ZashiAccount -> R.drawable.logo_zec_fill_stroke_white
+                            if (walletAddress is WalletAddress.Transparent) {
+                                R.drawable.ic_zec_qr_transparent
+                            } else {
+                                R.drawable.ic_zec_qr_shielded
                             },
                         walletAddress = walletAddress,
                         request = request,
@@ -144,10 +134,10 @@ class RequestViewModel(
                                         application.getString(R.string.request_qr_code_share_chooser_title),
                                     filenamePrefix = TEMP_FILE_NAME_PREFIX,
                                     centerIcon =
-                                        when (account) {
-                                            is KeystoneAccount ->
-                                                co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr_white
-                                            is ZashiAccount -> R.drawable.logo_zec_fill_stroke_white
+                                        if (walletAddress is WalletAddress.Transparent) {
+                                            R.drawable.ic_zec_qr_transparent
+                                        } else {
+                                            R.drawable.ic_zec_qr_shielded
                                         }
                                 )
                             }

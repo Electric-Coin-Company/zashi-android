@@ -14,6 +14,8 @@ import co.electriccoin.zcash.ui.common.provider.HttpClientProvider
 import co.electriccoin.zcash.ui.common.provider.HttpClientProviderImpl
 import co.electriccoin.zcash.ui.common.provider.IsExchangeRateEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.provider.IsExchangeRateEnabledStorageProviderImpl
+import co.electriccoin.zcash.ui.common.provider.IsKeepScreenOnDuringRestoreProvider
+import co.electriccoin.zcash.ui.common.provider.IsKeepScreenOnDuringRestoreProviderImpl
 import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.KtorNearApiProvider
@@ -83,4 +85,5 @@ val providerModule =
         factoryOf(::HttpClientProviderImpl) bind HttpClientProvider::class
         factoryOf(::SimpleSwapAssetProviderImpl) bind SimpleSwapAssetProvider::class
         factoryOf(::SwapAssetProviderImpl) bind SwapAssetProvider::class
+        factoryOf(::IsKeepScreenOnDuringRestoreProviderImpl) bind IsKeepScreenOnDuringRestoreProvider::class
     }

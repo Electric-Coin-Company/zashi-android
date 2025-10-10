@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.common.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.BuildConfig
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +29,7 @@ class ScreenSecurity {
 }
 
 @Suppress("CompositionLocalAllowlist")
-val LocalScreenSecurity = compositionLocalOf { ScreenSecurity() }
+val LocalScreenSecurity = staticCompositionLocalOf { ScreenSecurity() }
 
 /**
  * Returns true only if it's used from the automated Android UI testing.

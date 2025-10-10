@@ -4,16 +4,17 @@ import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.provider.IsKeepScreenOnDuringRestoreProvider
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 
-class IsRestoreSuccessDialogVisibleUseCase(
+class IsScreenTimeoutDisabledDuringRestoreUseCase(
     private val walletRepository: WalletRepository,
-    private val isKeepScreenOnDuringRestoreProvider: IsKeepScreenOnDuringRestoreProvider
+    private val isKeepScreenOnDuringRestoreProvider: IsKeepScreenOnDuringRestoreProvider,
 ) {
     fun observe() =
         combine(
             walletRepository.walletRestoringState,
             isKeepScreenOnDuringRestoreProvider.observe()
-        ) { walletRestoringState, isKeepScreenOnDuringRestore ->
-            walletRestoringState == WalletRestoringState.RESTORING && isKeepScreenOnDuringRestore == null
-        }
+        ) { restoringState, isKeepScreenOnDuringRestore ->
+            isKeepScreenOnDuringRestore == true && restoringState == WalletRestoringState.RESTORING
+        }.distinctUntilChanged()
 }

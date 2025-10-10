@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.design.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
@@ -28,6 +30,7 @@ import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -68,7 +71,7 @@ fun ZashiQr(
         contentPadding = contentPadding,
         qrSize = qrSize,
         enableBitmapReload = !isFullscreenDialogVisible,
-        centerImageResId = state.centerImageResId,
+        centerImage = state.centerImage,
     )
 
     if (isFullscreenDialogVisible) {
@@ -82,16 +85,15 @@ fun ZashiQr(
                 )
         ) {
             val parent = LocalView.current.parent
-
-            BrightenScreen()
-
-            FullscreenDialogContent(
-                state = state,
-                onBack = { isFullscreenDialogVisible = false },
-            )
-
             SideEffect {
                 (parent as? DialogWindowProvider)?.window?.setDimAmount(FULLSCREEN_DIM)
+            }
+            BrightenScreen()
+            ConfigurationOverride(isDarkTheme = false) {
+                FullscreenDialogContent(
+                    state = state,
+                    onBack = { isFullscreenDialogVisible = false },
+                )
             }
         }
     }
@@ -104,7 +106,7 @@ private fun ZashiQrInternal(
     colors: QrCodeColors,
     contentPadding: PaddingValues,
     enableBitmapReload: Boolean,
-    centerImageResId: Int?,
+    @DrawableRes centerImage: Int?,
     modifier: Modifier = Modifier,
 ) {
     val qrSizePx = with(LocalDensity.current) { qrSize.roundToPx() }
@@ -137,13 +139,13 @@ private fun ZashiQrInternal(
                 contentDescription = state.contentDescription?.getValue(),
             )
 
-            if (centerImageResId != null) {
+            if (centerImage != null) {
                 Image(
                     modifier =
                         Modifier
                             .size(64.dp)
                             .align(Alignment.Center),
-                    painter = painterResource(centerImageResId),
+                    painter = painterResource(centerImage),
                     contentDescription = null,
                 )
             }
@@ -156,6 +158,7 @@ private fun FullscreenDialogContent(
     state: QrState,
     onBack: () -> Unit
 ) {
+    val containerWidth = LocalWindowInfo.current.containerSize.widthDp
     Box(
         modifier =
             Modifier
@@ -173,15 +176,10 @@ private fun FullscreenDialogContent(
                     .align(Alignment.Center),
             state = state,
             contentPadding = PaddingValues(6.dp),
-            colors =
-                QrCodeDefaults.colors(
-                    background = Color.White,
-                    foreground = Color.Black,
-                    border = Color.Unspecified
-                ),
-            qrSize = LocalConfiguration.current.screenWidthDp.dp - 44.dp,
+            colors = QrCodeDefaults.colors(border = Color.Unspecified),
+            qrSize = if (containerWidth > 44.dp) containerWidth - 44.dp else containerWidth,
             enableBitmapReload = true,
-            centerImageResId = state.fullscreenCenterImageResId,
+            centerImage = state.centerImage,
         )
     }
 }
@@ -218,11 +216,11 @@ object QrCodeDefaults {
     )
 }
 
+@Immutable
 data class QrState(
     val qrData: String,
     val contentDescription: StringResource? = null,
-    val centerImageResId: Int? = null,
-    val fullscreenCenterImageResId: Int? = null,
+    @DrawableRes val centerImage: Int? = null,
 )
 
 private const val FULLSCREEN_DIM = .9f

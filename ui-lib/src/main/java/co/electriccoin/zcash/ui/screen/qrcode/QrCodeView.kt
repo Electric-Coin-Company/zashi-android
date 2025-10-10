@@ -1,6 +1,6 @@
 @file:Suppress("TooManyFunctions")
 
-package co.electriccoin.zcash.ui.screen.qrcode.view
+package co.electriccoin.zcash.ui.screen.qrcode
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -52,8 +52,6 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeState
-import co.electriccoin.zcash.ui.screen.qrcode.model.QrCodeType
 import kotlinx.coroutines.runBlocking
 
 @Composable
@@ -240,7 +238,7 @@ fun UnifiedQrCodePanel(
         horizontalAlignment = CenterHorizontally
     ) {
         QrCode(
-            preparedState = state,
+            state = state,
             modifier =
                 Modifier
                     .padding(horizontal = 24.dp),
@@ -325,7 +323,7 @@ fun TransparentQrCodePanel(
         horizontalAlignment = CenterHorizontally
     ) {
         QrCode(
-            preparedState = state,
+            state = state,
             modifier =
                 Modifier
                     .padding(horizontal = 24.dp),
@@ -384,30 +382,26 @@ fun TransparentQrCodePanel(
 
 @Composable
 private fun ColumnScope.QrCode(
-    preparedState: QrCodeState.Prepared,
+    state: QrCodeState.Prepared,
     modifier: Modifier = Modifier
 ) {
     ZashiQr(
         state =
-            preparedState.toQrState(
+            state.toQrState(
                 contentDescription =
                     stringRes(
-                        when (preparedState.walletAddress) {
+                        when (state.walletAddress) {
                             is WalletAddress.Unified -> R.string.qr_code_unified_content_description
                             is WalletAddress.Sapling -> R.string.qr_code_sapling_content_description
                             is WalletAddress.Transparent -> R.string.qr_code_transparent_content_description
-                            else -> error("Unsupported address type: ${preparedState.walletAddress}")
+                            else -> error("Unsupported address type: ${state.walletAddress}")
                         }
                     ),
                 centerImageResId =
-                    when (preparedState.qrCodeType) {
-                        QrCodeType.ZASHI -> R.drawable.logo_zec_fill_stroke
-                        QrCodeType.KEYSTONE -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr
-                    },
-                fullscreenCenterImageResId =
-                    when (preparedState.qrCodeType) {
-                        QrCodeType.ZASHI -> R.drawable.logo_zec_fill_stroke_white
-                        QrCodeType.KEYSTONE -> co.electriccoin.zcash.ui.design.R.drawable.ic_item_keystone_qr_white
+                    if (state.walletAddress is WalletAddress.Transparent) {
+                        R.drawable.ic_zec_qr_transparent
+                    } else {
+                        R.drawable.ic_zec_qr_shielded
                     }
             ),
         modifier = modifier.align(CenterHorizontally),

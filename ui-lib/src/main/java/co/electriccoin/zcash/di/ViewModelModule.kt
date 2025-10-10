@@ -4,6 +4,7 @@ import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarVM
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.OldHomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.screen.ScreenTimeoutVM
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookVM
 import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientVM
@@ -28,9 +29,9 @@ import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfoViewMod
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoVM
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsVM
 import co.electriccoin.zcash.ui.screen.pay.PayVM
-import co.electriccoin.zcash.ui.screen.qrcode.viewmodel.QrCodeViewModel
+import co.electriccoin.zcash.ui.screen.qrcode.QrCodeVM
 import co.electriccoin.zcash.ui.screen.receive.ReceiveVM
-import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestViewModel
+import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestVM
 import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateViewModel
 import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationViewModel
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightViewModel
@@ -86,8 +87,8 @@ val viewModelModule =
         viewModelOf(::WhatsNewViewModel)
         viewModelOf(::ChooseServerVM)
         viewModelOf(::ReceiveVM)
-        viewModelOf(::QrCodeViewModel)
-        viewModelOf(::RequestViewModel)
+        viewModelOf(::QrCodeVM)
+        viewModelOf(::RequestVM)
         viewModelOf(::ScanZashiAddressVM)
         viewModelOf(::ScanKeystoneSignInRequestViewModel)
         viewModelOf(::ScanKeystonePCZTViewModel)
@@ -143,4 +144,5 @@ val viewModelModule =
         viewModelOf(::ORSwapConfirmationVM)
         viewModelOf(::SwapDetailVM)
         viewModelOf(::SwapRefundAddressInfoVM)
+        viewModelOf(::ScreenTimeoutVM)
     }

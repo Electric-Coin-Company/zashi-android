@@ -46,9 +46,7 @@ internal fun AndroidHome() {
     }
 
     if (restoreDialogState != null) {
-        WrapRestoreSuccess(
-            onComplete = { restoreDialogState?.onClick?.invoke() }
-        )
+        WrapRestoreSuccess()
     }
 }
 
