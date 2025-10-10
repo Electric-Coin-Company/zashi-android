@@ -4,6 +4,7 @@ import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarVM
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.OldHomeViewModel
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
+import co.electriccoin.zcash.ui.screen.ScreenTimeoutVM
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookVM
 import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientVM
@@ -143,4 +144,5 @@ val viewModelModule =
         viewModelOf(::ORSwapConfirmationVM)
         viewModelOf(::SwapDetailVM)
         viewModelOf(::SwapRefundAddressInfoVM)
+        viewModelOf(::ScreenTimeoutVM)
     }

@@ -2,24 +2,14 @@ package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-sealed class ScreenBrightnessState {
-    fun getChange(): ScreenBrightnessState =
-        when (this) {
-            NORMAL -> FULL
-            FULL -> NORMAL
-        }
+enum class ScreenBrightnessState { FULL, NORMAL }
 
-    data object FULL : ScreenBrightnessState()
-
-    data object NORMAL : ScreenBrightnessState()
-}
-
-object ScreenBrightness {
+class ScreenBrightness {
     private val mutableSwitch: MutableStateFlow<ScreenBrightnessState> = MutableStateFlow(ScreenBrightnessState.NORMAL)
 
     val referenceSwitch = mutableSwitch.asStateFlow()
@@ -30,7 +20,7 @@ object ScreenBrightness {
 }
 
 @Suppress("CompositionLocalAllowlist")
-val LocalScreenBrightness = compositionLocalOf { ScreenBrightness }
+val LocalScreenBrightness = staticCompositionLocalOf { ScreenBrightness() }
 
 @Composable
 fun BrightenScreen() {

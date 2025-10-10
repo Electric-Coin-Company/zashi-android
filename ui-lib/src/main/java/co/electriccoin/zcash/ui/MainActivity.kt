@@ -25,6 +25,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.compose.BindCompLocalProvider
+import co.electriccoin.zcash.ui.common.compose.DisableScreenTimeout
 import co.electriccoin.zcash.ui.common.extension.setContentCompat
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationUIState
 import co.electriccoin.zcash.ui.common.viewmodel.AuthenticationViewModel
@@ -35,6 +36,7 @@ import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ConfigurationOverride
 import co.electriccoin.zcash.ui.design.component.Override
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.screen.ScreenTimeoutVM
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
 import co.electriccoin.zcash.ui.screen.authentication.RETRY_TRIGGER_DELAY
 import co.electriccoin.zcash.ui.screen.authentication.WrapAuthentication
@@ -51,11 +53,13 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
+@Suppress("TooManyFunctions")
 class MainActivity : FragmentActivity() {
     private val oldHomeViewModel by viewModel<OldHomeViewModel>()
 
@@ -159,6 +163,7 @@ class MainActivity : FragmentActivity() {
                         BindCompLocalProvider {
                             MainContent()
                             AuthenticationForAppAccess()
+                            ScreenTimeoutHandle()
                         }
                     }
                 }
@@ -253,6 +258,16 @@ class MainActivity : FragmentActivity() {
                 // For now, keep displaying splash screen using condition above.
                 // In the future, we might consider displaying something different here.
             }
+        }
+    }
+
+    @Composable
+    private fun ScreenTimeoutHandle() {
+        val vm = koinViewModel<ScreenTimeoutVM>()
+        val isScreenTimeoutDisabled by vm.isScreenTimeoutDisabled.collectAsStateWithLifecycle()
+
+        if (isScreenTimeoutDisabled == true) {
+            DisableScreenTimeout()
         }
     }
 
