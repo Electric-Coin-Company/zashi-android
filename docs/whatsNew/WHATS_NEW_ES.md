@@ -12,6 +12,12 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.4.3 (1250)] - 2025-10-13
+
+### Corregido:
+- Corrección de errores
+- Actualizaciones de UI/UX
+
 ## [2.4.2 (1248)] - 2025-10-07
 
 ### Cambiado:
