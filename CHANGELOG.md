@@ -6,6 +6,21 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.3 (1250)] - 2025-10-13
+
+### Added:
+- Predictive back enabled
+- ConfigurationOverride added to override light and dark theme
+
+### Changed:
+- Flexa version bumped
+- Copy button removed from taddr on receive screen
+- QR center icons are now colorful
+
+### Fixed:
+- Screen lock now works correctly if user opts in and restore is in progress
+- Fixed an issue which caused app crash if break-lines were appended to seed (unknown reason how this could happen)
+
 ## [2.4.2 (1248)] - 2025-10-07
 
 ### Changed:
