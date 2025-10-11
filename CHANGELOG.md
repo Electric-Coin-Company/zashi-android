@@ -19,6 +19,7 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ### Fixed:
 - Screen lock now works correctly if user opts in and restore is in progress
+- Fixed an issue which caused app crash if break-lines were appended to seed (unknown reason how this could happen)
 
 ## [2.4.2 (1248)] - 2025-10-07
 
