@@ -320,7 +320,6 @@ class TransactionDetailVM(
 
     private fun onCopyToClipboard(text: String) {
         copyToClipboard(
-            tag = "Clipboard",
             value = text
         )
     }

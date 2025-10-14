@@ -112,7 +112,6 @@ class ReceiveVM(
         isShielded = type == Unified,
         onCopyClicked = {
             copyToClipboard(
-                tag = application.getString(R.string.receive_clipboard_tag),
                 value = address
             )
         },

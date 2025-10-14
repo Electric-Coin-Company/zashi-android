@@ -88,8 +88,7 @@ class TransactionProgressVM(
         },
         onCopyClick = {
             copyToClipboardUseCase(
-                tag = "Transaction ID",
-                value = result.txIds.joinToString(separator = ", ")
+                value = result.txIds.joinToString()
             )
         },
         onSupportClick = {

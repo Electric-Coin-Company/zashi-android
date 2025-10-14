@@ -76,7 +76,6 @@ class QrCodeVM(
 
     private fun onAddressCopyClick(address: String) =
         copyToClipboard(
-            tag = application.getString(R.string.qr_code_clipboard_tag),
             value = address
         )
 }
