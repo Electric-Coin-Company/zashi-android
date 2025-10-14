@@ -189,7 +189,7 @@ class ProposalDataSourceImpl(
         }
 
     override suspend fun submitTransaction(pcztWithProofs: Pczt, pcztWithSignatures: Pczt): SubmitResult =
-        submitTransactionInternal {
+        submitTransactionInternal(transactionCount = 1) {
             it.createTransactionFromPczt(
                 pcztWithProofs = pcztWithProofs,
                 pcztWithSignatures = pcztWithSignatures,
@@ -197,7 +197,7 @@ class ProposalDataSourceImpl(
         }
 
     override suspend fun submitTransaction(proposal: Proposal, usk: UnifiedSpendingKey): SubmitResult =
-        submitTransactionInternal {
+        submitTransactionInternal(transactionCount = proposal.transactionCount()) {
             it.createProposedTransactions(
                 proposal = proposal,
                 usk = usk,
@@ -211,8 +211,9 @@ class ProposalDataSourceImpl(
                 .redactPcztForSigner(pczt)
         }
 
-    private suspend inline fun submitTransactionInternal(
-        crossinline block: suspend (Synchronizer) -> Flow<TransactionSubmitResult>
+    private suspend fun submitTransactionInternal(
+        transactionCount: Int,
+        block: suspend (Synchronizer) -> Flow<TransactionSubmitResult>
     ): SubmitResult =
         withContext(Dispatchers.IO) {
             val synchronizer = synchronizerProvider.getSdkSynchronizer()
@@ -224,57 +225,57 @@ class ProposalDataSourceImpl(
                     throw e
                 }
 
-            val transactionCount = submitResults.size
-            var successCount = 0
+            Twig.debug { "Internal transaction submit results: $submitResults" }
 
-            val txIds = mutableListOf<String>()
-            val statuses = mutableListOf<String>()
-            var errCode = 0
-            var errDesc = ""
-            var resubmittableFailure = false
+            val successCount = submitResults
+                .count { it is TransactionSubmitResult.Success }
+            val txIds = submitResults
+                .map { it.txIdString() }
+            val statuses = submitResults
+                .map {
+                    when (it) {
+                        is TransactionSubmitResult.Success -> "success"
+                        is TransactionSubmitResult.Failure ->
+                            if (it.grpcError) {
+                                it.description.orEmpty()
+                            } else {
+                                "code: ${it.code} desc: ${it.description}"
+                            }
 
-            for (transactionSubmitResult in submitResults) {
-                when (transactionSubmitResult) {
-                    is TransactionSubmitResult.Success -> {
-                        successCount++
-                        txIds.add(transactionSubmitResult.txIdString())
-                        statuses.add("success")
-                    }
-
-                    is TransactionSubmitResult.Failure -> {
-                        if (transactionSubmitResult.grpcError) {
-                            txIds.add(transactionSubmitResult.txIdString())
-                            statuses.add(transactionSubmitResult.description.orEmpty())
-                            resubmittableFailure = true
-                        } else {
-                            txIds.add(transactionSubmitResult.txIdString())
-                            statuses.add(
-                                "code: ${transactionSubmitResult.code} " +
-                                    "desc: ${transactionSubmitResult.description}"
-                            )
-                            errCode = transactionSubmitResult.code
-                            errDesc = transactionSubmitResult.description.orEmpty()
-                        }
-                    }
-
-                    is TransactionSubmitResult.NotAttempted -> {
-                        txIds.add(transactionSubmitResult.txIdString())
-                        statuses.add("notAttempted")
+                        is TransactionSubmitResult.NotAttempted -> "notAttempted"
                     }
                 }
-            }
+            val resubmittableFailures = submitResults
+                .mapNotNull {
+                    when (it) {
+                        is TransactionSubmitResult.Failure -> it.grpcError
+                        is TransactionSubmitResult.NotAttempted -> null
+                        is TransactionSubmitResult.Success -> null
+                    }
+                }
+
+            val (errCode, errDesc) = submitResults
+                .filterIsInstance<TransactionSubmitResult.Failure>()
+                .lastOrNull { !it.grpcError }
+                ?.let { it.code to it.description } ?: (0 to "")
 
             val result =
                 when (successCount) {
                     0 ->
-                        if (resubmittableFailure) {
+                        if (resubmittableFailures.all { it }) {
                             SubmitResult.GrpcFailure(txIds = txIds)
                         } else {
                             SubmitResult.Failure(txIds = txIds, code = errCode, description = errDesc)
                         }
 
                     transactionCount -> SubmitResult.Success(txIds = txIds)
-                    else -> SubmitResult.Partial(txIds = txIds, statuses = statuses)
+
+                    else ->
+                        if (resubmittableFailures.all { it }) {
+                            SubmitResult.GrpcFailure(txIds = txIds)
+                        } else {
+                            SubmitResult.Partial(txIds = txIds, statuses = statuses)
+                        }
                 }
 
             synchronizer.refreshTransactions()
