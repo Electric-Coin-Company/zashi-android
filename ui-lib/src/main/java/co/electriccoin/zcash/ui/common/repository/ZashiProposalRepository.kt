@@ -40,24 +40,16 @@ interface ZashiProposalRepository {
     suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
-    suspend fun createExactInputSwapProposal(
-        zecSend: ZecSend,
-        quote: SwapQuote,
-    ): ExactInputSwapTransactionProposal
+    suspend fun createExactInputSwapProposal(zecSend: ZecSend, quote: SwapQuote): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
-    suspend fun createExactOutputSwapProposal(
-        zecSend: ZecSend,
-        quote: SwapQuote,
-    ): ExactOutputSwapTransactionProposal
+    suspend fun createExactOutputSwapProposal(zecSend: ZecSend, quote: SwapQuote): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createShieldProposal()
 
-    @Throws(IllegalStateException::class)
     fun submitTransaction()
 
-    @Throws(IllegalStateException::class)
     suspend fun submitTransactionAndGet(): SubmitResult
 
     suspend fun getTransactionProposal(): TransactionProposal
@@ -131,53 +123,75 @@ class ZashiProposalRepositoryImpl(
     @Suppress("TooGenericExceptionCaught")
     override fun submitTransaction() {
         submitJob?.cancel()
-        val transactionProposal = checkNotNull(transactionProposal.value)
         submitJob =
             scope.launch {
-                submitState.update { SubmitProposalState.Submitting }
-                val result =
-                    try {
-                        proposalDataSource.submitTransaction(
-                            proposal = transactionProposal.proposal,
-                            usk = zashiSpendingKeyDataSource.getZashiSpendingKey()
-                        )
-                    } catch (e: Exception) {
-                        SubmitResult.Failure(
-                            txIds = emptyList(),
-                            code = 0,
-                            description = e.message
+                val transactionProposal = transactionProposal.value
+                if (transactionProposal == null) {
+                    submitState.update {
+                        SubmitProposalState.Result(
+                            SubmitResult.Failure(
+                                txIds = emptyList(),
+                                code = 0,
+                                description = "Transaction proposal is null"
+                            )
                         )
                     }
-                runSwapPipeline(transactionProposal, result)
-                submitState.update { SubmitProposalState.Result(result) }
+                } else {
+                    submitState.update { SubmitProposalState.Submitting }
+                    val result =
+                        try {
+                            proposalDataSource.submitTransaction(
+                                proposal = transactionProposal.proposal,
+                                usk = zashiSpendingKeyDataSource.getZashiSpendingKey()
+                            )
+                        } catch (e: Exception) {
+                            SubmitResult.Failure(
+                                txIds = emptyList(),
+                                code = 0,
+                                description = e.message
+                            )
+                        }
+                    runSwapPipeline(transactionProposal, result)
+                    submitState.update { SubmitProposalState.Result(result) }
+                }
             }
     }
 
     @Suppress("TooGenericExceptionCaught")
     override suspend fun submitTransactionAndGet(): SubmitResult {
         submitJob?.cancel()
-        val transactionProposal = checkNotNull(transactionProposal.value)
         return scope
             .async {
-                submitState.update { SubmitProposalState.Submitting }
-                try {
-                    val result =
-                        proposalDataSource.submitTransaction(
-                            proposal = transactionProposal.proposal,
-                            usk = zashiSpendingKeyDataSource.getZashiSpendingKey()
-                        )
-                    runSwapPipeline(transactionProposal, result)
-                    submitState.update { SubmitProposalState.Result(result) }
-                    result
-                } catch (e: Exception) {
-                    val result =
-                        SubmitResult.Failure(
-                            txIds = emptyList(),
-                            code = 0,
-                            description = e.message
-                        )
-                    submitState.update { SubmitProposalState.Result(result) }
-                    throw e
+                val transactionProposal = transactionProposal.value
+                if (transactionProposal == null) {
+                    val submitResult = SubmitResult.Failure(
+                        txIds = emptyList(),
+                        code = 0,
+                        description = "Transaction proposal is null"
+                    )
+                    submitState.update { SubmitProposalState.Result(submitResult) }
+                    throw IllegalStateException("Transaction proposal is null")
+                } else {
+                    submitState.update { SubmitProposalState.Submitting }
+                    try {
+                        val result =
+                            proposalDataSource.submitTransaction(
+                                proposal = transactionProposal.proposal,
+                                usk = zashiSpendingKeyDataSource.getZashiSpendingKey()
+                            )
+                        runSwapPipeline(transactionProposal, result)
+                        submitState.update { SubmitProposalState.Result(result) }
+                        result
+                    } catch (e: Exception) {
+                        val result =
+                            SubmitResult.Failure(
+                                txIds = emptyList(),
+                                code = 0,
+                                description = e.message
+                            )
+                        submitState.update { SubmitProposalState.Result(result) }
+                        throw e
+                    }
                 }
             }.await()
     }

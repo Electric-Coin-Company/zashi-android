@@ -43,16 +43,10 @@ interface KeystoneProposalRepository {
     suspend fun createProposal(zecSend: ZecSend)
 
     @Throws(TransactionProposalNotCreatedException::class)
-    suspend fun createExactInputSwapProposal(
-        zecSend: ZecSend,
-        quote: SwapQuote,
-    ): ExactInputSwapTransactionProposal
+    suspend fun createExactInputSwapProposal(zecSend: ZecSend, quote: SwapQuote): ExactInputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
-    suspend fun createExactOutputSwapProposal(
-        zecSend: ZecSend,
-        quote: SwapQuote,
-    ): ExactOutputSwapTransactionProposal
+    suspend fun createExactOutputSwapProposal(zecSend: ZecSend, quote: SwapQuote): ExactOutputSwapTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal
@@ -69,7 +63,6 @@ interface KeystoneProposalRepository {
     @Throws(ParsePCZTException::class)
     suspend fun parsePCZT(ur: UR)
 
-    @Throws(IllegalStateException::class)
     fun extractPCZT()
 
     fun clear()
@@ -84,9 +77,7 @@ class ParsePCZTException : Exception()
 sealed interface SubmitProposalState {
     data object Submitting : SubmitProposalState
 
-    data class Result(
-        val submitResult: SubmitResult
-    ) : SubmitProposalState
+    data class Result(val submitResult: SubmitResult) : SubmitProposalState
 }
 
 @Suppress("TooManyFunctions")
@@ -197,9 +188,7 @@ class KeystoneProposalRepositoryImpl(
         withContext(Dispatchers.IO) {
             val pczt = proposalPczt ?: throw IllegalStateException("Proposal not created")
             val redactedPczt = proposalDataSource.redactPcztForSigner(pczt.clonePczt())
-            keystoneZcashSDK.generatePczt(
-                pczt = redactedPczt.toByteArray()
-            )
+            keystoneZcashSDK.generatePczt(pczt = redactedPczt.toByteArray())
         }
 
     override suspend fun parsePCZT(ur: UR) =
@@ -214,23 +203,44 @@ class KeystoneProposalRepositoryImpl(
     @Suppress("UseCheckOrError", "ThrowingExceptionsWithoutMessageOrCause")
     override fun extractPCZT() {
         extractPCZTJob?.cancel()
-
-        val transactionProposal = transactionProposal.value ?: throw IllegalStateException()
-        val pcztWithSignatures = pcztWithSignatures ?: throw IllegalStateException()
-
         extractPCZTJob =
             scope.launch {
-                submitState.update { SubmitProposalState.Submitting }
-                val pcztWithProofs =
-                    pcztWithProofs.filter { !it.isLoading }.first().pczt
-                        ?: throw IllegalStateException()
-                val result =
-                    proposalDataSource.submitTransaction(
-                        pcztWithProofs = pcztWithProofs,
-                        pcztWithSignatures = pcztWithSignatures
-                    )
-                runSwapPipeline(transactionProposal, result)
-                submitState.update { SubmitProposalState.Result(result) }
+                val transactionProposal = transactionProposal.value
+                val pcztWithSignatures = pcztWithSignatures
+
+                if (transactionProposal == null || pcztWithSignatures == null) {
+                    submitState.update {
+                        SubmitProposalState.Result(
+                            SubmitResult.Failure(
+                                txIds = emptyList(),
+                                code = 0,
+                                description = "Transaction proposal is null"
+                            )
+                        )
+                    }
+                } else {
+                    submitState.update { SubmitProposalState.Submitting }
+                    val pcztWithProofs = pcztWithProofs.filter { !it.isLoading }.first().pczt
+                    if (pcztWithProofs == null) {
+                        submitState.update {
+                            SubmitProposalState.Result(
+                                SubmitResult.Failure(
+                                    txIds = emptyList(),
+                                    code = 0,
+                                    description = "PCZT with proofs is null"
+                                )
+                            )
+                        }
+                    } else {
+                        val result =
+                            proposalDataSource.submitTransaction(
+                                pcztWithProofs = pcztWithProofs,
+                                pcztWithSignatures = pcztWithSignatures
+                            )
+                        runSwapPipeline(transactionProposal, result)
+                        submitState.update { SubmitProposalState.Result(result) }
+                    }
+                }
             }
     }
 

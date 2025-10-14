@@ -13,6 +13,7 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.type.AddressType
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.WalletAccount
@@ -26,16 +27,10 @@ import java.math.BigDecimal
 
 interface ProposalDataSource {
     @Throws(TransactionProposalNotCreatedException::class)
-    suspend fun createProposal(
-        account: WalletAccount,
-        send: ZecSend
-    ): RegularTransactionProposal
+    suspend fun createProposal(account: WalletAccount, send: ZecSend): RegularTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
-    suspend fun createZip321Proposal(
-        account: WalletAccount,
-        zip321Uri: String
-    ): Zip321TransactionProposal
+    suspend fun createZip321Proposal(account: WalletAccount, zip321Uri: String): Zip321TransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactInputProposal(
@@ -55,23 +50,14 @@ interface ProposalDataSource {
     suspend fun createShieldProposal(account: WalletAccount): ShieldTransactionProposal
 
     @Throws(PcztException.CreatePcztFromProposalException::class)
-    suspend fun createPcztFromProposal(
-        account: WalletAccount,
-        proposal: Proposal
-    ): Pczt
+    suspend fun createPcztFromProposal(account: WalletAccount, proposal: Proposal): Pczt
 
     @Throws(PcztException.AddProofsToPcztException::class)
     suspend fun addProofsToPczt(pczt: Pczt): Pczt
 
-    suspend fun submitTransaction(
-        pcztWithProofs: Pczt,
-        pcztWithSignatures: Pczt
-    ): SubmitResult
+    suspend fun submitTransaction(pcztWithProofs: Pczt, pcztWithSignatures: Pczt): SubmitResult
 
-    suspend fun submitTransaction(
-        proposal: Proposal,
-        usk: UnifiedSpendingKey
-    ): SubmitResult
+    suspend fun submitTransaction(proposal: Proposal, usk: UnifiedSpendingKey): SubmitResult
 
     @Throws(PcztException.RedactPcztForSignerException::class)
     suspend fun redactPcztForSigner(pczt: Pczt): Pczt
@@ -104,10 +90,7 @@ class ProposalDataSourceImpl(
             }
         }
 
-    override suspend fun createZip321Proposal(
-        account: WalletAccount,
-        zip321Uri: String
-    ): Zip321TransactionProposal =
+    override suspend fun createZip321Proposal(account: WalletAccount, zip321Uri: String): Zip321TransactionProposal =
         withContext(Dispatchers.IO) {
             getOrThrow {
                 val synchronizer = synchronizerProvider.getSynchronizer()
@@ -189,10 +172,7 @@ class ProposalDataSourceImpl(
             }
         }
 
-    override suspend fun createPcztFromProposal(
-        account: WalletAccount,
-        proposal: Proposal
-    ): Pczt =
+    override suspend fun createPcztFromProposal(account: WalletAccount, proposal: Proposal): Pczt =
         withContext(Dispatchers.IO) {
             val synchronizer = synchronizerProvider.getSynchronizer()
             synchronizer.createPcztFromProposal(
@@ -208,10 +188,7 @@ class ProposalDataSourceImpl(
                 .addProofsToPczt(pczt)
         }
 
-    override suspend fun submitTransaction(
-        pcztWithProofs: Pczt,
-        pcztWithSignatures: Pczt
-    ): SubmitResult =
+    override suspend fun submitTransaction(pcztWithProofs: Pczt, pcztWithSignatures: Pczt): SubmitResult =
         submitTransactionInternal {
             it.createTransactionFromPczt(
                 pcztWithProofs = pcztWithProofs,
@@ -219,10 +196,7 @@ class ProposalDataSourceImpl(
             )
         }
 
-    override suspend fun submitTransaction(
-        proposal: Proposal,
-        usk: UnifiedSpendingKey
-    ): SubmitResult =
+    override suspend fun submitTransaction(proposal: Proposal, usk: UnifiedSpendingKey): SubmitResult =
         submitTransactionInternal {
             it.createProposedTransactions(
                 proposal = proposal,
@@ -242,7 +216,13 @@ class ProposalDataSourceImpl(
     ): SubmitResult =
         withContext(Dispatchers.IO) {
             val synchronizer = synchronizerProvider.getSdkSynchronizer()
-            val submitResults = block(synchronizer).toList()
+            val submitResults =
+                try {
+                    block(synchronizer).toList()
+                } catch (e: Exception) {
+                    Twig.error(e) { "Error submitting transaction" }
+                    throw e
+                }
 
             val transactionCount = submitResults.size
             var successCount = 0
@@ -299,7 +279,7 @@ class ProposalDataSourceImpl(
 
             synchronizer.refreshTransactions()
             synchronizer.refreshAllBalances()
-
+            Twig.debug { "Transaction submit result: $result" }
             result
         }
 
