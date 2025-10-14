@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.ScreenTimeoutVM
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookVM
-import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientVM
+import co.electriccoin.zcash.ui.screen.addressbook.SelectABRecipientVM
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsVM
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetVM
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceVM
@@ -108,7 +108,7 @@ val viewModelModule =
         viewModelOf(::TransactionHistoryVM)
         viewModelOf(::TransactionDetailVM)
         viewModelOf(::AddressBookVM)
-        viewModelOf(::SelectRecipientVM)
+        viewModelOf(::SelectABRecipientVM)
         viewModelOf(::TransactionNoteViewModel)
         viewModelOf(::TaxExportViewModel)
         viewModelOf(::CrashReportingViewModel)

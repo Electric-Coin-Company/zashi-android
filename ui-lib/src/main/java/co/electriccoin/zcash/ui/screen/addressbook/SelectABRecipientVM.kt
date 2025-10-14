@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class SelectRecipientVM(
+class SelectABRecipientVM(
     getAddressBookContacts: GetABContactsUseCase,
     getWalletAccountsUseCase: GetWalletAccountsUseCase,
     private val observeContactPicked: ObserveABContactPickedUseCase,
@@ -61,6 +61,7 @@ class SelectRecipientVM(
             listOf(
                 AddressBookItem.Title(stringRes(R.string.address_book_multiple_wallets_title)),
                 *accounts
+                    .filter { !it.isSelected }
                     .map { account ->
                         AddressBookItem.Contact(
                             ContactListItemState(

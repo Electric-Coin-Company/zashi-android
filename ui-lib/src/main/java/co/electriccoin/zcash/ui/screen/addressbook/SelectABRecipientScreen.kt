@@ -8,12 +8,12 @@ import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SelectRecipientScreen() {
-    val viewModel = koinViewModel<SelectRecipientVM>()
+fun SelectABRecipientScreen() {
+    val viewModel = koinViewModel<SelectABRecipientVM>()
     val state by viewModel.state.collectAsStateWithLifecycle()
     BackHandler { state.onBack() }
     AddressBookView(state = state)
 }
 
 @Serializable
-data object SelectRecipientArgs
+data object SelectABRecipientArgs
