@@ -13,7 +13,8 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.usecase.RestoreWalletUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
-import co.electriccoin.zcash.ui.design.component.TextFieldState
+import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
+import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDate
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
@@ -25,13 +26,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
-class RestoreBDHeightViewModel(
+class RestoreBDHeightVM(
     private val restoreBDHeight: RestoreBDHeight,
     private val navigationRouter: NavigationRouter,
     private val context: Context,
     private val restoreWallet: RestoreWalletUseCase
 ) : ViewModel() {
-    private val blockHeightText = MutableStateFlow("")
+    private val blockHeightText = MutableStateFlow(NumberTextFieldInnerState())
 
     val state: StateFlow<RestoreBDHeightState> =
         blockHeightText
@@ -43,12 +44,12 @@ class RestoreBDHeightViewModel(
                 initialValue = createState(blockHeightText.value)
             )
 
-    private fun createState(blockHeight: String): RestoreBDHeightState {
+    private fun createState(blockHeight: NumberTextFieldInnerState): RestoreBDHeightState {
         val isHigherThanSaplingActivationHeight =
             blockHeight
-                .toLongOrNull()
-                ?.let { it >= ZcashNetwork.fromResources(context).saplingActivationHeight.value } ?: false
-        val isValid = blockHeight.isEmpty() || isHigherThanSaplingActivationHeight
+                .amount
+                ?.let { it.toLong() >= ZcashNetwork.fromResources(context).saplingActivationHeight.value } ?: false
+        val isValid = !blockHeight.innerTextFieldState.value.isEmpty() && isHigherThanSaplingActivationHeight
 
         return RestoreBDHeightState(
             onBack = ::onBack,
@@ -64,12 +65,7 @@ class RestoreBDHeightViewModel(
                     isEnabled = isValid
                 ),
             estimate = ButtonState(stringRes(R.string.restore_bd_height_btn), onClick = ::onEstimateClick),
-            blockHeight =
-                TextFieldState(
-                    value = stringRes(blockHeight),
-                    onValueChange = ::onValueChanged,
-                    error = stringRes("").takeIf { !isValid }
-                )
+            blockHeight = NumberTextFieldState(innerState = blockHeight, onValueChange = ::onValueChanged)
         )
     }
 
@@ -80,7 +76,7 @@ class RestoreBDHeightViewModel(
     private fun onRestoreClick() {
         restoreWallet(
             seedPhrase = SeedPhrase.new(restoreBDHeight.seed.trim()),
-            birthday = blockHeightText.value.toLongOrNull()?.let { BlockHeight.new(it) }
+            birthday = blockHeightText.value.amount?.let { BlockHeight.new(it.toLong()) }
         )
     }
 
@@ -92,7 +88,7 @@ class RestoreBDHeightViewModel(
         navigationRouter.forward(SeedInfo)
     }
 
-    private fun onValueChanged(string: String) {
-        blockHeightText.update { string }
+    private fun onValueChanged(state: NumberTextFieldInnerState) {
+        blockHeightText.update { state }
     }
 }

@@ -11,7 +11,7 @@ import org.koin.core.parameter.parametersOf
 
 @Composable
 fun AndroidRestoreBDHeight(args: RestoreBDHeight) {
-    val vm = koinViewModel<RestoreBDHeightViewModel> { parametersOf(args) }
+    val vm = koinViewModel<RestoreBDHeightVM> { parametersOf(args) }
     val state by vm.state.collectAsStateWithLifecycle()
     SecureScreen()
     BackHandler { state.onBack() }

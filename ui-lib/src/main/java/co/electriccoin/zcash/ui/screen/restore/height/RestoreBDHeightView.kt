@@ -18,26 +18,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.appbar.ZashiTopAppBarTags
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
-import co.electriccoin.zcash.ui.design.component.TextFieldState
+import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
+import co.electriccoin.zcash.ui.design.component.ZashiNumberTextField
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.ZashiTextField
 import co.electriccoin.zcash.ui.design.component.ZashiTextFieldPlaceholder
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -47,8 +43,6 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
-import java.text.DecimalFormat
-import java.text.NumberFormat
 
 @Composable
 fun RestoreBDHeightView(state: RestoreBDHeightState) {
@@ -96,7 +90,7 @@ private fun Content(
             fontWeight = FontWeight.Medium
         )
         Spacer(Modifier.height(6.dp))
-        ZashiTextField(
+        ZashiNumberTextField(
             state = state.blockHeight,
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
@@ -106,12 +100,11 @@ private fun Content(
             },
             keyboardOptions =
                 KeyboardOptions(
-                    KeyboardCapitalization.None,
+                    capitalization = KeyboardCapitalization.None,
                     autoCorrectEnabled = false,
                     imeAction = ImeAction.Done,
                     keyboardType = KeyboardType.Number
                 ),
-            visualTransformation = ThousandSeparatorTransformation()
         )
         Spacer(Modifier.height(6.dp))
         Text(
@@ -136,41 +129,6 @@ private fun Content(
                 Modifier
                     .fillMaxWidth()
                     .testTag(RestoreBDHeightTags.RESTORE_BTN),
-        )
-    }
-}
-
-private class ThousandSeparatorTransformation : VisualTransformation {
-    override fun filter(text: AnnotatedString): TransformedText {
-        val symbols = DecimalFormat().decimalFormatSymbols
-        val decimalSeparator = symbols.decimalSeparator
-
-        var outputText = ""
-        val integerPart: Long
-        val decimalPart: String
-
-        val number = text.text.toDoubleOrNull()
-        if (number != null) {
-            integerPart = number.toLong()
-            outputText += NumberFormat.getIntegerInstance().format(integerPart)
-            if (text.text.contains(decimalSeparator)) {
-                decimalPart = text.text.substring(text.text.indexOf(decimalSeparator))
-                if (decimalPart.isNotEmpty()) {
-                    outputText += decimalPart
-                }
-            }
-        }
-
-        val numberOffsetTranslator =
-            object : OffsetMapping {
-                override fun originalToTransformed(offset: Int): Int = outputText.length
-
-                override fun transformedToOriginal(offset: Int): Int = text.length
-            }
-
-        return TransformedText(
-            text = AnnotatedString(outputText),
-            offsetMapping = numberOffsetTranslator
         )
     }
 }
@@ -206,7 +164,7 @@ private fun Preview() =
                 RestoreBDHeightState(
                     onBack = {},
                     dialogButton = IconButtonState(R.drawable.ic_help) {},
-                    blockHeight = TextFieldState(stringRes("")) {},
+                    blockHeight = NumberTextFieldState {},
                     estimate = ButtonState(stringRes("Estimate")) {},
                     restore = ButtonState(stringRes("Restore")) {}
                 )

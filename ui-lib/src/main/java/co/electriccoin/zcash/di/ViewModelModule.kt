@@ -34,7 +34,7 @@ import co.electriccoin.zcash.ui.screen.receive.ReceiveVM
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestVM
 import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateViewModel
 import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationViewModel
-import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightViewModel
+import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightVM
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionVM
@@ -114,7 +114,7 @@ val viewModelModule =
         viewModelOf(::CrashReportingViewModel)
         viewModelOf(::BalanceWidgetVM)
         viewModelOf(::HomeVM)
-        viewModelOf(::RestoreBDHeightViewModel)
+        viewModelOf(::RestoreBDHeightVM)
         viewModelOf(::RestoreBDDateViewModel)
         viewModelOf(::RestoreBDEstimationViewModel)
         viewModelOf(::ShieldFundsInfoVM)
