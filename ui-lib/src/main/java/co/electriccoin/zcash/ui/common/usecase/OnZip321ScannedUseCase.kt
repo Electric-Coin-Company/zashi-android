@@ -87,7 +87,6 @@ class OnZip321ScannedUseCase(
             navigateToErrorUseCase(ErrorArgs.General(e))
             zashiProposalRepository.clear()
             keystoneProposalRepository.clear()
-            throw e
         }
     }
 
@@ -128,7 +127,6 @@ class OnZip321ScannedUseCase(
             navigateToErrorUseCase(ErrorArgs.General(e))
             zashiProposalRepository.clear()
             keystoneProposalRepository.clear()
-            throw e
         }
     }
 

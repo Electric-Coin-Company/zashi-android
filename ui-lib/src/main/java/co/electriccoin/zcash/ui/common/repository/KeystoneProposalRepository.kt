@@ -54,7 +54,7 @@ interface KeystoneProposalRepository {
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createShieldProposal()
 
-    @Throws(PcztException.AddProofsToPcztException::class, PcztException.CreatePcztFromProposalException::class)
+    @Throws(PcztException.CreatePcztFromProposalException::class)
     suspend fun createPCZTFromProposal()
 
     @Throws(IllegalStateException::class)
@@ -166,19 +166,12 @@ class KeystoneProposalRepositoryImpl(
         pcztWithProofsJob?.cancel()
         pcztWithProofsJob =
             scope.launch {
-                pcztWithProofs.update {
-                    PcztState(isLoading = true, pczt = null)
-                }
-                // Copy the original PZCT proposal data so we pass one copy to the KeyStone device and the second one
-                // to the Rust Backend
-                val result =
-                    runCatching {
-                        proposalDataSource.addProofsToPczt(
-                            pczt = proposalPczt.clonePczt()
-                        )
-                    }.getOrNull()
-                pcztWithProofs.update {
-                    PcztState(isLoading = false, pczt = result)
+                pcztWithProofs.update { PcztState(isLoading = true, pczt = null) }
+                try {
+                    val result = proposalDataSource.addProofsToPczt(proposalPczt.clonePczt())
+                    pcztWithProofs.update { PcztState(isLoading = false, pczt = result) }
+                } catch (_: PcztException.AddProofsToPcztException) {
+                    pcztWithProofs.update { PcztState(isLoading = false, pczt = null) }
                 }
             }
     }
@@ -312,7 +305,4 @@ class KeystoneProposalRepositoryImpl(
     }
 }
 
-private data class PcztState(
-    val isLoading: Boolean,
-    val pczt: Pczt?
-)
+private data class PcztState(val isLoading: Boolean, val pczt: Pczt?)
