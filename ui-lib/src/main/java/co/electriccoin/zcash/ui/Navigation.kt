@@ -163,8 +163,8 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailScreen
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersArgs
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersScreen
-import co.electriccoin.zcash.ui.screen.transactionhistory.AndroidTransactionHistory
-import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
+import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityHistoryScreen
+import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityHistoryArgs
 import co.electriccoin.zcash.ui.screen.transactionnote.AndroidTransactionNote
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressArgs
@@ -341,7 +341,7 @@ internal fun MainActivity.Navigation() {
         composable<SelectKeystoneAccount> { AndroidSelectKeystoneAccount(it.toRoute()) }
         composable<ReviewTransactionArgs> { AndroidReviewTransaction() }
         composable<TransactionProgressArgs> { TransactionProgressScreen(it.toRoute()) }
-        composable<TransactionHistory> { AndroidTransactionHistory() }
+        composable<ActivityHistoryArgs> { ActivityHistoryScreen() }
         dialogComposable<TransactionFiltersArgs> { TransactionFiltersScreen() }
         composable<TransactionDetailArgs> { TransactionDetailScreen(it.toRoute()) }
         dialogComposable<TransactionNote> { AndroidTransactionNote(it.toRoute()) }

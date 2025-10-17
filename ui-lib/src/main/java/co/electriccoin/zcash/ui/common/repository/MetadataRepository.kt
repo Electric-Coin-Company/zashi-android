@@ -24,6 +24,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -70,7 +73,16 @@ interface MetadataRepository {
 
     fun observeTransactionMetadata(transaction: Transaction): Flow<TransactionMetadata>
 
+    suspend fun getTransactionMetadata(transaction: Transaction): TransactionMetadata? =
+        observeTransactionMetadata(transaction).first()
+
     fun observeORSwapMetadata(): Flow<List<TransactionSwapMetadata>?>
+
+    suspend fun getORSwapMetadata(depositAddress: String): TransactionSwapMetadata? =
+        observeORSwapMetadata()
+            .filterNotNull()
+            .first()
+            .find { it.depositAddress == depositAddress }
 
     fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?>
 }
@@ -188,18 +200,19 @@ class MetadataRepositoryImpl(
         val depositAddress = transaction.recipient?.address
 
         return metadata
+            .filterNotNull()
             .map { metadata ->
-                val accountMetadata = metadata?.accountMetadata
+                val accountMetadata = metadata.accountMetadata
                 val swapMetadata =
                     if (depositAddress != null) {
-                        accountMetadata?.swaps?.swapIds?.find { it.depositAddress == depositAddress }
+                        accountMetadata.swaps.swapIds.find { it.depositAddress == depositAddress }
                     } else {
                         null
                     }
                 TransactionMetadata(
-                    isBookmarked = accountMetadata?.bookmarked?.find { it.txId == txId }?.isBookmarked == true,
-                    isRead = accountMetadata?.read?.any { it == txId } == true,
-                    note = accountMetadata?.annotations?.find { it.txId == txId }?.content,
+                    isBookmarked = accountMetadata.bookmarked.find { it.txId == txId }?.isBookmarked == true,
+                    isRead = accountMetadata.read.any { it == txId },
+                    note = accountMetadata.annotations.find { it.txId == txId }?.content,
                     swapMetadata = swapMetadata?.toBusinessObject()
                 )
             }.distinctUntilChanged()

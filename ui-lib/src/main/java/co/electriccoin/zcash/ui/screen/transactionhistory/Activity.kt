@@ -24,6 +24,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,11 +48,15 @@ import co.electriccoin.zcash.ui.design.util.orHiddenString
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
-fun Transaction(
-    state: TransactionState,
+fun Activity(
+    state: ActivityState,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 12.dp)
 ) {
+    LaunchedEffect(state.key) {
+        state.onDisplayed()
+    }
+
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
@@ -141,7 +147,8 @@ fun Transaction(
     }
 }
 
-data class TransactionState(
+@Immutable
+data class ActivityState(
     override val key: Any,
     @DrawableRes val bigIcon: Int,
     @DrawableRes val smallIcon: Int?,
@@ -151,8 +158,9 @@ data class TransactionState(
     val value: StyledStringResource?,
     val isUnread: Boolean,
     val onClick: () -> Unit,
+    val onDisplayed: () -> Unit
 ) : Itemizable {
-    override val contentType: Any = "Transaction"
+    override val contentType: Any = "activity"
 }
 
 @PreviewScreens
@@ -160,8 +168,8 @@ data class TransactionState(
 private fun TransactionPreview() =
     ZcashTheme {
         BlankSurface {
-            Transaction(
-                state = TransactionStateFixture.new(),
+            Activity(
+                state = ActivityStateFixture.new(),
                 modifier = Modifier.fillMaxWidth()
             )
         }

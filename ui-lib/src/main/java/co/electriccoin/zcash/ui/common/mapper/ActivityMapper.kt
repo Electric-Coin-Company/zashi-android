@@ -23,7 +23,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDateTime
 import co.electriccoin.zcash.ui.design.util.styledStringResource
-import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionState
+import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityState
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -34,11 +34,12 @@ class ActivityMapper {
         data: ActivityData,
         restoreTimestamp: Instant,
         onTransactionClick: (Transaction) -> Unit,
-        onSwapClick: (depositAddress: String) -> Unit
-    ): TransactionState =
+        onSwapClick: (depositAddress: String) -> Unit,
+        onDisplayed: (ActivityData) -> Unit
+    ): ActivityState =
         when (data) {
             is ActivityData.BySwap ->
-                TransactionState(
+                ActivityState(
                     key = data.swap.depositAddress,
                     bigIcon = getSwapBigIcon(data),
                     smallIcon = null,
@@ -47,11 +48,12 @@ class ActivityMapper {
                     isShielded = false,
                     value = getSwapValue(data),
                     onClick = { onSwapClick(data.swap.depositAddress) },
-                    isUnread = false
+                    isUnread = false,
+                    onDisplayed = { onDisplayed(data) }
                 )
 
             is ActivityData.ByTransaction ->
-                TransactionState(
+                ActivityState(
                     key = data.transaction.id.txIdString(),
                     bigIcon = getTransactionBigIcon(data),
                     smallIcon = null,
@@ -60,7 +62,8 @@ class ActivityMapper {
                     isShielded = isTransactionShielded(data),
                     value = getTransactionValue(data),
                     onClick = { onTransactionClick(data.transaction) },
-                    isUnread = isTransactionUnread(data, restoreTimestamp)
+                    isUnread = isTransactionUnread(data, restoreTimestamp),
+                    onDisplayed = { onDisplayed(data) }
                 )
         }
 

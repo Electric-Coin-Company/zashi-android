@@ -24,10 +24,7 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
-fun TransactionHistoryWidgetHeader(
-    state: TransactionHistoryWidgetHeaderState,
-    modifier: Modifier = Modifier
-) {
+fun ActivityWidgetHeader(state: TransactionHistoryWidgetHeaderState, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -65,7 +62,7 @@ data class TransactionHistoryWidgetHeaderState(
 private fun Preview() =
     ZcashTheme {
         BlankSurface {
-            TransactionHistoryWidgetHeader(
+            ActivityWidgetHeader(
                 TransactionHistoryWidgetHeaderState(
                     title = stringRes("Transactions"),
                     button =
@@ -84,7 +81,7 @@ private fun Preview() =
 private fun PreviewWithoutButton() =
     ZcashTheme {
         BlankSurface {
-            TransactionHistoryWidgetHeader(
+            ActivityWidgetHeader(
                 TransactionHistoryWidgetHeaderState(
                     title = stringRes("Transactions"),
                     button = null

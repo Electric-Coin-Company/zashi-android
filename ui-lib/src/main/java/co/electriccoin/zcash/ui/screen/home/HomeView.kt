@@ -35,15 +35,15 @@ import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidget
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
 import co.electriccoin.zcash.ui.screen.home.error.WalletErrorMessageState
-import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetState
-import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetStateFixture
-import co.electriccoin.zcash.ui.screen.transactionhistory.widget.createTransactionHistoryWidgets
+import co.electriccoin.zcash.ui.screen.transactionhistory.widget.ActivityWidgetState
+import co.electriccoin.zcash.ui.screen.transactionhistory.widget.ActivityWidgetStateFixture
+import co.electriccoin.zcash.ui.screen.transactionhistory.widget.createActivityWidgets
 
 @Composable
 internal fun HomeView(
     appBarState: ZashiMainTopAppBarState?,
     balanceWidgetState: BalanceWidgetState,
-    transactionWidgetState: TransactionHistoryWidgetState,
+    transactionWidgetState: ActivityWidgetState,
     state: HomeState
 ) {
     BlankBgScaffold(
@@ -52,7 +52,7 @@ internal fun HomeView(
         Content(
             modifier = Modifier.padding(top = paddingValues.calculateTopPadding() + ZashiDimensions.Spacing.spacingLg),
             paddingValues = paddingValues,
-            transactionHistoryWidgetState = transactionWidgetState,
+            activityWidgetState = transactionWidgetState,
             balanceWidgetState = balanceWidgetState,
             state = state
         )
@@ -61,7 +61,7 @@ internal fun HomeView(
 
 @Composable
 private fun Content(
-    transactionHistoryWidgetState: TransactionHistoryWidgetState,
+    activityWidgetState: ActivityWidgetState,
     paddingValues: PaddingValues,
     balanceWidgetState: BalanceWidgetState,
     state: HomeState,
@@ -105,8 +105,8 @@ private fun Content(
                         .fillMaxWidth()
                         .weight(1f)
             ) {
-                createTransactionHistoryWidgets(
-                    state = transactionHistoryWidgetState
+                createActivityWidgets(
+                    state = activityWidgetState
                 )
             }
         }
@@ -178,7 +178,7 @@ private fun Preview() {
         HomeView(
             appBarState = ZashiMainTopAppBarStateFixture.new(),
             balanceWidgetState = BalanceStateFixture.new(),
-            transactionWidgetState = TransactionHistoryWidgetStateFixture.new(),
+            transactionWidgetState = ActivityWidgetStateFixture.new(),
             state =
                 HomeState(
                     firstButton =

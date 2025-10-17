@@ -2,11 +2,11 @@ package co.electriccoin.zcash.ui.screen.transactionhistory.widget
 
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionStateFixture
+import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityStateFixture
 
-object TransactionHistoryWidgetStateFixture {
+object ActivityWidgetStateFixture {
     fun new() =
-        TransactionHistoryWidgetState.Data(
+        ActivityWidgetState.Data(
             header =
                 TransactionHistoryWidgetHeaderState(
                     title = stringRes("Transactions"),
@@ -19,9 +19,9 @@ object TransactionHistoryWidgetStateFixture {
                 ),
             transactions =
                 listOf(
-                    TransactionStateFixture.new(),
-                    TransactionStateFixture.new(),
-                    TransactionStateFixture.new(),
+                    ActivityStateFixture.new(),
+                    ActivityStateFixture.new(),
+                    ActivityStateFixture.new(),
                 )
         )
 }

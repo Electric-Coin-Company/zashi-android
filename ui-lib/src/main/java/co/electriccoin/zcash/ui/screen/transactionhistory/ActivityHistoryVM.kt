@@ -8,12 +8,15 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.mapper.ActivityMapper
 import co.electriccoin.zcash.ui.common.repository.Transaction
+import co.electriccoin.zcash.ui.common.repository.TransactionFilter
 import co.electriccoin.zcash.ui.common.repository.TransactionFilterRepository
 import co.electriccoin.zcash.ui.common.usecase.ActivityData
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFulltextFiltersUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetCurrentFilteredActivitiesUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetFilteredActivitiesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
+import co.electriccoin.zcash.ui.common.usecase.MIN_TEXT_FILTER_LENGTH
 import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
+import co.electriccoin.zcash.ui.common.usecase.UpdateActivitySwapMetadataUseCase
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -28,21 +31,24 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
 import java.time.YearMonth
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.util.Objects
 
-class TransactionHistoryVM(
-    getCurrentActivities: GetCurrentFilteredActivitiesUseCase,
+class ActivityHistoryVM(
+    getFilteredActivities: GetFilteredActivitiesUseCase,
     getTransactionFilters: GetTransactionFiltersUseCase,
     transactionFilterRepository: TransactionFilterRepository,
     private val applyTransactionFulltextFilters: ApplyTransactionFulltextFiltersUseCase,
     private val activityMapper: ActivityMapper,
     private val navigationRouter: NavigationRouter,
     private val resetTransactionFilters: ResetTransactionFiltersUseCase,
-    private val restoreTimestampDataSource: RestoreTimestampDataSource
+    private val restoreTimestampDataSource: RestoreTimestampDataSource,
+    private val updateActivitySwapMetadata: UpdateActivitySwapMetadataUseCase
 ) : ViewModel() {
     val search =
         transactionFilterRepository.fulltextFilter
@@ -61,39 +67,44 @@ class TransactionHistoryVM(
             )
 
     @OptIn(ExperimentalCoroutinesApi::class)
+    private val filteredActivities = getFilteredActivities
+        .observe()
+        .mapLatest { activities ->
+            val searchHash = Objects.hash(
+                getTransactionFilters.observe().value,
+                transactionFilterRepository.fulltextFilter.value
+            ).toString()
+
+            activities to searchHash
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     val state =
         combine(
-            getCurrentActivities.observe(),
+            updateActivitySwapMetadata.uiPipeline.onStart { emit(Unit) },
+            filteredActivities,
             getTransactionFilters.observe(),
-        ) { activities, filters ->
-            activities to filters
-        }.mapLatest { (activities, filters) ->
+        ) { _, (activities, searchHash), filters ->
+            Triple(activities, filters, searchHash)
+        }.mapLatest { (activities, filters, searchHash) ->
             when {
-                activities == null ->
-                    createLoadingState(
-                        filtersSize = filters.size,
-                    )
+                activities == null -> createLoadingState(filtersSize = filters.size)
 
-                activities.isEmpty() ->
-                    createEmptyState(
-                        filtersSize = filters.size,
-                    )
+                activities.isEmpty() -> createEmptyState(filtersSize = filters.size)
 
                 else ->
                     createDataState(
                         transactions = activities,
-                        filtersSize = filters.size,
-                        restoreTimestamp = restoreTimestampDataSource.getOrCreate()
+                        restoreTimestamp = restoreTimestampDataSource.getOrCreate(),
+                        filters = filters,
+                        searchHash = searchHash
                     )
             }
         }.flowOn(Dispatchers.Default)
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.Lazily,
-                initialValue =
-                    createLoadingState(
-                        filtersSize = 0,
-                    )
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = createLoadingState(filtersSize = 0)
             )
 
     override fun onCleared() {
@@ -103,11 +114,11 @@ class TransactionHistoryVM(
 
     private fun createDataState(
         transactions: List<ActivityData>,
-        filtersSize: Int,
         restoreTimestamp: Instant,
-    ): TransactionHistoryState.Data {
+        filters: List<TransactionFilter>,
+        searchHash: String
+    ): ActivityHistoryState.Data {
         val now = ZonedDateTime.now().toLocalDate()
-
         val items =
             transactions
                 .groupBy {
@@ -136,48 +147,51 @@ class TransactionHistoryVM(
                 }.map { (entry, transactions) ->
                     val (headerStringRes, headerId) = entry
                     listOf(
-                        TransactionHistoryItem.Header(
+                        ActivityHistoryItem.Header(
                             title = headerStringRes,
                             key = headerId,
                         ),
                     ) +
                         transactions.map { activity ->
-                            TransactionHistoryItem.Transaction(
+                            ActivityHistoryItem.Activity(
                                 state =
                                     activityMapper.createTransactionState(
                                         data = activity,
                                         restoreTimestamp = restoreTimestamp,
                                         onTransactionClick = ::onTransactionClick,
-                                        onSwapClick = ::onSwapClick
+                                        onSwapClick = ::onSwapClick,
+                                        onDisplayed = ::onActivityDisplayed
                                     )
                             )
                         }
                 }.flatten()
 
-        return TransactionHistoryState.Data(
+        return ActivityHistoryState.Data(
             onBack = ::onBack,
             items = items,
             filterButton =
                 IconButtonState(
                     icon =
-                        if (filtersSize <= 0) {
+                        if (filters.isEmpty()) {
                             R.drawable.ic_transaction_filters
                         } else {
                             R.drawable.ic_transactions_filters_selected
                         },
-                    badge = stringRes(filtersSize.toString()).takeIf { filtersSize > 0 },
+                    badge = stringRes(filters.size.toString()).takeIf { filters.isNotEmpty() },
                     onClick = ::onTransactionFiltersClicked,
-                    contentDescription = null
                 ),
+            filtersId = searchHash
         )
     }
+
+    private fun onActivityDisplayed(activity: ActivityData) = updateActivitySwapMetadata(activity)
 
     private fun onFulltextFilterChanged(value: String) {
         applyTransactionFulltextFilters(value)
     }
 
     private fun createLoadingState(filtersSize: Int) =
-        TransactionHistoryState.Loading(
+        ActivityHistoryState.Loading(
             onBack = ::onBack,
             filterButton =
                 IconButtonState(
@@ -194,7 +208,7 @@ class TransactionHistoryVM(
         )
 
     private fun createEmptyState(filtersSize: Int) =
-        TransactionHistoryState.Empty(
+        ActivityHistoryState.Empty(
             onBack = ::onBack,
             filterButton =
                 IconButtonState(

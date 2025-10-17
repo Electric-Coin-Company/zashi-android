@@ -8,10 +8,10 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.styledStringResource
 import java.util.UUID
 
-object TransactionStateFixture {
+object ActivityStateFixture {
     @Suppress("MagicNumber")
     fun new() =
-        TransactionState(
+        ActivityState(
             bigIcon = R.drawable.ic_transaction_sent,
             smallIcon = R.drawable.ic_transaction_provider_near,
             title = stringRes("Transaction Title"),
@@ -25,5 +25,6 @@ object TransactionStateFixture {
             onClick = {},
             key = UUID.randomUUID().toString(),
             isUnread = true,
+            onDisplayed = {}
         )
 }

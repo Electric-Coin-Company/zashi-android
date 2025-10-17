@@ -9,39 +9,44 @@ import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.mapper.ActivityMapper
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
 import co.electriccoin.zcash.ui.common.repository.Transaction
+import co.electriccoin.zcash.ui.common.usecase.ActivityData
 import co.electriccoin.zcash.ui.common.usecase.GetActivitiesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
+import co.electriccoin.zcash.ui.common.usecase.UpdateActivitySwapMetadataUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailArgs
-import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
+import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityHistoryArgs
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class TransactionHistoryWidgetVM(
+class ActivityWidgetVM(
     getActivities: GetActivitiesUseCase,
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     private val activityMapper: ActivityMapper,
     private val navigationRouter: NavigationRouter,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val navigateToRequestShielded: NavigateToRequestShieldedUseCase,
+    private val updateActivitySwapMetadata: UpdateActivitySwapMetadataUseCase
     // private val navigateToCoinbase: NavigateToCoinbaseUseCase,
     // private val getVersionInfoProvider: GetVersionInfoProvider,
 ) : ViewModel() {
     val state =
         combine(
+            updateActivitySwapMetadata.uiPipeline.onStart { emit(Unit) },
             getActivities.observe(),
             getWalletRestoringState.observe(),
-        ) { transactions, restoringState ->
+        ) { _, transactions, restoringState ->
             when {
-                transactions == null -> TransactionHistoryWidgetState.Loading
+                transactions == null -> ActivityWidgetState.Loading
                 transactions.isEmpty() ->
-                    TransactionHistoryWidgetState.Empty(
+                    ActivityWidgetState.Empty(
                         subtitle =
                             stringRes(R.string.transaction_history_widget_empty_subtitle)
                                 .takeIf { restoringState != WalletRestoringState.RESTORING },
@@ -54,7 +59,7 @@ class TransactionHistoryWidgetVM(
                     )
 
                 else ->
-                    TransactionHistoryWidgetState.Data(
+                    ActivityWidgetState.Data(
                         header =
                             TransactionHistoryWidgetHeaderState(
                                 title = stringRes(R.string.transaction_history_widget_title),
@@ -74,7 +79,8 @@ class TransactionHistoryWidgetVM(
                                         data = transaction,
                                         restoreTimestamp = restoreTimestampDataSource.getOrCreate(),
                                         onTransactionClick = ::onTransactionClick,
-                                        onSwapClick = ::onSwapClick
+                                        onSwapClick = ::onSwapClick,
+                                        onDisplayed = ::onActivityDisplayed
                                     )
                                 }
                     )
@@ -82,8 +88,10 @@ class TransactionHistoryWidgetVM(
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = TransactionHistoryWidgetState.Loading
+            initialValue = ActivityWidgetState.Loading
         )
+
+    private fun onActivityDisplayed(activity: ActivityData) = updateActivitySwapMetadata(activity)
 
     private fun onSwapClick(depositAddress: String) = navigationRouter.forward(SwapDetailArgs(depositAddress))
 
@@ -92,7 +100,7 @@ class TransactionHistoryWidgetVM(
     }
 
     private fun onSeeAllTransactionsClick() {
-        navigationRouter.forward(TransactionHistory)
+        navigationRouter.forward(ActivityHistoryArgs)
     }
 
     private fun onRequestZecClick() = viewModelScope.launch { navigateToRequestShielded() }

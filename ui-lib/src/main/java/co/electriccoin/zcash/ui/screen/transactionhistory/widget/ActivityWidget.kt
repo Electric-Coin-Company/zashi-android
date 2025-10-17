@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,19 +34,19 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.home.common.CommonShimmerLoadingScreen
-import co.electriccoin.zcash.ui.screen.transactionhistory.Transaction
+import co.electriccoin.zcash.ui.screen.transactionhistory.Activity
 
-fun LazyListScope.createTransactionHistoryWidgets(state: TransactionHistoryWidgetState) {
+fun LazyListScope.createActivityWidgets(state: ActivityWidgetState) {
     when (state) {
-        is TransactionHistoryWidgetState.Data -> transactionHistoryWidgets(state)
-        is TransactionHistoryWidgetState.Empty -> transactionHistoryEmptyWidget(state)
-        TransactionHistoryWidgetState.Loading -> transactionHistoryLoadingWidget()
+        is ActivityWidgetState.Data -> activityWidgets(state)
+        is ActivityWidgetState.Empty -> emptyWidget(state)
+        ActivityWidgetState.Loading -> loadingWidget()
     }
 }
 
-private fun LazyListScope.transactionHistoryWidgets(state: TransactionHistoryWidgetState.Data) {
+private fun LazyListScope.activityWidgets(state: ActivityWidgetState.Data) {
     item {
-        TransactionHistoryWidgetHeader(
+        ActivityWidgetHeader(
             state = state.header,
             modifier = Modifier.padding(horizontal = 24.dp),
         )
@@ -60,7 +61,7 @@ private fun LazyListScope.transactionHistoryWidgets(state: TransactionHistoryWid
         Column(
             modifier = Modifier.animateItem()
         ) {
-            Transaction(
+            Activity(
                 state = item,
                 modifier = Modifier.padding(horizontal = 4.dp),
                 contentPadding = PaddingValues(vertical = 12.dp, horizontal = 20.dp)
@@ -75,7 +76,7 @@ private fun LazyListScope.transactionHistoryWidgets(state: TransactionHistoryWid
     }
 }
 
-private fun LazyListScope.transactionHistoryEmptyWidget(state: TransactionHistoryWidgetState.Empty) {
+private fun LazyListScope.emptyWidget(state: ActivityWidgetState.Empty) {
     item {
         Box {
             CommonShimmerLoadingScreen(
@@ -131,17 +132,23 @@ private fun LazyListScope.transactionHistoryEmptyWidget(state: TransactionHistor
     }
 }
 
-private fun LazyListScope.transactionHistoryLoadingWidget() {
+private fun LazyListScope.loadingWidget() {
     item {
         Column {
-            Spacer(Modifier.height(13.dp))
-            Text(
-                modifier = Modifier.fillParentMaxWidth().padding(horizontal = 24.dp),
-                text = stringResource(R.string.transaction_history_widget_title),
-                color = ZashiColors.Text.textPrimary,
-                fontWeight = FontWeight.SemiBold,
-                style = ZashiTypography.textLg
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier
+                        .fillParentMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    text = stringResource(R.string.transaction_history_widget_title),
+                    color = ZashiColors.Text.textPrimary,
+                    fontWeight = FontWeight.SemiBold,
+                    style = ZashiTypography.textLg
+                )
+                Spacer(Modifier.height(32.dp))
+            }
             Spacer(Modifier.height(10.dp))
             CommonShimmerLoadingScreen(
                 modifier = Modifier.fillParentMaxWidth(),
@@ -159,8 +166,8 @@ private fun Preview() =
     ZcashTheme {
         BlankSurface {
             LazyColumn {
-                createTransactionHistoryWidgets(
-                    state = TransactionHistoryWidgetStateFixture.new()
+                createActivityWidgets(
+                    state = ActivityWidgetStateFixture.new()
                 )
             }
         }
@@ -172,9 +179,9 @@ private fun EmptyPreview() =
     ZcashTheme {
         BlankSurface {
             LazyColumn {
-                createTransactionHistoryWidgets(
+                createActivityWidgets(
                     state =
-                        TransactionHistoryWidgetState.Empty(
+                        ActivityWidgetState.Empty(
                             subtitle = stringRes(R.string.transaction_history_widget_empty_subtitle),
                             sendTransaction =
                                 ButtonState(
@@ -194,8 +201,8 @@ private fun LoadingPreview() =
     ZcashTheme {
         BlankSurface {
             LazyColumn {
-                createTransactionHistoryWidgets(
-                    state = TransactionHistoryWidgetState.Loading
+                createActivityWidgets(
+                    state = ActivityWidgetState.Loading
                 )
             }
         }

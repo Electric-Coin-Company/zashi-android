@@ -26,8 +26,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -62,8 +66,8 @@ import co.electriccoin.zcash.ui.screen.home.common.CommonShimmerLoadingScreen
 import kotlinx.coroutines.launch
 
 @Composable
-fun TransactionHistoryView(
-    state: TransactionHistoryState,
+fun ActivityHistoryView(
+    state: ActivityHistoryState,
     search: TextFieldState,
     mainAppBarState: ZashiMainTopAppBarState?,
 ) {
@@ -120,7 +124,7 @@ fun TransactionHistoryView(
             }
 
             when (state) {
-                is TransactionHistoryState.Data ->
+                is ActivityHistoryState.Data ->
                     Data(
                         paddingValues = paddingValues,
                         state = state,
@@ -130,8 +134,8 @@ fun TransactionHistoryView(
                                 .fillMaxWidth()
                     )
 
-                is TransactionHistoryState.Empty -> CommonEmptyScreen(modifier = Modifier.fillMaxSize())
-                is TransactionHistoryState.Loading ->
+                is ActivityHistoryState.Empty -> CommonEmptyScreen(modifier = Modifier.fillMaxSize())
+                is ActivityHistoryState.Loading ->
                     Loading(
                         modifier =
                             Modifier
@@ -147,7 +151,7 @@ fun TransactionHistoryView(
 @OptIn(ExperimentalFoundationApi::class)
 private fun Data(
     paddingValues: PaddingValues,
-    state: TransactionHistoryState.Data,
+    state: ActivityHistoryState.Data,
     modifier: Modifier = Modifier
 ) {
     val kbController = LocalSoftwareKeyboardController.current
@@ -160,6 +164,16 @@ private fun Data(
         }
     }
 
+    var previousFiltersId by remember { mutableStateOf(state.filtersId) }
+    if (state.filtersId != previousFiltersId) {
+        lazyListState.requestScrollToItem(0)
+    }
+    SideEffect {
+        if (state.filtersId != previousFiltersId) {
+            previousFiltersId = state.filtersId
+        }
+    }
+
     LazyColumn(
         modifier = modifier,
         state = lazyListState,
@@ -167,7 +181,7 @@ private fun Data(
     ) {
         state.items.forEachIndexed { index, item ->
             when (item) {
-                is TransactionHistoryItem.Header ->
+                is ActivityHistoryItem.Header ->
                     stickyHeader(
                         contentType = item.contentType,
                         key = item.key
@@ -182,12 +196,12 @@ private fun Data(
                         )
                     }
 
-                is TransactionHistoryItem.Transaction ->
+                is ActivityHistoryItem.Activity ->
                     item(
-                        contentType = item.contentType,
-                        key = item.key,
+                        contentType = item.state.contentType,
+                        key = item.state.key,
                     ) {
-                        TransactionItem(
+                        ActivityItem(
                             item = item,
                             index = index,
                             state = state,
@@ -209,7 +223,7 @@ private fun Loading(modifier: Modifier = Modifier) {
 
 @Composable
 private fun HeaderItem(
-    item: TransactionHistoryItem.Header,
+    item: ActivityHistoryItem.Header,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -228,10 +242,10 @@ private fun HeaderItem(
 }
 
 @Composable
-private fun TransactionItem(
-    item: TransactionHistoryItem.Transaction,
+private fun ActivityItem(
+    item: ActivityHistoryItem.Activity,
     index: Int,
-    state: TransactionHistoryState.Data,
+    state: ActivityHistoryState.Data,
     modifier: Modifier = Modifier
 ) {
     val previousItem = if (index != 0) state.items[index - 1] else null
@@ -240,21 +254,21 @@ private fun TransactionItem(
     Column(
         modifier = modifier,
     ) {
-        if (previousItem is TransactionHistoryItem.Header) {
+        if (previousItem is ActivityHistoryItem.Header) {
             Spacer(Modifier.height(6.dp))
         }
 
-        Transaction(
+        Activity(
             modifier = Modifier.padding(horizontal = 4.dp),
             state = item.state,
             contentPadding = PaddingValues(vertical = 12.dp, horizontal = 20.dp)
         )
 
-        if (index != state.items.lastIndex && nextItem is TransactionHistoryItem.Transaction) {
+        if (index != state.items.lastIndex && nextItem is ActivityHistoryItem.Activity) {
             ZashiHorizontalDivider(
                 modifier = Modifier.padding(horizontal = 4.dp),
             )
-        } else if (index != state.items.lastIndex && nextItem !is TransactionHistoryItem.Transaction) {
+        } else if (index != state.items.lastIndex && nextItem !is ActivityHistoryItem.Activity) {
             Spacer(
                 modifier = Modifier.height(26.dp)
             )
@@ -309,7 +323,7 @@ private fun BadgeIconButton(
 @Composable
 private fun TransactionHistoryAppBar(
     mainAppBarState: ZashiMainTopAppBarState?,
-    state: TransactionHistoryState
+    state: ActivityHistoryState
 ) {
     ZashiSmallTopAppBar(
         title = stringResource(R.string.transaction_history_screen_title),
@@ -332,9 +346,9 @@ const val EMPTY_GRADIENT_THRESHOLD = .28f
 @Composable
 private fun DataPreview() =
     ZcashTheme {
-        TransactionHistoryView(
+        ActivityHistoryView(
             state =
-                TransactionHistoryState.Data(
+                ActivityHistoryState.Data(
                     onBack = {},
                     filterButton =
                         IconButtonState(
@@ -344,24 +358,12 @@ private fun DataPreview() =
                         ),
                     items =
                         listOf(
-                            TransactionHistoryItem.Header(
-                                title = stringRes("Header")
-                            ),
-                            TransactionHistoryItem.Transaction(
-                                state = TransactionStateFixture.new(),
-                            ),
-                            TransactionHistoryItem.Transaction(
-                                state = TransactionStateFixture.new(),
-                            ),
-                            TransactionHistoryItem.Header(
-                                title = stringRes("Header 2")
-                            ),
-                            TransactionHistoryItem.Transaction(
-                                state = TransactionStateFixture.new()
-                            ),
-                            TransactionHistoryItem.Transaction(
-                                state = TransactionStateFixture.new()
-                            ),
+                            ActivityHistoryItem.Header(stringRes("Header")),
+                            ActivityHistoryItem.Activity(ActivityStateFixture.new(),),
+                            ActivityHistoryItem.Activity(ActivityStateFixture.new(),),
+                            ActivityHistoryItem.Header(stringRes("Header 2")),
+                            ActivityHistoryItem.Activity(ActivityStateFixture.new()),
+                            ActivityHistoryItem.Activity(ActivityStateFixture.new()),
                         )
                 ),
             search = TextFieldState(stringRes(value = "")) {},
@@ -373,9 +375,9 @@ private fun DataPreview() =
 @Composable
 private fun EmptyPreview() =
     ZcashTheme {
-        TransactionHistoryView(
+        ActivityHistoryView(
             state =
-                TransactionHistoryState.Empty(
+                ActivityHistoryState.Empty(
                     onBack = {},
                     filterButton =
                         IconButtonState(
@@ -393,9 +395,9 @@ private fun EmptyPreview() =
 @Composable
 private fun LoadingPreview() =
     ZcashTheme {
-        TransactionHistoryView(
+        ActivityHistoryView(
             state =
-                TransactionHistoryState.Loading(
+                ActivityHistoryState.Loading(
                     onBack = {},
                     filterButton =
                         IconButtonState(

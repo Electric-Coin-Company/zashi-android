@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
@@ -55,23 +56,17 @@ class GetActivitiesUseCase(
     private fun observeTransactions(): Flow<List<ActivityData.ByTransaction>?> =
         transactionRepository.currentTransactions
             .flatMapLatest { transactions ->
-                if (transactions == null) {
-                    flowOf(null)
-                } else if (transactions.isEmpty()) {
-                    flowOf(emptyList())
-                } else {
-                    transactions
-                        .map {
-                            metadataRepository
-                                .observeTransactionMetadata(it)
-                                .mapLatest { metadata ->
-                                    ActivityData.ByTransaction(transaction = it, metadata = metadata)
-                                }
-                        }.combineToFlow()
-                }
+                transactions
+                    ?.map {
+                    metadataRepository
+                        .observeTransactionMetadata(it)
+                        .mapLatest { metadata ->
+                            ActivityData.ByTransaction(transaction = it, metadata = metadata)
+                        }
+                }?.combineToFlow() ?: flowOf(null)
             }
 
-    private fun observeIntoZecSwaps() =
+    private fun observeIntoZecSwaps(): Flow<List<ActivityData.BySwap>?> =
         metadataRepository
             .observeORSwapMetadata()
             .map {
