@@ -1,22 +1,46 @@
 package co.electriccoin.zcash.ui.common.usecase
 
+import android.net.Uri
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 
 class ValidateEndpointUseCase {
     operator fun invoke(endpoint: String): LightWalletEndpoint? {
-        val valid = ENDPOINT_REGEX.toRegex().matches(endpoint)
+        return try {
+            // First validate regex
+            if (!ENDPOINT_REGEX.toRegex().matches(endpoint)) {
+                return null
+            }
 
-        return if (valid) {
-            endpoint.toEndpoint(":")
-        } else {
+            // Parse using Android's Uri class for robust URL parsing
+            val uri = if (endpoint.contains("://")) {
+                Uri.parse(endpoint)
+            } else {
+                // Handle endpoints without protocol scheme
+                Uri.parse("https://$endpoint")
+            }
+
+            val host = uri.host
+            val port = uri.port
+
+            // Validate hostname - reject empty, leading/trailing periods
+            if (host.isNullOrBlank() ||
+                host.startsWith(".") ||
+                host.endsWith(".") ||
+                host.contains("..")) {
+                return null
+            }
+
+            // Validate port range
+            if (port !in 1..65535) {
+                return null
+            }
+
+            LightWalletEndpoint(host, port, true)
+        } catch (e: Exception) {
+            // Catch any parsing errors and return null instead of crashing
             null
         }
     }
-
-    private fun String.toEndpoint(delimiter: String): LightWalletEndpoint {
-        val parts = split(delimiter)
-        return LightWalletEndpoint(parts[0], parts[1].toInt(), true)
-    }
 }
 
-private const val ENDPOINT_REGEX = "^(([^:/?#\\s]+)://)?([^/?#\\s]+):([1-9][0-9]{3}|[1-5][0-9]{2}|[0-9]{1,2})$"
+private const val ENDPOINT_REGEX = "^(([^:/?#\\s]+)://)?([^/?#\\s.][^/?#\\s]*[^/?#\\s.]):([1-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$"
