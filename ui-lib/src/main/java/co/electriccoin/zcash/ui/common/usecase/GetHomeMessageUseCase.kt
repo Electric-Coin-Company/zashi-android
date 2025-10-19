@@ -147,7 +147,7 @@ class GetHomeMessageUseCase(
             .map { message -> prioritizeMessage(message) }
             .stateIn(
                 scope = scope,
-                started = SharingStarted.WhileSubscribed(0, 0),
+                started = SharingStarted.WhileSubscribed(),
                 initialValue = null
             )
 
