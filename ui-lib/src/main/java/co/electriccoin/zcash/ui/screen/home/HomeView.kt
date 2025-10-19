@@ -6,15 +6,25 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -93,25 +103,59 @@ private fun Content(
                 state = state
             )
             Spacer(Modifier.height(2.dp))
-            HomeMessage(
-                modifier =
-                    Modifier
-                        .zIndex(0f),
-                state = state.message
-            )
-            LazyColumn(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-            ) {
-                createActivityWidgets(
-                    state = activityWidgetState
+            OverlappingBoxes {
+                HomeMessage(
+                    modifier =
+                        Modifier
+                            .zIndex(0f),
+                    state = state.message
                 )
+                LazyColumn(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
+                    contentPadding = PaddingValues(top = 24.dp)
+                ) {
+                    createActivityWidgets(
+                        state = activityWidgetState
+                    )
+                }
             }
         }
     }
 }
+
+@Composable
+private fun OverlappingBoxes(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    val density = LocalDensity.current
+    val overlapPx by remember { mutableIntStateOf(with(density) { 24.dp.toPx().toInt() }) }
+
+    Layout(
+        modifier = modifier,
+        content = content,
+    ) { measurables, constraints ->
+        val firstBox = measurables.getOrNull(0)
+        val secondBox = measurables.getOrNull(1)
+        val looseConstraints = constraints.copy(minWidth = 0, minHeight = 0)
+        val firstPlaceable = firstBox?.measure(looseConstraints)
+        val secondPlaceable = secondBox?.measure(looseConstraints)
+        layout(
+            width = constraints.maxWidth,
+            height = constraints.maxHeight
+        ) {
+            firstPlaceable?.placeRelative(
+                x = 0,
+                y = 0,
+            )
+            secondPlaceable?.placeRelative(
+                x = 0,
+                y = ((firstPlaceable?.height ?: 0) - overlapPx).coerceAtLeast(0),
+            )
+        }
+    }
+}
+
 
 @Suppress("MagicNumber")
 @Composable

@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.repository
 
+import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.TransactionId
 import cash.z.ecc.android.sdk.model.TransactionOutput
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
@@ -83,8 +85,9 @@ class TransactionRepositoryImpl(
                                 }
                             } to synchronizer
                     }
+                    .onStart<Pair<List<TransactionOverview>?, Synchronizer>> { emit(null to synchronizer) }
             }
-        }
+        }.distinctUntilChanged()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val currentTransactions: Flow<List<Transaction>?> =
