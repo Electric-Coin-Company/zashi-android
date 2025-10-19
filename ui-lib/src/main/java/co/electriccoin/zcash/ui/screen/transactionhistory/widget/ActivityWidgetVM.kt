@@ -13,7 +13,7 @@ import co.electriccoin.zcash.ui.common.usecase.ActivityData
 import co.electriccoin.zcash.ui.common.usecase.GetActivitiesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToRequestShieldedUseCase
-import co.electriccoin.zcash.ui.common.usecase.UpdateActivitySwapMetadataUseCase
+import co.electriccoin.zcash.ui.common.usecase.UpdateSwapActivityMetadataUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailArgs
@@ -33,16 +33,16 @@ class ActivityWidgetVM(
     private val navigationRouter: NavigationRouter,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val navigateToRequestShielded: NavigateToRequestShieldedUseCase,
-    private val updateActivitySwapMetadata: UpdateActivitySwapMetadataUseCase
+    private val updateSwapActivityMetadata: UpdateSwapActivityMetadataUseCase
     // private val navigateToCoinbase: NavigateToCoinbaseUseCase,
     // private val getVersionInfoProvider: GetVersionInfoProvider,
 ) : ViewModel() {
     val state =
         combine(
-            updateActivitySwapMetadata.uiPipeline.onStart { emit(Unit) },
+            // updateSwapActivityMetadata.uiPipeline.onStart { emit(Unit) },
             getActivities.observe(),
             getWalletRestoringState.observe(),
-        ) { _, transactions, restoringState ->
+        ) { transactions, restoringState ->
             when {
                 transactions == null -> ActivityWidgetState.Loading
                 transactions.isEmpty() ->
@@ -91,7 +91,7 @@ class ActivityWidgetVM(
             initialValue = ActivityWidgetState.Loading
         )
 
-    private fun onActivityDisplayed(activity: ActivityData) = updateActivitySwapMetadata(activity)
+    private fun onActivityDisplayed(activity: ActivityData) = updateSwapActivityMetadata(activity)
 
     private fun onSwapClick(depositAddress: String) = navigationRouter.forward(SwapDetailArgs(depositAddress))
 

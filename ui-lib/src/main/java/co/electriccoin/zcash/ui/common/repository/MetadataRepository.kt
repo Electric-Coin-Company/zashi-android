@@ -10,7 +10,6 @@ import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
-import co.electriccoin.zcash.ui.common.model.ZecSimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.metadata.SwapMetadataV3
 import co.electriccoin.zcash.ui.common.provider.MetadataKeyStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
@@ -26,7 +25,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -73,16 +71,9 @@ interface MetadataRepository {
 
     fun observeTransactionMetadata(transaction: Transaction): Flow<TransactionMetadata>
 
-    suspend fun getTransactionMetadata(transaction: Transaction): TransactionMetadata? =
-        observeTransactionMetadata(transaction).first()
+    fun observeSwapMetadata(): Flow<List<TransactionSwapMetadata>?>
 
-    fun observeORSwapMetadata(): Flow<List<TransactionSwapMetadata>?>
-
-    suspend fun getORSwapMetadata(depositAddress: String): TransactionSwapMetadata? =
-        observeORSwapMetadata()
-            .filterNotNull()
-            .first()
-            .find { it.depositAddress == depositAddress }
+    suspend fun getSwapMetadata(depositAddress: String): TransactionSwapMetadata?
 
     fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?>
 }
@@ -243,7 +234,7 @@ class MetadataRepositoryImpl(
             totalFeesUsd = totalFeesUsd,
         )
 
-    override fun observeORSwapMetadata(): Flow<List<TransactionSwapMetadata>?> =
+    override fun observeSwapMetadata(): Flow<List<TransactionSwapMetadata>?> =
         metadata
             .map { metadata ->
                 metadata
@@ -251,8 +242,18 @@ class MetadataRepositoryImpl(
                     ?.swaps
                     ?.swapIds
                     ?.map { it.toBusinessObject() }
-                    ?.filter { it.destination is ZecSimpleSwapAsset }
             }.distinctUntilChanged()
+
+    override suspend fun getSwapMetadata(depositAddress: String): TransactionSwapMetadata? {
+        return metadata
+            .filterNotNull()
+            .first()
+            .accountMetadata
+            .swaps
+            .swapIds
+            .firstOrNull { it.depositAddress == depositAddress }
+            ?.toBusinessObject()
+    }
 
     override fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?> =
         metadata

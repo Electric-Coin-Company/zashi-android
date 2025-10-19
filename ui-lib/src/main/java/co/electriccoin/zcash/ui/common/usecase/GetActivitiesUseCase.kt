@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.usecase
 
+import co.electriccoin.zcash.ui.common.model.ZecSimpleSwapAsset
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
@@ -10,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
@@ -21,6 +21,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneOffset
+import kotlin.collections.filter
 
 class GetActivitiesUseCase(
     private val transactionRepository: TransactionRepository,
@@ -68,7 +69,10 @@ class GetActivitiesUseCase(
 
     private fun observeIntoZecSwaps(): Flow<List<ActivityData.BySwap>?> =
         metadataRepository
-            .observeORSwapMetadata()
+            .observeSwapMetadata()
+            .map {
+                it?.filter { metadata -> metadata.destination is ZecSimpleSwapAsset }
+            }
             .map {
                 it?.map { metadata -> ActivityData.BySwap(swap = metadata) }
             }

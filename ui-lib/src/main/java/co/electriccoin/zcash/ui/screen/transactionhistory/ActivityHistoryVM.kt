@@ -14,9 +14,8 @@ import co.electriccoin.zcash.ui.common.usecase.ActivityData
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFulltextFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetFilteredActivitiesUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
-import co.electriccoin.zcash.ui.common.usecase.MIN_TEXT_FILTER_LENGTH
 import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
-import co.electriccoin.zcash.ui.common.usecase.UpdateActivitySwapMetadataUseCase
+import co.electriccoin.zcash.ui.common.usecase.UpdateSwapActivityMetadataUseCase
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -48,7 +47,7 @@ class ActivityHistoryVM(
     private val navigationRouter: NavigationRouter,
     private val resetTransactionFilters: ResetTransactionFiltersUseCase,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
-    private val updateActivitySwapMetadata: UpdateActivitySwapMetadataUseCase
+    private val updateSwapActivityMetadata: UpdateSwapActivityMetadataUseCase
 ) : ViewModel() {
     val search =
         transactionFilterRepository.fulltextFilter
@@ -81,10 +80,10 @@ class ActivityHistoryVM(
     @OptIn(ExperimentalCoroutinesApi::class)
     val state =
         combine(
-            updateActivitySwapMetadata.uiPipeline.onStart { emit(Unit) },
+            // updateSwapActivityMetadata.uiPipeline.onStart { emit(Unit) },
             filteredActivities,
             getTransactionFilters.observe(),
-        ) { _, (activities, searchHash), filters ->
+        ) { (activities, searchHash), filters ->
             Triple(activities, filters, searchHash)
         }.mapLatest { (activities, filters, searchHash) ->
             when {
@@ -184,7 +183,7 @@ class ActivityHistoryVM(
         )
     }
 
-    private fun onActivityDisplayed(activity: ActivityData) = updateActivitySwapMetadata(activity)
+    private fun onActivityDisplayed(activity: ActivityData) = updateSwapActivityMetadata(activity)
 
     private fun onFulltextFilterChanged(value: String) {
         applyTransactionFulltextFilters(value)

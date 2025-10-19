@@ -110,7 +110,7 @@ import co.electriccoin.zcash.ui.common.usecase.ShareQRUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateABContactUseCase
-import co.electriccoin.zcash.ui.common.usecase.UpdateActivitySwapMetadataUseCase
+import co.electriccoin.zcash.ui.common.usecase.UpdateSwapActivityMetadataUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateGenericABContactNameUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateSeedUseCase
@@ -245,5 +245,5 @@ val useCaseModule =
         factoryOf(::ShareQRUseCase)
         factoryOf(::GetActivitiesUseCase)
         factoryOf(::IsScreenTimeoutDisabledDuringRestoreUseCase)
-        singleOf(::UpdateActivitySwapMetadataUseCase)
+        singleOf(::UpdateSwapActivityMetadataUseCase)
     }

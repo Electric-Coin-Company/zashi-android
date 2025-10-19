@@ -48,6 +48,9 @@ interface SwapRepository {
 
     fun observeSwapStatus(depositAddress: String): Flow<SwapQuoteStatusData>
 
+    suspend fun getSwapStatus(depositAddress: String): SwapQuoteStatusData =
+        observeSwapStatus(depositAddress).first { !it.isLoading }
+
     fun requestExactInputQuote(amount: BigDecimal, address: String)
 
     fun requestExactOutputQuote(amount: BigDecimal, address: String)
