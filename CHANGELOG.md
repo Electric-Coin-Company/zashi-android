@@ -6,6 +6,21 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.4 (1265)] - 2025-10-20
+
+### Added:
+- Swap statuses now load from activity history screen in addition to swap detail screen 
+
+### Fixed:
+- All native libraries are now using 16KB memory page
+- TEX error handling improved in case one transaction fails
+- AB recipient selection screen now does not offer selected account on send screen
+- Crash when focusing restore BD height text field resolved
+
+### Changed:
+- Improved transaction loading performance
+- Improved edge case error handling during proposal creation for both Zashi and Keystone
+
 ## [2.4.3 (1250)] - 2025-10-13
 
 ### Added:
