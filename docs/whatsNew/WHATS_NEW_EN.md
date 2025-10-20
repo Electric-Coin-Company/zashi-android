@@ -15,7 +15,7 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [2.4.4 (1265)] - 2025-10-20
 
 ### Changed:
-- We implemented auto-updating of swap/payment statuses, no need to click into them to see them changed.
+- We implemented auto-updating of swap payment statuses, no need to click into them to see them changed.
 - We removed Keystone logo from QR code, nobody needs to know you got one.
 - We addressed Google library size requirement
 
