@@ -15,9 +15,10 @@ directly impact users rather than highlighting other key architectural updates.*
 ## [2.4.4 (1265)] - 2025-10-20
 
 ### Cambiado:
-- Implementamos la actualización automática de los estados de intercambio/pago; no es necesario hacer clic en ellos para verlos modificados.
+
+- Implementamos la actualización automática de los estados de intercambio/pago.
 - Eliminamos el logotipo de Keystone del código QR; nadie tiene por qué saber que tienes uno.
-- Abordamos el requisito de tamaño de la biblioteca de Google
+- Abordamos el requisito de tamaño de la biblioteca de Google.
 
 ### Corregido:
 - Solucionamos un problema con una transacción entrante pendiente permanente.
