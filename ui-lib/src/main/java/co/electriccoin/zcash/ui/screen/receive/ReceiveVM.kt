@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.receive
 
-import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
@@ -32,7 +31,6 @@ import kotlinx.coroutines.flow.update
 
 class ReceiveVM(
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
-    private val application: Application,
     private val copyToClipboard: CopyToClipboardUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {

@@ -163,8 +163,8 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailScreen
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersArgs
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersScreen
-import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityHistoryScreen
 import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityHistoryArgs
+import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityHistoryScreen
 import co.electriccoin.zcash.ui.screen.transactionnote.AndroidTransactionNote
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressArgs

@@ -211,6 +211,7 @@ class ProposalDataSourceImpl(
                 .redactPcztForSigner(pczt)
         }
 
+    @Suppress("CyclomaticComplexMethod", "TooGenericExceptionCaught")
     private suspend fun submitTransactionInternal(
         transactionCount: Int,
         block: suspend (Synchronizer) -> Flow<TransactionSubmitResult>
@@ -227,37 +228,42 @@ class ProposalDataSourceImpl(
 
             Twig.debug { "Internal transaction submit results: $submitResults" }
 
-            val successCount = submitResults
-                .count { it is TransactionSubmitResult.Success }
-            val txIds = submitResults
-                .map { it.txIdString() }
-            val statuses = submitResults
-                .map {
-                    when (it) {
-                        is TransactionSubmitResult.Success -> "success"
-                        is TransactionSubmitResult.Failure ->
-                            if (it.grpcError) {
-                                it.description.orEmpty()
-                            } else {
-                                "code: ${it.code} desc: ${it.description}"
-                            }
+            val successCount =
+                submitResults
+                    .count { it is TransactionSubmitResult.Success }
+            val txIds =
+                submitResults
+                    .map { it.txIdString() }
+            val statuses =
+                submitResults
+                    .map {
+                        when (it) {
+                            is TransactionSubmitResult.Success -> "success"
+                            is TransactionSubmitResult.Failure ->
+                                if (it.grpcError) {
+                                    it.description.orEmpty()
+                                } else {
+                                    "code: ${it.code} desc: ${it.description}"
+                                }
 
-                        is TransactionSubmitResult.NotAttempted -> "notAttempted"
+                            is TransactionSubmitResult.NotAttempted -> "notAttempted"
+                        }
                     }
-                }
-            val resubmittableFailures = submitResults
-                .mapNotNull {
-                    when (it) {
-                        is TransactionSubmitResult.Failure -> it.grpcError
-                        is TransactionSubmitResult.NotAttempted -> null
-                        is TransactionSubmitResult.Success -> null
+            val resubmittableFailures =
+                submitResults
+                    .mapNotNull {
+                        when (it) {
+                            is TransactionSubmitResult.Failure -> it.grpcError
+                            is TransactionSubmitResult.NotAttempted -> null
+                            is TransactionSubmitResult.Success -> null
+                        }
                     }
-                }
 
-            val (errCode, errDesc) = submitResults
-                .filterIsInstance<TransactionSubmitResult.Failure>()
-                .lastOrNull { !it.grpcError }
-                ?.let { it.code to it.description } ?: (0 to "")
+            val (errCode, errDesc) =
+                submitResults
+                    .filterIsInstance<TransactionSubmitResult.Failure>()
+                    .lastOrNull { !it.grpcError }
+                    ?.let { it.code to it.description } ?: (0 to "")
 
             val result =
                 when (successCount) {

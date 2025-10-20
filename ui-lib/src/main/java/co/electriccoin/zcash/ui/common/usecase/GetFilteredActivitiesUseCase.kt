@@ -109,8 +109,7 @@ class GetFilteredActivitiesUseCase(
                                 }
                             )
                         }
-                    }
-                    .distinctUntilChanged()
+                    }.distinctUntilChanged()
                     .collect { send(it) }
             }
 
@@ -120,40 +119,40 @@ class GetFilteredActivitiesUseCase(
         }.flowOn(Dispatchers.Default)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val result: Flow<List<ActivityData>?> = channelFlow {
-        val transactionsFilteredByFulltext = transactionsFilteredByFulltext.stateIn(this)
-        launch {
-            transactionFilterRepository.filters
-                .flatMapLatest { filters ->
-                    flow {
-                        emitAll(
-                            transactionsFilteredByFulltext
-                                .mapLatest { transactions ->
-                                    transactions
-                                        ?.filter { transaction ->
-                                            filterBySentReceivedSwap(filters, transaction)
-                                        }?.filter { transaction ->
-                                            filterByGeneralFilters(
-                                                filters = filters,
-                                                activity = transaction,
-                                                restoreTimestamp = restoreTimestampDataSource.getOrCreate()
-                                            )
-                                        }?.map { transaction ->
-                                            transaction.activity
-                                        }
-                                }
-                        )
+    private val result: Flow<List<ActivityData>?> =
+        channelFlow {
+            val transactionsFilteredByFulltext = transactionsFilteredByFulltext.stateIn(this)
+            launch {
+                transactionFilterRepository.filters
+                    .flatMapLatest { filters ->
+                        flow {
+                            emitAll(
+                                transactionsFilteredByFulltext
+                                    .mapLatest { transactions ->
+                                        transactions
+                                            ?.filter { transaction ->
+                                                filterBySentReceivedSwap(filters, transaction)
+                                            }?.filter { transaction ->
+                                                filterByGeneralFilters(
+                                                    filters = filters,
+                                                    activity = transaction,
+                                                    restoreTimestamp = restoreTimestampDataSource.getOrCreate()
+                                                )
+                                            }?.map { transaction ->
+                                                transaction.activity
+                                            }
+                                    }
+                            )
+                        }
+                    }.collect {
+                        send(it)
                     }
-                }
-                .collect {
-                    send(it)
-                }
-        }
-        awaitClose {
-            // do nothing
-        }
-    }.distinctUntilChanged()
-        .flowOn(Dispatchers.Default)
+            }
+            awaitClose {
+                // do nothing
+            }
+        }.distinctUntilChanged()
+            .flowOn(Dispatchers.Default)
 
     fun observe(): Flow<List<ActivityData>?> = result
 
@@ -268,12 +267,12 @@ class GetFilteredActivitiesUseCase(
                             activity.activity.metadata.swapMetadata == null ||
                                 activity.activity.metadata.swapMetadata
                                     .destination !is ZecSimpleSwapAsset
-                            )
+                        )
                     ) {
                         (
                             stringRes("- ") +
                                 stringRes(activity.activity.transaction.amount, HIDDEN) + stringRes(" ZEC")
-                            ).getString(context)
+                        ).getString(context)
                     } else {
                         (stringRes(activity.activity.transaction.amount, HIDDEN) + stringRes(" ZEC"))
                             .getString(context)

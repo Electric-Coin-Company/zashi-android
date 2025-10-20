@@ -34,6 +34,7 @@ class UpdateSwapActivityMetadataUseCase(
     private val pipelineCacheSemaphore = Mutex()
 
     init {
+        @Suppress("MagicNumber")
         scope.launch {
             for (item in pipeline) {
                 pipelineSemaphore.withLock {
@@ -77,31 +78,40 @@ class UpdateSwapActivityMetadataUseCase(
 
     operator fun invoke(activity: ActivityData) {
         scope.launch {
-            val depositAddress = when (activity) {
-                is ActivityData.BySwap -> activity.swap.depositAddress
-                    .takeIf { !activity.swap.status.isTerminal }
+            val depositAddress =
+                when (activity) {
+                    is ActivityData.BySwap ->
+                        activity.swap.depositAddress
+                            .takeIf { !activity.swap.status.isTerminal }
 
-                is ActivityData.ByTransaction -> activity.metadata.swapMetadata?.depositAddress
-                    ?.takeIf { !activity.metadata.swapMetadata.status.isTerminal }
-            }
+                    is ActivityData.ByTransaction ->
+                        activity.metadata.swapMetadata
+                            ?.depositAddress
+                            ?.takeIf { !activity.metadata.swapMetadata.status.isTerminal }
+                }
 
             if (depositAddress != null) {
-                val request = pipelineCacheSemaphore.withLock {
-                    val found = pipelineCache.find { it.depositAddress == depositAddress }?.also { it.close() }
-                    Request(depositAddress, found?.timestamp)
-                }
+                val request =
+                    pipelineCacheSemaphore.withLock {
+                        val found = pipelineCache.find { it.depositAddress == depositAddress }?.also { it.close() }
+                        Request(depositAddress, found?.timestamp)
+                    }
                 Twig.debug { "Activities: queue $depositAddress" }
                 pipeline.send(request)
             }
         }
     }
 
-    private fun requeue(depositAddress: String, timestamp: Instant) = scope.launch {
-        Twig.debug { "Activities: requeue $depositAddress" }
-        pipeline.send(pipelineCacheSemaphore.withLock { Request(depositAddress, timestamp) })
-    }
+    private fun requeue(depositAddress: String, timestamp: Instant) =
+        scope.launch {
+            Twig.debug { "Activities: requeue $depositAddress" }
+            pipeline.send(pipelineCacheSemaphore.withLock { Request(depositAddress, timestamp) })
+        }
 
-    private inner class Request(val depositAddress: String, val timestamp: Instant?) : AutoCloseable {
+    private inner class Request(
+        val depositAddress: String,
+        val timestamp: Instant?
+    ) : AutoCloseable {
         init {
             val found = pipelineCache.find { it.depositAddress == depositAddress }
             if (found != null) pipelineCache.remove(found)

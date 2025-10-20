@@ -157,18 +157,19 @@ class ZashiProposalRepositoryImpl(
             }
     }
 
-    @Suppress("TooGenericExceptionCaught")
+    @Suppress("TooGenericExceptionCaught", "UseCheckOrError")
     override suspend fun submitTransactionAndGet(): SubmitResult {
         submitJob?.cancel()
         return scope
             .async {
                 val transactionProposal = transactionProposal.value
                 if (transactionProposal == null) {
-                    val submitResult = SubmitResult.Failure(
-                        txIds = emptyList(),
-                        code = 0,
-                        description = "Transaction proposal is null"
-                    )
+                    val submitResult =
+                        SubmitResult.Failure(
+                            txIds = emptyList(),
+                            code = 0,
+                            description = "Transaction proposal is null"
+                        )
                     submitState.update { SubmitProposalState.Result(submitResult) }
                     throw IllegalStateException("Transaction proposal is null")
                 } else {

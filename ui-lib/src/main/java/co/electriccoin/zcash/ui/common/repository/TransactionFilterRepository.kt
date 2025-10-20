@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.common.repository
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.update
 
 interface TransactionFilterRepository {

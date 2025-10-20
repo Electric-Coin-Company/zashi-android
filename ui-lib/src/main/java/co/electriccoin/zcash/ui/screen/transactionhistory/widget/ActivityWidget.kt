@@ -139,9 +139,10 @@ private fun LazyListScope.loadingWidget() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    modifier = Modifier
-                        .fillParentMaxWidth()
-                        .padding(horizontal = 24.dp),
+                    modifier =
+                        Modifier
+                            .fillParentMaxWidth()
+                            .padding(horizontal = 24.dp),
                     text = stringResource(R.string.transaction_history_widget_title),
                     color = ZashiColors.Text.textPrimary,
                     fontWeight = FontWeight.SemiBold,

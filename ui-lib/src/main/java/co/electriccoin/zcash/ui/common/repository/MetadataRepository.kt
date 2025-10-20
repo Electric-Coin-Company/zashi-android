@@ -35,6 +35,7 @@ import kotlinx.coroutines.sync.withLock
 import java.math.BigDecimal
 import java.time.Instant
 
+@Suppress("TooManyFunctions")
 interface MetadataRepository {
     fun flipTxBookmark(txId: String)
 
@@ -244,8 +245,8 @@ class MetadataRepositoryImpl(
                     ?.map { it.toBusinessObject() }
             }.distinctUntilChanged()
 
-    override suspend fun getSwapMetadata(depositAddress: String): TransactionSwapMetadata? {
-        return metadata
+    override suspend fun getSwapMetadata(depositAddress: String): TransactionSwapMetadata? =
+        metadata
             .filterNotNull()
             .first()
             .accountMetadata
@@ -253,7 +254,6 @@ class MetadataRepositoryImpl(
             .swapIds
             .firstOrNull { it.depositAddress == depositAddress }
             ?.toBusinessObject()
-    }
 
     override fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?> =
         metadata

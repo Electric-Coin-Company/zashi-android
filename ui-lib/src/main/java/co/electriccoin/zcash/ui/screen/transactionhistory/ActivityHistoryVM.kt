@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import java.time.Instant
 import java.time.YearMonth
@@ -66,16 +65,19 @@ class ActivityHistoryVM(
             )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val filteredActivities = getFilteredActivities
-        .observe()
-        .mapLatest { activities ->
-            val searchHash = Objects.hash(
-                getTransactionFilters.observe().value,
-                transactionFilterRepository.fulltextFilter.value
-            ).toString()
+    private val filteredActivities =
+        getFilteredActivities
+            .observe()
+            .mapLatest { activities ->
+                val searchHash =
+                    Objects
+                        .hash(
+                            getTransactionFilters.observe().value,
+                            transactionFilterRepository.fulltextFilter.value
+                        ).toString()
 
-            activities to searchHash
-        }
+                activities to searchHash
+            }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val state =

@@ -38,10 +38,13 @@ sealed interface ActivityHistoryItem {
     data class Header(
         val title: StringResource,
         override val key: Any = UUID.randomUUID()
-    ) : ActivityHistoryItem, Itemizable {
+    ) : ActivityHistoryItem,
+        Itemizable {
         override val contentType = "Transaction Header"
     }
 
     @Immutable
-    data class Activity(val state: ActivityState) : ActivityHistoryItem
+    data class Activity(
+        val state: ActivityState
+    ) : ActivityHistoryItem
 }

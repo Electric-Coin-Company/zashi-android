@@ -59,12 +59,12 @@ class GetActivitiesUseCase(
             .flatMapLatest { transactions ->
                 transactions
                     ?.map {
-                    metadataRepository
-                        .observeTransactionMetadata(it)
-                        .mapLatest { metadata ->
-                            ActivityData.ByTransaction(transaction = it, metadata = metadata)
-                        }
-                }?.combineToFlow() ?: flowOf(null)
+                        metadataRepository
+                            .observeTransactionMetadata(it)
+                            .mapLatest { metadata ->
+                                ActivityData.ByTransaction(transaction = it, metadata = metadata)
+                            }
+                    }?.combineToFlow() ?: flowOf(null)
             }
 
     private fun observeIntoZecSwaps(): Flow<List<ActivityData.BySwap>?> =
@@ -72,8 +72,7 @@ class GetActivitiesUseCase(
             .observeSwapMetadata()
             .map {
                 it?.filter { metadata -> metadata.destination is ZecSimpleSwapAsset }
-            }
-            .map {
+            }.map {
                 it?.map { metadata -> ActivityData.BySwap(swap = metadata) }
             }
 }

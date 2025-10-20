@@ -4,13 +4,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 
-inline fun <reified T> List<Flow<T>>.combineToFlow(): Flow<List<T>> {
-    return if (this.isEmpty()) {
+inline fun <reified T> List<Flow<T>>.combineToFlow(): Flow<List<T>> =
+    if (this.isEmpty()) {
         flowOf(emptyList())
     } else {
         combine(this.map { flow -> flow }) { items -> items.toList() }
     }
-}
 
 @Suppress("UNCHECKED_CAST", "MagicNumber")
 fun <T1, T2, T3, T4, T5, T6, R> combine(

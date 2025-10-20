@@ -65,29 +65,29 @@ class TransactionRepositoryImpl(
             accountDataSource.selectedAccount.map { it?.sdkAccount }
         ) { synchronizer, account ->
             synchronizer to account
-        }.distinctUntilChanged().flatMapLatest { (synchronizer, account) ->
-            if (synchronizer == null || account == null) {
-                flowOf(null to null)
-            } else {
-                synchronizer
-                    .getTransactions(account.accountUuid)
-                    .map { transactions ->
-                        transactions
-                            .map {
-                                if (it.isSentTransaction) {
-                                    it.copy(
-                                        transactionState =
-                                            createTransactionState(minedHeight = it.minedHeight)
-                                                ?: it.transactionState
-                                    )
-                                } else {
-                                    it
-                                }
-                            } to synchronizer
-                    }
-                    .onStart<Pair<List<TransactionOverview>?, Synchronizer>> { emit(null to synchronizer) }
-            }
         }.distinctUntilChanged()
+            .flatMapLatest { (synchronizer, account) ->
+                if (synchronizer == null || account == null) {
+                    flowOf(null to null)
+                } else {
+                    synchronizer
+                        .getTransactions(account.accountUuid)
+                        .map { transactions ->
+                            transactions
+                                .map {
+                                    if (it.isSentTransaction) {
+                                        it.copy(
+                                            transactionState =
+                                                createTransactionState(minedHeight = it.minedHeight)
+                                                    ?: it.transactionState
+                                        )
+                                    } else {
+                                        it
+                                    }
+                                } to synchronizer
+                        }.onStart<Pair<List<TransactionOverview>?, Synchronizer>> { emit(null to synchronizer) }
+                }
+            }.distinctUntilChanged()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val currentTransactions: Flow<List<Transaction>?> =
