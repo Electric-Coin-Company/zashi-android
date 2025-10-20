@@ -10,7 +10,6 @@ import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
-import co.electriccoin.zcash.ui.common.model.ZecSimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.metadata.SwapMetadataV3
 import co.electriccoin.zcash.ui.common.provider.MetadataKeyStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
@@ -24,6 +23,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -34,6 +35,7 @@ import kotlinx.coroutines.sync.withLock
 import java.math.BigDecimal
 import java.time.Instant
 
+@Suppress("TooManyFunctions")
 interface MetadataRepository {
     fun flipTxBookmark(txId: String)
 
@@ -70,7 +72,9 @@ interface MetadataRepository {
 
     fun observeTransactionMetadata(transaction: Transaction): Flow<TransactionMetadata>
 
-    fun observeORSwapMetadata(): Flow<List<TransactionSwapMetadata>?>
+    fun observeSwapMetadata(): Flow<List<TransactionSwapMetadata>?>
+
+    suspend fun getSwapMetadata(depositAddress: String): TransactionSwapMetadata?
 
     fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?>
 }
@@ -188,18 +192,19 @@ class MetadataRepositoryImpl(
         val depositAddress = transaction.recipient?.address
 
         return metadata
+            .filterNotNull()
             .map { metadata ->
-                val accountMetadata = metadata?.accountMetadata
+                val accountMetadata = metadata.accountMetadata
                 val swapMetadata =
                     if (depositAddress != null) {
-                        accountMetadata?.swaps?.swapIds?.find { it.depositAddress == depositAddress }
+                        accountMetadata.swaps.swapIds.find { it.depositAddress == depositAddress }
                     } else {
                         null
                     }
                 TransactionMetadata(
-                    isBookmarked = accountMetadata?.bookmarked?.find { it.txId == txId }?.isBookmarked == true,
-                    isRead = accountMetadata?.read?.any { it == txId } == true,
-                    note = accountMetadata?.annotations?.find { it.txId == txId }?.content,
+                    isBookmarked = accountMetadata.bookmarked.find { it.txId == txId }?.isBookmarked == true,
+                    isRead = accountMetadata.read.any { it == txId },
+                    note = accountMetadata.annotations.find { it.txId == txId }?.content,
                     swapMetadata = swapMetadata?.toBusinessObject()
                 )
             }.distinctUntilChanged()
@@ -230,7 +235,7 @@ class MetadataRepositoryImpl(
             totalFeesUsd = totalFeesUsd,
         )
 
-    override fun observeORSwapMetadata(): Flow<List<TransactionSwapMetadata>?> =
+    override fun observeSwapMetadata(): Flow<List<TransactionSwapMetadata>?> =
         metadata
             .map { metadata ->
                 metadata
@@ -238,8 +243,17 @@ class MetadataRepositoryImpl(
                     ?.swaps
                     ?.swapIds
                     ?.map { it.toBusinessObject() }
-                    ?.filter { it.destination is ZecSimpleSwapAsset }
             }.distinctUntilChanged()
+
+    override suspend fun getSwapMetadata(depositAddress: String): TransactionSwapMetadata? =
+        metadata
+            .filterNotNull()
+            .first()
+            .accountMetadata
+            .swaps
+            .swapIds
+            .firstOrNull { it.depositAddress == depositAddress }
+            ?.toBusinessObject()
 
     override fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?> =
         metadata

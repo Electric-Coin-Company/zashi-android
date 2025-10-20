@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.common.repository
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.getAndUpdate
+import kotlinx.coroutines.flow.update
 
 interface TransactionFilterRepository {
     val fulltextFilter: StateFlow<String?>
@@ -24,19 +24,19 @@ class TransactionFilterRepositoryImpl : TransactionFilterRepository {
     override val filters = MutableStateFlow<List<TransactionFilter>>(emptyList())
 
     override fun apply(filters: List<TransactionFilter>) {
-        this.filters.getAndUpdate { filters }
+        this.filters.update { filters }
     }
 
     override fun applyFulltext(fulltext: String) {
-        fulltextFilter.getAndUpdate { fulltext }
+        fulltextFilter.update { fulltext }
     }
 
     override fun clear() {
-        filters.getAndUpdate { emptyList() }
+        filters.update { emptyList() }
     }
 
     override fun clearFulltext() {
-        fulltextFilter.getAndUpdate { null }
+        fulltextFilter.update { null }
     }
 }
 

@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.qrcode
 
-import android.app.Application
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,7 +23,6 @@ import kotlinx.coroutines.launch
 class QrCodeVM(
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val addressTypeOrdinal: Int,
-    private val application: Application,
     private val copyToClipboard: CopyToClipboardUseCase,
     private val navigationRouter: NavigationRouter,
     private val shareQR: ShareQRUseCase,
@@ -76,7 +74,6 @@ class QrCodeVM(
 
     private fun onAddressCopyClick(address: String) =
         copyToClipboard(
-            tag = application.getString(R.string.qr_code_clipboard_tag),
             value = address
         )
 }

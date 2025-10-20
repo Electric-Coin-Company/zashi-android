@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.transactionhistory.widget
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.VerticalSpacer
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
@@ -24,24 +24,21 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
-fun TransactionHistoryWidgetHeader(
-    state: TransactionHistoryWidgetHeaderState,
-    modifier: Modifier = Modifier
-) {
+fun ActivityWidgetHeader(state: TransactionHistoryWidgetHeaderState, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            modifier = Modifier.weight(1f) then if (state.button == null) Modifier.padding(top = 13.dp) else Modifier,
+            modifier = Modifier.weight(1f),
             text = state.title.getValue(),
             color = ZashiColors.Text.textPrimary,
             fontWeight = FontWeight.SemiBold,
             style = ZashiTypography.textLg
         )
-        state.button?.let {
+        if (state.button != null) {
             ZashiButton(
-                state = it,
+                state = state.button,
                 defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors(),
                 style =
                     ZashiTypography.textSm.copy(
@@ -51,6 +48,8 @@ fun TransactionHistoryWidgetHeader(
                 shape = CircleShape,
                 modifier = Modifier.height(32.dp)
             )
+        } else {
+            VerticalSpacer(32.dp)
         }
     }
 }
@@ -65,7 +64,7 @@ data class TransactionHistoryWidgetHeaderState(
 private fun Preview() =
     ZcashTheme {
         BlankSurface {
-            TransactionHistoryWidgetHeader(
+            ActivityWidgetHeader(
                 TransactionHistoryWidgetHeaderState(
                     title = stringRes("Transactions"),
                     button =
@@ -84,7 +83,7 @@ private fun Preview() =
 private fun PreviewWithoutButton() =
     ZcashTheme {
         BlankSurface {
-            TransactionHistoryWidgetHeader(
+            ActivityWidgetHeader(
                 TransactionHistoryWidgetHeaderState(
                     title = stringRes("Transactions"),
                     button = null

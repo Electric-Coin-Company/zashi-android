@@ -88,8 +88,7 @@ class TransactionProgressVM(
         },
         onCopyClick = {
             copyToClipboardUseCase(
-                tag = "Transaction ID",
-                value = result.txIds.joinToString(separator = ", ")
+                value = result.txIds.joinToString()
             )
         },
         onSupportClick = {
@@ -105,7 +104,7 @@ class TransactionProgressVM(
         GrpcFailureTransactionState(
             onBack = ::onViewTransactions,
             onCloseClick = ::onViewTransactions,
-            onViewTransactionClick = { result.txIds.firstOrNull()?.let { onViewTransactionDetailClick(it) } }
+            onViewTransactionClick = { result.txIds.lastOrNull()?.let { onViewTransactionDetailClick(it) } }
         )
 
     private suspend fun createSuccessfulTransactionState(
@@ -177,7 +176,7 @@ class TransactionProgressVM(
     )
 
     private fun onViewTransactionClick(result: SubmitResult.Success) {
-        val txId = result.txIds.firstOrNull()
+        val txId = result.txIds.lastOrNull()
         if (txId == null) onViewTransactions() else onViewTransactionDetailClick(txId)
     }
 
@@ -187,7 +186,7 @@ class TransactionProgressVM(
     ) = FailureTransactionState(
         onBack = ::onBackToSendForm,
         onCloseClick = ::onBackToSendForm,
-        onViewTransactionClick = { result.txIds.firstOrNull()?.let { onViewTransactionDetailClick(it) } },
+        onViewTransactionClick = { result.txIds.lastOrNull()?.let { onViewTransactionDetailClick(it) } },
         onReportClick = {
             viewModelScope.launch {
                 sendEmailUseCase(result)

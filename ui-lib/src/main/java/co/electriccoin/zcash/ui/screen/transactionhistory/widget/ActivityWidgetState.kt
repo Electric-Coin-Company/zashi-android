@@ -3,23 +3,23 @@ package co.electriccoin.zcash.ui.screen.transactionhistory.widget
 import androidx.compose.runtime.Immutable
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.StringResource
-import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionState
+import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityState
 
 @Immutable
-sealed interface TransactionHistoryWidgetState {
+sealed interface ActivityWidgetState {
     @Immutable
     data class Data(
         val header: TransactionHistoryWidgetHeaderState,
-        val transactions: List<TransactionState>
-    ) : TransactionHistoryWidgetState
+        val transactions: List<ActivityState>
+    ) : ActivityWidgetState
 
     @Immutable
     data class Empty(
         val subtitle: StringResource?,
         val sendTransaction: ButtonState?,
         val enableShimmer: Boolean
-    ) : TransactionHistoryWidgetState
+    ) : ActivityWidgetState
 
     @Immutable
-    data object Loading : TransactionHistoryWidgetState
+    data object Loading : ActivityWidgetState
 }

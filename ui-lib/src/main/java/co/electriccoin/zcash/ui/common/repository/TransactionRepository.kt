@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.repository
 
+import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.TransactionId
 import cash.z.ecc.android.sdk.model.TransactionOutput
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
@@ -63,28 +65,29 @@ class TransactionRepositoryImpl(
             accountDataSource.selectedAccount.map { it?.sdkAccount }
         ) { synchronizer, account ->
             synchronizer to account
-        }.distinctUntilChanged().flatMapLatest { (synchronizer, account) ->
-            if (synchronizer == null || account == null) {
-                flowOf(null to null)
-            } else {
-                synchronizer
-                    .getTransactions(account.accountUuid)
-                    .map { transactions ->
-                        transactions
-                            .map {
-                                if (it.isSentTransaction) {
-                                    it.copy(
-                                        transactionState =
-                                            createTransactionState(minedHeight = it.minedHeight)
-                                                ?: it.transactionState
-                                    )
-                                } else {
-                                    it
-                                }
-                            } to synchronizer
-                    }
-            }
-        }
+        }.distinctUntilChanged()
+            .flatMapLatest { (synchronizer, account) ->
+                if (synchronizer == null || account == null) {
+                    flowOf(null to null)
+                } else {
+                    synchronizer
+                        .getTransactions(account.accountUuid)
+                        .map { transactions ->
+                            transactions
+                                .map {
+                                    if (it.isSentTransaction) {
+                                        it.copy(
+                                            transactionState =
+                                                createTransactionState(minedHeight = it.minedHeight)
+                                                    ?: it.transactionState
+                                        )
+                                    } else {
+                                        it
+                                    }
+                                } to synchronizer
+                        }.onStart<Pair<List<TransactionOverview>?, Synchronizer>> { emit(null to synchronizer) }
+                }
+            }.distinctUntilChanged()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val currentTransactions: Flow<List<Transaction>?> =

@@ -45,8 +45,8 @@ import co.electriccoin.zcash.ui.screen.accountlist.AccountList
 import co.electriccoin.zcash.ui.screen.accountlist.AndroidAccountList
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookScreen
-import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientArgs
-import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientScreen
+import co.electriccoin.zcash.ui.screen.addressbook.SelectABRecipientArgs
+import co.electriccoin.zcash.ui.screen.addressbook.SelectABRecipientScreen
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsArgs
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsScreen
 import co.electriccoin.zcash.ui.screen.authentication.AuthenticationUseCase
@@ -163,8 +163,8 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailScreen
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersArgs
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersScreen
-import co.electriccoin.zcash.ui.screen.transactionhistory.AndroidTransactionHistory
-import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
+import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityHistoryArgs
+import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityHistoryScreen
 import co.electriccoin.zcash.ui.screen.transactionnote.AndroidTransactionNote
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressArgs
@@ -321,7 +321,7 @@ internal fun MainActivity.Navigation() {
             )
         }
         composable<AddressBookArgs> { AddressBookScreen() }
-        composable<SelectRecipientArgs> { SelectRecipientScreen() }
+        composable<SelectABRecipientArgs> { SelectABRecipientScreen() }
         composable<AddZashiABContactArgs> { AddZashiABContactScreen(it.toRoute()) }
         composable(
             route = "$QR_CODE/{$ADDRESS_TYPE}",
@@ -341,7 +341,7 @@ internal fun MainActivity.Navigation() {
         composable<SelectKeystoneAccount> { AndroidSelectKeystoneAccount(it.toRoute()) }
         composable<ReviewTransactionArgs> { AndroidReviewTransaction() }
         composable<TransactionProgressArgs> { TransactionProgressScreen(it.toRoute()) }
-        composable<TransactionHistory> { AndroidTransactionHistory() }
+        composable<ActivityHistoryArgs> { ActivityHistoryScreen() }
         dialogComposable<TransactionFiltersArgs> { TransactionFiltersScreen() }
         composable<TransactionDetailArgs> { TransactionDetailScreen(it.toRoute()) }
         dialogComposable<TransactionNote> { AndroidTransactionNote(it.toRoute()) }

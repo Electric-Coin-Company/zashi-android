@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.ScreenTimeoutVM
 import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewModel
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookVM
-import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientVM
+import co.electriccoin.zcash.ui.screen.addressbook.SelectABRecipientVM
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsVM
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetVM
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceVM
@@ -34,7 +34,7 @@ import co.electriccoin.zcash.ui.screen.receive.ReceiveVM
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestVM
 import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateViewModel
 import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationViewModel
-import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightViewModel
+import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightVM
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionVM
@@ -63,8 +63,8 @@ import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInVM
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsVM
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailVM
 import co.electriccoin.zcash.ui.screen.transactionfilters.viewmodel.TransactionFiltersVM
-import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistoryVM
-import co.electriccoin.zcash.ui.screen.transactionhistory.widget.TransactionHistoryWidgetVM
+import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityHistoryVM
+import co.electriccoin.zcash.ui.screen.transactionhistory.widget.ActivityWidgetVM
 import co.electriccoin.zcash.ui.screen.transactionnote.viewmodel.TransactionNoteViewModel
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressVM
 import co.electriccoin.zcash.ui.screen.walletbackup.WalletBackupViewModel
@@ -104,17 +104,17 @@ val viewModelModule =
         viewModelOf(::ReviewTransactionVM)
         viewModelOf(::TransactionFiltersVM)
         viewModelOf(::TransactionProgressVM)
-        viewModelOf(::TransactionHistoryWidgetVM)
-        viewModelOf(::TransactionHistoryVM)
+        viewModelOf(::ActivityWidgetVM)
+        viewModelOf(::ActivityHistoryVM)
         viewModelOf(::TransactionDetailVM)
         viewModelOf(::AddressBookVM)
-        viewModelOf(::SelectRecipientVM)
+        viewModelOf(::SelectABRecipientVM)
         viewModelOf(::TransactionNoteViewModel)
         viewModelOf(::TaxExportViewModel)
         viewModelOf(::CrashReportingViewModel)
         viewModelOf(::BalanceWidgetVM)
         viewModelOf(::HomeVM)
-        viewModelOf(::RestoreBDHeightViewModel)
+        viewModelOf(::RestoreBDHeightVM)
         viewModelOf(::RestoreBDDateViewModel)
         viewModelOf(::RestoreBDEstimationViewModel)
         viewModelOf(::ShieldFundsInfoVM)

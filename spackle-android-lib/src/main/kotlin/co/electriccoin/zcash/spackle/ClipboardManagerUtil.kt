@@ -18,15 +18,10 @@ object ClipboardManagerUtil {
                 "android.content.extra.IS_SENSITIVE"
             }
 
-    fun copyToClipboard(
-        context: Context,
-        label: String,
-        value: String
-    ) {
-        Twig.info { "Copied to clipboard: label: $label, value: $value" }
+    fun copyToClipboard(context: Context, value: String) {
         val clipboardManager = context.getSystemService<ClipboardManager>()
         val data =
-            ClipData.newPlainText(label, value).apply {
+            ClipData.newPlainText("", value).apply {
                 description.extras =
                     PersistableBundle().apply {
                         putBoolean(extraIsSensitive, true)

@@ -7,5 +7,8 @@ enum class SwapStatus {
     REFUNDED,
     FAILED,
     PROCESSING,
-    EXPIRED
+    EXPIRED;
+
+    val isTerminal: Boolean
+        get() = this == SUCCESS || this == REFUNDED || this == FAILED || this == EXPIRED
 }
