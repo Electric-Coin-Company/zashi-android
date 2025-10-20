@@ -29,25 +29,14 @@ class UpdateSwapActivityMetadataUseCase(
 
     private val pipelineCache = linkedSetOf<Request>()
 
-    private val semaphore = Mutex()
+    private val pipelineSemaphore = Mutex()
 
-    // @OptIn(ExperimentalCoroutinesApi::class)
-    // private val isUiPipelineActive = uiPipeline
-    //     .subscriptionCount
-    //     .map { it > 0 }
-    //     .distinctUntilChanged()
-    // .mapLatest { isActive ->
-    //     if (!isActive) {
-    //         delay(5.seconds)
-    //         false
-    //     }
-    //     isActive
-    // }
+    private val pipelineCacheSemaphore = Mutex()
 
     init {
         scope.launch {
             for (item in pipeline) {
-                semaphore.withLock {
+                pipelineSemaphore.withLock {
                     val depositAddress = item.depositAddress
                     if (item.timestamp != null) {
                         val timeSinceLastAttempt = Clock.System.now() - item.timestamp
@@ -62,7 +51,7 @@ class UpdateSwapActivityMetadataUseCase(
                         Twig.debug { "Activities: consuming $depositAddress" }
                         val apiRequestTimestamp = Clock.System.now()
                         val quoteStatus = swapRepository.getSwapStatus(depositAddress)
-                        item.close()
+                        pipelineCacheSemaphore.withLock { item.close() }
                         if (quoteStatus.status?.status?.isTerminal != true) {
                             when (pipelineCache.lastOrNull()?.depositAddress) {
                                 null,
@@ -97,17 +86,19 @@ class UpdateSwapActivityMetadataUseCase(
             }
 
             if (depositAddress != null) {
-                val found = pipelineCache.find { it.depositAddress == depositAddress }
-                found?.close()
+                val request = pipelineCacheSemaphore.withLock {
+                    val found = pipelineCache.find { it.depositAddress == depositAddress }?.also { it.close() }
+                    Request(depositAddress, found?.timestamp)
+                }
                 Twig.debug { "Activities: queue $depositAddress" }
-                pipeline.send(Request(depositAddress, found?.timestamp))
+                pipeline.send(request)
             }
         }
     }
 
     private fun requeue(depositAddress: String, timestamp: Instant) = scope.launch {
         Twig.debug { "Activities: requeue $depositAddress" }
-        pipeline.send(Request(depositAddress, timestamp))
+        pipeline.send(pipelineCacheSemaphore.withLock { Request(depositAddress, timestamp) })
     }
 
     private inner class Request(val depositAddress: String, val timestamp: Instant?) : AutoCloseable {
