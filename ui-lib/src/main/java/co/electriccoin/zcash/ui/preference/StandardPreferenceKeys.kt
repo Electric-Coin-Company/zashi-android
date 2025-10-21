@@ -18,11 +18,6 @@ object StandardPreferenceKeys {
 
     val IS_BACKGROUND_SYNC_ENABLED = BooleanPreferenceDefault(PreferenceKey("is_background_sync_enabled"), true)
 
-    val IS_KEEP_SCREEN_ON_DURING_SYNC = BooleanPreferenceDefault(PreferenceKey("is_keep_screen_on_during_sync"), true)
-
-    val IS_RESTORING_INITIAL_WARNING_SEEN =
-        BooleanPreferenceDefault(PreferenceKey("IS_RESTORING_INITIAL_WARNING_SEEN"), false)
-
     /**
      * Screens or flows protected by required authentication
      */

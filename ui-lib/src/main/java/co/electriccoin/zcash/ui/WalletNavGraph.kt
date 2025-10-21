@@ -16,8 +16,8 @@ import co.electriccoin.zcash.ui.screen.accountlist.AccountList
 import co.electriccoin.zcash.ui.screen.accountlist.AndroidAccountList
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookArgs
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookScreen
-import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientArgs
-import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientScreen
+import co.electriccoin.zcash.ui.screen.addressbook.SelectABRecipientArgs
+import co.electriccoin.zcash.ui.screen.addressbook.SelectABRecipientScreen
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsArgs
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsScreen
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceArgs
@@ -69,7 +69,7 @@ import co.electriccoin.zcash.ui.screen.pay.PayArgs
 import co.electriccoin.zcash.ui.screen.pay.PayScreen
 import co.electriccoin.zcash.ui.screen.pay.info.PayInfoArgs
 import co.electriccoin.zcash.ui.screen.pay.info.PayInfoScreen
-import co.electriccoin.zcash.ui.screen.qrcode.WrapQrCode
+import co.electriccoin.zcash.ui.screen.qrcode.QrCodeScreen
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.ReceiveArgs
 import co.electriccoin.zcash.ui.screen.receive.ReceiveScreen
@@ -77,7 +77,7 @@ import co.electriccoin.zcash.ui.screen.receive.info.ShieldedAddressInfoArgs
 import co.electriccoin.zcash.ui.screen.receive.info.ShieldedAddressInfoScreen
 import co.electriccoin.zcash.ui.screen.receive.info.TransparentAddressInfoArgs
 import co.electriccoin.zcash.ui.screen.receive.info.TransparentAddressInfoScreen
-import co.electriccoin.zcash.ui.screen.request.WrapRequest
+import co.electriccoin.zcash.ui.screen.request.RequestScreen
 import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
@@ -131,8 +131,8 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailScreen
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersArgs
 import co.electriccoin.zcash.ui.screen.transactionfilters.TransactionFiltersScreen
-import co.electriccoin.zcash.ui.screen.transactionhistory.AndroidTransactionHistory
-import co.electriccoin.zcash.ui.screen.transactionhistory.TransactionHistory
+import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityHistoryArgs
+import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityHistoryScreen
 import co.electriccoin.zcash.ui.screen.transactionnote.AndroidTransactionNote
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
 import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressArgs
@@ -181,7 +181,7 @@ fun NavGraphBuilder.walletNavGraph(
             )
         }
         composable<AddressBookArgs> { AddressBookScreen() }
-        composable<SelectRecipientArgs> { SelectRecipientScreen() }
+        composable<SelectABRecipientArgs> { SelectABRecipientScreen() }
         composable<AddZashiABContactArgs> { AddZashiABContactScreen(it.toRoute()) }
         composable(
             route = "${NavigationTargets.QR_CODE}/{${NavigationArgs.ADDRESS_TYPE}}",
@@ -189,7 +189,7 @@ fun NavGraphBuilder.walletNavGraph(
         ) { backStackEntry ->
             val addressType =
                 backStackEntry.arguments?.getInt(NavigationArgs.ADDRESS_TYPE) ?: ReceiveAddressType.Unified.ordinal
-            WrapQrCode(addressType)
+            QrCodeScreen(addressType)
         }
         composable(
             route = "${NavigationTargets.REQUEST}/{${NavigationArgs.ADDRESS_TYPE}}",
@@ -197,13 +197,13 @@ fun NavGraphBuilder.walletNavGraph(
         ) { backStackEntry ->
             val addressType =
                 backStackEntry.arguments?.getInt(NavigationArgs.ADDRESS_TYPE) ?: ReceiveAddressType.Unified.ordinal
-            WrapRequest(addressType)
+            RequestScreen(addressType)
         }
         composable<ConnectKeystone> { AndroidConnectKeystone() }
         composable<SelectKeystoneAccount> { AndroidSelectKeystoneAccount(it.toRoute()) }
         composable<ReviewTransactionArgs> { AndroidReviewTransaction() }
         composable<TransactionProgressArgs> { TransactionProgressScreen(it.toRoute()) }
-        composable<TransactionHistory> { AndroidTransactionHistory() }
+        composable<ActivityHistoryArgs> { ActivityHistoryScreen() }
         dialogComposable<TransactionFiltersArgs> { TransactionFiltersScreen() }
         composable<TransactionDetailArgs> { TransactionDetailScreen(it.toRoute()) }
         dialogComposable<TransactionNote> { AndroidTransactionNote(it.toRoute()) }

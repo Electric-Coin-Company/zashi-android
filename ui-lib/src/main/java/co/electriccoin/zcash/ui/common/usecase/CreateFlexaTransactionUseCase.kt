@@ -18,7 +18,7 @@ import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import com.flexa.core.Flexa
-import com.flexa.spend.Transaction
+import com.flexa.core.shared.Transaction
 import com.flexa.spend.buildSpend
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first

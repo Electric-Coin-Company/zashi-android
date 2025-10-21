@@ -1,20 +1,13 @@
 package co.electriccoin.zcash.ui.screen.restoresuccess
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 
 @Composable
-fun WrapRestoreSuccess(onComplete: () -> Unit) {
+fun WrapRestoreSuccess() {
     val viewModel = koinActivityViewModel<RestoreSuccessViewModel>()
-    val state = viewModel.state.collectAsStateWithLifecycle().value
-    RestoreSuccessView(
-        state =
-            state.copy(
-                onPositiveClick = {
-                    state.onPositiveClick()
-                    onComplete()
-                }
-            )
-    )
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    RestoreSuccessView(state)
 }

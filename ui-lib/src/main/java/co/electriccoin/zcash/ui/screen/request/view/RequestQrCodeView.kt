@@ -101,8 +101,7 @@ private fun ColumnScope.QrCode(
         state =
             requestState.toQrState(
                 contentDescription = stringRes(R.string.request_qr_code_content_description),
-                centerImageResId = requestState.icon,
-                fullscreenCenterImageResId = requestState.fullScreenIcon
+                centerImage = requestState.icon
             ),
         modifier = modifier.align(CenterHorizontally),
     )

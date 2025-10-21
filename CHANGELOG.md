@@ -6,6 +6,36 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.4 (1265)] - 2025-10-20
+
+### Added:
+- Swap statuses now load from activity history screen in addition to swap detail screen 
+
+### Fixed:
+- All native libraries are now using 16KB memory page
+- TEX error handling improved in case one transaction fails
+- AB recipient selection screen now does not offer selected account on send screen
+- Crash when focusing restore BD height text field resolved
+
+### Changed:
+- Improved transaction loading performance
+- Improved edge case error handling during proposal creation for both Zashi and Keystone
+
+## [2.4.3 (1250)] - 2025-10-13
+
+### Added:
+- Predictive back enabled
+- ConfigurationOverride added to override light and dark theme
+
+### Changed:
+- Flexa version bumped
+- Copy button removed from taddr on receive screen
+- QR center icons are now colorful
+
+### Fixed:
+- Screen lock now works correctly if user opts in and restore is in progress
+- Fixed an issue which caused app crash if break-lines were appended to seed (unknown reason how this could happen)
+
 ## [2.4.2 (1248)] - 2025-10-07
 
 ### Changed:

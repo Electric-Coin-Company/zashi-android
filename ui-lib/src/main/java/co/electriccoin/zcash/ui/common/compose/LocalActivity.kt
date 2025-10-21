@@ -4,7 +4,4 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.compositionLocalOf
 
 @Suppress("CompositionLocalAllowlist")
-val LocalActivity =
-    compositionLocalOf<ComponentActivity> {
-        error("Activity not provided")
-    }
+val LocalActivity = compositionLocalOf<ComponentActivity> { error("Activity not provided") }

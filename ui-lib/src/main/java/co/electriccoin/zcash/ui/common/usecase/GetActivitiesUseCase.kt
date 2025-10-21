@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.usecase
 
+import co.electriccoin.zcash.ui.common.model.ZecSimpleSwapAsset
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
@@ -20,6 +21,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneOffset
+import kotlin.collections.filter
 
 class GetActivitiesUseCase(
     private val transactionRepository: TransactionRepository,
@@ -55,26 +57,22 @@ class GetActivitiesUseCase(
     private fun observeTransactions(): Flow<List<ActivityData.ByTransaction>?> =
         transactionRepository.currentTransactions
             .flatMapLatest { transactions ->
-                if (transactions == null) {
-                    flowOf(null)
-                } else if (transactions.isEmpty()) {
-                    flowOf(emptyList())
-                } else {
-                    transactions
-                        .map {
-                            metadataRepository
-                                .observeTransactionMetadata(it)
-                                .mapLatest { metadata ->
-                                    ActivityData.ByTransaction(transaction = it, metadata = metadata)
-                                }
-                        }.combineToFlow()
-                }
+                transactions
+                    ?.map {
+                        metadataRepository
+                            .observeTransactionMetadata(it)
+                            .mapLatest { metadata ->
+                                ActivityData.ByTransaction(transaction = it, metadata = metadata)
+                            }
+                    }?.combineToFlow() ?: flowOf(null)
             }
 
-    private fun observeIntoZecSwaps() =
+    private fun observeIntoZecSwaps(): Flow<List<ActivityData.BySwap>?> =
         metadataRepository
-            .observeORSwapMetadata()
+            .observeSwapMetadata()
             .map {
+                it?.filter { metadata -> metadata.destination is ZecSimpleSwapAsset }
+            }.map {
                 it?.map { metadata -> ActivityData.BySwap(swap = metadata) }
             }
 }

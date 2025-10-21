@@ -191,8 +191,8 @@ class SwapDetailVM(
 
     private fun onBack() = navigationRouter.back()
 
-    private fun onCopyDepositAddressClick() = copyToClipboard("Deposit Address", args.depositAddress)
+    private fun onCopyDepositAddressClick() = copyToClipboard(args.depositAddress)
 
     private fun onCopyRecipientAddressClick(recipient: String) =
-        copyToClipboard("Recipient Address", recipient)
+        copyToClipboard(recipient)
 }

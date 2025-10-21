@@ -221,16 +221,18 @@ private fun AddressPanel(
                         .fillMaxWidth()
                         .padding(top = ZcashTheme.dimens.spacingDefault)
             ) {
-                ReceiveIconButton(
-                    containerColor = buttonColor,
-                    contentColor = buttonTextColor,
-                    iconPainter = painterResource(id = R.drawable.ic_copy_shielded),
-                    onClick = state.onCopyClicked,
-                    text = stringResource(id = R.string.receive_copy),
-                    modifier = Modifier.weight(1f)
-                )
+                if (state.isShielded) {
+                    ReceiveIconButton(
+                        containerColor = buttonColor,
+                        contentColor = buttonTextColor,
+                        iconPainter = painterResource(id = R.drawable.ic_copy_shielded),
+                        onClick = state.onCopyClicked,
+                        text = stringResource(id = R.string.receive_copy),
+                        modifier = Modifier.weight(1f)
+                    )
 
-                Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
+                    Spacer(modifier = Modifier.width(ZcashTheme.dimens.spacingSmall))
+                }
 
                 ReceiveIconButton(
                     containerColor = buttonColor,

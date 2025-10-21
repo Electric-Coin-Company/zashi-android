@@ -3,7 +3,7 @@ package co.electriccoin.zcash.ui.screen.flexa
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.electriccoin.zcash.ui.common.usecase.CreateFlexaTransactionUseCase
-import com.flexa.spend.Transaction
+import com.flexa.core.shared.Transaction
 import kotlinx.coroutines.launch
 
 class FlexaViewModel(

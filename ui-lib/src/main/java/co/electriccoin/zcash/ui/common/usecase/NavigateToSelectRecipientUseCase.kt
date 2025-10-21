@@ -7,7 +7,7 @@ import co.electriccoin.zcash.ui.common.repository.BiometricRequest
 import co.electriccoin.zcash.ui.common.repository.BiometricsCancelledException
 import co.electriccoin.zcash.ui.common.repository.BiometricsFailureException
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.addressbook.SelectRecipientArgs
+import co.electriccoin.zcash.ui.screen.addressbook.SelectABRecipientArgs
 
 class NavigateToSelectRecipientUseCase(
     private val navigationRouter: NavigationRouter,
@@ -24,7 +24,7 @@ class NavigateToSelectRecipientUseCase(
                         )
                 )
             )
-            navigationRouter.forward(SelectRecipientArgs)
+            navigationRouter.forward(SelectABRecipientArgs)
         } catch (_: BiometricsFailureException) {
             // do nothing
         } catch (_: BiometricsCancelledException) {

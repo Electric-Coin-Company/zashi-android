@@ -56,8 +56,8 @@ class HomeVM(
     getHomeMessage: GetHomeMessageUseCase,
     shieldFundsInfoProvider: ShieldFundsInfoProvider,
     getWalletAccounts: GetWalletAccountsUseCase,
+    isRestoreSuccessDialogVisible: IsRestoreSuccessDialogVisibleUseCase,
     private val navigationRouter: NavigationRouter,
-    private val isRestoreSuccessDialogVisible: IsRestoreSuccessDialogVisibleUseCase,
     private val shieldFunds: ShieldFundsMessageUseCase,
     private val navigateToError: NavigateToErrorUseCase,
     private val navigateToReceive: NavigateToReceiveUseCase,
@@ -89,9 +89,7 @@ class HomeVM(
     val restoreDialogState: StateFlow<HomeRestoreSuccessDialogState?> =
         isRestoreDialogVisible
             .map { isVisible ->
-                HomeRestoreSuccessDialogState(
-                    onClick = ::onRestoreDialogSeenClick
-                ).takeIf { isVisible == true }
+                HomeRestoreSuccessDialogState.takeIf { isVisible == true }
             }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -225,8 +223,6 @@ class HomeVM(
         }
 
     private fun onCrashReportMessageClick() = navigationRouter.forward(CrashReportOptIn)
-
-    private fun onRestoreDialogSeenClick() = viewModelScope.launch { isRestoreSuccessDialogVisible.setSeen() }
 
     private fun onMoreButtonClick() = navigationRouter.forward(IntegrationsArgs)
 

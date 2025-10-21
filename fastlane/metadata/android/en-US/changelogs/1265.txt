@@ -1,0 +1,10 @@
+Changed:
+- We implemented auto-updating of swap payment statuses, no need to click into them to see them changed.
+- We removed Keystone logo from QR code, nobody needs to know you got one.
+- We addressed Google library size requirement
+
+Fixed:
+- We fixed an issue with a forever pending incoming transaction.
+- We fixed issue with false positive error for a TEX send.
+- We fixed an issue with the app crashing during block height estimation.
+- We also did a few more bug fixes.

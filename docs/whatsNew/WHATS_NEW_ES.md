@@ -12,6 +12,26 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.4.4 (1265)] - 2025-10-20
+
+### Cambiado:
+
+- Implementamos la actualización automática de los estados de intercambio/pago.
+- Eliminamos el logotipo de Keystone del código QR; nadie tiene por qué saber que tienes uno.
+- Abordamos el requisito de tamaño de la biblioteca de Google.
+
+### Corregido:
+- Solucionamos un problema con una transacción entrante pendiente permanente.
+- Solucionamos un error de falso positivo en un envío de TEX.
+- Solucionamos un problema por el cual la aplicación se bloqueaba durante la estimación de la altura del bloque.
+- También corregimos algunos errores adicionales.
+
+## [2.4.3 (1250)] - 2025-10-13
+
+### Corregido:
+- Corrección de errores
+- Actualizaciones de UI/UX
+
 ## [2.4.2 (1248)] - 2025-10-07
 
 ### Cambiado:

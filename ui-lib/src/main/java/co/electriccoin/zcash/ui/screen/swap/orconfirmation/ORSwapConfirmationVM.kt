@@ -105,13 +105,11 @@ class ORSwapConfirmationVM(
 
     private fun onAmountClick(amountInFormatted: BigDecimal) =
         copyToClipboard(
-            tag = "Swap Amount",
             value = amountInFormatted.toPlainString()
         )
 
     private fun onCopyAddressClick(depositAddress: String) =
         copyToClipboard(
-            tag = "Swap Deposit Address",
             value = depositAddress
         )
 

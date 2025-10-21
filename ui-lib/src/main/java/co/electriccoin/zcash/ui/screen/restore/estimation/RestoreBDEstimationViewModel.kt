@@ -43,7 +43,6 @@ class RestoreBDEstimationViewModel(
 
     private fun onCopyClick() {
         copyToClipboard(
-            tag = "clipboard",
             value = args.blockHeight.toString()
         )
     }

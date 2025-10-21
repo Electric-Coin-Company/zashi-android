@@ -6,12 +6,10 @@ import co.electriccoin.zcash.spackle.ClipboardManagerUtil
 class CopyToClipboardUseCase(
     private val context: Context
 ) {
-    operator fun invoke(
-        tag: String,
-        value: String
-    ) = ClipboardManagerUtil.copyToClipboard(
-        context = context,
-        label = tag,
-        value = value
-    )
+    operator fun invoke(value: String) {
+        ClipboardManagerUtil.copyToClipboard(
+            context = context,
+            value = value
+        )
+    }
 }

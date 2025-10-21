@@ -13,6 +13,7 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.type.AddressType
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.WalletAccount
@@ -26,16 +27,10 @@ import java.math.BigDecimal
 
 interface ProposalDataSource {
     @Throws(TransactionProposalNotCreatedException::class)
-    suspend fun createProposal(
-        account: WalletAccount,
-        send: ZecSend
-    ): RegularTransactionProposal
+    suspend fun createProposal(account: WalletAccount, send: ZecSend): RegularTransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
-    suspend fun createZip321Proposal(
-        account: WalletAccount,
-        zip321Uri: String
-    ): Zip321TransactionProposal
+    suspend fun createZip321Proposal(account: WalletAccount, zip321Uri: String): Zip321TransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class)
     suspend fun createExactInputProposal(
@@ -55,23 +50,14 @@ interface ProposalDataSource {
     suspend fun createShieldProposal(account: WalletAccount): ShieldTransactionProposal
 
     @Throws(PcztException.CreatePcztFromProposalException::class)
-    suspend fun createPcztFromProposal(
-        account: WalletAccount,
-        proposal: Proposal
-    ): Pczt
+    suspend fun createPcztFromProposal(account: WalletAccount, proposal: Proposal): Pczt
 
     @Throws(PcztException.AddProofsToPcztException::class)
     suspend fun addProofsToPczt(pczt: Pczt): Pczt
 
-    suspend fun submitTransaction(
-        pcztWithProofs: Pczt,
-        pcztWithSignatures: Pczt
-    ): SubmitResult
+    suspend fun submitTransaction(pcztWithProofs: Pczt, pcztWithSignatures: Pczt): SubmitResult
 
-    suspend fun submitTransaction(
-        proposal: Proposal,
-        usk: UnifiedSpendingKey
-    ): SubmitResult
+    suspend fun submitTransaction(proposal: Proposal, usk: UnifiedSpendingKey): SubmitResult
 
     @Throws(PcztException.RedactPcztForSignerException::class)
     suspend fun redactPcztForSigner(pczt: Pczt): Pczt
@@ -104,10 +90,7 @@ class ProposalDataSourceImpl(
             }
         }
 
-    override suspend fun createZip321Proposal(
-        account: WalletAccount,
-        zip321Uri: String
-    ): Zip321TransactionProposal =
+    override suspend fun createZip321Proposal(account: WalletAccount, zip321Uri: String): Zip321TransactionProposal =
         withContext(Dispatchers.IO) {
             getOrThrow {
                 val synchronizer = synchronizerProvider.getSynchronizer()
@@ -189,10 +172,7 @@ class ProposalDataSourceImpl(
             }
         }
 
-    override suspend fun createPcztFromProposal(
-        account: WalletAccount,
-        proposal: Proposal
-    ): Pczt =
+    override suspend fun createPcztFromProposal(account: WalletAccount, proposal: Proposal): Pczt =
         withContext(Dispatchers.IO) {
             val synchronizer = synchronizerProvider.getSynchronizer()
             synchronizer.createPcztFromProposal(
@@ -208,22 +188,16 @@ class ProposalDataSourceImpl(
                 .addProofsToPczt(pczt)
         }
 
-    override suspend fun submitTransaction(
-        pcztWithProofs: Pczt,
-        pcztWithSignatures: Pczt
-    ): SubmitResult =
-        submitTransactionInternal {
+    override suspend fun submitTransaction(pcztWithProofs: Pczt, pcztWithSignatures: Pczt): SubmitResult =
+        submitTransactionInternal(transactionCount = 1) {
             it.createTransactionFromPczt(
                 pcztWithProofs = pcztWithProofs,
                 pcztWithSignatures = pcztWithSignatures,
             )
         }
 
-    override suspend fun submitTransaction(
-        proposal: Proposal,
-        usk: UnifiedSpendingKey
-    ): SubmitResult =
-        submitTransactionInternal {
+    override suspend fun submitTransaction(proposal: Proposal, usk: UnifiedSpendingKey): SubmitResult =
+        submitTransactionInternal(transactionCount = proposal.transactionCount()) {
             it.createProposedTransactions(
                 proposal = proposal,
                 usk = usk,
@@ -237,69 +211,82 @@ class ProposalDataSourceImpl(
                 .redactPcztForSigner(pczt)
         }
 
-    private suspend inline fun submitTransactionInternal(
-        crossinline block: suspend (Synchronizer) -> Flow<TransactionSubmitResult>
+    @Suppress("CyclomaticComplexMethod", "TooGenericExceptionCaught")
+    private suspend fun submitTransactionInternal(
+        transactionCount: Int,
+        block: suspend (Synchronizer) -> Flow<TransactionSubmitResult>
     ): SubmitResult =
         withContext(Dispatchers.IO) {
             val synchronizer = synchronizerProvider.getSdkSynchronizer()
-            val submitResults = block(synchronizer).toList()
+            val submitResults =
+                try {
+                    block(synchronizer).toList()
+                } catch (e: Exception) {
+                    Twig.error(e) { "Error submitting transaction" }
+                    throw e
+                }
 
-            val transactionCount = submitResults.size
-            var successCount = 0
+            Twig.debug { "Internal transaction submit results: $submitResults" }
 
-            val txIds = mutableListOf<String>()
-            val statuses = mutableListOf<String>()
-            var errCode = 0
-            var errDesc = ""
-            var resubmittableFailure = false
+            val successCount =
+                submitResults
+                    .count { it is TransactionSubmitResult.Success }
+            val txIds =
+                submitResults
+                    .map { it.txIdString() }
+            val statuses =
+                submitResults
+                    .map {
+                        when (it) {
+                            is TransactionSubmitResult.Success -> "success"
+                            is TransactionSubmitResult.Failure ->
+                                if (it.grpcError) {
+                                    it.description.orEmpty()
+                                } else {
+                                    "code: ${it.code} desc: ${it.description}"
+                                }
 
-            for (transactionSubmitResult in submitResults) {
-                when (transactionSubmitResult) {
-                    is TransactionSubmitResult.Success -> {
-                        successCount++
-                        txIds.add(transactionSubmitResult.txIdString())
-                        statuses.add("success")
+                            is TransactionSubmitResult.NotAttempted -> "notAttempted"
+                        }
                     }
-
-                    is TransactionSubmitResult.Failure -> {
-                        if (transactionSubmitResult.grpcError) {
-                            txIds.add(transactionSubmitResult.txIdString())
-                            statuses.add(transactionSubmitResult.description.orEmpty())
-                            resubmittableFailure = true
-                        } else {
-                            txIds.add(transactionSubmitResult.txIdString())
-                            statuses.add(
-                                "code: ${transactionSubmitResult.code} " +
-                                    "desc: ${transactionSubmitResult.description}"
-                            )
-                            errCode = transactionSubmitResult.code
-                            errDesc = transactionSubmitResult.description.orEmpty()
+            val resubmittableFailures =
+                submitResults
+                    .mapNotNull {
+                        when (it) {
+                            is TransactionSubmitResult.Failure -> it.grpcError
+                            is TransactionSubmitResult.NotAttempted -> null
+                            is TransactionSubmitResult.Success -> null
                         }
                     }
 
-                    is TransactionSubmitResult.NotAttempted -> {
-                        txIds.add(transactionSubmitResult.txIdString())
-                        statuses.add("notAttempted")
-                    }
-                }
-            }
+            val (errCode, errDesc) =
+                submitResults
+                    .filterIsInstance<TransactionSubmitResult.Failure>()
+                    .lastOrNull { !it.grpcError }
+                    ?.let { it.code to it.description } ?: (0 to "")
 
             val result =
                 when (successCount) {
                     0 ->
-                        if (resubmittableFailure) {
+                        if (resubmittableFailures.all { it }) {
                             SubmitResult.GrpcFailure(txIds = txIds)
                         } else {
                             SubmitResult.Failure(txIds = txIds, code = errCode, description = errDesc)
                         }
 
                     transactionCount -> SubmitResult.Success(txIds = txIds)
-                    else -> SubmitResult.Partial(txIds = txIds, statuses = statuses)
+
+                    else ->
+                        if (resubmittableFailures.all { it }) {
+                            SubmitResult.GrpcFailure(txIds = txIds)
+                        } else {
+                            SubmitResult.Partial(txIds = txIds, statuses = statuses)
+                        }
                 }
 
             synchronizer.refreshTransactions()
             synchronizer.refreshAllBalances()
-
+            Twig.debug { "Transaction submit result: $result" }
             result
         }
 
