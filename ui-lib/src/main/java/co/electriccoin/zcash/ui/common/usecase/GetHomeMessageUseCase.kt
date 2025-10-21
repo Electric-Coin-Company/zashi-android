@@ -53,7 +53,6 @@ class GetHomeMessageUseCase(
     private val messageAvailabilityDataSource: MessageAvailabilityDataSource,
     private val cache: HomeMessageCacheRepository,
 ) {
-    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
     private val backupFlow =
         combine(
@@ -145,13 +144,9 @@ class GetHomeMessageUseCase(
         }.distinctUntilChanged()
             .debounce(1.seconds)
             .map { message -> prioritizeMessage(message) }
-            .stateIn(
-                scope = scope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = null
-            )
+            .distinctUntilChanged()
 
-    fun observe(): StateFlow<HomeMessageData?> = flow
+    fun observe(): Flow<HomeMessageData?> = flow
 
     private fun createMessage(
         status: Synchronizer.Status?,
