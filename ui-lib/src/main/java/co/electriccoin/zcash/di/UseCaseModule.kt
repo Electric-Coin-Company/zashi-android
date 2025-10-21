@@ -208,7 +208,7 @@ val useCaseModule =
         factoryOf(::GetKeystoneStatusUseCase)
         factoryOf(::GetCoinbaseStatusUseCase)
         factoryOf(::GetFlexaStatusUseCase)
-        singleOf(::GetHomeMessageUseCase)
+        factoryOf(::GetHomeMessageUseCase)
         factoryOf(::OnUserSavedWalletBackupUseCase)
         factoryOf(::RemindWalletBackupLaterUseCase)
         singleOf(::ShieldFundsUseCase)
