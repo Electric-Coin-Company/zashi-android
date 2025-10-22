@@ -43,7 +43,7 @@ class WalletViewModel(
     fun persistExistingWalletWithSeedPhrase(
         network: ZcashNetwork,
         seedPhrase: SeedPhrase,
-        birthday: BlockHeight?
+        birthday: BlockHeight
     ) {
         walletRepository.restoreWallet(network, seedPhrase, birthday)
     }

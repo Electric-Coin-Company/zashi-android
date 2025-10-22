@@ -1,17 +1,19 @@
-package co.electriccoin.zcash.ui.common.datasource
+package co.electriccoin.zcash.ui.common.usecase
 
 import androidx.annotation.StringRes
-import cash.z.ecc.android.sdk.Synchronizer
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
+import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
+import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.WalletBackupFlagStorageProvider
 import co.electriccoin.zcash.ui.common.provider.WalletBackupRemindMeCountStorageProvider
 import co.electriccoin.zcash.ui.common.provider.WalletBackupRemindMeTimestampStorageProvider
-import co.electriccoin.zcash.ui.util.Quadruple
+import co.electriccoin.zcash.ui.common.repository.ReceiveTransaction
+import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -19,33 +21,28 @@ import java.time.Instant
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
-interface WalletBackupDataSource {
+interface WalletBackupMessageUseCase {
     fun observe(): Flow<WalletBackupData>
-
-    suspend fun onUserSavedWalletBackup()
-
-    suspend fun remindMeLater()
 }
 
-class WalletBackupDataSourceImpl(
-    private val synchronizerProvider: SynchronizerProvider,
+class WalletBackupMessageUseCaseImpl(
     private val walletBackupFlagStorageProvider: WalletBackupFlagStorageProvider,
     private val walletBackupRemindMeCountStorageProvider: WalletBackupRemindMeCountStorageProvider,
-    private val walletBackupRemindMeTimestampStorageProvider: WalletBackupRemindMeTimestampStorageProvider
-) : WalletBackupDataSource {
-    @Suppress("DestructuringDeclarationWithTooManyEntries")
+    private val walletBackupRemindMeTimestampStorageProvider: WalletBackupRemindMeTimestampStorageProvider,
+    private val accountDataSource: AccountDataSource,
+    private val transactionRepository: TransactionRepository,
+) : WalletBackupMessageUseCase {
+
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun observe(): Flow<WalletBackupData> =
         combine(
-            synchronizerProvider.synchronizer.flatMapLatest { it?.status ?: flowOf(null) },
             walletBackupFlagStorageProvider.observe(),
             walletBackupRemindMeCountStorageProvider.observe(),
-            walletBackupRemindMeTimestampStorageProvider.observe()
-        ) { status, isBackedUp, count, timestamp ->
-            Quadruple(status, isBackedUp, count, timestamp)
-        }.flatMapLatest { (status, isBackedUp, count, timestamp) ->
+            walletBackupRemindMeTimestampStorageProvider.observe(),
+        ) { isBackedUp, count, timestamp ->
+            Triple(isBackedUp, count, timestamp)
+        }.flatMapLatest { (isBackedUp, count, timestamp) ->
             when {
-                status in listOf(null, Synchronizer.Status.INITIALIZING) -> flowOf(WalletBackupData.Unavailable)
                 isBackedUp -> flowOf(WalletBackupData.Unavailable)
                 timestamp == null -> flowOf(WalletBackupData.Available(WalletBackupLockoutDuration.TWO_DAYS))
                 count == 1 ->
@@ -67,18 +64,21 @@ class WalletBackupDataSourceImpl(
                         nextLockoutDuration = WalletBackupLockoutDuration.ONE_MONTH
                     )
             }
-        }
-
-    override suspend fun onUserSavedWalletBackup() {
-        walletBackupFlagStorageProvider.store(true)
-    }
-
-    override suspend fun remindMeLater() {
-        val count = walletBackupRemindMeCountStorageProvider.get()
-        val timestamp = Instant.now()
-        walletBackupRemindMeCountStorageProvider.store(count + 1)
-        walletBackupRemindMeTimestampStorageProvider.store(timestamp)
-    }
+        }.flatMapLatest { backup ->
+            combine(
+                accountDataSource.selectedAccount,
+                transactionRepository.transactions,
+            ) { account, transactions ->
+                if (backup is WalletBackupData.Available &&
+                    account is ZashiAccount &&
+                    transactions.orEmpty().any { it is ReceiveTransaction }
+                ) {
+                    backup
+                } else {
+                    WalletBackupData.Unavailable
+                }
+            }
+        }.distinctUntilChanged()
 
     private fun calculateNext(
         lastTimestamp: Instant,

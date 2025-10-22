@@ -19,6 +19,7 @@
     <string name="general_loading">Cargando</string>
     <string name="general_review">Revisar</string>
     <string name="general_ok">OK</string>
+    <string name="general_cancel">Cancel</string>
     <string name="general_report">Reportar</string>
     <string name="general_zec">%s ZEC</string>
     <string name="general_dismiss">Cerrar</string>

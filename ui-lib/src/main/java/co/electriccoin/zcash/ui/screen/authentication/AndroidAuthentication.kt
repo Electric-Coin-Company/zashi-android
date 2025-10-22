@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.stringResource
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import co.electriccoin.zcash.di.koinActivityViewModel
 import co.electriccoin.zcash.spackle.Twig
@@ -18,8 +19,6 @@ import co.electriccoin.zcash.ui.screen.authentication.view.AuthenticationErrorDi
 import kotlin.time.Duration.Companion.milliseconds
 
 private const val APP_ACCESS_TRIGGER_DELAY = 0
-private const val DELETE_WALLET_TRIGGER_DELAY = 0
-private const val EXPORT_PRIVATE_DATA_TRIGGER_DELAY = 0
 private const val SEND_FUNDS_DELAY = 0
 internal const val RETRY_TRIGGER_DELAY = 0
 
@@ -44,7 +43,7 @@ internal fun MainActivity.WrapAuthentication(
 @Composable
 @Suppress("LongParameterList")
 private fun WrapAuthenticationUseCases(
-    activity: MainActivity,
+    activity: FragmentActivity,
     onSuccess: () -> Unit,
     onCancel: () -> Unit,
     onFail: () -> Unit,
@@ -57,26 +56,6 @@ private fun WrapAuthenticationUseCases(
             WrapAppAccessAuth(
                 activity = activity,
                 goToAppContent = onSuccess,
-                onCancel = onCancel,
-                onFail = onFail
-            )
-        }
-        AuthenticationUseCase.ExportPrivateData -> {
-            Twig.debug { "Export Private Data Authentication" }
-            WrapAppExportPrivateDataAuth(
-                activity = activity,
-                goExportPrivateData = onSuccess,
-                goSupport = goSupport ?: {},
-                onCancel = onCancel,
-                onFail = onFail
-            )
-        }
-        AuthenticationUseCase.DeleteWallet -> {
-            Twig.debug { "Delete Wallet Authentication" }
-            WrapDeleteWalletAuth(
-                activity = activity,
-                goDeleteWallet = onSuccess,
-                goSupport = goSupport ?: {},
                 onCancel = onCancel,
                 onFail = onFail
             )
@@ -95,159 +74,9 @@ private fun WrapAuthenticationUseCases(
 }
 
 @Composable
-private fun WrapDeleteWalletAuth(
-    activity: MainActivity,
-    goSupport: () -> Unit,
-    goDeleteWallet: () -> Unit,
-    onCancel: () -> Unit,
-    onFail: () -> Unit,
-) {
-    val authenticationViewModel = koinActivityViewModel<AuthenticationViewModel>()
-
-    val authenticationResult =
-        authenticationViewModel.authenticationResult
-            .collectAsStateWithLifecycle(initialValue = AuthenticationResult.None)
-            .value
-
-    when (authenticationResult) {
-        AuthenticationResult.None -> {
-            Twig.info { "Authentication result: initiating" }
-            // Initial state
-        }
-        AuthenticationResult.Success -> {
-            Twig.info { "Authentication result: successful" }
-            authenticationViewModel.resetAuthenticationResult()
-            goDeleteWallet()
-        }
-        AuthenticationResult.Canceled -> {
-            Twig.info { "Authentication result: canceled" }
-            authenticationViewModel.resetAuthenticationResult()
-            onCancel()
-        }
-        AuthenticationResult.Failed -> {
-            Twig.warn { "Authentication result: failed" }
-            authenticationViewModel.resetAuthenticationResult()
-            onFail()
-            Toast
-                .makeText(activity, activity.getString(R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
-                .show()
-        }
-        is AuthenticationResult.Error -> {
-            Twig.error {
-                "Authentication result: error: ${authenticationResult.errorCode}: ${authenticationResult.errorMessage}"
-            }
-            AuthenticationErrorDialog(
-                onDismiss = {
-                    // Reset authentication states
-                    authenticationViewModel.resetAuthenticationResult()
-                    onCancel()
-                },
-                onRetry = {
-                    authenticationViewModel.resetAuthenticationResult()
-                    authenticationViewModel.authenticate(
-                        activity = activity,
-                        initialAuthSystemWindowDelay = RETRY_TRIGGER_DELAY.milliseconds,
-                        useCase = AuthenticationUseCase.DeleteWallet
-                    )
-                },
-                onSupport = {
-                    authenticationViewModel.resetAuthenticationResult()
-                    goSupport()
-                },
-                reason = authenticationResult
-            )
-        }
-    }
-
-    // Starting authentication
-    LaunchedEffect(key1 = true) {
-        authenticationViewModel.authenticate(
-            activity = activity,
-            initialAuthSystemWindowDelay = DELETE_WALLET_TRIGGER_DELAY.milliseconds,
-            useCase = AuthenticationUseCase.DeleteWallet
-        )
-    }
-}
-
-@Composable
-private fun WrapAppExportPrivateDataAuth(
-    activity: MainActivity,
-    goSupport: () -> Unit,
-    goExportPrivateData: () -> Unit,
-    onCancel: () -> Unit,
-    onFail: () -> Unit,
-) {
-    val authenticationViewModel = koinActivityViewModel<AuthenticationViewModel>()
-
-    val authenticationResult =
-        authenticationViewModel.authenticationResult
-            .collectAsStateWithLifecycle(initialValue = AuthenticationResult.None)
-            .value
-
-    when (authenticationResult) {
-        AuthenticationResult.None -> {
-            Twig.info { "Authentication result: initiating" }
-            // Initial state
-        }
-        AuthenticationResult.Success -> {
-            Twig.info { "Authentication result: successful" }
-            authenticationViewModel.resetAuthenticationResult()
-            goExportPrivateData()
-        }
-        AuthenticationResult.Canceled -> {
-            Twig.info { "Authentication result: canceled" }
-            authenticationViewModel.resetAuthenticationResult()
-            onCancel()
-        }
-        AuthenticationResult.Failed -> {
-            Twig.warn { "Authentication result: failed" }
-            authenticationViewModel.resetAuthenticationResult()
-            onFail()
-            Toast
-                .makeText(activity, stringResource(id = R.string.authentication_toast_failed), Toast.LENGTH_SHORT)
-                .show()
-        }
-        is AuthenticationResult.Error -> {
-            Twig.error {
-                "Authentication result: error: ${authenticationResult.errorCode}: ${authenticationResult.errorMessage}"
-            }
-            AuthenticationErrorDialog(
-                onDismiss = {
-                    // Reset authentication states
-                    authenticationViewModel.resetAuthenticationResult()
-                    onCancel()
-                },
-                onRetry = {
-                    authenticationViewModel.resetAuthenticationResult()
-                    authenticationViewModel.authenticate(
-                        activity = activity,
-                        initialAuthSystemWindowDelay = RETRY_TRIGGER_DELAY.milliseconds,
-                        useCase = AuthenticationUseCase.ExportPrivateData
-                    )
-                },
-                onSupport = {
-                    authenticationViewModel.resetAuthenticationResult()
-                    goSupport()
-                },
-                reason = authenticationResult
-            )
-        }
-    }
-
-    // Starting authentication
-    LaunchedEffect(key1 = true) {
-        authenticationViewModel.authenticate(
-            activity = activity,
-            initialAuthSystemWindowDelay = EXPORT_PRIVATE_DATA_TRIGGER_DELAY.milliseconds,
-            useCase = AuthenticationUseCase.ExportPrivateData
-        )
-    }
-}
-
-@Composable
 @Suppress("LongMethod")
 private fun WrapSendFundsAuth(
-    activity: MainActivity,
+    activity: FragmentActivity,
     goSupport: () -> Unit,
     onSendFunds: () -> Unit,
     onCancel: () -> Unit,
@@ -323,7 +152,7 @@ private fun WrapSendFundsAuth(
 @Composable
 @Suppress("LongMethod")
 private fun WrapAppAccessAuth(
-    activity: MainActivity,
+    activity: FragmentActivity,
     goToAppContent: () -> Unit,
     onCancel: () -> Unit,
     onFail: () -> Unit,
@@ -395,10 +224,6 @@ private fun WrapAppAccessAuth(
 
 sealed class AuthenticationUseCase {
     data object AppAccess : AuthenticationUseCase()
-
-    data object DeleteWallet : AuthenticationUseCase()
-
-    data object ExportPrivateData : AuthenticationUseCase()
 
     data object SendFunds : AuthenticationUseCase()
 }

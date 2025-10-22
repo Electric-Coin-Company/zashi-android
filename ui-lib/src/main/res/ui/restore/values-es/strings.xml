@@ -32,4 +32,10 @@
     <string name="restore_bd_estimation_restore">Restaurar</string>
 
     <string name="restore_seed_warning_suggestions">Esta palabra no está en el diccionario de frases de recuperación. Por favor selecciona la correcta de las sugerencias.</string>
+
+    <string name="restore_tor_title">Enable Tor Protection</string>
+    <string name="restore_tor_subtitle">If Tor is available in your region, we recommend enabling it for enhanced privacy during wallet restoration. This step is completely optional.</string>
+    <string name="restore_tor_checkbox_title">Enable Tor Protection</string>
+    <string name="restore_tor_checkbox_subtitle">Routes your connection through the Tor network for enhanced anonymity and privacy protection.</string>
+
 </resources>
