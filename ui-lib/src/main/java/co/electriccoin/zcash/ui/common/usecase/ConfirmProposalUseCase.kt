@@ -48,10 +48,10 @@ class ConfirmProposalUseCase(
                 is KeystoneAccount -> navigationRouter.replace(SignKeystoneTransactionArgs)
                 is ZashiAccount -> {
                     zashiProposalRepository.submitTransaction()
+                    swapRepository.clear()
                     navigationRouter.forward(TransactionProgressArgs)
                 }
             }
-            swapRepository.clear()
         } catch (_: BiometricsFailureException) {
             // do nothing
         } catch (_: BiometricsCancelledException) {
