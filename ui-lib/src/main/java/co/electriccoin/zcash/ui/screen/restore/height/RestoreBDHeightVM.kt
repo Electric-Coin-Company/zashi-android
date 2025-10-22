@@ -4,14 +4,11 @@ import android.content.Context
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.sdk.model.BlockHeight
-import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.usecase.RestoreWalletUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
@@ -19,6 +16,7 @@ import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDate
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
+import co.electriccoin.zcash.ui.screen.restore.tor.RestoreTorArgs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +29,6 @@ class RestoreBDHeightVM(
     private val restoreBDHeight: RestoreBDHeight,
     private val navigationRouter: NavigationRouter,
     private val context: Context,
-    private val restoreWallet: RestoreWalletUseCase
 ) : ViewModel() {
     private val blockHeightText = MutableStateFlow(NumberTextFieldInnerState())
 
@@ -76,9 +73,11 @@ class RestoreBDHeightVM(
     }
 
     private fun onRestoreClick() {
-        restoreWallet(
-            seedPhrase = SeedPhrase.new(restoreBDHeight.seed.trim()),
-            birthday = blockHeightText.value.amount?.let { BlockHeight.new(it.toLong()) }
+        navigationRouter.forward(
+            RestoreTorArgs(
+                seed = restoreBDHeight.seed.trim(),
+                blockHeight = blockHeightText.value.amount?.toLong() ?: return
+            )
         )
     }
 
