@@ -60,7 +60,7 @@ interface WalletRepository {
     fun restoreWallet(
         network: ZcashNetwork,
         seedPhrase: SeedPhrase,
-        birthday: BlockHeight?
+        birthday: BlockHeight
     )
 
     fun updateWalletEndpoint(endpoint: LightWalletEndpoint)
@@ -209,7 +209,7 @@ class WalletRepositoryImpl(
     override fun restoreWallet(
         network: ZcashNetwork,
         seedPhrase: SeedPhrase,
-        birthday: BlockHeight?
+        birthday: BlockHeight
     ) {
         scope.launch {
             val restoredWallet =

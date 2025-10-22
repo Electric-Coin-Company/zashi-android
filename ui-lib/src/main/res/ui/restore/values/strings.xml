@@ -39,4 +39,9 @@
 
     <string name="restore_seed_warning_suggestions">This word is not in the seed phrase dictionary.  Please select the correct one from the suggestions.</string>
 
+    <string name="restore_tor_title">Enable Tor Protection</string>
+    <string name="restore_tor_subtitle">If Tor is available in your region, we recommend enabling it for enhanced privacy during wallet restoration. This step is completely optional.</string>
+    <string name="restore_tor_checkbox_title">Enable Tor Protection</string>
+    <string name="restore_tor_checkbox_subtitle">Routes your connection through the Tor network for enhanced anonymity and privacy protection.</string>
+
 </resources>
