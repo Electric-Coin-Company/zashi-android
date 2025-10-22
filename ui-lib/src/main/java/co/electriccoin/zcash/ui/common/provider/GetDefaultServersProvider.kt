@@ -14,11 +14,12 @@ class GetDefaultServersProvider(
     private val lightWalletEndpoints by lazy {
         if (ZcashNetwork.fromResources(application) == ZcashNetwork.Mainnet) {
             listOf(
-                LightWalletEndpoint(ZR_HOST, ZR_PORT, true),
-                LightWalletEndpoint(ZR_HOST_NA, ZR_PORT, true),
-                LightWalletEndpoint(ZR_HOST_SA, ZR_PORT, true),
-                LightWalletEndpoint(ZR_HOST_EU, ZR_PORT, true),
-                LightWalletEndpoint(ZR_HOST_AP, ZR_PORT, true),
+                LightWalletEndpoint(host = "zec.rocks", port = 443, isSecure = true),
+                LightWalletEndpoint(host = "na.zec.rocks", port = 443, isSecure = true),
+                LightWalletEndpoint(host = "sa.zec.rocks", port = 443, isSecure = true),
+                LightWalletEndpoint(host = "eu.zec.rocks", port = 443, isSecure = true),
+                LightWalletEndpoint(host = "ap.zec.rocks", port = 443, isSecure = true),
+                LightWalletEndpoint(host = "eu.zec.stardust.rest", port = 443, isSecure = true),
             )
         } else {
             listOf(LightWalletEndpoint.Testnet)
@@ -29,10 +30,3 @@ class GetDefaultServersProvider(
 
     fun defaultEndpoint() = this().first()
 }
-
-private const val ZR_HOST = "zec.rocks" // NON-NLS
-private const val ZR_HOST_NA = "na.zec.rocks" // NON-NLS
-private const val ZR_HOST_SA = "sa.zec.rocks" // NON-NLS
-private const val ZR_HOST_EU = "eu.zec.rocks" // NON-NLS
-private const val ZR_HOST_AP = "ap.zec.rocks" // NON-NLS
-private const val ZR_PORT = 443
