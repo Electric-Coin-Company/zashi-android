@@ -1,5 +1,7 @@
 package co.electriccoin.zcash.di
 
+import co.electriccoin.zcash.ui.common.usecase.WalletBackupMessageUseCase
+import co.electriccoin.zcash.ui.common.usecase.WalletBackupMessageUseCaseImpl
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFulltextFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.CanCreateABContactUseCase
@@ -109,7 +111,7 @@ import co.electriccoin.zcash.ui.common.usecase.SetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareImageUseCase
 import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareQRUseCase
-import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
+import co.electriccoin.zcash.ui.common.usecase.ShieldFundsFromMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateABContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateSwapActivityMetadataUseCase
@@ -124,6 +126,7 @@ import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val useCaseModule =
@@ -214,7 +217,7 @@ val useCaseModule =
         singleOf(::ShieldFundsUseCase)
         singleOf(::NavigateToErrorUseCase)
         factoryOf(::RescanQrUseCase)
-        factoryOf(::ShieldFundsMessageUseCase)
+        factoryOf(::ShieldFundsFromMessageUseCase)
         factoryOf(::NavigateToReceiveUseCase)
         factoryOf(::NavigateToRequestShieldedUseCase)
         factoryOf(::IsTorEnabledUseCase)
@@ -250,4 +253,5 @@ val useCaseModule =
         factoryOf(::NavigateToResetWalletUseCase)
         factoryOf(::IsScreenTimeoutDisabledDuringRestoreUseCase)
         singleOf(::UpdateSwapActivityMetadataUseCase)
+        factoryOf(::WalletBackupMessageUseCaseImpl) bind WalletBackupMessageUseCase::class
     }

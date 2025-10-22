@@ -55,7 +55,7 @@ class GetActivitiesUseCase(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeTransactions(): Flow<List<ActivityData.ByTransaction>?> =
-        transactionRepository.currentTransactions
+        transactionRepository.transactions
             .flatMapLatest { transactions ->
                 transactions
                     ?.map {

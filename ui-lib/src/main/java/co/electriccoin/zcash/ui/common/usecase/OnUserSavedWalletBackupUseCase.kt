@@ -1,14 +1,14 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.common.datasource.WalletBackupDataSource
+import co.electriccoin.zcash.ui.common.provider.WalletBackupFlagStorageProvider
 
 class OnUserSavedWalletBackupUseCase(
     private val navigationRouter: NavigationRouter,
-    private val walletBackupDataSource: WalletBackupDataSource
+    private val walletBackupFlagStorageProvider: WalletBackupFlagStorageProvider
 ) {
     suspend operator fun invoke() {
-        walletBackupDataSource.onUserSavedWalletBackup()
+        walletBackupFlagStorageProvider.store(true)
         navigationRouter.backToRoot()
     }
 }

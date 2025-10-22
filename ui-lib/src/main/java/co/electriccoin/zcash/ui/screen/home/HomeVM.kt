@@ -20,7 +20,7 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToNearPayUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapUseCase
-import co.electriccoin.zcash.ui.common.usecase.ShieldFundsMessageUseCase
+import co.electriccoin.zcash.ui.common.usecase.ShieldFundsFromMessageUseCase
 import co.electriccoin.zcash.ui.design.component.BigIconButtonState
 import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -60,7 +60,7 @@ class HomeVM(
     isRestoreSuccessDialogVisible: IsRestoreSuccessDialogVisibleUseCase,
     private val configurationRepository: ConfigurationRepository,
     private val navigationRouter: NavigationRouter,
-    private val shieldFunds: ShieldFundsMessageUseCase,
+    private val shieldFundsFromMessage: ShieldFundsFromMessageUseCase,
     private val navigateToError: NavigateToErrorUseCase,
     private val navigateToReceive: NavigateToReceiveUseCase,
     private val navigateToNearPay: NavigateToNearPayUseCase,
@@ -75,7 +75,7 @@ class HomeVM(
             createMessageState(message, isShieldFundsInfoEnabled)
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
+            started = SharingStarted.Eagerly,
             initialValue = null
         )
 
@@ -255,9 +255,9 @@ class HomeVM(
 
     private fun onWalletBackupMessageButtonClick() = navigationRouter.forward(WalletBackupDetail(false))
 
-    private fun onShieldFundsMessageClick() = viewModelScope.launch { shieldFunds() }
+    private fun onShieldFundsMessageClick() = viewModelScope.launch { shieldFundsFromMessage() }
 
-    private fun onShieldFundsMessageButtonClick() = viewModelScope.launch { shieldFunds() }
+    private fun onShieldFundsMessageButtonClick() = viewModelScope.launch { shieldFundsFromMessage() }
 
     private fun onWalletErrorMessageClick(homeMessageData: HomeMessageData.Error) =
         navigateToError(ErrorArgs.SyncError(homeMessageData.synchronizerError))
