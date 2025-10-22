@@ -19,6 +19,7 @@
     <string name="general_loading">Loading</string>
     <string name="general_review">Review</string>
     <string name="general_ok">OK</string>
+    <string name="general_cancel">Cancel</string>
     <string name="general_report">Report</string>
     <string name="general_zec">%s ZEC</string>
     <string name="general_dismiss">Dismiss</string>
