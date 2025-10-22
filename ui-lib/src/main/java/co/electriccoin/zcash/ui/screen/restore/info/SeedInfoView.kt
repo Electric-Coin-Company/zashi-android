@@ -53,7 +53,7 @@ private fun Content(state: SeedInfoState) {
         modifier = Modifier.padding(horizontal = 24.dp)
     ) {
         Text(
-            text = stringResource(R.string.integrations_dialog_more_options),
+            text = stringResource(R.string.restore_dialog_title),
             style = ZashiTypography.header6,
             fontWeight = FontWeight.SemiBold,
             color = ZashiColors.Text.textPrimary
