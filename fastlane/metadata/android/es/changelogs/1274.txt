@@ -1,0 +1,2 @@
+Corregido:
+- Corregimos un problema de saldo y protección que afectaba las billeteras de algunos usuarios.
