@@ -107,8 +107,6 @@ jobs:
           # replacing it.)
           SIGNING_KEYSTORE_BASE_64: ${{ secrets.UPLOAD_KEYSTORE_BASE_64 }}
           SIGNING_KEY_PATH: ${{ format('{0}/release.jks', env.home) }}
-          SIGNING_KEYSTORE_BASE_64_SOLANA: ${{ secrets.UPLOAD_KEYSTORE_BASE_64_SOLANA }}
-          SIGNING_KEY_PATH_SOLANA: ${{ format('{0}/release_solana.jks', env.home) }}
         shell: bash
         run: |
           echo ${SIGNING_KEYSTORE_BASE_64} | base64 --decode > ${SIGNING_KEY_PATH}
