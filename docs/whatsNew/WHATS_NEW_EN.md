@@ -12,6 +12,11 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.4.5 (1276)] - 2025-10-24
+
+### Fixed:
+- We fixed a balance and shielding issue impacting some users' wallets.
+
 ## [2.4.5 (1274)] - 2025-10-23
 
 ### Fixed:
