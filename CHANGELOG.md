@@ -6,6 +6,11 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.5 (1276)] - 2025-10-24
+
+### Added:
+- Support for Solana app store
+
 ## [2.4.5 (1274)] - 2025-10-23
 
 ### Fixed:
