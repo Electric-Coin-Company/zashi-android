@@ -157,7 +157,6 @@ jobs:
       - name: Prepare FOSS (externallibs) Artifacts
         timeout-minutes: 1
         run: |
-          mkdir artifacts/
           mv app/build/outputs/apk/zcashmainnetFoss/release/app-zcashmainnet-foss-release.apk artifacts/app-zcashmainnet-foss-release-full-externallibs.apk
 
       - name: Build FOSS (F-Droid) APK
