@@ -182,12 +182,11 @@ jobs:
         run: |          
           cd artifacts/
           TAG=$(git describe --tags --abbrev=0)
-          VERSION_NAME=$(echo "$TAG" | cut -d'-' -f1)
           VERSION_CODE=$(echo "$TAG" | cut -d'-' -f2)
-          echo $VERSION_NAME > version_code.txt
           echo $VERSION_CODE > version_code.txt
-          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *foss*.apk
-          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign *store*.apk
+          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign app-zcashmainnet-foss-release.apk
+          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign app-zcashmainnet-foss-release-full-externallibs.apk
+          gpg -u sysadmin@z.cash --armor --digest-algo SHA256 --detach-sign app-zcashmainnet-google-play-store-release-universal.apk
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
