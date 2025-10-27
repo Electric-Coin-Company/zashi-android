@@ -1,0 +1,2 @@
+Fixed:
+- We fixed an issue with swapping larger amounts that was resulting in an error. Swap away!

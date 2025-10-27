@@ -12,6 +12,11 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.4.6 (1279)] - 2025-10-27
+
+### Fixed:
+- We fixed an issue with swapping larger amounts that was resulting in an error. Swap away!
+
 ## [2.4.5 (1276)] - 2025-10-24
 
 ### Fixed:

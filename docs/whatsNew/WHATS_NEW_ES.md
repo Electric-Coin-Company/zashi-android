@@ -12,6 +12,11 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.4.6 (1279)] - 2025-10-27
+
+### Fixed:
+- Solucionamos un problema que generaba un error al intercambiar cantidades mayores. ¡A intercambiar!
+
 ## [2.4.5 (1276)] - 2025-10-24
 
 ### Corregido:

@@ -1,0 +1,2 @@
+Corregido:
+- Solucionamos un problema que generaba un error al intercambiar cantidades mayores. ¡A intercambiar!
