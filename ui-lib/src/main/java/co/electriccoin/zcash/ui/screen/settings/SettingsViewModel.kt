@@ -13,6 +13,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.about.AboutArgs
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsArgs
 import co.electriccoin.zcash.ui.screen.feedback.FeedbackArgs
+import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixArgs
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -56,8 +57,11 @@ class SettingsViewModel(
                         bigIcon = imageRes(R.drawable.ic_settings_feedback),
                         onClick = ::onSendUsFeedbackClick
                     ),
-                ).toImmutableList()
+                ).toImmutableList(),
+            onVersionLongClick = ::onVersionLongClick
         )
+
+    private fun onVersionLongClick() = navigationRouter.forward(EphemeralHotfixArgs(address = null))
 
     private fun onBack() = navigationRouter.back()
 

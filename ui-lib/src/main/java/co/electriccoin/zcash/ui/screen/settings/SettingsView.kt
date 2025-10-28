@@ -58,7 +58,7 @@ fun Settings(state: SettingsState) {
             }
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
             Spacer(modifier = Modifier.weight(1f))
-            ZashiVersion(modifier = Modifier.fillMaxWidth(), version = state.version)
+            ZashiVersion(modifier = Modifier.fillMaxWidth(), version = state.version, onLongClick = state.onVersionLongClick)
         }
     }
 }
@@ -107,6 +107,7 @@ private fun PreviewSettings() {
                                 onClick = { },
                             ),
                         ),
+                    onVersionLongClick = {}
                 ),
         )
     }
@@ -144,6 +145,7 @@ private fun IntegrationsDisabledPreview() {
                                 onClick = { },
                             ),
                         ),
+                    onVersionLongClick = {}
                 ),
         )
     }
