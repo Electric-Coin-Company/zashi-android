@@ -63,6 +63,7 @@ fun ZashiAddressTextField(
         keyboardActions = keyboardActions,
         maxLines = 1,
         minLines = 1,
+        singleLine = true,
         interactionSource = interactionSource,
         shape = shape,
         contentPadding = contentPadding,

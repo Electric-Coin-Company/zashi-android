@@ -12,6 +12,21 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.4.6 (1279)] - 2025-10-27
+
+### Fixed:
+- Solucionamos un problema que generaba un error al intercambiar cantidades mayores. ¡A intercambiar!
+
+## [2.4.5 (1276)] - 2025-10-24
+
+### Corregido:
+- Corregimos un problema de saldo y protección que afectaba las billeteras de algunos usuarios.
+
+## [2.4.5 (1274)] - 2025-10-23
+
+### Corregido:
+- Corregimos un problema de saldo y protección que afectaba las billeteras de algunos usuarios.
+
 ## [2.4.4 (1265)] - 2025-10-20
 
 ### Cambiado:

@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.WalletAddress
+import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.NavigationRouter
@@ -103,7 +104,7 @@ class RequestSwapQuoteUseCase(
             val send =
                 ZecSend(
                     destination = getWalletAddress(quote.depositAddress),
-                    amount = quote.destinationAmountZatoshi,
+                    amount = Zatoshi(quote.amountIn.toLong()),
                     memo = Memo(""),
                     proposal = null
                 )

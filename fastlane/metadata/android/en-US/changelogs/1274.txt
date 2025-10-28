@@ -1,0 +1,2 @@
+Fixed:
+- We fixed a balance and shielding issue impacting some user's wallets.

@@ -16,8 +16,6 @@ import java.math.MathContext
 interface SwapQuote {
     val originAsset: SwapAsset
     val destinationAsset: SwapAsset
-
-    val destinationAmountZatoshi: Zatoshi
     val depositAddress: String
     val destinationAddress: String
     val provider: String
@@ -59,8 +57,6 @@ data class NearSwapQuote(
     override val slippage: BigDecimal =
         BigDecimal(response.quoteRequest.slippageTolerance)
             .divide(BigDecimal("100", MathContext.DECIMAL128))
-
-    override val destinationAmountZatoshi: Zatoshi = Zatoshi(response.quote.amountIn.toLong())
 
     override val depositAddress: String = response.quote.depositAddress
 

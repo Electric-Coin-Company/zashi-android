@@ -10,6 +10,7 @@ import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.ShieldFundsInfoProvider
+import co.electriccoin.zcash.ui.common.repository.ConfigurationRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageData
 import co.electriccoin.zcash.ui.common.usecase.ErrorArgs
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
@@ -57,6 +58,7 @@ class HomeVM(
     shieldFundsInfoProvider: ShieldFundsInfoProvider,
     getWalletAccounts: GetWalletAccountsUseCase,
     isRestoreSuccessDialogVisible: IsRestoreSuccessDialogVisibleUseCase,
+    private val configurationRepository: ConfigurationRepository,
     private val navigationRouter: NavigationRouter,
     private val shieldFundsFromMessage: ShieldFundsFromMessageUseCase,
     private val navigateToError: NavigateToErrorUseCase,
@@ -101,7 +103,11 @@ class HomeVM(
             messageState,
             getWalletAccounts.observe()
         ) { messageState, accounts ->
-            createState(messageState, accounts)
+            createState(
+                messageState = messageState,
+                accounts = accounts,
+                isFlexaAvailable = configurationRepository.isFlexaAvailable()
+            )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
@@ -111,6 +117,7 @@ class HomeVM(
     private fun createState(
         messageState: HomeMessageState?,
         accounts: List<WalletAccount>?,
+        isFlexaAvailable: Boolean
     ) = HomeState(
         firstButton =
             BigIconButtonState(
@@ -132,7 +139,7 @@ class HomeVM(
             ),
         fourthButton =
             if (getVersionInfoProvider().distributionDimension == DistributionDimension.FOSS) {
-                if (accounts.orEmpty().any { it is KeystoneAccount }) {
+                if (!isFlexaAvailable && accounts.orEmpty().any { it is KeystoneAccount }) {
                     BigIconButtonState(
                         text = stringRes(R.string.home_button_swap),
                         icon = R.drawable.ic_home_swap,

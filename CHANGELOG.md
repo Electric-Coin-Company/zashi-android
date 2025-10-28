@@ -6,6 +6,23 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.6 (1279)] - 2025-10-27
+
+### Fixed:
+- We fixed an issue with swapping larger amounts that was resulting in an error. Swap away!
+
+## [2.4.5 (1276)] - 2025-10-24
+
+### Added:
+- Support for Solana app store
+
+## [2.4.5 (1274)] - 2025-10-23
+
+### Fixed:
+- Fixed a crash on invalid server url
+- FOSS build now displays More button on homepage if flexa is present 
+- We fixed a balance and shielding issue impacting some user's wallets.
+
 ## [2.4.4 (1265)] - 2025-10-20
 
 ### Added:
