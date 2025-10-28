@@ -24,6 +24,7 @@ import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.design.util.stringResByCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDateTime
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
+import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.CommonTransactionDetailMapper
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailHeaderState
 import co.electriccoin.zcash.ui.screen.transactiondetail.infoitems.TransactionDetailInfoRowState
@@ -186,7 +187,8 @@ class SwapDetailVM(
                         ?.tokenIcon ?: loadingImageRes(),
                     imageRes(R.drawable.ic_transaction_received),
                     imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
-                )
+                ),
+            onLongClick = { onHeaderLongClick(swapData) }
         )
 
     private fun onBack() = navigationRouter.back()
@@ -195,4 +197,9 @@ class SwapDetailVM(
 
     private fun onCopyRecipientAddressClick(recipient: String) =
         copyToClipboard(recipient)
+
+    private fun onHeaderLongClick(swapData: SwapData) {
+        val address = swapData.status?.quote?.recipient ?: args.depositAddress
+        navigationRouter.forward(EphemeralHotfixArgs(address))
+    }
 }

@@ -63,6 +63,8 @@ import co.electriccoin.zcash.ui.screen.home.syncing.AndroidWalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.AndroidWalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
+import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixArgs
+import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixScreen
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsScreen
 import co.electriccoin.zcash.ui.screen.pay.PayArgs
@@ -244,5 +246,6 @@ fun NavGraphBuilder.walletNavGraph(
         composable<ORSwapConfirmationArgs> { ORSwapConfirmationScreen() }
         composable<SwapDetailArgs> { SwapDetailScreen(it.toRoute()) }
         dialogComposable<SwapRefundAddressInfoArgs> { SwapRefundAddressInfoScreen() }
+        dialogComposable<EphemeralHotfixArgs> { EphemeralHotfixScreen(it.toRoute()) }
     }
 }

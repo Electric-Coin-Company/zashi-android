@@ -7,5 +7,6 @@ import kotlinx.collections.immutable.ImmutableList
 data class SettingsState(
     val version: StringResource,
     val onBack: () -> Unit,
+    val onVersionLongClick: () -> Unit,
     val items: ImmutableList<ListItemState>,
 )
