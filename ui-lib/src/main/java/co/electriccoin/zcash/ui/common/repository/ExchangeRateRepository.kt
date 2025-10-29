@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -57,17 +56,17 @@ class ExchangeRateRepositoryImpl(
             .flatMapLatest { optedIn ->
                 if (optedIn == true) {
                     channelFlow {
-                        val exchangeRate = synchronizerProvider
-                            .synchronizer
-                            .flatMapLatest { synchronizer ->
-                                synchronizer?.exchangeRateUsd ?: flowOf(
-                                    ObserveFiatCurrencyResult(
-                                        isLoading = false,
-                                        currencyConversion = null
+                        val exchangeRate =
+                            synchronizerProvider
+                                .synchronizer
+                                .flatMapLatest { synchronizer ->
+                                    synchronizer?.exchangeRateUsd ?: flowOf(
+                                        ObserveFiatCurrencyResult(
+                                            isLoading = false,
+                                            currencyConversion = null
+                                        )
                                     )
-                                )
-                            }
-                            .stateIn(this)
+                                }.stateIn(this)
 
                         launch {
                             synchronizerProvider
@@ -89,9 +88,7 @@ class ExchangeRateRepositoryImpl(
 
                                         else -> exchangeRate
                                     }
-
-                                }
-                                .collect { send(it) }
+                                }.collect { send(it) }
                         }
 
                         awaitClose()

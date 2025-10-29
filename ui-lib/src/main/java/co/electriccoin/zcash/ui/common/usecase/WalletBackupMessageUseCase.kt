@@ -32,7 +32,6 @@ class WalletBackupMessageUseCaseImpl(
     private val accountDataSource: AccountDataSource,
     private val transactionRepository: TransactionRepository,
 ) : WalletBackupMessageUseCase {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun observe(): Flow<WalletBackupData> =
         combine(

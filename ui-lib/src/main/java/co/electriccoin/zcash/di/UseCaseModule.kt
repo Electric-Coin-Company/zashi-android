@@ -1,7 +1,5 @@
 package co.electriccoin.zcash.di
 
-import co.electriccoin.zcash.ui.common.usecase.WalletBackupMessageUseCase
-import co.electriccoin.zcash.ui.common.usecase.WalletBackupMessageUseCaseImpl
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFulltextFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.CanCreateABContactUseCase
@@ -122,6 +120,8 @@ import co.electriccoin.zcash.ui.common.usecase.ValidateSwapABContactAddressUseCa
 import co.electriccoin.zcash.ui.common.usecase.ValidateZashiABContactAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionDetailAfterSuccessfulProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ViewTransactionsAfterSuccessfulProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.WalletBackupMessageUseCase
+import co.electriccoin.zcash.ui.common.usecase.WalletBackupMessageUseCaseImpl
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
 import org.koin.core.module.dsl.factoryOf

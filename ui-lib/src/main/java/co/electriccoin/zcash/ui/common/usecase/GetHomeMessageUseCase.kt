@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
@@ -41,44 +40,43 @@ class GetHomeMessageUseCase(
     private val messageAvailabilityDataSource: MessageAvailabilityDataSource,
     private val cache: HomeMessageCacheRepository,
 ) {
-
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    fun observe(): Flow<HomeMessageData?> = channelFlow {
-        val messages =
-            combine(
-                observeRuntimeMessage(),
-                walletBackupMessageUseCase.observe(),
-                observeIsExchangeRateMessageVisible(),
-                crashReportingStorageProvider.observe().map { it == null },
-            ) { runtimeMessage, backup, isCCAvailable, isCrashReportingEnabled ->
-                createMessage(
-                    runtimeMessage = runtimeMessage,
-                    backup = backup,
-                    isCurrencyConversionEnabled = isCCAvailable,
-                    isCrashReportingVisible = isCrashReportingEnabled,
-                )
+    fun observe(): Flow<HomeMessageData?> =
+        channelFlow {
+            val messages =
+                combine(
+                    observeRuntimeMessage(),
+                    walletBackupMessageUseCase.observe(),
+                    observeIsExchangeRateMessageVisible(),
+                    crashReportingStorageProvider.observe().map { it == null },
+                ) { runtimeMessage, backup, isCCAvailable, isCrashReportingEnabled ->
+                    createMessage(
+                        runtimeMessage = runtimeMessage,
+                        backup = backup,
+                        isCurrencyConversionEnabled = isCCAvailable,
+                        isCrashReportingVisible = isCrashReportingEnabled,
+                    )
+                }
+
+            launch {
+                walletSnapshotDataSource
+                    .observe()
+                    .filterNotNull()
+                    .map { it.status }
+                    .flatMapLatest {
+                        when (it) {
+                            Synchronizer.Status.STOPPED,
+                            Synchronizer.Status.INITIALIZING -> emptyFlow()
+                            else -> messages
+                        }
+                    }.distinctUntilChanged()
+                    .collect { send(it) }
             }
 
-        launch {
-            walletSnapshotDataSource.observe()
-                .filterNotNull()
-                .map { it.status }
-                .flatMapLatest {
-                    when (it) {
-                        Synchronizer.Status.STOPPED,
-                        Synchronizer.Status.INITIALIZING -> emptyFlow()
-                        else -> messages
-                    }
-
-                }
-                .distinctUntilChanged()
-                .collect { send(it) }
-        }
-
-        awaitClose()
-    }.debounce(1.seconds)
-        .distinctUntilChanged()
-        .map { message -> prioritizeMessage(message) }
+            awaitClose()
+        }.debounce(1.seconds)
+            .distinctUntilChanged()
+            .map { message -> prioritizeMessage(message) }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeRuntimeMessage(): Flow<RuntimeMessage?> {
@@ -188,7 +186,7 @@ class GetHomeMessageUseCase(
             (
                 walletSnapshot.synchronizerError is SynchronizerError.Processor &&
                     walletSnapshot.synchronizerError.error is CancellationException
-                )
+            )
         ) {
             return null
         }

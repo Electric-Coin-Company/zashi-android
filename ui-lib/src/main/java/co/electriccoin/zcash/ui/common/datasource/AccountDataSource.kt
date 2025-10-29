@@ -39,9 +39,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.stateIn
@@ -117,8 +115,7 @@ class AccountDataSourceImpl(
                                             )
                                     }
                                 }
-                            }
-                            .combineToFlow()
+                            }.combineToFlow()
                     }
                     ?: flowOf(null)
             }.map { it?.sortedDescending() }

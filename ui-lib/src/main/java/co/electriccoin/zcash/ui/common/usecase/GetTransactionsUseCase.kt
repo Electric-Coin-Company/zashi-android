@@ -28,9 +28,11 @@ class GetTransactionsUseCase(
                                     metadata = metadata
                                 )
                             }
-                    }
-                    ?.combineToFlow() ?: flowOf(null)
+                    }?.combineToFlow() ?: flowOf(null)
             }
 }
 
-data class ListTransactionData(val transaction: Transaction, val metadata: TransactionMetadata)
+data class ListTransactionData(
+    val transaction: Transaction,
+    val metadata: TransactionMetadata
+)

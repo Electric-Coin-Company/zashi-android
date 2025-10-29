@@ -8,10 +8,10 @@ import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 
 // TODO [#1273]: Add ChooseServer Tests #1273
 // TODO [#1273]: https://github.com/Electric-Coin-Company/zashi-android/issues/1273
-class GetDefaultServersProvider(
+class LightWalletEndpointProvider(
     private val application: Application
 ) {
-    private val lightWalletEndpoints by lazy {
+    fun getEndpoints(): List<LightWalletEndpoint> =
         if (ZcashNetwork.fromResources(application) == ZcashNetwork.Mainnet) {
             listOf(
                 LightWalletEndpoint(host = "zec.rocks", port = 443, isSecure = true),
@@ -24,9 +24,6 @@ class GetDefaultServersProvider(
         } else {
             listOf(LightWalletEndpoint.Testnet)
         }
-    }
 
-    operator fun invoke() = lightWalletEndpoints
-
-    fun defaultEndpoint() = this().first()
+    fun getDefaultEndpoint() = getEndpoints().first()
 }

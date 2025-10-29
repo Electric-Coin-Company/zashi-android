@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.usecase.WalletBackupData
-import co.electriccoin.zcash.ui.common.usecase.WalletBackupMessageUseCase
 import co.electriccoin.zcash.ui.common.provider.WalletBackupConsentStorageProvider
 import co.electriccoin.zcash.ui.common.usecase.RemindWalletBackupLaterUseCase
+import co.electriccoin.zcash.ui.common.usecase.WalletBackupData
+import co.electriccoin.zcash.ui.common.usecase.WalletBackupMessageUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.CheckboxState
 import co.electriccoin.zcash.ui.design.util.stringRes

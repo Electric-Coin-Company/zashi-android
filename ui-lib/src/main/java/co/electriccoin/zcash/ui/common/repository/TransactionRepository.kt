@@ -20,8 +20,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -37,8 +35,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import java.time.Instant
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 interface TransactionRepository {
     val transactions: Flow<List<Transaction>?>
@@ -74,23 +70,23 @@ class TransactionRepositoryImpl(
                             if (synchronizer == null) {
                                 flowOf(null)
                             } else {
-                                val normalizedTransactions = synchronizer
-                                    .getTransactions(account.accountUuid)
-                                    .map { transactions ->
-                                        transactions
-                                            .map {
-                                                if (it.isSentTransaction) {
-                                                    it.copy(
-                                                        transactionState =
-                                                            createTransactionState(minedHeight = it.minedHeight)
-                                                                ?: it.transactionState
-                                                    )
-                                                } else {
-                                                    it
+                                val normalizedTransactions =
+                                    synchronizer
+                                        .getTransactions(account.accountUuid)
+                                        .map { transactions ->
+                                            transactions
+                                                .map {
+                                                    if (it.isSentTransaction) {
+                                                        it.copy(
+                                                            transactionState =
+                                                                createTransactionState(minedHeight = it.minedHeight)
+                                                                    ?: it.transactionState
+                                                        )
+                                                    } else {
+                                                        it
+                                                    }
                                                 }
-                                            }
-                                    }
-                                    .distinctUntilChanged()
+                                        }.distinctUntilChanged()
 
                                 normalizedTransactions
                                     .mapLatest { transactions ->
@@ -102,8 +98,7 @@ class TransactionRepositoryImpl(
                                             }
                                     }
                             }
-                        }
-                        .onStart { emit(null) }
+                        }.onStart { emit(null) }
                 }
             }.stateIn(
                 scope = scope,
