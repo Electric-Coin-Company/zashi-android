@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.repository
 
+import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ObserveFiatCurrencyResult
 import co.electriccoin.zcash.ui.common.provider.IsExchangeRateEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
@@ -10,12 +11,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -52,12 +55,44 @@ class ExchangeRateRepositoryImpl(
         isExchangeRateOptedIn
             .flatMapLatest { optedIn ->
                 if (optedIn == true) {
-                    synchronizerProvider
-                        .synchronizer
-                        .filterNotNull()
-                        .flatMapLatest { synchronizer ->
-                            synchronizer.exchangeRateUsd
+                    channelFlow {
+                        val exchangeRate =
+                            synchronizerProvider
+                                .synchronizer
+                                .flatMapLatest { synchronizer ->
+                                    synchronizer?.exchangeRateUsd ?: flowOf(
+                                        ObserveFiatCurrencyResult(
+                                            isLoading = false,
+                                            currencyConversion = null
+                                        )
+                                    )
+                                }.stateIn(this)
+
+                        launch {
+                            synchronizerProvider
+                                .synchronizer
+                                .flatMapLatest { it?.status ?: flowOf(null) }
+                                .flatMapLatest {
+                                    when (it) {
+                                        null ->
+                                            flowOf(
+                                                ObserveFiatCurrencyResult(
+                                                    isLoading = false,
+                                                    currencyConversion = null
+                                                )
+                                            )
+
+                                        Synchronizer.Status.STOPPED,
+                                        Synchronizer.Status.INITIALIZING ->
+                                            emptyFlow()
+
+                                        else -> exchangeRate
+                                    }
+                                }.collect { send(it) }
                         }
+
+                        awaitClose()
+                    }
                 } else {
                     flowOf(ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null))
                 }

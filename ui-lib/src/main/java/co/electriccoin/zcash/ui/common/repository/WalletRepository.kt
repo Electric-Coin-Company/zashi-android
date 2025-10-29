@@ -16,15 +16,14 @@ import co.electriccoin.zcash.ui.common.datasource.RestoreTimestampDataSource
 import co.electriccoin.zcash.ui.common.model.FastestServersState
 import co.electriccoin.zcash.ui.common.model.OnboardingState
 import co.electriccoin.zcash.ui.common.model.WalletRestoringState
-import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
 import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProvider
+import co.electriccoin.zcash.ui.common.provider.LightWalletEndpointProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.provider.WalletBackupFlagStorageProvider
 import co.electriccoin.zcash.ui.common.provider.WalletRestoringStateProvider
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
-import co.electriccoin.zcash.ui.screen.chooseserver.AvailableServerProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -61,7 +60,7 @@ interface WalletRepository {
     fun restoreWallet(
         network: ZcashNetwork,
         seedPhrase: SeedPhrase,
-        birthday: BlockHeight?
+        birthday: BlockHeight
     )
 
     fun updateWalletEndpoint(endpoint: LightWalletEndpoint)
@@ -74,10 +73,9 @@ interface WalletRepository {
 class WalletRepositoryImpl(
     configurationRepository: ConfigurationRepository,
     private val application: Application,
-    private val getAvailableServers: GetDefaultServersProvider,
+    private val lightWalletEndpointProvider: LightWalletEndpointProvider,
     private val persistableWalletProvider: PersistableWalletProvider,
     private val synchronizerProvider: SynchronizerProvider,
-    private val getDefaultServers: GetDefaultServersProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val walletRestoringStateProvider: WalletRestoringStateProvider,
@@ -128,7 +126,7 @@ class WalletRepositoryImpl(
                 .withIndex()
                 .flatMapLatest { (_, synchronizer) ->
                     synchronizer
-                        ?.getFastestServers(getDefaultServers())
+                        ?.getFastestServers(lightWalletEndpointProvider.getEndpoints())
                         ?.map {
                             when (it) {
                                 FastestServersResult.Measuring ->
@@ -185,7 +183,7 @@ class WalletRepositoryImpl(
                 PersistableWallet.new(
                     application = application,
                     zcashNetwork = zcashNetwork,
-                    endpoint = getAvailableServers().first(),
+                    endpoint = lightWalletEndpointProvider.getDefaultEndpoint(),
                     walletInitMode = WalletInitMode.NewWallet,
                 )
             persistWalletInternal(newWallet)
@@ -211,14 +209,14 @@ class WalletRepositoryImpl(
     override fun restoreWallet(
         network: ZcashNetwork,
         seedPhrase: SeedPhrase,
-        birthday: BlockHeight?
+        birthday: BlockHeight
     ) {
         scope.launch {
             val restoredWallet =
                 PersistableWallet(
                     network = network,
                     birthday = birthday,
-                    endpoint = AvailableServerProvider.getDefaultServer(),
+                    endpoint = lightWalletEndpointProvider.getDefaultEndpoint(),
                     seedPhrase = seedPhrase,
                     walletInitMode = WalletInitMode.RestoreWallet,
                 )

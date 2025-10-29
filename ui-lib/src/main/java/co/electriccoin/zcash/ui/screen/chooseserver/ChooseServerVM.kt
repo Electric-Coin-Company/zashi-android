@@ -7,7 +7,7 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
+import co.electriccoin.zcash.ui.common.provider.LightWalletEndpointProvider
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointException
@@ -33,7 +33,7 @@ class ChooseServerVM(
     application: Application,
     observeFastestServers: ObserveFastestServersUseCase,
     getSelectedEndpoint: GetSelectedEndpointUseCase,
-    private val getAvailableServers: GetDefaultServersProvider,
+    private val lightWalletEndpointProvider: LightWalletEndpointProvider,
     private val refreshFastestServersUseCase: RefreshFastestServersUseCase,
     private val persistEndpoint: PersistEndpointUseCase,
     private val validateEndpoint: ValidateEndpointUseCase,
@@ -48,6 +48,8 @@ class ChooseServerVM(
     private val dialogState = MutableStateFlow<ServerDialogState?>(null)
 
     private val isCustomEndpointExpanded = MutableStateFlow(false)
+
+    private val availableServers by lazy(LazyThreadSafetyMode.NONE) { lightWalletEndpointProvider.getEndpoints() }
 
     private val fastest =
         combine(
@@ -81,7 +83,7 @@ class ChooseServerVM(
         ) { selectedEndpoint, fastest, userCustomEndpointText, userEndpointSelection, isCustomEndpointExpanded ->
             if (selectedEndpoint == null) return@combine null
 
-            val isSelectedEndpointCustom = !getAvailableServers().contains(selectedEndpoint)
+            val isSelectedEndpointCustom = !availableServers.contains(selectedEndpoint)
 
             val customEndpointState =
                 createCustomServerState(
@@ -95,7 +97,7 @@ class ChooseServerVM(
             ServerListState.Other(
                 title = stringRes(R.string.choose_server_other_servers),
                 servers =
-                    getAvailableServers()
+                    availableServers
                         .filter {
                             !fastest.servers.orEmpty().contains(it)
                         }.map<LightWalletEndpoint, ServerState> { endpoint ->
@@ -118,7 +120,7 @@ class ChooseServerVM(
             val userSelectedEndpoint =
                 when (userEndpointSelection) {
                     Selection.Custom -> {
-                        val isSelectedEndpointCustom = !getAvailableServers().contains(selectedEndpoint)
+                        val isSelectedEndpointCustom = !availableServers.contains(selectedEndpoint)
                         if (isSelectedEndpointCustom) selectedEndpoint else null
                     }
 
@@ -129,7 +131,7 @@ class ChooseServerVM(
             val isCustomEndpointSelectedAndUpdated =
                 when (userEndpointSelection) {
                     Selection.Custom -> {
-                        val isSelectedEndpointCustom = !getAvailableServers().contains(selectedEndpoint)
+                        val isSelectedEndpointCustom = !availableServers.contains(selectedEndpoint)
                         when {
                             isSelectedEndpointCustom && userCustomEndpointText == null -> false
                             isSelectedEndpointCustom &&
@@ -225,7 +227,7 @@ class ChooseServerVM(
         userEndpointSelection: Selection?,
         selectedEndpoint: LightWalletEndpoint?,
     ): ServerState.Default {
-        val defaultEndpoint = getAvailableServers.defaultEndpoint()
+        val defaultEndpoint = lightWalletEndpointProvider.getDefaultEndpoint()
         val isEndpointChecked =
             (userEndpointSelection is Selection.Endpoint && userEndpointSelection.endpoint == endpoint) ||
                 (userEndpointSelection == null && selectedEndpoint == endpoint)
