@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.datasource.WalletBackupData
-import co.electriccoin.zcash.ui.common.datasource.WalletBackupDataSource
 import co.electriccoin.zcash.ui.common.provider.WalletBackupConsentStorageProvider
 import co.electriccoin.zcash.ui.common.usecase.RemindWalletBackupLaterUseCase
+import co.electriccoin.zcash.ui.common.usecase.WalletBackupData
+import co.electriccoin.zcash.ui.common.usecase.WalletBackupMessageUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.CheckboxState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class WalletBackupInfoViewModel(
-    walletBackupDataSource: WalletBackupDataSource,
+    walletBackupMessageUseCase: WalletBackupMessageUseCase,
     walletBackupConsentStorageProvider: WalletBackupConsentStorageProvider,
     private val navigationRouter: NavigationRouter,
     private val remindWalletBackupLater: RemindWalletBackupLaterUseCase,
@@ -34,7 +34,7 @@ class WalletBackupInfoViewModel(
     private val isConsentChecked = MutableStateFlow(false)
 
     private val lockoutDuration =
-        walletBackupDataSource
+        walletBackupMessageUseCase
             .observe()
             .filterIsInstance<WalletBackupData.Available>()
             .take(1)
