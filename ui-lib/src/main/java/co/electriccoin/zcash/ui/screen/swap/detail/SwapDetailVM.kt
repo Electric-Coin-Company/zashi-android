@@ -195,8 +195,7 @@ class SwapDetailVM(
 
     private fun onCopyDepositAddressClick() = copyToClipboard(args.depositAddress)
 
-    private fun onCopyRecipientAddressClick(recipient: String) =
-        copyToClipboard(recipient)
+    private fun onCopyRecipientAddressClick(recipient: String) = copyToClipboard(recipient)
 
     private fun onHeaderLongClick(swapData: SwapData) {
         val address = swapData.status?.quote?.recipient ?: args.depositAddress

@@ -19,6 +19,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
+import co.electriccoin.zcash.ui.common.usecase.IsEphemeralAddressLockedUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
@@ -63,7 +64,8 @@ internal class PayVM(
     private val navigateToScanAddress: NavigateToScanGenericAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
     private val isABContactHintVisible: IsABContactHintVisibleUseCase,
-    private val canCreateABContact: CanCreateABContactUseCase
+    private val canCreateABContact: CanCreateABContactUseCase,
+    private val isEphemeralAddressLocked: IsEphemeralAddressLockedUseCase
 ) : ViewModel() {
     private val address: MutableStateFlow<String> = MutableStateFlow("")
 
@@ -137,9 +139,9 @@ internal class PayVM(
             selectedContact,
             getSelectedWalletAccount.observe(),
             isABHintVisible,
-            canCreateNewABContact
-        ) {
-            address,
+            canCreateNewABContact,
+            isEphemeralAddressLocked.observe()
+        ) { address,
             text,
             asset,
             slippage,
@@ -148,7 +150,8 @@ internal class PayVM(
             selectedContact,
             account,
             isABHintVisible,
-            canCreateNewABContact
+            canCreateNewABContact,
+            isEphemeralAddressLocked
             ->
             InternalStateImpl(
                 asset = asset,
@@ -161,7 +164,8 @@ internal class PayVM(
                 selectedABContact = selectedContact,
                 account = account,
                 isABHintVisible = isABHintVisible,
-                canCreateNewABContact = canCreateNewABContact
+                canCreateNewABContact = canCreateNewABContact,
+                isEphemeralAddressLocked = isEphemeralAddressLocked
             )
         }
 
@@ -320,6 +324,7 @@ internal interface InternalState {
     val isRequestingQuote: Boolean
     val account: WalletAccount?
     val swapAssets: SwapAssetsData
+    val isEphemeralAddressLocked: Boolean
 
     val totalSpendableBalance: Zatoshi
         get() = account?.spendableShieldedBalance ?: Zatoshi(0)
@@ -337,4 +342,5 @@ internal data class InternalStateImpl(
     override val isRequestingQuote: Boolean,
     override val account: WalletAccount?,
     override val swapAssets: SwapAssetsData,
+    override val isEphemeralAddressLocked: Boolean
 ) : InternalState

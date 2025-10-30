@@ -26,9 +26,9 @@ internal data class SwapState(
     val address: TextFieldState,
     val addressPlaceholder: StringResource,
     val qrScannerButton: IconButtonState,
+    val infoFooter: StringResource?,
     val errorFooter: SwapErrorFooterState?,
     val primaryButton: ButtonState?,
-    val footer: StringResource?,
     val onBack: () -> Unit,
     val changeModeButton: IconButtonState,
 ) {

@@ -6,9 +6,9 @@ import co.electriccoin.zcash.ui.common.usecase.CanCreateABContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
-import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateFlexaTransactionUseCase
+import co.electriccoin.zcash.ui.common.usecase.CreateIncreaseEphemeralGapLimitProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateKeystoneProposalPCZTEncoderUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateOrUpdateTransactionNoteUseCase
@@ -50,9 +50,11 @@ import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletRestoringStateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetZashiAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
+import co.electriccoin.zcash.ui.common.usecase.IsEphemeralAddressLockedUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsScreenTimeoutDisabledDuringRestoreUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsTorEnabledUseCase
+import co.electriccoin.zcash.ui.common.usecase.ProcessSwapTransactionUseCase
 import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
@@ -112,6 +114,9 @@ import co.electriccoin.zcash.ui.common.usecase.SharePCZTUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareQRUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsFromMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShieldFundsUseCase
+import co.electriccoin.zcash.ui.common.usecase.SubmitIncreaseEphemeralGapLimitUseCase
+import co.electriccoin.zcash.ui.common.usecase.SubmitKSProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.SubmitProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateABContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.UpdateSwapActivityMetadataUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateAddressUseCase
@@ -174,6 +179,7 @@ val useCaseModule =
         factoryOf(::OnZip321ScannedUseCase)
         factoryOf(::OnAddressScannedUseCase)
         factoryOf(::ParseKeystonePCZTUseCase)
+        singleOf(::SubmitKSProposalUseCase)
         factoryOf(::ParseKeystoneSignInRequestUseCase)
         factoryOf(::CancelProposalFlowUseCase)
         factoryOf(::ObserveProposalUseCase)
@@ -184,7 +190,8 @@ val useCaseModule =
         factoryOf(::NavigateToCoinbaseUseCase)
         factoryOf(::ObserveTransactionSubmitStateUseCase)
         factoryOf(::GetProposalUseCase)
-        factoryOf(::ConfirmProposalUseCase)
+        singleOf(::SubmitProposalUseCase)
+        singleOf(::ProcessSwapTransactionUseCase)
         factoryOf(::GetWalletRestoringStateUseCase)
         factoryOf(::ApplyTransactionFiltersUseCase)
         factoryOf(::ResetTransactionFiltersUseCase)
@@ -258,4 +265,7 @@ val useCaseModule =
         factoryOf(::WalletBackupMessageUseCaseImpl) bind WalletBackupMessageUseCase::class
         factoryOf(::ValidateAddressUseCase)
         factoryOf(::RecoverFundsHotfixUseCase)
+        factoryOf(::IsEphemeralAddressLockedUseCase)
+        singleOf(::SubmitIncreaseEphemeralGapLimitUseCase)
+        factoryOf(::CreateIncreaseEphemeralGapLimitProposalUseCase)
     }

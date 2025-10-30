@@ -6,6 +6,8 @@ import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
 import co.electriccoin.zcash.ui.common.provider.BlockchainProviderImpl
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProviderImpl
+import co.electriccoin.zcash.ui.common.provider.EphemeralAddressStorageProvider
+import co.electriccoin.zcash.ui.common.provider.EphemeralAddressStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
@@ -86,4 +88,5 @@ val providerModule =
         factoryOf(::SimpleSwapAssetProviderImpl) bind SimpleSwapAssetProvider::class
         factoryOf(::SwapAssetProviderImpl) bind SwapAssetProvider::class
         factoryOf(::IsKeepScreenOnDuringRestoreProviderImpl) bind IsKeepScreenOnDuringRestoreProvider::class
+        singleOf(::EphemeralAddressStorageProviderImpl) bind EphemeralAddressStorageProvider::class
     }

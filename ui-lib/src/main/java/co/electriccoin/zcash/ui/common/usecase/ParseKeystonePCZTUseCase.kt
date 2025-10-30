@@ -1,10 +1,7 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
-import co.electriccoin.zcash.ui.common.repository.SwapRepository
-import co.electriccoin.zcash.ui.screen.transactionprogress.TransactionProgressArgs
 import com.keystone.module.DecodeResult
 import com.keystone.sdk.KeystoneSDK
 import com.sparrowwallet.hummingbird.UR
@@ -14,15 +11,13 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 class ParseKeystonePCZTUseCase(
-    private val keystoneProposalRepository: KeystoneProposalRepository,
-    private val navigationRouter: NavigationRouter,
-    private val swapRepository: SwapRepository
+    private val submitKSProposal: SubmitKSProposalUseCase,
+    private val keystoneProposalRepository: KeystoneProposalRepository
 ) : BaseKeystoneScanner() {
+
     override suspend fun onSuccess(ur: UR) {
         keystoneProposalRepository.parsePCZT(ur)
-        keystoneProposalRepository.extractPCZT()
-        swapRepository.clear()
-        navigationRouter.replace(TransactionProgressArgs)
+        submitKSProposal()
     }
 }
 
@@ -92,7 +87,4 @@ abstract class BaseKeystoneScanner {
 
 class InvalidKeystonePCZTQRException : Exception()
 
-data class ParseKeystoneQrResult(
-    val progress: Int,
-    val isFinished: Boolean,
-)
+data class ParseKeystoneQrResult(val progress: Int, val isFinished: Boolean)

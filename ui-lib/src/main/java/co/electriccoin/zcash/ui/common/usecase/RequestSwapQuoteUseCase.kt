@@ -13,6 +13,7 @@ import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
+import co.electriccoin.zcash.ui.common.repository.EphemeralAddressRepository
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
@@ -22,16 +23,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import java.lang.IllegalStateException
 import java.math.BigDecimal
 
 class RequestSwapQuoteUseCase(
+    private val navigationRouter: NavigationRouter,
+    private val navigateToErrorUseCase: NavigateToErrorUseCase,
     private val swapRepository: SwapRepository,
     private val zashiProposalRepository: ZashiProposalRepository,
     private val keystoneProposalRepository: KeystoneProposalRepository,
+    private val ephemeralAddressRepository: EphemeralAddressRepository,
     private val accountDataSource: AccountDataSource,
     private val synchronizerProvider: SynchronizerProvider,
-    private val navigationRouter: NavigationRouter,
-    private val navigateToErrorUseCase: NavigateToErrorUseCase,
 ) {
     suspend fun requestExactInput(
         amount: BigDecimal,
@@ -39,7 +42,13 @@ class RequestSwapQuoteUseCase(
         canNavigateToSwapQuote: () -> Boolean
     ) {
         requestQuote(
-            requestQuote = { swapRepository.requestExactInputQuote(amount, address) },
+            requestQuote = {
+                swapRepository.requestExactInputQuote(
+                    amount = amount,
+                    address = address,
+                    refundAddress = getEphemeralAddress()
+                )
+            },
             createProposal = true,
             canNavigateToSwapQuote = canNavigateToSwapQuote
         )
@@ -51,7 +60,13 @@ class RequestSwapQuoteUseCase(
         canNavigateToSwapQuote: () -> Boolean
     ) {
         requestQuote(
-            requestQuote = { swapRepository.requestExactOutputQuote(amount, address) },
+            requestQuote = {
+                swapRepository.requestExactOutputQuote(
+                    amount = amount,
+                    address = address,
+                    refundAddress = getEphemeralAddress()
+                )
+            },
             createProposal = true,
             canNavigateToSwapQuote = canNavigateToSwapQuote
         )
@@ -63,10 +78,29 @@ class RequestSwapQuoteUseCase(
         canNavigateToSwapQuote: () -> Boolean
     ) {
         requestQuote(
-            requestQuote = { swapRepository.requestExactInputIntoZec(amount, refundAddress) },
+            requestQuote = {
+                swapRepository
+                    .requestExactInputIntoZec(
+                        amount = amount,
+                        refundAddress = refundAddress,
+                        destinationAddress = getEphemeralAddress()
+                    )
+            },
             createProposal = false,
             canNavigateToSwapQuote = canNavigateToSwapQuote
         )
+    }
+
+    private suspend fun getEphemeralAddress(): String {
+        val ephemeral = ephemeralAddressRepository.get()
+            ?: throw IllegalStateException("Ephemeral address is null")
+
+        return if (ephemeral.gapLimit - ephemeral.gapPosition > 1u) {
+            ephemeral.address
+        } else {
+            ephemeralAddressRepository.invalidate()
+            ephemeralAddressRepository.create().address
+        }
     }
 
     @Suppress("TooGenericExceptionCaught")
@@ -112,22 +146,16 @@ class RequestSwapQuoteUseCase(
             when (accountDataSource.getSelectedAccount()) {
                 is KeystoneAccount -> {
                     when (quote.mode) {
-                        EXACT_INPUT ->
-                            keystoneProposalRepository.createExactInputSwapProposal(send, quote)
-
-                        EXACT_OUTPUT ->
-                            keystoneProposalRepository.createExactOutputSwapProposal(send, quote)
+                        EXACT_INPUT -> keystoneProposalRepository.createExactInputSwapProposal(send, quote)
+                        EXACT_OUTPUT -> keystoneProposalRepository.createExactOutputSwapProposal(send, quote)
                     }
                     keystoneProposalRepository.createPCZTFromProposal()
                 }
 
                 is ZashiAccount ->
                     when (quote.mode) {
-                        EXACT_INPUT ->
-                            zashiProposalRepository.createExactInputSwapProposal(send, quote)
-
-                        EXACT_OUTPUT ->
-                            zashiProposalRepository.createExactOutputSwapProposal(send, quote)
+                        EXACT_INPUT -> zashiProposalRepository.createExactInputSwapProposal(send, quote)
+                        EXACT_OUTPUT -> zashiProposalRepository.createExactOutputSwapProposal(send, quote)
                     }
             }
         } catch (e: Exception) {

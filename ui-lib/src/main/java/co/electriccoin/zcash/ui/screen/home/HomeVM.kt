@@ -43,6 +43,7 @@ import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
 import co.electriccoin.zcash.ui.screen.send.Send
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -113,6 +114,10 @@ class HomeVM(
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = null
         )
+
+    private var onPayButtonClickJob: Job? = null
+
+    private var onSwapButtonClick: Job? = null
 
     private fun createState(
         messageState: HomeMessageState?,
@@ -233,13 +238,19 @@ class HomeVM(
 
     private fun onMoreButtonClick() = navigationRouter.forward(IntegrationsArgs)
 
-    private fun onSwapButtonClick() = navigateToSwap()
+    private fun onSwapButtonClick() {
+        if (onSwapButtonClick?.isActive == true) return
+        onSwapButtonClick = viewModelScope.launch { navigateToSwap() }
+    }
 
     private fun onSendButtonClick() = navigationRouter.forward(Send())
 
     private fun onReceiveButtonClick() = viewModelScope.launch { navigateToReceive() }
 
-    private fun onPayButtonClick() = navigateToNearPay()
+    private fun onPayButtonClick() {
+        if (onPayButtonClickJob?.isActive == true) return
+        onPayButtonClickJob = viewModelScope.launch { navigateToNearPay() }
+    }
 
     private fun onWalletUpdatingMessageClick() = navigationRouter.forward(WalletUpdatingInfo)
 

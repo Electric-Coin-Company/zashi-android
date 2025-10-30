@@ -8,14 +8,11 @@ import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ExactOutputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
-import co.electriccoin.zcash.ui.common.datasource.SwapDataSource
-import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.SwapQuote
-import co.electriccoin.zcash.ui.common.model.SwapStatus
 import com.keystone.sdk.KeystoneSDK
 import com.keystone.sdk.KeystoneZcashSDK
 import com.sparrowwallet.hummingbird.UR
@@ -24,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filter
@@ -63,7 +61,7 @@ interface KeystoneProposalRepository {
     @Throws(ParsePCZTException::class)
     suspend fun parsePCZT(ur: UR)
 
-    fun extractPCZT()
+    suspend fun submit(): SubmitResult
 
     fun clear()
 
@@ -77,17 +75,13 @@ class ParsePCZTException : Exception()
 sealed interface SubmitProposalState {
     data object Submitting : SubmitProposalState
 
-    data class Result(
-        val submitResult: SubmitResult
-    ) : SubmitProposalState
+    data class Result(val submitResult: SubmitResult) : SubmitProposalState
 }
 
 @Suppress("TooManyFunctions")
 class KeystoneProposalRepositoryImpl(
     private val accountDataSource: AccountDataSource,
     private val proposalDataSource: ProposalDataSource,
-    private val swapDataSource: SwapDataSource,
-    private val metadataRepository: MetadataRepository
 ) : KeystoneProposalRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -103,7 +97,6 @@ class KeystoneProposalRepositoryImpl(
     private val keystoneZcashSDK: KeystoneZcashSDK
         get() = keystoneSDK.zcash
     private var pcztWithProofsJob: Job? = null
-    private var extractPCZTJob: Job? = null
 
     override suspend fun createProposal(zecSend: ZecSend) {
         createProposalInternal {
@@ -196,10 +189,9 @@ class KeystoneProposalRepositoryImpl(
         }
 
     @Suppress("UseCheckOrError", "ThrowingExceptionsWithoutMessageOrCause")
-    override fun extractPCZT() {
-        extractPCZTJob?.cancel()
-        extractPCZTJob =
-            scope.launch {
+    override suspend fun submit(): SubmitResult {
+        return scope
+            .async {
                 val transactionProposal = transactionProposal.value
                 val pcztWithSignatures = pcztWithSignatures
 
@@ -213,6 +205,7 @@ class KeystoneProposalRepositoryImpl(
                             )
                         )
                     }
+                    throw IllegalStateException("Transaction proposal is null")
                 } else {
                     submitState.update { SubmitProposalState.Submitting }
                     val pcztWithProofs = pcztWithProofs.filter { !it.isLoading }.first().pczt
@@ -226,51 +219,25 @@ class KeystoneProposalRepositoryImpl(
                                 )
                             )
                         }
+                        throw IllegalStateException("PCZT with proofs is null")
                     } else {
                         val result =
                             proposalDataSource.submitTransaction(
                                 pcztWithProofs = pcztWithProofs,
                                 pcztWithSignatures = pcztWithSignatures
                             )
-                        runSwapPipeline(transactionProposal, result)
                         submitState.update { SubmitProposalState.Result(result) }
+                        result
                     }
                 }
-            }
+            }.await()
     }
-
-    private fun runSwapPipeline(transactionProposal: TransactionProposal, result: SubmitResult) =
-        scope.launch {
-            if (transactionProposal is SwapTransactionProposal) {
-                val txIds: List<String> =
-                    when (result) {
-                        is SubmitResult.GrpcFailure -> result.txIds
-                        is SubmitResult.Failure -> emptyList()
-                        is SubmitResult.Partial -> result.txIds
-                        is SubmitResult.Success -> result.txIds
-                    }.filter { it.isNotEmpty() }
-                metadataRepository.markTxAsSwap(
-                    depositAddress = transactionProposal.destination.address,
-                    provider = transactionProposal.quote.provider,
-                    totalFees = transactionProposal.totalFees,
-                    totalFeesUsd = transactionProposal.totalFeesUsd,
-                    amountOutFormatted = transactionProposal.quote.amountOutFormatted,
-                    mode = transactionProposal.quote.mode,
-                    status = SwapStatus.PENDING,
-                    origin = transactionProposal.quote.originAsset,
-                    destination = transactionProposal.quote.destinationAsset
-                )
-                txIds.forEach { submitDepositTransaction(it, transactionProposal) }
-            }
-        }
 
     override suspend fun getTransactionProposal(): TransactionProposal = transactionProposal.filterNotNull().first()
 
     override fun getProposalPCZT(): Pczt? = proposalPczt
 
     override fun clear() {
-        extractPCZTJob?.cancel()
-        extractPCZTJob = null
         pcztWithProofsJob?.cancel()
         pcztWithProofsJob = null
         pcztWithProofs.update { PcztState(isLoading = false, pczt = null) }
@@ -293,21 +260,6 @@ class KeystoneProposalRepositoryImpl(
         transactionProposal.update { proposal }
         return proposal
     }
-
-    @Suppress("TooGenericExceptionCaught")
-    private suspend fun submitDepositTransaction(txId: String, transactionProposal: SwapTransactionProposal) {
-        try {
-            swapDataSource.submitDepositTransaction(
-                txHash = txId,
-                depositAddress = transactionProposal.destination.address
-            )
-        } catch (e: Exception) {
-            Twig.error(e) { "Unable to submit deposit transaction" }
-        }
-    }
 }
 
-private data class PcztState(
-    val isLoading: Boolean,
-    val pczt: Pczt?
-)
+private data class PcztState(val isLoading: Boolean, val pczt: Pczt?)

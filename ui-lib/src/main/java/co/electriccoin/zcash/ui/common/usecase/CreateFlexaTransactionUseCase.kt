@@ -13,15 +13,12 @@ import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
 import co.electriccoin.zcash.ui.common.repository.BiometricsCancelledException
 import co.electriccoin.zcash.ui.common.repository.BiometricsFailureException
-import co.electriccoin.zcash.ui.common.repository.SubmitProposalState
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import com.flexa.core.Flexa
 import com.flexa.core.shared.Transaction
 import com.flexa.spend.buildSpend
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.first
 
 class CreateFlexaTransactionUseCase(
     private val synchronizerProvider: SynchronizerProvider,
@@ -35,14 +32,8 @@ class CreateFlexaTransactionUseCase(
                 BiometricRequest(message = stringRes(R.string.integrations_flexa_biometric_message))
             )
             zashiProposalRepository.createProposal(getZecSend(transaction.getOrNull()))
-            zashiProposalRepository.submitTransaction()
-            when (
-                val result =
-                    zashiProposalRepository.submitState
-                        .filterIsInstance<SubmitProposalState.Result>()
-                        .first()
-                        .submitResult
-            ) {
+
+            when (val result = zashiProposalRepository.submit()) {
                 is SubmitResult.Success -> {
                     Flexa
                         .buildSpend()

@@ -36,4 +36,4 @@ fun PayScreen() {
 }
 
 @Serializable
-object PayArgs
+data object PayArgs

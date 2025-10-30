@@ -28,6 +28,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import co.electriccoin.zcash.ui.screen.flexa.Flexa
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
@@ -70,6 +71,8 @@ class IntegrationsVM(
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue = null
         )
+
+    private var onNearSwapClickJob: Job? = null
 
     private fun createState(
         isRestoring: Boolean,
@@ -146,7 +149,10 @@ class IntegrationsVM(
             ).toImmutableList(),
     )
 
-    private fun onNearSwapClick() = viewModelScope.launch { navigateToSwap() }
+    private fun onNearSwapClick() {
+        if (onNearSwapClickJob?.isActive == true) return
+        onNearSwapClickJob = viewModelScope.launch { navigateToSwap() }
+    }
 
     private fun onBack() = navigationRouter.back()
 

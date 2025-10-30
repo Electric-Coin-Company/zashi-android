@@ -17,6 +17,7 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
+import co.electriccoin.zcash.ui.common.usecase.IsEphemeralAddressLockedUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
@@ -60,6 +61,7 @@ internal class SwapVM(
     private val exactInputVMMapper: ExactInputVMMapper,
     private val navigateToScanAddress: NavigateToScanGenericAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
+    private val isEphemeralAddressLocked: IsEphemeralAddressLockedUseCase
 ) : ViewModel() {
     private val mode = MutableStateFlow(SWAP_INTO_ZEC)
 
@@ -115,9 +117,9 @@ internal class SwapVM(
             isRequestingQuote,
             selectedContact,
             getSelectedWalletAccount.observe(),
-            mode
-        ) {
-            address,
+            mode,
+            isEphemeralAddressLocked.observe()
+        ) { address,
             amount,
             asset,
             slippage,
@@ -126,7 +128,8 @@ internal class SwapVM(
             isRequestingQuote,
             selectedContact,
             account,
-            mode
+            mode,
+            isEphemeralAddressLocked
             ->
             InternalStateImpl(
                 swapAsset = asset,
@@ -138,7 +141,8 @@ internal class SwapVM(
                 isRequestingQuote = isRequestingQuote,
                 selectedContact = selectedContact,
                 account = account,
-                mode = mode
+                mode = mode,
+                isEphemeralAddressLocked = isEphemeralAddressLocked
             )
         }
 
@@ -289,6 +293,7 @@ internal class SwapVM(
                         address = address,
                         canNavigateToSwapQuote = { !isCancelStateVisible.value }
                     )
+
                 SWAP_INTO_ZEC ->
                     requestSwapQuote.requestExactInputIntoZec(
                         amount = amount,
@@ -327,6 +332,7 @@ internal interface InternalState {
     val isRequestingQuote: Boolean
     val selectedContact: EnhancedABContact?
     val mode: Mode
+    val isEphemeralAddressLocked: Boolean
 
     val totalSpendableBalance: Zatoshi
         get() = account?.spendableShieldedBalance ?: Zatoshi(0)
@@ -343,4 +349,5 @@ internal data class InternalStateImpl(
     override val isRequestingQuote: Boolean,
     override val selectedContact: EnhancedABContact?,
     override val mode: Mode,
+    override val isEphemeralAddressLocked: Boolean,
 ) : InternalState

@@ -25,6 +25,7 @@ internal data class PayState(
     val amountError: StringResource? = null,
     val zecAmount: StyledStringResource,
     val slippage: ButtonState,
+    val infoFooter: StringResource?,
     val errorFooter: SwapErrorFooterState?,
     val primaryButton: ButtonState?,
     val isABHintVisible: Boolean,

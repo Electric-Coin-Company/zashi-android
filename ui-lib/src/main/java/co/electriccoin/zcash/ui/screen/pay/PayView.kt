@@ -58,6 +58,7 @@ import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiChipButton
 import co.electriccoin.zcash.ui.design.component.ZashiIconButton
 import co.electriccoin.zcash.ui.design.component.ZashiImageButton
+import co.electriccoin.zcash.ui.design.component.ZashiInfoText
 import co.electriccoin.zcash.ui.design.component.ZashiNumberTextField
 import co.electriccoin.zcash.ui.design.component.ZashiNumberTextFieldDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
@@ -146,6 +147,10 @@ internal fun PayView(
             Spacer(12.dp)
             if (state.errorFooter != null) {
                 SwapErrorFooter(state.errorFooter)
+                Spacer(32.dp)
+            } else if (state.infoFooter != null) {
+                ZashiInfoText(text = state.infoFooter.getValue())
+                Spacer(24.dp)
             }
             if (state.primaryButton != null) {
                 ZashiButton(
@@ -431,7 +436,8 @@ private fun Preview() {
                             stringRes("Primary"),
                         ),
                     isABHintVisible = true,
-                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
+                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address),
+                    infoFooter = stringRes("Info footer")
                 )
         )
     }
@@ -488,7 +494,8 @@ private fun ErrorPreview() {
                         ),
                     primaryButton = null,
                     isABHintVisible = true,
-                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
+                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address),
+                    infoFooter = stringRes("Info footer")
                 )
         )
     }

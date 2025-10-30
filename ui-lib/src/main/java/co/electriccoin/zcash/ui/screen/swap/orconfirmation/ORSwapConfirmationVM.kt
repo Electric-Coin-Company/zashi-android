@@ -25,6 +25,7 @@ import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -103,19 +104,21 @@ class ORSwapConfirmationVM(
                 initialValue = null
             )
 
-    private fun onAmountClick(amountInFormatted: BigDecimal) =
-        copyToClipboard(
-            value = amountInFormatted.toPlainString()
-        )
+    private var onSentFundsClickJob: Job? = null
 
-    private fun onCopyAddressClick(depositAddress: String) =
-        copyToClipboard(
-            value = depositAddress
-        )
+    private fun onAmountClick(amountInFormatted: BigDecimal) = copyToClipboard(amountInFormatted.toPlainString())
 
-    private fun onBack() = cancelSwapQuote()
+    private fun onCopyAddressClick(depositAddress: String) = copyToClipboard(depositAddress)
 
-    private fun onSentFundsClick() = saveORSwap()
+    private fun onBack() {
+        if (onSentFundsClickJob?.isActive == true) return
+        cancelSwapQuote()
+    }
+
+    private fun onSentFundsClick() {
+        if (onSentFundsClickJob?.isActive == true) return
+        onSentFundsClickJob = viewModelScope.launch { saveORSwap() }
+    }
 
     private fun onInfoClick() = navigationRouter.forward(SwapInfoArgs)
 
