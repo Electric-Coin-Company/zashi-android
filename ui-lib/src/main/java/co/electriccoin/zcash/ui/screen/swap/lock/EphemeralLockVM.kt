@@ -38,7 +38,7 @@ internal class EphemeralLockVM(
                     ),
                     SwapQuoteInfoItem(
                         description = stringRes(R.string.send_amount_label),
-                        title = stringRes(it.amount - it.proposal.totalFeeRequired()),
+                        title = stringRes(it.amount),
                     ),
                     SwapQuoteInfoItem(
                         description = stringRes(R.string.send_confirmation_fee),
@@ -47,7 +47,7 @@ internal class EphemeralLockVM(
                 ),
                 amount = SwapQuoteInfoItem(
                     description = stringRes(R.string.send_confirmation_amount),
-                    title = stringRes(it.amount),
+                    title = stringRes(it.amount + it.proposal.totalFeeRequired()),
                 ),
                 secondaryButton = ButtonState(
                     text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_cancel),
@@ -71,7 +71,7 @@ internal class EphemeralLockVM(
     private fun onBack() {
         zashiProposalRepository.clear()
         keystoneProposalRepository.clear()
-        navigationRouter.back()
+        navigationRouter.backToRoot()
     }
 
     private fun onSubmitClick() {

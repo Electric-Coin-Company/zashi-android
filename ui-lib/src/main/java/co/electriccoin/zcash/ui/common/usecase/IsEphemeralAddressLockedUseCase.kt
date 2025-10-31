@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.usecase
 
+import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.repository.EphemeralAddressRepository
 import co.electriccoin.zcash.ui.common.repository.SendTransaction
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
@@ -25,7 +26,11 @@ class IsEphemeralAddressLockedUseCase(
         } else {
             val unlockTransaction = transactions
                 .filterIsInstance<SendTransaction>()
-                .find { it.recipient?.address == ephemeral.address }
+                .find {
+                    val fee = it.fee ?: Zatoshi(0)
+                    val amount = it.amount - fee
+                    it.recipient?.address == ephemeral.address && amount <= Zatoshi(100)
+                }
 
             when (unlockTransaction) {
                 is SendTransaction.Failed -> EphemeralLockState.LOCKED
@@ -50,7 +55,11 @@ class IsEphemeralAddressLockedUseCase(
                     .map { transactions ->
                         transactions
                             .filterIsInstance<SendTransaction.Success>()
-                            .none { it.recipient?.address == ephemeral.address }
+                            .none {
+                                val fee = it.fee ?: Zatoshi(0)
+                                val amount = it.amount - fee
+                                it.recipient?.address == ephemeral.address && amount <= Zatoshi(100)
+                            }
                     }
             }
         }

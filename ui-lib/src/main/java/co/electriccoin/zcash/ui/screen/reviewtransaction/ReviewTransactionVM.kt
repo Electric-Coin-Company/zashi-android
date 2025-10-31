@@ -125,7 +125,7 @@ class ReviewTransactionVM(
             listOfNotNull(
                 AmountState(
                     title = stringRes(R.string.send_confirmation_amount),
-                    amount = transactionProposal.amount,
+                    amount = transactionProposal.amount + transactionProposal.proposal.totalFeeRequired(),
                     exchangeRate = exchangeRateState,
                 ),
                 ReceiverState(
