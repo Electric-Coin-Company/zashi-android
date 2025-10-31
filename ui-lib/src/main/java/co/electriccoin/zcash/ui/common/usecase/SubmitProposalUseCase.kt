@@ -9,6 +9,7 @@ import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.model.ZecSwapAsset
 import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
 import co.electriccoin.zcash.ui.common.repository.BiometricsCancelledException
@@ -58,10 +59,7 @@ class SubmitProposalUseCase(
                 is ZashiAccount -> zashiProposalRepository.getTransactionProposal()
             }
             if (proposal is SwapTransactionProposal) {
-                val selectedSwapAsset = when (proposal) {
-                    is ExactInputSwapTransactionProposal -> proposal.quote.destinationAsset
-                    is ExactOutputSwapTransactionProposal -> proposal.quote.originAsset
-                }
+                val selectedSwapAsset = proposal.quote.destinationAsset
                 metadataRepository.addSwapAssetToHistory(
                     tokenTicker = selectedSwapAsset.tokenTicker,
                     chainTicker = selectedSwapAsset.chainTicker

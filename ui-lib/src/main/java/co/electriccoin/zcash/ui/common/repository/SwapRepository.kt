@@ -10,6 +10,7 @@ import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.SwapQuoteStatus
 import co.electriccoin.zcash.ui.common.model.SwapStatus
+import co.electriccoin.zcash.ui.common.model.ZecSimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.ZecSwapAsset
 import co.electriccoin.zcash.ui.common.provider.SimpleSwapAssetProvider
 import io.ktor.client.plugins.ResponseException
@@ -173,8 +174,9 @@ class SwapRepositoryImpl(
                         .observeLastUsedAssetHistory()
                         .filterNotNull()
                         .first()
-                        .firstOrNull() ?: simpleSwapAssetProvider
-                        .get(tokenTicker = "usdc", chainTicker = "near")
+                        .firstOrNull()
+                        ?.takeIf { it !is ZecSimpleSwapAsset }
+                        ?: simpleSwapAssetProvider.get(tokenTicker = "usdc", chainTicker = "near")
                 val foundAssetToSelect =
                     filtered
                         .find {
