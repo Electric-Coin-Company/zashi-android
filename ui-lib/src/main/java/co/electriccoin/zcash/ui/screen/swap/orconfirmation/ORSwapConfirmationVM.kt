@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.swap.orconfirmation
 
 import android.content.Context
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -95,6 +96,7 @@ class ORSwapConfirmationVM(
                     primaryButton =
                         ButtonState(
                             text = stringRes(R.string.swap_confirmation_primary_button),
+                            hapticFeedbackType = HapticFeedbackType.Confirm,
                             onClick = ::onSentFundsClick
                         ),
                 )

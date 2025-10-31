@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.transactionnote.viewmodel
 
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
@@ -72,18 +73,21 @@ internal class TransactionNoteViewModel(
                 ButtonState(
                     text = stringRes(R.string.transaction_note_add_note),
                     onClick = ::onAddOrUpdateNoteClick,
-                    isEnabled = !isNoteTextTooLong && noteTextNormalized.isNotEmpty()
+                    isEnabled = !isNoteTextTooLong && noteTextNormalized.isNotEmpty(),
+                    hapticFeedbackType = HapticFeedbackType.Confirm
                 ).takeIf { foundNote == null },
             secondaryButton =
                 ButtonState(
                     text = stringRes(R.string.transaction_note_save_note),
                     onClick = ::onAddOrUpdateNoteClick,
-                    isEnabled = !isNoteTextTooLong && noteTextNormalized.isNotEmpty()
+                    isEnabled = !isNoteTextTooLong && noteTextNormalized.isNotEmpty(),
+                    hapticFeedbackType = HapticFeedbackType.Confirm
                 ).takeIf { foundNote != null },
             negative =
                 ButtonState(
                     text = stringRes(R.string.transaction_note_delete_note),
                     onClick = ::onDeleteNoteClick,
+                    hapticFeedbackType = HapticFeedbackType.Confirm
                 ).takeIf { foundNote != null },
         )
     }

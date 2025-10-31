@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.transactiondetail
 
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.TransactionPool
@@ -101,7 +102,12 @@ class TransactionDetailVM(
                                 } else {
                                     R.drawable.ic_transaction_detail_no_bookmark
                                 },
-                            onClick = ::onBookmarkClick
+                            onClick = ::onBookmarkClick,
+                            hapticFeedbackType = if (transaction.metadata.isBookmarked) {
+                                HapticFeedbackType.ToggleOff
+                            } else {
+                                HapticFeedbackType.ToggleOn
+                            }
                         ),
                     errorFooter = createErrorFooter(transaction)
                 )

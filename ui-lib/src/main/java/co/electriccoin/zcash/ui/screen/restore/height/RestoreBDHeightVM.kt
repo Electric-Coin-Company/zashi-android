@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.restore.height
 
 import android.content.Context
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.BlockHeight
@@ -62,7 +63,8 @@ class RestoreBDHeightVM(
                 ButtonState(
                     stringRes(R.string.restore_bd_restore_btn),
                     onClick = ::onRestoreClick,
-                    isEnabled = isValid
+                    isEnabled = isValid,
+                    hapticFeedbackType = HapticFeedbackType.Confirm
                 ),
             estimate = ButtonState(stringRes(R.string.restore_bd_height_btn), onClick = ::onEstimateClick),
             blockHeight = NumberTextFieldState(innerState = blockHeight, onValueChange = ::onValueChanged)

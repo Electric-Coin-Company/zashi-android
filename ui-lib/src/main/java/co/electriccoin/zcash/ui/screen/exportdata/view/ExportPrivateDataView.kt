@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -113,7 +114,8 @@ private fun ExportPrivateDataContent(
             onClick = onConfirm,
             text = stringResource(R.string.export_data_confirm),
             enabled = checkedState.value,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            hapticFeedbackType = HapticFeedbackType.Confirm
         )
     }
 }

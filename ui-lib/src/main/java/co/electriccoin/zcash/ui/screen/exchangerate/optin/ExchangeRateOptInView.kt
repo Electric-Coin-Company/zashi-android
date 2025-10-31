@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -64,7 +65,8 @@ fun ExchangeRateOptInView(state: ExchangeRateOptInState) {
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(R.string.exchange_rate_opt_in_enable),
                 onClick = state.onEnableClick,
-                colors = ZashiButtonDefaults.primaryColors()
+                colors = ZashiButtonDefaults.primaryColors(),
+                hapticFeedbackType = HapticFeedbackType.Confirm
             )
         }
     )

@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.restore.estimation
 
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.SeedPhrase
@@ -38,7 +39,11 @@ class RestoreBDEstimationViewModel(
                     icon = R.drawable.ic_copy,
                     onClick = ::onCopyClick
                 ),
-            restore = ButtonState(stringRes(R.string.restore_bd_estimation_restore), onClick = ::onRestoreClick),
+            restore = ButtonState(
+                text = stringRes(R.string.restore_bd_estimation_restore),
+                onClick = ::onRestoreClick,
+                hapticFeedbackType = HapticFeedbackType.Confirm
+            ),
         )
 
     private fun onCopyClick() {

@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.swap
 
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import cash.z.ecc.android.sdk.ext.Conversions
 import cash.z.ecc.android.sdk.ext.Conversions.ZEC_FORMATTER
 import cash.z.ecc.android.sdk.model.FiatCurrency

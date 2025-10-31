@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -170,7 +171,8 @@ private fun OnboardingMainContent(
         ZashiButton(
             onClick = onCreateWallet,
             text = stringResource(R.string.onboarding_create_new_wallet),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            hapticFeedbackType = HapticFeedbackType.Confirm
         )
     }
 }

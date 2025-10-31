@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.chooseserver
 
 import android.app.Application
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
@@ -152,7 +153,8 @@ class ChooseServerVM(
                     (userEndpointSelection != null && selectedEndpoint != userSelectedEndpoint) ||
                         isCustomEndpointSelectedAndUpdated,
                 isLoading = isSaveInProgress,
-                onClick = ::onSaveButtonClicked
+                onClick = ::onSaveButtonClicked,
+                hapticFeedbackType = HapticFeedbackType.Confirm
             )
         }
 

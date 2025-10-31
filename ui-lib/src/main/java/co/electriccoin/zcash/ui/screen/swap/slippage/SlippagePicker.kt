@@ -31,8 +31,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
@@ -66,10 +68,16 @@ fun SlippagePicker(
     state: SlippagePickerState,
     modifier: Modifier = Modifier
 ) {
+    val haptic = LocalHapticFeedback.current
     val focusManager = LocalFocusManager.current
     var textFieldInnerState by remember { mutableStateOf(createTextFieldInnerState(state.amount)) }
     val textFieldInteractionSource = remember { MutableInteractionSource() }
     val isTextFieldFocused by textFieldInteractionSource.collectIsFocusedAsState()
+    LaunchedEffect(isTextFieldFocused) {
+        if (isTextFieldFocused) {
+            haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+        }
+    }
     val selection by remember(state.amount, isTextFieldFocused) {
         mutableStateOf(
             if (isTextFieldFocused) {
@@ -125,6 +133,7 @@ fun SlippagePicker(
                 text = (stringResByNumber(BigDecimal("0.5"), minDecimals = 0) + stringRes("%")).getValue(),
                 isSelected = selection is Selection.ByButton1 && !isTextFieldFocused,
                 onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                     focusManager.clearFocus(true)
                     textFieldInnerState = createTextFieldInnerState(null)
                     state.onAmountChange(BigDecimal("0.5"))
@@ -134,6 +143,7 @@ fun SlippagePicker(
                 text = (stringResByNumber(1, minDecimals = 0) + stringRes("%")).getValue(),
                 isSelected = selection is Selection.ByButton2 && !isTextFieldFocused,
                 onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                     focusManager.clearFocus(true)
                     textFieldInnerState = createTextFieldInnerState(null)
                     state.onAmountChange(BigDecimal(1))
@@ -143,6 +153,7 @@ fun SlippagePicker(
                 text = (stringResByNumber(2, minDecimals = 0) + stringRes("%")).getValue(),
                 isSelected = selection is Selection.ByButton3 && !isTextFieldFocused,
                 onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
                     focusManager.clearFocus(true)
                     textFieldInnerState = createTextFieldInnerState(null)
                     state.onAmountChange(BigDecimal(2))

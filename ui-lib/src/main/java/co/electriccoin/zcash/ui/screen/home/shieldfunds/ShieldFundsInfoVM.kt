@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.home.shieldfunds
 
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.Zatoshi
@@ -35,7 +36,8 @@ class ShieldFundsInfoVM(
                 primaryButton =
                     ButtonState(
                         onClick = ::onShieldClick,
-                        text = stringRes(R.string.home_info_transparent_balance_shield)
+                        text = stringRes(R.string.home_info_transparent_balance_shield),
+                        hapticFeedbackType = HapticFeedbackType.Confirm
                     ),
                 secondaryButton =
                     ButtonState(

@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -160,7 +161,8 @@ fun CrashReportingOptInFooter(
             text = stringResource(R.string.crash_reporting_opt_in_save),
             onClick = { state.onSaveClicked(isOptInSelected) },
             enabled = !isSaveDisabled,
-            colors = ZashiButtonDefaults.primaryColors()
+            colors = ZashiButtonDefaults.primaryColors(),
+            hapticFeedbackType = HapticFeedbackType.Confirm
         )
     }
 }

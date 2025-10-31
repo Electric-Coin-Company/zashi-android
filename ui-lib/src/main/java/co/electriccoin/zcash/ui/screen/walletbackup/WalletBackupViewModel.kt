@@ -1,10 +1,15 @@
 package co.electriccoin.zcash.ui.screen.walletbackup
 
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.repository.BiometricRepository
+import co.electriccoin.zcash.ui.common.repository.BiometricRequest
+import co.electriccoin.zcash.ui.common.repository.BiometricsCancelledException
+import co.electriccoin.zcash.ui.common.repository.BiometricsFailureException
 import co.electriccoin.zcash.ui.common.usecase.GetPersistableWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.OnUserSavedWalletBackupUseCase
 import co.electriccoin.zcash.ui.common.usecase.RemindWalletBackupLaterUseCase
@@ -33,6 +38,7 @@ class WalletBackupViewModel(
     private val navigationRouter: NavigationRouter,
     private val onUserSavedWalletBackup: OnUserSavedWalletBackupUseCase,
     private val remindWalletBackupLater: RemindWalletBackupLaterUseCase,
+    private val biometricRepository: BiometricRepository
 ) : ViewModel() {
     private val lockoutDuration =
         walletBackupMessageUseCase
@@ -78,6 +84,7 @@ class WalletBackupViewModel(
                             when {
                                 isRevealed && args.isOpenedFromSeedBackupInfo ->
                                     stringRes(R.string.seed_recovery_saved_button)
+
                                 isRevealed -> stringRes(R.string.seed_recovery_hide_button)
                                 else -> stringRes(R.string.seed_recovery_reveal_button)
                             },
@@ -94,7 +101,8 @@ class WalletBackupViewModel(
                                 isRevealed && args.isOpenedFromSeedBackupInfo -> null
                                 isRevealed -> R.drawable.ic_seed_hide
                                 else -> R.drawable.ic_seed_show
-                            }
+                            },
+                        hapticFeedbackType = if (isRevealed) HapticFeedbackType.Confirm else null
                     ),
                 info =
                     IconButtonState(
@@ -136,9 +144,29 @@ class WalletBackupViewModel(
             onUserSavedWalletBackup()
         }
 
-    private fun onRevealClick() {
-        isRevealed.update { !it }
-    }
+    private fun onRevealClick() =
+        viewModelScope.launch {
+            if (!isRevealed.value) {
+                try {
+                    biometricRepository.requestBiometrics(
+                        BiometricRequest(
+                            message =
+                                stringRes(
+                                    R.string.authentication_system_ui_subtitle,
+                                    stringRes(R.string.authentication_use_case_seed_recovery)
+                                )
+                        )
+                    )
+                    isRevealed.update { !it }
+                } catch (_: BiometricsFailureException) {
+                    // do nothing
+                } catch (_: BiometricsCancelledException) {
+                    // do nothing
+                }
+            } else {
+                isRevealed.update { !it }
+            }
+        }
 
     private fun onInfoClick() {
         navigationRouter.forward(SeedInfo)

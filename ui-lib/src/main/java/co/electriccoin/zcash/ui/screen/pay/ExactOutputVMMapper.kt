@@ -348,7 +348,7 @@ internal class ExactOutputVMMapper {
                 },
             isLoading = state.isEphemeralAddressLocked ||
                 state.isRequestingQuote ||
-                (state.swapAssets.isLoading && state.swapAssets.data == null)
+                (state.swapAssets.isLoading && state.swapAssets.data == null),
         )
     }
 

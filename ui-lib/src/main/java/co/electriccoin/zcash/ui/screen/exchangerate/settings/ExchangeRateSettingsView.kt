@@ -80,7 +80,7 @@ internal fun ExchangeRateSettingsView(state: ExchangeRateSettingsState) {
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 state = state.saveButton,
-                defaultPrimaryColors = ZashiButtonDefaults.primaryColors()
+                defaultPrimaryColors = ZashiButtonDefaults.primaryColors(),
             )
         },
     )
