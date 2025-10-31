@@ -30,7 +30,16 @@ class NavigatorImpl(
 ) : Navigator {
     override suspend fun executeCommand(command: NavigationCommand) {
         keyboardManager.close()
-        sheetStateManager.hide()
+
+        when (command) {
+            NavigationCommand.Back,
+            NavigationCommand.BackToRoot,
+            is NavigationCommand.BackTo -> sheetStateManager.hide()
+            else -> {
+                // do nothing
+            }
+        }
+
         when (command) {
             is NavigationCommand.Forward -> forward(command)
             is NavigationCommand.Replace -> replace(command)
