@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel
 
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.exception.InitializeException
@@ -75,7 +76,8 @@ class SelectKeystoneAccountViewModel(
                         }
                     },
                     isEnabled = selection != null,
-                    isLoading = isCreatingAccount
+                    isLoading = isCreatingAccount,
+                    hapticFeedbackType = HapticFeedbackType.Confirm
                 ),
             negativeButtonState =
                 ButtonState(
