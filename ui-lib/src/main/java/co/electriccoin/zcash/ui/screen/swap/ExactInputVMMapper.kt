@@ -466,7 +466,7 @@ internal class ExactInputVMMapper {
             isEnabled =
                 when {
                     state.isEphemeralAddressLocked -> false
-                    state.swapAssets.error != null -> !state.swapAssets.isLoading
+                    state.swapAssets.error != null -> !state.swapAssets.isLoading || state.swapAssets.data != null
                     else -> (!state.swapAssets.isLoading && state.swapAssets.data != null) &&
                         state.swapAsset != null &&
                         !textField.isError &&

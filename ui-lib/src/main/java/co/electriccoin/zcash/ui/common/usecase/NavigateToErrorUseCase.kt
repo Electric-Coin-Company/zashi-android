@@ -30,21 +30,13 @@ class NavigateToErrorUseCase(
 }
 
 sealed interface ErrorArgs {
-    data class SyncError(
-        val synchronizerError: SynchronizerError
-    ) : ErrorArgs
+    data class SyncError(val synchronizerError: SynchronizerError) : ErrorArgs
 
-    data class ShieldingError(
-        val error: SubmitResult
-    ) : ErrorArgs
+    data class ShieldingError(val error: SubmitResult) : ErrorArgs
 
-    data class ShieldingGeneralError(
-        val exception: Exception
-    ) : ErrorArgs
+    data class ShieldingGeneralError(val exception: Exception) : ErrorArgs
 
-    data class General(
-        val exception: Exception
-    ) : ErrorArgs
+    data class General(val exception: Exception) : ErrorArgs
 
     data object SynchronizerTorInitError : ErrorArgs
 }

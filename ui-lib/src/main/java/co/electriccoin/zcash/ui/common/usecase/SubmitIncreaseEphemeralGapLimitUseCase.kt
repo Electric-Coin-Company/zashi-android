@@ -4,11 +4,13 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
 import co.electriccoin.zcash.ui.common.repository.BiometricsCancelledException
 import co.electriccoin.zcash.ui.common.repository.BiometricsFailureException
+import co.electriccoin.zcash.ui.common.repository.EphemeralAddressRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionArgs
@@ -22,6 +24,7 @@ class SubmitIncreaseEphemeralGapLimitUseCase(
     private val accountDataSource: AccountDataSource,
     private val zashiProposalRepository: ZashiProposalRepository,
     private val biometricRepository: BiometricRepository,
+    private val ephemeralAddressRepository: EphemeralAddressRepository
 ) {
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
@@ -54,9 +57,22 @@ class SubmitIncreaseEphemeralGapLimitUseCase(
     private fun submitZashiProposal() {
         scope.launch {
             try {
-                zashiProposalRepository.submit()
+                val result = zashiProposalRepository.submit()
+                // invalidateEphemeralAddress(result)
                 zashiProposalRepository.clear()
             } catch (_: IllegalStateException) {
+                // do nothing
+            }
+        }
+    }
+
+    private suspend fun invalidateEphemeralAddress(result: SubmitResult) {
+        when (result) {
+            is SubmitResult.Failure,
+            is SubmitResult.GrpcFailure,
+            is SubmitResult.Success -> ephemeralAddressRepository.invalidate()
+
+            is SubmitResult.Partial -> {
                 // do nothing
             }
         }
