@@ -28,7 +28,8 @@ class SheetStateManager {
     }
 
     suspend fun hide(route: String) {
-        if (route != this.route) return
+        val current = this.route
+        if (current == null || !route.startsWith(current)) return
 
         try {
             withTimeoutOrNull(.5.seconds) {
