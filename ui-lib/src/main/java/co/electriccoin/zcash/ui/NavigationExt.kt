@@ -17,7 +17,7 @@ inline fun <reified T : Any> NavGraphBuilder.dialogComposable(
         dialogProperties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
         content = {
             CompositionLocalProvider(
-                LocalNavRoute provides T::class.qualifiedName.orEmpty()
+                LocalNavRoute provides it.destination.route
             ) {
                 content(it)
             }
