@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.common.compose
+package co.electriccoin.zcash.ui.design.util
 
 import androidx.compose.runtime.compositionLocalOf
 import androidx.navigation.NavHostController

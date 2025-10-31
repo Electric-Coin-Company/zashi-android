@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
-import co.electriccoin.zcash.ui.common.compose.LocalNavController
+import co.electriccoin.zcash.ui.design.util.LocalNavController
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -85,11 +85,16 @@ fun RootNavGraph(
     }
 
     LaunchedEffect(secretState, navController) {
+        val currentRoute = navController
+            .currentBackStackEntry
+            ?.destination
+            ?.route
+
         if (secretState == SecretState.READY &&
             navController.currentDestination?.parent?.route != MainAppGraph::class.qualifiedName
         ) {
             keyboardManager.close()
-            sheetStateManager.hide()
+            currentRoute?.let { sheetStateManager.hide(it) }
             navController.navigate(MainAppGraph) {
                 popUpTo(OnboardingGraph) {
                     inclusive = true
@@ -100,7 +105,7 @@ fun RootNavGraph(
             navController.currentDestination?.parent?.route != OnboardingGraph::class.qualifiedName
         ) {
             keyboardManager.close()
-            sheetStateManager.hide()
+            currentRoute?.let { sheetStateManager.hide(it) }
             navController.navigate(OnboardingGraph) {
                 popUpTo(MainAppGraph) {
                     inclusive = true

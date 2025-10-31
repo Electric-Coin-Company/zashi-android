@@ -34,7 +34,14 @@ class NavigatorImpl(
         when (command) {
             NavigationCommand.Back,
             NavigationCommand.BackToRoot,
-            is NavigationCommand.BackTo -> sheetStateManager.hide()
+            is NavigationCommand.BackTo -> {
+                val currentRoute = navController
+                    .currentBackStackEntry
+                    ?.destination
+                    ?.route
+
+                currentRoute?.let { sheetStateManager.hide(it) }
+            }
             else -> {
                 // do nothing
             }

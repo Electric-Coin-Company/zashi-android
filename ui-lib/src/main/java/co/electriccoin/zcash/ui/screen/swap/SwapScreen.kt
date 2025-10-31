@@ -7,8 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.currentBackStackEntryAsState
-import co.electriccoin.zcash.ui.common.compose.LocalNavController
+import co.electriccoin.zcash.ui.design.util.LocalNavController
 import co.electriccoin.zcash.ui.design.util.tryRequestFocus
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel

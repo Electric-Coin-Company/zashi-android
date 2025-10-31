@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindowProvider
 import co.electriccoin.zcash.ui.design.LocalKeyboardManager
 import co.electriccoin.zcash.ui.design.LocalSheetStateManager
+import co.electriccoin.zcash.ui.design.util.LocalNavRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -127,8 +128,9 @@ fun rememberScreenModalBottomSheetState(
             initialValue = initialValue,
             skipHiddenState = skipHiddenState,
         )
+    val route = LocalNavRoute.current
     DisposableEffect(sheetState) {
-        sheetManager.onSheetOpened(sheetState)
+        sheetManager.onSheetOpened(sheetState, route)
         onDispose {
             sheetManager.onSheetDisposed(sheetState)
         }
