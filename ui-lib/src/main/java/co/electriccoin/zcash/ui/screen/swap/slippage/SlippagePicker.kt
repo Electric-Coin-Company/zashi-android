@@ -74,7 +74,9 @@ fun SlippagePicker(
     val textFieldInteractionSource = remember { MutableInteractionSource() }
     val isTextFieldFocused by textFieldInteractionSource.collectIsFocusedAsState()
     LaunchedEffect(isTextFieldFocused) {
-        if (isTextFieldFocused) {
+        if (isTextFieldFocused && state.amount in
+            listOf(BigDecimal("0.5"), BigDecimal(1), BigDecimal(2))
+        ) {
             haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
         }
     }
@@ -133,7 +135,10 @@ fun SlippagePicker(
                 text = (stringResByNumber(BigDecimal("0.5"), minDecimals = 0) + stringRes("%")).getValue(),
                 isSelected = selection is Selection.ByButton1 && !isTextFieldFocused,
                 onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    if (selection !is Selection.ByButton1 || isTextFieldFocused) {
+                        haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    }
+
                     focusManager.clearFocus(true)
                     textFieldInnerState = createTextFieldInnerState(null)
                     state.onAmountChange(BigDecimal("0.5"))
@@ -143,7 +148,9 @@ fun SlippagePicker(
                 text = (stringResByNumber(1, minDecimals = 0) + stringRes("%")).getValue(),
                 isSelected = selection is Selection.ByButton2 && !isTextFieldFocused,
                 onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    if (selection !is Selection.ByButton2 || isTextFieldFocused) {
+                        haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    }
                     focusManager.clearFocus(true)
                     textFieldInnerState = createTextFieldInnerState(null)
                     state.onAmountChange(BigDecimal(1))
@@ -153,7 +160,9 @@ fun SlippagePicker(
                 text = (stringResByNumber(2, minDecimals = 0) + stringRes("%")).getValue(),
                 isSelected = selection is Selection.ByButton3 && !isTextFieldFocused,
                 onClick = {
-                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    if (selection !is Selection.ByButton3 || isTextFieldFocused) {
+                        haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    }
                     focusManager.clearFocus(true)
                     textFieldInnerState = createTextFieldInnerState(null)
                     state.onAmountChange(BigDecimal(2))
@@ -308,7 +317,8 @@ private fun Button(
                     onClick = onClick,
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
-                ).padding(vertical = 8.dp),
+                )
+                .padding(vertical = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
         val color by animateColorAsState(
@@ -350,7 +360,8 @@ private fun Indicator(
                     .background(
                         shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg),
                         color = ZashiColors.Switcher.selectedBg,
-                    ).border(
+                    )
+                    .border(
                         border = BorderStroke(1.dp, ZashiColors.Switcher.selectedStroke),
                         shape = RoundedCornerShape(ZashiDimensions.Radius.radiusLg)
                     )

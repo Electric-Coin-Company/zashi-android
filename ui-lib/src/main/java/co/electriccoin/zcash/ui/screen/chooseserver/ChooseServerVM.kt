@@ -161,17 +161,17 @@ class ChooseServerVM(
     val state =
         combine(fastest, other, buttonState, dialogState) {
             fastest,
-            all,
+            other,
             buttonState,
             dialogState
             ->
-            if (all == null) { // not loaded yet
+            if (other == null) { // not loaded yet
                 return@combine null
             }
 
             ChooseServerState(
                 fastest = fastest,
-                other = all,
+                other = other,
                 saveButton = buttonState,
                 dialogState = dialogState,
                 onBack = ::onBack
@@ -191,38 +191,41 @@ class ChooseServerVM(
         userCustomEndpointText: String?,
         selectedEndpoint: LightWalletEndpoint,
         isCustomEndpointExpanded: Boolean,
-    ) = ServerState.Custom(
-        radioButtonState =
-            RadioButtonState(
-                text =
-                    if (isSelectedEndpointCustom) {
-                        stringRes(R.string.choose_server_full_server_name, selectedEndpoint.host, selectedEndpoint.port)
-                    } else {
-                        stringRes(R.string.choose_server_custom)
-                    },
-                isChecked =
-                    userEndpointSelection is Selection.Custom ||
-                        (userEndpointSelection == null && isSelectedEndpointCustom),
-                onClick = ::onCustomEndpointClicked,
-            ),
-        newServerTextFieldState =
-            TextFieldState(
-                value =
-                    userCustomEndpointText?.let { stringRes(it) } ?: if (isSelectedEndpointCustom) {
-                        stringRes(
-                            resource = R.string.choose_server_full_server_name_text_field,
-                            selectedEndpoint.host,
-                            selectedEndpoint.port
-                        )
-                    } else {
-                        stringRes("")
-                    },
-                onValueChange = ::onCustomEndpointTextChanged,
-            ),
-        badge = if (isSelectedEndpointCustom) stringRes(R.string.choose_server_active) else null,
-        isExpanded = isCustomEndpointExpanded,
-        key = "custom",
-    )
+    ): ServerState.Custom {
+        var isChecked = userEndpointSelection is Selection.Custom ||
+            (userEndpointSelection == null && isSelectedEndpointCustom)
+        return ServerState.Custom(
+            radioButtonState =
+                RadioButtonState(
+                    text =
+                        if (isSelectedEndpointCustom) {
+                            stringRes(R.string.choose_server_full_server_name, selectedEndpoint.host, selectedEndpoint.port)
+                        } else {
+                            stringRes(R.string.choose_server_custom)
+                        },
+                    isChecked = isChecked,
+                    onClick = ::onCustomEndpointClicked,
+                    hapticFeedbackType = if (isChecked) null else HapticFeedbackType.SegmentTick,
+                ),
+            newServerTextFieldState =
+                TextFieldState(
+                    value =
+                        userCustomEndpointText?.let { stringRes(it) } ?: if (isSelectedEndpointCustom) {
+                            stringRes(
+                                resource = R.string.choose_server_full_server_name_text_field,
+                                selectedEndpoint.host,
+                                selectedEndpoint.port
+                            )
+                        } else {
+                            stringRes("")
+                        },
+                    onValueChange = ::onCustomEndpointTextChanged,
+                ),
+            badge = if (isSelectedEndpointCustom) stringRes(R.string.choose_server_active) else null,
+            isExpanded = isCustomEndpointExpanded,
+            key = "custom",
+        )
+    }
 
     private fun createDefaultServerState(
         endpoint: LightWalletEndpoint,
@@ -247,6 +250,7 @@ class ChooseServerVM(
                         } else {
                             null
                         },
+                    hapticFeedbackType = if (isEndpointChecked) null else HapticFeedbackType.SegmentTick,
                 ),
             badge = if (endpoint == selectedEndpoint) stringRes(R.string.choose_server_active) else null,
         )

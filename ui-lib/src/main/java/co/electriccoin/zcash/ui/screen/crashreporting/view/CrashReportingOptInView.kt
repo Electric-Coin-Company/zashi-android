@@ -47,6 +47,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.screen.crashreporting.model.CrashReportingOptInState
 import co.electriccoin.zcash.ui.screen.exchangerate.SecondaryCard
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.Option
 
 @Composable
 fun CrashReportingOptIn(state: CrashReportingOptInState) {
@@ -177,12 +178,7 @@ fun CrashReportingOptInOptions(
         Option(
             modifier = Modifier.fillMaxWidth(),
             image = R.drawable.ic_opt_in,
-            selectionImage =
-                if (isOptInSelected) {
-                    R.drawable.ic_checkbox_checked
-                } else {
-                    R.drawable.ic_checkbox_unchecked
-                },
+            isChecked = isOptInSelected,
             title = stringResource(R.string.crash_reporting_opt_in_positive),
             subtitle = stringResource(R.string.crash_reporting_opt_in_positive_desc),
             onClick = { setOptInSelected(true) }
@@ -191,12 +187,7 @@ fun CrashReportingOptInOptions(
         Option(
             modifier = Modifier.fillMaxWidth(),
             image = R.drawable.ic_opt_out,
-            selectionImage =
-                if (!isOptInSelected) {
-                    R.drawable.ic_checkbox_checked
-                } else {
-                    R.drawable.ic_checkbox_unchecked
-                },
+            isChecked = !isOptInSelected,
             title = stringResource(R.string.crash_reporting_opt_in_negative),
             subtitle = stringResource(R.string.crash_reporting_opt_in_negative_desc),
             onClick = { setOptInSelected(false) }
@@ -204,56 +195,6 @@ fun CrashReportingOptInOptions(
     }
 }
 
-@Suppress("LongParameterList")
-@Composable
-private fun Option(
-    @DrawableRes image: Int,
-    @DrawableRes selectionImage: Int,
-    title: String,
-    subtitle: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    SecondaryCard(
-        modifier =
-            modifier.clickable(
-                onClick = onClick,
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-            )
-    ) {
-        Row(
-            Modifier.padding(20.dp)
-        ) {
-            Image(
-                painter = painterResource(image),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = title,
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Text.textPrimary,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = subtitle,
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Text.textTertiary,
-                )
-            }
-            Image(
-                painter = painterResource(selectionImage),
-                contentDescription = null
-            )
-        }
-    }
-}
 
 @Suppress("UnusedPrivateMember")
 @PreviewScreens
