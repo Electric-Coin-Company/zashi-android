@@ -17,7 +17,6 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
-import co.electriccoin.zcash.ui.common.usecase.IsEphemeralAddressLockedUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
@@ -61,7 +60,7 @@ internal class SwapVM(
     private val exactInputVMMapper: ExactInputVMMapper,
     private val navigateToScanAddress: NavigateToScanGenericAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
-    private val isEphemeralAddressLocked: IsEphemeralAddressLockedUseCase
+    // private val isEphemeralAddressLocked: IsEphemeralAddressLockedUseCase
 ) : ViewModel() {
     private val mode = MutableStateFlow(SWAP_INTO_ZEC)
 
@@ -118,7 +117,7 @@ internal class SwapVM(
             selectedContact,
             getSelectedWalletAccount.observe(),
             mode,
-            isEphemeralAddressLocked.observe()
+            // isEphemeralAddressLocked.observe()
         ) { address,
             amount,
             asset,
@@ -129,7 +128,7 @@ internal class SwapVM(
             selectedContact,
             account,
             mode,
-            isEphemeralAddressLocked
+            // isEphemeralAddressLocked
             ->
             InternalStateImpl(
                 swapAsset = asset,
@@ -142,7 +141,7 @@ internal class SwapVM(
                 selectedContact = selectedContact,
                 account = account,
                 mode = mode,
-                isEphemeralAddressLocked = isEphemeralAddressLocked
+                isEphemeralAddressLocked = false
             )
         }
 

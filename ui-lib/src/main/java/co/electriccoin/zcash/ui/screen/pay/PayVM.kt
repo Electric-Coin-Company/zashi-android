@@ -19,7 +19,6 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsABContactHintVisibleUseCase
-import co.electriccoin.zcash.ui.common.usecase.IsEphemeralAddressLockedUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
@@ -65,7 +64,7 @@ internal class PayVM(
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
     private val isABContactHintVisible: IsABContactHintVisibleUseCase,
     private val canCreateABContact: CanCreateABContactUseCase,
-    private val isEphemeralAddressLocked: IsEphemeralAddressLockedUseCase
+    // private val isEphemeralAddressLocked: IsEphemeralAddressLockedUseCase
 ) : ViewModel() {
     private val address: MutableStateFlow<String> = MutableStateFlow("")
 
@@ -140,7 +139,7 @@ internal class PayVM(
             getSelectedWalletAccount.observe(),
             isABHintVisible,
             canCreateNewABContact,
-            isEphemeralAddressLocked.observe()
+            // isEphemeralAddressLocked.observe()
         ) { address,
             text,
             asset,
@@ -151,7 +150,7 @@ internal class PayVM(
             account,
             isABHintVisible,
             canCreateNewABContact,
-            isEphemeralAddressLocked
+            // isEphemeralAddressLocked
             ->
             InternalStateImpl(
                 asset = asset,
@@ -165,7 +164,7 @@ internal class PayVM(
                 account = account,
                 isABHintVisible = isABHintVisible,
                 canCreateNewABContact = canCreateNewABContact,
-                isEphemeralAddressLocked = isEphemeralAddressLocked
+                isEphemeralAddressLocked = false
             )
         }
 

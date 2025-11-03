@@ -5,32 +5,31 @@ import co.electriccoin.zcash.ui.common.datasource.SwapDataSource
 import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.SwapStatus
-import co.electriccoin.zcash.ui.common.repository.EphemeralAddressRepository
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import kotlinx.coroutines.yield
 
 class ProcessSwapTransactionUseCase(
     private val metadataRepository: MetadataRepository,
-    private val ephemeralAddressRepository: EphemeralAddressRepository,
     private val swapDataSource: SwapDataSource,
+    // private val ephemeralAddressRepository: EphemeralAddressRepository,
 ) {
     suspend operator fun invoke(transactionProposal: SwapTransactionProposal, result: SubmitResult) {
         saveSwapToMetadata(transactionProposal)
-        invalidateEphemeralAddress(result)
+        // invalidateEphemeralAddress(result)
         submitDepositTransactions(transactionProposal, result)
     }
 
-    private suspend fun invalidateEphemeralAddress(result: SubmitResult) {
-        when (result) {
-            is SubmitResult.Failure,
-            is SubmitResult.GrpcFailure,
-            is SubmitResult.Success -> ephemeralAddressRepository.invalidate()
-
-            is SubmitResult.Partial -> {
-                // do nothing
-            }
-        }
-    }
+    // private suspend fun invalidateEphemeralAddress(result: SubmitResult) {
+    //     when (result) {
+    //         is SubmitResult.Failure,
+    //         is SubmitResult.GrpcFailure,
+    //         is SubmitResult.Success -> ephemeralAddressRepository.invalidate()
+    //
+    //         is SubmitResult.Partial -> {
+    //             // do nothing
+    //         }
+    //     }
+    // }
 
     private fun saveSwapToMetadata(transactionProposal: SwapTransactionProposal) {
         metadataRepository.markTxAsSwap(
