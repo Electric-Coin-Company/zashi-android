@@ -12,7 +12,11 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -37,18 +41,25 @@ import co.electriccoin.zcash.ui.screen.transactionnote.model.TransactionNoteStat
 internal fun TransactionNoteView(
     state: TransactionNoteState?,
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
+    onSheetOpened: (FocusRequester) -> Unit = { }
 ) {
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
         content = {
-            BottomSheetContent(it)
+            val focusRequester = remember { FocusRequester() }
+            BottomSheetContent(it, focusRequester)
+            LaunchedEffect(sheetState.currentValue) {
+                if (sheetState.currentValue == SheetValue.Expanded) {
+                    onSheetOpened(focusRequester)
+                }
+            }
         },
     )
 }
 
 @Composable
-private fun BottomSheetContent(state: TransactionNoteState) {
+private fun BottomSheetContent(state: TransactionNoteState, focusRequester: FocusRequester) {
     Column {
         Text(
             modifier = Modifier.padding(horizontal = 24.dp),
@@ -64,7 +75,8 @@ private fun BottomSheetContent(state: TransactionNoteState) {
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
+                    .padding(horizontal = 24.dp)
+                    .focusRequester(focusRequester),
             state = state.note,
             minLines = 4,
             placeholder = {

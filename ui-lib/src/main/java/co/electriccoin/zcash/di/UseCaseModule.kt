@@ -91,7 +91,7 @@ import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneSignInRequestUseCase
 import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneUrToZashiAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.PrefillSendUseCase
-import co.electriccoin.zcash.ui.common.usecase.RecoverFundsHotfixUseCase
+import co.electriccoin.zcash.ui.common.usecase.FixEphemeralAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RemindWalletBackupLaterUseCase
 import co.electriccoin.zcash.ui.common.usecase.RequestSwapQuoteUseCase
@@ -264,7 +264,7 @@ val useCaseModule =
         singleOf(::UpdateSwapActivityMetadataUseCase)
         factoryOf(::WalletBackupMessageUseCaseImpl) bind WalletBackupMessageUseCase::class
         factoryOf(::ValidateAddressUseCase)
-        factoryOf(::RecoverFundsHotfixUseCase)
+        singleOf(::FixEphemeralAddressUseCase)
         factoryOf(::IsEphemeralAddressLockedUseCase)
         singleOf(::SubmitIncreaseEphemeralGapLimitUseCase)
         factoryOf(::CreateIncreaseEphemeralGapLimitProposalUseCase)

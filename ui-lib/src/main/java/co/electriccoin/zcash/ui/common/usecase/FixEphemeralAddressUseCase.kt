@@ -1,0 +1,62 @@
+package co.electriccoin.zcash.ui.common.usecase
+
+import cash.z.ecc.android.sdk.type.AddressType
+import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
+import co.electriccoin.zcash.ui.common.repository.SwapRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+class FixEphemeralAddressUseCase(
+    private val synchronizerProvider: SynchronizerProvider,
+    private val navigationRouter: NavigationRouter,
+    private val swapRepository: SwapRepository,
+    private val accountDataSource: AccountDataSource,
+) {
+    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+
+    private val isLoading = MutableStateFlow(false)
+
+    private var job: Job? = null
+
+    operator fun invoke(address: String) {
+        if (job?.isActive == true) return
+        job = scope.launch {
+            try {
+                isLoading.update { true }
+                val validation = synchronizerProvider.getSynchronizer().validateAddress(address)
+
+                val ephemeral = when (validation) {
+                    AddressType.Shielded,
+                    AddressType.Tex,
+                    AddressType.Unified -> return@launch
+
+                    AddressType.Transparent -> address
+                    is AddressType.Invalid ->
+                        swapRepository.getSwapStatus(depositAddress = address).status?.quote?.recipient
+                            ?: return@launch
+                }
+                navigationRouter.back()
+                fetchUtxosByAddress(ephemeral)
+            } finally {
+                isLoading.update { false }
+            }
+        }
+    }
+
+    fun observeIsLoading() = isLoading.asStateFlow()
+
+    private suspend fun fetchUtxosByAddress(address: String) {
+        synchronizerProvider.getSynchronizer().fetchUtxosByAddress(
+            accountUuid = accountDataSource.getSelectedAccount().sdkAccount.accountUuid,
+            address = address
+        )
+    }
+}

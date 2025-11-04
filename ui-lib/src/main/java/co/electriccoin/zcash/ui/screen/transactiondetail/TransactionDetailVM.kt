@@ -40,7 +40,6 @@ import co.electriccoin.zcash.ui.design.util.stringResByCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.design.util.stringResByTransactionId
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
-import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixArgs
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveShieldedState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.ReceiveTransparentState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.SendShieldedState
@@ -492,7 +491,6 @@ class TransactionDetailVM(
                             imageRes(R.drawable.ic_transaction_detail_shielded),
                         )
                 },
-            onLongClick = { onHeaderLongClick(data) }
         )
 
     private fun onBack() = navigationRouter.back()
@@ -501,12 +499,6 @@ class TransactionDetailVM(
         viewModelScope.launch {
             flipTransactionBookmark(transactionDetailArgs.transactionId)
         }
-
-    private fun onHeaderLongClick(data: DetailedTransactionData) {
-        if (data.metadata.swapMetadata != null) return
-        val address = data.transaction.recipient?.address ?: return
-        navigationRouter.forward(EphemeralHotfixArgs(address))
-    }
 }
 
 private const val MIN_FEE_THRESHOLD = 100000

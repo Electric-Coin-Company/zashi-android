@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.common.usecase.RecoverFundsHotfixUseCase
+import co.electriccoin.zcash.ui.common.usecase.FixEphemeralAddressUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -20,19 +20,24 @@ import kotlinx.coroutines.launch
 class EphemeralHotfixVM(
     args: EphemeralHotfixArgs,
     private val navigationRouter: NavigationRouter,
-    private val recoverFundsHotfix: RecoverFundsHotfixUseCase
+    private val fixEphemeralAddressUseCase: FixEphemeralAddressUseCase,
 ) : ViewModel() {
 
     private val text = MutableStateFlow(args.address)
 
-    private val isLoading = MutableStateFlow(false)
+    private val isError = MutableStateFlow(false)
 
-    val state: StateFlow<EphemeralHotfixState?> = combine(text, isLoading) { text, isLoading ->
+    val state: StateFlow<EphemeralHotfixState?> = combine(
+        text,
+        fixEphemeralAddressUseCase.observeIsLoading(),
+        isError
+    ) { text, isLoading, isError ->
         EphemeralHotfixState(
             address = TextFieldState(
                 value = stringRes(text.orEmpty()),
                 onValueChange = { new -> this.text.update { new } },
-                isEnabled = !isLoading
+                isEnabled = !isLoading,
+                error = stringRes("").takeIf { isError }
             ),
             button = ButtonState(
                 stringRes("Recover Funds"),
@@ -41,18 +46,13 @@ class EphemeralHotfixVM(
             ),
             onBack = ::onBack
         )
-    }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+        initialValue = null
+    )
 
     private fun onBack() = navigationRouter.back()
 
-    private fun onRecoverFundsClick() = viewModelScope.launch {
-        isLoading.update { true }
-        recoverFundsHotfix(text.value.orEmpty())
-        isLoading.update { false }
-    }
+    private fun onRecoverFundsClick() = fixEphemeralAddressUseCase(text.value.orEmpty())
 }
