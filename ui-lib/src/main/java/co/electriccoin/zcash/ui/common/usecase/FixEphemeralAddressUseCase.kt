@@ -1,5 +1,7 @@
 package co.electriccoin.zcash.ui.common.usecase
 
+import android.content.Context
+import android.widget.Toast
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
@@ -13,12 +15,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FixEphemeralAddressUseCase(
     private val synchronizerProvider: SynchronizerProvider,
     private val navigationRouter: NavigationRouter,
     private val swapRepository: SwapRepository,
     private val accountDataSource: AccountDataSource,
+    private val context: Context
 ) {
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
@@ -54,9 +58,16 @@ class FixEphemeralAddressUseCase(
     fun observeIsLoading() = isLoading.asStateFlow()
 
     private suspend fun fetchUtxosByAddress(address: String) {
-        synchronizerProvider.getSynchronizer().fetchUtxosByAddress(
+        val fundsDiscovered = synchronizerProvider.getSynchronizer().fetchUtxosByAddress(
             accountUuid = accountDataSource.getSelectedAccount().sdkAccount.accountUuid,
             address = address
         )
+        withContext(Dispatchers.Main.immediate) {
+            if (fundsDiscovered) {
+                Toast.makeText(context, "Funds were successfully discovered", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(context, "No funds were discovered", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }

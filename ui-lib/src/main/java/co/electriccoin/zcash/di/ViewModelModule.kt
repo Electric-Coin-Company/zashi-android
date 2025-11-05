@@ -9,6 +9,7 @@ import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewMode
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookVM
 import co.electriccoin.zcash.ui.screen.addressbook.SelectABRecipientVM
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsVM
+import co.electriccoin.zcash.ui.screen.advancedsettings.debug.DebugVM
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetVM
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceVM
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerVM
@@ -149,4 +150,5 @@ val viewModelModule =
         viewModelOf(::ScreenTimeoutVM)
         viewModelOf(::EphemeralHotfixVM)
         viewModelOf(::EphemeralLockVM)
+        viewModelOf(::DebugVM)
     }

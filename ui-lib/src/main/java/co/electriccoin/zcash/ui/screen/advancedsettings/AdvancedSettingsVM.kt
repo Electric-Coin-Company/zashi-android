@@ -1,9 +1,9 @@
 package co.electriccoin.zcash.ui.screen.advancedsettings
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
+import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.NavigationTargets
 import co.electriccoin.zcash.ui.R
@@ -19,10 +19,10 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.advancedsettings.debug.DebugArgs
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerArgs
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsArgs
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsArgs
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -56,7 +56,7 @@ class AdvancedSettingsVM(
         AdvancedSettingsState(
             onBack = ::onBack,
             items =
-                mutableStateListOf(
+                listOfNotNull(
                     ListItemState(
                         title = stringRes(R.string.advanced_settings_recovery),
                         bigIcon = imageRes(R.drawable.ic_advanced_settings_recovery),
@@ -95,17 +95,16 @@ class AdvancedSettingsVM(
                         bigIcon = imageRes(R.drawable.ic_advanced_settings_currency_conversion),
                         onClick = ::onCurrencyConversionClick
                     ),
-                ).apply {
-                    if (versionInfo.distributionDimension == DistributionDimension.STORE) {
-                        add(
-                            ListItemState(
-                                title = stringRes(R.string.advanced_settings_crash_reporting),
-                                bigIcon = imageRes(R.drawable.ic_advanced_settings_crash_reporting),
-                                onClick = ::onCrashReportingClick
-                            )
-                        )
-                    }
-                }.toImmutableList(),
+                    ListItemState(
+                        title = stringRes(R.string.advanced_settings_crash_reporting),
+                        bigIcon = imageRes(R.drawable.ic_advanced_settings_crash_reporting),
+                        onClick = ::onCrashReportingClick
+                    ).takeIf { versionInfo.distributionDimension == DistributionDimension.STORE },
+                    ListItemState(
+                        title = stringRes("Debug menu"),
+                        onClick = ::onDebugMenuClick
+                    ).takeIf { BuildConfig.DEBUG },
+                ),
             deleteButton =
                 ButtonState(
                     text = stringRes(R.string.advanced_settings_delete_button),
@@ -120,6 +119,8 @@ class AdvancedSettingsVM(
     private fun onChooseServerClick() = navigationRouter.forward(ChooseServerArgs)
 
     private fun onCurrencyConversionClick() = navigationRouter.forward(ExchangeRateSettingsArgs)
+
+    private fun onDebugMenuClick() = navigationRouter.forward(DebugArgs)
 
     private fun onCrashReportingClick() = navigationRouter.forward(NavigationTargets.CRASH_REPORTING_OPT_IN)
 

@@ -280,13 +280,11 @@ class ChooseServerVM(
                 if (isSaveInProgress.value) return@launch
                 isSaveInProgress.update { true }
                 val selection = getUserEndpointSelectionOrShowError() ?: return@launch
-                try {
-                    persistEndpoint(selection)
-                    isCustomEndpointExpanded.update { false }
-                    userEndpointSelection.update { null }
-                } catch (e: PersistEndpointException) {
-                    showValidationErrorDialog(e.message)
-                }
+                persistEndpoint(selection)
+                isCustomEndpointExpanded.update { false }
+                userEndpointSelection.update { null }
+            } catch (e: PersistEndpointException) {
+                showValidationErrorDialog(e.message)
             } finally {
                 isSaveInProgress.update { false }
             }
