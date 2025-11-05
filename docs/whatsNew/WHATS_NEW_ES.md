@@ -12,6 +12,19 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.4.7 (1309)] - 2025-11-05
+
+### Añadido:
+- Añadimos retroalimentación háptica para acciones importantes del usuario.
+
+### Cambiado:
+- Añadimos un nuevo servidor a la lista de servidores de Zashi.
+- Aumentamos el plazo para realizar intercambios y evitar reembolsos anticipados.
+
+### Corregido:
+- Realizamos numerosas correcciones de errores, refactorización y mejoras en la experiencia de usuario (UX/UI).
+- Implementamos un mecanismo para detectar fondos de transacciones TEX fallidas.
+
 ## [2.4.6 (1279)] - 2025-10-27
 
 ### Fixed:

@@ -6,6 +6,19 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.7 (1309)] - 2025-11-05
+
+### Added:
+- We added haptic feedback for important user actions.
+
+### Changed:
+- We added a new server to the Zashi server list.
+- We increased the swap deadline to prevent early refunds.
+
+### Fixed:
+- We made a whole bunch of bug fixes, refactoring and UX/UI improvements.
+- We implemented a mechanism for discovering failed TEX transaction funds.
+
 ## [2.4.6 (1279)] - 2025-10-27
 
 ### Fixed:

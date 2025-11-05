@@ -1,0 +1,10 @@
+Added:
+- We added haptic feedback for important user actions.
+
+Changed:
+- We added a new server to the Zashi server list.
+- We increased the swap deadline to prevent early refunds.
+
+Fixed:
+- We made a whole bunch of bug fixes, refactoring and UX/UI improvements.
+- We implemented a mechanism for discovering failed TEX transaction funds.

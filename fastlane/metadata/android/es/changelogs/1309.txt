@@ -1,0 +1,10 @@
+Añadido:
+- Añadimos retroalimentación háptica para acciones importantes del usuario.
+
+Cambiado:
+- Añadimos un nuevo servidor a la lista de servidores de Zashi.
+- Aumentamos el plazo para realizar intercambios y evitar reembolsos anticipados.
+
+Corregido:
+- Realizamos numerosas correcciones de errores, refactorización y mejoras en la experiencia de usuario (UX/UI).
+- Implementamos un mecanismo para detectar fondos de transacciones TEX fallidas.
