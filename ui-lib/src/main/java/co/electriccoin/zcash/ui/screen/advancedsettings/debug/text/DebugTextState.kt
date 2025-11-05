@@ -9,4 +9,4 @@ data class DebugTextState(
     val title: StringResource,
     val text: StringResource,
     override val onBack: () -> Unit
-): ModalBottomSheetState
+) : ModalBottomSheetState

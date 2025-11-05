@@ -54,8 +54,7 @@ private fun MetadataKey?.encode(secretKeyAccess: SecretKeyAccess?): Set<String>?
         ?.bytes
         ?.map {
             Base64.encode(it.toByteArray(secretKeyAccess))
-        }
-        ?.toSet()
+        }?.toSet()
 
 @OptIn(ExperimentalEncodingApi::class)
 private fun Set<String>?.decode(secretKeyAccess: SecretKeyAccess?) =

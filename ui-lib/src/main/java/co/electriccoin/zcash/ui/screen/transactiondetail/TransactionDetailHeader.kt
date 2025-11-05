@@ -42,16 +42,18 @@ fun TransactionDetailHeader(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier then if (state.onLongClick != null) {
-            Modifier.combinedClickable(
-                indication = null,
-                onClick = {},
-                onLongClick = state.onLongClick,
-                interactionSource = remember { MutableInteractionSource() },
-            )
-        } else {
-            Modifier
-        },
+        modifier =
+            modifier then
+                if (state.onLongClick != null) {
+                    Modifier.combinedClickable(
+                        indication = null,
+                        onClick = {},
+                        onLongClick = state.onLongClick,
+                        interactionSource = remember { MutableInteractionSource() },
+                    )
+                } else {
+                    Modifier
+                },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ZashiOverlappingIcons(OverlappingIconsState(state.icons))

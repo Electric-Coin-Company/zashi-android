@@ -89,16 +89,17 @@ fun Option(
     modifier: Modifier = Modifier,
 ) {
     val haptic = LocalHapticFeedback.current
-    val onClick = remember(isChecked,onClick) {
-        if (isChecked) {
-            onClick
-        } else {
-            {
-                haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
-                onClick()
+    val onClick =
+        remember(isChecked, onClick) {
+            if (isChecked) {
+                onClick
+            } else {
+                {
+                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    onClick()
+                }
             }
         }
-    }
 
     SecondaryCard(
         modifier =
@@ -134,9 +135,10 @@ fun Option(
                 )
             }
             Image(
-                painter = painterResource(
-                    if (isChecked) R.drawable.ic_checkbox_checked else R.drawable.ic_checkbox_unchecked
-                ),
+                painter =
+                    painterResource(
+                        if (isChecked) R.drawable.ic_checkbox_checked else R.drawable.ic_checkbox_unchecked
+                    ),
                 contentDescription = null
             )
         }

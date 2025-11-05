@@ -192,14 +192,19 @@ class ChooseServerVM(
         selectedEndpoint: LightWalletEndpoint,
         isCustomEndpointExpanded: Boolean,
     ): ServerState.Custom {
-        var isChecked = userEndpointSelection is Selection.Custom ||
-            (userEndpointSelection == null && isSelectedEndpointCustom)
+        var isChecked =
+            userEndpointSelection is Selection.Custom ||
+                (userEndpointSelection == null && isSelectedEndpointCustom)
         return ServerState.Custom(
             radioButtonState =
                 RadioButtonState(
                     text =
                         if (isSelectedEndpointCustom) {
-                            stringRes(R.string.choose_server_full_server_name, selectedEndpoint.host, selectedEndpoint.port)
+                            stringRes(
+                                R.string.choose_server_full_server_name,
+                                selectedEndpoint.host,
+                                selectedEndpoint.port,
+                            )
                         } else {
                             stringRes(R.string.choose_server_custom)
                         },

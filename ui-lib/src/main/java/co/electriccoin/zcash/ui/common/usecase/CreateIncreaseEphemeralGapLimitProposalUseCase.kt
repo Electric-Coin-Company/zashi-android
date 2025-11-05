@@ -17,16 +17,18 @@ class CreateIncreaseEphemeralGapLimitProposalUseCase(
     private val accountDataSource: AccountDataSource,
     private val ephemeralAddressRepository: EphemeralAddressRepository
 ) {
-    @Suppress("TooGenericExceptionCaught")
+    @Suppress("TooGenericExceptionCaught", "MagicNumber", "UseCheckOrError")
     suspend operator fun invoke() {
-        val address = ephemeralAddressRepository.get()?.address
-            ?: throw IllegalStateException("Ephemeral address is null")
-        val normalized = ZecSend(
-            destination = WalletAddress.Transparent.new(address),
-            amount = Zatoshi(100),
-            memo = Memo(""),
-            proposal = null
-        )
+        val address =
+            ephemeralAddressRepository.get()?.address
+                ?: throw IllegalStateException("Ephemeral address is null")
+        val normalized =
+            ZecSend(
+                destination = WalletAddress.Transparent.new(address),
+                amount = Zatoshi(100),
+                memo = Memo(""),
+                proposal = null
+            )
         try {
             when (accountDataSource.getSelectedAccount()) {
                 is KeystoneAccount -> {

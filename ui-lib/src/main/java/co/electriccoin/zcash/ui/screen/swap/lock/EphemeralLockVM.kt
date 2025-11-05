@@ -28,43 +28,48 @@ internal class EphemeralLockVM(
     private val zashiProposalRepository: ZashiProposalRepository,
     private val keystoneProposalRepository: KeystoneProposalRepository,
 ) : ViewModel() {
-    val state: StateFlow<EphemeralLockState?> = observeProposal.filterSend()
-        .map {
-            EphemeralLockState(
-                items = listOf(
-                    SwapQuoteInfoItem(
-                        description = stringRes(R.string.send_confirmation_address),
-                        title = stringResByAddress(it.destination.address, true),
-                    ),
-                    SwapQuoteInfoItem(
-                        description = stringRes(R.string.send_amount_label),
-                        title = stringRes(it.amount),
-                    ),
-                    SwapQuoteInfoItem(
-                        description = stringRes(R.string.send_confirmation_fee),
-                        title = stringRes(it.proposal.totalFeeRequired()),
-                    ),
-                ),
-                amount = SwapQuoteInfoItem(
-                    description = stringRes(R.string.send_confirmation_amount),
-                    title = stringRes(it.amount + it.proposal.totalFeeRequired()),
-                ),
-                secondaryButton = ButtonState(
-                    text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_cancel),
-                    onClick = ::onBack
-                ),
-                primaryButton = ButtonState(
-                    text = stringRes("Confirm Transaction"),
-                    onClick = ::onSubmitClick
-                ),
-                onBack = ::onBack
+    val state: StateFlow<EphemeralLockState?> =
+        observeProposal
+            .filterSend()
+            .map {
+                EphemeralLockState(
+                    items =
+                        listOf(
+                            SwapQuoteInfoItem(
+                                description = stringRes(R.string.send_confirmation_address),
+                                title = stringResByAddress(it.destination.address, true),
+                            ),
+                            SwapQuoteInfoItem(
+                                description = stringRes(R.string.send_amount_label),
+                                title = stringRes(it.amount),
+                            ),
+                            SwapQuoteInfoItem(
+                                description = stringRes(R.string.send_confirmation_fee),
+                                title = stringRes(it.proposal.totalFeeRequired()),
+                            ),
+                        ),
+                    amount =
+                        SwapQuoteInfoItem(
+                            description = stringRes(R.string.send_confirmation_amount),
+                            title = stringRes(it.amount + it.proposal.totalFeeRequired()),
+                        ),
+                    secondaryButton =
+                        ButtonState(
+                            text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_cancel),
+                            onClick = ::onBack
+                        ),
+                    primaryButton =
+                        ButtonState(
+                            text = stringRes("Confirm Transaction"),
+                            onClick = ::onSubmitClick
+                        ),
+                    onBack = ::onBack
+                )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
             )
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
 
     private var onSubmitClickJob: Job? = null
 

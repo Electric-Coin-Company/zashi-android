@@ -39,11 +39,12 @@ class RestoreBDEstimationViewModel(
                     icon = R.drawable.ic_copy,
                     onClick = ::onCopyClick
                 ),
-            restore = ButtonState(
-                text = stringRes(R.string.restore_bd_estimation_restore),
-                onClick = ::onRestoreClick,
-                hapticFeedbackType = HapticFeedbackType.Confirm
-            ),
+            restore =
+                ButtonState(
+                    text = stringRes(R.string.restore_bd_estimation_restore),
+                    onClick = ::onRestoreClick,
+                    hapticFeedbackType = HapticFeedbackType.Confirm
+                ),
         )
 
     private fun onCopyClick() {

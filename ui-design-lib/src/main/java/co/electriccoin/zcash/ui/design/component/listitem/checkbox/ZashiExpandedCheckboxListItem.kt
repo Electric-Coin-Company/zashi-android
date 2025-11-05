@@ -110,14 +110,15 @@ fun ZashiExpandedCheckboxListItem(
                     ZashiColors.Surfaces.strokeSecondary
                 }
             ),
-        onClick = if (state.hapticFeedbackType == null) {
-            state.onClick
-        } else {
-            {
-                haptic.performHapticFeedback(state.hapticFeedbackType)
-                state.onClick()
-            }
-        },
+        onClick =
+            if (state.hapticFeedbackType == null) {
+                state.onClick
+            } else {
+                {
+                    haptic.performHapticFeedback(state.hapticFeedbackType)
+                    state.onClick()
+                }
+            },
         shape = RoundedCornerShape(16.dp),
     )
 }
@@ -167,11 +168,12 @@ data class ZashiExpandedCheckboxListItemState(
     val subtitle: StringResource,
     val icon: Int,
     val isSelected: Boolean,
-    val hapticFeedbackType: HapticFeedbackType? = if (isSelected) {
-        HapticFeedbackType.ToggleOff
-    } else {
-        HapticFeedbackType.ToggleOn
-    },
+    val hapticFeedbackType: HapticFeedbackType? =
+        if (isSelected) {
+            HapticFeedbackType.ToggleOff
+        } else {
+            HapticFeedbackType.ToggleOn
+        },
     val info: ZashiExpandedCheckboxRowState?,
     val onClick: () -> Unit
 ) : CheckboxListItemState

@@ -10,13 +10,14 @@ import org.koin.compose.koinInject
 @Composable
 fun DebugTextScreen(args: DebugTextArgs) {
     val navigationRouter = koinInject<NavigationRouter>()
-    val state = remember(args) {
-        DebugTextState(
-            title = stringRes(args.title),
-            text = stringRes(args.text),
-            onBack = { navigationRouter.back() },
-        )
-    }
+    val state =
+        remember(args) {
+            DebugTextState(
+                title = stringRes(args.title),
+                text = stringRes(args.text),
+                onBack = { navigationRouter.back() },
+            )
+        }
     DebugTextView(state)
 }
 

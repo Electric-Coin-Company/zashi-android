@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.swap
 
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import cash.z.ecc.android.sdk.ext.Conversions
 import cash.z.ecc.android.sdk.ext.Conversions.ZEC_FORMATTER
 import cash.z.ecc.android.sdk.model.FiatCurrency
@@ -38,6 +37,7 @@ import java.math.BigDecimal
 import java.math.MathContext
 import kotlin.math.absoluteValue
 
+@Suppress("TooManyFunctions")
 internal class ExactInputVMMapper {
     fun createState(
         internalState: InternalState,
@@ -144,7 +144,11 @@ internal class ExactInputVMMapper {
 
     private fun createInfoFooter(state: ExactInputInternalState): StringResource? =
         when {
-            state.isEphemeralAddressLocked -> stringRes("Renewing temporary addresses. Once the reset transaction is processed, you will be able to proceed. This may take up to 2 minutes.")
+            state.isEphemeralAddressLocked ->
+                stringRes(
+                    "Renewing temporary addresses. Once the reset transaction is processed, you will be able to " +
+                        "proceed. This may take up to 2 minutes."
+                )
             state.mode == SWAP_INTO_ZEC -> stringRes(R.string.swap_into_zec_footer)
             else -> null
         }
@@ -468,17 +472,19 @@ internal class ExactInputVMMapper {
                 when {
                     state.isEphemeralAddressLocked -> false
                     state.swapAssets.error != null -> !state.swapAssets.isLoading || state.swapAssets.data != null
-                    else -> state.swapAssets.data != null &&
-                        state.swapAsset != null &&
-                        !textField.isError &&
-                        amount != null &&
-                        amount > BigDecimal(0) &&
-                        (state.addressText.isNotBlank() || state.selectedContact != null) &&
-                        !state.isRequestingQuote
+                    else ->
+                        state.swapAssets.data != null &&
+                            state.swapAsset != null &&
+                            !textField.isError &&
+                            amount != null &&
+                            amount > BigDecimal(0) &&
+                            (state.addressText.isNotBlank() || state.selectedContact != null) &&
+                            !state.isRequestingQuote
                 },
-            isLoading = state.isEphemeralAddressLocked ||
-                state.isRequestingQuote ||
-                (state.swapAssets.isLoading && state.swapAssets.data == null)
+            isLoading =
+                state.isEphemeralAddressLocked ||
+                    state.isRequestingQuote ||
+                    (state.swapAssets.isLoading && state.swapAssets.data == null)
         )
     }
 

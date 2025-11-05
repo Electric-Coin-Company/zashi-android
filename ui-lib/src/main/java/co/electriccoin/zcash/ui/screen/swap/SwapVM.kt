@@ -118,7 +118,8 @@ internal class SwapVM(
             getSelectedWalletAccount.observe(),
             mode,
             // isEphemeralAddressLocked.observe()
-        ) { address,
+        ) {
+            address,
             amount,
             asset,
             slippage,

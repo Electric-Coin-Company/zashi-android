@@ -28,16 +28,18 @@ fun ZashiVersion(
     onLongClick: (() -> Unit)? = null
 ) {
     Column(
-        modifier = modifier then if (onLongClick != null) {
-            Modifier.combinedClickable(
-                indication = null,
-                onClick = {},
-                onLongClick = onLongClick,
-                interactionSource = remember { MutableInteractionSource() },
-            )
-        } else {
-            Modifier
-        }
+        modifier =
+            modifier then
+                if (onLongClick != null) {
+                    Modifier.combinedClickable(
+                        indication = null,
+                        onClick = {},
+                        onLongClick = onLongClick,
+                        interactionSource = remember { MutableInteractionSource() },
+                    )
+                } else {
+                    Modifier
+                }
     ) {
         Image(
             modifier = Modifier.align(CenterHorizontally),

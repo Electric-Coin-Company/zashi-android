@@ -9,7 +9,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -20,17 +19,12 @@ import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.Spacer
-import co.electriccoin.zcash.ui.design.component.SwapQuoteHeaderState
 import co.electriccoin.zcash.ui.design.component.ZashiButton
-import co.electriccoin.zcash.ui.design.component.ZashiButtonColors
 import co.electriccoin.zcash.ui.design.component.ZashiButtonDefaults
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
-import co.electriccoin.zcash.ui.design.component.ZashiInfoText
 import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
-import co.electriccoin.zcash.ui.design.component.ZashiSwapQuoteHeader
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
-import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getValue
@@ -85,15 +79,18 @@ private fun Content(
         Spacer(12.dp)
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = "Zashi uses temporary addresses during swaps and payments to protect your privacy. If too many " +
-                "remain unused, Zashi hits a limit and can’t create new ones.",
+            text =
+                "Zashi uses temporary addresses during swaps and payments to protect your privacy. If too many " +
+                    "remain unused, Zashi hits a limit and can’t create new ones.",
             style = ZashiTypography.textSm,
             color = ZashiColors.Text.textTertiary,
         )
         Spacer(12.dp)
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = "To keep everything working smoothly, at least one of the generated addresses needs to receive funds. Completing this internal wallet transaction will get your swaps and payments unblocked.",
+            text =
+                "To keep everything working smoothly, at least one of the generated addresses needs to receive " +
+                    "funds. Completing this internal wallet transaction will get your swaps and payments unblocked.",
             style = ZashiTypography.textSm,
             color = ZashiColors.Text.textTertiary,
         )

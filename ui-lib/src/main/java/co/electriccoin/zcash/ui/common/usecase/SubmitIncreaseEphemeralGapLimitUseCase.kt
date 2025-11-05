@@ -58,7 +58,7 @@ class SubmitIncreaseEphemeralGapLimitUseCase(
         scope.launch {
             try {
                 val result = zashiProposalRepository.submit()
-                // invalidateEphemeralAddress(result)
+                invalidateEphemeralAddress(result)
                 zashiProposalRepository.clear()
             } catch (_: IllegalStateException) {
                 // do nothing

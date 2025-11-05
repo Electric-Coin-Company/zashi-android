@@ -75,7 +75,9 @@ class ParsePCZTException : Exception()
 sealed interface SubmitProposalState {
     data object Submitting : SubmitProposalState
 
-    data class Result(val submitResult: SubmitResult) : SubmitProposalState
+    data class Result(
+        val submitResult: SubmitResult
+    ) : SubmitProposalState
 }
 
 @Suppress("TooManyFunctions")
@@ -189,8 +191,8 @@ class KeystoneProposalRepositoryImpl(
         }
 
     @Suppress("UseCheckOrError", "ThrowingExceptionsWithoutMessageOrCause")
-    override suspend fun submit(): SubmitResult {
-        return scope
+    override suspend fun submit(): SubmitResult =
+        scope
             .async {
                 val transactionProposal = transactionProposal.value
                 val pcztWithSignatures = pcztWithSignatures
@@ -231,7 +233,6 @@ class KeystoneProposalRepositoryImpl(
                     }
                 }
             }.await()
-    }
 
     override suspend fun getTransactionProposal(): TransactionProposal = transactionProposal.filterNotNull().first()
 
@@ -262,4 +263,7 @@ class KeystoneProposalRepositoryImpl(
     }
 }
 
-private data class PcztState(val isLoading: Boolean, val pczt: Pczt?)
+private data class PcztState(
+    val isLoading: Boolean,
+    val pczt: Pczt?
+)

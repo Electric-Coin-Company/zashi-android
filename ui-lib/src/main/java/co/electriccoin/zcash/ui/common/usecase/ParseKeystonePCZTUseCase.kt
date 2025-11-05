@@ -14,7 +14,6 @@ class ParseKeystonePCZTUseCase(
     private val submitKSProposal: SubmitKSProposalUseCase,
     private val keystoneProposalRepository: KeystoneProposalRepository
 ) : BaseKeystoneScanner() {
-
     override suspend fun onSuccess(ur: UR) {
         keystoneProposalRepository.parsePCZT(ur)
         submitKSProposal()
@@ -87,4 +86,7 @@ abstract class BaseKeystoneScanner {
 
 class InvalidKeystonePCZTQRException : Exception()
 
-data class ParseKeystoneQrResult(val progress: Int, val isFinished: Boolean)
+data class ParseKeystoneQrResult(
+    val progress: Int,
+    val isFinished: Boolean
+)

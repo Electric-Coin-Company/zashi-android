@@ -1,10 +1,6 @@
 package co.electriccoin.zcash.ui.screen.crashreporting.view
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -46,7 +41,6 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.screen.crashreporting.model.CrashReportingOptInState
-import co.electriccoin.zcash.ui.screen.exchangerate.SecondaryCard
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.Option
 
 @Composable
@@ -194,7 +188,6 @@ fun CrashReportingOptInOptions(
         )
     }
 }
-
 
 @Suppress("UnusedPrivateMember")
 @PreviewScreens

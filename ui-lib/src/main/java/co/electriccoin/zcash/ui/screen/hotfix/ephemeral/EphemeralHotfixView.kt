@@ -14,7 +14,9 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -38,8 +40,10 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 fun EphemeralHotfixView(
     state: EphemeralHotfixState?,
     sheetState: SheetState = rememberInScreenModalBottomSheetState(),
-    onSheetOpened: (FocusRequester) -> Unit = { }
+    onSheetOpen: (FocusRequester) -> Unit = { }
 ) {
+    val onSheetOpen by rememberUpdatedState(onSheetOpen)
+
     val focusRequester = remember { FocusRequester() }
 
     ZashiScreenModalBottomSheet(
@@ -63,8 +67,9 @@ fun EphemeralHotfixView(
             )
             Spacer(12.dp)
             Text(
-                text = "If you confirm, Zashi will scan the transparent address you provide and discover its funds. " +
-                    "This may take a few minutes up to a few hours.",
+                text =
+                    "If you confirm, Zashi will scan the transparent address you provide and discover its funds. " +
+                        "This may take a few minutes up to a few hours.",
                 style = ZashiTypography.textSm,
                 color = ZashiColors.Text.textTertiary
             )
@@ -93,7 +98,7 @@ fun EphemeralHotfixView(
 
         LaunchedEffect(sheetState.currentValue) {
             if (sheetState.currentValue == SheetValue.Expanded) {
-                onSheetOpened(focusRequester)
+                onSheetOpen(focusRequester)
             }
         }
     }

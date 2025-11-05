@@ -14,12 +14,12 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
-import co.electriccoin.zcash.ui.common.usecase.SubmitProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.SubmitProposalUseCase
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ChipButtonState

@@ -19,55 +19,59 @@ class DebugVM(
     private val ephemeralAddressRepository: EphemeralAddressRepository,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
-    val state: StateFlow<DebugState> = MutableStateFlow(
-        DebugState(
-            onBack = ::onBack,
-            items = listOf(
-                ListItemState(
-                    // bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                    // smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_unshielded),
-                    title = stringRes("Get Current Ephemeral Address"),
-                    onClick = ::onGetEphemeralAddressClick
-                ),
-                ListItemState(
-                    // bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                    // smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_unshielded),
-                    title = stringRes("Generate an Ephemeral Address"),
-                    onClick = ::onGenerateEphemeralAddressClick
-                ),
-                ListItemState(
-                    // bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                    // smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_unshielded),
-                    title = stringRes("Discover Funds"),
-                    onClick = ::onDiscoverFundsClick
-                ),
+    val state: StateFlow<DebugState> =
+        MutableStateFlow(
+            DebugState(
+                onBack = ::onBack,
+                items =
+                    listOf(
+                        ListItemState(
+                            // bigIcon = imageRes(R.drawable.ic_zec_round_full),
+                            // smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_unshielded),
+                            title = stringRes("Get Current Ephemeral Address"),
+                            onClick = ::onGetEphemeralAddressClick
+                        ),
+                        ListItemState(
+                            // bigIcon = imageRes(R.drawable.ic_zec_round_full),
+                            // smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_unshielded),
+                            title = stringRes("Generate an Ephemeral Address"),
+                            onClick = ::onGenerateEphemeralAddressClick
+                        ),
+                        ListItemState(
+                            // bigIcon = imageRes(R.drawable.ic_zec_round_full),
+                            // smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_unshielded),
+                            title = stringRes("Discover Funds"),
+                            onClick = ::onDiscoverFundsClick
+                        ),
+                    )
             )
-        )
-    ).asStateFlow()
+        ).asStateFlow()
 
     private fun onBack() = navigationRouter.back()
 
-    private fun onGetEphemeralAddressClick() = viewModelScope.launch {
-        val address = ephemeralAddressRepository.get()
-        copyToClipboardUseCase(address?.address.toString())
-        navigationRouter.forward(
-            DebugTextArgs(
-                title = "Current Ephemeral Address",
-                text = address.toString()
+    private fun onGetEphemeralAddressClick() =
+        viewModelScope.launch {
+            val address = ephemeralAddressRepository.get()
+            copyToClipboardUseCase(address?.address.toString())
+            navigationRouter.forward(
+                DebugTextArgs(
+                    title = "Current Ephemeral Address",
+                    text = address.toString()
+                )
             )
-        )
-    }
+        }
 
-    private fun onGenerateEphemeralAddressClick() = viewModelScope.launch {
-        val address = ephemeralAddressRepository.create()
-        copyToClipboardUseCase(address.address)
-        navigationRouter.forward(
-            DebugTextArgs(
-                title = "New Ephemeral Address",
-                text = address.toString()
+    private fun onGenerateEphemeralAddressClick() =
+        viewModelScope.launch {
+            val address = ephemeralAddressRepository.create()
+            copyToClipboardUseCase(address.address)
+            navigationRouter.forward(
+                DebugTextArgs(
+                    title = "New Ephemeral Address",
+                    text = address.toString()
+                )
             )
-        )
-    }
+        }
 
     private fun onDiscoverFundsClick() = navigationRouter.forward(EphemeralHotfixArgs(null))
 }

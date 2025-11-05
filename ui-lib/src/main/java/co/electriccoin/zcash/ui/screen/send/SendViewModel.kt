@@ -134,13 +134,14 @@ class SendViewModel(
         setSendStage: (SendStage) -> Unit
     ) {
         if (onCreateZecSendClickJob?.isActive == true) return
-        onCreateZecSendClickJob = viewModelScope.launch {
-            try {
-                createProposal(zecSend = newZecSend, floor = amountState.lastFieldChangedByUser == AmountField.FIAT)
-            } catch (e: Exception) {
-                setSendStage(SendStage.SendFailure(e.cause?.message ?: e.message ?: ""))
-                Twig.error(e) { "Error creating proposal" }
+        onCreateZecSendClickJob =
+            viewModelScope.launch {
+                try {
+                    createProposal(zecSend = newZecSend, floor = amountState.lastFieldChangedByUser == AmountField.FIAT)
+                } catch (e: Exception) {
+                    setSendStage(SendStage.SendFailure(e.cause?.message ?: e.message ?: ""))
+                    Twig.error(e) { "Error creating proposal" }
+                }
             }
-        }
     }
 }

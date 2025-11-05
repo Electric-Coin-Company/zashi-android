@@ -8,12 +8,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankBgScaffold
-import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ZashiHorizontalDivider
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
 import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarBackNavigation
@@ -24,7 +22,6 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.scaffoldScrollPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsState
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsTag
 import kotlinx.collections.immutable.persistentListOf
 

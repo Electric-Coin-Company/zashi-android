@@ -47,14 +47,15 @@ fun ZashiIconButton(
         modifier = modifier
     ) {
         IconButton(
-            onClick = if (state.hapticFeedbackType != null) {
-                {
-                    haptic.performHapticFeedback(state.hapticFeedbackType)
-                    state.onClick()
+            onClick =
+                if (state.hapticFeedbackType != null) {
+                    {
+                        haptic.performHapticFeedback(state.hapticFeedbackType)
+                        state.onClick()
+                    }
+                } else {
+                    state.onClick
                 }
-            } else {
-                state.onClick
-            }
         ) {
             Icon(
                 painter = painterResource(state.icon),
@@ -95,14 +96,15 @@ fun ZashiImageButton(
     Box(
         modifier =
             modifier.clickable(
-                onClick = if (state.hapticFeedbackType != null) {
-                    {
-                        haptic.performHapticFeedback(state.hapticFeedbackType)
-                        state.onClick()
-                    }
-                } else {
-                    state.onClick
-                },
+                onClick =
+                    if (state.hapticFeedbackType != null) {
+                        {
+                            haptic.performHapticFeedback(state.hapticFeedbackType)
+                            state.onClick()
+                        }
+                    } else {
+                        state.onClick
+                    },
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 enabled = state.isEnabled

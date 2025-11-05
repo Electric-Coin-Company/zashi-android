@@ -19,6 +19,7 @@ import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddre
 import co.electriccoin.zcash.ui.common.usecase.ExportTaxUseCase
 import co.electriccoin.zcash.ui.common.usecase.FilterSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.FilterSwapBlockchainsUseCase
+import co.electriccoin.zcash.ui.common.usecase.FixEphemeralAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.FlipTransactionBookmarkUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABContactByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABContactsUseCase
@@ -54,7 +55,6 @@ import co.electriccoin.zcash.ui.common.usecase.IsEphemeralAddressLockedUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsScreenTimeoutDisabledDuringRestoreUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsTorEnabledUseCase
-import co.electriccoin.zcash.ui.common.usecase.ProcessSwapTransactionUseCase
 import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
@@ -91,7 +91,7 @@ import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneSignInRequestUseCase
 import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneUrToZashiAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.PrefillSendUseCase
-import co.electriccoin.zcash.ui.common.usecase.FixEphemeralAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.ProcessSwapTransactionUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RemindWalletBackupLaterUseCase
 import co.electriccoin.zcash.ui.common.usecase.RequestSwapQuoteUseCase

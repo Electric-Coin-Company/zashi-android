@@ -39,7 +39,7 @@ class ApplicationStateRepositoryImpl(
             combine(
                 synchronizerProvider.synchronizer,
                 applicationStateProvider.isInForeground,
-            ) { synchronizer, isInForeground-> synchronizer to isInForeground }
+            ) { synchronizer, isInForeground -> synchronizer to isInForeground }
                 .collect { (synchronizer, isInForeground) ->
                     if (isInForeground) {
                         synchronizer?.onForeground()

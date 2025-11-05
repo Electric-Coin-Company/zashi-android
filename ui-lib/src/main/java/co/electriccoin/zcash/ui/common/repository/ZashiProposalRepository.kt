@@ -15,7 +15,6 @@ import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -112,8 +111,8 @@ class ZashiProposalRepositoryImpl(
     }
 
     @Suppress("TooGenericExceptionCaught", "UseCheckOrError")
-    override suspend fun submit(): SubmitResult {
-        return scope
+    override suspend fun submit(): SubmitResult =
+        scope
             .async {
                 val transactionProposal = transactionProposal.value
                 if (transactionProposal == null) {
@@ -147,7 +146,6 @@ class ZashiProposalRepositoryImpl(
                     }
                 }
             }.await()
-    }
 
     override suspend fun getTransactionProposal(): TransactionProposal = transactionProposal.filterNotNull().first()
 

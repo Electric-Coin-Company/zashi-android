@@ -7,7 +7,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import co.electriccoin.zcash.ui.common.compose.LocalActivity
-import co.electriccoin.zcash.ui.design.util.LocalNavController
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.viewmodel.SecretState
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
@@ -17,6 +16,7 @@ import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.enterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.exitTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popEnterTransition
 import co.electriccoin.zcash.ui.design.animation.ScreenAnimation.popExitTransition
+import co.electriccoin.zcash.ui.design.util.LocalNavController
 import co.electriccoin.zcash.ui.screen.flexa.FlexaViewModel
 import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import kotlinx.serialization.Serializable
@@ -85,10 +85,11 @@ fun RootNavGraph(
     }
 
     LaunchedEffect(secretState, navController) {
-        val currentRoute = navController
-            .currentBackStackEntry
-            ?.destination
-            ?.route
+        val currentRoute =
+            navController
+                .currentBackStackEntry
+                ?.destination
+                ?.route
 
         if (secretState == SecretState.READY &&
             navController.currentDestination?.parent?.route != MainAppGraph::class.qualifiedName

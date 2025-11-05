@@ -101,7 +101,15 @@ internal class ExactOutputVMMapper {
                             it.chainName
                         )
                     } ?: stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address),
-            infoFooter = if (state.isEphemeralAddressLocked) stringRes("Renewing temporary addresses. Once the reset transaction is processed, you will be able to proceed. This may take up to 2 minutes.") else null
+            infoFooter =
+                if (state.isEphemeralAddressLocked) {
+                    stringRes(
+                        "Renewing temporary addresses. Once the reset transaction is processed, you will be able to " +
+                            "proceed. This may take up to 2 minutes."
+                    )
+                } else {
+                    null
+                }
         )
     }
 
@@ -338,17 +346,19 @@ internal class ExactOutputVMMapper {
                 when {
                     state.isEphemeralAddressLocked -> false
                     state.swapAssets.error != null -> !state.swapAssets.isLoading || state.swapAssets.data != null
-                    else -> state.swapAssets.data != null &&
-                        state.asset != null &&
-                        !textField.isError &&
-                        amount != null &&
-                        amount > BigDecimal(0) &&
-                        (state.address.isNotBlank() || state.selectedABContact != null) &&
-                        !state.isRequestingQuote
+                    else ->
+                        state.swapAssets.data != null &&
+                            state.asset != null &&
+                            !textField.isError &&
+                            amount != null &&
+                            amount > BigDecimal(0) &&
+                            (state.address.isNotBlank() || state.selectedABContact != null) &&
+                            !state.isRequestingQuote
                 },
-            isLoading = state.isEphemeralAddressLocked ||
-                state.isRequestingQuote ||
-                (state.swapAssets.isLoading && state.swapAssets.data == null),
+            isLoading =
+                state.isEphemeralAddressLocked ||
+                    state.isRequestingQuote ||
+                    (state.swapAssets.isLoading && state.swapAssets.data == null),
         )
     }
 

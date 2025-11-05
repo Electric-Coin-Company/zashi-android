@@ -77,11 +77,12 @@ class ZashiTopAppBarVM(
                     },
                 onClick = ::onShowOrHideBalancesClicked,
                 contentDescription = stringRes(co.electriccoin.zcash.ui.R.string.hide_balances_content_description),
-                hapticFeedbackType = if (isHideBalances == true) {
-                    HapticFeedbackType.ToggleOn
-                } else {
-                    HapticFeedbackType.ToggleOff
-                }
+                hapticFeedbackType =
+                    if (isHideBalances == true) {
+                        HapticFeedbackType.ToggleOn
+                    } else {
+                        HapticFeedbackType.ToggleOff
+                    }
             ),
         settingsButton =
             IconButtonState(

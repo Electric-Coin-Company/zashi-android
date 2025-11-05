@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@Suppress("TooManyFunctions")
 class AdvancedSettingsVM(
     getWalletRestoringState: GetWalletRestoringStateUseCase,
     private val navigationRouter: NavigationRouter,

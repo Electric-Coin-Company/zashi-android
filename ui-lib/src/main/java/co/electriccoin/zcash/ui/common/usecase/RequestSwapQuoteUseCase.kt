@@ -44,7 +44,10 @@ class RequestSwapQuoteUseCase(
                 swapRepository.requestExactInputQuote(
                     amount = amount,
                     address = address,
-                    refundAddress = accountDataSource.getSelectedAccount().transparent.address.address
+                    refundAddress =
+                        accountDataSource
+                            .getSelectedAccount()
+                            .transparent.address.address
                     // refundAddress = getEphemeralAddress()
                 )
             },
@@ -63,7 +66,10 @@ class RequestSwapQuoteUseCase(
                 swapRepository.requestExactOutputQuote(
                     amount = amount,
                     address = address,
-                    refundAddress = accountDataSource.getSelectedAccount().transparent.address.address
+                    refundAddress =
+                        accountDataSource
+                            .getSelectedAccount()
+                            .transparent.address.address
                     // refundAddress = getEphemeralAddress()
                 )
             },
@@ -83,7 +89,10 @@ class RequestSwapQuoteUseCase(
                     .requestExactInputIntoZec(
                         amount = amount,
                         refundAddress = refundAddress,
-                        destinationAddress = accountDataSource.getSelectedAccount().transparent.address.address
+                        destinationAddress =
+                            accountDataSource
+                                .getSelectedAccount()
+                                .transparent.address.address
                         // destinationAddress = getEphemeralAddress()
                     )
             },

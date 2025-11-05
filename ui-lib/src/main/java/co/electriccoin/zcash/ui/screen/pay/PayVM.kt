@@ -140,7 +140,8 @@ internal class PayVM(
             isABHintVisible,
             canCreateNewABContact,
             // isEphemeralAddressLocked.observe()
-        ) { address,
+        ) {
+            address,
             text,
             asset,
             slippage,

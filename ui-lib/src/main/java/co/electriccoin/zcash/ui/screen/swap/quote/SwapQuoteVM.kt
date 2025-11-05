@@ -18,8 +18,8 @@ import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
-import co.electriccoin.zcash.ui.common.usecase.SubmitProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.SubmitProposalUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes

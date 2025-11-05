@@ -21,7 +21,7 @@ fun AndroidTransactionNote(transactionNote: TransactionNote) {
     var hasBeenAutofocused by rememberSaveable { mutableStateOf(false) }
     TransactionNoteView(
         state = state,
-        onSheetOpened = { focusRequester ->
+        onSheetOpen = { focusRequester ->
             if (!hasBeenAutofocused) {
                 hasBeenAutofocused = focusRequester.tryRequestFocus() ?: true
             }

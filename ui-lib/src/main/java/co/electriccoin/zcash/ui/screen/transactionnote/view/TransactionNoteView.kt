@@ -13,7 +13,9 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -41,8 +43,9 @@ import co.electriccoin.zcash.ui.screen.transactionnote.model.TransactionNoteStat
 internal fun TransactionNoteView(
     state: TransactionNoteState?,
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
-    onSheetOpened: (FocusRequester) -> Unit = { }
+    onSheetOpen: (FocusRequester) -> Unit = { }
 ) {
+    val onSheetOpen by rememberUpdatedState(onSheetOpen)
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
@@ -51,7 +54,7 @@ internal fun TransactionNoteView(
             BottomSheetContent(it, focusRequester)
             LaunchedEffect(sheetState.currentValue) {
                 if (sheetState.currentValue == SheetValue.Expanded) {
-                    onSheetOpened(focusRequester)
+                    onSheetOpen(focusRequester)
                 }
             }
         },

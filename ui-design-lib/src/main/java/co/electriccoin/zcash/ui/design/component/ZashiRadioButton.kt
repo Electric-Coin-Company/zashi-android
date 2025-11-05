@@ -64,17 +64,17 @@ fun ZashiRadioButton(
                 .clickable(
                     indication = if (isRippleEnabled) ripple() else null,
                     interactionSource = remember { MutableInteractionSource() },
-                    onClick = if (state.hapticFeedbackType != null) {
-                        {
-                            haptic.performHapticFeedback(state.hapticFeedbackType)
-                            state.onClick()
-                        }
-                    } else {
-                        state.onClick
-                    },
+                    onClick =
+                        if (state.hapticFeedbackType != null) {
+                            {
+                                haptic.performHapticFeedback(state.hapticFeedbackType)
+                                state.onClick()
+                            }
+                        } else {
+                            state.onClick
+                        },
                     role = Role.Button,
-                )
-                .padding(horizontal = 20.dp)
+                ).padding(horizontal = 20.dp)
                 .then(
                     if (testTag != null) {
                         Modifier.testTag(testTag)
@@ -168,11 +168,12 @@ private fun RadioButtonIndicator(
 data class RadioButtonState(
     val text: StringResource,
     val isChecked: Boolean,
-    val hapticFeedbackType: HapticFeedbackType? = if (isChecked) {
-        HapticFeedbackType.ToggleOff
-    } else {
-        HapticFeedbackType.ToggleOn
-    },
+    val hapticFeedbackType: HapticFeedbackType? =
+        if (isChecked) {
+            HapticFeedbackType.ToggleOff
+        } else {
+            HapticFeedbackType.ToggleOn
+        },
     val subtitle: StringResource? = null,
     val onClick: () -> Unit,
 )

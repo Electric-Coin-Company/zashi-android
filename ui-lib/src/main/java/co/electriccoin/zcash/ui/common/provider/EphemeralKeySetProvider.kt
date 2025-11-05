@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 interface EphemeralAddressStorageProvider {
-
     fun observe(uuid: AccountUuid): Flow<EphemeralAddress?>
 
     suspend fun get(uuid: AccountUuid): EphemeralAddress?
@@ -62,4 +61,3 @@ private fun String?.decode(): EphemeralAddress? =
             gapLimit = it[2].toUInt()
         )
     }
-

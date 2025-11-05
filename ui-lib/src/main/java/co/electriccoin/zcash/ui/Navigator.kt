@@ -35,10 +35,11 @@ class NavigatorImpl(
             NavigationCommand.Back,
             NavigationCommand.BackToRoot,
             is NavigationCommand.BackTo -> {
-                val currentRoute = navController
-                    .currentBackStackEntry
-                    ?.destination
-                    ?.route
+                val currentRoute =
+                    navController
+                        .currentBackStackEntry
+                        ?.destination
+                        ?.route
 
                 currentRoute?.let { sheetStateManager.hide(it) }
             }

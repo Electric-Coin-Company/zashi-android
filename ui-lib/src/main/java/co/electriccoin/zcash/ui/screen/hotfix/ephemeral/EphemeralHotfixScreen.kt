@@ -20,7 +20,7 @@ fun EphemeralHotfixScreen(args: EphemeralHotfixArgs) {
     var hasBeenAutofocused by rememberSaveable { mutableStateOf(false) }
     EphemeralHotfixView(
         state = state,
-        onSheetOpened = { focusRequester ->
+        onSheetOpen = { focusRequester ->
             if (!hasBeenAutofocused) {
                 hasBeenAutofocused = focusRequester.tryRequestFocus() ?: true
             }
@@ -29,4 +29,6 @@ fun EphemeralHotfixScreen(args: EphemeralHotfixArgs) {
 }
 
 @Serializable
-data class EphemeralHotfixArgs(val address: String?)
+data class EphemeralHotfixArgs(
+    val address: String?
+)

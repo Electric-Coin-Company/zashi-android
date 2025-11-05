@@ -32,36 +32,43 @@ class FixEphemeralAddressUseCase(
 
     operator fun invoke(address: String) {
         if (job?.isActive == true) return
-        job = scope.launch {
-            try {
-                isLoading.update { true }
-                val validation = synchronizerProvider.getSynchronizer().validateAddress(address)
+        job =
+            scope.launch {
+                try {
+                    isLoading.update { true }
+                    val validation = synchronizerProvider.getSynchronizer().validateAddress(address)
 
-                val ephemeral = when (validation) {
-                    AddressType.Shielded,
-                    AddressType.Tex,
-                    AddressType.Unified -> return@launch
+                    val ephemeral =
+                        when (validation) {
+                            AddressType.Shielded,
+                            AddressType.Tex,
+                            AddressType.Unified -> return@launch
 
-                    AddressType.Transparent -> address
-                    is AddressType.Invalid ->
-                        swapRepository.getSwapStatus(depositAddress = address).status?.quote?.recipient
-                            ?: return@launch
+                            AddressType.Transparent -> address
+                            is AddressType.Invalid ->
+                                swapRepository
+                                    .getSwapStatus(depositAddress = address)
+                                    .status
+                                    ?.quote
+                                    ?.recipient
+                                    ?: return@launch
+                        }
+                    navigationRouter.back()
+                    fetchUtxosByAddress(ephemeral)
+                } finally {
+                    isLoading.update { false }
                 }
-                navigationRouter.back()
-                fetchUtxosByAddress(ephemeral)
-            } finally {
-                isLoading.update { false }
             }
-        }
     }
 
     fun observeIsLoading() = isLoading.asStateFlow()
 
     private suspend fun fetchUtxosByAddress(address: String) {
-        val fundsDiscovered = synchronizerProvider.getSynchronizer().fetchUtxosByAddress(
-            accountUuid = accountDataSource.getSelectedAccount().sdkAccount.accountUuid,
-            address = address
-        )
+        val fundsDiscovered =
+            synchronizerProvider.getSynchronizer().fetchUtxosByAddress(
+                accountUuid = accountDataSource.getSelectedAccount().sdkAccount.accountUuid,
+                address = address
+            )
         withContext(Dispatchers.Main.immediate) {
             if (fundsDiscovered) {
                 Toast.makeText(context, "Funds were successfully discovered", Toast.LENGTH_LONG).show()

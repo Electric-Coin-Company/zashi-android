@@ -167,14 +167,15 @@ fun ZashiButton(
     val haptic = LocalHapticFeedback.current
 
     Button(
-        onClick = if (state.hapticFeedbackType != null) {
-            {
-                haptic.performHapticFeedback(state.hapticFeedbackType)
-                state.onClick()
-            }
-        } else {
-            state.onClick
-        },
+        onClick =
+            if (state.hapticFeedbackType != null) {
+                {
+                    haptic.performHapticFeedback(state.hapticFeedbackType)
+                    state.onClick()
+                }
+            } else {
+                state.onClick
+            },
         modifier = modifier,
         shape = shape,
         contentPadding = contentPadding,

@@ -3,13 +3,10 @@ package co.electriccoin.zcash.ui.common.usecase
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
-import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionProposal
-import co.electriccoin.zcash.ui.common.datasource.ExactOutputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.SwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
-import co.electriccoin.zcash.ui.common.model.ZecSwapAsset
 import co.electriccoin.zcash.ui.common.repository.BiometricRepository
 import co.electriccoin.zcash.ui.common.repository.BiometricRequest
 import co.electriccoin.zcash.ui.common.repository.BiometricsCancelledException
@@ -54,10 +51,11 @@ class SubmitProposalUseCase(
                     )
             )
             val account = accountDataSource.getSelectedAccount()
-            val proposal = when (account) {
-                is KeystoneAccount -> keystoneProposalRepository.getTransactionProposal()
-                is ZashiAccount -> zashiProposalRepository.getTransactionProposal()
-            }
+            val proposal =
+                when (account) {
+                    is KeystoneAccount -> keystoneProposalRepository.getTransactionProposal()
+                    is ZashiAccount -> zashiProposalRepository.getTransactionProposal()
+                }
             if (proposal is SwapTransactionProposal) {
                 val selectedSwapAsset = proposal.quote.destinationAsset
                 metadataRepository.addSwapAssetToHistory(

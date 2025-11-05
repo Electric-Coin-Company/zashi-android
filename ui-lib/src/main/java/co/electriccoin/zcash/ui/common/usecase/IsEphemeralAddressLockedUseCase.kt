@@ -15,22 +15,25 @@ class IsEphemeralAddressLockedUseCase(
     private val transactionRepository: TransactionRepository,
     private val ephemeralAddressRepository: EphemeralAddressRepository
 ) {
+    @Suppress("MagicNumber", "UseCheckOrError")
     suspend operator fun invoke(): EphemeralLockState {
-        val ephemeral = ephemeralAddressRepository.get()
-            ?: throw IllegalStateException("Ephemeral address is null")
+        val ephemeral =
+            ephemeralAddressRepository.get()
+                ?: throw IllegalStateException("Ephemeral address is null")
 
         val transactions = transactionRepository.getTransactions()
 
         return if (ephemeral.gapLimit - ephemeral.gapPosition > 1u) {
             EphemeralLockState.UNLOCKED
         } else {
-            val unlockTransaction = transactions
-                .filterIsInstance<SendTransaction>()
-                .find {
-                    val fee = it.fee ?: Zatoshi(0)
-                    val amount = it.amount - fee
-                    it.recipient?.address == ephemeral.address && amount <= Zatoshi(100)
-                }
+            val unlockTransaction =
+                transactions
+                    .filterIsInstance<SendTransaction>()
+                    .find {
+                        val fee = it.fee ?: Zatoshi(0)
+                        val amount = it.amount - fee
+                        it.recipient?.address == ephemeral.address && amount <= Zatoshi(100)
+                    }
 
             when (unlockTransaction) {
                 is SendTransaction.Failed -> EphemeralLockState.LOCKED
@@ -41,28 +44,30 @@ class IsEphemeralAddressLockedUseCase(
         }
     }
 
+    @Suppress("MagicNumber")
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun observe() = ephemeralAddressRepository
-        .observe()
-        .filterNotNull()
-        .flatMapLatest { ephemeral ->
-            if (ephemeral.gapLimit - ephemeral.gapPosition > 1u) {
-                flowOf(false)
-            } else {
-                transactionRepository
-                    .transactions
-                    .filterNotNull()
-                    .map { transactions ->
-                        transactions
-                            .filterIsInstance<SendTransaction.Success>()
-                            .none {
-                                val fee = it.fee ?: Zatoshi(0)
-                                val amount = it.amount - fee
-                                it.recipient?.address == ephemeral.address && amount <= Zatoshi(100)
-                            }
-                    }
+    fun observe() =
+        ephemeralAddressRepository
+            .observe()
+            .filterNotNull()
+            .flatMapLatest { ephemeral ->
+                if (ephemeral.gapLimit - ephemeral.gapPosition > 1u) {
+                    flowOf(false)
+                } else {
+                    transactionRepository
+                        .transactions
+                        .filterNotNull()
+                        .map { transactions ->
+                            transactions
+                                .filterIsInstance<SendTransaction.Success>()
+                                .none {
+                                    val fee = it.fee ?: Zatoshi(0)
+                                    val amount = it.amount - fee
+                                    it.recipient?.address == ephemeral.address && amount <= Zatoshi(100)
+                                }
+                        }
+                }
             }
-        }
 }
 
 enum class EphemeralLockState {

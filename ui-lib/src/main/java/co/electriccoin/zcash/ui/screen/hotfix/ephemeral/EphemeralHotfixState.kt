@@ -10,4 +10,4 @@ data class EphemeralHotfixState(
     val address: TextFieldState,
     val button: ButtonState,
     override val onBack: () -> Unit,
-): ModalBottomSheetState
+) : ModalBottomSheetState

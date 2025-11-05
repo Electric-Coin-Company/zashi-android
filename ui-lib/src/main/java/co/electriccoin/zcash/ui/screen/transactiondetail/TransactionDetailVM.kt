@@ -102,11 +102,12 @@ class TransactionDetailVM(
                                     R.drawable.ic_transaction_detail_no_bookmark
                                 },
                             onClick = ::onBookmarkClick,
-                            hapticFeedbackType = if (transaction.metadata.isBookmarked) {
-                                HapticFeedbackType.ToggleOff
-                            } else {
-                                HapticFeedbackType.ToggleOn
-                            }
+                            hapticFeedbackType =
+                                if (transaction.metadata.isBookmarked) {
+                                    HapticFeedbackType.ToggleOff
+                                } else {
+                                    HapticFeedbackType.ToggleOn
+                                }
                         ),
                     errorFooter = createErrorFooter(transaction)
                 )
