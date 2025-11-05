@@ -38,7 +38,7 @@ class ApplicationStateRepositoryImpl(
         scope.launch {
             combine(
                 synchronizerProvider.synchronizer,
-                applicationStateProvider.isInForeground
+                applicationStateProvider.isInForeground,
             ) { synchronizer, isInForeground -> synchronizer to isInForeground }
                 .collect { (synchronizer, isInForeground) ->
                     if (isInForeground) {

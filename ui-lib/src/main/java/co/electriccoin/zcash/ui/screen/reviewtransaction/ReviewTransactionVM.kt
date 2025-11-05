@@ -14,12 +14,12 @@ import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
-import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveContactByAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
+import co.electriccoin.zcash.ui.common.usecase.SubmitProposalUseCase
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ChipButtonState
@@ -28,6 +28,7 @@ import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
 import co.electriccoin.zcash.ui.util.Quintuple
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -44,11 +45,11 @@ class ReviewTransactionVM(
     getWalletAccounts: GetWalletAccountsUseCase,
     observeContactByAddress: ObserveContactByAddressUseCase,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
-    observeKeystoneSendTransactionProposal: ObserveProposalUseCase,
+    observeProposal: ObserveProposalUseCase,
     private val cancelProposalFlow: CancelProposalFlowUseCase,
     private val getExchangeRate: GetExchangeRateUseCase,
     private val navigationRouter: NavigationRouter,
-    private val confirmProposal: ConfirmProposalUseCase,
+    private val submitProposal: SubmitProposalUseCase,
 ) : ViewModel() {
     private val isReceiverExpanded = MutableStateFlow(false)
 
@@ -66,7 +67,7 @@ class ReviewTransactionVM(
     val state =
         combine(
             observeSelectedWalletAccount.require(),
-            observeKeystoneSendTransactionProposal.filterSendTransactions(),
+            observeProposal.filterSend(),
             isReceiverExpanded,
             exchangeRate,
             getWalletAccounts.observe()
@@ -106,6 +107,8 @@ class ReviewTransactionVM(
             initialValue = null
         )
 
+    private var onConfirmClickJob: Job? = null
+
     private fun createState(
         selectedWallet: WalletAccount,
         transactionProposal: SendTransactionProposal,
@@ -122,7 +125,7 @@ class ReviewTransactionVM(
             listOfNotNull(
                 AmountState(
                     title = stringRes(R.string.send_confirmation_amount),
-                    amount = transactionProposal.amount,
+                    amount = transactionProposal.amount + transactionProposal.proposal.totalFeeRequired(),
                     exchangeRate = exchangeRateState,
                 ),
                 ReceiverState(
@@ -243,7 +246,10 @@ class ReviewTransactionVM(
 
     private fun onBack() = viewModelScope.launch { cancelProposalFlow(clearSendForm = false) }
 
-    private fun onConfirmClick() = viewModelScope.launch { confirmProposal() }
+    private fun onConfirmClick() {
+        if (onConfirmClickJob?.isActive == true) return
+        onConfirmClickJob = viewModelScope.launch { submitProposal() }
+    }
 
     private fun onAddContactClick(address: String) = navigationRouter.forward(AddZashiABContactArgs(address))
 }

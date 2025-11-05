@@ -6,6 +6,7 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
@@ -13,7 +14,6 @@ import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.spackle.AndroidApiVersion
 import co.electriccoin.zcash.spackle.Twig
-import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
@@ -107,6 +107,7 @@ class AuthenticationViewModel(
                         AuthenticationUIState.Required
                     }
                 }
+
                 else -> state
             }
         }.stateIn(
@@ -136,15 +137,6 @@ class AuthenticationViewModel(
         }
 
     /**
-     * Other authentication use cases
-     */
-    val isExportPrivateDataAuthenticationRequired: StateFlow<Boolean?> =
-        booleanStateFlow(StandardPreferenceKeys.IS_EXPORT_PRIVATE_DATA_AUTHENTICATION)
-
-    val isDeleteWalletAuthenticationRequired: StateFlow<Boolean?> =
-        booleanStateFlow(StandardPreferenceKeys.IS_DELETE_WALLET_AUTHENTICATION)
-
-    /**
      * Authentication framework result
      */
     internal val authenticationResult: MutableStateFlow<AuthenticationResult> =
@@ -155,7 +147,7 @@ class AuthenticationViewModel(
     }
 
     fun authenticate(
-        activity: MainActivity,
+        activity: FragmentActivity,
         initialAuthSystemWindowDelay: Duration = DEFAULT_INITIAL_DELAY.milliseconds,
         useCase: AuthenticationUseCase
     ) {
@@ -302,14 +294,7 @@ class AuthenticationViewModel(
                             R.string.authentication_system_ui_subtitle,
                             getString(
                                 when (useCase) {
-                                    AuthenticationUseCase.AppAccess ->
-                                        R.string.app_name
-
-                                    AuthenticationUseCase.DeleteWallet ->
-                                        R.string.authentication_use_case_delete_wallet
-
-                                    AuthenticationUseCase.ExportPrivateData ->
-                                        R.string.authentication_use_case_export_data
+                                    AuthenticationUseCase.AppAccess -> R.string.app_name
 
                                     AuthenticationUseCase.SendFunds ->
                                         R.string.authentication_use_case_send_funds

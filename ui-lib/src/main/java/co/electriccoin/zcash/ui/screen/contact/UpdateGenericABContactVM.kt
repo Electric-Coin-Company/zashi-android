@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.contact
 
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
@@ -178,7 +179,8 @@ class UpdateGenericABContactVM(
                         contactName.value.isNotEmpty() &&
                         (nameChanged || addressChanged || blockchainChanged),
                 onClick = ::onUpdateButtonClick,
-                isLoading = isUpdatingContact
+                isLoading = isUpdatingContact,
+                hapticFeedbackType = HapticFeedbackType.Confirm
             )
         }
 
@@ -187,7 +189,8 @@ class UpdateGenericABContactVM(
             ButtonState(
                 text = stringRes(R.string.update_contact_secondary_btn),
                 onClick = ::onDeleteButtonClick,
-                isLoading = isDeletingContact
+                isLoading = isDeletingContact,
+                hapticFeedbackType = HapticFeedbackType.Confirm
             )
         }
 

@@ -52,7 +52,7 @@ class ShieldFundsUseCase(
     private suspend fun shieldZashiFunds() {
         try {
             zashiProposalRepository.createShieldProposal()
-            val result = zashiProposalRepository.submitTransactionAndGet()
+            val result = zashiProposalRepository.submit()
 
             when (result) {
                 is SubmitResult.Failure,

@@ -37,5 +37,5 @@ internal sealed interface SwapQuoteState : ModalBottomSheetState {
 data class SwapQuoteInfoItem(
     val description: StringResource,
     val title: StringResource,
-    val subtitle: StringResource?,
+    val subtitle: StringResource? = null,
 )

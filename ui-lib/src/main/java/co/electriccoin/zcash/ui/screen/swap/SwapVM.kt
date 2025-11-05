@@ -60,6 +60,7 @@ internal class SwapVM(
     private val exactInputVMMapper: ExactInputVMMapper,
     private val navigateToScanAddress: NavigateToScanGenericAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
+    // private val isEphemeralAddressLocked: IsEphemeralAddressLockedUseCase
 ) : ViewModel() {
     private val mode = MutableStateFlow(SWAP_INTO_ZEC)
 
@@ -115,7 +116,8 @@ internal class SwapVM(
             isRequestingQuote,
             selectedContact,
             getSelectedWalletAccount.observe(),
-            mode
+            mode,
+            // isEphemeralAddressLocked.observe()
         ) {
             address,
             amount,
@@ -126,7 +128,8 @@ internal class SwapVM(
             isRequestingQuote,
             selectedContact,
             account,
-            mode
+            mode,
+            // isEphemeralAddressLocked
             ->
             InternalStateImpl(
                 swapAsset = asset,
@@ -138,7 +141,8 @@ internal class SwapVM(
                 isRequestingQuote = isRequestingQuote,
                 selectedContact = selectedContact,
                 account = account,
-                mode = mode
+                mode = mode,
+                isEphemeralAddressLocked = false
             )
         }
 
@@ -289,6 +293,7 @@ internal class SwapVM(
                         address = address,
                         canNavigateToSwapQuote = { !isCancelStateVisible.value }
                     )
+
                 SWAP_INTO_ZEC ->
                     requestSwapQuote.requestExactInputIntoZec(
                         amount = amount,
@@ -327,6 +332,7 @@ internal interface InternalState {
     val isRequestingQuote: Boolean
     val selectedContact: EnhancedABContact?
     val mode: Mode
+    val isEphemeralAddressLocked: Boolean
 
     val totalSpendableBalance: Zatoshi
         get() = account?.spendableShieldedBalance ?: Zatoshi(0)
@@ -343,4 +349,5 @@ internal data class InternalStateImpl(
     override val isRequestingQuote: Boolean,
     override val selectedContact: EnhancedABContact?,
     override val mode: Mode,
+    override val isEphemeralAddressLocked: Boolean,
 ) : InternalState

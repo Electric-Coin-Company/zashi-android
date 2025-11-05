@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.exchangerate.settings
 
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
@@ -51,7 +52,8 @@ internal class ExchangeRateSettingsVM(
                 ButtonState(
                     stringRes(R.string.exchange_rate_opt_in_save),
                     onClick = ::onOptInExchangeRateUsdClick,
-                    isEnabled = isOptedIn != isOptedInOriginal
+                    isEnabled = isOptedIn != isOptedInOriginal,
+                    hapticFeedbackType = HapticFeedbackType.Confirm
                 ),
             onBack = ::onBack
         )

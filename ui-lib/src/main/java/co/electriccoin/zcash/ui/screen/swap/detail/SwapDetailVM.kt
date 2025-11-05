@@ -186,13 +186,12 @@ class SwapDetailVM(
                         ?.tokenIcon ?: loadingImageRes(),
                     imageRes(R.drawable.ic_transaction_received),
                     imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
-                )
+                ),
         )
 
     private fun onBack() = navigationRouter.back()
 
     private fun onCopyDepositAddressClick() = copyToClipboard(args.depositAddress)
 
-    private fun onCopyRecipientAddressClick(recipient: String) =
-        copyToClipboard(recipient)
+    private fun onCopyRecipientAddressClick(recipient: String) = copyToClipboard(recipient)
 }

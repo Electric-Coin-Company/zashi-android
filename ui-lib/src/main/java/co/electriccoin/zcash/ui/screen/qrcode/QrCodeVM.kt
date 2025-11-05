@@ -72,8 +72,5 @@ class QrCodeVM(
 
     private fun onBack() = navigationRouter.back()
 
-    private fun onAddressCopyClick(address: String) =
-        copyToClipboard(
-            value = address
-        )
+    private fun onAddressCopyClick(address: String) = copyToClipboard(address)
 }

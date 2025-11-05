@@ -16,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,12 +53,7 @@ internal fun ExchangeRateSettingsView(state: ExchangeRateSettingsState) {
             Option(
                 modifier = Modifier.fillMaxWidth(),
                 image = R.drawable.ic_opt_in,
-                selectionImage =
-                    if (state.isOptedIn.isChecked) {
-                        R.drawable.ic_checkbox_checked
-                    } else {
-                        R.drawable.ic_checkbox_unchecked
-                    },
+                isChecked = state.isOptedIn.isChecked,
                 title = stringResource(R.string.exchange_rate_opt_in_option_title),
                 subtitle = stringResource(R.string.exchange_rate_opt_in_option_subtitle),
                 onClick = state.isOptedIn.onClick
@@ -65,12 +62,7 @@ internal fun ExchangeRateSettingsView(state: ExchangeRateSettingsState) {
             Option(
                 modifier = Modifier.fillMaxWidth(),
                 image = R.drawable.ic_opt_out,
-                selectionImage =
-                    if (state.isOptedOut.isChecked) {
-                        R.drawable.ic_checkbox_checked
-                    } else {
-                        R.drawable.ic_checkbox_unchecked
-                    },
+                isChecked = state.isOptedOut.isChecked,
                 title = stringResource(R.string.exchange_rate_opt_out_option_title),
                 subtitle = stringResource(R.string.exchange_rate_opt_out_option_subtitle),
                 onClick = state.isOptedOut.onClick
@@ -80,7 +72,7 @@ internal fun ExchangeRateSettingsView(state: ExchangeRateSettingsState) {
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 state = state.saveButton,
-                defaultPrimaryColors = ZashiButtonDefaults.primaryColors()
+                defaultPrimaryColors = ZashiButtonDefaults.primaryColors(),
             )
         },
     )
@@ -88,14 +80,27 @@ internal fun ExchangeRateSettingsView(state: ExchangeRateSettingsState) {
 
 @Suppress("LongParameterList")
 @Composable
-private fun Option(
+fun Option(
     @DrawableRes image: Int,
-    @DrawableRes selectionImage: Int,
+    isChecked: Boolean,
     title: String,
     subtitle: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val haptic = LocalHapticFeedback.current
+    val onClick =
+        remember(isChecked, onClick) {
+            if (isChecked) {
+                onClick
+            } else {
+                {
+                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    onClick()
+                }
+            }
+        }
+
     SecondaryCard(
         modifier =
             modifier.clickable(
@@ -122,7 +127,7 @@ private fun Option(
                     color = ZashiColors.Text.textPrimary,
                     fontWeight = FontWeight.SemiBold,
                 )
-                Spacer(modifier = Modifier.height(2.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = subtitle,
                     style = ZashiTypography.textSm,
@@ -130,7 +135,10 @@ private fun Option(
                 )
             }
             Image(
-                painter = painterResource(selectionImage),
+                painter =
+                    painterResource(
+                        if (isChecked) R.drawable.ic_checkbox_checked else R.drawable.ic_checkbox_unchecked
+                    ),
                 contentDescription = null
             )
         }

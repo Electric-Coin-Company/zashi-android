@@ -100,7 +100,16 @@ internal class ExactOutputVMMapper {
                             co.electriccoin.zcash.ui.design.R.string.general_enter_address_partial,
                             it.chainName
                         )
-                    } ?: stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
+                    } ?: stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address),
+            infoFooter =
+                if (state.isEphemeralAddressLocked) {
+                    stringRes(
+                        "Renewing temporary addresses. Once the reset transaction is processed, you will be able to " +
+                            "proceed. This may take up to 2 minutes."
+                    )
+                } else {
+                    null
+                }
         )
     }
 
@@ -313,10 +322,15 @@ internal class ExactOutputVMMapper {
         return ButtonState(
             text =
                 when {
+                    state.isEphemeralAddressLocked ->
+                        stringRes(co.electriccoin.zcash.ui.design.R.string.general_processing)
+
                     state.swapAssets.error != null ->
                         stringRes(co.electriccoin.zcash.ui.design.R.string.general_try_again)
+
                     state.swapAssets.isLoading && state.swapAssets.data == null ->
                         stringRes(co.electriccoin.zcash.ui.design.R.string.general_loading)
+
                     else -> stringRes(co.electriccoin.zcash.ui.design.R.string.general_review)
                 },
             style = if (state.swapAssets.error != null) ButtonStyle.DESTRUCTIVE1 else null,
@@ -329,18 +343,22 @@ internal class ExactOutputVMMapper {
                 }
             },
             isEnabled =
-                if (state.swapAssets.error != null) {
-                    !state.swapAssets.isLoading
-                } else {
-                    (!state.swapAssets.isLoading && state.swapAssets.data != null) &&
-                        state.asset != null &&
-                        !textField.isError &&
-                        amount != null &&
-                        amount > BigDecimal(0) &&
-                        (state.address.isNotBlank() || state.selectedABContact != null) &&
-                        !state.isRequestingQuote
+                when {
+                    state.isEphemeralAddressLocked -> false
+                    state.swapAssets.error != null -> !state.swapAssets.isLoading || state.swapAssets.data != null
+                    else ->
+                        state.swapAssets.data != null &&
+                            state.asset != null &&
+                            !textField.isError &&
+                            amount != null &&
+                            amount > BigDecimal(0) &&
+                            (state.address.isNotBlank() || state.selectedABContact != null) &&
+                            !state.isRequestingQuote
                 },
-            isLoading = state.isRequestingQuote || (state.swapAssets.isLoading && state.swapAssets.data == null)
+            isLoading =
+                state.isEphemeralAddressLocked ||
+                    state.isRequestingQuote ||
+                    (state.swapAssets.isLoading && state.swapAssets.data == null),
         )
     }
 
@@ -375,6 +393,7 @@ private data class ExactOutputInternalState(
     override val account: WalletAccount?,
     override val swapAssets: SwapAssetsData,
     override val isABHintVisible: Boolean,
+    override val isEphemeralAddressLocked: Boolean
 ) : InternalState {
     constructor(original: InternalState) : this(
         address = original.address,
@@ -388,14 +407,8 @@ private data class ExactOutputInternalState(
         account = original.account,
         swapAssets = original.swapAssets,
         isABHintVisible = original.isABHintVisible,
+        isEphemeralAddressLocked = original.isEphemeralAddressLocked
     )
-
-    // fun getTotalSpendableFiatBalance(): BigDecimal? {
-    //     if (swapAssets.zecAsset?.usdPrice == null) return null
-    //     return totalSpendableBalance.value
-    //         .convertZatoshiToZecBigDecimal()
-    //         .multiply(swapAssets.zecAsset.usdPrice, MathContext.DECIMAL128)
-    // }
 
     fun getOriginFiatAmount(): BigDecimal? {
         val tokenAmount = amount.amount
@@ -407,13 +420,6 @@ private data class ExactOutputInternalState(
     }
 
     fun getOriginTokenAmount(): BigDecimal? = amount.amount
-
-    // fun getZecToOriginAssetExchangeRate(): BigDecimal? {
-    //     val zecUsdPrice = swapAssets.zecAsset?.usdPrice
-    //     val assetUsdPrice = asset?.usdPrice
-    //     if (zecUsdPrice == null || assetUsdPrice == null) return null
-    //     return zecUsdPrice.divide(assetUsdPrice, MathContext.DECIMAL128)
-    // }
 
     fun getZatoshi(): Zatoshi? {
         val amountToken = getOriginTokenAmount()

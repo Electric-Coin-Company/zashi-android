@@ -27,9 +27,7 @@ class ObserveProposalUseCase(
                 }
             }.filterNotNull()
 
-    fun filterSendTransactions() =
-        this()
-            .filterIsInstance<SendTransactionProposal>()
+    fun filterSend() = this().filterIsInstance<SendTransactionProposal>()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     fun observeNullable() =

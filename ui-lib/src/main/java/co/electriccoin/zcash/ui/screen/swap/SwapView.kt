@@ -131,10 +131,10 @@ internal fun SwapView(state: SwapState, onSideEffect: (amountFocusRequester: Foc
             Spacer(1f)
             if (state.errorFooter != null) {
                 SwapErrorFooter(state.errorFooter)
-                Spacer(24.dp)
-            } else if (state.footer != null) {
+                Spacer(32.dp)
+            } else if (state.infoFooter != null) {
                 ZashiInfoText(
-                    text = state.footer.getValue()
+                    text = state.infoFooter.getValue()
                 )
                 Spacer(24.dp)
             }
@@ -181,8 +181,6 @@ fun SwapErrorFooter(errorFooter: SwapErrorFooterState) {
             color = ZashiColors.Text.textError,
             textAlign = TextAlign.Center
         )
-
-        Spacer(32.dp)
     }
 }
 
@@ -378,6 +376,7 @@ private fun Preview() {
         SwapView(
             state =
                 SwapState(
+                    swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     amountTextField =
                         SwapAmountTextFieldState(
                             title = stringRes("From"),
@@ -404,12 +403,6 @@ private fun Preview() {
                             stringRes("1%"),
                             trailingIcon = R.drawable.ic_swap_slippage
                         ),
-                    addressContact =
-                        ChipButtonState(
-                            text = stringRes("Contact"),
-                            onClick = {},
-                            endIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chip_close
-                        ),
                     amountText =
                         SwapAmountTextState(
                             token =
@@ -425,12 +418,6 @@ private fun Preview() {
                             secondaryText = stringResByDynamicCurrencyNumber(2.47123, "ZEC"),
                             subtitle = null
                         ),
-                    primaryButton =
-                        ButtonState(
-                            stringRes("Get a quote")
-                        ),
-                    onBack = {},
-                    swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     infoItems =
                         listOf(
                             SimpleListItemState(
@@ -438,27 +425,38 @@ private fun Preview() {
                                 text = stringRes("1 ZEC = 51.74 USDC")
                             )
                         ),
-                    address = TextFieldState(stringRes("")) {},
-                    qrScannerButton =
-                        IconButtonState(
-                            icon = R.drawable.qr_code_icon,
-                            onClick = {}
+                    addressContact =
+                        ChipButtonState(
+                            text = stringRes("Contact"),
+                            onClick = {},
+                            endIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chip_close
                         ),
                     addressBookButton =
                         IconButtonState(
                             icon = R.drawable.send_address_book,
                             onClick = {}
                         ),
-                    footer =
+                    addressLocation = BOTTOM,
+                    onAddressClick = null,
+                    address = TextFieldState(stringRes("")) {},
+                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address),
+                    qrScannerButton =
+                        IconButtonState(
+                            icon = R.drawable.qr_code_icon,
+                            onClick = {}
+                        ),
+                    errorFooter = null,
+                    primaryButton =
+                        ButtonState(
+                            stringRes("Get a quote")
+                        ),
+                    infoFooter =
                         stringRes(
                             "NEAR only supports swaps to a transparent address. " +
                                 "Zashi will prompt you to shield your funds upon receipt."
                         ),
-                    errorFooter = null,
-                    addressLocation = BOTTOM,
-                    changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {},
-                    onAddressClick = null,
-                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
+                    onBack = {},
+                    changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {}
                 )
         )
     }
@@ -471,6 +469,7 @@ private fun UnexpectedErrorPreview() {
         SwapView(
             state =
                 SwapState(
+                    swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     amountTextField =
                         SwapAmountTextFieldState(
                             title = stringRes("From"),
@@ -512,8 +511,6 @@ private fun UnexpectedErrorPreview() {
                             secondaryText = stringResByDynamicCurrencyNumber(2.47123, "ZEC"),
                             subtitle = null
                         ),
-                    onBack = {},
-                    swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     infoItems =
                         listOf(
                             SimpleListItemState(
@@ -521,15 +518,18 @@ private fun UnexpectedErrorPreview() {
                                 text = stringRes("1 ZEC = 51.74 USDC")
                             )
                         ),
-                    address = TextFieldState(stringRes("")) {},
-                    qrScannerButton =
-                        IconButtonState(
-                            icon = R.drawable.qr_code_icon,
-                            onClick = {}
-                        ),
                     addressBookButton =
                         IconButtonState(
                             icon = R.drawable.send_address_book,
+                            onClick = {}
+                        ),
+                    addressLocation = BOTTOM,
+                    onAddressClick = null,
+                    address = TextFieldState(stringRes("")) {},
+                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address),
+                    qrScannerButton =
+                        IconButtonState(
+                            icon = R.drawable.qr_code_icon,
                             onClick = {}
                         ),
                     errorFooter =
@@ -542,11 +542,9 @@ private fun UnexpectedErrorPreview() {
                             stringRes("Try again"),
                             style = ButtonStyle.DESTRUCTIVE1
                         ),
-                    footer = null,
-                    addressLocation = BOTTOM,
-                    changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {},
-                    onAddressClick = null,
-                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
+                    infoFooter = null,
+                    onBack = {},
+                    changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {}
                 )
         )
     }
@@ -559,6 +557,7 @@ private fun ServiceUnavailableErrorPreview() {
         SwapView(
             state =
                 SwapState(
+                    swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     amountTextField =
                         SwapAmountTextFieldState(
                             title = stringRes("From"),
@@ -600,8 +599,6 @@ private fun ServiceUnavailableErrorPreview() {
                             secondaryText = stringResByDynamicCurrencyNumber(2.47123, "ZEC"),
                             subtitle = null
                         ),
-                    onBack = {},
-                    swapInfoButton = IconButtonState(R.drawable.ic_help) {},
                     infoItems =
                         listOf(
                             SimpleListItemState(
@@ -609,15 +606,18 @@ private fun ServiceUnavailableErrorPreview() {
                                 text = stringRes("1 ZEC = 51.74 USDC")
                             )
                         ),
-                    address = TextFieldState(stringRes("")) {},
-                    qrScannerButton =
-                        IconButtonState(
-                            icon = R.drawable.qr_code_icon,
-                            onClick = {}
-                        ),
                     addressBookButton =
                         IconButtonState(
                             icon = R.drawable.send_address_book,
+                            onClick = {}
+                        ),
+                    addressLocation = BOTTOM,
+                    onAddressClick = null,
+                    address = TextFieldState(stringRes("")) {},
+                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address),
+                    qrScannerButton =
+                        IconButtonState(
+                            icon = R.drawable.qr_code_icon,
                             onClick = {}
                         ),
                     errorFooter =
@@ -626,11 +626,9 @@ private fun ServiceUnavailableErrorPreview() {
                             subtitle = stringRes("Please try again later."),
                         ),
                     primaryButton = null,
-                    footer = null,
-                    addressLocation = BOTTOM,
-                    changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {},
-                    onAddressClick = null,
-                    addressPlaceholder = stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
+                    infoFooter = null,
+                    onBack = {},
+                    changeModeButton = IconButtonState(R.drawable.ic_swap_change_mode) {}
                 )
         )
     }

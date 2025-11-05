@@ -18,6 +18,7 @@ import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.listitem.SimpleListItemState
+import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -36,6 +37,7 @@ import java.math.BigDecimal
 import java.math.MathContext
 import kotlin.math.absoluteValue
 
+@Suppress("TooManyFunctions")
 internal class ExactInputVMMapper {
     fun createState(
         internalState: InternalState,
@@ -118,7 +120,7 @@ internal class ExactInputVMMapper {
                     SWAP_FROM_ZEC -> SwapState.AddressLocation.BOTTOM
                     SWAP_INTO_ZEC -> SwapState.AddressLocation.TOP
                 },
-            footer = stringRes(R.string.swap_into_zec_footer,).takeIf { state.mode == SWAP_INTO_ZEC },
+            infoFooter = createInfoFooter(state),
             changeModeButton =
                 IconButtonState(
                     icon = R.drawable.ic_swap_change_mode,
@@ -139,6 +141,17 @@ internal class ExactInputVMMapper {
                     } ?: stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
         )
     }
+
+    private fun createInfoFooter(state: ExactInputInternalState): StringResource? =
+        when {
+            state.isEphemeralAddressLocked ->
+                stringRes(
+                    "Renewing temporary addresses. Once the reset transaction is processed, you will be able to " +
+                        "proceed. This may take up to 2 minutes."
+                )
+            state.mode == SWAP_INTO_ZEC -> stringRes(R.string.swap_into_zec_footer)
+            else -> null
+        }
 
     private fun createAddressContactState(
         state: ExactInputInternalState,
@@ -396,7 +409,7 @@ internal class ExactInputVMMapper {
     }
 
     private fun createErrorFooterState(state: ExactInputInternalState): SwapErrorFooterState? {
-        if (state.swapAssets.error == null) return null
+        if (state.swapAssets.error == null || state.isEphemeralAddressLocked) return null
 
         val isServiceUnavailableError =
             state.swapAssets.error is ResponseException &&
@@ -435,6 +448,9 @@ internal class ExactInputVMMapper {
         return ButtonState(
             text =
                 when {
+                    state.isEphemeralAddressLocked ->
+                        stringRes(co.electriccoin.zcash.ui.design.R.string.general_processing)
+
                     state.swapAssets.error != null ->
                         stringRes(co.electriccoin.zcash.ui.design.R.string.general_try_again)
 
@@ -453,18 +469,22 @@ internal class ExactInputVMMapper {
                 }
             },
             isEnabled =
-                if (state.swapAssets.error != null) {
-                    !state.swapAssets.isLoading
-                } else {
-                    (!state.swapAssets.isLoading && state.swapAssets.data != null) &&
-                        state.swapAsset != null &&
-                        !textField.isError &&
-                        amount != null &&
-                        amount > BigDecimal(0) &&
-                        (state.addressText.isNotBlank() || state.selectedContact != null) &&
-                        !state.isRequestingQuote
+                when {
+                    state.isEphemeralAddressLocked -> false
+                    state.swapAssets.error != null -> !state.swapAssets.isLoading || state.swapAssets.data != null
+                    else ->
+                        state.swapAssets.data != null &&
+                            state.swapAsset != null &&
+                            !textField.isError &&
+                            amount != null &&
+                            amount > BigDecimal(0) &&
+                            (state.addressText.isNotBlank() || state.selectedContact != null) &&
+                            !state.isRequestingQuote
                 },
-            isLoading = state.isRequestingQuote || (state.swapAssets.isLoading && state.swapAssets.data == null)
+            isLoading =
+                state.isEphemeralAddressLocked ||
+                    state.isRequestingQuote ||
+                    (state.swapAssets.isLoading && state.swapAssets.data == null)
         )
     }
 
@@ -519,7 +539,8 @@ private data class ExactInputInternalState(
     override val swapAssets: SwapAssetsData,
     override val isRequestingQuote: Boolean,
     override val selectedContact: EnhancedABContact?,
-    override val mode: Mode
+    override val mode: Mode,
+    override val isEphemeralAddressLocked: Boolean
 ) : InternalState {
     constructor(original: InternalState) : this(
         account = original.account,
@@ -531,7 +552,8 @@ private data class ExactInputInternalState(
         swapAssets = original.swapAssets,
         isRequestingQuote = original.isRequestingQuote,
         selectedContact = original.selectedContact,
-        mode = original.mode
+        mode = original.mode,
+        isEphemeralAddressLocked = original.isEphemeralAddressLocked
     )
 
     val originAsset: SwapAsset? =

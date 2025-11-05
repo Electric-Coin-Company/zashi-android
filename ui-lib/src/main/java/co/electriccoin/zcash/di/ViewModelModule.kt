@@ -9,6 +9,7 @@ import co.electriccoin.zcash.ui.screen.accountlist.viewmodel.AccountListViewMode
 import co.electriccoin.zcash.ui.screen.addressbook.AddressBookVM
 import co.electriccoin.zcash.ui.screen.addressbook.SelectABRecipientVM
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsVM
+import co.electriccoin.zcash.ui.screen.advancedsettings.debug.DebugVM
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetVM
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceVM
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerVM
@@ -27,6 +28,7 @@ import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptInViewModel
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoVM
+import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixVM
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsVM
 import co.electriccoin.zcash.ui.screen.pay.PayVM
 import co.electriccoin.zcash.ui.screen.qrcode.QrCodeVM
@@ -53,6 +55,7 @@ import co.electriccoin.zcash.ui.screen.swap.ab.AddSwapABContactVM
 import co.electriccoin.zcash.ui.screen.swap.ab.SelectSwapABRecipientVM
 import co.electriccoin.zcash.ui.screen.swap.detail.SwapDetailVM
 import co.electriccoin.zcash.ui.screen.swap.info.SwapRefundAddressInfoVM
+import co.electriccoin.zcash.ui.screen.swap.lock.EphemeralLockVM
 import co.electriccoin.zcash.ui.screen.swap.orconfirmation.ORSwapConfirmationVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapAssetPickerVM
 import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerVM
@@ -145,4 +148,7 @@ val viewModelModule =
         viewModelOf(::SwapDetailVM)
         viewModelOf(::SwapRefundAddressInfoVM)
         viewModelOf(::ScreenTimeoutVM)
+        viewModelOf(::EphemeralHotfixVM)
+        viewModelOf(::EphemeralLockVM)
+        viewModelOf(::DebugVM)
     }

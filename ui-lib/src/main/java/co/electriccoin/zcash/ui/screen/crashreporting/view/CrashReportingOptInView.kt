@@ -1,10 +1,6 @@
 package co.electriccoin.zcash.ui.screen.crashreporting.view
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -31,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,7 +41,7 @@ import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.screen.crashreporting.model.CrashReportingOptInState
-import co.electriccoin.zcash.ui.screen.exchangerate.SecondaryCard
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.Option
 
 @Composable
 fun CrashReportingOptIn(state: CrashReportingOptInState) {
@@ -160,7 +156,8 @@ fun CrashReportingOptInFooter(
             text = stringResource(R.string.crash_reporting_opt_in_save),
             onClick = { state.onSaveClicked(isOptInSelected) },
             enabled = !isSaveDisabled,
-            colors = ZashiButtonDefaults.primaryColors()
+            colors = ZashiButtonDefaults.primaryColors(),
+            hapticFeedbackType = HapticFeedbackType.Confirm
         )
     }
 }
@@ -175,12 +172,7 @@ fun CrashReportingOptInOptions(
         Option(
             modifier = Modifier.fillMaxWidth(),
             image = R.drawable.ic_opt_in,
-            selectionImage =
-                if (isOptInSelected) {
-                    R.drawable.ic_checkbox_checked
-                } else {
-                    R.drawable.ic_checkbox_unchecked
-                },
+            isChecked = isOptInSelected,
             title = stringResource(R.string.crash_reporting_opt_in_positive),
             subtitle = stringResource(R.string.crash_reporting_opt_in_positive_desc),
             onClick = { setOptInSelected(true) }
@@ -189,67 +181,11 @@ fun CrashReportingOptInOptions(
         Option(
             modifier = Modifier.fillMaxWidth(),
             image = R.drawable.ic_opt_out,
-            selectionImage =
-                if (!isOptInSelected) {
-                    R.drawable.ic_checkbox_checked
-                } else {
-                    R.drawable.ic_checkbox_unchecked
-                },
+            isChecked = !isOptInSelected,
             title = stringResource(R.string.crash_reporting_opt_in_negative),
             subtitle = stringResource(R.string.crash_reporting_opt_in_negative_desc),
             onClick = { setOptInSelected(false) }
         )
-    }
-}
-
-@Suppress("LongParameterList")
-@Composable
-private fun Option(
-    @DrawableRes image: Int,
-    @DrawableRes selectionImage: Int,
-    title: String,
-    subtitle: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    SecondaryCard(
-        modifier =
-            modifier.clickable(
-                onClick = onClick,
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-            )
-    ) {
-        Row(
-            Modifier.padding(20.dp)
-        ) {
-            Image(
-                painter = painterResource(image),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = title,
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Text.textPrimary,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = subtitle,
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Text.textTertiary,
-                )
-            }
-            Image(
-                painter = painterResource(selectionImage),
-                contentDescription = null
-            )
-        }
     }
 }
 

@@ -29,6 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -53,6 +55,8 @@ fun ZashiRadioButton(
     trailingContent: @Composable (RowScope.() -> Unit)? = null,
     testTag: String? = null,
 ) {
+    val haptic = LocalHapticFeedback.current
+
     Row(
         modifier =
             modifier
@@ -60,7 +64,15 @@ fun ZashiRadioButton(
                 .clickable(
                     indication = if (isRippleEnabled) ripple() else null,
                     interactionSource = remember { MutableInteractionSource() },
-                    onClick = state.onClick,
+                    onClick =
+                        if (state.hapticFeedbackType != null) {
+                            {
+                                haptic.performHapticFeedback(state.hapticFeedbackType)
+                                state.onClick()
+                            }
+                        } else {
+                            state.onClick
+                        },
                     role = Role.Button,
                 ).padding(horizontal = 20.dp)
                 .then(
@@ -156,6 +168,12 @@ private fun RadioButtonIndicator(
 data class RadioButtonState(
     val text: StringResource,
     val isChecked: Boolean,
+    val hapticFeedbackType: HapticFeedbackType? =
+        if (isChecked) {
+            HapticFeedbackType.ToggleOff
+        } else {
+            HapticFeedbackType.ToggleOn
+        },
     val subtitle: StringResource? = null,
     val onClick: () -> Unit,
 )

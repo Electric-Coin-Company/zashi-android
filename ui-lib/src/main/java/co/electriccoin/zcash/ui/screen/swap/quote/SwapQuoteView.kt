@@ -157,12 +157,12 @@ private fun Success(
             if (index != 0) {
                 Spacer(12.dp)
             }
-            Item(item)
+            SwapQuoteInfo(item)
         }
         Spacer(12.dp)
         ZashiHorizontalDivider()
         Spacer(12.dp)
-        Item(
+        SwapQuoteInfo(
             item = state.amount,
             descriptionStyle = ZashiTypography.textSm,
             descriptionFontWeight = FontWeight.Medium,
@@ -185,7 +185,7 @@ private fun Success(
 }
 
 @Composable
-private fun Item(
+fun SwapQuoteInfo(
     item: SwapQuoteInfoItem,
     descriptionStyle: TextStyle = ZashiTypography.textSm,
     descriptionFontWeight: FontWeight = FontWeight.Normal,

@@ -87,7 +87,7 @@ class MetadataRepositoryImpl(
     private val persistableWalletProvider: PersistableWalletProvider,
     private val simpleSwapAssetProvider: SimpleSwapAssetProvider
 ) : MetadataRepository {
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     private val mutex = Mutex()
 
@@ -276,7 +276,7 @@ class MetadataRepositoryImpl(
     }
 
     private suspend fun getMetadataKey(selectedAccount: WalletAccount): MetadataKey {
-        val key = metadataKeyStorageProvider.get(selectedAccount.sdkAccount)
+        val key = metadataKeyStorageProvider.get(selectedAccount.sdkAccount.accountUuid)
 
         return if (key != null) {
             key
@@ -294,7 +294,7 @@ class MetadataRepositoryImpl(
                             is ZashiAccount -> null
                         }
                 )
-            metadataKeyStorageProvider.store(newKey, selectedAccount.sdkAccount)
+            metadataKeyStorageProvider.store(selectedAccount.sdkAccount.accountUuid, newKey)
             newKey
         }
     }

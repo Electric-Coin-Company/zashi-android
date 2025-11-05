@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import co.electriccoin.zcash.ui.design.util.LocalNavController
 import co.electriccoin.zcash.ui.design.util.tryRequestFocus
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
@@ -16,7 +17,15 @@ fun SwapScreen() {
     val vm = koinViewModel<SwapVM>()
     val state by vm.state.collectAsStateWithLifecycle()
     val cancelState by vm.cancelState.collectAsStateWithLifecycle()
-    var hasBeenAutofocused by rememberSaveable { mutableStateOf(false) }
+    val navController = LocalNavController.current
+    var hasBeenAutofocused by rememberSaveable {
+        val isSwapFirstScreen =
+            navController
+                .currentBackStackEntry
+                ?.destination
+                ?.route == SwapArgs::class.qualifiedName
+        mutableStateOf(!isSwapFirstScreen)
+    }
     state?.let {
         SwapView(
             state = it,

@@ -24,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -51,6 +53,7 @@ fun ZashiButton(
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int? = null,
     @DrawableRes trailingIcon: Int? = null,
+    hapticFeedbackType: HapticFeedbackType? = null,
     enabled: Boolean = true,
     isLoading: Boolean = false,
     style: TextStyle = ZashiButtonDefaults.style,
@@ -68,6 +71,7 @@ fun ZashiButton(
                 isEnabled = enabled,
                 isLoading = isLoading,
                 onClick = onClick,
+                hapticFeedbackType = hapticFeedbackType
             )
         }
 
@@ -160,8 +164,18 @@ fun ZashiButton(
 
     val borderColor = if (state.isEnabled) actualColors.borderColor else actualColors.disabledBorderColor
 
+    val haptic = LocalHapticFeedback.current
+
     Button(
-        onClick = state.onClick,
+        onClick =
+            if (state.hapticFeedbackType != null) {
+                {
+                    haptic.performHapticFeedback(state.hapticFeedbackType)
+                    state.onClick()
+                }
+            } else {
+                state.onClick
+            },
         modifier = modifier,
         shape = shape,
         contentPadding = contentPadding,
@@ -311,6 +325,7 @@ data class ButtonState(
     @DrawableRes val trailingIcon: Int? = null,
     val isEnabled: Boolean = true,
     val isLoading: Boolean = false,
+    val hapticFeedbackType: HapticFeedbackType? = null,
     val onClick: () -> Unit = {},
 )
 

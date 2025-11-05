@@ -20,7 +20,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -39,11 +41,21 @@ fun ZashiIconButton(
     state: IconButtonState,
     modifier: Modifier = Modifier
 ) {
+    val haptic = LocalHapticFeedback.current
+
     Box(
         modifier = modifier
     ) {
         IconButton(
-            onClick = state.onClick
+            onClick =
+                if (state.hapticFeedbackType != null) {
+                    {
+                        haptic.performHapticFeedback(state.hapticFeedbackType)
+                        state.onClick()
+                    }
+                } else {
+                    state.onClick
+                }
         ) {
             Icon(
                 painter = painterResource(state.icon),
@@ -79,10 +91,20 @@ fun ZashiImageButton(
     state: IconButtonState,
     modifier: Modifier = Modifier
 ) {
+    val haptic = LocalHapticFeedback.current
+
     Box(
         modifier =
             modifier.clickable(
-                onClick = state.onClick,
+                onClick =
+                    if (state.hapticFeedbackType != null) {
+                        {
+                            haptic.performHapticFeedback(state.hapticFeedbackType)
+                            state.onClick()
+                        }
+                    } else {
+                        state.onClick
+                    },
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 enabled = state.isEnabled
@@ -107,6 +129,7 @@ data class IconButtonState(
     val contentDescription: StringResource? = null,
     val badge: StringResource? = null,
     val isEnabled: Boolean = true,
+    val hapticFeedbackType: HapticFeedbackType? = null,
     val onClick: () -> Unit,
 )
 

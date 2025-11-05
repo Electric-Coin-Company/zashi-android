@@ -21,7 +21,7 @@ import kotlinx.datetime.Clock
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
-import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.hours
 
 class NearSwapDataSourceImpl(
     private val nearApiProvider: NearApiProvider,
@@ -78,7 +78,7 @@ class NearSwapDataSourceImpl(
                 refundType = RefundType.ORIGIN_CHAIN,
                 recipient = destinationAddress,
                 recipientType = RecipientType.DESTINATION_CHAIN,
-                deadline = Clock.System.now() + 10.minutes,
+                deadline = Clock.System.now() + 2.hours,
                 quoteWaitingTimeMs = QUOTE_WAITING_TIME,
                 appFees =
                     listOf(

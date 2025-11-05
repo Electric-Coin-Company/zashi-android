@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.taxexport
 
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
@@ -39,6 +40,7 @@ class TaxExportViewModel(
             exportButton =
                 ButtonState(
                     text = stringRes(R.string.tax_export_export_button),
+                    hapticFeedbackType = HapticFeedbackType.Confirm,
                     onClick = ::onExportClick
                 ),
             onBack = ::onBack,

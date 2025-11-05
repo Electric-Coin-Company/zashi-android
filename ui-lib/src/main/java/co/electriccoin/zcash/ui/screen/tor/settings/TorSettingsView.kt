@@ -1,17 +1,8 @@
 package co.electriccoin.zcash.ui.screen.tor.settings
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -20,9 +11,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.BlankSurface
@@ -33,7 +23,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.screen.exchangerate.SecondaryCard
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.Option
 
 @Composable
 fun TorSettingsView(state: TorSettingsState) {
@@ -61,12 +51,7 @@ fun TorSettingsView(state: TorSettingsState) {
             Option(
                 modifier = Modifier.fillMaxWidth(),
                 image = R.drawable.ic_opt_in,
-                selectionImage =
-                    if (isOptInSelected) {
-                        R.drawable.ic_checkbox_checked
-                    } else {
-                        R.drawable.ic_checkbox_unchecked
-                    },
+                isChecked = isOptInSelected,
                 title = stringResource(R.string.exchange_rate_opt_in_option_title),
                 subtitle = stringResource(R.string.tor_settings_item_subtitle_1),
                 onClick = { isOptInSelected = true }
@@ -75,12 +60,7 @@ fun TorSettingsView(state: TorSettingsState) {
             Option(
                 modifier = Modifier.fillMaxWidth(),
                 image = R.drawable.ic_opt_out,
-                selectionImage =
-                    if (!isOptInSelected) {
-                        R.drawable.ic_checkbox_checked
-                    } else {
-                        R.drawable.ic_checkbox_unchecked
-                    },
+                isChecked = !isOptInSelected,
                 title = stringResource(R.string.exchange_rate_opt_out_option_title),
                 subtitle = stringResource(R.string.tor_settings_item_subtitle_2),
                 onClick = { isOptInSelected = false }
@@ -98,60 +78,11 @@ fun TorSettingsView(state: TorSettingsState) {
                 modifier = Modifier.fillMaxWidth(),
                 onClick = { state.onSaveClick(isOptInSelected) },
                 enabled = !isButtonDisabled,
-                colors = ZashiButtonDefaults.primaryColors()
+                colors = ZashiButtonDefaults.primaryColors(),
+                hapticFeedbackType = HapticFeedbackType.Confirm
             )
         },
     )
-}
-
-@Composable
-private fun Option(
-    @DrawableRes image: Int,
-    @DrawableRes selectionImage: Int,
-    title: String,
-    subtitle: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    SecondaryCard(
-        modifier =
-            modifier.clickable(
-                onClick = onClick,
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-            )
-    ) {
-        Row(
-            Modifier.padding(20.dp)
-        ) {
-            Image(
-                painter = painterResource(image),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = title,
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Text.textPrimary,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = subtitle,
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Text.textTertiary,
-                )
-            }
-            Image(
-                painter = painterResource(selectionImage),
-                contentDescription = null
-            )
-        }
-    }
 }
 
 @PreviewScreens

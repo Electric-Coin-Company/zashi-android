@@ -12,6 +12,7 @@ import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.ui.MainActivity
 import co.electriccoin.zcash.ui.design.component.LocalScreenBrightness
 import co.electriccoin.zcash.ui.design.component.ScreenBrightnessState
+import co.electriccoin.zcash.ui.design.util.LocalNavController
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 

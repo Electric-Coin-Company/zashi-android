@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.appbar
 
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
@@ -75,7 +76,13 @@ class ZashiTopAppBarVM(
                         R.drawable.ic_app_bar_balances_show
                     },
                 onClick = ::onShowOrHideBalancesClicked,
-                contentDescription = stringRes(co.electriccoin.zcash.ui.R.string.hide_balances_content_description)
+                contentDescription = stringRes(co.electriccoin.zcash.ui.R.string.hide_balances_content_description),
+                hapticFeedbackType =
+                    if (isHideBalances == true) {
+                        HapticFeedbackType.ToggleOn
+                    } else {
+                        HapticFeedbackType.ToggleOff
+                    }
             ),
         settingsButton =
             IconButtonState(

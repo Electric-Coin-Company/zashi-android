@@ -25,10 +25,12 @@
     <string name="general_select">Select…</string>
     <string name="general_confirm">Confirm</string>
     <string name="general_address">Address</string>
+    <string name="general_processing">Processing</string>
     <string name="general_enter_address">Enter address…</string>
     <string name="general_enter_address_partial">%s address…</string>
     <string name="general_copy">Copy</string>
     <string name="general_share_qr">Share QR</string>
+    <string name="general_cancel">Cancel</string>
 
     <string name="common_empty_screen_title">No results</string>
     <string name="common_empty_screen_subtitle">We tried but couldn’t find anything.</string>

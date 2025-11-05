@@ -6,7 +6,8 @@ import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
 import co.electriccoin.zcash.ui.common.provider.BlockchainProviderImpl
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProviderImpl
-import co.electriccoin.zcash.ui.common.provider.GetDefaultServersProvider
+import co.electriccoin.zcash.ui.common.provider.EphemeralAddressStorageProvider
+import co.electriccoin.zcash.ui.common.provider.EphemeralAddressStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
@@ -19,6 +20,7 @@ import co.electriccoin.zcash.ui.common.provider.IsKeepScreenOnDuringRestoreProvi
 import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.KtorNearApiProvider
+import co.electriccoin.zcash.ui.common.provider.LightWalletEndpointProvider
 import co.electriccoin.zcash.ui.common.provider.NearApiProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProviderImpl
@@ -57,7 +59,7 @@ import org.koin.dsl.module
 
 val providerModule =
     module {
-        singleOf(::GetDefaultServersProvider)
+        factoryOf(::LightWalletEndpointProvider)
         singleOf(::GetVersionInfoProvider)
         singleOf(::GetZcashCurrencyProvider)
         singleOf(::GetMonetarySeparatorProvider)
@@ -86,4 +88,5 @@ val providerModule =
         factoryOf(::SimpleSwapAssetProviderImpl) bind SimpleSwapAssetProvider::class
         factoryOf(::SwapAssetProviderImpl) bind SwapAssetProvider::class
         factoryOf(::IsKeepScreenOnDuringRestoreProviderImpl) bind IsKeepScreenOnDuringRestoreProvider::class
+        singleOf(::EphemeralAddressStorageProviderImpl) bind EphemeralAddressStorageProvider::class
     }

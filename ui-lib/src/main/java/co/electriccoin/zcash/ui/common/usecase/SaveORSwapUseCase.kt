@@ -12,6 +12,7 @@ class SaveORSwapUseCase(
     private val swapRepository: SwapRepository,
     private val metadataRepository: MetadataRepository,
     private val navigationRouter: NavigationRouter,
+    // private val ephemeralAddressRepository: EphemeralAddressRepository,
 ) {
     operator fun invoke() {
         val quote = (swapRepository.quote.value as? SwapQuoteData.Success)?.quote
@@ -27,6 +28,7 @@ class SaveORSwapUseCase(
                 origin = quote.originAsset,
                 destination = quote.destinationAsset
             )
+            // ephemeralAddressRepository.invalidate()
             swapRepository.clear()
             navigationRouter.backToRoot()
         }

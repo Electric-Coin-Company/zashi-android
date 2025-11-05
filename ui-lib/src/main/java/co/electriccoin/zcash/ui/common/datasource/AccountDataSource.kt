@@ -39,7 +39,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.retryWhen
@@ -87,9 +86,10 @@ class AccountDataSourceImpl(
             .flatMapLatest { synchronizer ->
                 synchronizer
                     ?.accountsFlow
+                    ?.filterNotNull()
                     ?.flatMapLatest { allSdkAccounts ->
                         allSdkAccounts
-                            ?.map { sdkAccount ->
+                            .map { sdkAccount ->
                                 combine(
                                     observeUnified(synchronizer, sdkAccount),
                                     observeTransparent(synchronizer, sdkAccount),
@@ -115,11 +115,10 @@ class AccountDataSourceImpl(
                                             )
                                     }
                                 }
-                            }?.combineToFlow() ?: flowOf(null)
+                            }.combineToFlow()
                     }
                     ?: flowOf(null)
             }.map { it?.sortedDescending() }
-            .flowOn(Dispatchers.IO)
             .stateIn(
                 scope = scope,
                 started = SharingStarted.Eagerly,

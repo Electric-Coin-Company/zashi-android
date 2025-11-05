@@ -18,8 +18,8 @@ import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
-import co.electriccoin.zcash.ui.common.usecase.ConfirmProposalUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.SubmitProposalUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -45,7 +45,7 @@ internal class SwapQuoteVM(
     private val cancelSwapQuote: CancelSwapQuoteUseCase,
     private val cancelSwap: CancelSwapUseCase,
     private val swapQuoteSuccessMapper: SwapQuoteVMMapper,
-    private val confirmProposal: ConfirmProposalUseCase,
+    private val submitProposal: SubmitProposalUseCase,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     val state: StateFlow<SwapQuoteState?> =
@@ -147,7 +147,7 @@ internal class SwapQuoteVM(
 
     private fun onBackDuringError() = cancelSwapQuote()
 
-    private fun onSubmitQuoteClick() = viewModelScope.launch { confirmProposal() }
+    private fun onSubmitQuoteClick() = viewModelScope.launch { submitProposal() }
 
     private fun onCancelPaymentClick() = cancelSwap()
 }

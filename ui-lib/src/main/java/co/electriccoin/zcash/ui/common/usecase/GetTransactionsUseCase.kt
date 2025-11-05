@@ -16,25 +16,19 @@ class GetTransactionsUseCase(
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun observe() =
-        transactionRepository.currentTransactions
+        transactionRepository.transactions
             .flatMapLatest { transactions ->
-                if (transactions == null) {
-                    flowOf(null)
-                } else if (transactions.isEmpty()) {
-                    flowOf(emptyList())
-                } else {
-                    transactions
-                        .map {
-                            metadataRepository
-                                .observeTransactionMetadata(it)
-                                .mapLatest { metadata ->
-                                    ListTransactionData(
-                                        transaction = it,
-                                        metadata = metadata
-                                    )
-                                }
-                        }.combineToFlow()
-                }
+                transactions
+                    ?.map {
+                        metadataRepository
+                            .observeTransactionMetadata(it)
+                            .mapLatest { metadata ->
+                                ListTransactionData(
+                                    transaction = it,
+                                    metadata = metadata
+                                )
+                            }
+                    }?.combineToFlow() ?: flowOf(null)
             }
 }
 

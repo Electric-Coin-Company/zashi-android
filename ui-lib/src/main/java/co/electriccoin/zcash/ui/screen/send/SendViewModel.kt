@@ -19,6 +19,7 @@ import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.send.model.SendAddressBookState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -41,6 +42,8 @@ class SendViewModel(
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
     val recipientAddressState = MutableStateFlow(RecipientAddressState.new("", null))
+
+    private var onCreateZecSendClickJob: Job? = null
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val sendAddressBookState =
@@ -129,12 +132,16 @@ class SendViewModel(
         newZecSend: ZecSend,
         amountState: AmountState,
         setSendStage: (SendStage) -> Unit
-    ) = viewModelScope.launch {
-        try {
-            createProposal(zecSend = newZecSend, floor = amountState.lastFieldChangedByUser == AmountField.FIAT)
-        } catch (e: Exception) {
-            setSendStage(SendStage.SendFailure(e.cause?.message ?: e.message ?: ""))
-            Twig.error(e) { "Error creating proposal" }
-        }
+    ) {
+        if (onCreateZecSendClickJob?.isActive == true) return
+        onCreateZecSendClickJob =
+            viewModelScope.launch {
+                try {
+                    createProposal(zecSend = newZecSend, floor = amountState.lastFieldChangedByUser == AmountField.FIAT)
+                } catch (e: Exception) {
+                    setSendStage(SendStage.SendFailure(e.cause?.message ?: e.message ?: ""))
+                    Twig.error(e) { "Error creating proposal" }
+                }
+            }
     }
 }

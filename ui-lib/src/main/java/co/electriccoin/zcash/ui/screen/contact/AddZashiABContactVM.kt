@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.contact
 
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
@@ -113,7 +114,8 @@ class AddZashiABContactVM(
                         contactAddress.value.isNotEmpty() &&
                         contactName.value.isNotEmpty(),
                 onClick = ::onSaveButtonClick,
-                isLoading = isSavingContact
+                isLoading = isSavingContact,
+                hapticFeedbackType = HapticFeedbackType.Confirm
             )
         }
 

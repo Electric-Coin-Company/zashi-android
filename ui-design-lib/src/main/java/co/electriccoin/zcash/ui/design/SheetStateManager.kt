@@ -13,18 +13,23 @@ import kotlin.time.Duration.Companion.seconds
 @Stable
 class SheetStateManager {
     private var sheetState: SheetState? = null
+    private var route: String? = null
 
-    fun onSheetOpened(sheetState: SheetState) {
+    fun onSheetOpened(sheetState: SheetState, route: String?) {
         this.sheetState = sheetState
+        this.route = route
     }
 
     fun onSheetDisposed(sheetState: SheetState) {
         if (this.sheetState === sheetState) {
             this.sheetState = null
+            this.route = null
         }
     }
 
-    suspend fun hide() {
+    suspend fun hide(route: String) {
+        if (route != this.route) return
+
         try {
             withTimeoutOrNull(.5.seconds) {
                 sheetState?.hide()

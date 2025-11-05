@@ -1,11 +1,14 @@
 package co.electriccoin.zcash.ui.design.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -21,10 +24,22 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 @Composable
 fun ZashiVersion(
     version: StringResource,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onLongClick: (() -> Unit)? = null
 ) {
     Column(
-        modifier = modifier
+        modifier =
+            modifier then
+                if (onLongClick != null) {
+                    Modifier.combinedClickable(
+                        indication = null,
+                        onClick = {},
+                        onLongClick = onLongClick,
+                        interactionSource = remember { MutableInteractionSource() },
+                    )
+                } else {
+                    Modifier
+                }
     ) {
         Image(
             modifier = Modifier.align(CenterHorizontally),
