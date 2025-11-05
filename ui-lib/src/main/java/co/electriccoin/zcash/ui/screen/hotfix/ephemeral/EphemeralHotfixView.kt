@@ -27,12 +27,14 @@ import co.electriccoin.zcash.ui.design.component.Spacer
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.ZashiAddressTextField
 import co.electriccoin.zcash.ui.design.component.ZashiButton
+import co.electriccoin.zcash.ui.design.component.ZashiInfoText
 import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
 import co.electriccoin.zcash.ui.design.component.rememberInScreenModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,7 +90,15 @@ fun EphemeralHotfixView(
                     Text(text = "Enter or paste...")
                 }
             )
-            Spacer(32.dp)
+
+            if (it.info != null) {
+                Spacer(24.dp)
+                ZashiInfoText(text = it.info.getValue())
+                Spacer(24.dp)
+            } else {
+                Spacer(32.dp)
+            }
+
             ZashiButton(
                 modifier = Modifier.fillMaxWidth(),
                 state = it.button
@@ -118,6 +128,7 @@ private fun Preview() =
                         onClick = {},
                     ),
                 address = TextFieldState(stringRes("")) {},
+                info = stringRes("Info")
             )
         )
     }

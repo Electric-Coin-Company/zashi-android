@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.usecase.FixEphemeralAddressUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
@@ -20,6 +21,7 @@ class EphemeralHotfixVM(
     args: EphemeralHotfixArgs,
     private val navigationRouter: NavigationRouter,
     private val fixEphemeralAddressUseCase: FixEphemeralAddressUseCase,
+    private val isTorEnabledStorageProvider: IsTorEnabledStorageProvider
 ) : ViewModel() {
     private val text = MutableStateFlow(args.address)
 
@@ -29,22 +31,28 @@ class EphemeralHotfixVM(
         combine(
             text,
             fixEphemeralAddressUseCase.observeIsLoading(),
-            isError
-        ) { text, isLoading, isError ->
+            isError,
+            isTorEnabledStorageProvider.observe()
+        ) { text, isLoading, isError, isTorEnabled ->
             EphemeralHotfixState(
                 address =
                     TextFieldState(
                         value = stringRes(text.orEmpty()),
                         onValueChange = { new -> this.text.update { new } },
-                        isEnabled = !isLoading,
+                        isEnabled = !isLoading && isTorEnabled == true,
                         error = stringRes("").takeIf { isError }
                     ),
                 button =
                     ButtonState(
                         stringRes("Recover Funds"),
                         onClick = ::onRecoverFundsClick,
-                        isEnabled = !text.isNullOrBlank() && !isLoading
+                        isEnabled = !text.isNullOrBlank() && !isLoading && isTorEnabled == true
                     ),
+                info =
+                    stringRes(
+                        "This operation requires Tor Protection. " +
+                            "Please enable it in the Advanced Settings."
+                    ).takeIf { isTorEnabled != true },
                 onBack = ::onBack
             )
         }.stateIn(
