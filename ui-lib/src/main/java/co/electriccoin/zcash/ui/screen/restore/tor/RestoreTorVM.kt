@@ -25,46 +25,48 @@ class RestoreTorVM(
     private val navigationRouter: NavigationRouter,
     private val restoreWallet: RestoreWalletUseCase
 ) : ViewModel() {
-
     private val isChecked = MutableStateFlow(false)
 
-    val state: StateFlow<RestoreTorState> = isChecked
-        .map {
-            createState(it)
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = createState(isChecked.value)
-        )
+    val state: StateFlow<RestoreTorState> =
+        isChecked
+            .map {
+                createState(it)
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = createState(isChecked.value)
+            )
 
-    private fun createState(isChecked: Boolean): RestoreTorState {
-        return RestoreTorState(
-            checkbox = CheckboxState(
-                title = stringRes(R.string.restore_tor_checkbox_title),
-                subtitle = stringRes(R.string.restore_tor_checkbox_subtitle),
-                isChecked = isChecked,
-                onClick = { this.isChecked.update { !it } }
-            ),
-            primary = ButtonState(
-                text = stringRes(R.string.restore_bd_restore_btn),
-                onClick = { onRestoreWalletClick(isChecked) },
-            ),
-            secondary = ButtonState(
-                text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_cancel),
-                onClick = ::onBack,
-            ),
+    private fun createState(isChecked: Boolean): RestoreTorState =
+        RestoreTorState(
+            checkbox =
+                CheckboxState(
+                    title = stringRes(R.string.restore_tor_checkbox_title),
+                    subtitle = stringRes(R.string.restore_tor_checkbox_subtitle),
+                    isChecked = isChecked,
+                    onClick = { this.isChecked.update { !it } }
+                ),
+            primary =
+                ButtonState(
+                    text = stringRes(R.string.restore_bd_restore_btn),
+                    onClick = { onRestoreWalletClick(isChecked) },
+                ),
+            secondary =
+                ButtonState(
+                    text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_cancel),
+                    onClick = ::onBack,
+                ),
             onBack = ::onBack
         )
-    }
 
     private fun onBack() = navigationRouter.back()
 
-    private fun onRestoreWalletClick(isChecked: Boolean) = viewModelScope.launch {
-        restoreWallet(
-            seedPhrase = SeedPhrase.new(args.seed.trim()),
-            enableTor = isChecked,
-            birthday = BlockHeight.new(args.blockHeight)
-        )
-    }
+    private fun onRestoreWalletClick(isChecked: Boolean) =
+        viewModelScope.launch {
+            restoreWallet(
+                seedPhrase = SeedPhrase.new(args.seed.trim()),
+                enableTor = isChecked,
+                birthday = BlockHeight.new(args.blockHeight)
+            )
+        }
 }

@@ -59,9 +59,10 @@ fun RestoreTorView(state: RestoreTorState?) {
 @Composable
 private fun Content(state: RestoreTorState, modifier: Modifier) {
     Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp)
+        modifier =
+            modifier
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp)
     ) {
         Image(
             painter = painterResource(R.drawable.ic_restore_tor_info),
@@ -141,9 +142,10 @@ private fun Switch(state: CheckboxState) {
             )
             val offset by animateDpAsState(if (state.isChecked) 21.dp else 0.dp)
             Surface(
-                modifier = Modifier
-                    .width(64.dp)
-                    .height(28.dp),
+                modifier =
+                    Modifier
+                        .width(64.dp)
+                        .height(28.dp),
                 color = switchColor,
                 shape = CircleShape,
             ) {
@@ -151,12 +153,13 @@ private fun Switch(state: CheckboxState) {
                     modifier = Modifier.padding(2.dp)
                 ) {
                     Box(
-                        modifier = Modifier
-                            .offset(x = offset)
-                            .width(39.dp)
-                            .height(24.dp)
-                            .clip(CircleShape)
-                            .background(ZashiColors.Surfaces.bgPrimary)
+                        modifier =
+                            Modifier
+                                .offset(x = offset)
+                                .width(39.dp)
+                                .height(24.dp)
+                                .clip(CircleShape)
+                                .background(ZashiColors.Surfaces.bgPrimary)
                     )
                 }
             }
@@ -166,20 +169,23 @@ private fun Switch(state: CheckboxState) {
 
 @PreviewScreens
 @Composable
-private fun Preview() = ZcashTheme {
-    var isChecked by remember { mutableStateOf(true) }
+private fun Preview() =
+    ZcashTheme {
+        var isChecked by remember { mutableStateOf(true) }
 
-    RestoreTorView(
-        state = RestoreTorState(
-            checkbox = CheckboxState(
-                title = stringRes(stringResource(R.string.restore_tor_checkbox_title)),
-                subtitle = stringRes(stringResource(R.string.restore_tor_checkbox_subtitle)),
-                isChecked = isChecked,
-                onClick = { isChecked = !isChecked }
-            ),
-            secondary = ButtonState(stringRes(co.electriccoin.zcash.ui.design.R.string.general_cancel)),
-            primary = ButtonState(stringRes(R.string.restore_bd_restore_btn)),
-            onBack = { }
+        RestoreTorView(
+            state =
+                RestoreTorState(
+                    checkbox =
+                        CheckboxState(
+                            title = stringRes(stringResource(R.string.restore_tor_checkbox_title)),
+                            subtitle = stringRes(stringResource(R.string.restore_tor_checkbox_subtitle)),
+                            isChecked = isChecked,
+                            onClick = { isChecked = !isChecked }
+                        ),
+                    secondary = ButtonState(stringRes(co.electriccoin.zcash.ui.design.R.string.general_cancel)),
+                    primary = ButtonState(stringRes(R.string.restore_bd_restore_btn)),
+                    onBack = { }
+                )
         )
-    )
-}
+    }

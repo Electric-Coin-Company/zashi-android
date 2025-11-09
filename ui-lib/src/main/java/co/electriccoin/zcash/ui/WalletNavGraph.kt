@@ -69,6 +69,8 @@ import co.electriccoin.zcash.ui.screen.home.updating.AndroidWalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixArgs
 import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixScreen
+import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsArgs
+import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsScreen
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsScreen
 import co.electriccoin.zcash.ui.screen.pay.PayArgs
@@ -221,6 +223,7 @@ fun NavGraphBuilder.walletNavGraph(
         composable<ReceiveArgs> { ReceiveScreen() }
         composable<Send> { WrapSend(it.toRoute()) }
         dialogComposable<TEXUnsupportedArgs> { AndroidTEXUnsupported() }
+        dialogComposable<InsufficientFundsArgs> { InsufficientFundsScreen() }
         dialogComposable<SeedInfo> { AndroidSeedInfo() }
         composable<WalletBackupDetail> { AndroidWalletBackupDetail(it.toRoute()) }
         dialogComposable<SeedBackupInfo> { AndroidWalletBackupInfo() }
