@@ -62,6 +62,7 @@ import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerVM
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteVM
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageVM
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExportViewModel
+import co.electriccoin.zcash.ui.screen.texunsupported.TEXUnsupportedVM
 import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInVM
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsVM
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailVM
@@ -151,4 +152,5 @@ val viewModelModule =
         viewModelOf(::EphemeralHotfixVM)
         viewModelOf(::EphemeralLockVM)
         viewModelOf(::DebugVM)
+        viewModelOf(::TEXUnsupportedVM)
     }

@@ -131,6 +131,8 @@ import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageScreen
 import co.electriccoin.zcash.ui.screen.taxexport.AndroidTaxExport
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExport
+import co.electriccoin.zcash.ui.screen.texunsupported.AndroidTEXUnsupported
+import co.electriccoin.zcash.ui.screen.texunsupported.TEXUnsupportedArgs
 import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInArgs
 import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInScreen
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsArgs
@@ -218,6 +220,7 @@ fun NavGraphBuilder.walletNavGraph(
         composable<TaxExport> { AndroidTaxExport() }
         composable<ReceiveArgs> { ReceiveScreen() }
         composable<Send> { WrapSend(it.toRoute()) }
+        dialogComposable<TEXUnsupportedArgs> { AndroidTEXUnsupported() }
         dialogComposable<SeedInfo> { AndroidSeedInfo() }
         composable<WalletBackupDetail> { AndroidWalletBackupDetail(it.toRoute()) }
         dialogComposable<SeedBackupInfo> { AndroidWalletBackupInfo() }

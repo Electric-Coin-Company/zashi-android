@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="tex_unsupported_title">Tipo de dirección no compatible</string>
+    <string name="tex_unsupported_description_part1">Keystone actualmente no admite transferencias a direcciones TEX de Binance.</string>
+    <string name="tex_unsupported_description_part2">Por favor, siga los pasos a continuación para completar su transacción.</string>
+    <string name="tex_unsupported_workaround_title">Pasos alternativos</string>
+    <string name="tex_unsupported_step_1_badge">Paso 1</string>
+    <string name="tex_unsupported_step_1_title">Enviar a Zashi primero</string>
+    <string name="tex_unsupported_step_1_description">Transfiera ZEC a su dirección protegida de Zashi</string>
+    <string name="tex_unsupported_step_2_badge">Paso 2</string>
+    <string name="tex_unsupported_step_2_title">Enviar desde Zashi a la dirección TEX</string>
+    <string name="tex_unsupported_step_2_description">Una vez recibido en Zashi, envíe los tokens a su dirección de destino TEX final</string>
+    <string name="tex_unsupported_button">Entendido</string>
+</resources>

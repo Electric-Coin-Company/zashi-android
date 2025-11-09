@@ -3,11 +3,14 @@ package co.electriccoin.zcash.ui.screen.send
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.model.ZecSend
+import cash.z.ecc.android.sdk.type.AddressType
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.usecase.CreateProposalUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveABContactPickedUseCase
@@ -18,6 +21,7 @@ import co.electriccoin.zcash.ui.screen.send.model.AmountState
 import co.electriccoin.zcash.ui.screen.send.model.RecipientAddressState
 import co.electriccoin.zcash.ui.screen.send.model.SendAddressBookState
 import co.electriccoin.zcash.ui.screen.send.model.SendStage
+import co.electriccoin.zcash.ui.screen.texunsupported.TEXUnsupportedArgs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -40,6 +44,7 @@ class SendViewModel(
     private val observeWalletAccounts: GetWalletAccountsUseCase,
     private val navigateToSelectRecipient: NavigateToSelectRecipientUseCase,
     private val navigationRouter: NavigationRouter,
+    private val getSelectedWalletAccountUseCase: GetSelectedWalletAccountUseCase,
 ) : ViewModel() {
     val recipientAddressState = MutableStateFlow(RecipientAddressState.new("", null))
 
@@ -136,11 +141,17 @@ class SendViewModel(
         if (onCreateZecSendClickJob?.isActive == true) return
         onCreateZecSendClickJob =
             viewModelScope.launch {
-                try {
-                    createProposal(zecSend = newZecSend, floor = amountState.lastFieldChangedByUser == AmountField.FIAT)
-                } catch (e: Exception) {
-                    setSendStage(SendStage.SendFailure(e.cause?.message ?: e.message ?: ""))
-                    Twig.error(e) { "Error creating proposal" }
+                val currentAccount = getSelectedWalletAccountUseCase()
+                val address = newZecSend.destination
+                if (currentAccount is KeystoneAccount && address == AddressType.Tex) {
+                    navigationRouter.forward(TEXUnsupportedArgs)
+                } else {
+                    try {
+                        createProposal(newZecSend, amountState.lastFieldChangedByUser == AmountField.FIAT)
+                    } catch (e: Exception) {
+                        setSendStage(SendStage.SendFailure(e.cause?.message ?: e.message ?: ""))
+                        Twig.error(e) { "Error creating proposal" }
+                    }
                 }
             }
     }
