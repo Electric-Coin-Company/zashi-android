@@ -97,8 +97,6 @@ import co.electriccoin.zcash.ui.common.usecase.RemindWalletBackupLaterUseCase
 import co.electriccoin.zcash.ui.common.usecase.RequestSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanQrUseCase
-import co.electriccoin.zcash.ui.common.usecase.ResetInMemoryDataUseCase
-import co.electriccoin.zcash.ui.common.usecase.ResetSharedPrefsDataUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RestoreWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveABContactUseCase
@@ -131,6 +129,7 @@ import co.electriccoin.zcash.ui.common.usecase.WalletBackupMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.WalletBackupMessageUseCaseImpl
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
+import co.electriccoin.zcash.ui.screen.deletewallet.ResetZashiUseCase
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -201,8 +200,6 @@ val useCaseModule =
         factoryOf(::SendTransactionAgainUseCase)
         factoryOf(::GetABContactsUseCase)
         factoryOf(::GetABSwapContactsUseCase)
-        factoryOf(::ResetInMemoryDataUseCase)
-        factoryOf(::ResetSharedPrefsDataUseCase)
         factoryOf(::NavigateToAddressBookUseCase)
         factoryOf(::NavigateToSelectRecipientUseCase)
         factoryOf(::GetTransactionMetadataUseCase)
@@ -268,4 +265,5 @@ val useCaseModule =
         factoryOf(::IsEphemeralAddressLockedUseCase)
         singleOf(::SubmitIncreaseEphemeralGapLimitUseCase)
         factoryOf(::CreateIncreaseEphemeralGapLimitProposalUseCase)
+        factoryOf(::ResetZashiUseCase)
     }

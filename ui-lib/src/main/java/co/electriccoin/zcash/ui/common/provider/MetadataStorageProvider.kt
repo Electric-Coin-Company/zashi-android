@@ -8,6 +8,8 @@ interface MetadataStorageProvider {
     fun getStorageFile(key: MetadataKey): File?
 
     fun getOrCreateStorageFile(key: MetadataKey): File
+
+    fun getMetadataDir(): File?
 }
 
 class MetadataStorageProviderImpl(
@@ -24,6 +26,8 @@ class MetadataStorageProviderImpl(
         }
         return file
     }
+
+    override fun getMetadataDir(): File? = File(context.filesDir, "metadata").takeIf { it.exists() && it.isDirectory }
 
     private fun getOrCreateMetadataDir(): File {
         val filesDir = context.filesDir

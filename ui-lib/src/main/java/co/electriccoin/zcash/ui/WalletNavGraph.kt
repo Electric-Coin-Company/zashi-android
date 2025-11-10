@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui
 
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -9,7 +8,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
-import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.about.AboutArgs
 import co.electriccoin.zcash.ui.screen.about.AboutScreen
 import co.electriccoin.zcash.ui.screen.accountlist.AccountList
@@ -37,7 +35,10 @@ import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactScreen
 import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactScreen
 import co.electriccoin.zcash.ui.screen.crashreporting.AndroidCrashReportingOptIn
-import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
+import co.electriccoin.zcash.ui.screen.deletewallet.ResetZashiArgs
+import co.electriccoin.zcash.ui.screen.deletewallet.ResetZashiConfirmationArgs
+import co.electriccoin.zcash.ui.screen.deletewallet.ResetZashiConfirmationScreen
+import co.electriccoin.zcash.ui.screen.deletewallet.ResetZashiScreen
 import co.electriccoin.zcash.ui.screen.error.AndroidErrorBottomSheet
 import co.electriccoin.zcash.ui.screen.error.AndroidErrorDialog
 import co.electriccoin.zcash.ui.screen.error.ErrorBottomSheet
@@ -156,8 +157,6 @@ import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.screen.whatsnew.WrapWhatsNew
 
 fun NavGraphBuilder.walletNavGraph(
-    activity: ComponentActivity,
-    walletViewModel: WalletViewModel,
     storageCheckViewModel: StorageCheckViewModel,
     navigationRouter: NavigationRouter,
 ) {
@@ -174,7 +173,8 @@ fun NavGraphBuilder.walletNavGraph(
         composable<ChooseServerArgs> { ChooseServerScreen() }
         composable<WalletBackup> { AndroidWalletBackup(it.toRoute()) }
         composable<FeedbackArgs> { FeedbackScreen() }
-        composable(NavigationTargets.DELETE_WALLET) { WrapDeleteWallet(activity, walletViewModel) }
+        composable<ResetZashiArgs> { ResetZashiScreen() }
+        dialogComposable<ResetZashiConfirmationArgs> { ResetZashiConfirmationScreen(it.toRoute()) }
         composable<AboutArgs> { AboutScreen() }
         composable(NavigationTargets.WHATS_NEW) { WrapWhatsNew() }
         dialogComposable<IntegrationsArgs> { IntegrationsScreen() }
