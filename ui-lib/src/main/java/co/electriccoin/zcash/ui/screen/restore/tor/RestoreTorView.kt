@@ -57,7 +57,7 @@ fun RestoreTorView(state: RestoreTorState?) {
 }
 
 @Composable
-private fun Content(state: RestoreTorState, modifier: Modifier) {
+private fun Content(state: RestoreTorState, modifier: Modifier = Modifier) {
     Column(
         modifier =
             modifier
@@ -96,6 +96,7 @@ private fun Content(state: RestoreTorState, modifier: Modifier) {
     }
 }
 
+@Suppress("MagicNumber")
 @Composable
 private fun Switch(state: CheckboxState) {
     val borderColor by animateColorAsState(
