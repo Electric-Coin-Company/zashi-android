@@ -35,6 +35,7 @@ import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,7 +71,7 @@ private fun Content(state: ShieldFundsInfoState) {
         )
         Spacer(12.dp)
         Text(
-            stringResource(R.string.home_info_transparent_subtitle),
+            stringResource(R.string.home_info_transparent_subtitle, CURRENCY_TICKER),
             color = ZashiColors.Text.textTertiary,
             style = ZashiTypography.textMd
         )
@@ -78,7 +79,8 @@ private fun Content(state: ShieldFundsInfoState) {
         Text(
             stringRes(
                 R.string.home_info_transparent_message,
-                stringRes(Zatoshi.typicalFee, HIDDEN)
+                stringRes(Zatoshi.typicalFee, HIDDEN),
+                CURRENCY_TICKER
             ).getValue(),
             color = ZashiColors.Text.textTertiary,
             style = ZashiTypography.textMd
@@ -113,7 +115,8 @@ private fun Content(state: ShieldFundsInfoState) {
                 text =
                     stringResource(
                         R.string.home_message_transparent_balance_subtitle,
-                        stringRes(state.transparentAmount, HIDDEN).getValue()
+                        stringRes(state.transparentAmount, HIDDEN).getValue(),
+                        CURRENCY_TICKER
                     ),
                 color = ZashiColors.Text.textPrimary,
                 style = ZashiTypography.textXl,

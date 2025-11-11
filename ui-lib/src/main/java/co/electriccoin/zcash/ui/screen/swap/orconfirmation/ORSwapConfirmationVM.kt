@@ -26,6 +26,7 @@ import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.screen.swap.info.SwapInfoArgs
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -135,7 +136,8 @@ class ORSwapConfirmationVM(
                 R.string.swap_to_zec_share_text,
                 stringResByNumber(amount),
                 tokenTicker.uppercase(),
-                chainName
+                chainName,
+                CURRENCY_TICKER
             ).getString(context)
 
         shareQR(

@@ -20,7 +20,7 @@
     <string name="general_review">Review</string>
     <string name="general_ok">OK</string>
     <string name="general_report">Report</string>
-    <string name="general_zec">%s ZEC</string>
+    <string name="general_zec">%1$s %2$s</string>
     <string name="general_dismiss">Dismiss</string>
     <string name="general_select">Select…</string>
     <string name="general_confirm">Confirm</string>

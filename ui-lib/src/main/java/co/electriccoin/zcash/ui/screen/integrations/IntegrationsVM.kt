@@ -27,6 +27,7 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import co.electriccoin.zcash.ui.screen.flexa.Flexa
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
@@ -98,8 +99,8 @@ class IntegrationsVM(
                         } else {
                             imageRes(R.drawable.ic_integrations_near)
                         },
-                    title = stringRes(R.string.integrations_near_swap),
-                    subtitle = stringRes(R.string.integrations_near_swap_message),
+                    title = stringRes(R.string.integrations_near_swap, CURRENCY_TICKER),
+                    subtitle = stringRes(R.string.integrations_near_swap_message, CURRENCY_TICKER),
                     onClick = ::onNearSwapClick,
                     isEnabled = isRestoring.not(),
                 ),

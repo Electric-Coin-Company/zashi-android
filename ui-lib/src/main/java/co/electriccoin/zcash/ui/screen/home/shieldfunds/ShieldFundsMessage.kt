@@ -25,6 +25,7 @@ import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.home.HomeMessageState
 import co.electriccoin.zcash.ui.screen.home.HomeMessageWrapper
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 
 @Suppress("ModifierNaming")
 @Composable
@@ -85,7 +86,8 @@ private fun Preview() =
                         subtitle =
                             stringRes(
                                 R.string.home_message_transparent_balance_subtitle,
-                                stringRes(Zatoshi(10000), HIDDEN)
+                                stringRes(Zatoshi(10000), HIDDEN),
+                                CURRENCY_TICKER
                             ),
                         onClick = {},
                         onButtonClick = {}

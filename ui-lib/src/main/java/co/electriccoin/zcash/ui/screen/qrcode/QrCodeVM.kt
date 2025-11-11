@@ -14,6 +14,7 @@ import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCa
 import co.electriccoin.zcash.ui.common.usecase.ShareQRUseCase
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.map
@@ -44,8 +45,11 @@ class QrCodeVM(
                             viewModelScope.launch {
                                 shareQR(
                                     qrData = it,
-                                    shareText = context.getString(R.string.qr_code_share_chooser_text),
-                                    sharePickerText = context.getString(R.string.qr_code_share_chooser_title),
+                                    shareText = context.getString(R.string.qr_code_share_chooser_text, CURRENCY_TICKER),
+                                    sharePickerText = context.getString(
+                                        R.string.qr_code_share_chooser_title,
+                                        CURRENCY_TICKER
+                                    ),
                                     filenamePrefix = "zcash_address_qr_",
                                     centerIcon =
                                         if (walletAddress is WalletAddress.Transparent) {

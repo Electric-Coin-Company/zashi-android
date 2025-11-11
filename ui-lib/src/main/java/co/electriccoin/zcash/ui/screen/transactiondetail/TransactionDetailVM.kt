@@ -312,12 +312,12 @@ class TransactionDetailVM(
     private fun createFeeStringRes(data: DetailedTransactionData): StringResource {
         val feePaid =
             data.transaction.fee.takeIf { data.transaction !is ReceiveTransaction }
-                ?: return stringRes(R.string.transaction_detail_fee_minimal)
+                ?: return stringRes(R.string.transaction_detail_fee_minimal, CURRENCY_TICKER)
 
         return if (feePaid.value < MIN_FEE_THRESHOLD) {
-            stringRes(R.string.transaction_detail_fee_minimal)
+            stringRes(R.string.transaction_detail_fee_minimal, CURRENCY_TICKER)
         } else {
-            stringRes(R.string.transaction_detail_fee, stringRes(feePaid, HIDDEN))
+            stringRes(R.string.transaction_detail_fee, stringRes(feePaid, HIDDEN), CURRENCY_TICKER)
         }
     }
 
