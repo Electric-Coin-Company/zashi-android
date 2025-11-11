@@ -43,7 +43,7 @@ data class VersionInfo(
                 isRunningUnderTestService = (
                     FirebaseTestLabUtil.isFirebaseTestLab(context.applicationContext) ||
                         EmulatorWtfUtil.isEmulatorWtf(context.applicationContext)
-                    ),
+                ),
                 gitSha = gitSha,
                 gitCommitCount = gitCommitCount.toLong(),
                 changelog = Changelog.new(json = resolveBestReleaseNotes()),
@@ -72,6 +72,5 @@ enum class NetworkDimension(
     val value: String
 ) {
     MAINNET("zcashmainnet"),
-    TESTNET("zcashtestnet");
+    TESTNET("zcashtestnet")
 }
-

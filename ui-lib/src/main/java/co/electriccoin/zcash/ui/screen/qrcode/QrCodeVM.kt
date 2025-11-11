@@ -46,10 +46,11 @@ class QrCodeVM(
                                 shareQR(
                                     qrData = it,
                                     shareText = context.getString(R.string.qr_code_share_chooser_text, CURRENCY_TICKER),
-                                    sharePickerText = context.getString(
-                                        R.string.qr_code_share_chooser_title,
-                                        CURRENCY_TICKER
-                                    ),
+                                    sharePickerText =
+                                        context.getString(
+                                            R.string.qr_code_share_chooser_title,
+                                            CURRENCY_TICKER
+                                        ),
                                     filenamePrefix = "zcash_address_qr_",
                                     centerIcon =
                                         if (walletAddress is WalletAddress.Transparent) {
