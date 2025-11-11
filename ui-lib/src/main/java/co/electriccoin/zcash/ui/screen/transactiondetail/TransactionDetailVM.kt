@@ -50,6 +50,7 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailI
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemoState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemosState
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -166,9 +167,9 @@ class TransactionDetailVM(
                                 transaction.swap.status
                                     ?.refundedFormatted
                                     ?.let {
-                                        stringResByCurrencyNumber(amount = it, ticker = "ZEC")
+                                        stringResByCurrencyNumber(amount = it, ticker = CURRENCY_TICKER)
                                     }?.takeIf {
-                                        transaction.swap.status.status == SwapStatus.REFUNDED
+                                        transaction.swap.status.status == REFUNDED
                                     },
                             onTransactionIdClick = {
                                 onCopyToClipboard(transaction.transaction.id.txIdString())

@@ -143,7 +143,7 @@ class HomeVM(
                 onClick = ::onPayButtonClick,
             ),
         fourthButton =
-            if (getVersionInfoProvider().distributionDimension == DistributionDimension.FOSS) {
+            if (getVersionInfoProvider().distribution == DistributionDimension.FOSS) {
                 if (!isFlexaAvailable && accounts.orEmpty().any { it is KeystoneAccount }) {
                     BigIconButtonState(
                         text = stringRes(R.string.home_button_swap),

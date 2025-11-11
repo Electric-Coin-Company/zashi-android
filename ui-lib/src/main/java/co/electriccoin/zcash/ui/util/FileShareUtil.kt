@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
 import co.electriccoin.zcash.ui.common.model.DistributionDimension
+import co.electriccoin.zcash.ui.common.model.NetworkDimension
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import java.io.File
 
@@ -98,14 +99,14 @@ object FileShareUtil {
     }
 
     private fun getAuthorityByVersionInfo(versionInfo: VersionInfo) =
-        if (versionInfo.isTestnet) {
-            if (versionInfo.distributionDimension == DistributionDimension.FOSS) {
+        if (versionInfo.network == NetworkDimension.TESTNET) {
+            if (versionInfo.distribution == DistributionDimension.FOSS) {
                 getFossTestnetAuthority(versionInfo)
             } else {
                 getStoreTestnetAuthority(versionInfo)
             }
         } else {
-            if (versionInfo.distributionDimension == DistributionDimension.FOSS) {
+            if (versionInfo.distribution == DistributionDimension.FOSS) {
                 getFossMainnetAuthority(versionInfo)
             } else {
                 getStoreMainnetAuthority(versionInfo)

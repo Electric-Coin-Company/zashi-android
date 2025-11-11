@@ -139,7 +139,7 @@ class IntegrationsVM(
                     subtitle = stringRes(R.string.integrations_coinbase_subtitle_disabled),
                     isEnabled = false,
                     onClick = null,
-                ).takeIf { getVersionInfo().distributionDimension != DistributionDimension.FOSS },
+                ).takeIf { getVersionInfo().distribution != DistributionDimension.FOSS },
                 ListItemState(
                     title = stringRes(R.string.integrations_keystone),
                     subtitle = stringRes(R.string.integrations_keystone_subtitle),
