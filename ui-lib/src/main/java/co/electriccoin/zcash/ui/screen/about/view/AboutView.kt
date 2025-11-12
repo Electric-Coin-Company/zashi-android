@@ -45,6 +45,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.fixture.ConfigInfoFixture
 import co.electriccoin.zcash.ui.fixture.VersionInfoFixture
 import co.electriccoin.zcash.ui.screen.support.model.ConfigInfo
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 
 @Composable
 fun About(
@@ -153,7 +154,7 @@ fun AboutMainContent(
 
         Text(
             modifier = Modifier.padding(horizontal = ZashiDimensions.Spacing.spacing3xl),
-            text = stringResource(id = R.string.about_description),
+            text = stringResource(id = R.string.about_description, CURRENCY_TICKER),
             color = ZashiColors.Text.textPrimary,
             style = ZashiTypography.textSm
         )

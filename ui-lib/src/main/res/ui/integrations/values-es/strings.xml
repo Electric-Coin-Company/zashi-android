@@ -13,7 +13,7 @@
     <string name="integrations_keystone_subtitle">Vincula tu hardware wallet Keystone con Zashi para firmar transacciones.</string>
     <string name="integrations_disabled_info_flexa">Cambia de Keystone a Zashi para usar Flexa.</string>
     <string name="integrations_dialog_more_options">Más opciones</string>
-    <string name="integrations_near_swap">Haz swap de ZEC con NEAR Intents</string>
-    <string name="integrations_near_swap_message">Haz swap de ZEC con otras criptomonedas.</string>
+    <string name="integrations_near_swap">Haz swap de %s con NEAR Intents</string>
+    <string name="integrations_near_swap_message">Haz swap de %s con otras criptomonedas.</string>
     <string name="integrations_coinbase_subtitle_disabled">Coinbase Onramp está temporalmente no disponible.</string>
 </resources>

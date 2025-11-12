@@ -25,6 +25,7 @@ import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.screen.swap.SwapErrorFooterState
 import co.electriccoin.zcash.ui.screen.swap.convertZecToZatoshi
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import io.ktor.client.plugins.ResponseException
 import io.ktor.http.HttpStatusCode
 import java.math.BigDecimal
@@ -116,7 +117,7 @@ internal class ExactOutputVMMapper {
     private fun createZecAmount(state: ExactOutputInternalState): StyledStringResource {
         val zatoshi = state.getZatoshi()
         return styledStringResource(
-            stringResource = stringResByDynamicCurrencyNumber(state.getZec() ?: BigDecimal(0), "ZEC"),
+            stringResource = stringResByDynamicCurrencyNumber(state.getZec() ?: BigDecimal(0), CURRENCY_TICKER),
             color =
                 if (zatoshi != null && state.totalSpendableBalance < zatoshi) {
                     StringResourceColor.HINT_ERROR

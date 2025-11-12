@@ -24,6 +24,7 @@ import co.electriccoin.zcash.ui.design.util.stringResByCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDateTime
 import co.electriccoin.zcash.ui.design.util.styledStringResource
 import co.electriccoin.zcash.ui.screen.transactionhistory.ActivityState
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -69,7 +70,7 @@ class ActivityMapper {
 
     private fun getSwapValue(data: ActivityData.BySwap): StyledStringResource =
         styledStringResource(
-            stringResByCurrencyNumber(data.swap.amountOutFormatted, "ZEC"),
+            stringResByCurrencyNumber(data.swap.amountOutFormatted, CURRENCY_TICKER),
             when (data.swap.status) {
                 INCOMPLETE_DEPOSIT, PROCESSING, PENDING, SUCCESS -> StringResourceColor.PRIMARY
                 EXPIRED, REFUNDED, FAILED -> StringResourceColor.NEGATIVE

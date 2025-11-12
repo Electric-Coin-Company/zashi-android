@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.common.provider
 
 import android.app.Application
 import cash.z.ecc.android.sdk.model.ZcashNetwork
-import cash.z.ecc.sdk.extension.Testnet
 import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.lightwallet.client.model.LightWalletEndpoint
 
@@ -22,7 +21,9 @@ class LightWalletEndpointProvider(
                 LightWalletEndpoint(host = "eu.zec.stardust.rest", port = 443, isSecure = true),
             )
         } else {
-            listOf(LightWalletEndpoint.Testnet)
+            listOf(
+                LightWalletEndpoint(host = "testnet.zec.rocks", port = 443, isSecure = true)
+            )
         }
 
     fun getDefaultEndpoint() = getEndpoints().first()

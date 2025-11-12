@@ -19,12 +19,17 @@ data class VersionInfo(
     val changelog: Changelog,
     val isDebuggable: Boolean,
     val isRunningUnderTestService: Boolean,
-    val isTestnet: Boolean,
     val versionCode: Long,
     val versionName: String,
-    val distributionDimension: DistributionDimension
+    val distribution: DistributionDimension,
+    val network: NetworkDimension,
 ) {
     companion object {
+        val DISTRIBUTION: DistributionDimension
+            get() = DistributionDimension.entries.first { it.value == BuildConfig.FLAVOR_distribution }
+        val NETWORK: NetworkDimension
+            get() = NetworkDimension.entries.first { it.value == BuildConfig.FLAVOR_network }
+
         fun new(context: Context): VersionInfo {
             val packageInfo = context.packageManager.getPackageInfoCompat(context.packageName, 0L)
             val applicationInfo = context.applicationInfo
@@ -39,13 +44,11 @@ data class VersionInfo(
                     FirebaseTestLabUtil.isFirebaseTestLab(context.applicationContext) ||
                         EmulatorWtfUtil.isEmulatorWtf(context.applicationContext)
                 ),
-                isTestnet = context.resources.getBoolean(cash.z.ecc.sdk.ext.R.bool.zcash_is_testnet),
                 gitSha = gitSha,
                 gitCommitCount = gitCommitCount.toLong(),
                 changelog = Changelog.new(json = resolveBestReleaseNotes()),
-                distributionDimension =
-                    DistributionDimension.entries
-                        .first { it.value == BuildConfig.FLAVOR_distribution }
+                distribution = DISTRIBUTION,
+                network = NETWORK
             )
         }
 
@@ -63,4 +66,11 @@ enum class DistributionDimension(
 ) {
     STORE("store"),
     FOSS("foss")
+}
+
+enum class NetworkDimension(
+    val value: String
+) {
+    MAINNET("zcashmainnet"),
+    TESTNET("zcashtestnet")
 }

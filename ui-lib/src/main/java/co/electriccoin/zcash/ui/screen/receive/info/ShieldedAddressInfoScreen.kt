@@ -23,6 +23,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import kotlinx.serialization.Serializable
 import org.koin.compose.koinInject
 
@@ -55,7 +56,12 @@ private fun View(onDismissRequest: () -> Unit) {
             )
             Spacer(12.dp)
             ZashiBulletText(
-                stringResource(R.string.receive_info_shielded_bullet_1),
+                stringResource(
+                    R.string.receive_info_shielded_bullet_1,
+                    CURRENCY_TICKER,
+                    CURRENCY_TICKER,
+                    CURRENCY_TICKER
+                ),
                 color = ZashiColors.Text.textTertiary,
                 style = ZashiTypography.textSm,
             )

@@ -31,6 +31,7 @@ import co.electriccoin.zcash.ui.screen.swap.Mode.SWAP_FROM_ZEC
 import co.electriccoin.zcash.ui.screen.swap.Mode.SWAP_INTO_ZEC
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextFieldState
 import co.electriccoin.zcash.ui.screen.swap.ui.SwapAmountTextState
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import io.ktor.client.plugins.ResponseException
 import io.ktor.http.HttpStatusCode
 import java.math.BigDecimal
@@ -521,6 +522,7 @@ internal class ExactInputVMMapper {
                     text =
                         stringRes(
                             R.string.swap_zec_exchange_rate,
+                            CURRENCY_TICKER,
                             stringResByDynamicCurrencyNumber(zecToAssetExchangeRate, assetTokenTicker)
                         )
                 )

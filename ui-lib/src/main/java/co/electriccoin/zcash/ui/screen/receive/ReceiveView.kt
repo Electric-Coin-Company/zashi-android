@@ -53,6 +53,7 @@ import co.electriccoin.zcash.ui.fixture.ZashiMainTopAppBarStateFixture
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressState.ColorMode.DEFAULT
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressState.ColorMode.KEYSTONE
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressState.ColorMode.ZASHI
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 
 @Composable
 internal fun ReceiveView(
@@ -68,7 +69,7 @@ internal fun ReceiveView(
             BlankBgScaffold(
                 topBar = {
                     ZashiTopAppbar(
-                        title = stringRes(R.string.receive_title),
+                        title = stringRes(R.string.receive_title, CURRENCY_TICKER),
                         state = appBarState,
                         showHideBalances = false,
                         onBack = state.onBack
@@ -123,7 +124,10 @@ private fun ReceiveContents(
             text = stringResource(id = R.string.receive_prioritize_shielded),
             color = ZashiColors.Text.textTertiary,
             style = ZashiTypography.textSm,
-            modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth(),
+            modifier =
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
             textAlign = TextAlign.Center
         )
         Spacer(8.dp)

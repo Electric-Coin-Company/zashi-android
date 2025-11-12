@@ -4,6 +4,7 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.configuration.api.ConfigurationProvider
 import co.electriccoin.zcash.configuration.model.map.Configuration
 import co.electriccoin.zcash.ui.BuildConfig
+import co.electriccoin.zcash.ui.common.model.NetworkDimension
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.configuration.ConfigurationEntries
 import kotlinx.coroutines.CoroutineScope
@@ -53,7 +54,7 @@ class ConfigurationRepositoryImpl(
             .filterNotNull()
             .map {
                 val versionInfo = getVersionInfo()
-                !versionInfo.isTestnet &&
+                versionInfo.network != NetworkDimension.TESTNET &&
                     ConfigurationEntries.IS_FLEXA_AVAILABLE.getValue(it) &&
                     BuildConfig.ZCASH_FLEXA_KEY.isNotEmpty()
             }.stateIn(
@@ -65,7 +66,7 @@ class ConfigurationRepositoryImpl(
     override val isCoinbaseAvailable: StateFlow<Boolean?> =
         flow {
             val versionInfo = getVersionInfo()
-            emit(!versionInfo.isTestnet && BuildConfig.ZCASH_COINBASE_APP_ID.isNotEmpty())
+            emit(versionInfo.network != NetworkDimension.TESTNET && BuildConfig.ZCASH_COINBASE_APP_ID.isNotEmpty())
         }.stateIn(
             scope = scope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),

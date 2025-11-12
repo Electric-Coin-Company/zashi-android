@@ -15,6 +15,7 @@ import co.electriccoin.zcash.ui.common.repository.TransactionRepository
 import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import co.electriccoin.zcash.ui.util.FileShareUtil
 import co.electriccoin.zcash.ui.util.FileShareUtil.ZASHI_INTERNAL_DATA_MIME_TYPE
 import kotlinx.coroutines.Dispatchers
@@ -149,9 +150,9 @@ class ExportTaxUseCase(
                             receivedQuantity = "",
                             receivedCurrency = "",
                             sentQuantity = sentQuantity.getString(context),
-                            sentCurrency = ZEC_SYMBOL,
+                            sentCurrency = CURRENCY_TICKER,
                             feeAmount = stringRes(fee ?: Zatoshi(0), HIDDEN).getString(context),
-                            feeCurrency = ZEC_SYMBOL,
+                            feeCurrency = CURRENCY_TICKER,
                             tag = ""
                         )
                     }
@@ -162,7 +163,7 @@ class ExportTaxUseCase(
                         CsvEntry(
                             date = dateString,
                             receivedQuantity = stringRes(transaction.amount, HIDDEN).getString(context),
-                            receivedCurrency = ZEC_SYMBOL,
+                            receivedCurrency = CURRENCY_TICKER,
                             sentQuantity = "",
                             sentCurrency = "",
                             feeAmount = "",
@@ -190,5 +191,4 @@ private data class CsvEntry(
     val tag: String,
 )
 
-private const val ZEC_SYMBOL = "ZEC"
 private const val CSV_SEPARATOR = ","

@@ -30,7 +30,7 @@
 
     <string name="request_qr_code_content_description">Solicitar Código QR</string>
     <string name="request_qr_code_data_unable_to_share">No se pudo encontrar una aplicación para compartir el código QR.</string>
-    <string name="request_qr_code_share_chooser_title">Solicitar ZEC</string>
-    <string name="request_qr_code_share_chooser_text">Hola, ¡escanea este código QR para enviarme un pago en ZEC! Enlace de descarga:
+    <string name="request_qr_code_share_chooser_title">Solicitar %s</string>
+    <string name="request_qr_code_share_chooser_text">Hola, ¡escanea este código QR para enviarme un pago en %s! Enlace de descarga:
         https://play.google.com/store/apps/details?id=co.electriccoin.zcash</string>
 </resources>

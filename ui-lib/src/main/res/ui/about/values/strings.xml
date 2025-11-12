@@ -6,7 +6,7 @@
     <string name="about_debug_menu_app_name">App name:<xliff:g example="Zashi" id="app_name">%1$s</xliff:g></string>
     <string name="about_debug_menu_build">Build: <xliff:g example="635dac0eb9ddc2bc6da5177f0dd495d8b76af4dc" id="git_commit_hash">%1$s</xliff:g></string>
     <string name="about_description">Zashi is a Zcash-powered mobile wallet, built for unstoppable private payments.
-        It’s optimized for storage and real-world use of shielded $ZEC—the truly private cryptocurrency.\n\nDeveloped
+        It’s optimized for storage and real-world use of shielded $%s—the truly private cryptocurrency.\n\nDeveloped
         by the team that continues to set the industry standard for blockchain privacy, the original developers of the Zcash protocol at Electric Coin Company.
     </string>
     <string name="terms_of_use">Terms of Use</string>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="transaction_detail_fee">%s ZEC</string>
-    <string name="transaction_detail_fee_minimal">&lt; 0.001 ZEC</string>
+    <string name="transaction_detail_fee">%1$s %2$s</string>
+    <string name="transaction_detail_fee_minimal">&lt; 0.001 %s</string>
     <string name="transaction_detail_memo_view_less">View less</string>
     <string name="transaction_detail_memo_view_more">View more</string>
     <string name="transaction_detail_memo_empty">No message</string>
