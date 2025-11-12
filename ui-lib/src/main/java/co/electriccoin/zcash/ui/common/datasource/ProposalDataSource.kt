@@ -192,7 +192,7 @@ class ProposalDataSourceImpl(
         }
 
     override suspend fun submitTransaction(pcztWithProofs: Pczt, pcztWithSignatures: Pczt): SubmitResult =
-        submitTransactionInternal(transactionCount = 1) {
+        submitTransactionInternal {
             it.createTransactionFromPczt(
                 pcztWithProofs = pcztWithProofs,
                 pcztWithSignatures = pcztWithSignatures,
@@ -200,7 +200,7 @@ class ProposalDataSourceImpl(
         }
 
     override suspend fun submitTransaction(proposal: Proposal, usk: UnifiedSpendingKey): SubmitResult =
-        submitTransactionInternal(transactionCount = proposal.transactionCount()) {
+        submitTransactionInternal {
             it.createProposedTransactions(
                 proposal = proposal,
                 usk = usk,
@@ -216,19 +216,11 @@ class ProposalDataSourceImpl(
 
     @Suppress("CyclomaticComplexMethod", "TooGenericExceptionCaught")
     private suspend fun submitTransactionInternal(
-        transactionCount: Int,
         block: suspend (Synchronizer) -> Flow<TransactionSubmitResult>
     ): SubmitResult =
         withContext(Dispatchers.IO) {
             val synchronizer = synchronizerProvider.getSdkSynchronizer()
-            val submitResults =
-                try {
-                    block(synchronizer).toList()
-                } catch (e: Exception) {
-                    Twig.error(e) { "Error submitting transaction" }
-                    throw e
-                }
-
+            val submitResults = block(synchronizer).toList()
             Twig.debug { "Internal transaction submit results: $submitResults" }
 
             val successCount =
@@ -277,7 +269,7 @@ class ProposalDataSourceImpl(
                             SubmitResult.Failure(txIds = txIds, code = errCode, description = errDesc)
                         }
 
-                    transactionCount -> SubmitResult.Success(txIds = txIds)
+                    txIds.size -> SubmitResult.Success(txIds = txIds)
 
                     else ->
                         if (resubmittableFailures.all { it }) {

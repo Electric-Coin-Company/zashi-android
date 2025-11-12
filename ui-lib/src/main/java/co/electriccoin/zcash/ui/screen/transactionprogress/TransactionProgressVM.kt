@@ -186,7 +186,12 @@ class TransactionProgressVM(
     ) = FailureTransactionState(
         onBack = ::onBackToSendForm,
         onCloseClick = ::onBackToSendForm,
-        onViewTransactionClick = { result.txIds.lastOrNull()?.let { onViewTransactionDetailClick(it) } },
+        onViewTransactionClick =
+            if (result.txIds.isNotEmpty()) {
+                { onViewTransactionDetailClick(result.txIds.last()) }
+            } else {
+                null
+            },
         onReportClick = {
             viewModelScope.launch {
                 sendEmailUseCase(result)

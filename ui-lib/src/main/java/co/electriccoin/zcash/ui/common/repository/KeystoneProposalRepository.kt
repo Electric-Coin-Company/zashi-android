@@ -191,7 +191,7 @@ class KeystoneProposalRepositoryImpl(
             }
         }
 
-    @Suppress("UseCheckOrError", "ThrowingExceptionsWithoutMessageOrCause")
+    @Suppress("UseCheckOrError", "ThrowingExceptionsWithoutMessageOrCause", "TooGenericExceptionCaught")
     override suspend fun submit(): SubmitResult =
         scope
             .async {
@@ -224,13 +224,24 @@ class KeystoneProposalRepositoryImpl(
                         }
                         throw IllegalStateException("PCZT with proofs is null")
                     } else {
-                        val result =
-                            proposalDataSource.submitTransaction(
-                                pcztWithProofs = pcztWithProofs,
-                                pcztWithSignatures = pcztWithSignatures
-                            )
-                        submitState.update { SubmitProposalState.Result(result) }
-                        result
+                        try {
+                            val result =
+                                proposalDataSource.submitTransaction(
+                                    pcztWithProofs = pcztWithProofs,
+                                    pcztWithSignatures = pcztWithSignatures
+                                )
+                            submitState.update { SubmitProposalState.Result(result) }
+                            result
+                        } catch (e: Exception) {
+                            val result =
+                                SubmitResult.Failure(
+                                    txIds = emptyList(),
+                                    code = 0,
+                                    description = e.message
+                                )
+                            submitState.update { SubmitProposalState.Result(result) }
+                            throw e
+                        }
                     }
                 }
             }.await()

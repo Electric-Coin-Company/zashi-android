@@ -52,9 +52,7 @@ class ShieldFundsUseCase(
     private suspend fun shieldZashiFunds() {
         try {
             zashiProposalRepository.createShieldProposal()
-            val result = zashiProposalRepository.submit()
-
-            when (result) {
+            when (val result = zashiProposalRepository.submit()) {
                 is SubmitResult.Failure,
                 is SubmitResult.GrpcFailure,
                 is SubmitResult.Partial -> navigateToError(ErrorArgs.ShieldingError(result))
