@@ -19,6 +19,7 @@ import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.loadingImageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
@@ -81,7 +82,9 @@ class SpendableBalanceVM(
         val shielding =
             stringRes(
                 R.string.balance_action_shield_message,
-                stringRes(Zatoshi.typicalFee, HIDDEN)
+                CURRENCY_TICKER,
+                stringRes(Zatoshi.typicalFee, HIDDEN),
+                CURRENCY_TICKER
             ).takeIf { account.isShieldingAvailable }
 
         return if (pending != null && shielding != null) {

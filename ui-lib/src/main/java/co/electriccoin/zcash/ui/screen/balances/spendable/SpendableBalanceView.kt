@@ -41,6 +41,7 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.loadingImageRes
 import co.electriccoin.zcash.ui.design.util.orHiddenString
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -172,7 +173,11 @@ private fun BalanceShieldButton(state: SpendableBalanceShieldButtonState) {
                 Spacer(4.dp)
                 Text(
                     text =
-                        stringRes(R.string.home_message_transparent_balance_subtitle, stringRes(state.amount))
+                        stringRes(
+                            R.string.home_message_transparent_balance_subtitle,
+                            stringRes(state.amount),
+                            CURRENCY_TICKER
+                        )
                             orHiddenString
                             stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                     color = ZashiColors.Text.textPrimary,

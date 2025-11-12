@@ -6,6 +6,7 @@ import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.util.ImageResource
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 
 interface BlockchainProvider {
     fun getBlockchain(ticker: String): SwapBlockchain
@@ -44,7 +45,7 @@ class BlockchainProviderImpl(
                     "ton" -> stringRes("TON")
                     "tron" -> stringRes("Tron")
                     "xrp" -> stringRes("Ripple")
-                    "zec" -> stringRes("ZEC")
+                    "zec" -> stringRes(CURRENCY_TICKER)
                     else -> stringRes(ticker)
                 },
             chainIcon = getChainIcon(ticker)

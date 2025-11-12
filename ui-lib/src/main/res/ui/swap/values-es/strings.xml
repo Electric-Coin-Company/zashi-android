@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="swap_info_message">Haz swap de ZEC con cualquier token compatible con NEAR.\n\nSi haces swap HACIA ZEC, enviarás fondos desde una wallet de terceros y deberás proporcionar una dirección donde se pueda reembolsar el cambio.\n\nSi haces swap DESDE ZEC, debes proporcionar una dirección válida para el activo al que haces swap.</string>
+    <string name="swap_info_message">Haz swap de %1$s con cualquier token compatible con NEAR.\n\nSi haces swap HACIA %2$s, enviarás fondos desde una wallet de terceros y deberás proporcionar una dirección donde se pueda reembolsar el cambio.\n\nSi haces swap DESDE %3$s, debes proporcionar una dirección válida para el activo al que haces swap.</string>
     <string name="swap_info_title">Swap con</string>
     <string name="swap_select_token">Seleccionar token</string>
     <string name="swap_select_chain">Seleccionar red</string>
@@ -17,7 +17,7 @@
     <string name="swap_max">Disponible: %s</string>
     <string name="swap_to">A</string>
     <string name="swap_rate">Tasa</string>
-    <string name="swap_zec_exchange_rate">1 ZEC = %s</string>
+    <string name="swap_zec_exchange_rate">1 %1$s = %2$s</string>
     <string name="swap_slippage_tolerance">Tolerancia de slippage</string>
     <string name="swap_cancel_title">¿Estás seguro?</string>
     <string name="swap_cancel_subtitle">Si sales de esta pantalla, toda la información ingresada se perderá.</string>
@@ -49,7 +49,7 @@
     <string name="pay_to">Pagar a</string>
     <string name="swap_to_zec_footer">Usa tu wallet %s \n para depositar fondos. Depositar otros activos puede resultar en pérdida de fondos.</string>
     <string name="swap_to_zec_footer_bold">%s en %s</string>
-    <string name="swap_to_zec_share_text">Dirección de depósito para %s %s en %s swap a ZEC en Zashi</string>
+    <string name="swap_to_zec_share_text">Dirección de depósito para %1$s %2$s en %3$s swap a %4$s en Zashi</string>
     <string name="swap_refund_address">Dirección de reembolso</string>
     <string name="swap_refund_address_info_title">Dirección de reembolso</string>
     <string name="swap_refund_address_info_message_empty">Si el swap falla o cambian las condiciones del mercado, tu transacción puede ser reembolsada menos las comisiones de transacción.\n\nEl monto reembolsado será devuelto a tu wallet en la moneda de origen. Por favor, ingresa una dirección válida para evitar la pérdida de fondos.</string>

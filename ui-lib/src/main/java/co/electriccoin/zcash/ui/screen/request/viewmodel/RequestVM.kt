@@ -29,6 +29,7 @@ import co.electriccoin.zcash.ui.screen.request.model.Request
 import co.electriccoin.zcash.ui.screen.request.model.RequestCurrency
 import co.electriccoin.zcash.ui.screen.request.model.RequestStage
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -129,9 +130,15 @@ class RequestVM(
                                 shareQR(
                                     qrData = uri,
                                     shareText =
-                                        application.getString(R.string.request_qr_code_share_chooser_text),
+                                        application.getString(
+                                            R.string.request_qr_code_share_chooser_text,
+                                            CURRENCY_TICKER
+                                        ),
                                     sharePickerText =
-                                        application.getString(R.string.request_qr_code_share_chooser_title),
+                                        application.getString(
+                                            R.string.request_qr_code_share_chooser_title,
+                                            CURRENCY_TICKER
+                                        ),
                                     filenamePrefix = TEMP_FILE_NAME_PREFIX,
                                     centerIcon =
                                         if (walletAddress is WalletAddress.Transparent) {

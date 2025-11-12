@@ -11,7 +11,7 @@
     <string name="home_message_backup_required_button">Iniciar</string>
     <string name="home_message_wallet_disconnected_title">Wallet Desconectada</string>
     <string name="home_message_wallet_disconnected_subtitle">Revisa tu conexión y recarga Zashi</string>
-    <string name="home_message_transparent_balance_subtitle">%s ZEC</string>
+    <string name="home_message_transparent_balance_subtitle">%1$s %2$s</string>
     <string name="home_message_transparent_balance_title">Balance Transparente Detectado</string>
     <string name="home_message_transparent_balance_button">Proteger</string>
     <string name="home_message_currency_conversion_title">Conversión de Moneda</string>
@@ -40,8 +40,8 @@
     <string name="home_info_transparent_checkbox">No volver a mostrar este mensaje.</string>
     <string name="home_info_transparent_balance_shield">Proteger</string>
     <string name="home_info_transparent_title">Siempre Proteger Fondos Transparentes</string>
-    <string name="home_info_transparent_subtitle">Para proteger la privacidad del usuario, Zashi no permite gastar ZEC transparentes. Toca el botón "Proteger" abajo para hacer que tus fondos transparentes sean utilizables y tu balance total en Zashi sea privado.</string>
-    <string name="home_info_transparent_message">Esto creará una transacción de protección dentro de la wallet, consolidando tus fondos transparentes y protegidos. (Comisión típica: %s ZEC)</string>
+    <string name="home_info_transparent_subtitle">Para proteger la privacidad del usuario, Zashi no permite gastar %s transparentes. Toca el botón "Proteger" abajo para hacer que tus fondos transparentes sean utilizables y tu balance total en Zashi sea privado.</string>
+    <string name="home_info_transparent_message">Esto creará una transacción de protección dentro de la wallet, consolidando tus fondos transparentes y protegidos. (Comisión típica: %1$s %2$s)</string>
     <string name="home_info_transparent_subheader">Transparente</string>
     <string name="home_info_disconnected_title">Wallet Desconectada</string>
     <string name="home_info_disconnected_subtitle">Parece que estás sin conexión. Restaura tu conexión a internet para usar la wallet Zashi.</string>
@@ -69,7 +69,7 @@
     <string name="balance_action_all_shielded">Todos tus fondos están protegidos y disponibles.</string>
     <string name="balance_action_pending">Pendiente de recibir el cambio de una transacción previa.</string>
     <string name="balance_action_syncing">Zashi está escaneando la blockchain para asegurar que tus balances se muestren correctamente.</string>
-    <string name="balance_action_shield_message">Protege tu ZEC transparente para hacerlo utilizable y privado. Esto creará una transacción de protección dentro de la wallet, consolidando tus fondos transparentes y protegidos. (Comisión típica: %s ZEC)</string>
+    <string name="balance_action_shield_message">Protege tu %1$s transparente para hacerlo utilizable y privado. Esto creará una transacción de protección dentro de la wallet, consolidando tus fondos transparentes y protegidos. (Comisión típica: %2$s %3$s)</string>
     <string name="balance_action_info_shielded">Protegido (Disponible)</string>
     <string name="balance_action_info_pending">Pendiente</string>
     <string name="home_button_pay">Pagar</string>

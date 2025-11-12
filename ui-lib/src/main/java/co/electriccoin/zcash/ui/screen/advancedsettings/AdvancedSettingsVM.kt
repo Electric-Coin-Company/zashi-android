@@ -100,7 +100,7 @@ class AdvancedSettingsVM(
                         title = stringRes(R.string.advanced_settings_crash_reporting),
                         bigIcon = imageRes(R.drawable.ic_advanced_settings_crash_reporting),
                         onClick = ::onCrashReportingClick
-                    ).takeIf { versionInfo.distributionDimension == DistributionDimension.STORE },
+                    ).takeIf { versionInfo.distribution == DistributionDimension.STORE },
                     ListItemState(
                         title = stringRes("Debug menu"),
                         onClick = ::onDebugMenuClick

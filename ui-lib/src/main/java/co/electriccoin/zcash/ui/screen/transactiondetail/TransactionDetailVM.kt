@@ -11,7 +11,6 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
-import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.common.model.SwapStatus.EXPIRED
 import co.electriccoin.zcash.ui.common.model.SwapStatus.FAILED
 import co.electriccoin.zcash.ui.common.model.SwapStatus.INCOMPLETE_DEPOSIT
@@ -50,6 +49,7 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailI
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemoState
 import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailMemosState
 import co.electriccoin.zcash.ui.screen.transactionnote.TransactionNote
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -166,9 +166,9 @@ class TransactionDetailVM(
                                 transaction.swap.status
                                     ?.refundedFormatted
                                     ?.let {
-                                        stringResByCurrencyNumber(amount = it, ticker = "ZEC")
+                                        stringResByCurrencyNumber(amount = it, ticker = CURRENCY_TICKER)
                                     }?.takeIf {
-                                        transaction.swap.status.status == SwapStatus.REFUNDED
+                                        transaction.swap.status.status == REFUNDED
                                     },
                             onTransactionIdClick = {
                                 onCopyToClipboard(transaction.transaction.id.txIdString())
@@ -311,12 +311,12 @@ class TransactionDetailVM(
     private fun createFeeStringRes(data: DetailedTransactionData): StringResource {
         val feePaid =
             data.transaction.fee.takeIf { data.transaction !is ReceiveTransaction }
-                ?: return stringRes(R.string.transaction_detail_fee_minimal)
+                ?: return stringRes(R.string.transaction_detail_fee_minimal, CURRENCY_TICKER)
 
         return if (feePaid.value < MIN_FEE_THRESHOLD) {
-            stringRes(R.string.transaction_detail_fee_minimal)
+            stringRes(R.string.transaction_detail_fee_minimal, CURRENCY_TICKER)
         } else {
-            stringRes(R.string.transaction_detail_fee, stringRes(feePaid, HIDDEN))
+            stringRes(R.string.transaction_detail_fee, stringRes(feePaid, HIDDEN), CURRENCY_TICKER)
         }
     }
 

@@ -43,6 +43,7 @@ import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
 import co.electriccoin.zcash.ui.screen.send.Send
+import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -143,7 +144,7 @@ class HomeVM(
                 onClick = ::onPayButtonClick,
             ),
         fourthButton =
-            if (getVersionInfoProvider().distributionDimension == DistributionDimension.FOSS) {
+            if (getVersionInfoProvider().distribution == DistributionDimension.FOSS) {
                 if (!isFlexaAvailable && accounts.orEmpty().any { it is KeystoneAccount }) {
                     BigIconButtonState(
                         text = stringRes(R.string.home_button_swap),
@@ -209,7 +210,8 @@ class HomeVM(
                     subtitle =
                         stringRes(
                             R.string.home_message_transparent_balance_subtitle,
-                            stringRes(data.zatoshi, HIDDEN)
+                            stringRes(data.zatoshi, HIDDEN),
+                            CURRENCY_TICKER
                         ),
                     onClick =
                         if (isShieldFundsInfoEnabled) {

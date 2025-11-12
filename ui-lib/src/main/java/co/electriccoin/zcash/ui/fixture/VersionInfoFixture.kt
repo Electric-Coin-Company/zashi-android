@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.fixture
 
 import co.electriccoin.zcash.ui.common.model.Changelog
 import co.electriccoin.zcash.ui.common.model.DistributionDimension
+import co.electriccoin.zcash.ui.common.model.NetworkDimension
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 
 // Magic Number doesn't matter here for hard-coded fixture values
@@ -23,7 +24,6 @@ object VersionInfoFixture {
         versionCode: Long = VERSION_CODE,
         isDebuggable: Boolean = IS_DEBUGGABLE,
         isRunningUnderTestService: Boolean = IS_RUNNING_UNDER_TEST_SERVICE,
-        isTestnet: Boolean = IS_TESTNET,
         gitSha: String = GIT_SHA,
         gitCommitCount: Long = GIT_COMMIT_COUNT,
         changelog: Changelog = CHANGELOG,
@@ -33,10 +33,10 @@ object VersionInfoFixture {
         versionCode = versionCode,
         isDebuggable = isDebuggable,
         isRunningUnderTestService = isRunningUnderTestService,
-        isTestnet = isTestnet,
         gitSha = gitSha,
         gitCommitCount = gitCommitCount,
         changelog = changelog,
-        distributionDimension = distributionDimension
+        distribution = distributionDimension,
+        network = NetworkDimension.MAINNET
     )
 }
