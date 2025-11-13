@@ -28,6 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -216,8 +217,12 @@ class AccountDataSourceImpl(
                         WalletAddress
                             .Unified
                             .new(synchronizer.getCustomUnifiedAddress(sdkAccount, addressRequest))
-                    request.responseChannel.trySend(Unit)
-                    request.responseChannel.close()
+                    try {
+                        request.responseChannel.trySend(Unit)
+                        request.responseChannel.close()
+                    } catch (_: ClosedSendChannelException) {
+                        // ignore
+                    }
                     address
                 }.retryWhen { _, attempt ->
                     delay(attempt.coerceAtMost(RETRY_DELAY).seconds)
