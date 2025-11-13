@@ -58,10 +58,10 @@ class TransactionRepositoryImpl(
     override val transactions: Flow<List<Transaction>?> =
         accountDataSource
             .selectedAccount
-            .map { it?.sdkAccount }
+            .map { it?.sdkAccount?.accountUuid }
             .distinctUntilChanged()
-            .flatMapLatest { account ->
-                if (account == null) {
+            .flatMapLatest { uuid ->
+                if (uuid == null) {
                     flowOf(null)
                 } else {
                     synchronizerProvider
@@ -72,8 +72,8 @@ class TransactionRepositoryImpl(
                             } else {
                                 val normalizedTransactions =
                                     synchronizer
-                                        .getTransactions(account.accountUuid)
-                                        .map { transactions ->
+                                        .getTransactions(uuid)
+                                        .mapLatest { transactions ->
                                             transactions
                                                 .map {
                                                     if (it.isSentTransaction) {

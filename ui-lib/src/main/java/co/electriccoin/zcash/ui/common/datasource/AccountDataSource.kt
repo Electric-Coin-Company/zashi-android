@@ -27,9 +27,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -77,7 +78,7 @@ class AccountDataSourceImpl(
 ) : AccountDataSource {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    private val requestNextShieldedAddressPipeline = MutableSharedFlow<AccountUuid>()
+    private val requestNextShieldedAddressChannel = Channel<AddressRequest>(Channel.RENDEZVOUS)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val allAccounts: StateFlow<List<WalletAccount>?> =
@@ -173,10 +174,18 @@ class AccountDataSourceImpl(
                 )
         }
 
+    @Suppress("TooGenericExceptionCaught")
     override suspend fun requestNextShieldedAddress() {
         scope
             .launch {
-                requestNextShieldedAddressPipeline.emit(getSelectedAccount().sdkAccount.accountUuid)
+                val accountUuid = getSelectedAccount().sdkAccount.accountUuid
+                val responseChannel = Channel<Unit>()
+                requestNextShieldedAddressChannel.send(AddressRequest(accountUuid, responseChannel))
+                try {
+                    responseChannel.receive()
+                } catch (_: Exception) {
+                    // do nothing
+                }
             }.join()
     }
 
@@ -192,17 +201,24 @@ class AccountDataSourceImpl(
 
     private fun observeUnified(synchronizer: Synchronizer, sdkAccount: Account): Flow<UnifiedInfo> {
         val addressFlow =
-            requestNextShieldedAddressPipeline
-                .onStart { emit(sdkAccount.accountUuid) }
-                .map {
-                    val request =
+            requestNextShieldedAddressChannel
+                .receiveAsFlow()
+                .onStart { emit(AddressRequest(sdkAccount.accountUuid, Channel())) }
+                .map { request ->
+                    val addressRequest =
                         if (sdkAccount.keySource?.lowercase() == KEYSTONE_KEYSOURCE) {
                             UnifiedAddressRequest.Orchard
                         } else {
                             UnifiedAddressRequest.shielded
                         }
 
-                    WalletAddress.Unified.new(synchronizer.getCustomUnifiedAddress(sdkAccount, request))
+                    val address =
+                        WalletAddress
+                            .Unified
+                            .new(synchronizer.getCustomUnifiedAddress(sdkAccount, addressRequest))
+                    request.responseChannel.trySend(Unit)
+                    request.responseChannel.close()
+                    address
                 }.retryWhen { _, attempt ->
                     delay(attempt.coerceAtMost(RETRY_DELAY).seconds)
                     true
@@ -247,6 +263,11 @@ class AccountDataSourceImpl(
 
     private fun createEmptyWalletBalance() = WalletBalance(Zatoshi.ZERO, Zatoshi.ZERO, Zatoshi.ZERO)
 }
+
+private data class AddressRequest(
+    val accountUuid: AccountUuid,
+    val responseChannel: Channel<Unit>
+)
 
 private const val RETRY_DELAY = 3L
 private const val KEYSTONE_KEYSOURCE = "keystone"
