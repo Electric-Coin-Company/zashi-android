@@ -34,4 +34,3 @@ runs:
         sed -i -e '/com.google.gms/d' -e '/com.google.android.gms/d' -e '/com.google.firebase/d' buildscript-gradle.lockfile
         sed -i -e '/libs.google.services/d' -e '/libs.firebase/d' buildscript-gradle.lockfile
         sed -i -e '/com.google.gms.google-services/d' -e '/com.google.firebase.crashlytics/d' */build.gradle.kts
-        ./gradlew clean
