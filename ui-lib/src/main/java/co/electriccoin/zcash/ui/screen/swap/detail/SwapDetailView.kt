@@ -201,7 +201,7 @@ private fun Preview() =
                             from =
                                 SwapTokenAmountState(
                                     bigIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_placeholder),
-                                    smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
+                                    smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_shielded),
                                     title = stringResByDynamicNumber(0.000000421423154),
                                     subtitle =
                                         stringResByDynamicCurrencyNumber(
@@ -212,7 +212,7 @@ private fun Preview() =
                             to =
                                 SwapTokenAmountState(
                                     bigIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_chain_placeholder),
-                                    smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
+                                    smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_shielded),
                                     title = stringResByDynamicNumber(0.000000421423154),
                                     subtitle =
                                         stringResByDynamicCurrencyNumber(

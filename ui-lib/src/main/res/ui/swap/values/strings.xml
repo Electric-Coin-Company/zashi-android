@@ -71,7 +71,6 @@
     <string name="swap_confirmation_title">Swap</string>
     <string name="swap_confirmation_subtitle">Deposit Amount</string>
     <string name="swap_confirmation_primary_button">I’ve sent the funds</string>
-    <string name="swap_into_zec_footer">NEAR only supports swaps to a transparent address. Zashi will prompt you to shield your funds upon receipt.</string>
     <string name="swap_quote_error_getting_quote_swap">We tried but couldn\’t get a quote for a swap with your
         parameters. You can try to adjust the slippage or try again later.</string>
     <string name="swap_quote_cancel_swap">Cancel swap</string>

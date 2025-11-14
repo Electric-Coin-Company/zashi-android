@@ -210,7 +210,7 @@ private fun Header(state: ORSwapConfirmationState) {
                         contentDescription = null
                     )
                     if (state.smallIcon is ImageResource.ByDrawable) {
-                        if (state.smallIcon.resource == R.drawable.ic_receive_shield) {
+                        if (state.smallIcon.resource == R.drawable.ic_zec_shielded) {
                             Image(
                                 modifier =
                                     Modifier

@@ -18,7 +18,7 @@ class SaveORSwapUseCase(
         val quote = (swapRepository.quote.value as? SwapQuoteData.Success)?.quote
         if (quote != null) {
             metadataRepository.markTxAsSwap(
-                depositAddress = quote.depositAddress,
+                depositAddress = quote.depositAddress.address,
                 provider = quote.provider,
                 totalFees = Zatoshi(0),
                 totalFeesUsd = BigDecimal(0),

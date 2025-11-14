@@ -16,8 +16,9 @@ import java.math.MathContext
 interface SwapQuote {
     val originAsset: SwapAsset
     val destinationAsset: SwapAsset
-    val depositAddress: String
-    val destinationAddress: String
+    val depositAddress: SwapAddress
+    val destinationAddress: SwapAddress
+    val refundAddress: SwapAddress
     val provider: String
     val mode: SwapMode
     val zecExchangeRate: BigDecimal
@@ -29,8 +30,6 @@ interface SwapQuote {
     val amountOut: BigDecimal
     val amountOutUsd: BigDecimal
     val amountOutFormatted: BigDecimal
-
-    val recipient: String
 
     val affiliateFee: BigDecimal
     val affiliateFeeZatoshi: Zatoshi
@@ -53,14 +52,13 @@ data class NearSwapQuote(
     val response: QuoteResponseDto,
     override val originAsset: SwapAsset,
     override val destinationAsset: SwapAsset,
+    override val depositAddress: SwapAddress,
+    override val destinationAddress: SwapAddress,
+    override val refundAddress: SwapAddress,
 ) : SwapQuote {
     override val slippage: BigDecimal =
         BigDecimal(response.quoteRequest.slippageTolerance)
             .divide(BigDecimal("100", MathContext.DECIMAL128))
-
-    override val depositAddress: String = response.quote.depositAddress
-
-    override val destinationAddress: String = response.quoteRequest.recipient
 
     override val provider = "near"
 
@@ -82,8 +80,6 @@ data class NearSwapQuote(
     override val amountOut: BigDecimal = response.quote.amountOut
     override val amountOutUsd: BigDecimal = response.quote.amountOutUsd
     override val amountOutFormatted: BigDecimal = response.quote.amountOutFormatted
-
-    override val recipient: String = response.quoteRequest.recipient
 
     override val affiliateFee: BigDecimal =
         response.quote.amountInFormatted

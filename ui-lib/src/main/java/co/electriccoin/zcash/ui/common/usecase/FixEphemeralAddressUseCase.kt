@@ -50,7 +50,8 @@ class FixEphemeralAddressUseCase(
                                     .getSwapStatus(depositAddress = address)
                                     .status
                                     ?.quote
-                                    ?.recipient
+                                    ?.destinationAddress
+                                    ?.address
                                     ?: return@launch
                         }
                     navigationRouter.back()

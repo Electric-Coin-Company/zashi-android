@@ -134,7 +134,7 @@ class RequestSwapQuoteUseCase(
         try {
             val send =
                 ZecSend(
-                    destination = getWalletAddress(quote.depositAddress),
+                    destination = getWalletAddress(quote.depositAddress.address),
                     amount = Zatoshi(quote.amountIn.toLong()),
                     memo = Memo(""),
                     proposal = null

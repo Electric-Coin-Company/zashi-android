@@ -76,7 +76,7 @@ class ReviewTransactionVM(
         }.flatMapLatest { (selectedWallet, proposal, isReceiverExpanded, exchangeRate, accounts) ->
             observeContactByAddress(
                 if (proposal is ExactOutputSwapTransactionProposal) {
-                    proposal.quote.destinationAddress
+                    proposal.quote.destinationAddress.address
                 } else {
                     proposal.destination.address
                 }
