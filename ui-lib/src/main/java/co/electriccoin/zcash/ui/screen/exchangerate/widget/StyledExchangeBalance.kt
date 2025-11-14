@@ -28,10 +28,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import cash.z.ecc.android.sdk.ext.convertZatoshiToZec
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
-import cash.z.ecc.android.sdk.model.Locale
 import cash.z.ecc.android.sdk.model.Zatoshi
-import cash.z.ecc.android.sdk.model.toFiatString
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.compose.ZashiTooltipBox
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
@@ -43,12 +42,16 @@ import co.electriccoin.zcash.ui.design.theme.balances.LocalBalancesAvailable
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
+import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.fixture.ObserveFiatCurrencyResultFixture
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import java.math.BigDecimal
+import java.math.MathContext
 
 @Suppress("LongParameterList", "ComplexCondition")
 @Composable
@@ -153,13 +156,17 @@ internal fun createExchangeRateText(
         if (isHideBalances) {
             "${currencySymbol}${hiddenBalancePlaceholder.getValue()}"
         } else if (state.currencyConversion != null) {
-            val value =
-                zatoshi.toFiatString(
-                    currencyConversion = state.currencyConversion,
-                    locale = Locale.getDefault(),
-                )
-
-            "$currencySymbol$value"
+            stringResByDynamicCurrencyNumber(
+                amount =
+                    zatoshi
+                        .convertZatoshiToZec()
+                        .multiply(
+                            BigDecimal(state.currencyConversion.priceOfZec),
+                            MathContext.DECIMAL128
+                        ),
+                ticker = currencySymbol,
+                tickerLocation = TickerLocation.BEFORE
+            ).getValue()
         } else {
             currencySymbol
         }

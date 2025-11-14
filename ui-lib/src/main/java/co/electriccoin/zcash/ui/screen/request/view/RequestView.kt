@@ -22,9 +22,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cash.z.ecc.android.sdk.model.Locale
-import cash.z.ecc.android.sdk.model.MonetarySeparators
-import cash.z.ecc.android.sdk.model.toJavaLocale
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
@@ -77,11 +74,9 @@ private fun RequestPreview() =
                     exchangeRateState = ExchangeRateState.OptedOut,
                     zcashCurrency = ZcashCurrency.ZEC,
                     onAmount = {},
-                    onBack = {},
-                    onDone = {},
                     onSwitch = {},
-                    monetarySeparators = MonetarySeparators.current(Locale.getDefault().toJavaLocale())
-                ),
+                    onBack = {}
+                ) {},
             snackbarHostState = SnackbarHostState(),
         )
     }

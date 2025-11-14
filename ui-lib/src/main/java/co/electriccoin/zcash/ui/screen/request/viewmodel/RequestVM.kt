@@ -11,13 +11,13 @@ import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
-import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.ShareQRUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
+import co.electriccoin.zcash.ui.design.util.getPreferredLocale
 import co.electriccoin.zcash.ui.screen.qrcode.ext.fromReceiveAddressType
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressType
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.DecimalFormatSymbols
 
 @Suppress("TooManyFunctions")
 class RequestVM(
@@ -44,7 +45,6 @@ class RequestVM(
     private val application: Application,
     exchangeRateRepository: ExchangeRateRepository,
     getZcashCurrency: GetZcashCurrencyProvider,
-    getMonetarySeparators: GetMonetarySeparatorProvider,
     zip321BuildUriUseCase: Zip321BuildUriUseCase,
     observeSelectedWalletAccount: ObserveSelectedWalletAccountUseCase,
     private val navigationRouter: NavigationRouter,
@@ -55,6 +55,15 @@ class RequestVM(
         private const val DEFAULT_MEMO = ""
         private const val DEFAULT_URI = ""
     }
+
+    private val decimalFormatSymbols: DecimalFormatSymbols
+        get() = DecimalFormatSymbols(application.resources.configuration.getPreferredLocale())
+
+    private val decimal: String
+        get() = Regex.escape(decimalFormatSymbols.monetaryDecimalSeparator.toString())
+
+    private val grouping: String
+        get() = Regex.escape(decimalFormatSymbols.groupingSeparator.toString())
 
     private val defaultAmount = application.getString(R.string.request_amount_empty)
 
@@ -88,15 +97,13 @@ class RequestVM(
             when (currentStage) {
                 RequestStage.AMOUNT -> {
                     RequestState.Amount(
-                        exchangeRateState = exchangeRateUsd,
-                        monetarySeparators = getMonetarySeparators(),
-                        onAmount = { onAmount(resolveExchangeRateValue(exchangeRateUsd), it) },
-                        onBack = { onBack() },
-                        onDone = { onNextClick(walletAddress, zip321BuildUriUseCase, exchangeRateUsd) },
-                        onSwitch = { onSwitch(resolveExchangeRateValue(exchangeRateUsd), it) },
                         request = request,
+                        exchangeRateState = exchangeRateUsd,
                         zcashCurrency = getZcashCurrency(),
-                    )
+                        onAmount = { onAmount(resolveExchangeRateValue(exchangeRateUsd), it) },
+                        onSwitch = { onSwitch(resolveExchangeRateValue(exchangeRateUsd), it) },
+                        onBack = { onBack() },
+                    ) { onNextClick(walletAddress, zip321BuildUriUseCase, exchangeRateUsd) }
                 }
 
                 RequestStage.MEMO -> {
@@ -125,7 +132,7 @@ class RequestVM(
                             },
                         walletAddress = walletAddress,
                         request = request,
-                        onQrCodeShare = { colors, pixels, uri ->
+                        onQrCodeShare = { _, _, uri ->
                             viewModelScope.launch {
                                 shareQR(
                                     qrData = uri,
@@ -250,15 +257,14 @@ class RequestVM(
     }
 
     // Validates only zeros and decimal separator
-    private val defaultAmountValidationRegex = "^[${defaultAmount}${getMonetarySeparators().decimal}]*$".toRegex()
+    private val defaultAmountValidationRegex = "^[${defaultAmount}$decimal]*$".toRegex()
 
     // Validates only numbers the properly use grouping and decimal separators
     // Note that this regex aligns with the one from ZcashSDK (sdk-incubator-lib/src/main/res/values/strings-regex.xml)
     // It only adds check for 0-8 digits after the decimal separator at maximum
     @Suppress("MaxLineLength", "ktlint:standard:max-line-length")
     private val allowedNumberFormatValidationRegex =
-        "^([0-9]*([0-9]+([${getMonetarySeparators().grouping}]\$|[${getMonetarySeparators().grouping}][0-9]+))*([${getMonetarySeparators().decimal}]\$|[${getMonetarySeparators().decimal}][0-9]{0,8})?)?\$"
-            .toRegex()
+        "^([0-9]*([0-9]+([$grouping]\$|[$grouping][0-9]+))*([$decimal]\$|[$decimal][0-9]{0,8})?)?\$".toRegex()
 
     private fun validateAmountState(
         conversion: FiatCurrencyConversion?,
@@ -292,7 +298,7 @@ class RequestVM(
             }
 
         // Check for max Zcash supply
-        return newAmount.amount.convertToDouble()?.let { currentValue ->
+        return newAmount.amount.convertToDouble(application)?.let { currentValue ->
             val zecValue =
                 if (newAmount.currency == RequestCurrency.FIAT && conversion != null) {
                     currentValue / conversion.priceOfZec
@@ -330,7 +336,7 @@ class RequestVM(
                 when (it.amountState.currency) {
                     RequestCurrency.FIAT ->
                         if (conversion != null) {
-                            it.amountState.toZecStringFloored(conversion)
+                            it.amountState.toZecStringFloored(conversion, application)
                         } else {
                             Twig.error { "Unexpected screen state" }
                             it.amountState.amount
@@ -374,7 +380,7 @@ class RequestVM(
                 when (it.amountState.currency) {
                     RequestCurrency.FIAT ->
                         if (conversion != null) {
-                            it.amountState.toZecStringFloored(conversion)
+                            it.amountState.toZecStringFloored(conversion, application)
                         } else {
                             Twig.error { "Unexpected screen state" }
                             it.amountState.amount
@@ -416,7 +422,7 @@ class RequestVM(
                             conversion = conversion
                         )
 
-                    RequestCurrency.ZEC -> it.amountState.toZecString(conversion)
+                    RequestCurrency.ZEC -> it.amountState.toZecString(conversion, application)
                 }
 
             it.copy(
@@ -438,7 +444,7 @@ class RequestVM(
         memo: String,
         zip321BuildUriUseCase: Zip321BuildUriUseCase,
     ): String {
-        val amountNumber = amount.convertToDouble()?.toBigDecimal()
+        val amountNumber = amount.convertToDouble(application)?.toBigDecimal()
         return if (amountNumber == null) {
             Twig.error { "Unexpected amount state" }
             DEFAULT_URI

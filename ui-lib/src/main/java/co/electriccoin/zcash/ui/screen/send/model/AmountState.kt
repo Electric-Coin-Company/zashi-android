@@ -1,19 +1,14 @@
 package co.electriccoin.zcash.ui.screen.send.model
 
-import android.content.Context
 import androidx.compose.runtime.saveable.mapSaver
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
-import cash.z.ecc.android.sdk.model.Locale
-import cash.z.ecc.android.sdk.model.MonetarySeparators
-import cash.z.ecc.android.sdk.model.UserInputNumberParser
 import cash.z.ecc.android.sdk.model.Zatoshi
-import cash.z.ecc.android.sdk.model.ZecStringExt
 import cash.z.ecc.android.sdk.model.toFiatString
 import cash.z.ecc.android.sdk.model.toKotlinLocale
 import cash.z.ecc.android.sdk.model.toZatoshi
 import cash.z.ecc.android.sdk.model.toZecString
-import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
+import co.electriccoin.zcash.ui.design.component.ZashiNumberTextFieldParser
 
 sealed interface AmountState {
     val value: String
@@ -43,10 +38,10 @@ sealed interface AmountState {
             exchangeRateState: ExchangeRateState,
             lastFieldChangedByUser: AmountField = AmountField.ZEC
         ): AmountState {
-            val normalized = UserInputNumberParser.normalizeInput(value, locale)
+            val normalized = ZashiNumberTextFieldParser.normalizeInput(value, locale)
 
             val zecAmount =
-                UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
+                ZashiNumberTextFieldParser.toBigDecimalOrNull(normalized, locale)
                     ?: return Invalid(normalized, if (normalized.isBlank()) "" else fiatValue, lastFieldChangedByUser)
 
             val zatoshi =
@@ -96,10 +91,10 @@ sealed interface AmountState {
             isTransparentOrTextRecipient: Boolean,
             exchangeRateState: ExchangeRateState,
         ): AmountState {
-            val normalized = UserInputNumberParser.normalizeInput(fiatValue, locale)
+            val normalized = ZashiNumberTextFieldParser.normalizeInput(fiatValue, locale)
 
             val fiatAmount =
-                UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
+                ZashiNumberTextFieldParser.toBigDecimalOrNull(normalized, locale)
                     ?: return Invalid(
                         value = if (normalized.isBlank()) "" else value,
                         fiatValue = normalized,
@@ -142,16 +137,6 @@ sealed interface AmountState {
         private const val KEY_FIAT_VALUE = "fiat_value" // $NON-NLS
         private const val KEY_ZATOSHI = "zatoshi" // $NON-NLS
         private const val KEY_LAST_FIELD_CHANGED_BY_USER = "last_field_changed_by_user" // $NON-NLS
-
-        private fun validate(
-            context: Context,
-            monetarySeparators: MonetarySeparators,
-            value: String
-        ) = runCatching {
-            ZecStringExt.filterContinuous(context, monetarySeparators, value)
-        }.onFailure {
-            Twig.error(it) { "Failed while filtering raw amount characters" }
-        }.getOrDefault(false)
 
         internal val Saver
             get() =
