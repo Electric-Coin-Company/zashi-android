@@ -180,7 +180,13 @@ internal class ExactOutputVMMapper {
                     state.fiatAmount.copy(
                         innerTextFieldState =
                             state.fiatAmount.innerTextFieldState.copy(
-                                value = fiat?.let { stringResByDynamicNumber(it) } ?: stringRes(""),
+                                value =
+                                    fiat?.let {
+                                        stringResByDynamicNumber(
+                                            number = it,
+                                            includeDecimalSeparator = false
+                                        )
+                                    } ?: stringRes(""),
                                 selection = TextSelection.End
                             ),
                         amount = fiat,
@@ -218,7 +224,10 @@ internal class ExactOutputVMMapper {
                     state.amount.copy(
                         innerTextFieldState =
                             state.amount.innerTextFieldState.copy(
-                                value = amount?.let { stringResByDynamicNumber(it) } ?: stringRes(""),
+                                value =
+                                    amount?.let {
+                                        stringResByDynamicNumber(it, includeDecimalSeparator = false)
+                                    } ?: stringRes(""),
                                 selection = TextSelection.End
                             ),
                         amount = amount,

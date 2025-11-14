@@ -14,10 +14,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import cash.z.ecc.android.sdk.model.MonetarySeparators
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
+import co.electriccoin.zcash.ui.design.util.rememberDesiredFormatLocale
+import java.text.DecimalFormatSymbols
 import java.util.Locale
 
 @Preview
@@ -72,6 +73,7 @@ fun StyledBalance(
     textColor: Color = Color.Unspecified,
     textStyle: BalanceTextStyle = StyledBalanceDefaults.textStyles(),
 ) {
+    val locale = rememberDesiredFormatLocale()
     val content =
         if (isHideBalances) {
             buildAnnotatedString {
@@ -82,7 +84,7 @@ fun StyledBalance(
                 }
             }
         } else {
-            val balanceSplit = splitBalance(balanceParts)
+            val balanceSplit = splitBalance(balanceParts, locale)
 
             buildAnnotatedString {
                 withStyle(
@@ -117,14 +119,14 @@ fun StyledBalance(
 
 private const val CUT_POSITION_OFFSET = 4
 
-private fun splitBalance(balanceStringParts: ZecAmountTriple): Pair<String, String> {
+private fun splitBalance(balanceStringParts: ZecAmountTriple, locale: Locale): Pair<String, String> {
     Twig.debug { "Balance parts before calculation: $balanceStringParts" }
 
     val cutPosition =
         balanceStringParts.main
             .indexOf(
                 startIndex = 0,
-                char = MonetarySeparators.current(Locale.getDefault()).decimal,
+                char = DecimalFormatSymbols(locale).monetaryDecimalSeparator,
                 ignoreCase = true
             ).let { separatorPosition ->
                 if (separatorPosition + CUT_POSITION_OFFSET < balanceStringParts.main.length) {

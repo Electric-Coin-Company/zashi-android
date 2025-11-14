@@ -12,6 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:localeConfig="@xml/locales_config"
         android:enableOnBackInvokedCallback="true"
+        android:supportsRtl="false"
         android:label="@string/app_name">
 
         <!-- Alias acts as the entrypoint to the application.
