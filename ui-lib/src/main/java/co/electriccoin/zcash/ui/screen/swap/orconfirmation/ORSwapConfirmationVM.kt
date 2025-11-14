@@ -63,13 +63,13 @@ class ORSwapConfirmationVM(
                     amount = stringResByNumber(quote.amountInFormatted),
                     amountFiat = stringResByDynamicCurrencyNumber(quote.amountInUsd, FiatCurrency.USD.symbol),
                     onAmountClick = { onAmountClick(quote.amountInFormatted) },
-                    qr = quote.depositAddress,
-                    address = stringResByAddress(quote.depositAddress, true),
+                    qr = quote.depositAddress.address,
+                    address = stringResByAddress(quote.depositAddress.address, true),
                     copyButton =
                         BigIconButtonState(
                             text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_copy),
                             icon = R.drawable.ic_copy,
-                            onClick = { onCopyAddressClick(quote.depositAddress) }
+                            onClick = { onCopyAddressClick(quote.depositAddress.address) }
                         ),
                     shareButton =
                         BigIconButtonState(
@@ -77,7 +77,7 @@ class ORSwapConfirmationVM(
                             icon = R.drawable.ic_qr_code_other,
                             onClick = {
                                 onShareClick(
-                                    qrData = quote.depositAddress,
+                                    qrData = quote.depositAddress.address,
                                     amount = quote.amountInFormatted,
                                     tokenTicker = quote.originAsset.tokenTicker,
                                     chainName = quote.originAsset.chainName

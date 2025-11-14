@@ -27,7 +27,6 @@ interface SwapQuoteStatus {
 
     val isSlippageRealized: Boolean
     val maxSlippage: BigDecimal
-    val recipient: String
     val mode: SwapMode
 
     val amountInFee: BigDecimal
@@ -48,13 +47,19 @@ interface SwapQuoteStatus {
 data class NearSwapQuoteStatus(
     val response: SwapStatusResponseDto,
     val origin: SwapAsset,
-    val destination: SwapAsset
+    val destination: SwapAsset,
+    val depositAddress: SwapAddress,
+    val destinationAddress: SwapAddress,
+    val refundAddress: SwapAddress,
 ) : SwapQuoteStatus {
     override val quote: SwapQuote =
         NearSwapQuote(
             response = response.quoteResponse,
             originAsset = origin,
             destinationAsset = destination,
+            depositAddress = depositAddress,
+            destinationAddress = destinationAddress,
+            refundAddress = refundAddress,
         )
 
     override val timestamp: Instant = response.quoteResponse.timestamp.toJavaInstant()
@@ -92,8 +97,6 @@ data class NearSwapQuoteStatus(
                 BigDecimal(it).divide(BigDecimal(100), MathContext.DECIMAL128)
             }
             ?: quote.slippage
-
-    override val recipient: String = quote.recipient
 
     override val mode: SwapMode = quote.mode
 

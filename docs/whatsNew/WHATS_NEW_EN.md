@@ -12,6 +12,14 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.4.8 (1319)] - 2025-11-14
+
+### Changed:
+- We updated Swap and Pay features to use shielded addresses instead of transparent ones. Shields up!
+
+### Fixed:
+- We also fixed a few user reported issues.
+
 ## [2.4.7 (1309)] - 2025-11-05
 
 ### Added:

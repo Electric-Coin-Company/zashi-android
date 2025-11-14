@@ -116,21 +116,24 @@ class SwapDetailVM(
                 }
         )
 
-    private fun createRecipientState(swapData: SwapData): TransactionDetailInfoRowState =
-        TransactionDetailInfoRowState(
+    private fun createRecipientState(swapData: SwapData): TransactionDetailInfoRowState {
+        val destinationAddress =
+            swapData.status
+                ?.quote
+                ?.destinationAddress
+                ?.address
+        return TransactionDetailInfoRowState(
             title = stringRes(R.string.transaction_detail_info_recipient),
-            message =
-                swapData.status
-                    ?.recipient
-                    ?.let { stringResByAddress(it, true) },
+            message = destinationAddress?.let { stringResByAddress(it, true) },
             trailingIcon = R.drawable.ic_transaction_detail_info_copy,
             onClick =
-                if (swapData.status?.recipient != null) {
-                    { onCopyRecipientAddressClick(swapData.status.recipient) }
+                if (destinationAddress != null) {
+                    { onCopyRecipientAddressClick(destinationAddress) }
                 } else {
                     null
                 }
         )
+    }
 
     private fun createSlippageState(swapData: SwapData): TransactionDetailInfoRowState =
         TransactionDetailInfoRowState(

@@ -123,7 +123,7 @@ private fun Data(state: SwapTokenAmountState) {
 
                 if (state.smallIcon is ImageResource.ByDrawable) {
                     if (state.smallIcon.resource in
-                        listOf(R.drawable.ic_receive_shield, R.drawable.ic_zec_unshielded)
+                        listOf(R.drawable.ic_zec_shielded, R.drawable.ic_zec_unshielded)
                     ) {
                         Image(
                             modifier =
@@ -197,7 +197,7 @@ private fun Preview() =
                 state =
                     SwapTokenAmountState(
                         bigIcon = imageRes(R.drawable.ic_chain_placeholder),
-                        smallIcon = imageRes(R.drawable.ic_receive_shield),
+                        smallIcon = imageRes(R.drawable.ic_zec_shielded),
                         title = stringResByDynamicCurrencyNumber(0.000000421423154, "", TickerLocation.HIDDEN),
                         subtitle = stringResByDynamicCurrencyNumber(0.0000000000000021312, "$")
                     )

@@ -179,7 +179,7 @@ private fun ZecAmountText(state: PayState) {
                         .size(14.dp)
                         .align(BottomEnd)
                         .offset(4.dp, 3.dp),
-                painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
+                painter = painterResource(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_shielded),
                 contentDescription = null,
             )
         }

@@ -3,10 +3,10 @@ package co.electriccoin.zcash.ui.screen.swap.quote
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.FiatCurrency
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.DynamicSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.ZecSwapAsset
-import co.electriccoin.zcash.ui.common.model.getQuoteChainIcon
 import co.electriccoin.zcash.ui.common.model.getQuoteTokenIcon
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
@@ -87,7 +87,7 @@ internal class SwapQuoteVMMapper {
                         EXACT_INPUT -> stringRes(R.string.swap_quote_to)
                         EXACT_OUTPUT -> stringRes(R.string.pay_to)
                     },
-                title = stringResByAddress(quote.recipient, true),
+                title = stringResByAddress(quote.destinationAddress.address, true),
                 subtitle = null
             ).takeIf { quote.destinationAsset !is ZecSwapAsset },
             SwapQuoteInfoItem(
@@ -139,7 +139,11 @@ internal class SwapQuoteVMMapper {
     private fun SwapQuoteInternalState.createFromState(): SwapTokenAmountState =
         SwapTokenAmountState(
             bigIcon = quote.originAsset.getQuoteTokenIcon(),
-            smallIcon = quote.originAsset.getQuoteChainIcon(isOriginAsset = true),
+            smallIcon =
+                when (val asset = quote.originAsset) {
+                    is DynamicSwapAsset -> asset.chainIcon
+                    is ZecSwapAsset -> asset.getQuoteChainIcon(isShielded = true)
+                },
             title = stringResByDynamicNumber(quote.amountInFormatted),
             subtitle = stringResByDynamicCurrencyNumber(quote.amountInUsd, FiatCurrency.USD.symbol)
         )
@@ -147,7 +151,11 @@ internal class SwapQuoteVMMapper {
     private fun SwapQuoteInternalState.createToState(): SwapTokenAmountState =
         SwapTokenAmountState(
             bigIcon = quote.destinationAsset.getQuoteTokenIcon(),
-            smallIcon = quote.destinationAsset.getQuoteChainIcon(isOriginAsset = false),
+            smallIcon =
+                when (val asset = quote.destinationAsset) {
+                    is DynamicSwapAsset -> asset.chainIcon
+                    is ZecSwapAsset -> asset.getQuoteChainIcon(isShielded = true)
+                },
             title =
                 stringResByDynamicNumber(
                     quote.amountOutFormatted.setScale(quote.destinationAsset.decimals, RoundingMode.DOWN),

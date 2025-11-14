@@ -2,9 +2,11 @@ package co.electriccoin.zcash.ui.screen.transactiondetail
 
 import cash.z.ecc.android.sdk.model.FiatCurrency
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.DynamicSwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapQuoteStatus
-import co.electriccoin.zcash.ui.common.model.getQuoteChainIcon
+import co.electriccoin.zcash.ui.common.model.ZcashShieldedSwapAddress
+import co.electriccoin.zcash.ui.common.model.ZecSwapAsset
 import co.electriccoin.zcash.ui.common.model.getQuoteTokenIcon
 import co.electriccoin.zcash.ui.common.usecase.ReloadHandle
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -80,14 +82,28 @@ class CommonTransactionDetailMapper {
             from =
                 SwapTokenAmountState(
                     bigIcon = originAsset?.getQuoteTokenIcon(),
-                    smallIcon = originAsset?.getQuoteChainIcon(isOriginAsset = true),
+                    smallIcon =
+                        when (originAsset) {
+                            is DynamicSwapAsset -> originAsset.chainIcon
+                            is ZecSwapAsset -> originAsset.getQuoteChainIcon(isShielded = true)
+                            null -> null
+                        },
                     title = stringResByNumber(swap.amountInFormatted),
                     subtitle = stringResByDynamicCurrencyNumber(swap.amountInUsd, FiatCurrency.USD.symbol)
                 ),
             to =
                 SwapTokenAmountState(
                     bigIcon = destinationAsset?.getQuoteTokenIcon(),
-                    smallIcon = destinationAsset?.getQuoteChainIcon(isOriginAsset = false),
+                    smallIcon =
+                        when (destinationAsset) {
+                            is DynamicSwapAsset -> destinationAsset.chainIcon
+                            is ZecSwapAsset ->
+                                destinationAsset.getQuoteChainIcon(
+                                    isShielded = swap.quote.destinationAddress is ZcashShieldedSwapAddress
+                                )
+
+                            null -> null
+                        },
                     title = stringResByNumber(swap.amountOutFormatted),
                     subtitle = stringResByDynamicCurrencyNumber(swap.amountOutUsd, FiatCurrency.USD.symbol)
                 )
