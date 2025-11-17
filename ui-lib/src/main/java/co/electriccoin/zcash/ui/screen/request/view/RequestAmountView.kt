@@ -38,10 +38,12 @@ import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.rememberDesiredFormatLocale
 import co.electriccoin.zcash.ui.screen.request.model.AmountState
 import co.electriccoin.zcash.ui.screen.request.model.OnAmount
 import co.electriccoin.zcash.ui.screen.request.model.RequestCurrency
 import co.electriccoin.zcash.ui.screen.request.model.RequestState
+import java.text.DecimalFormatSymbols
 
 @Composable
 internal fun RequestAmountView(
@@ -101,6 +103,8 @@ private fun RequestAmountWithMainFiatView(
     onFiatPreferenceSwitch: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -142,7 +146,8 @@ private fun RequestAmountWithMainFiatView(
                         append(
                             if (state.exchangeRateState.currencyConversion != null) {
                                 state.request.amountState.toZecString(
-                                    state.exchangeRateState.currencyConversion
+                                    state.exchangeRateState.currencyConversion,
+                                    context = context
                                 )
                             } else {
                                 stringResource(id = R.string.request_amount_empty)
@@ -292,6 +297,7 @@ private fun RequestAmountKeyboardView(
     state: RequestState.Amount,
     modifier: Modifier = Modifier
 ) {
+    val locale = rememberDesiredFormatLocale()
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier =
@@ -316,9 +322,9 @@ private fun RequestAmountKeyboardView(
                 onClick = { state.onAmount(OnAmount.Number(KEYBOARD_SEVEN)) }
             )
             RequestAmountKeyboardTextButton(
-                text = state.monetarySeparators.decimal.toString(),
+                text = DecimalFormatSymbols(locale).monetaryDecimalSeparator.toString(),
                 onClick = {
-                    state.onAmount(OnAmount.Separator(state.monetarySeparators.decimal.toString()))
+                    state.onAmount(OnAmount.Separator(DecimalFormatSymbols(locale).monetaryDecimalSeparator.toString()))
                 }
             )
         }

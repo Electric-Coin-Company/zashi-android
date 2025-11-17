@@ -1,7 +1,6 @@
 package co.electriccoin.zcash.ui.screen.request.model
 
 import androidx.annotation.DrawableRes
-import cash.z.ecc.android.sdk.model.MonetarySeparators
 import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.type.ZcashCurrency
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
@@ -20,7 +19,6 @@ internal sealed class RequestState {
         val request: Request,
         val exchangeRateState: ExchangeRateState,
         val zcashCurrency: ZcashCurrency,
-        val monetarySeparators: MonetarySeparators,
         val onAmount: (OnAmount) -> Unit,
         val onSwitch: (RequestCurrency) -> Unit,
         override val onBack: () -> Unit,

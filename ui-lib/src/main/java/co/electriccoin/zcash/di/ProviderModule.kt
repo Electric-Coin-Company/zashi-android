@@ -8,7 +8,6 @@ import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.EphemeralAddressStorageProvider
 import co.electriccoin.zcash.ui.common.provider.EphemeralAddressStorageProviderImpl
-import co.electriccoin.zcash.ui.common.provider.GetMonetarySeparatorProvider
 import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.GetZcashCurrencyProvider
 import co.electriccoin.zcash.ui.common.provider.HttpClientProvider
@@ -62,7 +61,6 @@ val providerModule =
         factoryOf(::LightWalletEndpointProvider)
         singleOf(::GetVersionInfoProvider)
         singleOf(::GetZcashCurrencyProvider)
-        singleOf(::GetMonetarySeparatorProvider)
         singleOf(::SelectedAccountUUIDProviderImpl) bind SelectedAccountUUIDProvider::class
         singleOf(::PersistableWalletProviderImpl) bind PersistableWalletProvider::class
         singleOf(::SynchronizerProviderImpl) bind SynchronizerProvider::class

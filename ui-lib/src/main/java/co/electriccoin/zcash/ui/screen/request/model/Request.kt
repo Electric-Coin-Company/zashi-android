@@ -5,13 +5,14 @@ import cash.z.ecc.android.sdk.ext.convertUsdToZec
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.ext.toZecString
 import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
-import cash.z.ecc.android.sdk.model.Locale
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.Zatoshi
 import cash.z.ecc.android.sdk.model.fromZecString
 import cash.z.ecc.android.sdk.model.toFiatString
+import cash.z.ecc.android.sdk.model.toKotlinLocale
 import cash.z.ecc.sdk.extension.floor
 import cash.z.ecc.sdk.extension.toZecStringFull
+import co.electriccoin.zcash.ui.design.util.getPreferredLocale
 import co.electriccoin.zcash.ui.screen.request.ext.convertToDouble
 
 data class Request(
@@ -27,17 +28,19 @@ data class AmountState(
 ) {
     fun toZecString(
         conversion: FiatCurrencyConversion,
+        context: Context
     ): String =
         runCatching {
-            amount.convertToDouble().convertUsdToZec(conversion.priceOfZec).toZecString()
+            amount.convertToDouble(context).convertUsdToZec(conversion.priceOfZec).toZecString()
         }.getOrElse { "" }
 
     fun toZecStringFloored(
         conversion: FiatCurrencyConversion,
+        context: Context
     ): String =
         runCatching {
             amount
-                .convertToDouble()
+                .convertToDouble(context)
                 .convertUsdToZec(conversion.priceOfZec)
                 .convertZecToZatoshi()
                 .floor()
@@ -50,10 +53,16 @@ data class AmountState(
                 .fromZecString(
                     context = context,
                     zecString = amount,
-                    locale = Locale.getDefault()
+                    locale =
+                        context.resources.configuration
+                            .getPreferredLocale()
+                            .toKotlinLocale()
                 )?.toFiatString(
                     currencyConversion = conversion,
-                    locale = Locale.getDefault()
+                    locale =
+                        context.resources.configuration
+                            .getPreferredLocale()
+                            .toKotlinLocale()
                 ) ?: ""
         }.getOrElse { "" }
 }
