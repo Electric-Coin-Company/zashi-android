@@ -12,6 +12,14 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.4.8 (1319)] - 2025-11-14
+
+### Cambiado:
+- Actualizamos las funciones de Intercambio y Pago para usar direcciones protegidas en lugar de transparentes. ¡Privacidad activada!
+
+### Corregido:
+- También corregimos algunos errores reportados por los usuarios.
+
 ## [2.4.7 (1309)] - 2025-11-05
 
 ### Añadido:

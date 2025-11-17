@@ -18,7 +18,6 @@ import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.component.listitem.SimpleListItemState
-import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.TickerLocation
 import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -121,7 +120,7 @@ internal class ExactInputVMMapper {
                     SWAP_FROM_ZEC -> SwapState.AddressLocation.BOTTOM
                     SWAP_INTO_ZEC -> SwapState.AddressLocation.TOP
                 },
-            infoFooter = createInfoFooter(state),
+            infoFooter = null,
             changeModeButton =
                 IconButtonState(
                     icon = R.drawable.ic_swap_change_mode,
@@ -142,17 +141,6 @@ internal class ExactInputVMMapper {
                     } ?: stringRes(co.electriccoin.zcash.ui.design.R.string.general_enter_address)
         )
     }
-
-    private fun createInfoFooter(state: ExactInputInternalState): StringResource? =
-        when {
-            state.isEphemeralAddressLocked ->
-                stringRes(
-                    "Renewing temporary addresses. Once the reset transaction is processed, you will be able to " +
-                        "proceed. This may take up to 2 minutes."
-                )
-            state.mode == SWAP_INTO_ZEC -> stringRes(R.string.swap_into_zec_footer)
-            else -> null
-        }
 
     private fun createAddressContactState(
         state: ExactInputInternalState,
@@ -199,7 +187,7 @@ internal class ExactInputVMMapper {
                         AssetCardState.Data(
                             ticker = stringRes(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
                             bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                            smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_receive_shield),
+                            smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_shielded),
                             onClick = null
                         )
 
@@ -368,7 +356,7 @@ internal class ExactInputVMMapper {
                         AssetCardState.Data(
                             ticker = stringRes(cash.z.ecc.sdk.ext.R.string.zcash_token_zec),
                             bigIcon = imageRes(R.drawable.ic_zec_round_full),
-                            smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_unshielded),
+                            smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_shielded),
                             onClick = null
                         )
                 },

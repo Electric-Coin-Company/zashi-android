@@ -33,7 +33,6 @@ class RequestSwapQuoteUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
     private val accountDataSource: AccountDataSource,
     private val synchronizerProvider: SynchronizerProvider,
-    // private val ephemeralAddressRepository: EphemeralAddressRepository,
 ) {
     suspend fun requestExactInput(
         amount: BigDecimal,
@@ -42,14 +41,14 @@ class RequestSwapQuoteUseCase(
     ) {
         requestQuote(
             requestQuote = {
+                accountDataSource.requestNextShieldedAddress()
                 swapRepository.requestExactInputQuote(
                     amount = amount,
                     address = address,
                     refundAddress =
                         accountDataSource
                             .getSelectedAccount()
-                            .transparent.address.address
-                    // refundAddress = getEphemeralAddress()
+                            .unified.address.address
                 )
             },
             createProposal = true,
@@ -64,14 +63,14 @@ class RequestSwapQuoteUseCase(
     ) {
         requestQuote(
             requestQuote = {
+                accountDataSource.requestNextShieldedAddress()
                 swapRepository.requestExactOutputQuote(
                     amount = amount,
                     address = address,
                     refundAddress =
                         accountDataSource
                             .getSelectedAccount()
-                            .transparent.address.address
-                    // refundAddress = getEphemeralAddress()
+                            .unified.address.address
                 )
             },
             createProposal = true,
@@ -86,6 +85,7 @@ class RequestSwapQuoteUseCase(
     ) {
         requestQuote(
             requestQuote = {
+                accountDataSource.requestNextShieldedAddress()
                 swapRepository
                     .requestExactInputIntoZec(
                         amount = amount,
@@ -93,26 +93,13 @@ class RequestSwapQuoteUseCase(
                         destinationAddress =
                             accountDataSource
                                 .getSelectedAccount()
-                                .transparent.address.address
-                        // destinationAddress = getEphemeralAddress()
+                                .unified.address.address
                     )
             },
             createProposal = false,
             canNavigateToSwapQuote = canNavigateToSwapQuote
         )
     }
-
-    // private suspend fun getEphemeralAddress(): String {
-    //     val ephemeral = ephemeralAddressRepository.get()
-    //         ?: throw IllegalStateException("Ephemeral address is null")
-    //
-    //     return if (ephemeral.gapLimit - ephemeral.gapPosition > 1u) {
-    //         ephemeral.address
-    //     } else {
-    //         ephemeralAddressRepository.invalidate()
-    //         ephemeralAddressRepository.create().address
-    //     }
-    // }
 
     @Suppress("TooGenericExceptionCaught")
     private suspend fun requestQuote(
@@ -153,7 +140,7 @@ class RequestSwapQuoteUseCase(
     private suspend fun createProposal(quote: SwapQuote) {
         val send =
             ZecSend(
-                destination = getWalletAddress(quote.depositAddress),
+                destination = getWalletAddress(quote.depositAddress.address),
                 amount = Zatoshi(quote.amountIn.toLong()),
                 memo = Memo(""),
                 proposal = null
