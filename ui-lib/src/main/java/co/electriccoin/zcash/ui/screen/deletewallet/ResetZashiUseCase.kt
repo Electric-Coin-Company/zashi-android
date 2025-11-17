@@ -27,7 +27,6 @@ class ResetZashiUseCase(
     private val metadataStorageProvider: MetadataStorageProvider,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val encryptedPreferenceProvider: EncryptedPreferenceProvider,
-    private val addressBookRepository: AddressBookRepository,
     private val homeMessageCacheRepository: HomeMessageCacheRepository,
     private val biometricRepository: BiometricRepository,
     private val navigateToError: NavigateToErrorUseCase
@@ -80,8 +79,7 @@ class ResetZashiUseCase(
         return standardPrefsCleared && encryptedPrefsCleared
     }
 
-    private suspend fun clearInMemoryData() {
-        addressBookRepository.resetAddressBook()
+    private fun clearInMemoryData() {
         homeMessageCacheRepository.reset()
     }
 }
