@@ -10,8 +10,6 @@ interface AddressBookStorageProvider {
     fun getLegacyUnencryptedStorageFile(): File?
 
     fun getOrCreateStorageFile(addressBookKey: AddressBookKey): File
-
-    fun geAddressBookDir(): File?
 }
 
 class AddressBookStorageProviderImpl(
@@ -32,10 +30,6 @@ class AddressBookStorageProviderImpl(
         }
         return file
     }
-
-    override fun geAddressBookDir(): File? =
-        File(context.filesDir, "address_book")
-            .takeIf { it.exists() && it.isDirectory }
 
     private fun getOrCreateAddressBookDir(): File {
         val filesDir = context.filesDir

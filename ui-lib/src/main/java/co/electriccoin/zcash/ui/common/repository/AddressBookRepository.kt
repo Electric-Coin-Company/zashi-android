@@ -46,6 +46,8 @@ interface AddressBookRepository {
     fun deleteContact(contact: EnhancedABContact)
 
     fun observeContactByAddress(address: String): Flow<EnhancedABContact?>
+
+    fun delete()
 }
 
 data class EnhancedABContact(
@@ -136,6 +138,16 @@ class AddressBookRepositoryImpl(
             .map {
                 it.find { contact -> contact.address == address }
             }.distinctUntilChanged()
+
+    override fun delete() {
+        scope.launch {
+            mutex.withLock {
+                val account = accountDataSource.getZashiAccount()
+                val key = getAddressBookKey(account)
+                addressBookDataSource.delete(key)
+            }
+        }
+    }
 
     private fun updateAB(block: suspend (AddressBookKey) -> Unit) {
         scope.launch {

@@ -37,6 +37,8 @@ interface AddressBookDataSource {
     )
 
     suspend fun deleteContact(addressBookContact: AddressBookContact, key: AddressBookKey)
+
+    suspend fun delete(key: AddressBookKey)
 }
 
 class AddressBookDataSourceImpl(
@@ -45,7 +47,7 @@ class AddressBookDataSourceImpl(
 ) : AddressBookDataSource {
     private val mutex = Mutex()
 
-    private val abUpdatePipeline = MutableSharedFlow<Pair<AddressBookKey, AddressBook>>()
+    private val abUpdatePipeline = MutableSharedFlow<Pair<AddressBookKey, AddressBook?>>()
 
     override fun observe(key: AddressBookKey) =
         flow {
@@ -64,12 +66,13 @@ class AddressBookDataSourceImpl(
         chain: String?,
         key: AddressBookKey
     ) = updateAB(key) { contacts ->
-        contacts + AddressBookContact(
-            name = name.trim(),
-            address = address.trim(),
-            chain = chain?.trim()?.takeIf { it.isNotEmpty() },
-            lastUpdated = getTimestampNow(),
-        )
+        contacts +
+            AddressBookContact(
+                name = name.trim(),
+                address = address.trim(),
+                chain = chain?.trim()?.takeIf { it.isNotEmpty() },
+                lastUpdated = getTimestampNow(),
+            )
     }
 
     override suspend fun updateContact(
@@ -94,6 +97,15 @@ class AddressBookDataSourceImpl(
 
     override suspend fun deleteContact(addressBookContact: AddressBookContact, key: AddressBookKey) =
         updateAB(key) { it.apply { remove(addressBookContact) } }
+
+    override suspend fun delete(key: AddressBookKey) {
+        withContext(Dispatchers.IO) {
+            mutex.withLock {
+                addressBookStorageProvider.getStorageFile(key)?.delete()
+                abUpdatePipeline.emit(key to null)
+            }
+        }
+    }
 
     @Suppress("ReturnCount")
     private suspend fun getAddressBookInternal(addressBookKey: AddressBookKey): AddressBook {

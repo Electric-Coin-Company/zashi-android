@@ -77,6 +77,8 @@ interface MetadataRepository {
     suspend fun getSwapMetadata(depositAddress: String): TransactionSwapMetadata?
 
     fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?>
+
+    fun delete()
 }
 
 @Suppress("TooManyFunctions")
@@ -264,6 +266,17 @@ class MetadataRepositoryImpl(
                     ?.lastUsedAssetHistory
                     ?.toSimpleAssetSet()
             }.distinctUntilChanged()
+
+    override fun delete() {
+        scope.launch {
+            mutex.withLock {
+                accountDataSource.getAllAccounts().forEach {
+                    val key = getMetadataKey(it)
+                    metadataDataSource.delete(key)
+                }
+            }
+        }
+    }
 
     private fun updateMetadata(block: suspend (MetadataKey) -> Unit) {
         scope.launch {

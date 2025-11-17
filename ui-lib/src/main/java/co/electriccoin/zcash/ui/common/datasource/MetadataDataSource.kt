@@ -72,6 +72,8 @@ interface MetadataDataSource {
         chainTicker: String,
         key: MetadataKey
     )
+
+    suspend fun delete(key: MetadataKey)
 }
 
 @Suppress("TooManyFunctions")
@@ -82,7 +84,7 @@ class MetadataDataSourceImpl(
 ) : MetadataDataSource {
     private val mutex = Mutex()
 
-    private val metadataUpdatePipeline = MutableSharedFlow<Pair<MetadataKey, MetadataV3>>()
+    private val metadataUpdatePipeline = MutableSharedFlow<Pair<MetadataKey, MetadataV3?>>()
 
     override fun observe(key: MetadataKey) =
         flow {
@@ -267,6 +269,14 @@ class MetadataDataSourceImpl(
             key = key
         )
     }
+
+    override suspend fun delete(key: MetadataKey) =
+        withContext(Dispatchers.IO) {
+            mutex.withLock {
+                metadataStorageProvider.getStorageFile(key)?.delete()
+                metadataUpdatePipeline.emit(key to null)
+            }
+        }
 
     private suspend fun getMetadataInternal(key: MetadataKey): MetadataV3 {
         fun readLocalFileToMetadata(key: MetadataKey): MetadataV3? {
