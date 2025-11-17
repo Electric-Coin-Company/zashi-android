@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:filename")
+
 package co.electriccoin.zcash.ui.screen.error
 
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -11,12 +13,15 @@ import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AndroidErrorBottomSheet() {
-    val useCase = koinInject<NavigateToErrorUseCase>()
-    val vm = koinViewModel<ErrorVM> { parametersOf(useCase.requireCurrentArgs()) }
+internal fun SyncErrorScreen() {
+    val navigateToErrorUseCase = koinInject<NavigateToErrorUseCase>()
+    val vm =
+        koinViewModel<SyncErrorVM> {
+            parametersOf(navigateToErrorUseCase.requireCurrentArgs() as ErrorArgs.SyncError)
+        }
     val state by vm.state.collectAsStateWithLifecycle()
-    BottomSheetErrorView(state)
+    SyncErrorView(state = state)
 }
 
 @Serializable
-data object ErrorBottomSheet
+data object SyncErrorArgs

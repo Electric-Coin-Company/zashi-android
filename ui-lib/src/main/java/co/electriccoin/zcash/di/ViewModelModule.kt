@@ -19,7 +19,8 @@ import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactVM
 import co.electriccoin.zcash.ui.screen.crashreporting.viewmodel.CrashReportingViewModel
 import co.electriccoin.zcash.ui.screen.deletewallet.ResetZashiConfirmationVM
 import co.electriccoin.zcash.ui.screen.deletewallet.ResetZashiVM
-import co.electriccoin.zcash.ui.screen.error.ErrorViewModel
+import co.electriccoin.zcash.ui.screen.error.ErrorVM
+import co.electriccoin.zcash.ui.screen.error.SyncErrorVM
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInVM
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsVM
 import co.electriccoin.zcash.ui.screen.feedback.FeedbackVM
@@ -129,7 +130,8 @@ val viewModelModule =
         viewModelOf(::WalletBackupInfoViewModel)
         viewModelOf(::ExchangeRateSettingsVM)
         viewModelOf(::WalletBackupDetailViewModel)
-        viewModelOf(::ErrorViewModel)
+        viewModelOf(::ErrorVM)
+        viewModelOf(::SyncErrorVM)
         viewModelOf(::SpendableBalanceVM)
         viewModelOf(::CrashReportOptInViewModel)
         viewModelOf(::WalletRestoringInfoViewModel)

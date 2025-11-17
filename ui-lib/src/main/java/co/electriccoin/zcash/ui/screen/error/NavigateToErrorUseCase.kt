@@ -1,10 +1,8 @@
-package co.electriccoin.zcash.ui.common.usecase
+package co.electriccoin.zcash.ui.screen.error
 
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.viewmodel.SynchronizerError
-import co.electriccoin.zcash.ui.screen.error.ErrorBottomSheet
-import co.electriccoin.zcash.ui.screen.error.ErrorDialog
 
 class NavigateToErrorUseCase(
     private val navigationRouter: NavigationRouter,
@@ -15,7 +13,7 @@ class NavigateToErrorUseCase(
         this.args = args
         when (args) {
             is ErrorArgs.ShieldingError -> navigationRouter.forward(ErrorDialog)
-            is ErrorArgs.SyncError -> navigationRouter.forward(ErrorBottomSheet)
+            is ErrorArgs.SyncError -> navigationRouter.forward(SyncErrorArgs)
             is ErrorArgs.General -> navigationRouter.forward(ErrorDialog)
             is ErrorArgs.ShieldingGeneralError -> navigationRouter.forward(ErrorDialog)
             is ErrorArgs.SynchronizerTorInitError -> navigationRouter.forward(ErrorDialog)

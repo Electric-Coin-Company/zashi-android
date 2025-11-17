@@ -5,8 +5,6 @@ import androidx.lifecycle.viewModelScope
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SubmitResult
-import co.electriccoin.zcash.ui.common.usecase.ErrorArgs
-import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
 import co.electriccoin.zcash.ui.common.usecase.OptInTorUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.STACKTRACE_LIMIT
@@ -20,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Suppress("TooManyFunctions")
-class ErrorViewModel(
+class ErrorVM(
     args: ErrorArgs,
     private val navigateToErrorBottom: NavigateToErrorUseCase,
     private val navigationRouter: NavigationRouter,
@@ -167,7 +165,9 @@ class ErrorViewModel(
                     is SubmitResult.Failure -> sendEmailUseCase(args.error)
                     is SubmitResult.GrpcFailure -> sendEmailUseCase(args.error)
                     is SubmitResult.Partial -> sendEmailUseCase(args.error)
-                    is SubmitResult.Success -> TODO()
+                    is SubmitResult.Success -> {
+                        // do nothing
+                    }
                 }
             }
         }
