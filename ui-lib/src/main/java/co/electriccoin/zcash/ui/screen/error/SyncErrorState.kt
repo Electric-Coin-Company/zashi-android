@@ -6,6 +6,7 @@ import co.electriccoin.zcash.ui.design.component.ModalBottomSheetState
 
 @Immutable
 data class SyncErrorState(
+    val tryAgain: ButtonState,
     val switchServer: ButtonState,
     val disableTor: ButtonState?,
     val support: ButtonState,

@@ -74,6 +74,11 @@ fun SyncErrorContent(
         Spacer(24.dp)
         ZashiCardButton(
             modifier = Modifier.fillMaxWidth(),
+            state = state.tryAgain
+        )
+        Spacer(8.dp)
+        ZashiCardButton(
+            modifier = Modifier.fillMaxWidth(),
             state = state.switchServer
         )
         state.disableTor?.let { disableTorButton ->
@@ -105,6 +110,12 @@ private fun Preview() =
                             icon = R.drawable.ic_sync_error_switch_server,
                             trailingIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_right,
                             onClick = {}
+                        ),
+                    tryAgain =
+                        ButtonState(
+                            text = stringRes("Try again"),
+                            onClick = {},
+                            trailingIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_right,
                         ),
                     disableTor =
                         ButtonState(

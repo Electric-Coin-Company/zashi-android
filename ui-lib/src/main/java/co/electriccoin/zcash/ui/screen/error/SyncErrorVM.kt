@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.usecase.IsTorEnabledUseCase
 import co.electriccoin.zcash.ui.common.usecase.SendEmailUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
@@ -23,16 +24,16 @@ class SyncErrorVM(
     private val args: ErrorArgs.SyncError,
     private val navigationRouter: NavigationRouter,
     private val sendEmailUseCase: SendEmailUseCase,
+    private val synchronizerProvider: SynchronizerProvider,
     isTorEnabledUseCase: IsTorEnabledUseCase
 ) : ViewModel() {
-
     val state: StateFlow<SyncErrorState> =
-        isTorEnabledUseCase.observe()
+        isTorEnabledUseCase
+            .observe()
             .take(1)
             .map { isTorEnabled ->
                 createState(isTorEnabled)
-            }
-            .stateIn(
+            }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = createState(false)
@@ -48,6 +49,12 @@ class SyncErrorVM(
                     icon = R.drawable.ic_sync_error_switch_server,
                     trailingIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_right,
                     onClick = ::onSwitchServerClick
+                ),
+            tryAgain =
+                ButtonState(
+                    text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_try_again),
+                    trailingIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_right,
+                    onClick = ::onTryAgainClick
                 ),
             disableTor =
                 if (isTorEnabled) {
@@ -67,6 +74,11 @@ class SyncErrorVM(
                 ),
             onBack = ::onBack
         )
+
+    private fun onTryAgainClick() {
+        synchronizerProvider.resetSynchronizer()
+        navigationRouter.back()
+    }
 
     private fun onSwitchServerClick() = navigationRouter.forward(ChooseServerArgs)
 
