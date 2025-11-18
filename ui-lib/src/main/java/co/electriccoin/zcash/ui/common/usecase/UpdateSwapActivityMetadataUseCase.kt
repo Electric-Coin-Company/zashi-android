@@ -1,13 +1,17 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -20,9 +24,8 @@ import kotlin.time.Duration.Companion.seconds
 class UpdateSwapActivityMetadataUseCase(
     private val metadataRepository: MetadataRepository,
     private val swapRepository: SwapRepository,
+    private val accountDataSource: AccountDataSource,
 ) {
-    // val uiPipeline = MutableSharedFlow<Unit>()
-
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     private val pipeline = Channel<Request>()
@@ -34,7 +37,53 @@ class UpdateSwapActivityMetadataUseCase(
     private val pipelineCacheSemaphore = Mutex()
 
     init {
-        @Suppress("MagicNumber")
+        scope.launch {
+            accountDataSource.selectedAccount
+                .map { it?.sdkAccount?.accountUuid }
+                .distinctUntilChanged()
+                .collect {
+                    killPipeline()
+                    if (it != null) startPipeline()
+                }
+        }
+    }
+
+    operator fun invoke(activity: ActivityData) {
+        scope.launch {
+            val depositAddress =
+                when (activity) {
+                    is ActivityData.BySwap ->
+                        activity.swap.depositAddress
+                            .takeIf { !activity.swap.status.isTerminal }
+
+                    is ActivityData.ByTransaction ->
+                        activity.metadata.swapMetadata
+                            ?.depositAddress
+                            ?.takeIf { !activity.metadata.swapMetadata.status.isTerminal }
+                }
+
+            if (depositAddress != null) {
+                val request =
+                    pipelineCacheSemaphore.withLock {
+                        val found = pipelineCache.find { it.depositAddress == depositAddress }?.also { it.close() }
+                        Request(
+                            depositAddress = depositAddress,
+                            timestamp = found?.timestamp,
+                        )
+                    }
+                Twig.debug { "Activities: queue $depositAddress" }
+                pipeline.send(request)
+            }
+        }
+    }
+
+    private fun killPipeline() {
+        scope.coroutineContext.cancelChildren()
+        pipelineCache.clear()
+    }
+
+    @Suppress("MagicNumber")
+    private fun startPipeline() {
         scope.launch {
             for (item in pipeline) {
                 pipelineSemaphore.withLock {
@@ -76,37 +125,17 @@ class UpdateSwapActivityMetadataUseCase(
         }
     }
 
-    operator fun invoke(activity: ActivityData) {
-        scope.launch {
-            val depositAddress =
-                when (activity) {
-                    is ActivityData.BySwap ->
-                        activity.swap.depositAddress
-                            .takeIf { !activity.swap.status.isTerminal }
-
-                    is ActivityData.ByTransaction ->
-                        activity.metadata.swapMetadata
-                            ?.depositAddress
-                            ?.takeIf { !activity.metadata.swapMetadata.status.isTerminal }
-                }
-
-            if (depositAddress != null) {
-                val request =
-                    pipelineCacheSemaphore.withLock {
-                        val found = pipelineCache.find { it.depositAddress == depositAddress }?.also { it.close() }
-                        Request(depositAddress, found?.timestamp)
-                    }
-                Twig.debug { "Activities: queue $depositAddress" }
-                pipeline.send(request)
-            }
-        }
-    }
-
-    private fun requeue(depositAddress: String, timestamp: Instant) =
+    private fun requeue(depositAddress: String, timestamp: Instant) {
         scope.launch {
             Twig.debug { "Activities: requeue $depositAddress" }
-            pipeline.send(pipelineCacheSemaphore.withLock { Request(depositAddress, timestamp) })
+            pipeline.send(pipelineCacheSemaphore.withLock {
+                Request(
+                    depositAddress = depositAddress,
+                    timestamp = timestamp
+                )
+            })
         }
+    }
 
     private inner class Request(
         val depositAddress: String,
