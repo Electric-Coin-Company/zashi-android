@@ -340,7 +340,7 @@ class TransactionDetailVM(
 
     private fun createPrimaryButtonState(data: DetailedTransactionData): ButtonState? =
         when {
-            data.swap?.error != null && data.swap.status != null ->
+            data.swap?.error != null && data.swap.status == null ->
                 mapper.createTransactionDetailErrorButtonState(
                     error = data.swap.error,
                     reloadHandle = data.reloadHandle

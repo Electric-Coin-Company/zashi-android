@@ -2,7 +2,6 @@ package co.electriccoin.zcash.di
 
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFulltextFiltersUseCase
-import co.electriccoin.zcash.ui.common.usecase.CanCreateABContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
@@ -40,8 +39,8 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSwapStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableBalanceUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
@@ -90,6 +89,7 @@ import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneSignInRequestUseCase
 import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneUrToZashiAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.PrefillSendUseCase
+import co.electriccoin.zcash.ui.common.usecase.PreselectSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.ProcessSwapTransactionUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RemindWalletBackupLaterUseCase
@@ -246,11 +246,9 @@ val useCaseModule =
         factoryOf(::NavigateToSwapQuoteIfAvailableUseCase)
         singleOf(::NavigateToScanGenericAddressUseCase)
         singleOf(::NavigateToSelectABSwapRecipientUseCase)
-        factoryOf(::GetSwapAssetBlockchainUseCase)
         singleOf(::NavigateToSelectSwapBlockchainUseCase)
         factoryOf(::ValidateSwapABContactAddressUseCase)
         factoryOf(::NavigateToNearPayUseCase)
-        factoryOf(::CanCreateABContactUseCase)
         factoryOf(::SaveORSwapUseCase)
         factoryOf(::GetORSwapQuoteUseCase)
         factoryOf(::ShareQRUseCase)
@@ -266,4 +264,6 @@ val useCaseModule =
         singleOf(::SubmitIncreaseEphemeralGapLimitUseCase)
         factoryOf(::CreateIncreaseEphemeralGapLimitProposalUseCase)
         factoryOf(::ResetZashiUseCase)
+        factoryOf(::PreselectSwapAssetUseCase)
+        factoryOf(::GetSwapStatusUseCase)
     }

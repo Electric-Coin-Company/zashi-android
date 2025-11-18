@@ -39,6 +39,5 @@ internal fun AddGenericABContactScreen(args: AddGenericABContactArgs) {
 
 @Serializable
 data class AddGenericABContactArgs(
-    val address: String?,
-    val chain: String?
+    val address: String?
 )

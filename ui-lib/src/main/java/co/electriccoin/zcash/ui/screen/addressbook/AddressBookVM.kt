@@ -96,13 +96,13 @@ class AddressBookVM(
         )
     }
 
-    private fun onAddContactManuallyClick() = navigationRouter.forward(AddGenericABContactArgs(null, null))
+    private fun onAddContactManuallyClick() = navigationRouter.forward(AddGenericABContactArgs(null))
 
     private fun onScanContactClick() =
         viewModelScope.launch {
             val contact = navigateToScanGenericAddressUseCase()
             if (contact != null) {
-                navigationRouter.replace(AddGenericABContactArgs(address = contact.address, chain = null))
+                navigationRouter.replace(AddGenericABContactArgs(address = contact.address))
             }
         }
 }

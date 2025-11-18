@@ -3,8 +3,6 @@ package co.electriccoin.zcash.ui.common.usecase
 import co.electriccoin.zcash.ui.common.repository.AddressBookRepository
 import co.electriccoin.zcash.ui.common.repository.EnhancedABContact
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
-import co.electriccoin.zcash.ui.common.repository.SwapQuoteStatusData
-import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.repository.Transaction
 import co.electriccoin.zcash.ui.common.repository.TransactionMetadata
 import co.electriccoin.zcash.ui.common.repository.TransactionRepository
@@ -31,7 +29,7 @@ class GetTransactionDetailByIdUseCase(
     private val transactionRepository: TransactionRepository,
     private val addressBookRepository: AddressBookRepository,
     private val metadataRepository: MetadataRepository,
-    private val swapRepository: SwapRepository,
+    private val getSwapStatus: GetSwapStatusUseCase
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun observe(txId: String) =
@@ -95,7 +93,7 @@ class GetTransactionDetailByIdUseCase(
                                             if (depositAddress == null) {
                                                 flowOf(null)
                                             } else {
-                                                swapRepository.observeSwapStatus(depositAddress)
+                                                getSwapStatus.observe(depositAddress)
                                             }
                                         }
                                 }

@@ -21,6 +21,7 @@ import co.electriccoin.zcash.ui.common.usecase.NavigateToScanGenericAddressUseCa
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectABSwapRecipientUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapInfoUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSwapQuoteIfAvailableUseCase
+import co.electriccoin.zcash.ui.common.usecase.PreselectSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.RequestSwapQuoteUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.InnerTextFieldState
@@ -39,6 +40,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -51,6 +53,7 @@ internal class SwapVM(
     getSelectedSwapAsset: GetSelectedSwapAssetUseCase,
     getSwapAssetsUseCase: GetSwapAssetsUseCase,
     getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
+    preselectSwapAsset: PreselectSwapAssetUseCase,
     private val swapRepository: SwapRepository,
     private val navigateToSwapInfo: NavigateToSwapInfoUseCase,
     private val cancelSwap: CancelSwapUseCase,
@@ -60,7 +63,6 @@ internal class SwapVM(
     private val exactInputVMMapper: ExactInputVMMapper,
     private val navigateToScanAddress: NavigateToScanGenericAddressUseCase,
     private val navigateToSelectSwapRecipient: NavigateToSelectABSwapRecipientUseCase,
-    // private val isEphemeralAddressLocked: IsEphemeralAddressLockedUseCase
 ) : ViewModel() {
     private val mode = MutableStateFlow(SWAP_INTO_ZEC)
 
@@ -155,6 +157,12 @@ internal class SwapVM(
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = null
             )
+
+    init {
+        preselectSwapAsset
+            .observe()
+            .launchIn(viewModelScope)
+    }
 
     private fun createState(innerState: InternalStateImpl): SwapState =
         exactInputVMMapper.createState(

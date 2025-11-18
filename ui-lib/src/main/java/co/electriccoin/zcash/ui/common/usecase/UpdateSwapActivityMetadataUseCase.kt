@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.common.usecase
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
-import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,8 +22,8 @@ import kotlin.time.Duration.Companion.seconds
 
 class UpdateSwapActivityMetadataUseCase(
     private val metadataRepository: MetadataRepository,
-    private val swapRepository: SwapRepository,
     private val accountDataSource: AccountDataSource,
+    private val getSwapStatus: GetSwapStatusUseCase
 ) {
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
@@ -100,7 +99,7 @@ class UpdateSwapActivityMetadataUseCase(
                     if (swapMetadata != null && !swapMetadata.status.isTerminal) {
                         Twig.debug { "Activities: consuming $depositAddress" }
                         val apiRequestTimestamp = Clock.System.now()
-                        val quoteStatus = swapRepository.getSwapStatus(depositAddress)
+                        val quoteStatus = getSwapStatus(depositAddress)
                         pipelineCacheSemaphore.withLock { item.close() }
                         if (quoteStatus.status?.status?.isTerminal != true) {
                             when (pipelineCache.lastOrNull()?.depositAddress) {
@@ -128,12 +127,14 @@ class UpdateSwapActivityMetadataUseCase(
     private fun requeue(depositAddress: String, timestamp: Instant) {
         scope.launch {
             Twig.debug { "Activities: requeue $depositAddress" }
-            pipeline.send(pipelineCacheSemaphore.withLock {
-                Request(
-                    depositAddress = depositAddress,
-                    timestamp = timestamp
-                )
-            })
+            pipeline.send(
+                pipelineCacheSemaphore.withLock {
+                    Request(
+                        depositAddress = depositAddress,
+                        timestamp = timestamp
+                    )
+                }
+            )
         }
     }
 

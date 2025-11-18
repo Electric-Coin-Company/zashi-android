@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.SwapBlockchain
 import co.electriccoin.zcash.ui.common.usecase.ContactAddressValidationResult
-import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToSelectSwapBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveABContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.ValidateContactNameResult
@@ -31,7 +31,6 @@ import kotlinx.coroutines.launch
 
 class AddSwapABContactVM(
     args: AddSwapABContactArgs,
-    getSwapAssetBlockchain: GetSwapAssetBlockchainUseCase,
     private val validateABSwapContactAddress: ValidateSwapABContactAddressUseCase,
     private val validateGenericABContactName: ValidateGenericABContactNameUseCase,
     private val saveABContact: SaveABContactUseCase,
@@ -40,7 +39,7 @@ class AddSwapABContactVM(
 ) : ViewModel() {
     private val contactAddress = MutableStateFlow(args.address.orEmpty())
     private val contactName = MutableStateFlow("")
-    private val selectedBlockchain = MutableStateFlow(getSwapAssetBlockchain(args.chain))
+    private val selectedBlockchain = MutableStateFlow<SwapBlockchain?>(null)
     private val isSavingContact = MutableStateFlow(false)
 
     private val blockChainPickerState =
