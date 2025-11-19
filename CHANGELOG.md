@@ -6,6 +6,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.x (13xx)] - 2025-11-19
+- Add support for SEND intents that allow sharing of zcash uris via text or image directly with the app. 
+
 ## [2.4.8 (1319)] - 2025-11-14
 
 ### Changed:
