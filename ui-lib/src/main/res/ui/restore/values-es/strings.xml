@@ -38,4 +38,13 @@
     <string name="restore_tor_checkbox_title">Enable Tor Protection</string>
     <string name="restore_tor_checkbox_subtitle">Routes your connection through the Tor network for enhanced anonymity and privacy protection.</string>
 
+    <string name="resync_title">Resincronizar Billetera</string>
+    <string name="resync_bd_date_subtitle">Primera Transacción de la Billetera</string>
+    <string name="resync_bd_date_message">Decide hasta qué punto Zashi debe resincronizar. Ingresa una fecha anterior a tu primera transacción recibida.</string>
+    <string name="resync_bd_date_note">Si no estás seguro, elige una fecha anterior.</string>
+
+    <string name="resync_bd_estimation_subtitle">Altura de Bloque Estimada</string>
+    <string name="resync_bd_estimation_message">Zashi escaneará y recuperará todas las transacciones realizadas después del siguiente número de bloque.</string>
+    <string name="resync_bd_estimation_btn">Establecer esta altura</string>
+
 </resources>

@@ -49,6 +49,12 @@ class RestoreBDHeightVM(
         val isValid = !blockHeight.innerTextFieldState.value.isEmpty() && isHigherThanSaplingActivationHeight
 
         return RestoreBDHeightState(
+            title = stringRes(R.string.restore_title),
+            subtitle = stringRes(R.string.restore_bd_subtitle),
+            message = stringRes(R.string.restore_bd_message),
+            textFieldTitle = stringRes(R.string.restore_bd_text_field_title),
+            textFieldHint = stringRes(R.string.restore_bd_text_field_hint),
+            textFieldNote = stringRes(R.string.restore_bd_text_field_note),
             onBack = ::onBack,
             dialogButton =
                 IconButtonState(

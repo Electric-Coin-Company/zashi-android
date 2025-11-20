@@ -44,6 +44,8 @@ import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightVM
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restore.tor.RestoreTorVM
 import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
+import co.electriccoin.zcash.ui.screen.resync.date.ResyncBDDateVM
+import co.electriccoin.zcash.ui.screen.resync.estimation.ResyncBDEstimationVM
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionVM
 import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressVM
 import co.electriccoin.zcash.ui.screen.scan.ScanZashiAddressVM
@@ -126,6 +128,8 @@ val viewModelModule =
         viewModelOf(::RestoreBDHeightVM)
         viewModelOf(::RestoreBDDateVM)
         viewModelOf(::RestoreBDEstimationVM)
+        viewModelOf(::ResyncBDDateVM)
+        viewModelOf(::ResyncBDEstimationVM)
         viewModelOf(::ShieldFundsInfoVM)
         viewModelOf(::WalletBackupInfoViewModel)
         viewModelOf(::ExchangeRateSettingsVM)

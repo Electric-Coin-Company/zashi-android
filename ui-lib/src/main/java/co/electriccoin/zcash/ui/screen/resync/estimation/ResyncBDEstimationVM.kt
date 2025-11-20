@@ -1,31 +1,35 @@
-package co.electriccoin.zcash.ui.screen.restore.estimation
+package co.electriccoin.zcash.ui.screen.resync.estimation
 
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToEstimateBlockHeightUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationState
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
-import co.electriccoin.zcash.ui.screen.restore.tor.RestoreTorArgs
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class RestoreBDEstimationVM(
-    private val args: RestoreBDEstimationArgs,
+class ResyncBDEstimationVM(
+    private val args: ResyncBDEstimationArgs,
     private val navigationRouter: NavigationRouter,
-    private val copyToClipboard: CopyToClipboardUseCase
+    private val copyToClipboard: CopyToClipboardUseCase,
+    private val navigateToEstimateBlockHeight: NavigateToEstimateBlockHeightUseCase,
 ) : ViewModel() {
     val state: StateFlow<RestoreBDEstimationState> = MutableStateFlow(createState()).asStateFlow()
 
     private fun createState() =
         RestoreBDEstimationState(
-            title = stringRes(R.string.restore_title),
-            subtitle = stringRes(R.string.restore_bd_estimation_subtitle),
-            message = stringRes(R.string.restore_bd_estimation_message),
+            title = stringRes(R.string.resync_title),
+            subtitle = stringRes(R.string.resync_bd_estimation_subtitle),
+            message = stringRes(R.string.resync_bd_estimation_message),
             dialogButton =
                 IconButtonState(
                     icon = R.drawable.ic_help,
@@ -41,8 +45,8 @@ class RestoreBDEstimationVM(
                 ),
             restore =
                 ButtonState(
-                    text = stringRes(R.string.restore_bd_estimation_restore),
-                    onClick = ::onRestoreClick,
+                    text = stringRes(R.string.resync_bd_estimation_btn),
+                    onClick = ::onSetHeightClick,
                     hapticFeedbackType = HapticFeedbackType.Confirm
                 ),
         )
@@ -53,8 +57,10 @@ class RestoreBDEstimationVM(
         )
     }
 
-    private fun onRestoreClick() {
-        navigationRouter.forward(RestoreTorArgs(seed = args.seed.trim(), blockHeight = args.blockHeight))
+    private fun onSetHeightClick() {
+        viewModelScope.launch {
+            navigateToEstimateBlockHeight.onSelected(args.blockHeight, args)
+        }
     }
 
     private fun onBack() = navigationRouter.back()

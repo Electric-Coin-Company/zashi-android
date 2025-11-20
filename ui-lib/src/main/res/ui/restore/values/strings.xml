@@ -44,4 +44,13 @@
     <string name="restore_tor_checkbox_title">Enable Tor Protection</string>
     <string name="restore_tor_checkbox_subtitle">Routes your connection through the Tor network for enhanced anonymity and privacy protection.</string>
 
+    <string name="resync_title">Resync Wallet</string>
+    <string name="resync_bd_date_subtitle">First Wallet Transaction</string>
+    <string name="resync_bd_date_message">Decide how far Zashi should resync. Enter a date before your first received transaction.</string>
+    <string name="resync_bd_date_note">If you\'re not sure, choose an earlier date.</string>
+
+    <string name="resync_bd_estimation_subtitle">Estimated Block Height</string>
+    <string name="resync_bd_estimation_message">Zashi will scan and recover all transactions made after the following block number.</string>
+    <string name="resync_bd_estimation_btn">Set this height</string>
+
 </resources>

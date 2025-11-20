@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.restore.date
+package co.electriccoin.zcash.ui.screen.resync.date
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
@@ -8,10 +8,12 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.VersionInfo
+import co.electriccoin.zcash.ui.common.usecase.NavigateToEstimateBlockHeightUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationArgs
+import co.electriccoin.zcash.ui.screen.resync.estimation.ResyncBDEstimationArgs
+import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateState
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,10 +27,11 @@ import kotlinx.datetime.toKotlinInstant
 import java.time.YearMonth
 import java.time.ZoneId
 
-class RestoreBDDateVM(
-    private val args: RestoreBDDateArgs,
+class ResyncBDDateVM(
+    private val args: ResyncBDDateArgs,
     private val navigationRouter: NavigationRouter,
     private val application: Application,
+    private val navigateToEstimateBlockHeight: NavigateToEstimateBlockHeightUseCase,
 ) : ViewModel() {
     @Suppress("MagicNumber")
     private val selection = MutableStateFlow<YearMonth>(YearMonth.of(2018, 10))
@@ -45,10 +48,10 @@ class RestoreBDDateVM(
 
     private fun createState(selection: YearMonth) =
         RestoreBDDateState(
-            title = stringRes(R.string.restore_title),
-            subtitle = stringRes(R.string.restore_bd_date_subtitle),
-            message = stringRes(R.string.restore_bd_date_message),
-            note = stringRes(R.string.restore_bd_date_note),
+            title = stringRes(R.string.resync_title),
+            subtitle = stringRes(R.string.resync_bd_date_subtitle),
+            message = stringRes(R.string.resync_bd_date_message),
+            note = stringRes(R.string.resync_bd_date_note),
             next = ButtonState(stringRes(R.string.restore_bd_height_btn), onClick = ::onEstimateClick),
             dialogButton =
                 IconButtonState(
@@ -75,11 +78,15 @@ class RestoreBDDateVM(
                     date = instant,
                     network = VersionInfo.NETWORK
                 )
-            navigationRouter.forward(RestoreBDEstimationArgs(seed = args.seed, blockHeight = bday.value))
+            navigationRouter.forward(ResyncBDEstimationArgs(uuid = args.uuid, blockHeight = bday.value))
         }
     }
 
-    private fun onBack() = navigationRouter.back()
+    private fun onBack() {
+        viewModelScope.launch {
+            navigateToEstimateBlockHeight.onSelectionCancelled(args)
+        }
+    }
 
     private fun onInfoButtonClick() = navigationRouter.forward(SeedInfo)
 

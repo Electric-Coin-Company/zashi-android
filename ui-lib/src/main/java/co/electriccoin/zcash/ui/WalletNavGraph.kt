@@ -91,6 +91,10 @@ import co.electriccoin.zcash.ui.screen.receive.info.TransparentAddressInfoScreen
 import co.electriccoin.zcash.ui.screen.request.RequestScreen
 import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
+import co.electriccoin.zcash.ui.screen.resync.date.ResyncBDDateArgs
+import co.electriccoin.zcash.ui.screen.resync.date.ResyncBDDateScreen
+import co.electriccoin.zcash.ui.screen.resync.estimation.ResyncBDEstimationArgs
+import co.electriccoin.zcash.ui.screen.resync.estimation.ResyncBDEstimationScreen
 import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
@@ -265,5 +269,7 @@ fun NavGraphBuilder.walletNavGraph(
         dialogComposable<EphemeralLockArgs> { EphemeralLockScreen() }
         composable<DebugArgs> { DebugScreen() }
         dialogComposable<DebugTextArgs> { DebugTextScreen(it.toRoute()) }
+        composable<ResyncBDDateArgs> { ResyncBDDateScreen(it.toRoute()) }
+        composable<ResyncBDEstimationArgs> { ResyncBDEstimationScreen(it.toRoute()) }
     }
 }
