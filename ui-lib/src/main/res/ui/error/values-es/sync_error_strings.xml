@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sync_error_title">Algo salió mal</string>
+    <string name="sync_error_message">Hubo un error al intentar ejecutar la última operación. Verifica tu conexión, configuración de VPN, reinicia la aplicación o prueba una de las siguientes opciones:</string>
+    <string name="sync_error_switch_server">Cambiar servidor</string>
+    <string name="sync_error_disable_tor">Desactivar protección Tor</string>
+    <string name="sync_error_contact_support">Contactar Soporte</string>
+    <string name="sync_error_support_message">Encontré un error de sincronización mientras usaba Zashi. Por favor ayúdame.</string>
+</resources>
