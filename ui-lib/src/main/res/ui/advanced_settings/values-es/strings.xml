@@ -10,4 +10,5 @@
     <string name="advanced_settings_info">Se te pedirá confirmación en la siguiente pantalla</string>
     <string name="advanced_settings_delete_button">Restablecer Zashi</string>
     <string name="advanced_settings_tax">Exportar archivo fiscal</string>
+    <string name="advanced_settings_resync_wallet">Resincronizar Billetera</string>
 </resources>

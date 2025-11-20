@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.usecase
 
+import cash.z.ecc.android.sdk.model.BlockHeight
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.screen.resync.date.ResyncBDDateArgs
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -11,9 +12,9 @@ class NavigateToEstimateBlockHeightUseCase(
 ) {
     private val pipeline = MutableSharedFlow<EstimateBlockHeightPipelineResult>()
 
-    suspend operator fun invoke(): Long? {
+    suspend operator fun invoke(initialBlockHeight: BlockHeight): BlockHeight? {
         val uuid = UUID.randomUUID().toString()
-        val args = ResyncBDDateArgs(uuid = uuid)
+        val args = ResyncBDDateArgs(uuid = uuid, initialBlockHeight = initialBlockHeight.value)
         navigationRouter.forward(args)
         val result = pipeline.first { it.uuid == uuid }
         return when (result) {
@@ -31,7 +32,12 @@ class NavigateToEstimateBlockHeightUseCase(
         blockHeight: Long,
         args: co.electriccoin.zcash.ui.screen.resync.estimation.ResyncBDEstimationArgs
     ) {
-        pipeline.emit(EstimateBlockHeightPipelineResult.Selected(blockHeight = blockHeight, uuid = args.uuid))
+        pipeline.emit(
+            EstimateBlockHeightPipelineResult.Selected(
+                blockHeight = BlockHeight.new(blockHeight),
+                uuid = args.uuid
+            )
+        )
         navigationRouter.back()
     }
 }
@@ -44,7 +50,7 @@ private sealed interface EstimateBlockHeightPipelineResult {
     ) : EstimateBlockHeightPipelineResult
 
     data class Selected(
-        val blockHeight: Long,
+        val blockHeight: BlockHeight,
         override val uuid: String
     ) : EstimateBlockHeightPipelineResult
 }

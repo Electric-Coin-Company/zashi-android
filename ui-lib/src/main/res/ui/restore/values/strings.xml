@@ -53,4 +53,13 @@
     <string name="resync_bd_estimation_message">Zashi will scan and recover all transactions made after the following block number.</string>
     <string name="resync_bd_estimation_btn">Set this height</string>
 
+    <string name="confirm_resync_title">Confirm Resync</string>
+    <string name="confirm_resync_subtitle">Resync the current wallet without resetting the app. This can be used to
+        troubleshoot issues that would normally require restoring your wallet like fixing your Keystone balance
+        .\n\nUnless you specify otherwise below, Zashi will resync from the date displayed. </string>
+    <string name="confirm_resync_message">Unless you specify otherwise below, Zashi will resync from the date displayed.</string>
+    <string name="confirm_resync_info">Your wallet will be resynced from %1$s (%2$s blocks). Use the button below if you wish to change it.</string>
+    <string name="confirm_resync_change">Change</string>
+    <string name="confirm_resync_confirm">Confirm</string>
+
 </resources>

@@ -8,6 +8,7 @@ import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.restore.tor.RestoreTorArgs
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +33,7 @@ class RestoreBDEstimationVM(
                     onClick = ::onInfoButtonClick,
                 ),
             onBack = ::onBack,
-            text = stringRes(args.blockHeight.toString()),
+            text = stringResByNumber(args.blockHeight, 0),
             copy =
                 ButtonState(
                     text = stringRes(R.string.restore_bd_estimation_copy),

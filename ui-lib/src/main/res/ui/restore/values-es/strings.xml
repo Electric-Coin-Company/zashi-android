@@ -47,4 +47,13 @@
     <string name="resync_bd_estimation_message">Zashi escaneará y recuperará todas las transacciones realizadas después del siguiente número de bloque.</string>
     <string name="resync_bd_estimation_btn">Establecer esta altura</string>
 
+    <string name="confirm_resync_title">Confirmar Resincronización</string>
+    <string name="confirm_resync_subtitle">Resync the current wallet without resetting the app. This can be used to
+        troubleshoot issues that would normally require restoring your wallet like fixing your Keystone balance
+        .\n\nUnless you specify otherwise below, Zashi will resync from the date displayed. </string>
+    <string name="confirm_resync_message">A menos que especifiques lo contrario a continuación, Zashi se resincronizará desde la fecha mostrada.</string>
+    <string name="confirm_resync_info">Tu billetera se resincronizará desde %1$s (%2$s bloques). Usa el botón a continuación si deseas cambiarlo.</string>
+    <string name="confirm_resync_change">Cambiar</string>
+    <string name="confirm_resync_confirm">Confirmar</string>
+
 </resources>
