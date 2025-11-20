@@ -1,0 +1,5 @@
+Changed:
+- We updated Swap and Pay features to use shielded addresses instead of transparent ones. Shields up!
+
+Fixed:
+- We also fixed a few user reported issues.
