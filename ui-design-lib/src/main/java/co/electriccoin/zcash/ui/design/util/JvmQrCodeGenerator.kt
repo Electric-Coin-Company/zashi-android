@@ -18,7 +18,7 @@ object JvmQrCodeGenerator : QrCodeGenerator {
                 mapOf(
                     EncodeHintType.MARGIN to QR_CODE_IMAGE_MARGIN_IN_PIXELS,
                     EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.M,
-                    )
+                )
             )
 
         return BooleanArray(sizePixels * sizePixels).apply {

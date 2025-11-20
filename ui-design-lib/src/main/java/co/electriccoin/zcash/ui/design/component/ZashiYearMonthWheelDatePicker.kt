@@ -41,6 +41,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import java.text.DateFormatSymbols
 import java.time.Month
@@ -289,6 +290,7 @@ private fun WheelLazyList(
 
     LaunchedEffect(state) {
         snapshotFlow { state.firstVisibleItemIndex }
+            .drop(1)
             .collect {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
             }

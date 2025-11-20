@@ -23,7 +23,7 @@ internal fun persistExistingWalletWithSeedPhrase(
     context: Context,
     walletViewModel: WalletViewModel,
     seedPhrase: SeedPhrase,
-    birthday: BlockHeight?
+    birthday: BlockHeight
 ) {
     walletViewModel.persistExistingWalletWithSeedPhrase(
         network = ZcashNetwork.fromResources(context),

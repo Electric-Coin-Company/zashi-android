@@ -40,6 +40,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -71,20 +72,20 @@ private fun Content(
         modifier = modifier
     ) {
         Text(
-            text = stringResource(R.string.restore_bd_subtitle),
+            text = state.subtitle.getValue(),
             style = ZashiTypography.header6,
             color = ZashiColors.Text.textPrimary,
             fontWeight = FontWeight.SemiBold
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = stringResource(R.string.restore_bd_message),
+            text = state.message.getValue(),
             style = ZashiTypography.textSm,
             color = ZashiColors.Text.textPrimary
         )
         Spacer(Modifier.height(32.dp))
         Text(
-            text = stringResource(R.string.restore_bd_text_field_title),
+            text = state.textFieldTitle.getValue(),
             style = ZashiTypography.textSm,
             color = ZashiColors.Inputs.Default.label,
             fontWeight = FontWeight.Medium
@@ -95,7 +96,7 @@ private fun Content(
             modifier = Modifier.fillMaxWidth(),
             placeholder = {
                 ZashiTextFieldPlaceholder(
-                    stringRes(R.string.restore_bd_text_field_hint)
+                    state.textFieldHint
                 )
             },
             keyboardOptions =
@@ -108,7 +109,7 @@ private fun Content(
         )
         Spacer(Modifier.height(6.dp))
         Text(
-            text = stringResource(R.string.restore_bd_text_field_note),
+            text = state.textFieldNote.getValue(),
             style = ZashiTypography.textXs,
             color = ZashiColors.Text.textTertiary
         )
@@ -136,7 +137,7 @@ private fun Content(
 @Composable
 private fun AppBar(state: RestoreBDHeightState) {
     ZashiSmallTopAppBar(
-        title = stringResource(R.string.restore_title),
+        title = state.title.getValue(),
         navigationAction = {
             ZashiTopAppBarBackNavigation(
                 onBack = state.onBack,
@@ -162,6 +163,12 @@ private fun Preview() =
         RestoreBDHeightView(
             state =
                 RestoreBDHeightState(
+                    title = stringRes("Restore"),
+                    subtitle = stringRes("Wallet Birthday Height"),
+                    message = stringRes("Entering your Wallet Birthday Height helps speed up the restore process."),
+                    textFieldTitle = stringRes("Block Height"),
+                    textFieldHint = stringRes("Enter number"),
+                    textFieldNote = stringRes("Wallet Birthday Height is the point in time when your wallet was created."),
                     onBack = {},
                     dialogButton = IconButtonState(R.drawable.ic_help) {},
                     blockHeight = NumberTextFieldState {},

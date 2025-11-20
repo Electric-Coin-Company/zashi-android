@@ -85,7 +85,7 @@ class SubmitProposalUseCase(
                 if (proposal is SwapTransactionProposal) {
                     processSwapTransaction(proposal, result)
                 }
-            } catch (_: IllegalStateException) {
+            } catch (_: Exception) {
                 // do nothing
             }
         }

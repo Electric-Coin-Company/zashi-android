@@ -1,33 +1,21 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import co.electriccoin.zcash.ui.common.datasource.SwapDataSource
-import co.electriccoin.zcash.ui.common.datasource.TokenNotFoundException
 import co.electriccoin.zcash.ui.common.model.SwapAsset
 import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.SwapQuote
-import co.electriccoin.zcash.ui.common.model.SwapQuoteStatus
-import co.electriccoin.zcash.ui.common.model.SwapStatus
-import co.electriccoin.zcash.ui.common.model.ZecSimpleSwapAsset
 import co.electriccoin.zcash.ui.common.model.ZecSwapAsset
-import co.electriccoin.zcash.ui.common.provider.SimpleSwapAssetProvider
-import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import kotlin.time.Duration.Companion.seconds
 
@@ -46,10 +34,7 @@ interface SwapRepository {
 
     fun requestRefreshAssets()
 
-    fun observeSwapStatus(depositAddress: String): Flow<SwapQuoteStatusData>
-
-    suspend fun getSwapStatus(depositAddress: String): SwapQuoteStatusData =
-        observeSwapStatus(depositAddress).first { !it.isLoading }
+    suspend fun requestRefreshAssetsOnce()
 
     fun requestExactInputQuote(amount: BigDecimal, address: String, refundAddress: String)
 
@@ -76,38 +61,19 @@ sealed interface SwapQuoteData {
 }
 
 data class SwapAssetsData(
-    val data: List<SwapAsset>?,
-    val zecAsset: SwapAsset?,
-    val isLoading: Boolean,
-    val error: Exception?,
+    val data: List<SwapAsset>? = null,
+    val zecAsset: SwapAsset? = null,
+    val isLoading: Boolean = false,
+    val error: Exception? = null,
 )
-
-data class SwapQuoteStatusData(
-    val status: SwapQuoteStatus?,
-    val isLoading: Boolean,
-    val error: Exception?,
-) {
-    val originAsset = status?.quote?.originAsset
-    val destinationAsset = status?.quote?.destinationAsset
-}
 
 @Suppress("TooManyFunctions")
 class SwapRepositoryImpl(
-    private val swapDataSource: SwapDataSource,
-    private val metadataRepository: MetadataRepository,
-    private val simpleSwapAssetProvider: SimpleSwapAssetProvider
+    private val swapDataSource: SwapDataSource
 ) : SwapRepository {
-    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
-    override val assets =
-        MutableStateFlow(
-            SwapAssetsData(
-                data = null,
-                zecAsset = null,
-                isLoading = false,
-                error = null,
-            )
-        )
+    override val assets = MutableStateFlow(SwapAssetsData())
 
     override val selectedAsset = MutableStateFlow<SwapAsset?>(null)
 
@@ -134,24 +100,23 @@ class SwapRepositoryImpl(
             }
     }
 
+    override suspend fun requestRefreshAssetsOnce() {
+        scope.launch { refreshAssetsInternal() }.join()
+    }
+
     @Suppress("TooGenericExceptionCaught")
     private suspend fun refreshAssetsInternal() {
-        suspend fun findZecSwapAsset(assets: List<SwapAsset>) =
-            withContext(Dispatchers.Default) {
-                assets.find { asset -> asset is ZecSwapAsset }
-            }
+        fun findZecSwapAsset(assets: List<SwapAsset>) = assets.find { asset -> asset is ZecSwapAsset }
 
-        suspend fun filterSwapAssets(assets: List<SwapAsset>) =
-            withContext(Dispatchers.Default) {
-                assets
-                    .toMutableList()
-                    .apply {
-                        removeIf {
-                            val usdPrice = it.usdPrice
-                            it is ZecSwapAsset || usdPrice == null || usdPrice.toFloat() == 0f
-                        }
-                    }.toList()
-            }
+        fun filterSwapAssets(assets: List<SwapAsset>) =
+            assets
+                .toMutableList()
+                .apply {
+                    removeIf {
+                        val usdPrice = it.usdPrice
+                        it is ZecSwapAsset || usdPrice == null || usdPrice == BigDecimal.ZERO
+                    }
+                }.toList()
 
         assets.update { it.copy(isLoading = true) }
         try {
@@ -166,108 +131,12 @@ class SwapRepositoryImpl(
                     isLoading = false
                 )
             }
-
-            if (selectedAsset.value == null) {
-                val assetToSelect =
-                    metadataRepository
-                        .observeLastUsedAssetHistory()
-                        .filterNotNull()
-                        .first()
-                        .firstOrNull()
-                        ?.takeIf { it !is ZecSimpleSwapAsset }
-                        ?: simpleSwapAssetProvider.get(tokenTicker = "usdc", chainTicker = "near")
-                val foundAssetToSelect =
-                    filtered
-                        .find {
-                            it.tokenTicker.lowercase() == assetToSelect.tokenTicker.lowercase() &&
-                                it.chainTicker.lowercase() == assetToSelect.chainTicker.lowercase()
-                        }
-
-                if (foundAssetToSelect != null) {
-                    selectedAsset.update { foundAssetToSelect }
-                }
-            }
-        } catch (e: ResponseException) {
-            assets.update { assets ->
-                assets.copy(
-                    isLoading = false,
-                    error = e.takeIf { assets.data == null }
-                )
-            }
         } catch (e: Exception) {
             assets.update { assets ->
                 assets.copy(
                     isLoading = false,
                     error = e.takeIf { assets.data == null }
                 )
-            }
-        }
-    }
-
-    @Suppress("TooGenericExceptionCaught", "LoopWithTooManyJumpStatements")
-    override fun observeSwapStatus(depositAddress: String): Flow<SwapQuoteStatusData> {
-        return channelFlow {
-            val data =
-                MutableStateFlow(
-                    SwapQuoteStatusData(
-                        status = null,
-                        isLoading = true,
-                        error = null
-                    )
-                )
-
-            launch {
-                data.collect { send(it) }
-            }
-
-            launch {
-                val supportedTokens =
-                    try {
-                        swapDataSource.getSupportedTokens()
-                    } catch (e: Exception) {
-                        data.update { it.copy(isLoading = false, error = e) }
-                        return@launch
-                    }
-
-                while (true) {
-                    try {
-                        val result = swapDataSource.checkSwapStatus(depositAddress, supportedTokens)
-                        metadataRepository.updateSwap(
-                            depositAddress = depositAddress,
-                            amountOutFormatted = result.amountOutFormatted,
-                            status = result.status,
-                            mode = result.mode,
-                            origin = result.quote.originAsset,
-                            destination = result.quote.destinationAsset
-                        )
-                        data.update {
-                            it.copy(
-                                status = result,
-                                isLoading = false,
-                                error = null
-                            )
-                        }
-                        if (result.status in listOf(SwapStatus.SUCCESS, SwapStatus.REFUNDED)) {
-                            break
-                        }
-                    } catch (e: TokenNotFoundException) {
-                        data.update {
-                            it.copy(
-                                isLoading = false,
-                                error = e
-                            )
-                        }
-                        break
-                    } catch (e: Exception) {
-                        data.update { it.copy(isLoading = false, error = e) }
-                        break
-                    }
-                    delay(30.seconds)
-                }
-            }
-
-            awaitClose {
-                // do nothing
             }
         }
     }
@@ -341,19 +210,14 @@ class SwapRepositoryImpl(
                         )
                     quote.update { SwapQuoteData.Success(quote = result) }
                 } catch (e: Exception) {
-                    quote.update { SwapQuoteData.Error(SwapMode.EXACT_OUTPUT, e) }
+                    quote.update { SwapQuoteData.Error(EXACT_OUTPUT, e) }
                 }
             }
     }
 
     override fun clear() {
-        assets.update {
-            SwapAssetsData(
-                data = null,
-                zecAsset = null,
-                isLoading = false,
-                error = null,
-            )
+        if (assets.value.data == null) {
+            assets.update { SwapAssetsData() } // delete the error if no data found
         }
         refreshJob?.cancel()
         refreshJob = null

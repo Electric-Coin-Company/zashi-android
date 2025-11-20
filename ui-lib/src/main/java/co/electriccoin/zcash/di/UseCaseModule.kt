@@ -2,10 +2,10 @@ package co.electriccoin.zcash.di
 
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.ApplyTransactionFulltextFiltersUseCase
-import co.electriccoin.zcash.ui.common.usecase.CanCreateABContactUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelProposalFlowUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapUseCase
+import co.electriccoin.zcash.ui.common.usecase.ConfirmResyncUseCase
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateFlexaTransactionUseCase
 import co.electriccoin.zcash.ui.common.usecase.CreateIncreaseEphemeralGapLimitProposalUseCase
@@ -40,8 +40,8 @@ import co.electriccoin.zcash.ui.common.usecase.GetSelectedSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSlippageUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSupportUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetSwapAssetsUseCase
+import co.electriccoin.zcash.ui.common.usecase.GetSwapStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTotalSpendableBalanceUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionDetailByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetTransactionFiltersUseCase
@@ -58,7 +58,7 @@ import co.electriccoin.zcash.ui.common.usecase.IsTorEnabledUseCase
 import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
+import co.electriccoin.zcash.ui.common.usecase.NavigateToEstimateBlockHeightUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToExportPrivateDataUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToNearPayUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
@@ -91,14 +91,13 @@ import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneSignInRequestUseCase
 import co.electriccoin.zcash.ui.common.usecase.ParseKeystoneUrToZashiAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.PersistEndpointUseCase
 import co.electriccoin.zcash.ui.common.usecase.PrefillSendUseCase
+import co.electriccoin.zcash.ui.common.usecase.PreselectSwapAssetUseCase
 import co.electriccoin.zcash.ui.common.usecase.ProcessSwapTransactionUseCase
 import co.electriccoin.zcash.ui.common.usecase.RefreshFastestServersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RemindWalletBackupLaterUseCase
 import co.electriccoin.zcash.ui.common.usecase.RequestSwapQuoteUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanBlockchainUseCase
 import co.electriccoin.zcash.ui.common.usecase.RescanQrUseCase
-import co.electriccoin.zcash.ui.common.usecase.ResetInMemoryDataUseCase
-import co.electriccoin.zcash.ui.common.usecase.ResetSharedPrefsDataUseCase
 import co.electriccoin.zcash.ui.common.usecase.ResetTransactionFiltersUseCase
 import co.electriccoin.zcash.ui.common.usecase.RestoreWalletUseCase
 import co.electriccoin.zcash.ui.common.usecase.SaveABContactUseCase
@@ -131,6 +130,8 @@ import co.electriccoin.zcash.ui.common.usecase.WalletBackupMessageUseCase
 import co.electriccoin.zcash.ui.common.usecase.WalletBackupMessageUseCaseImpl
 import co.electriccoin.zcash.ui.common.usecase.Zip321BuildUriUseCase
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase
+import co.electriccoin.zcash.ui.screen.deletewallet.ResetZashiUseCase
+import co.electriccoin.zcash.ui.screen.error.NavigateToErrorUseCase
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -201,8 +202,6 @@ val useCaseModule =
         factoryOf(::SendTransactionAgainUseCase)
         factoryOf(::GetABContactsUseCase)
         factoryOf(::GetABSwapContactsUseCase)
-        factoryOf(::ResetInMemoryDataUseCase)
-        factoryOf(::ResetSharedPrefsDataUseCase)
         factoryOf(::NavigateToAddressBookUseCase)
         factoryOf(::NavigateToSelectRecipientUseCase)
         factoryOf(::GetTransactionMetadataUseCase)
@@ -249,11 +248,11 @@ val useCaseModule =
         factoryOf(::NavigateToSwapQuoteIfAvailableUseCase)
         singleOf(::NavigateToScanGenericAddressUseCase)
         singleOf(::NavigateToSelectABSwapRecipientUseCase)
-        factoryOf(::GetSwapAssetBlockchainUseCase)
         singleOf(::NavigateToSelectSwapBlockchainUseCase)
+        singleOf(::NavigateToEstimateBlockHeightUseCase)
+        factoryOf(::ConfirmResyncUseCase)
         factoryOf(::ValidateSwapABContactAddressUseCase)
         factoryOf(::NavigateToNearPayUseCase)
-        factoryOf(::CanCreateABContactUseCase)
         factoryOf(::SaveORSwapUseCase)
         factoryOf(::GetORSwapQuoteUseCase)
         factoryOf(::ShareQRUseCase)
@@ -268,4 +267,7 @@ val useCaseModule =
         factoryOf(::IsEphemeralAddressLockedUseCase)
         singleOf(::SubmitIncreaseEphemeralGapLimitUseCase)
         factoryOf(::CreateIncreaseEphemeralGapLimitProposalUseCase)
+        factoryOf(::ResetZashiUseCase)
+        factoryOf(::PreselectSwapAssetUseCase)
+        factoryOf(::GetSwapStatusUseCase)
     }

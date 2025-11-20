@@ -3,8 +3,8 @@ package co.electriccoin.zcash.ui.util
 import android.content.Context
 import android.content.Intent
 import androidx.core.content.FileProvider
+import cash.z.ecc.android.sdk.model.ZcashNetwork
 import co.electriccoin.zcash.ui.common.model.DistributionDimension
-import co.electriccoin.zcash.ui.common.model.NetworkDimension
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 import java.io.File
 
@@ -99,7 +99,7 @@ object FileShareUtil {
     }
 
     private fun getAuthorityByVersionInfo(versionInfo: VersionInfo) =
-        if (versionInfo.network == NetworkDimension.TESTNET) {
+        if (versionInfo.network == ZcashNetwork.Testnet) {
             if (versionInfo.distribution == DistributionDimension.FOSS) {
                 getFossTestnetAuthority(versionInfo)
             } else {

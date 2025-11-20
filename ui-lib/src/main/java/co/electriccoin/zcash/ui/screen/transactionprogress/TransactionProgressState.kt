@@ -30,7 +30,7 @@ data class SuccessfulTransactionState(
 data class FailureTransactionState(
     val title: StringResource,
     val text: StringResource,
-    val onViewTransactionClick: () -> Unit,
+    val onViewTransactionClick: (() -> Unit)?,
     val onCloseClick: () -> Unit,
     val onReportClick: () -> Unit,
     override val onBack: () -> Unit

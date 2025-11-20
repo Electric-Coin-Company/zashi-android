@@ -29,13 +29,7 @@ class PersistableWalletProviderImpl(
             .observe()
             .map { wallet ->
                 wallet?.copy(
-                    seedPhrase =
-                        wallet.seedPhrase.copy(
-                            split =
-                                wallet.seedPhrase.split.mapIndexed { index, word ->
-                                    word.trim()
-                                }
-                        )
+                    seedPhrase = wallet.seedPhrase.copy(split = wallet.seedPhrase.split.map { it.trim() })
                 )
             }
 

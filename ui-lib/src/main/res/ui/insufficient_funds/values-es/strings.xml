@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="insufficient_funds_title">Fondos insuficientes</string>
+    <string name="insufficient_funds_description">No pudimos crear esta transacción para ti. Tu billetera no tiene suficiente saldo para cubrir tanto el monto de la transacción como las comisiones de transacción. Por favor, reduce el monto de la transacción para tener en cuenta las comisiones.</string>
+    <string name="insufficient_funds_button">OK</string>
+</resources>

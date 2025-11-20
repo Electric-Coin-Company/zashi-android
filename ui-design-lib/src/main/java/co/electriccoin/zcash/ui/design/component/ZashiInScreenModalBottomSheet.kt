@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.design.component
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
@@ -30,42 +31,32 @@ fun <T : ModalBottomSheetState> ZashiInScreenModalBottomSheet(
     dragHandle: @Composable (() -> Unit)? = { ZashiModalBottomSheetDragHandle() },
     content: @Composable ColumnScope.(T) -> Unit = {},
 ) {
-    var normalizedState: T? by remember { mutableStateOf(null) }
+    var normalizedState: T? by remember { mutableStateOf(state) }
 
     normalizedState?.let {
         ZashiModalBottomSheet(
-            onDismissRequest = {
-                it.onBack()
-            },
+            onDismissRequest = { it.onBack() },
             modifier = modifier,
             sheetState = sheetState,
-            properties =
-                ModalBottomSheetProperties(
-                    shouldDismissOnBackPress = false
-                ),
+            properties = ModalBottomSheetProperties(shouldDismissOnBackPress = false),
             dragHandle = dragHandle
         ) {
-            BackHandler {
-                it.onBack()
-            }
-
+            BackHandler { it.onBack() }
             content(it)
-
             Spacer(24.dp)
-            androidx.compose.foundation.layout.Spacer(
-                modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars),
-            )
+            Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
+            LaunchedEffect(Unit) {
+                sheetState.show()
+            }
         }
     }
 
     LaunchedEffect(state) {
-        if (state != null) {
-            normalizedState = state
-            sheetState.show()
-        } else {
+        if (state == null) {
             sheetState.hide()
-            normalizedState = null
         }
+
+        normalizedState = state
     }
 }
 

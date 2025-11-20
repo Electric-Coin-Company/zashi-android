@@ -1,8 +1,8 @@
 package co.electriccoin.zcash.ui.fixture
 
+import cash.z.ecc.android.sdk.model.ZcashNetwork
 import co.electriccoin.zcash.ui.common.model.Changelog
 import co.electriccoin.zcash.ui.common.model.DistributionDimension
-import co.electriccoin.zcash.ui.common.model.NetworkDimension
 import co.electriccoin.zcash.ui.common.model.VersionInfo
 
 // Magic Number doesn't matter here for hard-coded fixture values
@@ -37,6 +37,6 @@ object VersionInfoFixture {
         gitCommitCount = gitCommitCount,
         changelog = changelog,
         distribution = distributionDimension,
-        network = NetworkDimension.MAINNET
+        network = ZcashNetwork.Mainnet
     )
 }

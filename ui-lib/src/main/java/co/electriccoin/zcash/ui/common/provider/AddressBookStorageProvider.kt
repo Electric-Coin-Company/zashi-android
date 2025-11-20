@@ -10,11 +10,6 @@ interface AddressBookStorageProvider {
     fun getLegacyUnencryptedStorageFile(): File?
 
     fun getOrCreateStorageFile(addressBookKey: AddressBookKey): File
-
-    // /**
-    //  * Create a temporary file into which data from remote is written. This file is removed after usage.
-    //  */
-    // fun getOrCreateTempStorageFile(): File
 }
 
 class AddressBookStorageProviderImpl(
@@ -36,14 +31,6 @@ class AddressBookStorageProviderImpl(
         return file
     }
 
-    // override fun getOrCreateTempStorageFile(): File {
-    //     val file = File(context.noBackupFilesDir, REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY)
-    //     if (!file.exists()) {
-    //         file.createNewFile()
-    //     }
-    //     return file
-    // }
-
     private fun getOrCreateAddressBookDir(): File {
         val filesDir = context.filesDir
         val addressBookDir = File(filesDir, "address_book")
@@ -55,4 +42,3 @@ class AddressBookStorageProviderImpl(
 }
 
 private const val LEGACY_UNENCRYPTED_ADDRESS_BOOK_FILE_NAME = "address_book"
-// private const val REMOTE_ADDRESS_BOOK_FILE_NAME_LOCAL_COPY = "address_book_temp"

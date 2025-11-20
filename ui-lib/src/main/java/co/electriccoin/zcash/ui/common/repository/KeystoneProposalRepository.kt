@@ -7,6 +7,7 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ExactOutputSwapTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.InsufficientFundsException
 import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
@@ -37,19 +38,19 @@ interface KeystoneProposalRepository {
 
     val submitState: Flow<SubmitProposalState?>
 
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createProposal(zecSend: ZecSend)
 
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createExactInputSwapProposal(zecSend: ZecSend, quote: SwapQuote): ExactInputSwapTransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createExactOutputSwapProposal(zecSend: ZecSend, quote: SwapQuote): ExactOutputSwapTransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createShieldProposal()
 
     @Throws(PcztException.CreatePcztFromProposalException::class)
@@ -190,7 +191,7 @@ class KeystoneProposalRepositoryImpl(
             }
         }
 
-    @Suppress("UseCheckOrError", "ThrowingExceptionsWithoutMessageOrCause")
+    @Suppress("UseCheckOrError", "ThrowingExceptionsWithoutMessageOrCause", "TooGenericExceptionCaught")
     override suspend fun submit(): SubmitResult =
         scope
             .async {
@@ -223,13 +224,24 @@ class KeystoneProposalRepositoryImpl(
                         }
                         throw IllegalStateException("PCZT with proofs is null")
                     } else {
-                        val result =
-                            proposalDataSource.submitTransaction(
-                                pcztWithProofs = pcztWithProofs,
-                                pcztWithSignatures = pcztWithSignatures
-                            )
-                        submitState.update { SubmitProposalState.Result(result) }
-                        result
+                        try {
+                            val result =
+                                proposalDataSource.submitTransaction(
+                                    pcztWithProofs = pcztWithProofs,
+                                    pcztWithSignatures = pcztWithSignatures
+                                )
+                            submitState.update { SubmitProposalState.Result(result) }
+                            result
+                        } catch (e: Exception) {
+                            val result =
+                                SubmitResult.Failure(
+                                    txIds = emptyList(),
+                                    code = 0,
+                                    description = e.message
+                                )
+                            submitState.update { SubmitProposalState.Result(result) }
+                            throw e
+                        }
                     }
                 }
             }.await()
@@ -255,6 +267,10 @@ class KeystoneProposalRepositoryImpl(
                 block()
             } catch (e: TransactionProposalNotCreatedException) {
                 Twig.error(e) { "Unable to create proposal" }
+                transactionProposal.update { null }
+                throw e
+            } catch (e: InsufficientFundsException) {
+                Twig.error(e) { "Insufficient funds" }
                 transactionProposal.update { null }
                 throw e
             }

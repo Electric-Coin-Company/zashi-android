@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common.datasource
 
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.exception.PcztException
+import cash.z.ecc.android.sdk.exception.TransactionEncoderException
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.Memo
 import cash.z.ecc.android.sdk.model.Pczt
@@ -26,27 +27,27 @@ import org.zecdev.zip321.ZIP321
 import java.math.BigDecimal
 
 interface ProposalDataSource {
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createProposal(account: WalletAccount, send: ZecSend): RegularTransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createZip321Proposal(account: WalletAccount, zip321Uri: String): Zip321TransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createExactInputProposal(
         account: WalletAccount,
         send: ZecSend,
         quote: SwapQuote,
     ): ExactInputSwapTransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createExactOutputProposal(
         account: WalletAccount,
         send: ZecSend,
         quote: SwapQuote,
     ): ExactOutputSwapTransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createShieldProposal(account: WalletAccount): ShieldTransactionProposal
 
     @Throws(PcztException.CreatePcztFromProposalException::class)
@@ -66,6 +67,8 @@ interface ProposalDataSource {
 class TransactionProposalNotCreatedException(
     reason: Exception
 ) : Exception(reason)
+
+class InsufficientFundsException : Exception()
 
 @Suppress("TooManyFunctions")
 class ProposalDataSourceImpl(
@@ -189,7 +192,7 @@ class ProposalDataSourceImpl(
         }
 
     override suspend fun submitTransaction(pcztWithProofs: Pczt, pcztWithSignatures: Pczt): SubmitResult =
-        submitTransactionInternal(transactionCount = 1) {
+        submitTransactionInternal {
             it.createTransactionFromPczt(
                 pcztWithProofs = pcztWithProofs,
                 pcztWithSignatures = pcztWithSignatures,
@@ -197,7 +200,7 @@ class ProposalDataSourceImpl(
         }
 
     override suspend fun submitTransaction(proposal: Proposal, usk: UnifiedSpendingKey): SubmitResult =
-        submitTransactionInternal(transactionCount = proposal.transactionCount()) {
+        submitTransactionInternal {
             it.createProposedTransactions(
                 proposal = proposal,
                 usk = usk,
@@ -213,19 +216,11 @@ class ProposalDataSourceImpl(
 
     @Suppress("CyclomaticComplexMethod", "TooGenericExceptionCaught")
     private suspend fun submitTransactionInternal(
-        transactionCount: Int,
         block: suspend (Synchronizer) -> Flow<TransactionSubmitResult>
     ): SubmitResult =
         withContext(Dispatchers.IO) {
             val synchronizer = synchronizerProvider.getSdkSynchronizer()
-            val submitResults =
-                try {
-                    block(synchronizer).toList()
-                } catch (e: Exception) {
-                    Twig.error(e) { "Error submitting transaction" }
-                    throw e
-                }
-
+            val submitResults = block(synchronizer).toList()
             Twig.debug { "Internal transaction submit results: $submitResults" }
 
             val successCount =
@@ -274,7 +269,7 @@ class ProposalDataSourceImpl(
                             SubmitResult.Failure(txIds = txIds, code = errCode, description = errDesc)
                         }
 
-                    transactionCount -> SubmitResult.Success(txIds = txIds)
+                    txIds.size -> SubmitResult.Success(txIds = txIds)
 
                     else ->
                         if (resubmittableFailures.all { it }) {
@@ -294,6 +289,13 @@ class ProposalDataSourceImpl(
     private inline fun <T : Any> getOrThrow(block: () -> T): T =
         try {
             block()
+        } catch (e: TransactionEncoderException.ProposalFromParametersException) {
+            val message = e.rootCause.message ?: ""
+            if (message.contains("Insufficient balance", true)) {
+                throw InsufficientFundsException()
+            } else {
+                throw TransactionProposalNotCreatedException(e)
+            }
         } catch (e: Exception) {
             throw TransactionProposalNotCreatedException(e)
         }

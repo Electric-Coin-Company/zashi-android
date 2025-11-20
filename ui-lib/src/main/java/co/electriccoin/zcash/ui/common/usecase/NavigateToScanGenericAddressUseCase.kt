@@ -44,7 +44,13 @@ class NavigateToScanGenericAddressUseCase(
         )
     }
 
-    private fun String.normalizeAddress() = this.split(":").lastOrNull().orEmpty()
+    private fun String.normalizeAddress() =
+        this
+            .split(":")
+            .lastOrNull()
+            ?.split("?")
+            ?.firstOrNull()
+            .orEmpty()
 }
 
 private sealed interface ScanAddressPipelineResult {

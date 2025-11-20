@@ -4,10 +4,12 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.sdk.extension.floor
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
+import co.electriccoin.zcash.ui.common.datasource.InsufficientFundsException
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
+import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsArgs
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionArgs
 
 class CreateProposalUseCase(
@@ -29,6 +31,10 @@ class CreateProposalUseCase(
                     zashiProposalRepository.createProposal(normalized)
             }
             navigationRouter.forward(ReviewTransactionArgs)
+        } catch (_: InsufficientFundsException) {
+            keystoneProposalRepository.clear()
+            zashiProposalRepository.clear()
+            navigationRouter.forward(InsufficientFundsArgs)
         } catch (e: Exception) {
             keystoneProposalRepository.clear()
             zashiProposalRepository.clear()

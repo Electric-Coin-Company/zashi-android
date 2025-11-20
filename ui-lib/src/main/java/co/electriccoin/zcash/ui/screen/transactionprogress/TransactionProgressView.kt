@@ -457,16 +457,18 @@ private fun FailureTransaction(
 
             Spacer(modifier = Modifier.height(ZashiDimensions.Spacing.spacingXl))
 
-            ZashiButton(
-                state =
-                    ButtonState(
-                        text = stringRes(R.string.send_confirmation_failure_view_trx),
-                        onClick = state.onViewTransactionClick,
-                    ),
-                modifier =
-                    Modifier.wrapContentWidth(),
-                defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
-            )
+            if (state.onViewTransactionClick != null) {
+                ZashiButton(
+                    state =
+                        ButtonState(
+                            text = stringRes(R.string.send_confirmation_failure_view_trx),
+                            onClick = state.onViewTransactionClick,
+                        ),
+                    modifier =
+                        Modifier.wrapContentWidth(),
+                    defaultPrimaryColors = ZashiButtonDefaults.tertiaryColors()
+                )
+            }
         }
     }
 }

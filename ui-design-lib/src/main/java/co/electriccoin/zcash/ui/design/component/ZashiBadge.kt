@@ -16,6 +16,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -31,12 +32,14 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 fun ZashiBadge(
     text: String,
     modifier: Modifier = Modifier,
+    shape: Shape = CircleShape,
     contentPadding: PaddingValues = ZashiBadgeDefaults.contentPadding,
     leadingIconVector: Painter? = null,
     colors: ZashiBadgeColors = ZashiBadgeDefaults.successColors()
 ) {
     ZashiBadge(
         text = stringRes(text),
+        shape = shape,
         leadingIconVector = leadingIconVector,
         modifier = modifier,
         colors = colors,
@@ -48,13 +51,14 @@ fun ZashiBadge(
 fun ZashiBadge(
     text: StringResource,
     modifier: Modifier = Modifier,
+    shape: Shape = CircleShape,
     contentPadding: PaddingValues = ZashiBadgeDefaults.contentPadding,
     leadingIconVector: Painter? = null,
     colors: ZashiBadgeColors = ZashiBadgeDefaults.successColors()
 ) {
     Surface(
         modifier = modifier,
-        shape = CircleShape,
+        shape = shape,
         color = colors.container,
         border = BorderStroke(1.dp, colors.border),
     ) {
@@ -131,6 +135,17 @@ object ZashiBadgeDefaults {
         border: Color = ZashiColors.Utility.WarningYellow.utilityOrange200,
         text: Color = ZashiColors.Utility.WarningYellow.utilityOrange700,
         background: Color = ZashiColors.Utility.WarningYellow.utilityOrange50,
+    ) = ZashiBadgeColors(
+        border = border,
+        text = text,
+        container = background,
+    )
+
+    @Composable
+    fun infoColors(
+        border: Color = ZashiColors.Utility.Gray.utilityGray200,
+        text: Color = ZashiColors.Utility.Gray.utilityGray700,
+        background: Color = ZashiColors.Utility.Gray.utilityGray50,
     ) = ZashiBadgeColors(
         border = border,
         text = text,

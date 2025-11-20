@@ -26,7 +26,6 @@ inline fun <reified T : Any> NavGraphBuilder.dialogComposable(
 }
 
 object NavigationTargets {
-    const val DELETE_WALLET = "delete_wallet"
     const val EXPORT_PRIVATE_DATA = "export_private_data"
     const val NOT_ENOUGH_SPACE = "not_enough_space"
     const val QR_CODE = "qr_code"
