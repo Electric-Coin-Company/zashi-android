@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.screen.resync.confirm
 
 import android.app.Application
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,6 +19,7 @@ import co.electriccoin.zcash.ui.design.util.StringResourceColor
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import co.electriccoin.zcash.ui.design.util.styledStringResource
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,18 +33,21 @@ import java.time.YearMonth
 import java.time.ZonedDateTime
 
 class ConfirmResyncVM(
+    persistableWalletProvider: PersistableWalletProvider,
     private val application: Application,
     private val navigationRouter: NavigationRouter,
-    persistableWalletProvider: PersistableWalletProvider,
     private val navigateToEstimateBlockHeight: NavigateToEstimateBlockHeightUseCase,
     private val confirmResync: ConfirmResyncUseCase
 ) : ViewModel() {
     private val blockHeight = MutableStateFlow<BlockHeight?>(null)
 
+    private var changeJob: Job? = null
+    private var confirmJob: Job? = null
+
     init {
         viewModelScope.launch {
             val wallet = persistableWalletProvider.requirePersistableWallet()
-            blockHeight.value = wallet.birthday
+            blockHeight.update { wallet.birthday }
         }
     }
 
@@ -72,8 +77,15 @@ class ConfirmResyncVM(
             subtitle = stringRes(R.string.confirm_resync_title),
             message = stringRes(R.string.confirm_resync_subtitle),
             onBack = ::onBack,
-            confirm = ButtonState(stringRes(R.string.confirm_resync_confirm), onClick = ::onConfirmClick),
-            change = ButtonState(stringRes(R.string.confirm_resync_change), onClick = ::onChangeClick),
+            confirm = ButtonState(
+                stringRes(R.string.confirm_resync_confirm),
+                hapticFeedbackType = HapticFeedbackType.Confirm,
+                onClick = ::onConfirmClick
+            ),
+            change = ButtonState(
+                stringRes(R.string.confirm_resync_change),
+                onClick = ::onChangeClick
+            ),
             changeInfo = styledStringResource(
                 resource = R.string.confirm_resync_info,
                 color = StringResourceColor.TERTIARY,
@@ -86,13 +98,18 @@ class ConfirmResyncVM(
 
     private fun onBack() = navigationRouter.back()
 
-    private fun onChangeClick() =
-        viewModelScope.launch {
+    private fun onChangeClick() {
+        if (changeJob?.isActive == true) return
+        changeJob = viewModelScope.launch {
             val currentHeight = blockHeight.value ?: return@launch
             val result = navigateToEstimateBlockHeight(currentHeight)
             result?.let { blockHeight.update { result } }
             navigationRouter.backTo(ConfirmResyncArgs::class)
         }
+    }
 
-    private fun onConfirmClick() = viewModelScope.launch { confirmResync(blockHeight.value ?: return@launch) }
+    private fun onConfirmClick() {
+        if (confirmJob?.isActive == true) return
+        confirmJob = viewModelScope.launch { confirmResync(blockHeight.value ?: return@launch) }
+    }
 }

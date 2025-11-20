@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.resync.estimation
 
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.electriccoin.zcash.ui.NavigationRouter
@@ -48,7 +47,6 @@ class ResyncBDEstimationVM(
                 ButtonState(
                     text = stringRes(R.string.resync_bd_estimation_btn),
                     onClick = ::onSetHeightClick,
-                    hapticFeedbackType = HapticFeedbackType.Confirm
                 ),
         )
 
