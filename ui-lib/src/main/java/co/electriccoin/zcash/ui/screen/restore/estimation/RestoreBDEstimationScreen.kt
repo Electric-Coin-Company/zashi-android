@@ -10,8 +10,8 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-fun AndroidRestoreBDEstimation(args: RestoreBDEstimation) {
-    val vm = koinViewModel<RestoreBDEstimationViewModel> { parametersOf(args) }
+fun RestoreBDEstimationScreen(args: RestoreBDEstimationArgs) {
+    val vm = koinViewModel<RestoreBDEstimationVM> { parametersOf(args) }
     val state by vm.state.collectAsStateWithLifecycle()
     SecureScreen()
     BackHandler { state.onBack() }
@@ -19,7 +19,4 @@ fun AndroidRestoreBDEstimation(args: RestoreBDEstimation) {
 }
 
 @Serializable
-data class RestoreBDEstimation(
-    val seed: String,
-    val blockHeight: Long
-)
+data class RestoreBDEstimationArgs(val seed: String, val blockHeight: Long)

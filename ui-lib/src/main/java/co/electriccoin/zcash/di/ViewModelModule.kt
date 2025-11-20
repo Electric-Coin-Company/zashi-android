@@ -39,7 +39,7 @@ import co.electriccoin.zcash.ui.screen.qrcode.QrCodeVM
 import co.electriccoin.zcash.ui.screen.receive.ReceiveVM
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestVM
 import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateVM
-import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationViewModel
+import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationVM
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightVM
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
 import co.electriccoin.zcash.ui.screen.restore.tor.RestoreTorVM
@@ -125,7 +125,7 @@ val viewModelModule =
         viewModelOf(::HomeVM)
         viewModelOf(::RestoreBDHeightVM)
         viewModelOf(::RestoreBDDateVM)
-        viewModelOf(::RestoreBDEstimationViewModel)
+        viewModelOf(::RestoreBDEstimationVM)
         viewModelOf(::ShieldFundsInfoVM)
         viewModelOf(::WalletBackupInfoViewModel)
         viewModelOf(::ExchangeRateSettingsVM)

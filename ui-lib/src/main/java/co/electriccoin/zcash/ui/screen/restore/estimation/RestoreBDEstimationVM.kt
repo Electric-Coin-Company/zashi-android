@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class RestoreBDEstimationViewModel(
-    private val args: RestoreBDEstimation,
+class RestoreBDEstimationVM(
+    private val args: RestoreBDEstimationArgs,
     private val navigationRouter: NavigationRouter,
     private val copyToClipboard: CopyToClipboardUseCase
 ) : ViewModel() {

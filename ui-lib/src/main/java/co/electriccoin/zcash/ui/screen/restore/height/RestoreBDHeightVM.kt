@@ -1,14 +1,12 @@
 package co.electriccoin.zcash.ui.screen.restore.height
 
-import android.content.Context
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
@@ -28,7 +26,6 @@ import kotlinx.coroutines.flow.update
 class RestoreBDHeightVM(
     private val restoreBDHeight: RestoreBDHeight,
     private val navigationRouter: NavigationRouter,
-    private val context: Context,
 ) : ViewModel() {
     private val blockHeightText = MutableStateFlow(NumberTextFieldInnerState())
 
@@ -46,7 +43,9 @@ class RestoreBDHeightVM(
         val isHigherThanSaplingActivationHeight =
             blockHeight
                 .amount
-                ?.let { it.toLong() >= ZcashNetwork.fromResources(context).saplingActivationHeight.value } ?: false
+                ?.let { it.toLong() >= VersionInfo.NETWORK.saplingActivationHeight.value
+                } ?:
+                false
         val isValid = !blockHeight.innerTextFieldState.value.isEmpty() && isHigherThanSaplingActivationHeight
 
         return RestoreBDHeightState(
@@ -68,9 +67,7 @@ class RestoreBDHeightVM(
         )
     }
 
-    private fun onEstimateClick() {
-        navigationRouter.forward(RestoreBDDateArgs(seed = restoreBDHeight.seed))
-    }
+    private fun onEstimateClick() = navigationRouter.forward(RestoreBDDateArgs(seed = restoreBDHeight.seed))
 
     private fun onRestoreClick() {
         navigationRouter.forward(
@@ -81,15 +78,9 @@ class RestoreBDHeightVM(
         )
     }
 
-    private fun onBack() {
-        navigationRouter.back()
-    }
+    private fun onBack() = navigationRouter.back()
 
-    private fun onInfoButtonClick() {
-        navigationRouter.forward(SeedInfo)
-    }
+    private fun onInfoButtonClick() = navigationRouter.forward(SeedInfo)
 
-    private fun onValueChanged(state: NumberTextFieldInnerState) {
-        blockHeightText.update { state }
-    }
+    private fun onValueChanged(state: NumberTextFieldInnerState) = blockHeightText.update { state }
 }
