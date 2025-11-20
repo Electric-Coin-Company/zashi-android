@@ -14,7 +14,7 @@ import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldInnerState
 import co.electriccoin.zcash.ui.design.component.NumberTextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDate
+import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateArgs
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.restore.tor.RestoreTorArgs
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -69,7 +69,7 @@ class RestoreBDHeightVM(
     }
 
     private fun onEstimateClick() {
-        navigationRouter.forward(RestoreBDDate(seed = restoreBDHeight.seed))
+        navigationRouter.forward(RestoreBDDateArgs(seed = restoreBDHeight.seed))
     }
 
     private fun onRestoreClick() {

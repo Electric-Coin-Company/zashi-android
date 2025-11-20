@@ -1,14 +1,13 @@
 package co.electriccoin.zcash.ui.screen.restore.date
 
-import android.content.Context
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.SdkSynchronizer
-import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
-import cash.z.ecc.sdk.type.fromResources
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -26,10 +25,10 @@ import kotlinx.datetime.toKotlinInstant
 import java.time.YearMonth
 import java.time.ZoneId
 
-class RestoreBDDateViewModel(
-    private val args: RestoreBDDate,
+class RestoreBDDateVM(
+    private val args: RestoreBDDateArgs,
     private val navigationRouter: NavigationRouter,
-    private val context: Context,
+    private val application: Application,
 ) : ViewModel() {
     @Suppress("MagicNumber")
     private val selection = MutableStateFlow<YearMonth>(YearMonth.of(2018, 10))
@@ -41,7 +40,7 @@ class RestoreBDDateViewModel(
             }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = null
+                initialValue = createState(selection.value)
             )
 
     private fun createState(selection: YearMonth) =
@@ -68,23 +67,17 @@ class RestoreBDDateViewModel(
                     .toKotlinInstant()
             val bday =
                 SdkSynchronizer.estimateBirthdayHeight(
-                    context = context,
+                    context = application,
                     date = instant,
-                    network = ZcashNetwork.fromResources(context)
+                    network = VersionInfo.NETWORK
                 )
             navigationRouter.forward(RestoreBDEstimation(seed = args.seed, blockHeight = bday.value))
         }
     }
 
-    private fun onBack() {
-        navigationRouter.back()
-    }
+    private fun onBack() = navigationRouter.back()
 
-    private fun onInfoButtonClick() {
-        navigationRouter.forward(SeedInfo)
-    }
+    private fun onInfoButtonClick() = navigationRouter.forward(SeedInfo)
 
-    private fun onYearMonthChange(yearMonth: YearMonth) {
-        selection.update { yearMonth }
-    }
+    private fun onYearMonthChange(yearMonth: YearMonth) = selection.update { yearMonth }
 }

@@ -10,8 +10,8 @@ import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
-fun AndroidRestoreBDDate(args: RestoreBDDate) {
-    val vm = koinViewModel<RestoreBDDateViewModel> { parametersOf(args) }
+fun RestoreBDDateScreen(args: RestoreBDDateArgs) {
+    val vm = koinViewModel<RestoreBDDateVM> { parametersOf(args) }
     val state by vm.state.collectAsStateWithLifecycle()
     SecureScreen()
     BackHandler(enabled = state != null) { state?.onBack?.invoke() }
@@ -19,6 +19,4 @@ fun AndroidRestoreBDDate(args: RestoreBDDate) {
 }
 
 @Serializable
-data class RestoreBDDate(
-    val seed: String
-)
+data class RestoreBDDateArgs(val seed: String)

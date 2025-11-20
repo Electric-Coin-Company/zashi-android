@@ -18,8 +18,8 @@ import co.electriccoin.zcash.ui.screen.error.ErrorDialog
 import co.electriccoin.zcash.ui.screen.onboarding.Onboarding
 import co.electriccoin.zcash.ui.screen.onboarding.persistExistingWalletWithSeedPhrase
 import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
-import co.electriccoin.zcash.ui.screen.restore.date.AndroidRestoreBDDate
-import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDate
+import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateScreen
+import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateArgs
 import co.electriccoin.zcash.ui.screen.restore.estimation.AndroidRestoreBDEstimation
 import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimation
 import co.electriccoin.zcash.ui.screen.restore.height.AndroidRestoreBDHeight
@@ -76,7 +76,7 @@ fun NavGraphBuilder.onboardingNavGraph(
         }
         composable<RestoreSeed> { AndroidRestoreSeed() }
         composable<RestoreBDHeight> { AndroidRestoreBDHeight(it.toRoute()) }
-        composable<RestoreBDDate> { AndroidRestoreBDDate(it.toRoute()) }
+        composable<RestoreBDDateArgs> { RestoreBDDateScreen(it.toRoute()) }
         composable<RestoreBDEstimation> { AndroidRestoreBDEstimation(it.toRoute()) }
         dialogComposable<SeedInfo> { AndroidSeedInfo() }
         composable<ThirdPartyScan> { AndroidThirdPartyScan() }
