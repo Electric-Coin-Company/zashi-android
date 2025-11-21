@@ -39,6 +39,9 @@ local.properties
 .idea/tasks.xml
 .idea/vcs.xml
 .idea/workspace.xml
+.idea/deviceManager.xml
+.idea/markdown.xml
+.idea/ChatHistory_schema_v3.xml
 
 # Other configuration files
 google-services.json

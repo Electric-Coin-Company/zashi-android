@@ -22,6 +22,8 @@ import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsArgs
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsScreen
 import co.electriccoin.zcash.ui.screen.advancedsettings.debug.DebugArgs
 import co.electriccoin.zcash.ui.screen.advancedsettings.debug.DebugScreen
+import co.electriccoin.zcash.ui.screen.advancedsettings.debug.db.DebugDBArgs
+import co.electriccoin.zcash.ui.screen.advancedsettings.debug.db.DebugDBScreen
 import co.electriccoin.zcash.ui.screen.advancedsettings.debug.text.DebugTextArgs
 import co.electriccoin.zcash.ui.screen.advancedsettings.debug.text.DebugTextScreen
 import co.electriccoin.zcash.ui.screen.balances.spendable.SpendableBalanceArgs
@@ -255,6 +257,7 @@ fun NavGraphBuilder.walletNavGraph(
         dialogComposable<EphemeralHotfixArgs> { EphemeralHotfixScreen(it.toRoute()) }
         dialogComposable<EphemeralLockArgs> { EphemeralLockScreen() }
         composable<DebugArgs> { DebugScreen() }
+        composable<DebugDBArgs> { DebugDBScreen() }
         dialogComposable<DebugTextArgs> { DebugTextScreen(it.toRoute()) }
     }
 }

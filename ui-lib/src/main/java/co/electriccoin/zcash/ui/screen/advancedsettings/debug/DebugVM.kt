@@ -7,6 +7,7 @@ import co.electriccoin.zcash.ui.common.repository.EphemeralAddressRepository
 import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.advancedsettings.debug.db.DebugDBArgs
 import co.electriccoin.zcash.ui.screen.advancedsettings.debug.text.DebugTextArgs
 import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixArgs
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,6 +44,12 @@ class DebugVM(
                             title = stringRes("Discover Funds"),
                             onClick = ::onDiscoverFundsClick
                         ),
+                        ListItemState(
+                            // bigIcon = imageRes(R.drawable.ic_zec_round_full),
+                            // smallIcon = imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_zec_unshielded),
+                            title = stringRes("Query Database"),
+                            onClick = ::onQueryDatabaseClick
+                        )
                     )
             )
         ).asStateFlow()
@@ -74,4 +81,6 @@ class DebugVM(
         }
 
     private fun onDiscoverFundsClick() = navigationRouter.forward(EphemeralHotfixArgs(null))
+
+    private fun onQueryDatabaseClick() = navigationRouter.forward(DebugDBArgs)
 }
