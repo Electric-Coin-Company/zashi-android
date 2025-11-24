@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptInViewModel
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoVM
+import co.electriccoin.zcash.ui.screen.hotfix.enhancement.EnhancementHotfixVM
 import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixVM
 import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsVM
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsVM
@@ -163,6 +164,7 @@ val viewModelModule =
         viewModelOf(::SwapRefundAddressInfoVM)
         viewModelOf(::ScreenTimeoutVM)
         viewModelOf(::EphemeralHotfixVM)
+        viewModelOf(::EnhancementHotfixVM)
         viewModelOf(::EphemeralLockVM)
         viewModelOf(::DebugVM)
         viewModelOf(::DebugDBVM)

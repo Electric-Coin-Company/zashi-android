@@ -61,7 +61,8 @@ fun MoreView(state: MoreState) {
             ZashiVersion(
                 modifier = Modifier.fillMaxWidth(),
                 version = state.version,
-                onLongClick = state.onVersionLongClick
+                onLongClick = state.onVersionLongClick,
+                onDoubleClick = state.onVersionDoubleClick
             )
         }
     }
@@ -111,7 +112,8 @@ private fun PreviewMoreView() {
                                 onClick = { },
                             ),
                         ),
-                    onVersionLongClick = {}
+                    onVersionLongClick = {},
+                    onVersionDoubleClick = {}
                 ),
         )
     }
@@ -149,7 +151,8 @@ private fun IntegrationsDisabledPreview() {
                                 onClick = { },
                             ),
                         ),
-                    onVersionLongClick = {}
+                    onVersionLongClick = {},
+                    onVersionDoubleClick = {}
                 ),
         )
     }

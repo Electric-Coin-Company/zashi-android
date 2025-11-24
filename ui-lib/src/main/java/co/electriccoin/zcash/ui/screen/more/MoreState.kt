@@ -10,5 +10,6 @@ data class MoreState(
     val version: StringResource,
     val onBack: () -> Unit,
     val onVersionLongClick: () -> Unit,
+    val onVersionDoubleClick: () -> Unit,
     val items: ImmutableList<ListItemState>,
 )

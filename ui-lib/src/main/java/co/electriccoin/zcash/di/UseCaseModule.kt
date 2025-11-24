@@ -19,6 +19,7 @@ import co.electriccoin.zcash.ui.common.usecase.DeriveKeystoneAccountUnifiedAddre
 import co.electriccoin.zcash.ui.common.usecase.ExportTaxUseCase
 import co.electriccoin.zcash.ui.common.usecase.FilterSwapAssetsUseCase
 import co.electriccoin.zcash.ui.common.usecase.FilterSwapBlockchainsUseCase
+import co.electriccoin.zcash.ui.common.usecase.FixEnhancementUseCase
 import co.electriccoin.zcash.ui.common.usecase.FixEphemeralAddressUseCase
 import co.electriccoin.zcash.ui.common.usecase.FlipTransactionBookmarkUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABContactByIdUseCase
@@ -260,6 +261,7 @@ val useCaseModule =
         factoryOf(::WalletBackupMessageUseCaseImpl) bind WalletBackupMessageUseCase::class
         factoryOf(::ValidateAddressUseCase)
         singleOf(::FixEphemeralAddressUseCase)
+        factoryOf(::FixEnhancementUseCase)
         factoryOf(::IsEphemeralAddressLockedUseCase)
         singleOf(::SubmitIncreaseEphemeralGapLimitUseCase)
         factoryOf(::CreateIncreaseEphemeralGapLimitProposalUseCase)

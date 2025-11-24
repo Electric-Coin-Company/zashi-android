@@ -25,7 +25,8 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 fun ZashiVersion(
     version: StringResource,
     modifier: Modifier = Modifier,
-    onLongClick: (() -> Unit)? = null
+    onLongClick: (() -> Unit)? = null,
+    onDoubleClick: (() -> Unit)? = null
 ) {
     Column(
         modifier =
@@ -35,6 +36,7 @@ fun ZashiVersion(
                         indication = null,
                         onClick = {},
                         onLongClick = onLongClick,
+                        onDoubleClick = onDoubleClick,
                         interactionSource = remember { MutableInteractionSource() },
                     )
                 } else {

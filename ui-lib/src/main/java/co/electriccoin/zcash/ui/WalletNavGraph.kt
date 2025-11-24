@@ -72,6 +72,8 @@ import co.electriccoin.zcash.ui.screen.home.syncing.AndroidWalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.AndroidWalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
+import co.electriccoin.zcash.ui.screen.hotfix.enhancement.EnhancementHotfixArgs
+import co.electriccoin.zcash.ui.screen.hotfix.enhancement.EnhancementHotfixScreen
 import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixArgs
 import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixScreen
 import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsArgs
@@ -271,6 +273,7 @@ fun NavGraphBuilder.walletNavGraph(
         composable<SwapDetailArgs> { SwapDetailScreen(it.toRoute()) }
         dialogComposable<SwapRefundAddressInfoArgs> { SwapRefundAddressInfoScreen() }
         dialogComposable<EphemeralHotfixArgs> { EphemeralHotfixScreen(it.toRoute()) }
+        dialogComposable<EnhancementHotfixArgs> { EnhancementHotfixScreen() }
         dialogComposable<EphemeralLockArgs> { EphemeralLockScreen() }
         composable<DebugArgs> { DebugScreen() }
         composable<DebugDBArgs> { DebugDBScreen() }

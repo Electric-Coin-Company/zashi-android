@@ -1,14 +1,14 @@
-package co.electriccoin.zcash.ui.screen.hotfix.ephemeral
+package co.electriccoin.zcash.ui.screen.hotfix.enhancement
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProvider
-import co.electriccoin.zcash.ui.common.usecase.FixEphemeralAddressUseCase
+import co.electriccoin.zcash.ui.common.usecase.FixEnhancementUseCase
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,51 +16,42 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class EphemeralHotfixVM(
-    args: EphemeralHotfixArgs,
-    isTorEnabledStorageProvider: IsTorEnabledStorageProvider,
+class EnhancementHotfixVM(
     private val navigationRouter: NavigationRouter,
-    private val fixEphemeralAddressUseCase: FixEphemeralAddressUseCase,
+    private val fixEnhancement: FixEnhancementUseCase
 ) : ViewModel() {
-    private val text = MutableStateFlow(args.address)
+    private val text = MutableStateFlow<String?>(null)
 
     private val isError = MutableStateFlow(false)
 
     val state: StateFlow<EphemeralHotfixState?> =
         combine(
             text,
-            fixEphemeralAddressUseCase.observeIsLoading(),
-            isError,
-            isTorEnabledStorageProvider.observe()
-        ) { text, isLoading, isError, isTorEnabled ->
+            isError
+        ) { text, isError ->
             EphemeralHotfixState(
                 address =
                     TextFieldState(
                         value = stringRes(text.orEmpty()),
                         onValueChange = { new -> this.text.update { new } },
-                        isEnabled = !isLoading && isTorEnabled == true,
                         error = stringRes("").takeIf { isError }
                     ),
                 button =
                     ButtonState(
-                        stringRes("Recover Funds"),
-                        onClick = ::onRecoverFundsClick,
-                        isEnabled = !text.isNullOrBlank() && !isLoading && isTorEnabled == true
+                        stringRes("Fetch Data"),
+                        onClick = ::onFetchDataClick,
+                        isEnabled = !text.isNullOrBlank()
                     ),
-                info =
-                    stringRes(
-                        "This operation requires Tor Protection. " +
-                            "Please enable it in the Advanced Settings."
-                    ).takeIf { isTorEnabled != true },
+                info = null,
                 onBack = ::onBack,
-                title = stringRes("Discover Funds"),
+                title = stringRes("Refresh Transaction Data"),
                 message =
                     stringRes(
-                        "If you confirm, Zashi will scan the transparent address you provide and " +
-                            "discover its funds. This may take a few minutes up to a few hours."
+                        "If you confirm, Zashi will fetch transaction data for a transaction ID you provide"
                     ),
-                subtitle = stringRes("Transparent Address"),
+                subtitle = stringRes("Transaction ID"),
             )
         }.stateIn(
             scope = viewModelScope,
@@ -70,5 +61,5 @@ class EphemeralHotfixVM(
 
     private fun onBack() = navigationRouter.back()
 
-    private fun onRecoverFundsClick() = fixEphemeralAddressUseCase(text.value.orEmpty())
+    private fun onFetchDataClick() = viewModelScope.launch { fixEnhancement(text.value.orEmpty()) }
 }

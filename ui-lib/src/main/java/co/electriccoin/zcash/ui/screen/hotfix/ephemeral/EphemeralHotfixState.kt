@@ -8,6 +8,9 @@ import co.electriccoin.zcash.ui.design.util.StringResource
 
 @Immutable
 data class EphemeralHotfixState(
+    val title: StringResource,
+    val message: StringResource,
+    val subtitle: StringResource,
     val address: TextFieldState,
     val button: ButtonState,
     val info: StringResource?,
