@@ -5,15 +5,9 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.DistributionDimension
-import co.electriccoin.zcash.ui.common.model.KeystoneAccount
-import co.electriccoin.zcash.ui.common.model.WalletAccount
-import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
 import co.electriccoin.zcash.ui.common.provider.ShieldFundsInfoProvider
-import co.electriccoin.zcash.ui.common.repository.ConfigurationRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageData
 import co.electriccoin.zcash.ui.common.usecase.GetHomeMessageUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.common.usecase.IsRestoreSuccessDialogVisibleUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToNearPayUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToReceiveUseCase
@@ -41,7 +35,6 @@ import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingMessageState
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingMessageState
-import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
 import co.electriccoin.zcash.ui.screen.send.Send
 import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import kotlinx.coroutines.Job
@@ -58,15 +51,12 @@ import kotlinx.coroutines.launch
 class HomeVM(
     getHomeMessage: GetHomeMessageUseCase,
     shieldFundsInfoProvider: ShieldFundsInfoProvider,
-    getWalletAccounts: GetWalletAccountsUseCase,
     isRestoreSuccessDialogVisible: IsRestoreSuccessDialogVisibleUseCase,
-    private val configurationRepository: ConfigurationRepository,
     private val navigationRouter: NavigationRouter,
     private val shieldFundsFromMessage: ShieldFundsFromMessageUseCase,
     private val navigateToError: NavigateToErrorUseCase,
     private val navigateToReceive: NavigateToReceiveUseCase,
     private val navigateToNearPay: NavigateToNearPayUseCase,
-    private val getVersionInfoProvider: GetVersionInfoProvider,
     private val navigateToSwap: NavigateToSwapUseCase
 ) : ViewModel() {
     private val messageState =
@@ -101,72 +91,49 @@ class HomeVM(
             )
 
     val state: StateFlow<HomeState?> =
-        combine(
-            messageState,
-            getWalletAccounts.observe()
-        ) { messageState, accounts ->
-            createState(
-                messageState = messageState,
-                accounts = accounts,
-                isFlexaAvailable = configurationRepository.isFlexaAvailable()
+        messageState
+            .map { messageState ->
+                createState(
+                    messageState = messageState
+                )
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
+                initialValue = null
             )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-            initialValue = null
-        )
 
     private var onPayButtonClickJob: Job? = null
 
     private var onSwapButtonClick: Job? = null
 
-    private fun createState(
-        messageState: HomeMessageState?,
-        accounts: List<WalletAccount>?,
-        isFlexaAvailable: Boolean
-    ) = HomeState(
-        firstButton =
-            BigIconButtonState(
-                text = stringRes(R.string.home_button_receive),
-                icon = R.drawable.ic_home_receive,
-                onClick = ::onReceiveButtonClick,
-            ),
-        secondButton =
-            BigIconButtonState(
-                text = stringRes(R.string.home_button_send),
-                icon = R.drawable.ic_home_send,
-                onClick = ::onSendButtonClick,
-            ),
-        thirdButton =
-            BigIconButtonState(
-                text = stringRes(R.string.home_button_pay),
-                icon = R.drawable.ic_home_pay,
-                onClick = ::onPayButtonClick,
-            ),
-        fourthButton =
-            if (getVersionInfoProvider().distribution == DistributionDimension.FOSS) {
-                if (!isFlexaAvailable && accounts.orEmpty().any { it is KeystoneAccount }) {
-                    BigIconButtonState(
-                        text = stringRes(R.string.home_button_swap),
-                        icon = R.drawable.ic_home_swap,
-                        onClick = ::onSwapButtonClick,
-                    )
-                } else {
-                    BigIconButtonState(
-                        text = stringRes(R.string.home_button_more),
-                        icon = R.drawable.ic_home_more,
-                        onClick = ::onMoreButtonClick,
-                    )
-                }
-            } else {
+    private fun createState(messageState: HomeMessageState?) =
+        HomeState(
+            firstButton =
                 BigIconButtonState(
-                    text = stringRes(R.string.home_button_more),
-                    icon = R.drawable.ic_home_more,
-                    onClick = ::onMoreButtonClick,
-                )
-            },
-        message = messageState
-    )
+                    text = stringRes(R.string.home_button_receive),
+                    icon = R.drawable.ic_home_receive,
+                    onClick = ::onReceiveButtonClick,
+                ),
+            secondButton =
+                BigIconButtonState(
+                    text = stringRes(R.string.home_button_send),
+                    icon = R.drawable.ic_home_send,
+                    onClick = ::onSendButtonClick,
+                ),
+            thirdButton =
+                BigIconButtonState(
+                    text = stringRes(R.string.home_button_pay),
+                    icon = R.drawable.ic_home_pay,
+                    onClick = ::onPayButtonClick,
+                ),
+            fourthButton =
+                BigIconButtonState(
+                    text = stringRes(R.string.home_button_swap),
+                    icon = R.drawable.ic_home_swap,
+                    onClick = ::onSwapButtonClick,
+                ),
+            message = messageState
+        )
 
     private fun createMessageState(data: HomeMessageData?, isShieldFundsInfoEnabled: Boolean) =
         when (data) {
@@ -237,8 +204,6 @@ class HomeVM(
         }
 
     private fun onCrashReportMessageClick() = navigationRouter.forward(CrashReportOptIn)
-
-    private fun onMoreButtonClick() = navigationRouter.forward(IntegrationsArgs)
 
     private fun onSwapButtonClick() {
         if (onSwapButtonClick?.isActive == true) return

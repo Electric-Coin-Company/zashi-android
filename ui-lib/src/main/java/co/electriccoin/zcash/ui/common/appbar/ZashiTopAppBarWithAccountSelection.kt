@@ -46,7 +46,7 @@ fun ZashiTopAppBarWithAccountSelection(
                     ZashiIconButton(state.balanceVisibilityButton, modifier = Modifier.size(40.dp))
                     Spacer(Modifier.width(4.dp))
                 }
-                ZashiIconButton(state.settingsButton, modifier = Modifier.size(40.dp))
+                ZashiIconButton(state.moreButton, modifier = Modifier.size(40.dp))
                 Spacer(Modifier.width(20.dp))
             },
             navigationAction = {
@@ -111,7 +111,7 @@ private fun AccountSwitch(state: AccountSwitchState) {
 data class ZashiMainTopAppBarState(
     val accountSwitchState: AccountSwitchState,
     val balanceVisibilityButton: IconButtonState,
-    val settingsButton: IconButtonState
+    val moreButton: IconButtonState
 ) {
     enum class AccountType { ZASHI, KEYSTONE }
 }
@@ -135,7 +135,7 @@ private fun ZashiMainTopAppBarPreview() =
                             onAccountTypeClick = {}
                         ),
                     balanceVisibilityButton = IconButtonState(R.drawable.ic_app_bar_balances_hide) {},
-                    settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {}
+                    moreButton = IconButtonState(R.drawable.ic_app_bar_settings) {}
                 )
         )
     }
@@ -153,7 +153,7 @@ private fun KeystoneMainTopAppBarPreview() =
                             onAccountTypeClick = {},
                         ),
                     balanceVisibilityButton = IconButtonState(R.drawable.ic_app_bar_balances_hide) {},
-                    settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {}
+                    moreButton = IconButtonState(R.drawable.ic_app_bar_settings) {}
                 )
         )
     }
@@ -171,7 +171,7 @@ private fun MainTopAppBarWithSubtitlePreview() =
                             onAccountTypeClick = {},
                         ),
                     balanceVisibilityButton = IconButtonState(R.drawable.ic_app_bar_balances_hide) {},
-                    settingsButton = IconButtonState(R.drawable.ic_app_bar_settings) {}
+                    moreButton = IconButtonState(R.drawable.ic_app_bar_settings) {}
                 )
         )
     }

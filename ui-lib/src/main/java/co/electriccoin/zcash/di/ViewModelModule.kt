@@ -35,6 +35,7 @@ import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoVM
 import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixVM
 import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsVM
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsVM
+import co.electriccoin.zcash.ui.screen.more.MoreVM
 import co.electriccoin.zcash.ui.screen.pay.PayVM
 import co.electriccoin.zcash.ui.screen.qrcode.QrCodeVM
 import co.electriccoin.zcash.ui.screen.receive.ReceiveVM
@@ -56,7 +57,6 @@ import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTVi
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel.SelectKeystoneAccountViewModel
 import co.electriccoin.zcash.ui.screen.send.SendViewModel
-import co.electriccoin.zcash.ui.screen.settings.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionVM
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.swap.SwapVM
@@ -93,7 +93,7 @@ val viewModelModule =
         viewModelOf(::OldHomeViewModel)
         viewModelOf(::StorageCheckViewModel)
         viewModelOf(::RestoreSeedViewModel)
-        viewModelOf(::SettingsViewModel)
+        viewModelOf(::MoreVM)
         viewModelOf(::AdvancedSettingsVM)
         viewModelOf(::SupportViewModel)
         viewModelOf(::RestoreSuccessViewModel)

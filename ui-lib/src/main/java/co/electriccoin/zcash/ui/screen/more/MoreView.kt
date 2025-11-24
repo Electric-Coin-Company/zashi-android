@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.settings
+package co.electriccoin.zcash.ui.screen.more
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,7 +30,7 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun Settings(state: SettingsState) {
+fun MoreView(state: MoreState) {
     BlankBgScaffold(
         topBar = {
             SettingsTopAppBar(
@@ -71,7 +71,7 @@ fun Settings(state: SettingsState) {
 private fun SettingsTopAppBar(onBack: () -> Unit) {
     ZashiSmallTopAppBar(
         title = stringResource(id = R.string.settings_title),
-        modifier = Modifier.testTag(SettingsTag.SETTINGS_TOP_APP_BAR),
+        modifier = Modifier.testTag(MoreTags.SETTINGS_TOP_APP_BAR),
         showTitleLogo = true,
         navigationAction = {
             ZashiTopAppBarBackNavigation(onBack = onBack)
@@ -81,11 +81,11 @@ private fun SettingsTopAppBar(onBack: () -> Unit) {
 
 @PreviewScreens
 @Composable
-private fun PreviewSettings() {
+private fun PreviewMoreView() {
     ZcashTheme {
-        Settings(
+        MoreView(
             state =
-                SettingsState(
+                MoreState(
                     version = stringRes("Version 1.2"),
                     onBack = {},
                     items =
@@ -121,9 +121,9 @@ private fun PreviewSettings() {
 @Composable
 private fun IntegrationsDisabledPreview() {
     ZcashTheme {
-        Settings(
+        MoreView(
             state =
-                SettingsState(
+                MoreState(
                     version = stringRes("Version 1.2"),
                     onBack = {},
                     items =

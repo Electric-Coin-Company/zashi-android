@@ -81,7 +81,7 @@ fun ZashiTopAppBarBigCloseNavigation(onBack: () -> Unit, modifier: Modifier = Mo
 }
 
 @Composable
-private fun ZashiTopAppBarNavigation(
+fun ZashiTopAppBarNavigation(
     backContentDescriptionText: String,
     @DrawableRes drawableRes: Int,
     onBack: () -> Unit,

@@ -78,6 +78,8 @@ import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsArgs
 import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsScreen
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsScreen
+import co.electriccoin.zcash.ui.screen.more.MoreArgs
+import co.electriccoin.zcash.ui.screen.more.MoreScreen
 import co.electriccoin.zcash.ui.screen.pay.PayArgs
 import co.electriccoin.zcash.ui.screen.pay.PayScreen
 import co.electriccoin.zcash.ui.screen.pay.info.PayInfoArgs
@@ -115,7 +117,6 @@ import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.AndroidSelectKeysto
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.send.Send
 import co.electriccoin.zcash.ui.screen.send.WrapSend
-import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionArgs
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionScreen
 import co.electriccoin.zcash.ui.screen.swap.SwapArgs
@@ -178,7 +179,7 @@ fun NavGraphBuilder.walletNavGraph(
                 navigationRouter.forward(NavigationTargets.NOT_ENOUGH_SPACE)
             }
         }
-        composable(NavigationTargets.SETTINGS) { WrapSettings() }
+        composable<MoreArgs> { MoreScreen() }
         composable<AdvancedSettingsArgs> { AdvancedSettingsScreen() }
         composable<ChooseServerArgs> { ChooseServerScreen() }
         composable<WalletBackup> { AndroidWalletBackup(it.toRoute()) }
@@ -199,7 +200,7 @@ fun NavGraphBuilder.walletNavGraph(
         composable(NavigationTargets.NOT_ENOUGH_SPACE) {
             WrapNotEnoughSpace(
                 goPrevious = { navigationRouter.back() },
-                goSettings = { navigationRouter.forward(NavigationTargets.SETTINGS) }
+                goSettings = { navigationRouter.forward(MoreArgs) }
             )
         }
         composable<AddressBookArgs> { AddressBookScreen() }

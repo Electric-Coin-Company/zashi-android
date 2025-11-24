@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiSmallTopAppBar
-import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarHamburgerNavigation
+import co.electriccoin.zcash.ui.design.component.ZashiTopAppBarNavigation
 import co.electriccoin.zcash.ui.design.component.zashiVerticalGradient
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -55,7 +55,15 @@ fun NotEnoughSpaceView(
                     title = null,
                     subtitle = null,
                     hamburgerMenuActions = {
-                        ZashiTopAppBarHamburgerNavigation(onSettings)
+                        ZashiTopAppBarNavigation(
+                            backContentDescriptionText =
+                                stringResource(
+                                    co.electriccoin.zcash.ui.design.R.string.back_navigation_content_description
+                                ),
+                            drawableRes = R.drawable.ic_home_more,
+                            onBack = onSettings,
+                            tint = ZashiColors.Text.textPrimary
+                        )
                     }
                 )
             },

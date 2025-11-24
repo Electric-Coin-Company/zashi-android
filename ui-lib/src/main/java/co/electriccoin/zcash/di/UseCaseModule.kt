@@ -25,7 +25,6 @@ import co.electriccoin.zcash.ui.common.usecase.GetABContactByIdUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetABSwapContactsUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetActivitiesUseCase
-import co.electriccoin.zcash.ui.common.usecase.GetCoinbaseStatusUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetConfigurationUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetExchangeRateUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetFilteredActivitiesUseCase
@@ -57,7 +56,6 @@ import co.electriccoin.zcash.ui.common.usecase.IsScreenTimeoutDisabledDuringRest
 import co.electriccoin.zcash.ui.common.usecase.IsTorEnabledUseCase
 import co.electriccoin.zcash.ui.common.usecase.MarkTxMemoAsReadUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToAddressBookUseCase
-import co.electriccoin.zcash.ui.common.usecase.NavigateToCoinbaseUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToEstimateBlockHeightUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToExportPrivateDataUseCase
 import co.electriccoin.zcash.ui.common.usecase.NavigateToNearPayUseCase
@@ -188,7 +186,6 @@ val useCaseModule =
         factoryOf(::CreateKeystoneProposalPCZTEncoderUseCase)
         factoryOf(::ViewTransactionsAfterSuccessfulProposalUseCase)
         factoryOf(::ViewTransactionDetailAfterSuccessfulProposalUseCase)
-        factoryOf(::NavigateToCoinbaseUseCase)
         factoryOf(::ObserveTransactionSubmitStateUseCase)
         factoryOf(::GetProposalUseCase)
         singleOf(::SubmitProposalUseCase)
@@ -217,7 +214,6 @@ val useCaseModule =
         factoryOf(::RestoreWalletUseCase)
         factoryOf(::NavigateToWalletBackupUseCase)
         factoryOf(::GetKeystoneStatusUseCase)
-        factoryOf(::GetCoinbaseStatusUseCase)
         factoryOf(::GetFlexaStatusUseCase)
         factoryOf(::GetHomeMessageUseCase)
         factoryOf(::OnUserSavedWalletBackupUseCase)

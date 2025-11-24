@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.screen.settings
+package co.electriccoin.zcash.ui.screen.more
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,15 +19,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class SettingsViewModel(
+class MoreVM(
     private val getVersionInfo: GetVersionInfoProvider,
     private val navigationRouter: NavigationRouter,
     private val navigateToAddressBook: NavigateToAddressBookUseCase,
 ) : ViewModel() {
-    val state: StateFlow<SettingsState> = MutableStateFlow(createState())
+    val state: StateFlow<MoreState> = MutableStateFlow(createState())
 
     private fun createState() =
-        SettingsState(
+        MoreState(
             version = stringRes(R.string.settings_version, getVersionInfo().versionName),
             onBack = ::onBack,
             items =

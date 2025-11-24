@@ -7,17 +7,17 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.NavigationTargets.SETTINGS
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
-import co.electriccoin.zcash.ui.common.usecase.GetSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.preference.StandardPreferenceKeys
 import co.electriccoin.zcash.ui.screen.accountlist.AccountList
+import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
+import co.electriccoin.zcash.ui.screen.more.MoreArgs
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
@@ -30,8 +30,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ZashiTopAppBarVM(
-    getWalletAccountUseCase: GetWalletAccountsUseCase,
-    getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
+    getWalletAccountsUseCase: GetWalletAccountsUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val navigationRouter: NavigationRouter,
 ) : ViewModel() {
@@ -39,62 +38,72 @@ class ZashiTopAppBarVM(
 
     val state =
         combine(
-            getSelectedWalletAccount.observe().filterNotNull(),
+            getWalletAccountsUseCase.observe(),
             isHideBalances,
-        ) { currentAccount, isHideBalances ->
-            createState(currentAccount, isHideBalances)
+        ) { accounts, isHideBalances ->
+            createState(accounts, isHideBalances)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
             initialValue =
                 createState(
-                    currentAccount = getWalletAccountUseCase.observe().value?.firstOrNull { it.isSelected },
+                    accounts = getWalletAccountsUseCase.observe().value,
                     isHideBalances = isHideBalances.value
                 )
         )
 
     private fun createState(
-        currentAccount: WalletAccount?,
+        accounts: List<WalletAccount>?,
         isHideBalances: Boolean?
-    ) = ZashiMainTopAppBarState(
-        accountSwitchState =
-            AccountSwitchState(
-                accountType =
-                    when (currentAccount) {
-                        is KeystoneAccount -> ZashiMainTopAppBarState.AccountType.KEYSTONE
-                        is ZashiAccount -> ZashiMainTopAppBarState.AccountType.ZASHI
-                        else -> ZashiMainTopAppBarState.AccountType.ZASHI
-                    },
-                onAccountTypeClick = ::onAccountTypeClicked,
-            ),
-        balanceVisibilityButton =
-            IconButtonState(
-                icon =
-                    if (isHideBalances == true) {
-                        R.drawable.ic_app_bar_balances_hide
-                    } else {
-                        R.drawable.ic_app_bar_balances_show
-                    },
-                onClick = ::onShowOrHideBalancesClicked,
-                contentDescription = stringRes(co.electriccoin.zcash.ui.R.string.hide_balances_content_description),
-                hapticFeedbackType =
-                    if (isHideBalances == true) {
-                        HapticFeedbackType.ToggleOn
-                    } else {
-                        HapticFeedbackType.ToggleOff
-                    }
-            ),
-        settingsButton =
-            IconButtonState(
-                icon = R.drawable.ic_app_bar_settings,
-                onClick = ::onSettingsClicked,
-                contentDescription = stringRes(co.electriccoin.zcash.ui.R.string.settings_menu_content_description)
-            )
-    )
+    ): ZashiMainTopAppBarState {
+        val current = accounts?.firstOrNull { it.isSelected }
+
+        return ZashiMainTopAppBarState(
+            accountSwitchState =
+                AccountSwitchState(
+                    accountType =
+                        when (current) {
+                            is KeystoneAccount -> ZashiMainTopAppBarState.AccountType.KEYSTONE
+                            is ZashiAccount -> ZashiMainTopAppBarState.AccountType.ZASHI
+                            else -> ZashiMainTopAppBarState.AccountType.ZASHI
+                        },
+                    onAccountTypeClick = ::onAccountTypeClicked,
+                ),
+            balanceVisibilityButton =
+                IconButtonState(
+                    icon =
+                        if (isHideBalances == true) {
+                            R.drawable.ic_app_bar_balances_hide
+                        } else {
+                            R.drawable.ic_app_bar_balances_show
+                        },
+                    onClick = ::onShowOrHideBalancesClicked,
+                    contentDescription = stringRes(co.electriccoin.zcash.ui.R.string.hide_balances_content_description),
+                    hapticFeedbackType =
+                        if (isHideBalances == true) {
+                            HapticFeedbackType.ToggleOn
+                        } else {
+                            HapticFeedbackType.ToggleOff
+                        }
+                ),
+            moreButton =
+                IconButtonState(
+                    icon = co.electriccoin.zcash.ui.R.drawable.ic_home_more,
+                    onClick = { onInfoClick(accounts) },
+                    contentDescription = stringRes(R.string.general_more)
+                )
+        )
+    }
 
     private fun onAccountTypeClicked() = navigationRouter.forward(AccountList)
 
-    private fun onSettingsClicked() = navigationRouter.forward(SETTINGS)
+    private fun onInfoClick(accounts: List<WalletAccount>?) {
+        if (accounts?.any { it is KeystoneAccount } == true) {
+            navigationRouter.forward(MoreArgs)
+        } else {
+            navigationRouter.forward(IntegrationsArgs)
+        }
+    }
 
     private fun onShowOrHideBalancesClicked() =
         viewModelScope.launch {
