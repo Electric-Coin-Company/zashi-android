@@ -291,7 +291,9 @@ class ProposalDataSourceImpl(
             block()
         } catch (e: TransactionEncoderException.ProposalFromParametersException) {
             val message = e.rootCause.message ?: ""
-            if (message.contains("Insufficient balance", true)) {
+            if (message.contains("Insufficient balance", true) ||
+                message.contains("The transaction requires an additional change output of", true)
+            ) {
                 throw InsufficientFundsException()
             } else {
                 throw TransactionProposalNotCreatedException(e)
