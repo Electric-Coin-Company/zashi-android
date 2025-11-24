@@ -58,12 +58,12 @@ fun ZashiTopAppBarWithAccountSelection(
 
 @Composable
 private fun AccountSwitch(state: AccountSwitchState) {
-    val clickModifier = if (state.onAccountTypeClick != null) {
-        Modifier.clickable(onClick = state.onAccountTypeClick)
-    } else {
-        Modifier
-    }
-
+    val clickModifier =
+        if (state.onAccountTypeClick != null) {
+            Modifier.clickable(onClick = state.onAccountTypeClick)
+        } else {
+            Modifier
+        }
 
     Row(
         modifier =
