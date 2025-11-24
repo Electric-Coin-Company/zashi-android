@@ -58,21 +58,23 @@ class DebugDBVM(
 
     private fun onQueryChanged(newQuery: String) = query.update { newQuery }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun onExecuteClick() {
         if (executeJob?.isActive == true) return
-        executeJob = viewModelScope.launch {
-            val currentQuery = query.value
-            if (currentQuery.isBlank()) {
-                output.update { "Please enter a query" }
-            } else {
-                try {
-                    val synchronizer = synchronizerProvider.getSynchronizer()
-                    val result = synchronizer.debugQuery(currentQuery)
-                    output.update { result }
-                } catch (e: Exception) {
-                    output.update { "Error: ${e.message}" }
+        executeJob =
+            viewModelScope.launch {
+                val currentQuery = query.value
+                if (currentQuery.isBlank()) {
+                    output.update { "Please enter a query" }
+                } else {
+                    try {
+                        val synchronizer = synchronizerProvider.getSynchronizer()
+                        val result = synchronizer.debugQuery(currentQuery)
+                        output.update { result }
+                    } catch (e: Exception) {
+                        output.update { "Error: ${e.message}" }
+                    }
                 }
             }
-        }
     }
 }
