@@ -7,9 +7,12 @@ import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
 import co.electriccoin.zcash.preference.model.entry.BooleanPreferenceDefault
 import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.common.model.DistributionDimension
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
+import co.electriccoin.zcash.ui.common.provider.GetVersionInfoProvider
+import co.electriccoin.zcash.ui.common.repository.ConfigurationRepository
 import co.electriccoin.zcash.ui.common.usecase.GetWalletAccountsUseCase
 import co.electriccoin.zcash.ui.design.R
 import co.electriccoin.zcash.ui.design.component.IconButtonState
@@ -33,6 +36,8 @@ class ZashiTopAppBarVM(
     getWalletAccountsUseCase: GetWalletAccountsUseCase,
     private val standardPreferenceProvider: StandardPreferenceProvider,
     private val navigationRouter: NavigationRouter,
+    private val getVersionInfo: GetVersionInfoProvider,
+    private val configurationRepository: ConfigurationRepository,
 ) : ViewModel() {
     private val isHideBalances: StateFlow<Boolean?> = booleanStateFlow(StandardPreferenceKeys.IS_HIDE_BALANCES)
 
@@ -97,13 +102,20 @@ class ZashiTopAppBarVM(
 
     private fun onAccountTypeClicked() = navigationRouter.forward(AccountList)
 
-    private fun onInfoClick(accounts: List<WalletAccount>?) {
-        if (accounts?.any { it is KeystoneAccount } == true) {
-            navigationRouter.forward(MoreArgs)
-        } else {
-            navigationRouter.forward(IntegrationsArgs)
+    private fun onInfoClick(accounts: List<WalletAccount>?) =
+        viewModelScope.launch {
+            if (getVersionInfo().distribution == DistributionDimension.FOSS) {
+                val isFlexaAvailable = configurationRepository.isFlexaAvailable()
+                val isKSConnected = accounts.orEmpty().any { it is KeystoneAccount }
+                if (!isFlexaAvailable && isKSConnected) {
+                    navigationRouter.forward(MoreArgs)
+                } else {
+                    navigationRouter.forward(IntegrationsArgs)
+                }
+            } else {
+                navigationRouter.forward(IntegrationsArgs)
+            }
         }
-    }
 
     private fun onShowOrHideBalancesClicked() =
         viewModelScope.launch {
