@@ -58,17 +58,20 @@ fun ZashiTopAppBarWithAccountSelection(
 
 @Composable
 private fun AccountSwitch(state: AccountSwitchState) {
+    val clickModifier = if (state.onAccountTypeClick != null) {
+        Modifier.clickable(onClick = state.onAccountTypeClick)
+    } else {
+        Modifier
+    }
+
+
     Row(
         modifier =
             Modifier
                 .defaultMinSize(40.dp, 40.dp)
                 .padding(start = 16.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .clickable(
-                    onClick =
-                        state
-                            .onAccountTypeClick
-                ).padding(start = 4.dp),
+                then clickModifier then Modifier.padding(start = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -98,12 +101,14 @@ private fun AccountSwitch(state: AccountSwitchState) {
                 ),
             contentDescription = null
         )
-        Spacer(Modifier.width(8.dp))
-        Image(
-            painter = painterResource(R.drawable.ic_app_bar_arrow_down),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(ZashiColors.Btns.Ghost.btnGhostFg)
-        )
+        if (state.onAccountTypeClick != null) {
+            Spacer(Modifier.width(8.dp))
+            Image(
+                painter = painterResource(R.drawable.ic_app_bar_arrow_down),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(ZashiColors.Btns.Ghost.btnGhostFg)
+            )
+        }
     }
 }
 
@@ -118,7 +123,7 @@ data class ZashiMainTopAppBarState(
 
 @Immutable
 data class AccountSwitchState(
-    val onAccountTypeClick: () -> Unit,
+    val onAccountTypeClick: (() -> Unit)?,
     val accountType: AccountType,
 )
 
