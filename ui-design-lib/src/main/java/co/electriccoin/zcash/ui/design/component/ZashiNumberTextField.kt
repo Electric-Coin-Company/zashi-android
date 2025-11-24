@@ -7,18 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -27,17 +21,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import cash.z.ecc.android.sdk.model.UserInputNumberParser
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.design.util.getValue
+import co.electriccoin.zcash.ui.design.util.rememberDesiredFormatLocale
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import java.math.BigDecimal
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.text.ParseException
+import java.util.Locale
 
 @Suppress("LongParameterList")
 @Composable
@@ -51,7 +48,7 @@ fun ZashiNumberTextField(
     suffix: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = ZashiTextFieldDefaults.shape,
@@ -91,8 +88,7 @@ fun ZashiNumberTextField(
 @Composable
 private fun createTextFieldState(state: NumberTextFieldState): EnhancedTextFieldState {
     val context = LocalContext.current
-    val locale = LocalConfiguration.current.locales[0]
-
+    val locale = rememberDesiredFormatLocale()
     val text =
         state.innerState.innerTextFieldState.value
             .getValue()
@@ -125,11 +121,11 @@ private fun createTextFieldState(state: NumberTextFieldState): EnhancedTextField
 
                 if (newText != text) {
                     normalized =
-                        UserInputNumberParser.normalizeInput(
+                        ZashiNumberTextFieldParser.normalizeInput(
                             input = innerState.value.getString(context, locale),
                             locale = locale
                         )
-                    amount = UserInputNumberParser.toBigDecimalOrNull(normalized, locale)
+                    amount = ZashiNumberTextFieldParser.toBigDecimalOrNull(normalized, locale)
                     lastValidAmount = amount ?: state.innerState.lastValidAmount
                 } else {
                     normalized = text
@@ -215,31 +211,119 @@ object ZashiNumberTextFieldDefaults {
     }
 }
 
+object ZashiNumberTextFieldParser {
+    fun normalizeInput(input: String, locale: Locale): String {
+        val symbols = DecimalFormatSymbols(locale)
+
+        val withoutGrouping =
+            input
+                .replace("\u00A0", "") // NO-BREAK SPACE
+                .replace("\u202F", "") // NARROW NO-BREAK SPACE
+                .replace("\u0020", "") // REGULAR SPACE
+                .replace(symbols.groupingSeparator.toString(), symbols.decimalSeparator.toString())
+
+        return if (symbols.decimalSeparator == '.') {
+            withoutGrouping.replace(',', '.')
+        } else {
+            withoutGrouping.replace('.', symbols.decimalSeparator)
+        }
+    }
+
+    /**
+     * Convert user's [input] to a number of type [BigDecimal]. Decimal separator is derived from [locale].
+     *
+     * This function first validates the input format, then uses DecimalFormat with isParseBigDecimal=true
+     * to parse the string. According to Java documentation, when isParseBigDecimal is true, parse() should
+     * always return BigDecimal directly, making type conversion unnecessary in most cases.
+     *
+     * @param input The normalized string to parse (should be already processed by normalizeInput)
+     * @param locale The locale to use for parsing (determines decimal separator)
+     * @return [BigDecimal] if [input] is a valid number representation, null otherwise
+     */
+    @Suppress("ReturnCount")
+    fun toBigDecimalOrNull(input: String, locale: Locale): BigDecimal? {
+        val symbols = DecimalFormatSymbols(locale)
+
+        if (!isValidNumericWithOptionalDecimalSeparator(input = input, symbols = symbols)) return null
+
+        val pattern = (DecimalFormat.getInstance(locale) as? DecimalFormat)?.toPattern()
+
+        val decimalFormat =
+            if (pattern != null) {
+                DecimalFormat(pattern, symbols).apply { this.isParseBigDecimal = true }
+            } else {
+                DecimalFormat().apply {
+                    this.decimalFormatSymbols = symbols
+                    this.isParseBigDecimal = true
+                }
+            }
+
+        return try {
+            when (val parsedNumber = decimalFormat.parse(input)) {
+                null -> null
+                is BigDecimal -> parsedNumber
+                // The following branches should rarely/never execute when isParseBigDecimal=true,
+                // but are kept as defensive fallbacks. Using string conversion to avoid precision loss.
+                is Double -> BigDecimal.valueOf(parsedNumber)
+                is Float -> BigDecimal(parsedNumber.toString())
+                else -> BigDecimal(parsedNumber.toString())
+            }
+        } catch (_: ParseException) {
+            return null
+        } catch (_: NumberFormatException) {
+            return null
+        }
+    }
+
+    /**
+     * Validates if the input string represents a valid numeric format with an optional decimal separator.
+     *
+     * Valid patterns:
+     * - Integer: "123"
+     * - Decimal: "123.456" or "123,456" (depending on locale)
+     * - Trailing separator: "123." or "123,"
+     * - Leading separator: ".123" or ",123"
+     * - Zero: "0"
+     *
+     * Invalid patterns:
+     * - Empty: ""
+     * - Only separator: "." or ","
+     * - Multiple separators: "12.34.56"
+     * - Non-numeric: "abc", "12a34"
+     *
+     * @param input The string to validate (should be already normalized via normalizeInput)
+     * @param symbols The decimal format symbols containing the decimal separator for the locale
+     * @return true if the input is a valid numeric format, false otherwise
+     */
+    private fun isValidNumericWithOptionalDecimalSeparator(
+        input: String,
+        symbols: DecimalFormatSymbols
+    ): Boolean {
+        if (input.isEmpty()) return false
+
+        // Escape the decimal separator for use in regex
+        // We need to escape all regex metacharacters: . ^ $ * + ? { } [ ] \ | ( )
+        val decimalSeparator = Regex.escape(symbols.decimalSeparator.toString())
+
+        // Pattern breakdown:
+        // ^(?:\d+SEPARATOR?\d*|SEPARATOR\d+)$
+        // - First alternative: digits, optional separator, optional digits (e.g., "123", "123.", "123.45")
+        // - Second alternative: separator followed by digits (e.g., ".45")
+        val regex = Regex("^(?:\\d+$decimalSeparator?\\d*|$decimalSeparator\\d+)$")
+
+        return regex.matches(input)
+    }
+}
+
 @Composable
 @Preview
 private fun Preview() =
     ZcashTheme {
-        var innerState by remember { mutableStateOf(NumberTextFieldInnerState()) }
-        val state by remember {
-            derivedStateOf {
-                NumberTextFieldState(
-                    innerState = innerState,
-                    onValueChange = { innerState = it }
-                )
-            }
-        }
-
         BlankSurface {
             Column(modifier = Modifier.fillMaxSize()) {
                 ZashiNumberTextField(
-                    state = state,
+                    state = NumberTextFieldState {},
                     modifier = Modifier.fillMaxWidth(),
-                )
-
-                Spacer(36.dp)
-
-                Text(
-                    text = "Result: $state"
                 )
             }
         }

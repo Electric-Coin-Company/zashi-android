@@ -7,14 +7,10 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.os.ConfigurationCompat
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.model.FiatCurrency
 import cash.z.ecc.android.sdk.model.Zatoshi
-import kotlinx.datetime.toJavaInstant
-import kotlinx.datetime.toKotlinInstant
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
@@ -81,6 +77,7 @@ sealed interface StringResource {
     data class ByDynamicCurrencyNumber(
         val amount: Number,
         val ticker: String,
+        val includeDecimalSeparator: Boolean,
         val tickerLocation: TickerLocation
     ) : StringResource
 
@@ -92,7 +89,8 @@ sealed interface StringResource {
 
     @Immutable
     data class ByDynamicNumber(
-        val number: Number
+        val number: Number,
+        val includeDecimalSeparator: Boolean
     ) : StringResource
 
     operator fun plus(other: StringResource): StringResource = CompositeStringResource(listOf(this, other))
@@ -131,11 +129,13 @@ fun stringResByDynamicCurrencyNumber(
     amount: Number,
     ticker: String,
     tickerLocation: TickerLocation =
-        if (ticker == FiatCurrency.USD.symbol) TickerLocation.BEFORE else TickerLocation.AFTER
+        if (ticker == FiatCurrency.USD.symbol) TickerLocation.BEFORE else TickerLocation.AFTER,
+    includeDecimalSeparator: Boolean = true
 ): StringResource =
     StringResource.ByDynamicCurrencyNumber(
         amount = amount,
         ticker = ticker,
+        includeDecimalSeparator = includeDecimalSeparator,
         tickerLocation = tickerLocation
     )
 
@@ -175,20 +175,20 @@ fun stringResByNumber(number: Number, minDecimals: Int = 2): StringResource =
     StringResource.ByNumber(number, minDecimals)
 
 @Stable
-fun stringResByDynamicNumber(number: Number): StringResource =
-    StringResource.ByDynamicNumber(number)
+fun stringResByDynamicNumber(number: Number, includeDecimalSeparator: Boolean = true): StringResource =
+    StringResource.ByDynamicNumber(number, includeDecimalSeparator)
 
 @Stable
 @Composable
 fun StringResource.getValue(): String =
     getString(
         context = LocalContext.current,
-        locale = LocalConfiguration.current.locales[0] ?: Locale.getDefault()
+        locale = rememberDesiredFormatLocale()
     )
 
 fun StringResource.getString(
     context: Context,
-    locale: Locale = ConfigurationCompat.getLocales(context.resources.configuration)[0] ?: Locale.getDefault(),
+    locale: Locale = context.resources.configuration.getPreferredLocale()
 ): String =
     when (this) {
         is StringResource.ByResource -> convertResource(context)
@@ -196,8 +196,8 @@ fun StringResource.getString(
         is StringResource.ByZatoshi -> convertZatoshi()
         is StringResource.ByCurrencyNumber -> convertCurrencyNumber(locale)
         is StringResource.ByDynamicCurrencyNumber -> convertDynamicCurrencyNumber(locale)
-        is StringResource.ByDateTime -> convertDateTime()
-        is StringResource.ByYearMonth -> convertYearMonth()
+        is StringResource.ByDateTime -> convertDateTime(locale)
+        is StringResource.ByYearMonth -> convertYearMonth(locale)
         is StringResource.ByAddress -> convertAddress()
         is StringResource.ByTransactionId -> convertTransactionId()
         is StringResource.ByNumber -> convertNumber(locale)
@@ -252,7 +252,7 @@ private fun convertNumberToString(amount: Number, locale: Locale, minDecimals: I
 }
 
 private fun StringResource.ByDynamicCurrencyNumber.convertDynamicCurrencyNumber(locale: Locale): String {
-    val amount = convertDynamicNumberToString(amount, locale)
+    val amount = convertDynamicNumberToString(amount, includeDecimalSeparator, locale)
     return when (this.tickerLocation) {
         TickerLocation.BEFORE -> "$ticker$amount"
         TickerLocation.AFTER -> "$amount $ticker"
@@ -261,9 +261,13 @@ private fun StringResource.ByDynamicCurrencyNumber.convertDynamicCurrencyNumber(
 }
 
 private fun StringResource.ByDynamicNumber.convertDynamicNumber(locale: Locale): String =
-    convertDynamicNumberToString(number, locale)
+    convertDynamicNumberToString(number, includeDecimalSeparator, locale)
 
-private fun convertDynamicNumberToString(number: Number, locale: Locale): String {
+private fun convertDynamicNumberToString(
+    number: Number,
+    includeDecimalSeparator: Boolean,
+    locale: Locale
+): String {
     val bigDecimalAmount = number.toBigDecimal().stripTrailingZeros()
     val dynamicAmount = bigDecimalAmount.stripFractionsDynamically()
     val maxDecimals = if (bigDecimalAmount.scale() > 0) bigDecimalAmount.scale() else 0
@@ -273,6 +277,7 @@ private fun convertDynamicNumberToString(number: Number, locale: Locale): String
             maximumFractionDigits = maxDecimals.coerceAtLeast(2)
             minimumFractionDigits = 2
             minimumIntegerDigits = 1
+            isGroupingUsed = includeDecimalSeparator
         }
     return formatter.format(dynamicAmount)
 }
@@ -288,41 +293,30 @@ private fun Number.toBigDecimal() =
         else -> BigDecimal(this.toDouble())
     }
 
-private fun StringResource.ByDateTime.convertDateTime(): String {
+private fun StringResource.ByDateTime.convertDateTime(locale: Locale): String {
     if (useFullFormat) {
         return DateFormat
             .getDateTimeInstance(
                 DateFormat.MEDIUM,
                 DateFormat.SHORT,
+                locale
             ).format(
-                Date.from(
-                    zonedDateTime
-                        .toInstant()
-                        .toKotlinInstant()
-                        .toJavaInstant()
-                )
+                Date.from(zonedDateTime.toInstant())
             )
     } else {
-        val pattern = DateTimeFormatter.ofPattern("MMM dd")
+        val pattern = DateTimeFormatter.ofPattern("MMM dd", locale)
         val start = zonedDateTime.format(pattern).orEmpty()
         val end =
             DateFormat
-                .getTimeInstance(DateFormat.SHORT)
-                .format(
-                    Date.from(
-                        zonedDateTime
-                            .toInstant()
-                            .toKotlinInstant()
-                            .toJavaInstant()
-                    )
-                )
+                .getTimeInstance(DateFormat.SHORT, locale)
+                .format(Date.from(zonedDateTime.toInstant()))
 
         return "$start $end"
     }
 }
 
-private fun StringResource.ByYearMonth.convertYearMonth(): String {
-    val pattern = DateTimeFormatter.ofPattern("MMMM yyyy")
+private fun StringResource.ByYearMonth.convertYearMonth(locale: Locale): String {
+    val pattern = DateTimeFormatter.ofPattern("MMMM yyyy", locale)
     return yearMonth.format(pattern).orEmpty()
 }
 

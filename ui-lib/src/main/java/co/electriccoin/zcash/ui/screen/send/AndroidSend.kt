@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
@@ -31,6 +30,7 @@ import co.electriccoin.zcash.ui.common.usecase.PrefillSendUseCase
 import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.design.component.CircularScreenProgressIndicator
+import co.electriccoin.zcash.ui.design.util.rememberDesiredFormatLocale
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetArgs
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetState
 import co.electriccoin.zcash.ui.screen.balances.BalanceWidgetVM
@@ -124,7 +124,7 @@ internal fun WrapSend(
 
     val zashiMainTopAppBarState by topAppBarViewModel.state.collectAsStateWithLifecycle()
 
-    val locale = LocalConfiguration.current.locales[0]
+    val locale = rememberDesiredFormatLocale()
 
     val (sendStage, setSendStage) =
         rememberSaveable(stateSaver = SendStage.Saver) { mutableStateOf(SendStage.Form) }

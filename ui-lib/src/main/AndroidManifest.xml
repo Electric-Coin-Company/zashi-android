@@ -10,7 +10,7 @@
     <application
         android:icon="@mipmap/ic_launcher_square"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true">
+        android:supportsRtl="false">
 
         <!-- compose can handle most config changes by itself hence we do not need activity recreation -->
         <!-- https://developer.android.com/guide/topics/resources/runtime-changes#react-changes-compose -->
