@@ -13,6 +13,7 @@ import co.electriccoin.zcash.spackle.FirebaseTestLabUtil
 import co.electriccoin.zcash.spackle.getPackageInfoCompat
 import co.electriccoin.zcash.spackle.versionCodeCompat
 import co.electriccoin.zcash.ui.BuildConfig
+import co.electriccoin.zcash.ui.design.util.getPreferredLocale
 
 data class VersionInfo(
     val gitSha: String,
@@ -54,18 +55,21 @@ data class VersionInfo(
                     ),
                 gitSha = gitSha,
                 gitCommitCount = gitCommitCount.toLong(),
-                changelog = Changelog.new(json = resolveBestReleaseNotes()),
+                changelog = Changelog.new(json = resolveBestReleaseNotes(context)),
                 distribution = DISTRIBUTION,
                 network = NETWORK
             )
         }
 
-        private fun resolveBestReleaseNotes(): String =
-            if (Locale.getDefault().language.contains("es", ignoreCase = true)) {
+        private fun resolveBestReleaseNotes(context: Context): String {
+            // Get the locale from the context configuration and ensure it's a supported locale
+            val locale = context.resources.configuration.getPreferredLocale()
+            return if (locale.language.contains("es", ignoreCase = true)) {
                 releaseNotesEs
             } else {
                 releaseNotesEn
             }
+        }
     }
 }
 

@@ -16,7 +16,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -25,6 +24,7 @@ import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
 import co.electriccoin.zcash.ui.design.util.getString
+import co.electriccoin.zcash.ui.design.util.rememberDesiredFormatLocale
 import co.electriccoin.zcash.ui.design.util.stringRes
 
 @Composable
@@ -38,7 +38,7 @@ fun ZashiSeedWordTextField(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     val context = LocalContext.current
-    val locale = LocalConfiguration.current.locales[0]
+    val locale = rememberDesiredFormatLocale()
     ZashiTextField(
         modifier = modifier,
         innerModifier = innerModifier,

@@ -1,0 +1,6 @@
+Cambiado:
+- Actualizamos las funciones de Intercambio y Pago para usar direcciones protegidas en lugar de transparentes.
+¡Privacidad activada!
+
+Corregido:
+- También corregimos algunos errores reportados por los usuarios.
