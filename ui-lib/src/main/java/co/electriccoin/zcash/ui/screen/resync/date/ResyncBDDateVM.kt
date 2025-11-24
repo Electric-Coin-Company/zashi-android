@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.sdk.SdkSynchronizer
-import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
@@ -25,11 +24,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.toJavaInstant
 import kotlinx.datetime.toKotlinInstant
 import java.time.YearMonth
 import java.time.ZoneId
-import java.time.ZonedDateTime
 
 class ResyncBDDateVM(
     private val args: ResyncBDDateArgs,
@@ -42,17 +39,18 @@ class ResyncBDDateVM(
 
     init {
         viewModelScope.launch {
-            val date = SdkSynchronizer
-                .estimateBirthdayDate(application, BlockHeight.new(args.initialBlockHeight), VersionInfo.NETWORK)
-
-            val yearMonth = if (date != null) {
-                ZonedDateTime.ofInstant(date.toJavaInstant(), ZoneId.systemDefault())
-                    .let { YearMonth.of(it.year, it.month) }
-            } else {
-                YearMonth.of(2018, 10)
-            }
-
-            selection.update { yearMonth }
+            // val date = SdkSynchronizer
+            //     .estimateBirthdayDate(application, BlockHeight.new(args.initialBlockHeight), VersionInfo.NETWORK)
+            //
+            // val yearMonth = if (date != null) {
+            //     ZonedDateTime.ofInstant(date.toJavaInstant(), ZoneId.systemDefault())
+            //         .let { YearMonth.of(it.year, it.month) }
+            // } else {
+            //     YearMonth.of(2018, 10)
+            // }
+            //
+            // selection.update { yearMonth }
+            TODO()
         }
     }
 

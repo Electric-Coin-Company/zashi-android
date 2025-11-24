@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -134,7 +133,11 @@ private fun Preview() =
                 RestoreBDEstimationState(
                     title = stringRes("Restore"),
                     subtitle = stringRes("Estimated Block Height"),
-                    message = stringRes("Zashi will scan and recover all transactions made after the following block number."),
+                    message =
+                        stringRes(
+                            "Zashi will scan and recover all transactions made after the " +
+                                "following block number."
+                        ),
                     restore = ButtonState(stringRes("Estimate")) {},
                     dialogButton = IconButtonState(R.drawable.ic_help) {},
                     onBack = {},

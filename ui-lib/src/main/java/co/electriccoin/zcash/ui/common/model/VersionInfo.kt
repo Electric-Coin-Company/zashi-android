@@ -2,7 +2,6 @@ package co.electriccoin.zcash.ui.common.model
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
-import cash.z.ecc.android.sdk.model.Locale
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import co.electriccoin.zcash.build.gitCommitCount
 import co.electriccoin.zcash.build.gitSha
@@ -27,17 +26,17 @@ data class VersionInfo(
     val network: ZcashNetwork,
 ) {
     companion object {
-
         private val NETWORK_DIMENSION: NetworkDimension
             get() = NetworkDimension.entries.first { it.value == BuildConfig.FLAVOR_network }
 
         val DISTRIBUTION: DistributionDimension
             get() = DistributionDimension.entries.first { it.value == BuildConfig.FLAVOR_distribution }
         val NETWORK: ZcashNetwork
-            get() = when (NETWORK_DIMENSION) {
-                NetworkDimension.MAINNET -> ZcashNetwork.Mainnet
-                NetworkDimension.TESTNET -> ZcashNetwork.Testnet
-            }
+            get() =
+                when (NETWORK_DIMENSION) {
+                    NetworkDimension.MAINNET -> ZcashNetwork.Mainnet
+                    NetworkDimension.TESTNET -> ZcashNetwork.Testnet
+                }
 
         fun new(context: Context): VersionInfo {
             val packageInfo = context.packageManager.getPackageInfoCompat(context.packageName, 0L)
@@ -52,7 +51,7 @@ data class VersionInfo(
                 isRunningUnderTestService = (
                     FirebaseTestLabUtil.isFirebaseTestLab(context.applicationContext) ||
                         EmulatorWtfUtil.isEmulatorWtf(context.applicationContext)
-                    ),
+                ),
                 gitSha = gitSha,
                 gitCommitCount = gitCommitCount.toLong(),
                 changelog = Changelog.new(json = resolveBestReleaseNotes(context)),

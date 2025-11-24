@@ -20,4 +20,7 @@ fun ResyncBDEstimationScreen(args: ResyncBDEstimationArgs) {
 }
 
 @Serializable
-data class ResyncBDEstimationArgs(val uuid: String, val blockHeight: Long)
+data class ResyncBDEstimationArgs(
+    val uuid: String,
+    val blockHeight: Long
+)

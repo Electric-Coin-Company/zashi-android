@@ -19,4 +19,7 @@ fun RestoreBDEstimationScreen(args: RestoreBDEstimationArgs) {
 }
 
 @Serializable
-data class RestoreBDEstimationArgs(val seed: String, val blockHeight: Long)
+data class RestoreBDEstimationArgs(
+    val seed: String,
+    val blockHeight: Long
+)

@@ -20,4 +20,7 @@ fun ResyncBDDateScreen(args: ResyncBDDateArgs) {
 }
 
 @Serializable
-data class ResyncBDDateArgs(val uuid: String, val initialBlockHeight: Long)
+data class ResyncBDDateArgs(
+    val uuid: String,
+    val initialBlockHeight: Long
+)

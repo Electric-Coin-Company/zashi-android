@@ -43,9 +43,10 @@ class RestoreBDHeightVM(
         val isHigherThanSaplingActivationHeight =
             blockHeight
                 .amount
-                ?.let { it.toLong() >= VersionInfo.NETWORK.saplingActivationHeight.value
-                } ?:
-                false
+                ?.let {
+                    it.toLong() >= VersionInfo.NETWORK.saplingActivationHeight.value
+                }
+                ?: false
         val isValid = !blockHeight.innerTextFieldState.value.isEmpty() && isHigherThanSaplingActivationHeight
 
         return RestoreBDHeightState(

@@ -13,7 +13,7 @@ class NavigateToErrorUseCase(
         this.args = args
         when (args) {
             is ErrorArgs.ShieldingError -> navigationRouter.forward(ErrorDialog)
-            is ErrorArgs.SyncError -> navigationRouter.forward(SyncErrorArgs)
+            is ErrorArgs.SyncError -> navigationRouter.forward(ErrorBottomSheet)
             is ErrorArgs.General -> navigationRouter.forward(ErrorDialog)
             is ErrorArgs.ShieldingGeneralError -> navigationRouter.forward(ErrorDialog)
             is ErrorArgs.SynchronizerTorInitError -> navigationRouter.forward(ErrorDialog)

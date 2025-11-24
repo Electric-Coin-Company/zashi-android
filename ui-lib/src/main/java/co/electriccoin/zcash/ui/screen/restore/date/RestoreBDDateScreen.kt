@@ -19,4 +19,6 @@ fun RestoreBDDateScreen(args: RestoreBDDateArgs) {
 }
 
 @Serializable
-data class RestoreBDDateArgs(val seed: String)
+data class RestoreBDDateArgs(
+    val seed: String
+)

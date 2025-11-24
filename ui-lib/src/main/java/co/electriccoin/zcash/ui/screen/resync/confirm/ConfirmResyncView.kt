@@ -91,9 +91,10 @@ private fun Content(
                 ZashiButton(
                     modifier = Modifier.fillMaxWidth(),
                     state = state.change,
-                    defaultPrimaryColors = ZashiButtonDefaults.secondaryColors(
-                        borderColor = ZashiColors.Btns.Secondary.btnSecondaryBorder
-                    )
+                    defaultPrimaryColors =
+                        ZashiButtonDefaults.secondaryColors(
+                            borderColor = ZashiColors.Btns.Secondary.btnSecondaryBorder
+                        )
                 )
             }
         }
@@ -137,9 +138,13 @@ private fun ConfirmResyncPreview() =
                     onBack = {},
                     confirm = ButtonState(stringRes("Confirm")) {},
                     change = ButtonState(stringRes("Change")) {},
-                    changeInfo = styledStringResource(
-                        stringRes("Your wallet will be resynced from May 2024 (2,185,500 blocks). Use the button below if you wish to change it.")
-                    )
+                    changeInfo =
+                        styledStringResource(
+                            stringRes(
+                                "Your wallet will be resynced from May 2024 (2,185,500 blocks). " +
+                                    "Use the button below if you wish to change it."
+                            )
+                        )
                 )
         )
     }

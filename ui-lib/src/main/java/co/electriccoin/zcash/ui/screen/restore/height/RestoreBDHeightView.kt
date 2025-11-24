@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -168,7 +167,11 @@ private fun Preview() =
                     message = stringRes("Entering your Wallet Birthday Height helps speed up the restore process."),
                     textFieldTitle = stringRes("Block Height"),
                     textFieldHint = stringRes("Enter number"),
-                    textFieldNote = stringRes("Wallet Birthday Height is the point in time when your wallet was created."),
+                    textFieldNote =
+                        stringRes(
+                            "Wallet Birthday Height is the point in time when your wallet " +
+                                "was created."
+                        ),
                     onBack = {},
                     dialogButton = IconButtonState(R.drawable.ic_help) {},
                     blockHeight = NumberTextFieldState {},

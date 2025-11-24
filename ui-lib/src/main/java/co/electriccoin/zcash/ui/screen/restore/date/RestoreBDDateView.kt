@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
@@ -154,7 +153,11 @@ private fun Preview() =
                 RestoreBDDateState(
                     title = stringRes("Restore"),
                     subtitle = stringRes("First Wallet Transaction"),
-                    message = stringRes("Decide how far Zashi should resync. Enter a date before your first received transaction."),
+                    message =
+                        stringRes(
+                            "Decide how far Zashi should resync. " +
+                                "Enter a date before your first received transaction."
+                        ),
                     note = stringRes("If you're not sure, choose an earlier date."),
                     next = ButtonState(stringRes("Estimate")) {},
                     dialogButton = IconButtonState(R.drawable.ic_help) {},
