@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.common.serialization.metada
+package co.electriccoin.zcash.ui.common.serialization.metadata
 
 import co.electriccoin.zcash.ui.common.model.metadata.AccountMetadataV3
 import co.electriccoin.zcash.ui.common.model.metadata.AnnotationMetadataV3
@@ -72,7 +72,7 @@ class MetadataSerializer {
                                         depositAddress = it.depositAddress,
                                         provider = it.provider.provider,
                                         totalFees = it.totalFees,
-                                        totalFeesUsd = it.totalFeesUsd,
+                                        totalUSDFeesInternal = it.totalFeesUsd,
                                         lastUpdated = it.lastUpdated,
                                         fromAsset = MetadataSimpleSwapAssetV3(token = "zec", chain = "zec"),
                                         toAsset =

@@ -14,7 +14,7 @@ import co.electriccoin.zcash.ui.common.model.metadata.SwapMetadataV3
 import co.electriccoin.zcash.ui.common.provider.MetadataKeyStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.SimpleSwapAssetProvider
-import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
+import co.electriccoin.zcash.ui.common.serialization.metadata.MetadataKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

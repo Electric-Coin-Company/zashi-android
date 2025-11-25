@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.common.serialization.metada
+package co.electriccoin.zcash.ui.common.serialization.metadata
 
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.metadata.MetadataV3

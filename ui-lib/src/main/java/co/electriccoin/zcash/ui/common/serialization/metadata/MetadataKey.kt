@@ -1,4 +1,4 @@
-package co.electriccoin.zcash.ui.common.serialization.metada
+package co.electriccoin.zcash.ui.common.serialization.metadata
 
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork

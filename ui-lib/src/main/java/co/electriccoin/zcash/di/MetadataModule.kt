@@ -10,9 +10,9 @@ import co.electriccoin.zcash.ui.common.provider.MetadataStorageProvider
 import co.electriccoin.zcash.ui.common.provider.MetadataStorageProviderImpl
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
 import co.electriccoin.zcash.ui.common.repository.MetadataRepositoryImpl
-import co.electriccoin.zcash.ui.common.serialization.metada.MetadataEncryptor
-import co.electriccoin.zcash.ui.common.serialization.metada.MetadataEncryptorImpl
-import co.electriccoin.zcash.ui.common.serialization.metada.MetadataSerializer
+import co.electriccoin.zcash.ui.common.serialization.metadata.MetadataEncryptor
+import co.electriccoin.zcash.ui.common.serialization.metadata.MetadataEncryptorImpl
+import co.electriccoin.zcash.ui.common.serialization.metadata.MetadataSerializer
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind

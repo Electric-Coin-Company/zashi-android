@@ -1,8 +1,8 @@
 package co.electriccoin.zcash.ui.common.provider
 
 import co.electriccoin.zcash.ui.common.model.metadata.MetadataV3
-import co.electriccoin.zcash.ui.common.serialization.metada.MetadataEncryptor
-import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
+import co.electriccoin.zcash.ui.common.serialization.metadata.MetadataEncryptor
+import co.electriccoin.zcash.ui.common.serialization.metadata.MetadataKey
 import java.io.File
 
 interface MetadataProvider {

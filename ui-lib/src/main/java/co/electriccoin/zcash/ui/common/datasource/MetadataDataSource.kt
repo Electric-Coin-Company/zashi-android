@@ -15,7 +15,7 @@ import co.electriccoin.zcash.ui.common.model.metadata.SwapsMetadataV3
 import co.electriccoin.zcash.ui.common.provider.MetadataProvider
 import co.electriccoin.zcash.ui.common.provider.MetadataStorageProvider
 import co.electriccoin.zcash.ui.common.provider.SimpleSwapAssetProvider
-import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
+import co.electriccoin.zcash.ui.common.serialization.metadata.MetadataKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -174,7 +174,7 @@ class MetadataDataSourceImpl(
                                             depositAddress = depositAddress,
                                             lastUpdated = Instant.now(),
                                             totalFees = totalFees,
-                                            totalFeesUsd = totalFeesUsd,
+                                            totalUSDFeesInternal = totalFeesUsd,
                                             provider = provider,
                                             fromAsset =
                                                 MetadataSimpleSwapAssetV3(

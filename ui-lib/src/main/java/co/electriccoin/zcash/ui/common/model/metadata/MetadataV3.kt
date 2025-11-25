@@ -7,11 +7,13 @@ import co.electriccoin.zcash.ui.common.model.SwapStatus
 import co.electriccoin.zcash.ui.common.serialization.BigDecimalSerializer
 import co.electriccoin.zcash.ui.common.serialization.InstantSerializer
 import co.electriccoin.zcash.ui.common.serialization.METADATA_SERIALIZATION_V3
+import co.electriccoin.zcash.ui.common.serialization.SwapStatusSerializer
 import co.electriccoin.zcash.ui.common.serialization.ZatoshiSerializer
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 import java.math.BigDecimal
 import java.time.Instant
@@ -87,7 +89,10 @@ data class SwapMetadataV3(
     val totalFees: Zatoshi,
     @SerialName("totalFeesUsd")
     @Serializable(BigDecimalSerializer::class)
-    val totalFeesUsd: BigDecimal,
+    val totalFeesUsdInternal: BigDecimal? = null,
+    @SerialName("totalUSDFees")
+    @Serializable(BigDecimalSerializer::class)
+    val totalUSDFeesInternal: BigDecimal? = null,
     @SerialName("lastUpdated")
     @Serializable(InstantSerializer::class)
     val lastUpdated: Instant,
@@ -99,12 +104,16 @@ data class SwapMetadataV3(
     val toAsset: MetadataSimpleSwapAssetV3,
     @SerialName("exactInput")
     val exactInput: Boolean?,
+    @Serializable(SwapStatusSerializer::class)
     @SerialName("status")
     val status: SwapStatus?,
     @Serializable(BigDecimalSerializer::class)
     @SerialName("amountOutFormatted")
     val amountOutFormatted: BigDecimal?,
-)
+) {
+    @Transient
+    val totalFeesUsd: BigDecimal = checkNotNull(totalFeesUsdInternal ?: totalUSDFeesInternal)
+}
 
 data class MetadataSimpleSwapAssetV3(
     val token: String,
