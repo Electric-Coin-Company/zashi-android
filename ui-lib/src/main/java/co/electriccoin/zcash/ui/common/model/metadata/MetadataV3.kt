@@ -40,6 +40,7 @@ data class AccountMetadataV3(
     val read: List<String>,
     @SerialName("annotations")
     val annotations: List<AnnotationMetadataV3>,
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     @SerialName("swaps")
     val swaps: SwapsMetadataV3 = SwapsMetadataV3(swapIds = emptyList(), lastUsedAssetHistory = emptySet()),
 )
