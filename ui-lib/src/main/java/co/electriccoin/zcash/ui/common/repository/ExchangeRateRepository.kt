@@ -1,9 +1,9 @@
 package co.electriccoin.zcash.ui.common.repository
 
-import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
 import cash.z.ecc.android.sdk.model.ObserveFiatCurrencyResult
+import co.electriccoin.zcash.ui.common.datasource.CMCDataSource
 import co.electriccoin.zcash.ui.common.provider.IsExchangeRateEnabledStorageProvider
-import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import co.electriccoin.zcash.ui.common.wallet.RefreshLock
 import co.electriccoin.zcash.ui.common.wallet.StaleLock
@@ -12,18 +12,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -36,10 +38,12 @@ interface ExchangeRateRepository {
 }
 
 class ExchangeRateRepositoryImpl(
-    private val synchronizerProvider: SynchronizerProvider,
-    private val isExchangeRateEnabledStorageProvider: IsExchangeRateEnabledStorageProvider
+    private val isExchangeRateEnabledStorageProvider: IsExchangeRateEnabledStorageProvider,
+    private val cmcDataSource: CMCDataSource
 ) : ExchangeRateRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+    private val refreshPipeline = MutableSharedFlow<Unit>()
 
     private val isExchangeRateOptedIn =
         isExchangeRateEnabledStorageProvider
@@ -54,41 +58,37 @@ class ExchangeRateRepositoryImpl(
     private val exchangeRateUsdInternal =
         isExchangeRateOptedIn
             .flatMapLatest { optedIn ->
+
+                var cache: FiatCurrencyConversion? = null
+
                 if (optedIn == true) {
                     channelFlow {
-                        val exchangeRate =
-                            synchronizerProvider
-                                .synchronizer
-                                .flatMapLatest { synchronizer ->
-                                    synchronizer?.exchangeRateUsd ?: flowOf(
-                                        ObserveFiatCurrencyResult(
-                                            isLoading = false,
-                                            currencyConversion = null
-                                        )
-                                    )
-                                }.stateIn(this)
-
                         launch {
-                            synchronizerProvider
-                                .synchronizer
-                                .flatMapLatest { it?.status ?: flowOf(null) }
-                                .flatMapLatest {
-                                    when (it) {
-                                        null ->
-                                            flowOf(
-                                                ObserveFiatCurrencyResult(
-                                                    isLoading = false,
-                                                    currencyConversion = null
-                                                )
+                            refreshPipeline
+                                .onStart { emit(Unit) }
+                                .collect {
+                                    send(ObserveFiatCurrencyResult(isLoading = true, currencyConversion = cache))
+                                    try {
+                                        val exchangeRate = cmcDataSource.getExchangeRate()
+                                        cache = FiatCurrencyConversion(
+                                            timestamp = Clock.System.now(),
+                                            priceOfZec = exchangeRate.toDouble()
+                                        )
+                                        send(
+                                            ObserveFiatCurrencyResult(
+                                                isLoading = false,
+                                                currencyConversion = cache
                                             )
-
-                                        Synchronizer.Status.STOPPED,
-                                        Synchronizer.Status.INITIALIZING ->
-                                            emptyFlow()
-
-                                        else -> exchangeRate
+                                        )
+                                    } catch (_: Exception) {
+                                        send(
+                                            ObserveFiatCurrencyResult(
+                                                isLoading = false,
+                                                currencyConversion = cache
+                                            )
+                                        )
                                     }
-                                }.collect { send(it) }
+                                }
                         }
 
                         awaitClose()
@@ -194,10 +194,9 @@ class ExchangeRateRepositoryImpl(
 
     private fun refreshExchangeRateUsdInternal() =
         scope.launch {
-            val synchronizer = synchronizerProvider.getSynchronizer()
             val value = state.value
             if (value is ExchangeRateState.Data && value.isRefreshEnabled && !value.isLoading) {
-                synchronizer.refreshExchangeRateUsd()
+                refreshPipeline.emit(Unit)
             }
         }
 
