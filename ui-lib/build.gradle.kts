@@ -134,6 +134,14 @@ androidComponents {
             )
         )
         variant.buildConfigFields.put(
+            "ZCASH_CMC_KEY",
+            BuildConfigField(
+                type = "String",
+                value = "\"${project.property("ZCASH_CMC_KEY")?.toString().orEmpty()}\"",
+                comment = "Publishable key of the CMC integration"
+            )
+        )
+        variant.buildConfigFields.put(
             "ZCASH_COINBASE_APP_ID",
             BuildConfigField(
                 type = "String",

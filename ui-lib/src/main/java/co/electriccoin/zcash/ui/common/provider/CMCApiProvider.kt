@@ -15,19 +15,19 @@ import kotlinx.io.IOException
 
 interface CMCApiProvider {
     @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
-    suspend fun getExchangeRateQuote(): GetCMCQuoteResponse
+    suspend fun getExchangeRateQuote(apiKey: String): GetCMCQuoteResponse
 }
 
 class CMCApiProviderImpl(
     private val httpClientProvider: HttpClientProvider
 ) : CMCApiProvider {
-    override suspend fun getExchangeRateQuote(): GetCMCQuoteResponse =
+    override suspend fun getExchangeRateQuote(apiKey: String): GetCMCQuoteResponse =
         execute {
             get("https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest") {
                 parameter("symbol", "ZEC")
                 parameter("convert", "USD")
                 contentType(ContentType.Application.Json)
-                header("X-CMC_PRO_API_KEY", AUTH_TOKEN)
+                header("X-CMC_PRO_API_KEY", apiKey)
             }.body()
         }
 
@@ -37,5 +37,3 @@ class CMCApiProviderImpl(
         crossinline block: suspend HttpClient.() -> T
     ): T = withContext(Dispatchers.IO) { httpClientProvider.create().use { block(it) } }
 }
-
-private const val AUTH_TOKEN = "655f7af4-fc7b-45a0-8a58-51303901d1cb"
