@@ -12,7 +12,7 @@ import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageData
 import co.electriccoin.zcash.ui.common.repository.RuntimeMessage
-import co.electriccoin.zcash.ui.common.viewmodel.SynchronizerError
+import co.electriccoin.zcash.ui.common.model.SynchronizerError
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -185,7 +185,7 @@ class GetHomeMessageUseCase(
         if (walletSnapshot.synchronizerError == null ||
             (
                 walletSnapshot.synchronizerError is SynchronizerError.Processor &&
-                    walletSnapshot.synchronizerError.error is CancellationException
+                    walletSnapshot.synchronizerError.cause is CancellationException
             )
         ) {
             return null

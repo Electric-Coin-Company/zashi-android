@@ -90,10 +90,6 @@ internal class MockSynchronizer : CloseableSynchronizer {
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
         set(value) {}
 
-    override var onSubmissionErrorHandler: ((Throwable?) -> Boolean)?
-        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-        set(value) {}
-
     override val processorInfo: Flow<CompactBlockProcessor.ProcessorInfo>
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
 
@@ -197,10 +193,6 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} yet.")
     }
 
-    override suspend fun refreshExchangeRateUsd() {
-        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-    }
-
     override suspend fun refreshUtxos(
         account: Account,
         since: BlockHeight
@@ -230,13 +222,6 @@ internal class MockSynchronizer : CloseableSynchronizer {
         network: ZcashNetwork,
         alias: String
     ): String {
-        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-    }
-
-    override suspend fun getFastestServers(
-        context: Context,
-        servers: List<LightWalletEndpoint>
-    ): Flow<FastestServersResult> {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 

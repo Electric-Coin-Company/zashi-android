@@ -43,88 +43,10 @@ enum class SecretState {
 }
 
 /**
- * This constant sets the default limitation on the length of the stack trace in the [SynchronizerError]
+ * This constant sets the default limitation on the length of the stack trace in the [co.electriccoin.zcash.ui.common.model.SynchronizerError]
  */
 const val STACKTRACE_LIMIT = 250
 
 // TODO [#529]: Localize Synchronizer Errors
 // TODO [#529]: https://github.com/Electric-Coin-Company/zashi-android/issues/529
 
-/**
- * Represents all kind of Synchronizer errors
- */
-sealed class SynchronizerError {
-    abstract fun getCauseMessage(): String?
-
-    abstract fun getStackTrace(limit: Int? = STACKTRACE_LIMIT): String?
-
-    internal fun Throwable.stackTraceFullString() = stackTraceToString()
-
-    internal fun Throwable.stackTraceToLimitedString(limit: Int) =
-        if (stackTraceToString().isNotEmpty()) {
-            stackTraceToString().substring(0..(stackTraceToString().length - 1).coerceAtMost(limit))
-        } else {
-            null
-        }
-
-    class Critical(
-        val error: Throwable?
-    ) : SynchronizerError() {
-        override fun getCauseMessage(): String? = error?.message
-
-        override fun getStackTrace(limit: Int?): String? =
-            if (limit != null) {
-                error?.stackTraceToLimitedString(limit)
-            } else {
-                error?.stackTraceFullString()
-            }
-    }
-
-    class Processor(
-        val error: Throwable?
-    ) : SynchronizerError() {
-        override fun getCauseMessage(): String? = error?.message
-
-        override fun getStackTrace(limit: Int?): String? =
-            if (limit != null) {
-                error?.stackTraceToLimitedString(limit)
-            } else {
-                error?.stackTraceFullString()
-            }
-    }
-
-    class Submission(
-        val error: Throwable?
-    ) : SynchronizerError() {
-        override fun getCauseMessage(): String? = error?.message
-
-        override fun getStackTrace(limit: Int?): String? =
-            if (limit != null) {
-                error?.stackTraceToLimitedString(limit)
-            } else {
-                error?.stackTraceFullString()
-            }
-    }
-
-    class Setup(
-        val error: Throwable?
-    ) : SynchronizerError() {
-        override fun getCauseMessage(): String? = error?.message
-
-        override fun getStackTrace(limit: Int?): String? =
-            if (limit != null) {
-                error?.stackTraceToLimitedString(limit)
-            } else {
-                error?.stackTraceFullString()
-            }
-    }
-
-    class Chain(
-        val x: BlockHeight,
-        val y: BlockHeight
-    ) : SynchronizerError() {
-        override fun getCauseMessage(): String = "$x, $y"
-
-        override fun getStackTrace(limit: Int?): String? = null
-    }
-}

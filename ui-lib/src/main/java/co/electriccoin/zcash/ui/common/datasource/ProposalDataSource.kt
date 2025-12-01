@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.common.datasource
 
+import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.exception.PcztException
 import cash.z.ecc.android.sdk.exception.TransactionEncoderException
@@ -219,7 +220,7 @@ class ProposalDataSourceImpl(
         block: suspend (Synchronizer) -> Flow<TransactionSubmitResult>
     ): SubmitResult =
         withContext(Dispatchers.IO) {
-            val synchronizer = synchronizerProvider.getSdkSynchronizer()
+            val synchronizer = synchronizerProvider.getSynchronizer() as SdkSynchronizer
             val submitResults = block(synchronizer).toList()
             Twig.debug { "Internal transaction submit results: $submitResults" }
 

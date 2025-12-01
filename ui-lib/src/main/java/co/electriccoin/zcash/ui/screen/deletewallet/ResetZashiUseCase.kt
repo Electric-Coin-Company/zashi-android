@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui.screen.deletewallet
 
+import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.WalletCoordinator
 import co.electriccoin.zcash.preference.EncryptedPreferenceProvider
 import co.electriccoin.zcash.preference.StandardPreferenceProvider
@@ -44,7 +45,7 @@ class ResetZashiUseCase(
             )
 
             flexaRepository.disconnect()
-            synchronizerProvider.getSdkSynchronizer().closeFlow().first()
+            (synchronizerProvider.getSynchronizer() as SdkSynchronizer).closeFlow().first()
             if (!clearSDK()) throw ResetZashiException("Wallet deletion failed")
             if (!keepFiles) {
                 addressBookRepository.delete()
