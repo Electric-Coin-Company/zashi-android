@@ -20,6 +20,8 @@ import kotlinx.io.IOException
 
 interface HttpClientProvider {
     suspend fun create(): HttpClient
+    suspend fun createTor(): HttpClient
+    suspend fun createDirect(): HttpClient
 }
 
 class HttpClientProviderImpl(
@@ -27,9 +29,9 @@ class HttpClientProviderImpl(
     private val isTorEnabledStorageProvider: IsTorEnabledStorageProvider
 ) : HttpClientProvider {
     override suspend fun create(): HttpClient =
-        if (isTorEnabledStorageProvider.get() == true) createTor() else createDefault()
+        if (isTorEnabledStorageProvider.get() == true) createTor() else createDirect()
 
-    private suspend fun createTor() =
+    override suspend fun createTor() =
         synchronizerProvider
             .getSynchronizer()
             .getTorHttpClient {
@@ -54,7 +56,7 @@ class HttpClientProviderImpl(
             }
 
     @Suppress("MagicNumber")
-    private fun createDefault() =
+    override suspend fun createDirect() =
         HttpClient(OkHttp) {
             configureHttpClient()
             install(HttpRequestRetry) {

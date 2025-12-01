@@ -35,5 +35,5 @@ class CMCApiProviderImpl(
     @Throws(ResponseException::class)
     private suspend inline fun <T> execute(
         crossinline block: suspend HttpClient.() -> T
-    ): T = withContext(Dispatchers.IO) { httpClientProvider.create().use { block(it) } }
+    ): T = withContext(Dispatchers.IO) { httpClientProvider.createTor().use { block(it) } }
 }
