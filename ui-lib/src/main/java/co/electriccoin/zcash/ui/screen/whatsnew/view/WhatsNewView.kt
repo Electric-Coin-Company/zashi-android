@@ -86,7 +86,11 @@ fun WhatsNewView(
 
             Spacer(Modifier.weight(1f))
 
-            ZashiVersion(modifier = Modifier.fillMaxWidth(), version = state.bottomVersion)
+            ZashiVersion(
+                modifier = Modifier.fillMaxWidth(),
+                version = state.bottomVersion,
+                onLongClick = state.onVersionLongClick
+            )
         }
     }
 }
@@ -138,7 +142,8 @@ private fun WhatsNewViewPreview() {
             state =
                 WhatsNewState.new(
                     changelog = ChangelogFixture.new(),
-                    version = VersionInfoFixture.new().versionName
+                    version = VersionInfoFixture.new().versionName,
+                    onVersionLongClick = {}
                 ),
             onBack = {}
         )
