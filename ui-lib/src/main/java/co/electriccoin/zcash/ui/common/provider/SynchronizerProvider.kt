@@ -23,7 +23,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 interface SynchronizerProvider {
-
     val error: StateFlow<SynchronizerError?>
 
     val synchronizer: StateFlow<Synchronizer?>
@@ -67,8 +66,7 @@ class SynchronizerProviderImpl(
                         synchronizer?.onChainErrorHandler = null
                     }
                 }
-            }
-            .stateIn(
+            }.stateIn(
                 scope = scope,
                 started = SharingStarted.Lazily,
                 initialValue = walletCoordinator.synchronizer.value

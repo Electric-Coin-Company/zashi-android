@@ -23,22 +23,25 @@ class NavigateToErrorUseCase(
         }
     }
 
+    @Suppress("MagicNumber")
     private fun navigateToSyncError(args: ErrorArgs.SyncError) {
-        val showSyncError = args.synchronizerError.cause
-            ?.getCausesAsSequence()
-            .orEmpty()
-            .any {
-                when {
-                    it is ResponseException && it.code in 500..599 -> true
-                    it is ResponseException && it.code == 3200 -> (500..599)
-                        .any { status ->
-                            it.message.orEmpty().contains("$status")
-                        }
+        val showSyncError =
+            args.synchronizerError.cause
+                ?.getCausesAsSequence()
+                .orEmpty()
+                .any {
+                    when {
+                        it is ResponseException && it.code in 500..599 -> true
+                        it is ResponseException && it.code == 3200 ->
+                            (500..599)
+                                .any { status ->
+                                    it.message.orEmpty().contains("$status")
+                                }
 
-                    it is UninitializedTorClientException -> true
-                    else -> false
+                        it is UninitializedTorClientException -> true
+                        else -> false
+                    }
                 }
-            }
 
         if (showSyncError) {
             navigationRouter.forward(SyncErrorArgs)

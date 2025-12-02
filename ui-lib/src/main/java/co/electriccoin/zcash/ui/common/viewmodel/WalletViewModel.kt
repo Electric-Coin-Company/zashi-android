@@ -49,4 +49,3 @@ const val STACKTRACE_LIMIT = 250
 
 // TODO [#529]: Localize Synchronizer Errors
 // TODO [#529]: https://github.com/Electric-Coin-Company/zashi-android/issues/529
-

@@ -20,7 +20,9 @@ import kotlinx.io.IOException
 
 interface HttpClientProvider {
     suspend fun create(): HttpClient
+
     suspend fun createTor(): HttpClient
+
     suspend fun createDirect(): HttpClient
 }
 

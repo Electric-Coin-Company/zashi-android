@@ -21,7 +21,6 @@ import kotlinx.datetime.Clock
 import kotlinx.io.IOException
 
 interface ExchangeRateDataSource {
-
     /**
      * Returns exchange rate from CMC if [BuildConfig.ZCASH_CMC_KEY] is available
      *
@@ -38,20 +37,29 @@ interface ExchangeRateDataSource {
     fun observeSynchronizerRoute(): Flow<ObserveFiatCurrencyResult>
 }
 
-class ExchangeRateUnavailable(message: String? = null, cause: Throwable? = null) : Exception(message, cause)
+class ExchangeRateUnavailable(
+    message: String? = null,
+    cause: Throwable? = null
+) : Exception(message, cause)
 
 class ExchangeRateDataSourceImpl(
     private val cmcApiProvider: CMCApiProvider,
     private val synchronizerProvider: SynchronizerProvider,
 ) : ExchangeRateDataSource {
-
     override suspend fun getExchangeRate(): FiatCurrencyConversion {
+        @Suppress("ThrowsCount", "MagicNumber")
         suspend fun getCMCExchangeRate(apiKey: String): FiatCurrencyConversion {
-            val exchangeRate = try {
-                cmcApiProvider.getExchangeRateQuote(apiKey).data["ZEC"]?.quote?.get("USD")?.price
-            } catch (e: ResponseException) {
-                if (e.response.status.value in 500..599) throw ExchangeRateUnavailable(cause = e) else throw e
-            }
+            val exchangeRate =
+                try {
+                    cmcApiProvider
+                        .getExchangeRateQuote(apiKey)
+                        .data["ZEC"]
+                        ?.quote
+                        ?.get("USD")
+                        ?.price
+                } catch (e: ResponseException) {
+                    if (e.response.status.value in 500..599) throw ExchangeRateUnavailable(cause = e) else throw e
+                }
             val price = exchangeRate ?: throw ExchangeRateUnavailable(message = "Exchange rate not found in response")
             return FiatCurrencyConversion(timestamp = Clock.System.now(), priceOfZec = price.toDouble())
         }
@@ -66,8 +74,8 @@ class ExchangeRateDataSourceImpl(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun observeSynchronizerRoute(): Flow<ObserveFiatCurrencyResult> {
-        return channelFlow {
+    override fun observeSynchronizerRoute(): Flow<ObserveFiatCurrencyResult> =
+        channelFlow {
             val exchangeRate =
                 synchronizerProvider
                     .synchronizer
@@ -87,12 +95,9 @@ class ExchangeRateDataSourceImpl(
 
                             else -> exchangeRate
                         }
-                    }
-                    .collect { send(it) }
+                    }.collect { send(it) }
             }
 
             awaitClose()
         }
-    }
 }
-

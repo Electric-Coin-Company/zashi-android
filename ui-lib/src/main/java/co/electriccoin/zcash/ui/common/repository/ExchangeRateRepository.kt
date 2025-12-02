@@ -87,8 +87,7 @@ class ExchangeRateRepositoryImpl(
                                         synchronizerProvider.getSynchronizer().refreshExchangeRateUsd()
                                         emitAll(exchangeRateDataSource.observeSynchronizerRoute())
                                     }
-                                }
-                                .collect {
+                                }.collect {
                                     cache = it
                                     send(cache)
                                 }
