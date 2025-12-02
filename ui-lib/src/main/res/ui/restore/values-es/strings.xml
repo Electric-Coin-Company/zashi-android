@@ -33,10 +33,10 @@
 
     <string name="restore_seed_warning_suggestions">Esta palabra no está en el diccionario de frases de recuperación. Por favor selecciona la correcta de las sugerencias.</string>
 
-    <string name="restore_tor_title">Enable Tor Protection</string>
-    <string name="restore_tor_subtitle">If Tor is available in your region, we recommend enabling it for enhanced privacy during wallet restoration. This step is completely optional.</string>
-    <string name="restore_tor_checkbox_title">Enable Tor Protection</string>
-    <string name="restore_tor_checkbox_subtitle">Routes your connection through the Tor network for enhanced anonymity and privacy protection.</string>
+    <string name="restore_tor_title">Habilitar Protección Tor</string>
+    <string name="restore_tor_subtitle">Si Tor está disponible en tu región, recomendamos habilitarlo para una mayor privacidad durante la restauración de la billetera. Este paso es completamente opcional.</string>
+    <string name="restore_tor_checkbox_title">Habilitar Protección Tor</string>
+    <string name="restore_tor_checkbox_subtitle">Redirige tu conexión a través de la red Tor para mayor anonimato y protección de privacidad.</string>
 
     <string name="resync_title">Resincronizar Billetera</string>
     <string name="resync_bd_date_subtitle">Primera Transacción de la Billetera</string>

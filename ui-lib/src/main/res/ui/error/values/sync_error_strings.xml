@@ -5,5 +5,4 @@
     <string name="sync_error_switch_server">Switch server</string>
     <string name="sync_error_disable_tor">Disable Tor protection</string>
     <string name="sync_error_contact_support">Contact Support</string>
-    <string name="sync_error_support_message">I encountered a sync error while using Zashi. Please help.</string>
 </resources>

@@ -53,6 +53,7 @@ class SyncErrorVM(
             tryAgain =
                 ButtonState(
                     text = stringRes(co.electriccoin.zcash.ui.design.R.string.general_try_again),
+                    icon = R.drawable.ic_sync_error_disable_tor,
                     trailingIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_right,
                     onClick = ::onTryAgainClick
                 ),

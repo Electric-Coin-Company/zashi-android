@@ -68,7 +68,7 @@ private fun Content(state: InsufficientFundsState, modifier: Modifier = Modifier
         ZashiButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = state.onBack,
-            text = stringResource(R.string.insufficient_funds_button)
+            text = stringResource(co.electriccoin.zcash.ui.design.R.string.general_ok)
         )
     }
 }

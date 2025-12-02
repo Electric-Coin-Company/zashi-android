@@ -60,7 +60,7 @@ fun SyncErrorContent(
         )
         Spacer(12.dp)
         Text(
-            text = stringResource(R.string.sync_error_title),
+            text = stringResource(co.electriccoin.zcash.ui.design.R.string.general_error_title),
             color = ZashiColors.Text.textPrimary,
             style = ZashiTypography.header6,
             fontWeight = FontWeight.SemiBold
