@@ -3,8 +3,6 @@ package co.electriccoin.zcash.ui.common.usecase
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
-import co.electriccoin.zcash.ui.util.CloseableScopeHolder
-import co.electriccoin.zcash.ui.util.CloseableScopeHolderImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -48,8 +46,7 @@ class UpdateSwapActivityMetadataUseCase(
             .onEach {
                 killPipeline()
                 if (it != null) startPipeline()
-            }
-            .launchIn(scope)
+            }.launchIn(scope)
     }
 
     operator fun invoke(activity: ActivityData) {
@@ -89,45 +86,46 @@ class UpdateSwapActivityMetadataUseCase(
 
     @Suppress("MagicNumber")
     private fun startPipeline() {
-        pipelineJob = scope.launch {
-            for (item in pipeline) {
-                pipelineSemaphore.withLock {
-                    val depositAddress = item.depositAddress
-                    if (item.timestamp != null) {
-                        val timeSinceLastAttempt = Clock.System.now() - item.timestamp
-                        if (timeSinceLastAttempt < 15.seconds) {
-                            Twig.debug { "Activities: delaying for ${15.seconds - timeSinceLastAttempt}" }
-                            delay(15.seconds - timeSinceLastAttempt)
+        pipelineJob =
+            scope.launch {
+                for (item in pipeline) {
+                    pipelineSemaphore.withLock {
+                        val depositAddress = item.depositAddress
+                        if (item.timestamp != null) {
+                            val timeSinceLastAttempt = Clock.System.now() - item.timestamp
+                            if (timeSinceLastAttempt < 15.seconds) {
+                                Twig.debug { "Activities: delaying for ${15.seconds - timeSinceLastAttempt}" }
+                                delay(15.seconds - timeSinceLastAttempt)
+                            }
                         }
-                    }
 
-                    val swapMetadata = metadataRepository.getSwapMetadata(depositAddress)
-                    if (swapMetadata != null && !swapMetadata.status.isTerminal) {
-                        Twig.debug { "Activities: consuming $depositAddress" }
-                        val apiRequestTimestamp = Clock.System.now()
-                        val quoteStatus = getSwapStatus(depositAddress)
-                        pipelineCacheSemaphore.withLock { item.close() }
-                        if (quoteStatus.status?.status?.isTerminal != true) {
-                            when (pipelineCache.lastOrNull()?.depositAddress) {
-                                null,
-                                depositAddress -> {
-                                    requeue(depositAddress, apiRequestTimestamp)
-                                    Twig.debug { "Activities: delaying 5..15 seconds" }
-                                    delay((5..15).random().seconds)
-                                }
+                        val swapMetadata = metadataRepository.getSwapMetadata(depositAddress)
+                        if (swapMetadata != null && !swapMetadata.status.isTerminal) {
+                            Twig.debug { "Activities: consuming $depositAddress" }
+                            val apiRequestTimestamp = Clock.System.now()
+                            val quoteStatus = getSwapStatus(depositAddress)
+                            pipelineCacheSemaphore.withLock { item.close() }
+                            if (quoteStatus.status?.status?.isTerminal != true) {
+                                when (pipelineCache.lastOrNull()?.depositAddress) {
+                                    null,
+                                    depositAddress -> {
+                                        requeue(depositAddress, apiRequestTimestamp)
+                                        Twig.debug { "Activities: delaying 5..15 seconds" }
+                                        delay((5..15).random().seconds)
+                                    }
 
-                                else -> {
-                                    requeue(depositAddress, apiRequestTimestamp)
-                                    Twig.debug { "Activities: delaying 0.5..1.5 seconds" }
-                                    delay((500..1500).random().milliseconds)
+                                    else -> {
+                                        requeue(depositAddress, apiRequestTimestamp)
+                                        Twig.debug { "Activities: delaying 0.5..1.5 seconds" }
+                                        delay((500..1500).random().milliseconds)
+                                    }
                                 }
                             }
                         }
                     }
+                    yield()
                 }
-                yield()
             }
-        }
     }
 
     private fun requeue(depositAddress: String, timestamp: Instant) {
