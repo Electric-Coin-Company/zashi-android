@@ -112,7 +112,7 @@ class NearSwapDataSourceImpl(
             )
         } catch (e: ResponseWithErrorException) {
             when {
-                e.error.message.startsWith("Amount is too low for bridge, try at least") -> {
+                e.error.message.contains("Amount is too low for bridge, try at least", true) -> {
                     val errorAmount =
                         e.error.message
                             .split(" ")
@@ -130,11 +130,12 @@ class NearSwapDataSourceImpl(
                     )
                 }
 
-                e.error.message.startsWith("No quotes found") -> throw QuoteLowAmountException(
-                    asset = originAsset,
-                    amount = null,
-                    amountFormatted = null
-                )
+                e.error.message.contains("No quotes found", true) ->
+                    throw QuoteLowAmountException(
+                        asset = originAsset,
+                        amount = null,
+                        amountFormatted = null
+                    )
 
                 else -> throw e
             }
