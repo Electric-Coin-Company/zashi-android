@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.screen.deletewallet
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +12,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -115,13 +113,6 @@ private fun ResetZashiContent(
 
 @Composable
 private fun CheckboxCard(checkboxState: CheckboxState) {
-    val subtitleColor by animateColorAsState(
-        if (checkboxState.isChecked) {
-            ZashiColors.Utility.WarningYellow.utilityOrange500
-        } else {
-            ZashiColors.Utility.WarningYellow.utilityOrange700
-        }
-    )
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = ZashiColors.Utility.WarningYellow.utilityOrange50,
@@ -141,7 +132,7 @@ private fun CheckboxCard(checkboxState: CheckboxState) {
                     subtitle =
                         ZashiTypography.textXs.copy(
                             fontWeight = FontWeight.SemiBold,
-                            color = subtitleColor
+                            color = ZashiColors.Utility.WarningYellow.utilityOrange700
                         ),
                 )
         )
