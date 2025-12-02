@@ -62,17 +62,6 @@ jobs:
         if: "${{ env.EMULATOR_WTF_API_KEY != '' }}"
         run: echo "defined=true" >> $GITHUB_OUTPUT
 
-  check_coinbase_secrets:
-    runs-on: ubuntu-latest
-    outputs:
-      has-secrets: ${{ steps.check_coinbase_secrets.outputs.defined }}
-    steps:
-      - id: check_coinbase_secrets
-        env:
-          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
-        if: "${{ env.COINBASE_APP_ID != '' }}"
-        run: echo "defined=true" >> $GITHUB_OUTPUT
-
   check_properties:
     needs: validate_gradle_wrapper
     runs-on: ubuntu-latest
@@ -272,8 +261,8 @@ jobs:
 
 # Emulator.wtf is preferred if it has an API key.
   test_android_modules_ftl:
-    if: needs.check_firebase_secrets.outputs.has-secrets == 'true' && needs.check_emulator_wtf_secrets.outputs.has-secrets == 'false' && needs.check_coinbase_secrets.outputs.has-secrets == 'true'
-    needs: [validate_gradle_wrapper, check_firebase_secrets, check_emulator_wtf_secrets, check_coinbase_secrets]
+    if: needs.check_firebase_secrets.outputs.has-secrets == 'true' && needs.check_emulator_wtf_secrets.outputs.has-secrets == 'false'
+    needs: [validate_gradle_wrapper, check_firebase_secrets, check_emulator_wtf_secrets]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -316,7 +305,6 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
           # Because Fulladle doesn't allow Test Orchestrator to be enabled/disabled for a specific submodule, it must be enabled for all modules
           ORG_GRADLE_PROJECT_IS_USE_TEST_ORCHESTRATOR: true
-          ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
           ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
           ORG_GRADLE_PROJECT_ZCASH_CMC_KEY: ${{ secrets.CMC_PUBLISHABLE_KEY }}
         run: |
@@ -340,8 +328,8 @@ jobs:
           path: ~/artifacts
 
   test_android_modules_wtf_coverage:
-    if: needs.check_emulator_wtf_secrets.outputs.has-secrets == 'true' && needs.check_coinbase_secrets.outputs.has-secrets == 'true'
-    needs: [ validate_gradle_wrapper, check_emulator_wtf_secrets, check_coinbase_secrets ]
+    if: needs.check_emulator_wtf_secrets.outputs.has-secrets == 'true'
+    needs: [ validate_gradle_wrapper, check_emulator_wtf_secrets]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -367,7 +355,6 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_DEBUG_APP_NAME_SUFFIX: ""
           ORG_GRADLE_PROJECT_ZCASH_EMULATOR_WTF_API_KEY: ${{ secrets.EMULATOR_WTF_API_KEY }}
           ORG_GRADLE_PROJECT_IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED: true
-          ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
           ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
           ORG_GRADLE_PROJECT_ZCASH_CMC_KEY: ${{ secrets.CMC_PUBLISHABLE_KEY }}
         run: |
@@ -391,8 +378,8 @@ jobs:
           path: ~/artifacts
 
   test_android_modules_wtf_no_coverage:
-    if: needs.check_emulator_wtf_secrets.outputs.has-secrets == 'true' && needs.check_coinbase_secrets.outputs.has-secrets == 'true'
-    needs: [ validate_gradle_wrapper, check_emulator_wtf_secrets, check_coinbase_secrets ]
+    if: needs.check_emulator_wtf_secrets.outputs.has-secrets == 'true'
+    needs: [ validate_gradle_wrapper, check_emulator_wtf_secrets]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -418,7 +405,6 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_DEBUG_APP_NAME_SUFFIX: ""
           ORG_GRADLE_PROJECT_ZCASH_EMULATOR_WTF_API_KEY: ${{ secrets.EMULATOR_WTF_API_KEY }}
           ORG_GRADLE_PROJECT_IS_ANDROID_INSTRUMENTATION_TEST_COVERAGE_ENABLED: false
-          ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
           ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
           ORG_GRADLE_PROJECT_ZCASH_CMC_KEY: ${{ secrets.CMC_PUBLISHABLE_KEY }}
         run: |
@@ -443,8 +429,8 @@ jobs:
 
   # Performs a button mash test on the debug build of the app with strict mode enabled
   test_robo_debug:
-    if: needs.check_firebase_secrets.outputs.has-secrets == 'true' && needs.check_coinbase_secrets.outputs.has-secrets == 'true'
-    needs: [check_firebase_secrets, check_coinbase_secrets]
+    if: needs.check_firebase_secrets.outputs.has-secrets == 'true'
+    needs: [check_firebase_secrets]
     runs-on: ubuntu-latest
     permissions:
       packages: read
@@ -480,7 +466,6 @@ jobs:
         timeout-minutes: 20
         env:
           ORG_GRADLE_PROJECT_IS_CRASH_ON_STRICT_MODE_VIOLATION: true
-          ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
           ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
           ORG_GRADLE_PROJECT_ZCASH_CMC_KEY: ${{ secrets.CMC_PUBLISHABLE_KEY }}
         run: |
@@ -500,13 +485,11 @@ jobs:
           # This first environment variable is used by Flank, since the temporary token is missing the project name
           GOOGLE_CLOUD_PROJECT: ${{ vars.FIREBASE_TEST_LAB_PROJECT }}
           ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
-          ORG_GRADLE_PROJECT_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
         run: |
           ./gradlew :app:runFlankSanityConfigDebug
 
   build:
-    if: needs.check_coinbase_secrets.outputs.has-secrets == 'true'
-    needs: [validate_gradle_wrapper, check_coinbase_secrets]
+    needs: [validate_gradle_wrapper]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -554,7 +537,6 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: android
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: androiddebugkey
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: android
-          ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
           ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
           ORG_GRADLE_PROJECT_ZCASH_CMC_KEY: ${{ secrets.CMC_PUBLISHABLE_KEY }}
         run: |
@@ -584,8 +566,7 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: android
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: androiddebugkey
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: android
-          # TODO [#1789] Re-enable Coinbase and Flexa integrations for FOSS variant
-          # ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
+          # TODO [#1789] Re-enable Flexa integrations for FOSS variant
           # ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
         run: |
           ./gradlew clean :app:assembleZcashmainnetFossRelease
@@ -599,8 +580,8 @@ jobs:
 
   # Performs a button mash test on the release build of the app
   test_robo_release:
-    if: needs.check_firebase_secrets.outputs.has-secrets == 'true' && needs.check_coinbase_secrets.outputs.has-secrets == 'true'
-    needs: [build, check_firebase_secrets, check_coinbase_secrets]
+    if: needs.check_firebase_secrets.outputs.has-secrets == 'true'
+    needs: [build, check_firebase_secrets]
     runs-on: ubuntu-latest
     permissions:
       packages: read
@@ -642,7 +623,6 @@ jobs:
           # This first environment variable is used by Flank, since the temporary token is missing the project name
           GOOGLE_CLOUD_PROJECT: ${{ vars.FIREBASE_TEST_LAB_PROJECT }}
           ORG_GRADLE_PROJECT_ZCASH_FIREBASE_TEST_LAB_API_KEY_PATH: ${{ steps.auth_test_lab.outputs.credentials_file_path }}
-          ORG_GRADLE_PROJECT_ZCASH_COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
           ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
           ORG_GRADLE_PROJECT_ZCASH_CMC_KEY: ${{ secrets.CMC_PUBLISHABLE_KEY }}
         run: |

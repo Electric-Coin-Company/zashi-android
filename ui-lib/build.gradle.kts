@@ -141,14 +141,6 @@ androidComponents {
                 comment = "Publishable key of the CMC integration"
             )
         )
-        variant.buildConfigFields.put(
-            "ZCASH_COINBASE_APP_ID",
-            BuildConfigField(
-                type = "String",
-                value = "\"${project.property("ZCASH_COINBASE_APP_ID")?.toString().orEmpty()}\"",
-                comment = "App ID of the Coinbase Onramp integration"
-            )
-        )
         // To configure screen orientation in runtime
         variant.buildConfigFields.put(
             "IS_SCREEN_ROTATION_ENABLED",
