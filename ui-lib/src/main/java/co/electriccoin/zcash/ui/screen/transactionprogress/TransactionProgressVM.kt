@@ -242,7 +242,7 @@ class TransactionProgressVM(
 
     private suspend fun getAddressAbbreviated(): StringResource {
         val address = (getTransactionProposal() as? SendTransactionProposal)?.destination?.address
-        return address?.let { stringResByAddress(it, true) } ?: stringRes("")
+        return address?.let { stringResByAddress(it) } ?: stringRes("")
     }
 
     private fun onBackToSendFormAndClear() = viewModelScope.launch { cancelKeystoneProposalFlow(clearSendForm = true) }

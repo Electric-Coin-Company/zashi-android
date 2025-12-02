@@ -153,14 +153,13 @@ class TransactionDetailVM(
                                 ),
                             depositAddress =
                                 stringResByAddress(
-                                    value = transaction.recipient?.address.orEmpty(),
-                                    abbreviated = true
+                                    value = transaction.recipient?.address.orEmpty()
                                 ),
                             totalFees =
                                 transaction.metadata.swapMetadata
                                     ?.totalFees
                                     ?.let { stringRes(it) },
-                            recipientAddress = recipient?.let { stringResByAddress(it, abbreviated = true) },
+                            recipientAddress = recipient?.let { stringResByAddress(it) },
                             transactionId =
                                 stringResByTransactionId(
                                     value = transaction.transaction.id.txIdString(),
@@ -200,8 +199,8 @@ class TransactionDetailVM(
                     transaction.recipient is WalletAddress.Transparent ->
                         SendTransparentState(
                             contact = transaction.contact?.let { stringRes(it.name) },
-                            address = stringResByAddress(transaction.recipient.address, false),
-                            addressAbbreviated = stringResByAddress(transaction.recipient.address, true),
+                            address = stringRes(transaction.recipient.address),
+                            addressAbbreviated = stringResByAddress(transaction.recipient.address),
                             transactionId =
                                 stringResByTransactionId(
                                     value = transaction.transaction.id.txIdString(),
@@ -222,8 +221,7 @@ class TransactionDetailVM(
                             contact = transaction.contact?.let { stringRes(it.name) },
                             address =
                                 stringResByAddress(
-                                    value = transaction.recipient?.address.orEmpty(),
-                                    abbreviated = true
+                                    value = transaction.recipient?.address.orEmpty()
                                 ),
                             transactionId =
                                 stringResByTransactionId(

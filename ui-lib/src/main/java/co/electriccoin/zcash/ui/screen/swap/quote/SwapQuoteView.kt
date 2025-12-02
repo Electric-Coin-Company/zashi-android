@@ -261,7 +261,7 @@ private fun SuccessPreview() =
                             ),
                             SwapQuoteInfoItem(
                                 description = stringRes("Pay to"),
-                                title = stringResByAddress("Asdwae12easdasd", abbreviated = true),
+                                title = stringResByAddress("Asdwae12easdasd"),
                                 subtitle = null
                             ),
                             SwapQuoteInfoItem(

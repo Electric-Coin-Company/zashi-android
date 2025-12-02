@@ -55,7 +55,7 @@ class AddressBookVM(
                                 smallIcon = contact.blockchain?.chainIcon ?: zcashBlockchain.chainIcon,
                                 isShielded = false,
                                 name = stringRes(contact.name),
-                                address = stringResByAddress(value = contact.address, abbreviated = true),
+                                address = stringResByAddress(value = contact.address),
                                 onClick = { onContactClick(contact) },
                             )
                         )

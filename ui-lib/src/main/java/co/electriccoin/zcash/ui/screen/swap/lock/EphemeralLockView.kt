@@ -27,7 +27,6 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
-import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
@@ -134,7 +133,7 @@ private fun Preview() =
                         listOf(
                             SwapQuoteInfoItem(
                                 description = stringRes("Send to"),
-                                title = stringResByAddress("Asdwae12easdasd", abbreviated = true),
+                                title = stringResByAddress("Asdwae12easdasd"),
                             ),
                             SwapQuoteInfoItem(
                                 description = stringRes("Amount"),

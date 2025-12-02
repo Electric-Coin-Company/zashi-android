@@ -56,7 +56,7 @@ class SelectSwapABRecipientVM(
                                 smallIcon = contact.blockchain?.chainIcon,
                                 isShielded = false,
                                 name = stringRes(contact.contact.name),
-                                address = stringResByAddress(contact.contact.address, abbreviated = true),
+                                address = stringResByAddress(contact.contact.address),
                                 onClick = { onContactClick(contact) },
                             )
                         )
