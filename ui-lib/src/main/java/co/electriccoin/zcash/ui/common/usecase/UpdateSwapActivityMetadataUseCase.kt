@@ -3,14 +3,18 @@ package co.electriccoin.zcash.ui.common.usecase
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.repository.MetadataRepository
+import co.electriccoin.zcash.ui.util.CloseableScopeHolder
+import co.electriccoin.zcash.ui.util.CloseableScopeHolderImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -21,8 +25,8 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 class UpdateSwapActivityMetadataUseCase(
+    accountDataSource: AccountDataSource,
     private val metadataRepository: MetadataRepository,
-    private val accountDataSource: AccountDataSource,
     private val getSwapStatus: GetSwapStatusUseCase
 ) {
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
@@ -35,16 +39,17 @@ class UpdateSwapActivityMetadataUseCase(
 
     private val pipelineCacheSemaphore = Mutex()
 
+    private var pipelineJob: Job? = null
+
     init {
-        scope.launch {
-            accountDataSource.selectedAccount
-                .map { it?.sdkAccount?.accountUuid }
-                .distinctUntilChanged()
-                .collect {
-                    killPipeline()
-                    if (it != null) startPipeline()
-                }
-        }
+        accountDataSource.selectedAccount
+            .map { it?.sdkAccount?.accountUuid }
+            .distinctUntilChanged()
+            .onEach {
+                killPipeline()
+                if (it != null) startPipeline()
+            }
+            .launchIn(scope)
     }
 
     operator fun invoke(activity: ActivityData) {
@@ -77,13 +82,14 @@ class UpdateSwapActivityMetadataUseCase(
     }
 
     private fun killPipeline() {
-        scope.coroutineContext.cancelChildren()
+        pipelineJob?.cancel()
+        pipelineJob = null
         pipelineCache.clear()
     }
 
     @Suppress("MagicNumber")
     private fun startPipeline() {
-        scope.launch {
+        pipelineJob = scope.launch {
             for (item in pipeline) {
                 pipelineSemaphore.withLock {
                     val depositAddress = item.depositAddress
