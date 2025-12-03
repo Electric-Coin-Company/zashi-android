@@ -12,6 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.design.component.BlankSurface
 import co.electriccoin.zcash.ui.design.component.ZashiBaseSettingsOptIn
 import co.electriccoin.zcash.ui.design.component.ZashiButton
@@ -40,7 +41,12 @@ fun ExchangeRateOptInView(state: ExchangeRateOptInState) {
             ZashiInfoRow(
                 icon = R.drawable.ic_exchange_rate_info_1,
                 title = stringResource(R.string.exchange_rate_info_title_1),
-                subtitle = stringResource(R.string.exchange_rate_info_subtitle_1),
+                subtitle =
+                    if (VersionInfo.IS_CMC_AVAILABLE) {
+                        stringResource(R.string.exchange_rate_info_subtitle_1)
+                    } else {
+                        stringResource(R.string.exchange_rate_info_subtitle_1_no_cmc)
+                    },
             )
             Spacer(modifier = Modifier.height(16.dp))
             ZashiInfoRow(

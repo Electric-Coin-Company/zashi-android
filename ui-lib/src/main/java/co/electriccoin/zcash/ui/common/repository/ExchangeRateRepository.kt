@@ -35,13 +35,11 @@ import kotlin.time.Duration.Companion.seconds
 interface ExchangeRateRepository {
     val state: StateFlow<ExchangeRateState>
 
-    fun optInExchangeRateUsd(optIn: Boolean)
-
     fun refreshExchangeRateUsd()
 }
 
 class ExchangeRateRepositoryImpl(
-    private val isExchangeRateEnabledStorageProvider: IsExchangeRateEnabledStorageProvider,
+    isExchangeRateEnabledStorageProvider: IsExchangeRateEnabledStorageProvider,
     private val exchangeRateDataSource: ExchangeRateDataSource,
     private val synchronizerProvider: SynchronizerProvider,
 ) : ExchangeRateRepository {
@@ -173,10 +171,6 @@ class ExchangeRateRepositoryImpl(
                 refreshPipeline.emit(Unit)
             }
         }
-
-    override fun optInExchangeRateUsd(optIn: Boolean) {
-        scope.launch { isExchangeRateEnabledStorageProvider.store(optIn) }
-    }
 }
 
 private val USD_EXCHANGE_REFRESH_LOCK_THRESHOLD = 2.minutes

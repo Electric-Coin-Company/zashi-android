@@ -32,6 +32,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.exchangerate.SecondaryCard
 
@@ -41,7 +42,7 @@ internal fun ExchangeRateSettingsView(state: ExchangeRateSettingsState) {
         header = stringResource(id = R.string.exchange_rate_opt_in_subtitle),
         image = R.drawable.exchange_rate,
         onDismiss = state.onBack,
-        info = null,
+        info = state.info?.getValue(),
         content = {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -169,7 +170,8 @@ private fun SettingsExchangeRateOptInPreview() =
                                 text = stringRes(R.string.exchange_rate_opt_in_save),
                                 onClick = {}
                             ),
-                        onBack = {}
+                        onBack = {},
+                        info = stringRes(R.string.exchange_rate_tor_enabled_footer)
                     )
             )
         }

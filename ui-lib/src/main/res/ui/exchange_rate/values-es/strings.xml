@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="exchange_rate_info_title_1">Protección de dirección IP</string>
-    <string name="exchange_rate_info_subtitle_1">Las tasas de cambio son obtenidas a travez de Tor para proteger tu dirección IP. Verifica si el uso de Tor esta permitido en tu region.</string>
+    <string name="exchange_rate_info_subtitle_1">Si la Protección Tor está activada (Configuración Avanzada), Zashi protege tu dirección IP.</string>
+    <string name="exchange_rate_info_subtitle_1_no_cmc">Las tasas de cambio son obtenidas a travez de Tor para proteger tu dirección IP. Verifica si el uso de Tor esta permitido en tu region.</string>
     <string name="exchange_rate_info_title_2">Actualización de tasa</string>
     <string name="exchange_rate_info_subtitle_2">La tasa se actualiza automáticamente y también se puede actualizar manualmente.</string>
 
@@ -29,4 +30,8 @@
     <string name="exchange_rate_tor_opt_in_description">La protección con Tor es una función beta que ofrece protecciones adicionales para tu dirección IP. Las tasas de cambio en USD solo están disponibles cuando esta opción está activada.\n\nSi Tor está permitido en tu región, te recomendamos activarlo. Puedes administrarlo en Configuración avanzada.</string>
     <string name="exchange_rate_tor_opt_in_positive">Activar</string>
     <string name="exchange_rate_tor_opt_in_negative">Hacerlo después</string>
+
+    <string name="exchange_rate_tor_enabled_footer">Desactivar la Protección Tor también desactivará la función de Conversión de Moneda hasta que se vuelva a activar.</string>
+    <string name="exchange_rate_tor_disabled_footer">Si deseas proteger tu dirección IP, activa la Protección Tor en la Configuración Avanzada.</string>
+
 </resources>

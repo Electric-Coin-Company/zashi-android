@@ -38,6 +38,8 @@ data class VersionInfo(
                     NetworkDimension.TESTNET -> ZcashNetwork.Testnet
                 }
 
+        val IS_CMC_AVAILABLE = BuildConfig.ZCASH_CMC_KEY.takeIf { it.isNotBlank() } != null
+
         fun new(context: Context): VersionInfo {
             val packageInfo = context.packageManager.getPackageInfoCompat(context.packageName, 0L)
             val applicationInfo = context.applicationInfo
