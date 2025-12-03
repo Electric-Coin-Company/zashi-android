@@ -29,16 +29,22 @@ class NavigateToErrorUseCase(
             args.synchronizerError.cause
                 ?.getCausesAsSequence()
                 .orEmpty()
-                .any {
+                .any { e ->
                     when {
-                        it is ResponseException && it.code in 500..599 -> true
-                        it is ResponseException && it.code == 3200 ->
-                            (500..599)
-                                .any { status ->
-                                    it.message.orEmpty().contains("$status")
-                                }
+                        e is ResponseException && e.code in 500..599 -> true
 
-                        it is UninitializedTorClientException -> true
+                        e is ResponseException &&
+                            e.code == 3200 &&
+                            (500..599)
+                                .any { e.message.orEmpty().contains("$it", true) }
+                        -> true
+
+                        e is ResponseException &&
+                            e.code == 3200 &&
+                            e.message.orEmpty().contains("Tonic error: transport error", true)
+                        -> true
+
+                        e is UninitializedTorClientException -> true
                         else -> false
                     }
                 }
