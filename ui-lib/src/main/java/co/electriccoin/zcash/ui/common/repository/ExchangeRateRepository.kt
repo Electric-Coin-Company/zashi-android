@@ -95,12 +95,12 @@ class ExchangeRateRepositoryImpl(
                         awaitClose()
                     }
                 } else {
-                    flowOf(ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null))
+                    flowOf(ObserveFiatCurrencyResult())
                 }
             }.stateIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(USD_EXCHANGE_REFRESH_LOCK_THRESHOLD),
-                initialValue = ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null)
+                initialValue = ObserveFiatCurrencyResult()
             )
 
     private val usdExchangeRateTimestamp =
@@ -121,8 +121,6 @@ class ExchangeRateRepositoryImpl(
             lockDuration = USD_EXCHANGE_STALE_LOCK_THRESHOLD,
             onRefresh = { refreshExchangeRateUsdInternal().join() }
         )
-
-    private var lastExchangeRateUsdValue: ExchangeRateState = ExchangeRateState.OptedOut
 
     override val state: StateFlow<ExchangeRateState> =
         combine(
@@ -150,44 +148,19 @@ class ExchangeRateRepositoryImpl(
         exchangeRate: ObserveFiatCurrencyResult,
         isStale: Boolean,
         isRefreshEnabled: Boolean,
-    ): ExchangeRateState {
-        lastExchangeRateUsdValue =
-            when (isOptedIn) {
-                true ->
-                    when (val lastValue = lastExchangeRateUsdValue) {
-                        is ExchangeRateState.Data ->
-                            lastValue.copy(
-                                isLoading = exchangeRate.isLoading,
-                                isStale = isStale,
-                                isRefreshEnabled = isRefreshEnabled,
-                                currencyConversion = exchangeRate.currencyConversion,
-                            )
-
-                        ExchangeRateState.OptedOut ->
-                            ExchangeRateState.Data(
-                                isLoading = exchangeRate.isLoading,
-                                isStale = isStale,
-                                isRefreshEnabled = isRefreshEnabled,
-                                currencyConversion = exchangeRate.currencyConversion,
-                                onRefresh = ::refreshExchangeRateUsd
-                            )
-
-                        is ExchangeRateState.OptIn ->
-                            ExchangeRateState.Data(
-                                isLoading = exchangeRate.isLoading,
-                                isStale = isStale,
-                                isRefreshEnabled = isRefreshEnabled,
-                                currencyConversion = exchangeRate.currencyConversion,
-                                onRefresh = ::refreshExchangeRateUsd
-                            )
-                    }
-
-                false -> ExchangeRateState.OptedOut
-                null -> ExchangeRateState.OptIn
-            }
-
-        return lastExchangeRateUsdValue
-    }
+    ): ExchangeRateState =
+        when (isOptedIn) {
+            true ->
+                ExchangeRateState.Data(
+                    isLoading = exchangeRate.isLoading,
+                    isStale = isStale,
+                    isRefreshEnabled = isRefreshEnabled,
+                    currencyConversion = exchangeRate.currencyConversion,
+                    onRefresh = ::refreshExchangeRateUsd
+                )
+            false -> ExchangeRateState.OptedOut
+            null -> ExchangeRateState.OptIn
+        }
 
     override fun refreshExchangeRateUsd() {
         refreshExchangeRateUsdInternal()

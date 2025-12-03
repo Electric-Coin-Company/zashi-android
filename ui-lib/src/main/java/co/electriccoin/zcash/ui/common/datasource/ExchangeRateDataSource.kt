@@ -83,8 +83,7 @@ class ExchangeRateDataSourceImpl(
                     .flatMapLatest {
                         when (it) {
                             null -> flowOf(ObserveFiatCurrencyResult())
-                            Synchronizer.Status.STOPPED,
-                            Synchronizer.Status.INITIALIZING -> emptyFlow()
+                            Synchronizer.Status.STOPPED -> emptyFlow()
 
                             else -> exchangeRate
                         }
