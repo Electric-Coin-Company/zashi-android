@@ -20,6 +20,7 @@ import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.screen.error.ErrorArgs
 import co.electriccoin.zcash.ui.screen.error.NavigateToErrorUseCase
+import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsArgs
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filter
@@ -122,7 +123,7 @@ class RequestSwapQuoteUseCase(
                 swapRepository.clearQuote()
                 zashiProposalRepository.clear()
                 keystoneProposalRepository.clear()
-                navigationRouter.forward(co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsArgs)
+                navigationRouter.forward(InsufficientFundsArgs)
                 return@withContext
             } catch (e: Exception) {
                 swapRepository.clearQuote()

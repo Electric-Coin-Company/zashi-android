@@ -44,7 +44,7 @@ class SendViewModel(
     private val observeWalletAccounts: GetWalletAccountsUseCase,
     private val navigateToSelectRecipient: NavigateToSelectRecipientUseCase,
     private val navigationRouter: NavigationRouter,
-    private val getSelectedWalletAccountUseCase: GetSelectedWalletAccountUseCase,
+    private val getSelectedWalletAccount: GetSelectedWalletAccountUseCase,
 ) : ViewModel() {
     val recipientAddressState = MutableStateFlow(RecipientAddressState.new("", null))
 
@@ -141,7 +141,7 @@ class SendViewModel(
         if (onCreateZecSendClickJob?.isActive == true) return
         onCreateZecSendClickJob =
             viewModelScope.launch {
-                val currentAccount = getSelectedWalletAccountUseCase()
+                val currentAccount = getSelectedWalletAccount()
                 val address = newZecSend.destination
                 if (currentAccount is KeystoneAccount && address == AddressType.Tex) {
                     navigationRouter.forward(TEXUnsupportedArgs)
