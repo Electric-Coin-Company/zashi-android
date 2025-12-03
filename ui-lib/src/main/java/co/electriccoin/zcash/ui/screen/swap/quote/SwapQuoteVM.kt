@@ -13,7 +13,7 @@ import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
-import co.electriccoin.zcash.ui.common.provider.ResponseWithErrorException
+import co.electriccoin.zcash.ui.common.provider.ResponseWithNearErrorException
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.usecase.CancelSwapQuoteUseCase
@@ -103,7 +103,7 @@ internal class SwapQuoteVM(
                     )
 
                 quote.exception is QuoteLowAmountException -> stringRes(R.string.swap_quote_error_too_low_try_higher)
-                quote.exception is ResponseWithErrorException &&
+                quote.exception is ResponseWithNearErrorException &&
                     !quote.exception.error.message
                         .contains("failed to get quote", ignoreCase = true) ->
                     stringRes(quote.exception.error.message)

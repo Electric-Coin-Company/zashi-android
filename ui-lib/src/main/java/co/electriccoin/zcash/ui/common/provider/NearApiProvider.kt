@@ -20,25 +20,24 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.io.IOException
 
 typealias GetNearSupportedTokensResponse = List<NearTokenDto>
 
 interface NearApiProvider {
-    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithNearErrorException::class)
     suspend fun getSupportedTokens(): GetNearSupportedTokensResponse
 
-    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithNearErrorException::class)
     suspend fun requestQuote(request: QuoteRequest): QuoteResponseDto
 
-    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithNearErrorException::class)
     suspend fun submitDepositTransaction(request: SubmitDepositTransactionRequest)
 
-    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithNearErrorException::class)
     suspend fun checkSwapStatus(depositAddress: String): SwapStatusResponseDto
 }
 
-class ResponseWithErrorException(
+class ResponseWithNearErrorException(
     response: HttpResponse,
     cachedResponseText: String,
     val error: ErrorDto
@@ -84,7 +83,26 @@ class KtorNearApiProvider(
     @Throws(ResponseException::class)
     private suspend inline fun <T> execute(
         crossinline block: suspend HttpClient.() -> T
-    ): T = withContext(Dispatchers.IO) { httpClientProvider.create().use { block(it) } }
+    ): T =
+        withContext(Dispatchers.IO) {
+            httpClientProvider.create().use {
+                try {
+                    block(it)
+                } catch (e: ResponseException) {
+                    val response = e.response
+                    val error: ErrorDto? = runCatching { response.body<ErrorDto?>() }.getOrNull()
+                    if (error != null) {
+                        throw ResponseWithNearErrorException(
+                            response = response,
+                            cachedResponseText = "Code: ${response.status}, message: ${error.message}",
+                            error = error
+                        )
+                    } else {
+                        throw e
+                    }
+                }
+            }
+        }
 }
 
 private const val AUTH_TOKEN =

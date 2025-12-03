@@ -5,7 +5,6 @@ import cash.z.ecc.android.sdk.model.FiatCurrencyConversion
 import cash.z.ecc.android.sdk.model.ObserveFiatCurrencyResult
 import co.electriccoin.zcash.ui.BuildConfig
 import co.electriccoin.zcash.ui.common.provider.CMCApiProvider
-import co.electriccoin.zcash.ui.common.provider.ResponseWithErrorException
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import io.ktor.client.plugins.ResponseException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.io.IOException
 
 interface ExchangeRateDataSource {
     /**
@@ -26,12 +24,7 @@ interface ExchangeRateDataSource {
      *
      * @throws ExchangeRateUnavailable when exchange rate is not found or server was down
      */
-    @Throws(
-        ExchangeRateUnavailable::class,
-        ResponseException::class,
-        ResponseWithErrorException::class,
-        IOException::class
-    )
+    @Throws(ExchangeRateUnavailable::class, ResponseException::class)
     suspend fun getExchangeRate(): FiatCurrencyConversion
 
     fun observeSynchronizerRoute(): Flow<ObserveFiatCurrencyResult>
