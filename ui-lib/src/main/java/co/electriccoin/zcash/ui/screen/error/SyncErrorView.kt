@@ -104,18 +104,19 @@ private fun Preview() =
         SyncErrorView(
             state =
                 SyncErrorState(
+                    tryAgain =
+                        ButtonState(
+                            text = stringRes("Try again"),
+                            icon = R.drawable.ic_sync_error_try_again,
+                            onClick = {},
+                            trailingIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_right,
+                        ),
                     switchServer =
                         ButtonState(
                             text = stringRes("Switch server"),
                             icon = R.drawable.ic_sync_error_switch_server,
                             trailingIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_right,
                             onClick = {}
-                        ),
-                    tryAgain =
-                        ButtonState(
-                            text = stringRes("Try again"),
-                            onClick = {},
-                            trailingIcon = co.electriccoin.zcash.ui.design.R.drawable.ic_chevron_right,
                         ),
                     disableTor =
                         ButtonState(
