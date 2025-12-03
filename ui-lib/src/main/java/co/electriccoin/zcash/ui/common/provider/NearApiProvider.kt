@@ -14,7 +14,6 @@ import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
@@ -38,10 +37,12 @@ interface NearApiProvider {
 }
 
 class ResponseWithNearErrorException(
-    response: HttpResponse,
-    cachedResponseText: String,
-    val error: ErrorDto
-) : ResponseException(response, cachedResponseText)
+    val error: ErrorDto,
+    override val cause: ResponseException
+) : ResponseException(
+        response = cause.response,
+        cachedResponseText = "Code: ${cause.response.status}, message: ${error.message}"
+    )
 
 class KtorNearApiProvider(
     private val httpClientProvider: HttpClientProvider
@@ -92,11 +93,7 @@ class KtorNearApiProvider(
                     val response = e.response
                     val error: ErrorDto? = runCatching { response.body<ErrorDto?>() }.getOrNull()
                     if (error != null) {
-                        throw ResponseWithNearErrorException(
-                            response = response,
-                            cachedResponseText = "Code: ${response.status}, message: ${error.message}",
-                            error = error
-                        )
+                        throw ResponseWithNearErrorException(error = error, cause = e)
                     } else {
                         throw e
                     }
