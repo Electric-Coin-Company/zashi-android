@@ -11,10 +11,9 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.io.IOException
 
 interface CMCApiProvider {
-    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
+    @Throws(ResponseException::class)
     suspend fun getExchangeRateQuote(apiKey: String): GetCMCQuoteResponse
 }
 
@@ -35,5 +34,5 @@ class CMCApiProviderImpl(
     @Throws(ResponseException::class)
     private suspend inline fun <T> execute(
         crossinline block: suspend HttpClient.() -> T
-    ): T = withContext(Dispatchers.IO) { httpClientProvider.createTor().use { block(it) } }
+    ): T = withContext(Dispatchers.IO) { httpClientProvider.create().use { block(it) } }
 }
