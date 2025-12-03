@@ -32,4 +32,28 @@
     <string name="restore_bd_estimation_restore">Restaurar</string>
 
     <string name="restore_seed_warning_suggestions">Esta palabra no está en el diccionario de frases de recuperación. Por favor selecciona la correcta de las sugerencias.</string>
+
+    <string name="restore_tor_title">Habilitar Protección Tor</string>
+    <string name="restore_tor_subtitle">Si Tor está disponible en tu región, recomendamos habilitarlo para una mayor privacidad durante la restauración de la billetera. Este paso es completamente opcional.</string>
+    <string name="restore_tor_checkbox_title">Habilitar Protección Tor</string>
+    <string name="restore_tor_checkbox_subtitle">Redirige tu conexión a través de la red Tor para mayor anonimato y protección de privacidad.</string>
+
+    <string name="resync_title">Resincronizar Billetera</string>
+    <string name="resync_bd_date_subtitle">Primera Transacción de la Billetera</string>
+    <string name="resync_bd_date_message">Decide hasta qué punto Zashi debe resincronizar. Ingresa una fecha anterior a tu primera transacción recibida.</string>
+    <string name="resync_bd_date_note">Si no estás seguro, elige una fecha anterior.</string>
+
+    <string name="resync_bd_estimation_subtitle">Altura de Bloque Estimada</string>
+    <string name="resync_bd_estimation_message">Zashi escaneará y recuperará todas las transacciones realizadas después del siguiente número de bloque.</string>
+    <string name="resync_bd_estimation_btn">Establecer esta altura</string>
+
+    <string name="confirm_resync_title">Confirmar Resincronización</string>
+    <string name="confirm_resync_subtitle">Resync the current wallet without resetting the app. This can be used to
+        troubleshoot issues that would normally require restoring your wallet like fixing your Keystone balance
+        .\n\nUnless you specify otherwise below, Zashi will resync from the date displayed. </string>
+    <string name="confirm_resync_message">A menos que especifiques lo contrario a continuación, Zashi se resincronizará desde la fecha mostrada.</string>
+    <string name="confirm_resync_info">Tu billetera se resincronizará desde %1$s (%2$s bloques). Usa el botón a continuación si deseas cambiarlo.</string>
+    <string name="confirm_resync_change">Cambiar</string>
+    <string name="confirm_resync_confirm">Confirmar</string>
+
 </resources>

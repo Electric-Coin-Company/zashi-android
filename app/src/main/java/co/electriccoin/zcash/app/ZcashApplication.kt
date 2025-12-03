@@ -22,8 +22,8 @@ import co.electriccoin.zcash.ui.common.repository.ApplicationStateRepository
 import co.electriccoin.zcash.ui.common.repository.FlexaRepository
 import co.electriccoin.zcash.ui.common.repository.HomeMessageCacheRepository
 import co.electriccoin.zcash.ui.common.repository.WalletSnapshotRepository
-import co.electriccoin.zcash.ui.common.usecase.ErrorArgs
-import co.electriccoin.zcash.ui.common.usecase.NavigateToErrorUseCase
+import co.electriccoin.zcash.ui.screen.error.ErrorArgs
+import co.electriccoin.zcash.ui.screen.error.NavigateToErrorUseCase
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject

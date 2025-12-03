@@ -114,7 +114,7 @@ class TransactionDetailVM(
             }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = null
+                initialValue = createEmptyState()
             )
 
     init {
@@ -127,6 +127,27 @@ class TransactionDetailVM(
             }
         }
     }
+
+    private fun createEmptyState(): TransactionDetailState =
+        TransactionDetailState(
+            onBack = ::onBack,
+            bookmarkButton = null,
+            header =
+                TransactionDetailHeaderState(
+                    title = null,
+                    amount = null,
+                    icons =
+                        listOf(
+                            loadingImageRes(),
+                            loadingImageRes(),
+                            loadingImageRes(),
+                        )
+                ),
+            info = null,
+            errorFooter = null,
+            primaryButton = null,
+            secondaryButton = null,
+        )
 
     private fun onAddOrEditNoteClick() {
         navigationRouter.forward(TransactionNote(transactionDetailArgs.transactionId))
@@ -153,14 +174,13 @@ class TransactionDetailVM(
                                 ),
                             depositAddress =
                                 stringResByAddress(
-                                    value = transaction.recipient?.address.orEmpty(),
-                                    abbreviated = true
+                                    value = transaction.recipient?.address.orEmpty()
                                 ),
                             totalFees =
                                 transaction.metadata.swapMetadata
                                     ?.totalFees
                                     ?.let { stringRes(it) },
-                            recipientAddress = recipient?.let { stringResByAddress(it, abbreviated = true) },
+                            recipientAddress = recipient?.let { stringResByAddress(it) },
                             transactionId =
                                 stringResByTransactionId(
                                     value = transaction.transaction.id.txIdString(),
@@ -200,8 +220,8 @@ class TransactionDetailVM(
                     transaction.recipient is WalletAddress.Transparent ->
                         SendTransparentState(
                             contact = transaction.contact?.let { stringRes(it.name) },
-                            address = stringResByAddress(transaction.recipient.address, false),
-                            addressAbbreviated = stringResByAddress(transaction.recipient.address, true),
+                            address = stringRes(transaction.recipient.address),
+                            addressAbbreviated = stringResByAddress(transaction.recipient.address),
                             transactionId =
                                 stringResByTransactionId(
                                     value = transaction.transaction.id.txIdString(),
@@ -222,8 +242,7 @@ class TransactionDetailVM(
                             contact = transaction.contact?.let { stringRes(it.name) },
                             address =
                                 stringResByAddress(
-                                    value = transaction.recipient?.address.orEmpty(),
-                                    abbreviated = true
+                                    value = transaction.recipient?.address.orEmpty()
                                 ),
                             transactionId =
                                 stringResByTransactionId(
@@ -340,7 +359,7 @@ class TransactionDetailVM(
 
     private fun createPrimaryButtonState(data: DetailedTransactionData): ButtonState? =
         when {
-            data.swap?.error != null && data.swap.status != null ->
+            data.swap?.error != null && data.swap.status == null ->
                 mapper.createTransactionDetailErrorButtonState(
                     error = data.swap.error,
                     reloadHandle = data.reloadHandle

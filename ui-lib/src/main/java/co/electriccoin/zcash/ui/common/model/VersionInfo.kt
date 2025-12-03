@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common.model
 
 import android.content.Context
 import android.content.pm.ApplicationInfo
+import cash.z.ecc.android.sdk.model.ZcashNetwork
 import co.electriccoin.zcash.build.gitCommitCount
 import co.electriccoin.zcash.build.gitSha
 import co.electriccoin.zcash.build.releaseNotesEn
@@ -22,13 +23,22 @@ data class VersionInfo(
     val versionCode: Long,
     val versionName: String,
     val distribution: DistributionDimension,
-    val network: NetworkDimension,
+    val network: ZcashNetwork,
 ) {
     companion object {
+        private val NETWORK_DIMENSION: NetworkDimension
+            get() = NetworkDimension.entries.first { it.value == BuildConfig.FLAVOR_network }
+
         val DISTRIBUTION: DistributionDimension
             get() = DistributionDimension.entries.first { it.value == BuildConfig.FLAVOR_distribution }
-        val NETWORK: NetworkDimension
-            get() = NetworkDimension.entries.first { it.value == BuildConfig.FLAVOR_network }
+        val NETWORK: ZcashNetwork
+            get() =
+                when (NETWORK_DIMENSION) {
+                    NetworkDimension.MAINNET -> ZcashNetwork.Mainnet
+                    NetworkDimension.TESTNET -> ZcashNetwork.Testnet
+                }
+
+        val IS_CMC_AVAILABLE = BuildConfig.ZCASH_CMC_KEY.takeIf { it.isNotBlank() } != null
 
         fun new(context: Context): VersionInfo {
             val packageInfo = context.packageManager.getPackageInfoCompat(context.packageName, 0L)
@@ -71,7 +81,7 @@ enum class DistributionDimension(
     FOSS("foss")
 }
 
-enum class NetworkDimension(
+private enum class NetworkDimension(
     val value: String
 ) {
     MAINNET("zcashmainnet"),

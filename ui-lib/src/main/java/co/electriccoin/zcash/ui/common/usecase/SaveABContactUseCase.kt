@@ -7,7 +7,7 @@ class SaveABContactUseCase(
     private val addressBookRepository: AddressBookRepository,
     private val navigationRouter: NavigationRouter,
 ) {
-    suspend operator fun invoke(
+    operator fun invoke(
         name: String,
         address: String,
         chain: String?,

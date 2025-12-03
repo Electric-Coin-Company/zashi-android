@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.common.model.SubmitResult
-import co.electriccoin.zcash.ui.common.viewmodel.SynchronizerError
+import co.electriccoin.zcash.ui.common.model.SynchronizerError
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.getString
 import co.electriccoin.zcash.ui.screen.support.model.SupportInfoType

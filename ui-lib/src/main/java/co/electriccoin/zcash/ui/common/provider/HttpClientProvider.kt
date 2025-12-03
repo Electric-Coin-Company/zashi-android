@@ -1,22 +1,17 @@
 package co.electriccoin.zcash.ui.common.provider
 
 import android.util.Log
-import co.electriccoin.zcash.ui.common.model.near.ErrorDto
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
-import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngineConfig
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.HttpCallValidator
 import io.ktor.client.plugins.HttpRequestRetry
-import io.ktor.client.plugins.ResponseException
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.io.IOException
 
 interface HttpClientProvider {
     suspend fun create(): HttpClient
@@ -27,55 +22,23 @@ class HttpClientProviderImpl(
     private val isTorEnabledStorageProvider: IsTorEnabledStorageProvider
 ) : HttpClientProvider {
     override suspend fun create(): HttpClient =
-        if (isTorEnabledStorageProvider.get() == true) createTor() else createDefault()
+        if (isTorEnabledStorageProvider.get() == true) createTor() else createDirect()
 
     private suspend fun createTor() =
         synchronizerProvider
             .getSynchronizer()
             .getTorHttpClient {
                 configureHttpClient()
-                install(HttpCallValidator) {
-                    handleResponseExceptionWithRequest { exception, _ ->
-                        if (exception is ResponseException) {
-                            val response = exception.response
-                            val error: ErrorDto? = runCatching { response.body<ErrorDto?>() }.getOrNull()
-                            if (error != null) {
-                                throw ResponseWithErrorException(
-                                    response = response,
-                                    cachedResponseText = "Code: ${response.status}, message: ${error.message}",
-                                    error = error
-                                )
-                            }
-                        } else if (exception is RuntimeException) {
-                            throw IOException(exception.message, exception)
-                        }
-                    }
-                }
             }
 
     @Suppress("MagicNumber")
-    private fun createDefault() =
+    private fun createDirect() =
         HttpClient(OkHttp) {
             configureHttpClient()
             install(HttpRequestRetry) {
                 maxRetries = 4
                 retryOnExceptionOrServerErrors(4)
                 exponentialDelay()
-            }
-            install(HttpCallValidator) {
-                handleResponseExceptionWithRequest { exception, _ ->
-                    if (exception is ResponseException) {
-                        val response = exception.response
-                        val error: ErrorDto? = runCatching { response.body<ErrorDto?>() }.getOrNull()
-                        if (error != null) {
-                            throw ResponseWithErrorException(
-                                response = response,
-                                cachedResponseText = "Code: ${response.status}, message: ${error.message}",
-                                error = error
-                            )
-                        }
-                    }
-                }
             }
         }
 

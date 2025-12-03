@@ -14,35 +14,35 @@ import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.contentType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.io.IOException
 
 typealias GetNearSupportedTokensResponse = List<NearTokenDto>
 
 interface NearApiProvider {
-    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithNearErrorException::class)
     suspend fun getSupportedTokens(): GetNearSupportedTokensResponse
 
-    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithNearErrorException::class)
     suspend fun requestQuote(request: QuoteRequest): QuoteResponseDto
 
-    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithNearErrorException::class)
     suspend fun submitDepositTransaction(request: SubmitDepositTransactionRequest)
 
-    @Throws(ResponseException::class, ResponseWithErrorException::class, IOException::class)
+    @Throws(ResponseException::class, ResponseWithNearErrorException::class)
     suspend fun checkSwapStatus(depositAddress: String): SwapStatusResponseDto
 }
 
-class ResponseWithErrorException(
-    response: HttpResponse,
-    cachedResponseText: String,
-    val error: ErrorDto
-) : ResponseException(response, cachedResponseText)
+class ResponseWithNearErrorException(
+    val error: ErrorDto,
+    override val cause: ResponseException
+) : ResponseException(
+        response = cause.response,
+        cachedResponseText = "Code: ${cause.response.status}, message: ${error.message}"
+    )
 
 class KtorNearApiProvider(
     private val httpClientProvider: HttpClientProvider
@@ -84,7 +84,22 @@ class KtorNearApiProvider(
     @Throws(ResponseException::class)
     private suspend inline fun <T> execute(
         crossinline block: suspend HttpClient.() -> T
-    ): T = withContext(Dispatchers.IO) { httpClientProvider.create().use { block(it) } }
+    ): T =
+        withContext(Dispatchers.IO) {
+            httpClientProvider.create().use {
+                try {
+                    block(it)
+                } catch (e: ResponseException) {
+                    val response = e.response
+                    val error: ErrorDto? = runCatching { response.body<ErrorDto?>() }.getOrNull()
+                    if (error != null) {
+                        throw ResponseWithNearErrorException(error = error, cause = e)
+                    } else {
+                        throw e
+                    }
+                }
+            }
+        }
 }
 
 private const val AUTH_TOKEN =

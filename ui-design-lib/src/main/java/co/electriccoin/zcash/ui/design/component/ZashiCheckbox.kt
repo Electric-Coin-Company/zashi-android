@@ -43,6 +43,7 @@ fun ZashiCheckbox(
     isChecked: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    textSpacing: Dp = 2.dp,
     spacing: Dp = ZashiDimensions.Spacing.spacingMd,
     textStyles: CheckboxTextStyles = ZashiCheckboxDefaults.textStyles()
 ) {
@@ -55,7 +56,8 @@ fun ZashiCheckbox(
             ),
         modifier = modifier,
         spacing = spacing,
-        textStyles = textStyles
+        textStyles = textStyles,
+        textSpacing = textSpacing
     )
 }
 
@@ -64,6 +66,7 @@ fun ZashiCheckbox(
     state: CheckboxState,
     modifier: Modifier = Modifier,
     spacing: Dp = ZashiDimensions.Spacing.spacingMd,
+    textSpacing: Dp = 2.dp,
     contentPadding: PaddingValues = ZashiCheckboxDefaults.contentPadding,
     textStyles: CheckboxTextStyles = ZashiCheckboxDefaults.textStyles()
 ) {
@@ -84,7 +87,7 @@ fun ZashiCheckbox(
                 style = textStyles.title,
             )
             state.subtitle?.let {
-                Spacer(2.dp)
+                Spacer(textSpacing)
                 Text(
                     text = it.getValue(),
                     style = textStyles.subtitle

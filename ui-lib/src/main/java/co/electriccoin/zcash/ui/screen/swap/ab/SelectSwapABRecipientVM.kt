@@ -56,7 +56,7 @@ class SelectSwapABRecipientVM(
                                 smallIcon = contact.blockchain?.chainIcon,
                                 isShielded = false,
                                 name = stringRes(contact.contact.name),
-                                address = stringResByAddress(contact.contact.address, abbreviated = true),
+                                address = stringResByAddress(contact.contact.address),
                                 onClick = { onContactClick(contact) },
                             )
                         )
@@ -94,8 +94,7 @@ class SelectSwapABRecipientVM(
     private fun onAddContactManuallyClick() =
         navigationRouter.forward(
             AddSwapABContactArgs(
-                address = null,
-                chain = null
+                address = null
             )
         )
 
@@ -103,7 +102,7 @@ class SelectSwapABRecipientVM(
         viewModelScope.launch {
             val contact = navigateToScanAddress()
             if (contact != null) {
-                navigationRouter.replace(AddSwapABContactArgs(address = contact.address, chain = null))
+                navigationRouter.replace(AddSwapABContactArgs(address = contact.address))
             }
         }
 }

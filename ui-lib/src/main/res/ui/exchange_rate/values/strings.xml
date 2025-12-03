@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="exchange_rate_info_title_1">IP Address Protection</string>
-    <string name="exchange_rate_info_subtitle_1">Exchange rates are fetched over Tor to protect your IP address. Ensure Tor use is allowed in your region.</string>
+    <string name="exchange_rate_info_subtitle_1">If Tor Protection is enabled (Advanced Settings), Zashi protects your IP address.</string>
+    <string name="exchange_rate_info_subtitle_1_no_cmc">Exchange rates are fetched over Tor to protect your IP address. Ensure Tor use is allowed in your region.</string>
     <string name="exchange_rate_info_title_2">Rate Refresh</string>
     <string name="exchange_rate_info_subtitle_2">The rate is refreshed automatically and can also be refreshed manually.</string>
 
@@ -33,5 +34,8 @@
         protections for your IP address. USD exchange rates are only available when it is enabled.\n\nIf Tor is permitted in your region, we recommend enabling it. You can manage it in Advanced Settings.</string>
     <string name="exchange_rate_tor_opt_in_positive">Enable</string>
     <string name="exchange_rate_tor_opt_in_negative">Do it later</string>
+
+    <string name="exchange_rate_tor_enabled_footer">Disabling Tor Protection will also disable the Currency Conversion feature until re-enabled.</string>
+    <string name="exchange_rate_tor_disabled_footer">If you would like to protect your IP address, enable Tor Protection in Advanced Settings.</string>
 
 </resources>

@@ -9,7 +9,6 @@ import cash.z.ecc.android.sdk.model.AccountBalance
 import cash.z.ecc.android.sdk.model.AccountImportSetup
 import cash.z.ecc.android.sdk.model.AccountUuid
 import cash.z.ecc.android.sdk.model.BlockHeight
-import cash.z.ecc.android.sdk.model.FastestServersResult
 import cash.z.ecc.android.sdk.model.ObserveFiatCurrencyResult
 import cash.z.ecc.android.sdk.model.Pczt
 import cash.z.ecc.android.sdk.model.PercentDecimal
@@ -87,10 +86,6 @@ internal class MockSynchronizer : CloseableSynchronizer {
         set(value) {}
 
     override var onSetupErrorHandler: ((Throwable?) -> Boolean)?
-        get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-        set(value) {}
-
-    override var onSubmissionErrorHandler: ((Throwable?) -> Boolean)?
         get() = error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
         set(value) {}
 
@@ -197,10 +192,6 @@ internal class MockSynchronizer : CloseableSynchronizer {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} yet.")
     }
 
-    override suspend fun refreshExchangeRateUsd() {
-        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-    }
-
     override suspend fun refreshUtxos(
         account: Account,
         since: BlockHeight
@@ -230,13 +221,6 @@ internal class MockSynchronizer : CloseableSynchronizer {
         network: ZcashNetwork,
         alias: String
     ): String {
-        error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
-    }
-
-    override suspend fun getFastestServers(
-        context: Context,
-        servers: List<LightWalletEndpoint>
-    ): Flow<FastestServersResult> {
         error("Intentionally not implemented in ${MockSynchronizer::class.simpleName} implementation.")
     }
 

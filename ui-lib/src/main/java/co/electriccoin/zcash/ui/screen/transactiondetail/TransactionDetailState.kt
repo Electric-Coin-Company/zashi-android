@@ -9,9 +9,9 @@ import co.electriccoin.zcash.ui.screen.transactiondetail.info.TransactionDetailI
 @Immutable
 data class TransactionDetailState(
     val onBack: () -> Unit,
-    val bookmarkButton: IconButtonState,
+    val bookmarkButton: IconButtonState?,
     val header: TransactionDetailHeaderState,
-    val info: TransactionDetailInfoState,
+    val info: TransactionDetailInfoState?,
     val errorFooter: ErrorFooter?,
     val primaryButton: ButtonState?,
     val secondaryButton: ButtonState?

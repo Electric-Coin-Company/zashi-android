@@ -14,7 +14,7 @@ import co.electriccoin.zcash.ui.common.model.metadata.SwapMetadataV3
 import co.electriccoin.zcash.ui.common.provider.MetadataKeyStorageProvider
 import co.electriccoin.zcash.ui.common.provider.PersistableWalletProvider
 import co.electriccoin.zcash.ui.common.provider.SimpleSwapAssetProvider
-import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
+import co.electriccoin.zcash.ui.common.serialization.metadata.MetadataKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -77,6 +77,8 @@ interface MetadataRepository {
     suspend fun getSwapMetadata(depositAddress: String): TransactionSwapMetadata?
 
     fun observeLastUsedAssetHistory(): Flow<Set<SimpleSwapAsset>?>
+
+    fun delete()
 }
 
 @Suppress("TooManyFunctions")
@@ -264,6 +266,17 @@ class MetadataRepositoryImpl(
                     ?.lastUsedAssetHistory
                     ?.toSimpleAssetSet()
             }.distinctUntilChanged()
+
+    override fun delete() {
+        scope.launch {
+            mutex.withLock {
+                accountDataSource.getAllAccounts().forEach {
+                    val key = getMetadataKey(it)
+                    metadataDataSource.delete(key)
+                }
+            }
+        }
+    }
 
     private fun updateMetadata(block: suspend (MetadataKey) -> Unit) {
         scope.launch {

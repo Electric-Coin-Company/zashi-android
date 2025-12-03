@@ -99,7 +99,7 @@ class SelectABRecipientVM(
                                     smallIcon = null,
                                     isShielded = false,
                                     name = stringRes(contact.name),
-                                    address = stringResByAddress(contact.address, abbreviated = true),
+                                    address = stringResByAddress(contact.address),
                                     onClick = { onContactClick(contact) }
                                 )
                             )
@@ -138,7 +138,7 @@ class SelectABRecipientVM(
                                 smallIcon = null,
                                 isShielded = false,
                                 name = stringRes(contact.name),
-                                address = stringResByAddress(contact.address, abbreviated = true),
+                                address = stringResByAddress(contact.address),
                                 onClick = { onContactClick(contact) },
                             )
                         )

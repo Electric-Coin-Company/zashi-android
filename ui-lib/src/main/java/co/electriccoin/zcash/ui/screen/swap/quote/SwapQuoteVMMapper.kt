@@ -87,7 +87,7 @@ internal class SwapQuoteVMMapper {
                         EXACT_INPUT -> stringRes(R.string.swap_quote_to)
                         EXACT_OUTPUT -> stringRes(R.string.pay_to)
                     },
-                title = stringResByAddress(quote.destinationAddress.address, true),
+                title = stringResByAddress(quote.destinationAddress.address),
                 subtitle = null
             ).takeIf { quote.destinationAsset !is ZecSwapAsset },
             SwapQuoteInfoItem(

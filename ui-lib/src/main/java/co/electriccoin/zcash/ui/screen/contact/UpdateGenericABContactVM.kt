@@ -258,7 +258,6 @@ class UpdateGenericABContactVM(
                     address = contactAddress.value,
                     chain = selectedBlockchain.takeIf { it != zcashBlockchain }?.chainTicker
                 )
-                navigationRouter.back()
                 isUpdatingContact.update { false }
             }
         }
@@ -269,7 +268,6 @@ class UpdateGenericABContactVM(
             originalContact.value?.let {
                 isDeletingContact.update { true }
                 deleteContact(it)
-                navigationRouter.back()
                 isDeletingContact.update { false }
             }
         }

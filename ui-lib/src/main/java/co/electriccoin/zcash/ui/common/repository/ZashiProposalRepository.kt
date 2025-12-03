@@ -5,6 +5,7 @@ import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.ExactOutputSwapTransactionProposal
+import co.electriccoin.zcash.ui.common.datasource.InsufficientFundsException
 import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
 import co.electriccoin.zcash.ui.common.datasource.RegularTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
@@ -13,6 +14,7 @@ import co.electriccoin.zcash.ui.common.datasource.ZashiSpendingKeyDataSource
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.SwapQuote
+import co.electriccoin.zcash.ui.common.repository.SubmitProposalState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -28,19 +30,19 @@ interface ZashiProposalRepository {
 
     val submitState: StateFlow<SubmitProposalState?>
 
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createProposal(zecSend: ZecSend): RegularTransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createExactInputSwapProposal(zecSend: ZecSend, quote: SwapQuote): ExactInputSwapTransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createExactOutputSwapProposal(zecSend: ZecSend, quote: SwapQuote): ExactOutputSwapTransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class)
+    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
     suspend fun createShieldProposal()
 
     suspend fun submit(): SubmitResult
@@ -160,6 +162,10 @@ class ZashiProposalRepositoryImpl(
                 block()
             } catch (e: TransactionProposalNotCreatedException) {
                 Twig.error(e) { "Unable to create proposal" }
+                transactionProposal.update { null }
+                throw e
+            } catch (e: InsufficientFundsException) {
+                Twig.error(e) { "Insufficient funds" }
                 transactionProposal.update { null }
                 throw e
             }

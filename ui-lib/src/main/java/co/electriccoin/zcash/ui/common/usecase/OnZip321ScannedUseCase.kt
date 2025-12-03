@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
+import co.electriccoin.zcash.ui.common.datasource.InsufficientFundsException
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
@@ -9,6 +10,9 @@ import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
 import co.electriccoin.zcash.ui.common.usecase.Zip321ParseUriValidationUseCase.Zip321ParseUriValidation
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactArgs
+import co.electriccoin.zcash.ui.screen.error.ErrorArgs
+import co.electriccoin.zcash.ui.screen.error.NavigateToErrorUseCase
+import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsArgs
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow.ADDRESS_BOOK
@@ -24,10 +28,7 @@ class OnZip321ScannedUseCase(
     private val prefillSend: PrefillSendUseCase,
     private val navigateToErrorUseCase: NavigateToErrorUseCase
 ) {
-    suspend operator fun invoke(
-        zip321: Zip321ParseUriValidation.Valid,
-        scanArgs: ScanArgs
-    ) {
+    suspend operator fun invoke(zip321: Zip321ParseUriValidation.Valid, scanArgs: ScanArgs) {
         when (scanArgs.flow) {
             ADDRESS_BOOK -> addressBookFlow(zip321)
             SEND ->
@@ -78,6 +79,10 @@ class OnZip321ScannedUseCase(
                 )
             )
             navigationRouter.replace(Send(), ReviewTransactionArgs)
+        } catch (_: InsufficientFundsException) {
+            zashiProposalRepository.clear()
+            keystoneProposalRepository.clear()
+            navigationRouter.replace(InsufficientFundsArgs)
         } catch (_: TransactionProposalNotCreatedException) {
             prefillSend.requestFromZip321(zip321.payment)
             navigationRouter.replace(Send())
@@ -118,6 +123,10 @@ class OnZip321ScannedUseCase(
                 )
             )
             navigationRouter.forward(ReviewTransactionArgs)
+        } catch (_: InsufficientFundsException) {
+            zashiProposalRepository.clear()
+            keystoneProposalRepository.clear()
+            navigationRouter.forward(InsufficientFundsArgs)
         } catch (_: TransactionProposalNotCreatedException) {
             prefillSend.requestFromZip321(zip321.payment)
             navigationRouter.back()

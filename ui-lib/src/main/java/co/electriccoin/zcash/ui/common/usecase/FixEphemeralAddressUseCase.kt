@@ -6,7 +6,6 @@ import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
-import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -20,8 +19,8 @@ import kotlinx.coroutines.withContext
 class FixEphemeralAddressUseCase(
     private val synchronizerProvider: SynchronizerProvider,
     private val navigationRouter: NavigationRouter,
-    private val swapRepository: SwapRepository,
     private val accountDataSource: AccountDataSource,
+    private val getSwapStatus: GetSwapStatusUseCase,
     private val context: Context
 ) {
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
@@ -46,8 +45,7 @@ class FixEphemeralAddressUseCase(
 
                             AddressType.Transparent -> address
                             is AddressType.Invalid ->
-                                swapRepository
-                                    .getSwapStatus(depositAddress = address)
+                                getSwapStatus(depositAddress = address)
                                     .status
                                     ?.quote
                                     ?.destinationAddress

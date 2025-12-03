@@ -227,7 +227,7 @@ private fun Preview() =
                     SendSwapState(
                         status = SwapStatus.REFUNDED,
                         quoteHeader = SwapQuoteHeaderState(from = null, to = null),
-                        depositAddress = stringResByAddress(value = "Address", abbreviated = true),
+                        depositAddress = stringResByAddress(value = "Address"),
                         totalFees = null,
                         recipientAddress = null,
                         transactionId = stringRes("Transaction ID"),

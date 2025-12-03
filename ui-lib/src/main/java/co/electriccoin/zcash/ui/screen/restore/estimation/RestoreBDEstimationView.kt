@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -68,14 +67,14 @@ private fun Content(
         modifier = modifier
     ) {
         Text(
-            text = stringResource(R.string.restore_bd_estimation_subtitle),
+            text = state.subtitle.getValue(),
             style = ZashiTypography.header6,
             color = ZashiColors.Text.textPrimary,
             fontWeight = FontWeight.SemiBold
         )
         VerticalSpacer(8.dp)
         Text(
-            text = stringResource(R.string.restore_bd_estimation_message),
+            text = state.message.getValue(),
             style = ZashiTypography.textSm,
             color = ZashiColors.Text.textPrimary
         )
@@ -106,7 +105,7 @@ private fun Content(
 @Composable
 private fun AppBar(state: RestoreBDEstimationState) {
     ZashiSmallTopAppBar(
-        title = stringResource(R.string.restore_title),
+        title = state.title.getValue(),
         navigationAction = {
             ZashiTopAppBarBackNavigation(
                 onBack = state.onBack,
@@ -132,6 +131,13 @@ private fun Preview() =
         RestoreBDEstimationView(
             state =
                 RestoreBDEstimationState(
+                    title = stringRes("Restore"),
+                    subtitle = stringRes("Estimated Block Height"),
+                    message =
+                        stringRes(
+                            "Zashi will scan and recover all transactions made after the " +
+                                "following block number."
+                        ),
                     restore = ButtonState(stringRes("Estimate")) {},
                     dialogButton = IconButtonState(R.drawable.ic_help) {},
                     onBack = {},

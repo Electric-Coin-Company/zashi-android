@@ -1,7 +1,8 @@
 package co.electriccoin.zcash.ui.common.repository
 
-import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.model.ObserveFiatCurrencyResult
+import co.electriccoin.zcash.ui.common.datasource.ExchangeRateDataSource
+import co.electriccoin.zcash.ui.common.datasource.ExchangeRateUnavailable
 import co.electriccoin.zcash.ui.common.provider.IsExchangeRateEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.common.wallet.ExchangeRateState
@@ -12,16 +13,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.minutes
@@ -30,16 +35,17 @@ import kotlin.time.Duration.Companion.seconds
 interface ExchangeRateRepository {
     val state: StateFlow<ExchangeRateState>
 
-    fun optInExchangeRateUsd(optIn: Boolean)
-
     fun refreshExchangeRateUsd()
 }
 
 class ExchangeRateRepositoryImpl(
+    isExchangeRateEnabledStorageProvider: IsExchangeRateEnabledStorageProvider,
+    private val exchangeRateDataSource: ExchangeRateDataSource,
     private val synchronizerProvider: SynchronizerProvider,
-    private val isExchangeRateEnabledStorageProvider: IsExchangeRateEnabledStorageProvider
 ) : ExchangeRateRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+    private val refreshPipeline = MutableSharedFlow<Unit>()
 
     private val isExchangeRateOptedIn =
         isExchangeRateEnabledStorageProvider
@@ -56,50 +62,43 @@ class ExchangeRateRepositoryImpl(
             .flatMapLatest { optedIn ->
                 if (optedIn == true) {
                     channelFlow {
-                        val exchangeRate =
-                            synchronizerProvider
-                                .synchronizer
-                                .flatMapLatest { synchronizer ->
-                                    synchronizer?.exchangeRateUsd ?: flowOf(
-                                        ObserveFiatCurrencyResult(
-                                            isLoading = false,
-                                            currencyConversion = null
-                                        )
-                                    )
-                                }.stateIn(this)
-
+                        var cache = ObserveFiatCurrencyResult()
                         launch {
-                            synchronizerProvider
-                                .synchronizer
-                                .flatMapLatest { it?.status ?: flowOf(null) }
+                            refreshPipeline
+                                .onStart { emit(Unit) }
                                 .flatMapLatest {
-                                    when (it) {
-                                        null ->
-                                            flowOf(
-                                                ObserveFiatCurrencyResult(
+                                    flow {
+                                        emit(cache.copy(isLoading = true))
+                                        try {
+                                            emit(
+                                                cache.copy(
                                                     isLoading = false,
-                                                    currencyConversion = null
+                                                    currencyConversion = exchangeRateDataSource.getExchangeRate()
                                                 )
                                             )
-
-                                        Synchronizer.Status.STOPPED,
-                                        Synchronizer.Status.INITIALIZING ->
-                                            emptyFlow()
-
-                                        else -> exchangeRate
+                                        } catch (e: ExchangeRateUnavailable) {
+                                            throw e
+                                        } catch (_: Exception) {
+                                            emit(cache.copy(isLoading = false))
+                                        }
+                                    }.catch {
+                                        synchronizerProvider.getSynchronizer().refreshExchangeRateUsd()
+                                        emitAll(exchangeRateDataSource.observeSynchronizerRoute())
                                     }
-                                }.collect { send(it) }
+                                }.collect {
+                                    cache = it
+                                    send(cache)
+                                }
                         }
-
                         awaitClose()
                     }
                 } else {
-                    flowOf(ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null))
+                    flowOf(ObserveFiatCurrencyResult())
                 }
             }.stateIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(USD_EXCHANGE_REFRESH_LOCK_THRESHOLD),
-                initialValue = ObserveFiatCurrencyResult(isLoading = false, currencyConversion = null)
+                initialValue = ObserveFiatCurrencyResult()
             )
 
     private val usdExchangeRateTimestamp =
@@ -120,8 +119,6 @@ class ExchangeRateRepositoryImpl(
             lockDuration = USD_EXCHANGE_STALE_LOCK_THRESHOLD,
             onRefresh = { refreshExchangeRateUsdInternal().join() }
         )
-
-    private var lastExchangeRateUsdValue: ExchangeRateState = ExchangeRateState.OptedOut
 
     override val state: StateFlow<ExchangeRateState> =
         combine(
@@ -149,44 +146,19 @@ class ExchangeRateRepositoryImpl(
         exchangeRate: ObserveFiatCurrencyResult,
         isStale: Boolean,
         isRefreshEnabled: Boolean,
-    ): ExchangeRateState {
-        lastExchangeRateUsdValue =
-            when (isOptedIn) {
-                true ->
-                    when (val lastValue = lastExchangeRateUsdValue) {
-                        is ExchangeRateState.Data ->
-                            lastValue.copy(
-                                isLoading = exchangeRate.isLoading,
-                                isStale = isStale,
-                                isRefreshEnabled = isRefreshEnabled,
-                                currencyConversion = exchangeRate.currencyConversion,
-                            )
-
-                        ExchangeRateState.OptedOut ->
-                            ExchangeRateState.Data(
-                                isLoading = exchangeRate.isLoading,
-                                isStale = isStale,
-                                isRefreshEnabled = isRefreshEnabled,
-                                currencyConversion = exchangeRate.currencyConversion,
-                                onRefresh = ::refreshExchangeRateUsd
-                            )
-
-                        is ExchangeRateState.OptIn ->
-                            ExchangeRateState.Data(
-                                isLoading = exchangeRate.isLoading,
-                                isStale = isStale,
-                                isRefreshEnabled = isRefreshEnabled,
-                                currencyConversion = exchangeRate.currencyConversion,
-                                onRefresh = ::refreshExchangeRateUsd
-                            )
-                    }
-
-                false -> ExchangeRateState.OptedOut
-                null -> ExchangeRateState.OptIn
-            }
-
-        return lastExchangeRateUsdValue
-    }
+    ): ExchangeRateState =
+        when (isOptedIn) {
+            true ->
+                ExchangeRateState.Data(
+                    isLoading = exchangeRate.isLoading,
+                    isStale = isStale,
+                    isRefreshEnabled = isRefreshEnabled,
+                    currencyConversion = exchangeRate.currencyConversion,
+                    onRefresh = ::refreshExchangeRateUsd
+                )
+            false -> ExchangeRateState.OptedOut
+            null -> ExchangeRateState.OptIn
+        }
 
     override fun refreshExchangeRateUsd() {
         refreshExchangeRateUsdInternal()
@@ -194,16 +166,11 @@ class ExchangeRateRepositoryImpl(
 
     private fun refreshExchangeRateUsdInternal() =
         scope.launch {
-            val synchronizer = synchronizerProvider.getSynchronizer()
             val value = state.value
             if (value is ExchangeRateState.Data && value.isRefreshEnabled && !value.isLoading) {
-                synchronizer.refreshExchangeRateUsd()
+                refreshPipeline.emit(Unit)
             }
         }
-
-    override fun optInExchangeRateUsd(optIn: Boolean) {
-        scope.launch { isExchangeRateEnabledStorageProvider.store(optIn) }
-    }
 }
 
 private val USD_EXCHANGE_REFRESH_LOCK_THRESHOLD = 2.minutes

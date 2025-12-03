@@ -33,8 +33,6 @@ class ActivityWidgetVM(
     private val restoreTimestampDataSource: RestoreTimestampDataSource,
     private val navigateToRequestShielded: NavigateToRequestShieldedUseCase,
     private val updateSwapActivityMetadata: UpdateSwapActivityMetadataUseCase
-    // private val navigateToCoinbase: NavigateToCoinbaseUseCase,
-    // private val getVersionInfoProvider: GetVersionInfoProvider,
 ) : ViewModel() {
     val state =
         combine(

@@ -1,23 +1,23 @@
 package co.electriccoin.zcash.ui.common.usecase
 
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.common.repository.ExchangeRateRepository
+import co.electriccoin.zcash.ui.common.provider.IsExchangeRateEnabledStorageProvider
 
 class OptInExchangeRateUseCase(
-    private val exchangeRateRepository: ExchangeRateRepository,
-    private val navigationRouter: NavigationRouter
+    private val navigationRouter: NavigationRouter,
+    private val isExchangeRateEnabledStorageProvider: IsExchangeRateEnabledStorageProvider
 ) {
-    operator fun invoke(optIn: Boolean) {
+    suspend operator fun invoke(optIn: Boolean) {
         if (optIn) optIn() else optOut()
     }
 
-    private fun optOut() {
-        exchangeRateRepository.optInExchangeRateUsd(false)
+    private suspend fun optOut() {
+        isExchangeRateEnabledStorageProvider.store(false)
         navigationRouter.back()
     }
 
-    private fun optIn() {
-        exchangeRateRepository.optInExchangeRateUsd(true)
+    private suspend fun optIn() {
+        isExchangeRateEnabledStorageProvider.store(true)
         navigationRouter.back()
     }
 }

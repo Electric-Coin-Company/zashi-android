@@ -62,7 +62,7 @@ sealed interface StringResource {
     @Immutable
     data class ByAddress(
         val address: String,
-        val abbreviated: Boolean
+        val middle: Boolean
     ) : StringResource
 
     @Immutable
@@ -163,8 +163,8 @@ fun stringRes(yearMonth: YearMonth): StringResource =
     StringResource.ByYearMonth(yearMonth)
 
 @Stable
-fun stringResByAddress(value: String, abbreviated: Boolean): StringResource =
-    StringResource.ByAddress(value, abbreviated)
+fun stringResByAddress(value: String, middle: Boolean = false): StringResource =
+    StringResource.ByAddress(value, middle)
 
 @Stable
 fun stringResByTransactionId(value: String, abbreviated: Boolean): StringResource =
@@ -320,12 +320,20 @@ private fun StringResource.ByYearMonth.convertYearMonth(locale: Locale): String 
     return yearMonth.format(pattern).orEmpty()
 }
 
-private fun StringResource.ByAddress.convertAddress(): String =
-    if (abbreviated && address.isNotBlank() && address.length > ADDRESS_MAX_LENGTH_ABBREVIATED) {
-        "${address.take(ADDRESS_MAX_LENGTH_ABBREVIATED)}..."
-    } else {
-        address
+private fun StringResource.ByAddress.convertAddress(): String {
+    return when {
+        middle && address.length > ADDRESS_MAX_LENGTH_ABBREVIATED -> {
+            val fromSide = ADDRESS_MAX_LENGTH_ABBREVIATED / 2
+            return "${address.take(fromSide)}...${address.takeLast(fromSide)}"
+        }
+        address.length > ADDRESS_MAX_LENGTH_ABBREVIATED -> {
+            "${address.take(ADDRESS_MAX_LENGTH_ABBREVIATED)}..."
+        }
+        else -> {
+            address
+        }
     }
+}
 
 private fun StringResource.ByTransactionId.convertTransactionId(): String =
     if (abbreviated) {

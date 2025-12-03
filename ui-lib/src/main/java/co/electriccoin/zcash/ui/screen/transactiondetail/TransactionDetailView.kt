@@ -44,6 +44,7 @@ import co.electriccoin.zcash.ui.design.util.TickerLocation.HIDDEN
 import co.electriccoin.zcash.ui.design.util.asScaffoldPaddingValues
 import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.imageRes
+import co.electriccoin.zcash.ui.design.util.loadingImageRes
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -137,6 +138,9 @@ fun TransactionDetailView(
                             modifier = Modifier.fillMaxWidth(),
                             state = state.info
                         )
+                    null -> {
+                        // do nothing
+                    }
                 }
             }
             BottomBar(
@@ -223,7 +227,7 @@ fun TransactionErrorFooter(errorFooter: ErrorFooter) {
 @Composable
 private fun TransactionDetailTopAppBar(
     onBack: () -> Unit,
-    bookmarkButton: IconButtonState,
+    bookmarkButton: IconButtonState?,
     appBarState: ZashiMainTopAppBarState?,
 ) {
     ZashiSmallTopAppBar(
@@ -235,7 +239,9 @@ private fun TransactionDetailTopAppBar(
                 ZashiIconButton(it, modifier = Modifier.size(40.dp))
                 Spacer(Modifier.width(4.dp))
             }
-            ZashiIconButton(bookmarkButton, modifier = Modifier.size(40.dp))
+            bookmarkButton?.let {
+                ZashiIconButton(it, modifier = Modifier.size(40.dp))
+            }
             Spacer(Modifier.width(20.dp))
         },
         colors =
@@ -365,6 +371,35 @@ private fun ShieldingPreview() =
                     secondaryButton = ButtonState(stringRes("Secondary")),
                     bookmarkButton = IconButtonState(R.drawable.ic_transaction_detail_no_bookmark) {},
                     errorFooter = null
+                ),
+            mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
+        )
+    }
+
+@PreviewScreens
+@Composable
+private fun EmptyPreview() =
+    ZcashTheme {
+        TransactionDetailView(
+            state =
+                TransactionDetailState(
+                    onBack = {},
+                    bookmarkButton = null,
+                    header =
+                        TransactionDetailHeaderState(
+                            title = null,
+                            amount = null,
+                            icons =
+                                listOf(
+                                    loadingImageRes(),
+                                    loadingImageRes(),
+                                    loadingImageRes(),
+                                )
+                        ),
+                    info = null,
+                    errorFooter = null,
+                    primaryButton = null,
+                    secondaryButton = null,
                 ),
             mainAppBarState = ZashiMainTopAppBarStateFixture.new(),
         )

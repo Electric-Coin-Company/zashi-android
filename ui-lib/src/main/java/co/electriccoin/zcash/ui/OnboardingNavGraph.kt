@@ -18,16 +18,18 @@ import co.electriccoin.zcash.ui.screen.error.ErrorDialog
 import co.electriccoin.zcash.ui.screen.onboarding.Onboarding
 import co.electriccoin.zcash.ui.screen.onboarding.persistExistingWalletWithSeedPhrase
 import co.electriccoin.zcash.ui.screen.onboarding.view.Onboarding
-import co.electriccoin.zcash.ui.screen.restore.date.AndroidRestoreBDDate
-import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDate
-import co.electriccoin.zcash.ui.screen.restore.estimation.AndroidRestoreBDEstimation
-import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimation
+import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateArgs
+import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateScreen
+import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationArgs
+import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationScreen
 import co.electriccoin.zcash.ui.screen.restore.height.AndroidRestoreBDHeight
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeight
 import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
 import co.electriccoin.zcash.ui.screen.restore.seed.AndroidRestoreSeed
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeed
+import co.electriccoin.zcash.ui.screen.restore.tor.RestoreTorArgs
+import co.electriccoin.zcash.ui.screen.restore.tor.RestoreTorScreen
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.AndroidThirdPartyScan
 import co.electriccoin.zcash.ui.screen.scan.thirdparty.ThirdPartyScan
 
@@ -74,11 +76,12 @@ fun NavGraphBuilder.onboardingNavGraph(
         }
         composable<RestoreSeed> { AndroidRestoreSeed() }
         composable<RestoreBDHeight> { AndroidRestoreBDHeight(it.toRoute()) }
-        composable<RestoreBDDate> { AndroidRestoreBDDate(it.toRoute()) }
-        composable<RestoreBDEstimation> { AndroidRestoreBDEstimation(it.toRoute()) }
+        composable<RestoreBDDateArgs> { RestoreBDDateScreen(it.toRoute()) }
+        composable<RestoreBDEstimationArgs> { RestoreBDEstimationScreen(it.toRoute()) }
         dialogComposable<SeedInfo> { AndroidSeedInfo() }
         composable<ThirdPartyScan> { AndroidThirdPartyScan() }
         dialogComposable<ErrorDialog> { AndroidErrorDialog() }
         dialogComposable<ErrorBottomSheet> { AndroidErrorBottomSheet() }
+        dialogComposable<RestoreTorArgs> { RestoreTorScreen(it.toRoute()) }
     }
 }

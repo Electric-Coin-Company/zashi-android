@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import co.electriccoin.zcash.ui.R
@@ -39,6 +38,7 @@ import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
 import co.electriccoin.zcash.ui.design.theme.colors.ZashiColors
 import co.electriccoin.zcash.ui.design.theme.typography.ZashiTypography
+import co.electriccoin.zcash.ui.design.util.getValue
 import co.electriccoin.zcash.ui.design.util.orDark
 import co.electriccoin.zcash.ui.design.util.scaffoldPadding
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -71,14 +71,14 @@ private fun Content(
         modifier = modifier
     ) {
         Text(
-            text = stringResource(R.string.restore_bd_date_subtitle),
+            text = state.subtitle.getValue(),
             style = ZashiTypography.header6,
             color = ZashiColors.Text.textPrimary,
             fontWeight = FontWeight.SemiBold
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = stringResource(R.string.restore_bd_date_message),
+            text = state.message.getValue(),
             style = ZashiTypography.textSm,
             color = ZashiColors.Text.textPrimary
         )
@@ -106,7 +106,7 @@ private fun Content(
             Spacer(Modifier.width(8.dp))
             Text(
                 modifier = Modifier.padding(top = 2.dp),
-                text = stringResource(R.string.restore_bd_date_note),
+                text = state.note.getValue(),
                 style = ZashiTypography.textXs,
                 fontWeight = FontWeight.Medium,
                 color = ZashiColors.Utility.Indigo.utilityIndigo700
@@ -125,7 +125,7 @@ private fun Content(
 @Composable
 private fun AppBar(state: RestoreBDDateState) {
     ZashiSmallTopAppBar(
-        title = stringResource(R.string.restore_title),
+        title = state.title.getValue(),
         navigationAction = {
             ZashiTopAppBarBackNavigation(
                 onBack = state.onBack,
@@ -151,6 +151,14 @@ private fun Preview() =
         RestoreBDDateView(
             state =
                 RestoreBDDateState(
+                    title = stringRes("Restore"),
+                    subtitle = stringRes("First Wallet Transaction"),
+                    message =
+                        stringRes(
+                            "Decide how far Zashi should resync. " +
+                                "Enter a date before your first received transaction."
+                        ),
+                    note = stringRes("If you're not sure, choose an earlier date."),
                     next = ButtonState(stringRes("Estimate")) {},
                     dialogButton = IconButtonState(R.drawable.ic_help) {},
                     onBack = {},

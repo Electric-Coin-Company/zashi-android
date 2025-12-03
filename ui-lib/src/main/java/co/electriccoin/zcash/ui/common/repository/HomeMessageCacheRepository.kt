@@ -2,7 +2,7 @@ package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.model.Zatoshi
 import co.electriccoin.zcash.ui.common.datasource.MessageAvailabilityDataSource
-import co.electriccoin.zcash.ui.common.viewmodel.SynchronizerError
+import co.electriccoin.zcash.ui.common.model.SynchronizerError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

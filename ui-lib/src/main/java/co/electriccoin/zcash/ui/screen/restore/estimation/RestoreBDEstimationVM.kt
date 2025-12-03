@@ -1,0 +1,64 @@
+package co.electriccoin.zcash.ui.screen.restore.estimation
+
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.lifecycle.ViewModel
+import co.electriccoin.zcash.ui.NavigationRouter
+import co.electriccoin.zcash.ui.R
+import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
+import co.electriccoin.zcash.ui.design.component.ButtonState
+import co.electriccoin.zcash.ui.design.component.IconButtonState
+import co.electriccoin.zcash.ui.design.util.stringRes
+import co.electriccoin.zcash.ui.design.util.stringResByNumber
+import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
+import co.electriccoin.zcash.ui.screen.restore.tor.RestoreTorArgs
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+class RestoreBDEstimationVM(
+    private val args: RestoreBDEstimationArgs,
+    private val navigationRouter: NavigationRouter,
+    private val copyToClipboard: CopyToClipboardUseCase
+) : ViewModel() {
+    val state: StateFlow<RestoreBDEstimationState> = MutableStateFlow(createState()).asStateFlow()
+
+    private fun createState() =
+        RestoreBDEstimationState(
+            title = stringRes(R.string.restore_title),
+            subtitle = stringRes(R.string.restore_bd_estimation_subtitle),
+            message = stringRes(R.string.restore_bd_estimation_message),
+            dialogButton =
+                IconButtonState(
+                    icon = R.drawable.ic_help,
+                    onClick = ::onInfoButtonClick,
+                ),
+            onBack = ::onBack,
+            text = stringResByNumber(args.blockHeight, 0),
+            copy =
+                ButtonState(
+                    text = stringRes(R.string.restore_bd_estimation_copy),
+                    icon = R.drawable.ic_copy,
+                    onClick = ::onCopyClick
+                ),
+            restore =
+                ButtonState(
+                    text = stringRes(R.string.restore_bd_estimation_restore),
+                    onClick = ::onRestoreClick,
+                    hapticFeedbackType = HapticFeedbackType.Confirm
+                ),
+        )
+
+    private fun onCopyClick() {
+        copyToClipboard(
+            value = args.blockHeight.toString()
+        )
+    }
+
+    private fun onRestoreClick() {
+        navigationRouter.forward(RestoreTorArgs(seed = args.seed.trim(), blockHeight = args.blockHeight))
+    }
+
+    private fun onBack() = navigationRouter.back()
+
+    private fun onInfoButtonClick() = navigationRouter.forward(SeedInfo)
+}

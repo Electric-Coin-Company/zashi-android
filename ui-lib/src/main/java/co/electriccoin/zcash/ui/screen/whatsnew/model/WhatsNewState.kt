@@ -10,12 +10,14 @@ data class WhatsNewState(
     val titleVersion: StringResource,
     val bottomVersion: StringResource,
     val date: LocalDate,
+    val onVersionLongClick: () -> Unit,
     val sections: List<WhatsNewSectionState>
 ) {
     companion object {
         fun new(
             changelog: Changelog,
-            version: String
+            version: String,
+            onVersionLongClick: () -> Unit
         ) = WhatsNewState(
             titleVersion = stringRes(R.string.whats_new_version, changelog.version),
             bottomVersion = stringRes(R.string.settings_version, version),
@@ -28,6 +30,7 @@ data class WhatsNewState(
                             stringRes(it.content)
                         )
                     },
+            onVersionLongClick = onVersionLongClick
         )
     }
 }

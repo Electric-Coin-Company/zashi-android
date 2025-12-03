@@ -186,7 +186,12 @@ class TransactionProgressVM(
     ) = FailureTransactionState(
         onBack = ::onBackToSendForm,
         onCloseClick = ::onBackToSendForm,
-        onViewTransactionClick = { result.txIds.lastOrNull()?.let { onViewTransactionDetailClick(it) } },
+        onViewTransactionClick =
+            if (result.txIds.isNotEmpty()) {
+                { onViewTransactionDetailClick(result.txIds.last()) }
+            } else {
+                null
+            },
         onReportClick = {
             viewModelScope.launch {
                 sendEmailUseCase(result)
@@ -237,7 +242,7 @@ class TransactionProgressVM(
 
     private suspend fun getAddressAbbreviated(): StringResource {
         val address = (getTransactionProposal() as? SendTransactionProposal)?.destination?.address
-        return address?.let { stringResByAddress(it, true) } ?: stringRes("")
+        return address?.let { stringResByAddress(it) } ?: stringRes("")
     }
 
     private fun onBackToSendFormAndClear() = viewModelScope.launch { cancelKeystoneProposalFlow(clearSendForm = true) }

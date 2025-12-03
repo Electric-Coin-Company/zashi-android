@@ -77,25 +77,16 @@ fun RootNavGraph(
         )
 
         this.walletNavGraph(
-            activity = activity,
-            walletViewModel = walletViewModel,
             storageCheckViewModel = storageCheckViewModel,
             navigationRouter = navigationRouter
         )
     }
 
     LaunchedEffect(secretState, navController) {
-        val currentRoute =
-            navController
-                .currentBackStackEntry
-                ?.destination
-                ?.route
-
         if (secretState == SecretState.READY &&
             navController.currentDestination?.parent?.route != MainAppGraph::class.qualifiedName
         ) {
             keyboardManager.close()
-            currentRoute?.let { sheetStateManager.hide(it) }
             navController.navigate(MainAppGraph) {
                 popUpTo(OnboardingGraph) {
                     inclusive = true
@@ -106,7 +97,6 @@ fun RootNavGraph(
             navController.currentDestination?.parent?.route != OnboardingGraph::class.qualifiedName
         ) {
             keyboardManager.close()
-            currentRoute?.let { sheetStateManager.hide(it) }
             navController.navigate(OnboardingGraph) {
                 popUpTo(MainAppGraph) {
                     inclusive = true

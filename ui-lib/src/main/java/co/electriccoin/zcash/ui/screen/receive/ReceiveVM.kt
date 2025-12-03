@@ -13,7 +13,7 @@ import co.electriccoin.zcash.ui.common.usecase.CopyToClipboardUseCase
 import co.electriccoin.zcash.ui.common.usecase.ObserveSelectedWalletAccountUseCase
 import co.electriccoin.zcash.ui.design.component.IconButtonState
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.screen.addressbook.ADDRESS_MAX_LENGTH
+import co.electriccoin.zcash.ui.design.util.stringResByAddress
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressState.ColorMode.DEFAULT
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressState.ColorMode.KEYSTONE
 import co.electriccoin.zcash.ui.screen.receive.ReceiveAddressState.ColorMode.ZASHI
@@ -101,12 +101,7 @@ class ReceiveVM(
                         stringRes(R.string.receive_wallet_address_transparent)
                     }
             },
-        subtitle =
-            if (type == Unified) {
-                stringRes(R.string.receive_wallet_address_unified_subtitle)
-            } else {
-                stringRes("${address.take(ADDRESS_MAX_LENGTH)}...")
-            },
+        subtitle = stringResByAddress(value = address, middle = true),
         isShielded = type == Unified,
         onCopyClicked = {
             copyToClipboard(

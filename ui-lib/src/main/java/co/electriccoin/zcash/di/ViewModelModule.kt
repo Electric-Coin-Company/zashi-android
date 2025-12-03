@@ -18,7 +18,10 @@ import co.electriccoin.zcash.ui.screen.contact.AddGenericABContactVM
 import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactVM
 import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactVM
 import co.electriccoin.zcash.ui.screen.crashreporting.viewmodel.CrashReportingViewModel
-import co.electriccoin.zcash.ui.screen.error.ErrorViewModel
+import co.electriccoin.zcash.ui.screen.deletewallet.ResetZashiConfirmationVM
+import co.electriccoin.zcash.ui.screen.deletewallet.ResetZashiVM
+import co.electriccoin.zcash.ui.screen.error.ErrorVM
+import co.electriccoin.zcash.ui.screen.error.SyncErrorVM
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInVM
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsVM
 import co.electriccoin.zcash.ui.screen.feedback.FeedbackVM
@@ -29,17 +32,24 @@ import co.electriccoin.zcash.ui.screen.home.backup.WalletBackupInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.reporting.CrashReportOptInViewModel
 import co.electriccoin.zcash.ui.screen.home.restoring.WalletRestoringInfoViewModel
 import co.electriccoin.zcash.ui.screen.home.shieldfunds.ShieldFundsInfoVM
+import co.electriccoin.zcash.ui.screen.hotfix.enhancement.EnhancementHotfixVM
 import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixVM
+import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsVM
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsVM
+import co.electriccoin.zcash.ui.screen.more.MoreVM
 import co.electriccoin.zcash.ui.screen.pay.PayVM
 import co.electriccoin.zcash.ui.screen.qrcode.QrCodeVM
 import co.electriccoin.zcash.ui.screen.receive.ReceiveVM
 import co.electriccoin.zcash.ui.screen.request.viewmodel.RequestVM
-import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateViewModel
-import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationViewModel
+import co.electriccoin.zcash.ui.screen.restore.date.RestoreBDDateVM
+import co.electriccoin.zcash.ui.screen.restore.estimation.RestoreBDEstimationVM
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightVM
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedViewModel
+import co.electriccoin.zcash.ui.screen.restore.tor.RestoreTorVM
 import co.electriccoin.zcash.ui.screen.restoresuccess.RestoreSuccessViewModel
+import co.electriccoin.zcash.ui.screen.resync.confirm.ConfirmResyncVM
+import co.electriccoin.zcash.ui.screen.resync.date.ResyncBDDateVM
+import co.electriccoin.zcash.ui.screen.resync.estimation.ResyncBDEstimationVM
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionVM
 import co.electriccoin.zcash.ui.screen.scan.ScanGenericAddressVM
 import co.electriccoin.zcash.ui.screen.scan.ScanZashiAddressVM
@@ -48,7 +58,6 @@ import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystonePCZTVi
 import co.electriccoin.zcash.ui.screen.scankeystone.viewmodel.ScanKeystoneSignInRequestViewModel
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.viewmodel.SelectKeystoneAccountViewModel
 import co.electriccoin.zcash.ui.screen.send.SendViewModel
-import co.electriccoin.zcash.ui.screen.settings.SettingsViewModel
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionVM
 import co.electriccoin.zcash.ui.screen.support.viewmodel.SupportViewModel
 import co.electriccoin.zcash.ui.screen.swap.SwapVM
@@ -63,6 +72,7 @@ import co.electriccoin.zcash.ui.screen.swap.picker.SwapBlockchainPickerVM
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteVM
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageVM
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExportViewModel
+import co.electriccoin.zcash.ui.screen.texunsupported.TEXUnsupportedVM
 import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInVM
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsVM
 import co.electriccoin.zcash.ui.screen.transactiondetail.TransactionDetailVM
@@ -84,7 +94,7 @@ val viewModelModule =
         viewModelOf(::OldHomeViewModel)
         viewModelOf(::StorageCheckViewModel)
         viewModelOf(::RestoreSeedViewModel)
-        viewModelOf(::SettingsViewModel)
+        viewModelOf(::MoreVM)
         viewModelOf(::AdvancedSettingsVM)
         viewModelOf(::SupportViewModel)
         viewModelOf(::RestoreSuccessViewModel)
@@ -119,13 +129,17 @@ val viewModelModule =
         viewModelOf(::BalanceWidgetVM)
         viewModelOf(::HomeVM)
         viewModelOf(::RestoreBDHeightVM)
-        viewModelOf(::RestoreBDDateViewModel)
-        viewModelOf(::RestoreBDEstimationViewModel)
+        viewModelOf(::RestoreBDDateVM)
+        viewModelOf(::RestoreBDEstimationVM)
+        viewModelOf(::ConfirmResyncVM)
+        viewModelOf(::ResyncBDDateVM)
+        viewModelOf(::ResyncBDEstimationVM)
         viewModelOf(::ShieldFundsInfoVM)
         viewModelOf(::WalletBackupInfoViewModel)
         viewModelOf(::ExchangeRateSettingsVM)
         viewModelOf(::WalletBackupDetailViewModel)
-        viewModelOf(::ErrorViewModel)
+        viewModelOf(::ErrorVM)
+        viewModelOf(::SyncErrorVM)
         viewModelOf(::SpendableBalanceVM)
         viewModelOf(::CrashReportOptInViewModel)
         viewModelOf(::WalletRestoringInfoViewModel)
@@ -150,7 +164,13 @@ val viewModelModule =
         viewModelOf(::SwapRefundAddressInfoVM)
         viewModelOf(::ScreenTimeoutVM)
         viewModelOf(::EphemeralHotfixVM)
+        viewModelOf(::EnhancementHotfixVM)
         viewModelOf(::EphemeralLockVM)
         viewModelOf(::DebugVM)
         viewModelOf(::DebugDBVM)
+        viewModelOf(::TEXUnsupportedVM)
+        viewModelOf(::InsufficientFundsVM)
+        viewModelOf(::RestoreTorVM)
+        viewModelOf(::ResetZashiVM)
+        viewModelOf(::ResetZashiConfirmationVM)
     }

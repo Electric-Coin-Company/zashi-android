@@ -52,6 +52,7 @@ android {
                     "src/main/res/ui/export_data",
                     "src/main/res/ui/error",
                     "src/main/res/ui/home",
+                    "src/main/res/ui/insufficient_funds",
                     "src/main/res/ui/choose_server",
                     "src/main/res/ui/integrations",
                     "src/main/res/ui/onboarding",
@@ -78,6 +79,7 @@ android {
                     "src/main/res/ui/transaction_history",
                     "src/main/res/ui/transaction_note",
                     "src/main/res/ui/tax_export",
+                    "src/main/res/ui/tex_unsupported",
                     "src/main/res/ui/feedback",
                     "src/main/res/ui/update",
                     "src/main/res/ui/update_contact",
@@ -132,11 +134,11 @@ androidComponents {
             )
         )
         variant.buildConfigFields.put(
-            "ZCASH_COINBASE_APP_ID",
+            "ZCASH_CMC_KEY",
             BuildConfigField(
                 type = "String",
-                value = "\"${project.property("ZCASH_COINBASE_APP_ID")?.toString().orEmpty()}\"",
-                comment = "App ID of the Coinbase Onramp integration"
+                value = "\"${project.property("ZCASH_CMC_KEY")?.toString().orEmpty()}\"",
+                comment = "Publishable key of the CMC integration"
             )
         )
         // To configure screen orientation in runtime

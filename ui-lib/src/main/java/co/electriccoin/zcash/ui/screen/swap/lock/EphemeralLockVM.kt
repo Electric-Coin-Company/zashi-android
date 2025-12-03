@@ -37,7 +37,7 @@ internal class EphemeralLockVM(
                         listOf(
                             SwapQuoteInfoItem(
                                 description = stringRes(R.string.send_confirmation_address),
-                                title = stringResByAddress(it.destination.address, true),
+                                title = stringResByAddress(it.destination.address),
                             ),
                             SwapQuoteInfoItem(
                                 description = stringRes(R.string.send_amount_label),

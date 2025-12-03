@@ -132,12 +132,6 @@ private fun IntegrationSettings() =
                     items =
                         persistentListOf(
                             ListItemState(
-                                bigIcon = imageRes(R.drawable.ic_integrations_coinbase),
-                                title = stringRes("Coinbase"),
-                                subtitle = stringRes("subtitle"),
-                                onClick = {}
-                            ),
-                            ListItemState(
                                 title = stringRes(R.string.integrations_flexa),
                                 subtitle = stringRes(R.string.integrations_flexa),
                                 bigIcon = imageRes(R.drawable.ic_integrations_flexa),

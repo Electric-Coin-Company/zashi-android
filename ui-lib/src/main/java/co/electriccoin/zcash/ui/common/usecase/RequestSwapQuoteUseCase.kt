@@ -7,6 +7,7 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
+import co.electriccoin.zcash.ui.common.datasource.InsufficientFundsException
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
@@ -17,6 +18,9 @@ import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.SwapQuoteData
 import co.electriccoin.zcash.ui.common.repository.SwapRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
+import co.electriccoin.zcash.ui.screen.error.ErrorArgs
+import co.electriccoin.zcash.ui.screen.error.NavigateToErrorUseCase
+import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsArgs
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filter
@@ -115,6 +119,12 @@ class RequestSwapQuoteUseCase(
                 if (createProposal) {
                     createProposal(result.quote)
                 }
+            } catch (_: InsufficientFundsException) {
+                swapRepository.clearQuote()
+                zashiProposalRepository.clear()
+                keystoneProposalRepository.clear()
+                navigationRouter.forward(InsufficientFundsArgs)
+                return@withContext
             } catch (e: Exception) {
                 swapRepository.clearQuote()
                 zashiProposalRepository.clear()
@@ -131,34 +141,28 @@ class RequestSwapQuoteUseCase(
 
     @Suppress("TooGenericExceptionCaught")
     private suspend fun createProposal(quote: SwapQuote) {
-        try {
-            val send =
-                ZecSend(
-                    destination = getWalletAddress(quote.depositAddress.address),
-                    amount = Zatoshi(quote.amountIn.toLong()),
-                    memo = Memo(""),
-                    proposal = null
-                )
+        val send =
+            ZecSend(
+                destination = getWalletAddress(quote.depositAddress.address),
+                amount = Zatoshi(quote.amountIn.toLong()),
+                memo = Memo(""),
+                proposal = null
+            )
 
-            when (accountDataSource.getSelectedAccount()) {
-                is KeystoneAccount -> {
-                    when (quote.mode) {
-                        EXACT_INPUT -> keystoneProposalRepository.createExactInputSwapProposal(send, quote)
-                        EXACT_OUTPUT -> keystoneProposalRepository.createExactOutputSwapProposal(send, quote)
-                    }
-                    keystoneProposalRepository.createPCZTFromProposal()
+        when (accountDataSource.getSelectedAccount()) {
+            is KeystoneAccount -> {
+                when (quote.mode) {
+                    EXACT_INPUT -> keystoneProposalRepository.createExactInputSwapProposal(send, quote)
+                    EXACT_OUTPUT -> keystoneProposalRepository.createExactOutputSwapProposal(send, quote)
                 }
-
-                is ZashiAccount ->
-                    when (quote.mode) {
-                        EXACT_INPUT -> zashiProposalRepository.createExactInputSwapProposal(send, quote)
-                        EXACT_OUTPUT -> zashiProposalRepository.createExactOutputSwapProposal(send, quote)
-                    }
+                keystoneProposalRepository.createPCZTFromProposal()
             }
-        } catch (e: Exception) {
-            keystoneProposalRepository.clear()
-            zashiProposalRepository.clear()
-            throw e
+
+            is ZashiAccount ->
+                when (quote.mode) {
+                    EXACT_INPUT -> zashiProposalRepository.createExactInputSwapProposal(send, quote)
+                    EXACT_OUTPUT -> zashiProposalRepository.createExactOutputSwapProposal(send, quote)
+                }
         }
     }
 

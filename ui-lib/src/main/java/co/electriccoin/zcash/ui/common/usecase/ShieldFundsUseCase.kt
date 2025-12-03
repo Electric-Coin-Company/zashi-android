@@ -8,6 +8,8 @@ import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
 import co.electriccoin.zcash.ui.common.repository.KeystoneProposalRepository
 import co.electriccoin.zcash.ui.common.repository.ZashiProposalRepository
+import co.electriccoin.zcash.ui.screen.error.ErrorArgs
+import co.electriccoin.zcash.ui.screen.error.NavigateToErrorUseCase
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionArgs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,9 +54,7 @@ class ShieldFundsUseCase(
     private suspend fun shieldZashiFunds() {
         try {
             zashiProposalRepository.createShieldProposal()
-            val result = zashiProposalRepository.submit()
-
-            when (result) {
+            when (val result = zashiProposalRepository.submit()) {
                 is SubmitResult.Failure,
                 is SubmitResult.GrpcFailure,
                 is SubmitResult.Partial -> navigateToError(ErrorArgs.ShieldingError(result))

@@ -62,22 +62,20 @@ fun EphemeralHotfixView(
                     .windowInsetsPadding(WindowInsets.systemBars)
         ) {
             Text(
-                "Discover Funds",
+                it.title.getValue(),
                 color = ZashiColors.Text.textPrimary,
                 style = ZashiTypography.textXl,
                 fontWeight = FontWeight.SemiBold
             )
             Spacer(12.dp)
             Text(
-                text =
-                    "If you confirm, Zashi will scan the transparent address you provide and discover its funds. " +
-                        "This may take a few minutes up to a few hours.",
+                text = it.message.getValue(),
                 style = ZashiTypography.textSm,
                 color = ZashiColors.Text.textTertiary
             )
             Spacer(24.dp)
             Text(
-                "Transparent Address",
+                it.subtitle.getValue(),
                 style = ZashiTypography.textSm,
                 fontWeight = FontWeight.Medium,
                 color = ZashiColors.Inputs.Default.label
@@ -128,7 +126,10 @@ private fun Preview() =
                         onClick = {},
                     ),
                 address = TextFieldState(stringRes("")) {},
-                info = stringRes("Info")
+                info = stringRes("Info"),
+                title = stringRes("Title"),
+                message = stringRes("Message"),
+                subtitle = stringRes("Subtitle")
             )
         )
     }

@@ -48,6 +48,7 @@ import co.electriccoin.zcash.ui.screen.authentication.view.AnimationConstants.WE
 import co.electriccoin.zcash.ui.screen.balances.BalanceTag
 import co.electriccoin.zcash.ui.screen.feedback.FeedbackArgs
 import co.electriccoin.zcash.ui.screen.home.HomeTags
+import co.electriccoin.zcash.ui.screen.more.MoreArgs
 import co.electriccoin.zcash.ui.screen.restore.height.RestoreBDHeightTags
 import co.electriccoin.zcash.ui.screen.restore.seed.RestoreSeedTag
 import co.electriccoin.zcash.ui.screen.send.SendTag
@@ -377,7 +378,7 @@ class ScreenshotTest : UiTestPrerequisites() {
         composeTestRule.onNode(hasTestTag(HomeTags.RECEIVE)).performClick()
         receiveZecScreenshots(resContext, tag, composeTestRule)
 
-        navigateTo(NavigationTargets.SETTINGS)
+        navigateTo(MoreArgs)
         settingsScreenshots(resContext, tag, composeTestRule)
 
         // These are the Settings screen items

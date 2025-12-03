@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.di
 
-import co.electriccoin.zcash.ui.common.datasource.LocalAddressBookDataSource
-import co.electriccoin.zcash.ui.common.datasource.LocalAddressBookDataSourceImpl
+import co.electriccoin.zcash.ui.common.datasource.AddressBookDataSource
+import co.electriccoin.zcash.ui.common.datasource.AddressBookDataSourceImpl
 import co.electriccoin.zcash.ui.common.provider.AddressBookKeyStorageProvider
 import co.electriccoin.zcash.ui.common.provider.AddressBookKeyStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.AddressBookProvider
@@ -26,6 +26,6 @@ val addressBookModule =
         factoryOf(::AddressBookKeyStorageProviderImpl) bind AddressBookKeyStorageProvider::class
         factoryOf(::AddressBookStorageProviderImpl) bind AddressBookStorageProvider::class
         factoryOf(::AddressBookProviderImpl) bind AddressBookProvider::class
-        singleOf(::LocalAddressBookDataSourceImpl) bind LocalAddressBookDataSource::class
+        singleOf(::AddressBookDataSourceImpl) bind AddressBookDataSource::class
         singleOf(::AddressBookRepositoryImpl) bind AddressBookRepository::class
     }

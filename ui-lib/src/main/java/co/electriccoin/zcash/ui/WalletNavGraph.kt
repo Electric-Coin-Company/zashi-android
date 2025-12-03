@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui
 
-import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -9,7 +8,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
-import co.electriccoin.zcash.ui.common.viewmodel.WalletViewModel
 import co.electriccoin.zcash.ui.screen.about.AboutArgs
 import co.electriccoin.zcash.ui.screen.about.AboutScreen
 import co.electriccoin.zcash.ui.screen.accountlist.AccountList
@@ -39,11 +37,16 @@ import co.electriccoin.zcash.ui.screen.contact.AddZashiABContactScreen
 import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactArgs
 import co.electriccoin.zcash.ui.screen.contact.UpdateGenericABContactScreen
 import co.electriccoin.zcash.ui.screen.crashreporting.AndroidCrashReportingOptIn
-import co.electriccoin.zcash.ui.screen.deletewallet.WrapDeleteWallet
+import co.electriccoin.zcash.ui.screen.deletewallet.ResetZashiArgs
+import co.electriccoin.zcash.ui.screen.deletewallet.ResetZashiConfirmationArgs
+import co.electriccoin.zcash.ui.screen.deletewallet.ResetZashiConfirmationScreen
+import co.electriccoin.zcash.ui.screen.deletewallet.ResetZashiScreen
 import co.electriccoin.zcash.ui.screen.error.AndroidErrorBottomSheet
 import co.electriccoin.zcash.ui.screen.error.AndroidErrorDialog
 import co.electriccoin.zcash.ui.screen.error.ErrorBottomSheet
 import co.electriccoin.zcash.ui.screen.error.ErrorDialog
+import co.electriccoin.zcash.ui.screen.error.SyncErrorArgs
+import co.electriccoin.zcash.ui.screen.error.SyncErrorScreen
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInArgs
 import co.electriccoin.zcash.ui.screen.exchangerate.optin.ExchangeRateOptInScreen
 import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsArgs
@@ -69,10 +72,16 @@ import co.electriccoin.zcash.ui.screen.home.syncing.AndroidWalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.syncing.WalletSyncingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.AndroidWalletUpdatingInfo
 import co.electriccoin.zcash.ui.screen.home.updating.WalletUpdatingInfo
+import co.electriccoin.zcash.ui.screen.hotfix.enhancement.EnhancementHotfixArgs
+import co.electriccoin.zcash.ui.screen.hotfix.enhancement.EnhancementHotfixScreen
 import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixArgs
 import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixScreen
+import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsArgs
+import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsScreen
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsArgs
 import co.electriccoin.zcash.ui.screen.integrations.IntegrationsScreen
+import co.electriccoin.zcash.ui.screen.more.MoreArgs
+import co.electriccoin.zcash.ui.screen.more.MoreScreen
 import co.electriccoin.zcash.ui.screen.pay.PayArgs
 import co.electriccoin.zcash.ui.screen.pay.PayScreen
 import co.electriccoin.zcash.ui.screen.pay.info.PayInfoArgs
@@ -88,6 +97,12 @@ import co.electriccoin.zcash.ui.screen.receive.info.TransparentAddressInfoScreen
 import co.electriccoin.zcash.ui.screen.request.RequestScreen
 import co.electriccoin.zcash.ui.screen.restore.info.AndroidSeedInfo
 import co.electriccoin.zcash.ui.screen.restore.info.SeedInfo
+import co.electriccoin.zcash.ui.screen.resync.confirm.ConfirmResyncArgs
+import co.electriccoin.zcash.ui.screen.resync.confirm.ConfirmResyncScreen
+import co.electriccoin.zcash.ui.screen.resync.date.ResyncBDDateArgs
+import co.electriccoin.zcash.ui.screen.resync.date.ResyncBDDateScreen
+import co.electriccoin.zcash.ui.screen.resync.estimation.ResyncBDEstimationArgs
+import co.electriccoin.zcash.ui.screen.resync.estimation.ResyncBDEstimationScreen
 import co.electriccoin.zcash.ui.screen.reviewtransaction.AndroidReviewTransaction
 import co.electriccoin.zcash.ui.screen.reviewtransaction.ReviewTransactionArgs
 import co.electriccoin.zcash.ui.screen.scan.ScanArgs
@@ -104,7 +119,6 @@ import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.AndroidSelectKeysto
 import co.electriccoin.zcash.ui.screen.selectkeystoneaccount.SelectKeystoneAccount
 import co.electriccoin.zcash.ui.screen.send.Send
 import co.electriccoin.zcash.ui.screen.send.WrapSend
-import co.electriccoin.zcash.ui.screen.settings.WrapSettings
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionArgs
 import co.electriccoin.zcash.ui.screen.signkeystonetransaction.SignKeystoneTransactionScreen
 import co.electriccoin.zcash.ui.screen.swap.SwapArgs
@@ -133,6 +147,8 @@ import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageArgs
 import co.electriccoin.zcash.ui.screen.swap.slippage.SwapSlippageScreen
 import co.electriccoin.zcash.ui.screen.taxexport.AndroidTaxExport
 import co.electriccoin.zcash.ui.screen.taxexport.TaxExport
+import co.electriccoin.zcash.ui.screen.texunsupported.AndroidTEXUnsupported
+import co.electriccoin.zcash.ui.screen.texunsupported.TEXUnsupportedArgs
 import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInArgs
 import co.electriccoin.zcash.ui.screen.tor.optin.TorOptInScreen
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsArgs
@@ -154,8 +170,6 @@ import co.electriccoin.zcash.ui.screen.warning.viewmodel.StorageCheckViewModel
 import co.electriccoin.zcash.ui.screen.whatsnew.WrapWhatsNew
 
 fun NavGraphBuilder.walletNavGraph(
-    activity: ComponentActivity,
-    walletViewModel: WalletViewModel,
     storageCheckViewModel: StorageCheckViewModel,
     navigationRouter: NavigationRouter,
 ) {
@@ -167,12 +181,13 @@ fun NavGraphBuilder.walletNavGraph(
                 navigationRouter.forward(NavigationTargets.NOT_ENOUGH_SPACE)
             }
         }
-        composable(NavigationTargets.SETTINGS) { WrapSettings() }
+        composable<MoreArgs> { MoreScreen() }
         composable<AdvancedSettingsArgs> { AdvancedSettingsScreen() }
         composable<ChooseServerArgs> { ChooseServerScreen() }
         composable<WalletBackup> { AndroidWalletBackup(it.toRoute()) }
         composable<FeedbackArgs> { FeedbackScreen() }
-        composable(NavigationTargets.DELETE_WALLET) { WrapDeleteWallet(activity, walletViewModel) }
+        composable<ResetZashiArgs> { ResetZashiScreen() }
+        dialogComposable<ResetZashiConfirmationArgs> { ResetZashiConfirmationScreen(it.toRoute()) }
         composable<AboutArgs> { AboutScreen() }
         composable(NavigationTargets.WHATS_NEW) { WrapWhatsNew() }
         dialogComposable<IntegrationsArgs> { IntegrationsScreen() }
@@ -187,7 +202,7 @@ fun NavGraphBuilder.walletNavGraph(
         composable(NavigationTargets.NOT_ENOUGH_SPACE) {
             WrapNotEnoughSpace(
                 goPrevious = { navigationRouter.back() },
-                goSettings = { navigationRouter.forward(NavigationTargets.SETTINGS) }
+                goSettings = { navigationRouter.forward(MoreArgs) }
             )
         }
         composable<AddressBookArgs> { AddressBookScreen() }
@@ -220,6 +235,8 @@ fun NavGraphBuilder.walletNavGraph(
         composable<TaxExport> { AndroidTaxExport() }
         composable<ReceiveArgs> { ReceiveScreen() }
         composable<Send> { WrapSend(it.toRoute()) }
+        dialogComposable<TEXUnsupportedArgs> { AndroidTEXUnsupported() }
+        dialogComposable<InsufficientFundsArgs> { InsufficientFundsScreen() }
         dialogComposable<SeedInfo> { AndroidSeedInfo() }
         composable<WalletBackupDetail> { AndroidWalletBackupDetail(it.toRoute()) }
         dialogComposable<SeedBackupInfo> { AndroidWalletBackupInfo() }
@@ -230,6 +247,7 @@ fun NavGraphBuilder.walletNavGraph(
         dialogComposable<WalletUpdatingInfo> { AndroidWalletUpdatingInfo() }
         dialogComposable<ErrorDialog> { AndroidErrorDialog() }
         dialogComposable<ErrorBottomSheet> { AndroidErrorBottomSheet() }
+        dialogComposable<SyncErrorArgs> { SyncErrorScreen() }
         dialogComposable<SpendableBalanceArgs> { SpendableBalanceScreen() }
         composable<CrashReportOptIn> { AndroidCrashReportOptIn() }
         composable<ThirdPartyScan> { AndroidThirdPartyScan() }
@@ -255,9 +273,13 @@ fun NavGraphBuilder.walletNavGraph(
         composable<SwapDetailArgs> { SwapDetailScreen(it.toRoute()) }
         dialogComposable<SwapRefundAddressInfoArgs> { SwapRefundAddressInfoScreen() }
         dialogComposable<EphemeralHotfixArgs> { EphemeralHotfixScreen(it.toRoute()) }
+        dialogComposable<EnhancementHotfixArgs> { EnhancementHotfixScreen() }
         dialogComposable<EphemeralLockArgs> { EphemeralLockScreen() }
         composable<DebugArgs> { DebugScreen() }
         composable<DebugDBArgs> { DebugDBScreen() }
         dialogComposable<DebugTextArgs> { DebugTextScreen(it.toRoute()) }
+        composable<ConfirmResyncArgs> { ConfirmResyncScreen() }
+        composable<ResyncBDDateArgs> { ResyncBDDateScreen(it.toRoute()) }
+        composable<ResyncBDEstimationArgs> { ResyncBDEstimationScreen(it.toRoute()) }
     }
 }

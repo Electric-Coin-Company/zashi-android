@@ -5,16 +5,22 @@ import cash.z.ecc.android.sdk.model.BlockHeight
 import cash.z.ecc.android.sdk.model.SeedPhrase
 import cash.z.ecc.android.sdk.model.ZcashNetwork
 import cash.z.ecc.sdk.type.fromResources
+import co.electriccoin.zcash.ui.common.provider.IsTorEnabledStorageProvider
 import co.electriccoin.zcash.ui.common.repository.WalletRepository
 
 class RestoreWalletUseCase(
     private val walletRepository: WalletRepository,
     private val context: Context,
+    private val isTorEnabledStorageProvider: IsTorEnabledStorageProvider
 ) {
-    operator fun invoke(
+    suspend operator fun invoke(
         seedPhrase: SeedPhrase,
-        birthday: BlockHeight?
+        enableTor: Boolean,
+        birthday: BlockHeight,
     ) {
+        if (enableTor) {
+            isTorEnabledStorageProvider.store(true)
+        }
         walletRepository.restoreWallet(
             network = ZcashNetwork.fromResources(context),
             seedPhrase = seedPhrase,

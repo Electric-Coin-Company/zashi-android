@@ -27,6 +27,7 @@ import co.electriccoin.zcash.ui.R
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.LottieProgress
 import co.electriccoin.zcash.ui.design.component.Spacer
+import co.electriccoin.zcash.ui.design.component.ZashiAutoSizeText
 import co.electriccoin.zcash.ui.design.component.ZashiButton
 import co.electriccoin.zcash.ui.design.component.ZashiCard
 import co.electriccoin.zcash.ui.design.component.ZashiScreenModalBottomSheet
@@ -41,7 +42,6 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.loadingImageRes
 import co.electriccoin.zcash.ui.design.util.orHiddenString
 import co.electriccoin.zcash.ui.design.util.stringRes
-import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -154,15 +154,18 @@ private fun BalanceShieldButton(state: SpendableBalanceShieldButtonState) {
         borderColor = ZashiColors.Surfaces.strokeSecondary
     ) {
         Row {
-            Column {
+            Column(
+                modifier = Modifier.weight(1f),
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        stringResource(R.string.balance_action_shield_button_header),
+                    ZashiAutoSizeText(
+                        text = stringResource(R.string.balance_action_shield_button_header),
                         color = ZashiColors.Text.textPrimary,
                         style = ZashiTypography.textMd,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1
                     )
                     Spacer(4.dp)
                     Image(
@@ -171,21 +174,18 @@ private fun BalanceShieldButton(state: SpendableBalanceShieldButtonState) {
                     )
                 }
                 Spacer(4.dp)
-                Text(
+                ZashiAutoSizeText(
                     text =
-                        stringRes(
-                            R.string.home_message_transparent_balance_subtitle,
-                            stringRes(state.amount),
-                            CURRENCY_TICKER
-                        )
+                        stringRes(state.amount)
                             orHiddenString
                             stringRes(co.electriccoin.zcash.ui.design.R.string.hide_balance_placeholder),
                     color = ZashiColors.Text.textPrimary,
                     style = ZashiTypography.textXl,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1
                 )
             }
-            Spacer(1f)
+            Spacer(8.dp)
             ZashiButton(
                 state =
                     ButtonState(

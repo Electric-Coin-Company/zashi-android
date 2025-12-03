@@ -65,7 +65,7 @@ class SwapDetailVM(
                     depositTo =
                         TransactionDetailInfoRowState(
                             title = stringRes(R.string.swap_detail_row_deposit_to),
-                            message = stringResByAddress(args.depositAddress, true),
+                            message = stringResByAddress(args.depositAddress),
                             trailingIcon = R.drawable.ic_transaction_detail_info_copy,
                             onClick = ::onCopyDepositAddressClick
                         ),
@@ -124,7 +124,7 @@ class SwapDetailVM(
                 ?.address
         return TransactionDetailInfoRowState(
             title = stringRes(R.string.transaction_detail_info_recipient),
-            message = destinationAddress?.let { stringResByAddress(it, true) },
+            message = destinationAddress?.let { stringResByAddress(it) },
             trailingIcon = R.drawable.ic_transaction_detail_info_copy,
             onClick =
                 if (destinationAddress != null) {

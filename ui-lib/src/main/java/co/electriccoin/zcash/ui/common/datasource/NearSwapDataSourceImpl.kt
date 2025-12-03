@@ -21,7 +21,7 @@ import co.electriccoin.zcash.ui.common.model.near.RefundType
 import co.electriccoin.zcash.ui.common.model.near.SubmitDepositTransactionRequest
 import co.electriccoin.zcash.ui.common.model.near.SwapType
 import co.electriccoin.zcash.ui.common.provider.NearApiProvider
-import co.electriccoin.zcash.ui.common.provider.ResponseWithErrorException
+import co.electriccoin.zcash.ui.common.provider.ResponseWithNearErrorException
 import co.electriccoin.zcash.ui.common.provider.SwapAssetProvider
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import kotlinx.coroutines.Dispatchers
@@ -110,9 +110,9 @@ class NearSwapDataSourceImpl(
                 destinationAddress = getDestinationAddress(response, originAsset),
                 refundAddress = getRefundAddress(response, originAsset),
             )
-        } catch (e: ResponseWithErrorException) {
+        } catch (e: ResponseWithNearErrorException) {
             when {
-                e.error.message.startsWith("Amount is too low for bridge, try at least") -> {
+                e.error.message.contains("Amount is too low for bridge, try at least", true) -> {
                     val errorAmount =
                         e.error.message
                             .split(" ")
@@ -130,11 +130,12 @@ class NearSwapDataSourceImpl(
                     )
                 }
 
-                e.error.message.startsWith("No quotes found") -> throw QuoteLowAmountException(
-                    asset = originAsset,
-                    amount = null,
-                    amountFormatted = null
-                )
+                e.error.message.contains("No quotes found", true) ->
+                    throw QuoteLowAmountException(
+                        asset = originAsset,
+                        amount = null,
+                        amountFormatted = null
+                    )
 
                 else -> throw e
             }

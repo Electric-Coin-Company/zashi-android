@@ -20,7 +20,7 @@ object SendShieldStateFixture {
     fun new(contact: StringResource? = stringRes("Contact")) =
         SendShieldedState(
             contact = contact,
-            address = stringResByAddress(value = "Address", abbreviated = true),
+            address = stringResByAddress(value = "Address"),
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
             onTransactionAddressClick = {},
@@ -43,8 +43,8 @@ object SendTransparentStateFixture {
     fun new(contact: StringResource? = stringRes("Contact")) =
         SendTransparentState(
             contact = contact,
-            address = stringResByAddress(value = "Address", abbreviated = false),
-            addressAbbreviated = stringResByAddress(value = "Address", abbreviated = true),
+            address = stringRes(value = "Address"),
+            addressAbbreviated = stringResByAddress(value = "Address"),
             transactionId = stringRes("Transaction ID"),
             onTransactionIdClick = {},
             onTransactionAddressClick = {},

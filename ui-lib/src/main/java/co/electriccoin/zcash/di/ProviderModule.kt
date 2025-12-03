@@ -4,6 +4,8 @@ import co.electriccoin.zcash.ui.common.provider.ApplicationStateProvider
 import co.electriccoin.zcash.ui.common.provider.ApplicationStateProviderImpl
 import co.electriccoin.zcash.ui.common.provider.BlockchainProvider
 import co.electriccoin.zcash.ui.common.provider.BlockchainProviderImpl
+import co.electriccoin.zcash.ui.common.provider.CMCApiProvider
+import co.electriccoin.zcash.ui.common.provider.CMCApiProviderImpl
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProvider
 import co.electriccoin.zcash.ui.common.provider.CrashReportingStorageProviderImpl
 import co.electriccoin.zcash.ui.common.provider.EphemeralAddressStorageProvider
@@ -87,4 +89,5 @@ val providerModule =
         factoryOf(::SwapAssetProviderImpl) bind SwapAssetProvider::class
         factoryOf(::IsKeepScreenOnDuringRestoreProviderImpl) bind IsKeepScreenOnDuringRestoreProvider::class
         singleOf(::EphemeralAddressStorageProviderImpl) bind EphemeralAddressStorageProvider::class
+        singleOf(::CMCApiProviderImpl) bind CMCApiProvider::class
     }

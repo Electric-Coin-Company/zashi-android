@@ -1,7 +1,7 @@
 package co.electriccoin.zcash.ui.common.provider
 
 import android.content.Context
-import co.electriccoin.zcash.ui.common.serialization.metada.MetadataKey
+import co.electriccoin.zcash.ui.common.serialization.metadata.MetadataKey
 import java.io.File
 
 interface MetadataStorageProvider {

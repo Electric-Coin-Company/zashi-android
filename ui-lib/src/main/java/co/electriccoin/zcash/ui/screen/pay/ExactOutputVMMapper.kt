@@ -45,8 +45,7 @@ internal class ExactOutputVMMapper {
         onTextFieldChange: (amount: NumberTextFieldInnerState, fiat: NumberTextFieldInnerState) -> Unit,
         onQrCodeScannerClick: () -> Unit,
         onAddressBookClick: () -> Unit,
-        onDeleteSelectedContactClick: () -> Unit,
-        onCreateNewContactClick: (address: String, chainTicker: String?) -> Unit
+        onDeleteSelectedContactClick: () -> Unit
     ): PayState {
         val state = ExactOutputInternalState(internalState)
         val amountState = createAmountState(state, onTextFieldChange)
@@ -60,19 +59,11 @@ internal class ExactOutputVMMapper {
             asset = createAssetState(state, onSwapAssetPickerClick),
             abContact = createAddressContactState(state, onDeleteSelectedContactClick),
             abButton =
-                if (state.canCreateNewABContact) {
-                    IconButtonState(
-                        icon = R.drawable.send_address_book_plus,
-                        onClick = { onCreateNewContactClick(state.address, state.asset?.chainTicker) },
-                        isEnabled = !state.isRequestingQuote
-                    )
-                } else {
-                    IconButtonState(
-                        icon = R.drawable.send_address_book,
-                        onClick = onAddressBookClick,
-                        isEnabled = !state.isRequestingQuote
-                    )
-                },
+                IconButtonState(
+                    icon = R.drawable.send_address_book,
+                    onClick = onAddressBookClick,
+                    isEnabled = !state.isRequestingQuote
+                ),
             qrButton =
                 IconButtonState(
                     icon = R.drawable.qr_code_icon,
@@ -394,7 +385,6 @@ internal class ExactOutputVMMapper {
 private data class ExactOutputInternalState(
     override val address: String,
     override val selectedABContact: EnhancedABContact?,
-    override val canCreateNewABContact: Boolean,
     override val asset: SwapAsset?,
     override val amount: NumberTextFieldInnerState,
     override val fiatAmount: NumberTextFieldInnerState,
@@ -408,7 +398,6 @@ private data class ExactOutputInternalState(
     constructor(original: InternalState) : this(
         address = original.address,
         selectedABContact = original.selectedABContact,
-        canCreateNewABContact = original.canCreateNewABContact,
         asset = original.asset,
         amount = original.amount,
         fiatAmount = original.fiatAmount,

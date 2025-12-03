@@ -19,9 +19,9 @@ import kotlinx.coroutines.flow.update
 
 class EphemeralHotfixVM(
     args: EphemeralHotfixArgs,
+    isTorEnabledStorageProvider: IsTorEnabledStorageProvider,
     private val navigationRouter: NavigationRouter,
     private val fixEphemeralAddressUseCase: FixEphemeralAddressUseCase,
-    private val isTorEnabledStorageProvider: IsTorEnabledStorageProvider
 ) : ViewModel() {
     private val text = MutableStateFlow(args.address)
 
@@ -53,7 +53,14 @@ class EphemeralHotfixVM(
                         "This operation requires Tor Protection. " +
                             "Please enable it in the Advanced Settings."
                     ).takeIf { isTorEnabled != true },
-                onBack = ::onBack
+                onBack = ::onBack,
+                title = stringRes("Discover Funds"),
+                message =
+                    stringRes(
+                        "If you confirm, Zashi will scan the transparent address you provide and " +
+                            "discover its funds. This may take a few minutes up to a few hours."
+                    ),
+                subtitle = stringRes("Transparent Address"),
             )
         }.stateIn(
             scope = viewModelScope,
