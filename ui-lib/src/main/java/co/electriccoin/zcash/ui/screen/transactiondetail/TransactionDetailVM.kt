@@ -114,7 +114,7 @@ class TransactionDetailVM(
             }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
-                initialValue = null
+                initialValue = createEmptyState()
             )
 
     init {
@@ -127,6 +127,27 @@ class TransactionDetailVM(
             }
         }
     }
+
+    private fun createEmptyState(): TransactionDetailState =
+        TransactionDetailState(
+            onBack = ::onBack,
+            bookmarkButton = null,
+            header =
+                TransactionDetailHeaderState(
+                    title = null,
+                    amount = null,
+                    icons =
+                        listOf(
+                            loadingImageRes(),
+                            loadingImageRes(),
+                            loadingImageRes(),
+                        )
+                ),
+            info = null,
+            errorFooter = null,
+            primaryButton = null,
+            secondaryButton = null,
+        )
 
     private fun onAddOrEditNoteClick() {
         navigationRouter.forward(TransactionNote(transactionDetailArgs.transactionId))

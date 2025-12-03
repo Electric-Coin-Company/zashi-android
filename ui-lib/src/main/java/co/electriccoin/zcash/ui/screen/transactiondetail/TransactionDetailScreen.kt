@@ -16,8 +16,8 @@ fun TransactionDetailScreen(transactionDetailArgs: TransactionDetailArgs) {
     val mainTopAppBarVM = koinActivityViewModel<ZashiTopAppBarVM>()
     val mainAppBarState by mainTopAppBarVM.state.collectAsStateWithLifecycle()
     val state by vm.state.collectAsStateWithLifecycle()
-    BackHandler(state != null) { state?.onBack?.invoke() }
-    state?.let { TransactionDetailView(state = it, mainAppBarState = mainAppBarState) }
+    BackHandler { state.onBack() }
+    TransactionDetailView(state = state, mainAppBarState = mainAppBarState)
 }
 
 @Serializable
