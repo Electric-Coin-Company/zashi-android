@@ -12,6 +12,23 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.4.9 (1386)] - 2025-12-04
+
+### Added:
+- We added error handling improvements for the most frequent Zashi errors to help you understand and troubleshoot.
+- We added an option to allow you to turn on Tor IP protection in the Restore flow.
+
+### Changed:
+- We added a Swap button leading directly to swaps.
+- We improved Currency Conversion performance.
+- We moved Pay with Flexa feature to More options.
+- We removed Coinbase Onramp integration.
+- We also improved Reset Zashi experience.
+
+### Fixed:
+- We caught and fixed a number of user-reported issues.
+- We implemented a feature to allow you to fetch transaction data
+
 ## [2.4.8 (1321)] - 2025-11-20
 
 ### Changed:
