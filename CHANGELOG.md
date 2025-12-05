@@ -6,6 +6,9 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.x (13xx)] - 2025-11-19
+- Add support for SEND intents that allow sharing of zcash uris via text or image directly with the app. 
+
 ## [2.4.9 (1386)] - 2025-12-04
 
 ### Added:
@@ -24,15 +27,6 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 - We implemented a feature to allow you to fetch transaction data
 
 ## [2.4.8 (1321)] - 2025-11-20
-
-### Changed:
-- We updated Swap and Pay features to use shielded addresses instead of transparent ones. Shields up!
-
-### Fixed:
-- We also fixed a few user reported issues.
-
-
-## [2.4.8 (1319)] - 2025-11-14
 
 ### Changed:
 - We updated Swap and Pay features to use shielded addresses instead of transparent ones. Shields up!
