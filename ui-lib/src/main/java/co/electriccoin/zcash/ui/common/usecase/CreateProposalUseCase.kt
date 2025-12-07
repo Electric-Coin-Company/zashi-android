@@ -28,9 +28,10 @@ class CreateProposalUseCase(
         try {
             when (accountDataSource.getSelectedAccount()) {
                 is KeystoneAccount -> {
-                    val destination = synchronizerProvider
-                        .getSynchronizer()
-                        .validateAddress(zecSend.destination.address)
+                    val destination =
+                        synchronizerProvider
+                            .getSynchronizer()
+                            .validateAddress(zecSend.destination.address)
                     if (destination is AddressType.Tex) {
                         throw TexUnsupportedOnKSException()
                     } else {
