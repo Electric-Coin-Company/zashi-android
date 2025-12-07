@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.swap.quote
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -50,40 +51,48 @@ import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 @Composable
 internal fun SwapQuoteView(state: SwapQuoteState?) {
     ZashiScreenModalBottomSheet(
-        state = state
-    ) { innerState ->
-        when (innerState) {
-            is SwapQuoteState.Success ->
-                Success(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .weight(1f, false),
-                    state = innerState
-                )
+        state = state,
+        content = { innerState, contentPadding ->
+            when (innerState) {
+                is SwapQuoteState.Success ->
+                    Success(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(1f, false),
+                        state = innerState,
+                        contentPadding = contentPadding
+                    )
 
-            is SwapQuoteState.Error ->
-                Error(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .weight(1f, false),
-                    state = innerState
-                )
+                is SwapQuoteState.Error ->
+                    Error(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(1f, false),
+                        state = innerState,
+                        contentPadding = contentPadding
+                    )
+            }
         }
-    }
+    )
 }
 
 @Composable
 private fun Error(
     state: SwapQuoteState.Error,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier =
             modifier
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+                .padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = contentPadding.calculateBottomPadding()
+                )
     ) {
         if (state.icon is ImageResource.ByDrawable) {
             Image(
@@ -126,13 +135,18 @@ private fun Error(
 @Composable
 private fun Success(
     state: SwapQuoteState.Success,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier =
             modifier
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+                .padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = contentPadding.calculateBottomPadding()
+                )
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),

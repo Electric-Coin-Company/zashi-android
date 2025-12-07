@@ -2,12 +2,15 @@ package co.electriccoin.zcash.ui.screen.restore.info
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
@@ -41,16 +44,27 @@ internal fun SeedInfoView(
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
-        content = {
-            Content(it)
+        content = { state, contentPadding ->
+            Content(
+                state = state,
+                contentPadding = contentPadding,
+                modifier = Modifier.weight(1f, false)
+            )
         },
     )
 }
 
 @Composable
-private fun Content(state: SeedInfoState) {
+private fun Content(
+    state: SeedInfoState,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
     Column(
-        modifier = Modifier.padding(horizontal = 24.dp)
+        modifier =
+            modifier
+                .verticalScroll(rememberScrollState())
+                .padding(start = 24.dp, end = 24.dp, bottom = contentPadding.calculateBottomPadding())
     ) {
         Text(
             text = stringResource(R.string.restore_dialog_title),

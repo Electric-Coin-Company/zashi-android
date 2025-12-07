@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,9 +31,17 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PayInfoView(state: PayInfoState) {
-    ZashiScreenModalBottomSheet(state) {
+    ZashiScreenModalBottomSheet(state, content = { state, contentPadding ->
         Column(
-            modifier = Modifier.padding(horizontal = 24.dp)
+            modifier =
+                Modifier
+                    .weight(1f, false)
+                    .verticalScroll(rememberScrollState())
+                    .padding(
+                        start = 24.dp,
+                        end = 24.dp,
+                        bottom = contentPadding.calculateBottomPadding()
+                    )
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -66,7 +76,7 @@ fun PayInfoView(state: PayInfoState) {
                     )
             )
         }
-    }
+    })
 }
 
 @PreviewScreens

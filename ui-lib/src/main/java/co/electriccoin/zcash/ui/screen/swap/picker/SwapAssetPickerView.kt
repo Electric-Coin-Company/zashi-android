@@ -68,98 +68,99 @@ fun SwapAssetPickerView(state: SwapAssetPickerState?) {
     ZashiScreenModalBottomSheet(
         state = state,
         dragHandle = null,
-        includeBottomPadding = false,
-        contentWindowInsets = { WindowInsets(0.dp, 0.dp, 0.dp, 0.dp) }
-    ) { innerState ->
-        BlankBgScaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                TopAppBar(innerState, windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp))
-            }
-        ) { padding ->
-            val kbController = LocalSoftwareKeyboardController.current
-            val lazyListState = rememberLazyListState()
+        content = { innerState, _ ->
+            BlankBgScaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    TopAppBar(innerState, windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp))
+                }
+            ) { padding ->
+                val kbController = LocalSoftwareKeyboardController.current
+                val lazyListState = rememberLazyListState()
 
-            val scope = rememberCoroutineScope()
-            var previousSearchValue by remember { mutableStateOf(innerState.search.value) }
-            if (innerState.search.value != previousSearchValue) {
-                lazyListState.requestScrollToItem(0)
-            }
-            SideEffect {
+                val scope = rememberCoroutineScope()
+                var previousSearchValue by remember { mutableStateOf(innerState.search.value) }
                 if (innerState.search.value != previousSearchValue) {
-                    previousSearchValue = innerState.search.value
+                    lazyListState.requestScrollToItem(0)
                 }
-            }
-
-            LaunchedEffect(lazyListState.isScrollInProgress) {
-                if (lazyListState.isScrollInProgress) {
-                    scope.launch { kbController?.hide() }
+                SideEffect {
+                    if (innerState.search.value != previousSearchValue) {
+                        previousSearchValue = innerState.search.value
+                    }
                 }
-            }
 
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .scaffoldScrollPadding(
-                            paddingValues = padding,
-                            top = padding.calculateTopPadding(),
-                            bottom = 0.dp,
-                            start = 0.dp,
-                            end = 0.dp,
-                        )
-            ) {
-                SearchTextField(
+                LaunchedEffect(lazyListState.isScrollInProgress) {
+                    if (lazyListState.isScrollInProgress) {
+                        scope.launch { kbController?.hide() }
+                    }
+                }
+
+                Column(
                     modifier =
                         Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp),
-                    innerState = innerState
-                )
-
-                when (innerState.data) {
-                    is SwapAssetPickerDataState.Error ->
-                        CommonErrorScreen(
-                            state = innerState.data,
-                            modifier = Modifier.fillMaxSize()
-                        )
-
-                    SwapAssetPickerDataState.Loading ->
-                        CommonShimmerLoadingScreen(
-                            shimmerItemsCount = 10,
-                            modifier =
-                                Modifier
-                                    .fillMaxSize()
-                                    .padding(top = 20.dp),
-                            contentPaddingValues = PaddingValues(24.dp, 12.dp),
-                        )
-
-                    is SwapAssetPickerDataState.Success ->
-                        if (innerState.data.items.isEmpty()) {
-                            CommonEmptyScreen(modifier = Modifier.fillMaxSize())
-                        } else {
-                            Success(
-                                modifier = Modifier.weight(1f),
-                                state = innerState.data,
-                                lazyListState = lazyListState
+                            .fillMaxSize()
+                            .scaffoldScrollPadding(
+                                paddingValues = padding,
+                                top = padding.calculateTopPadding(),
+                                bottom = 0.dp,
+                                start = 0.dp,
+                                end = 0.dp,
                             )
-                        }
+                ) {
+                    SearchTextField(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp),
+                        innerState = innerState
+                    )
+
+                    when (innerState.data) {
+                        is SwapAssetPickerDataState.Error ->
+                            CommonErrorScreen(
+                                state = innerState.data,
+                                modifier = Modifier.fillMaxSize()
+                            )
+
+                        SwapAssetPickerDataState.Loading ->
+                            CommonShimmerLoadingScreen(
+                                shimmerItemsCount = 10,
+                                modifier =
+                                    Modifier
+                                        .fillMaxSize()
+                                        .padding(top = 20.dp),
+                                contentPaddingValues = PaddingValues(24.dp, 12.dp),
+                            )
+
+                        is SwapAssetPickerDataState.Success ->
+                            if (innerState.data.items.isEmpty()) {
+                                CommonEmptyScreen(modifier = Modifier.fillMaxSize())
+                            } else {
+                                Success(
+                                    modifier = Modifier.weight(1f),
+                                    state = innerState.data,
+                                    lazyListState = lazyListState,
+                                    contentPadding = padding
+                                )
+                            }
+                    }
                 }
             }
         }
-    }
+    )
 }
 
 @Composable
 private fun Success(
     state: SwapAssetPickerDataState.Success,
     lazyListState: LazyListState,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier,
         state = lazyListState,
-        contentPadding = PaddingValues(top = 20.dp, bottom = 72.dp),
+        contentPadding = PaddingValues(top = 20.dp, bottom = contentPadding.calculateBottomPadding()),
     ) {
         itemsIndexed(
             items = state.items,

@@ -47,15 +47,28 @@ internal fun TransactionFiltersView(
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
-        content = {
-            BottomSheetContent(state)
+        content = { state, contentPadding ->
+            BottomSheetContent(
+                state = state,
+                contentPadding = contentPadding,
+                modifier = Modifier.weight(1f, false)
+            )
         },
     )
 }
 
 @Composable
-private fun BottomSheetContent(state: TransactionFiltersState?) {
-    Column {
+private fun BottomSheetContent(
+    state: TransactionFiltersState?,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier =
+            modifier
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = contentPadding.calculateBottomPadding())
+    ) {
         Text(
             modifier = Modifier.padding(horizontal = 24.dp),
             text = stringResource(R.string.transaction_filters_title),
@@ -69,45 +82,37 @@ private fun BottomSheetContent(state: TransactionFiltersState?) {
         if (state == null) {
             CircularScreenProgressIndicator()
         } else {
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 24.dp)
+            FlowRow(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    state.filters.forEach { filter ->
-                        ZashiChipButton(
-                            state =
-                                ChipButtonState(
-                                    endIcon = if (filter.isSelected) R.drawable.ic_close_small else null,
-                                    onClick = filter.onClick,
-                                    text = filter.text,
-                                ),
-                            shape = CircleShape,
-                            border =
-                                BorderStroke(1.dp, ZashiColors.Btns.Secondary.btnSecondaryBorder)
-                                    .takeIf { filter.isSelected },
-                            color =
-                                if (filter.isSelected) {
-                                    ZashiColors.Btns.Secondary.btnSecondaryBg
-                                } else {
-                                    ZashiChipButtonDefaults.color
-                                },
-                            contentPadding =
-                                if (filter.isSelected) {
-                                    PaddingValues(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 10.dp)
-                                } else {
-                                    PaddingValues(horizontal = 16.dp, vertical = 10.dp)
-                                },
-                            endIconSpacer = 10.dp
-                        )
-                    }
+                state.filters.forEach { filter ->
+                    ZashiChipButton(
+                        state =
+                            ChipButtonState(
+                                endIcon = if (filter.isSelected) R.drawable.ic_close_small else null,
+                                onClick = filter.onClick,
+                                text = filter.text,
+                            ),
+                        shape = CircleShape,
+                        border =
+                            BorderStroke(1.dp, ZashiColors.Btns.Secondary.btnSecondaryBorder)
+                                .takeIf { filter.isSelected },
+                        color =
+                            if (filter.isSelected) {
+                                ZashiColors.Btns.Secondary.btnSecondaryBg
+                            } else {
+                                ZashiChipButtonDefaults.color
+                            },
+                        contentPadding =
+                            if (filter.isSelected) {
+                                PaddingValues(start = 16.dp, end = 16.dp, top = 10.dp, bottom = 10.dp)
+                            } else {
+                                PaddingValues(horizontal = 16.dp, vertical = 10.dp)
+                            },
+                        endIconSpacer = 10.dp
+                    )
                 }
             }
 

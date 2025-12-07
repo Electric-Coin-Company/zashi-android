@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -50,7 +52,9 @@ private fun Content(
         Column(
             modifier =
                 Modifier
-                    .padding(horizontal = 24.dp)
+                    .weight(1f, false)
+                    .verticalScroll(rememberScrollState())
+                    .padding(start = 24.dp, end = 24.dp, bottom = it.calculateBottomPadding())
         ) {
             Image(
                 painter = painterResource(R.drawable.ic_info_wallet_disconnected),
