@@ -8,6 +8,7 @@ import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.InsufficientFundsException
+import co.electriccoin.zcash.ui.common.datasource.TexUnsupportedOnKSException
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
@@ -22,6 +23,7 @@ import co.electriccoin.zcash.ui.screen.error.ErrorArgs
 import co.electriccoin.zcash.ui.screen.error.NavigateToErrorUseCase
 import co.electriccoin.zcash.ui.screen.insufficientfunds.InsufficientFundsArgs
 import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteArgs
+import co.electriccoin.zcash.ui.screen.texunsupported.TEXUnsupportedArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -119,6 +121,10 @@ class RequestSwapQuoteUseCase(
                 if (createProposal) {
                     createProposal(result.quote)
                 }
+            } catch (_: TexUnsupportedOnKSException) {
+                navigationRouter.forward(TEXUnsupportedArgs)
+                keystoneProposalRepository.clear()
+                zashiProposalRepository.clear()
             } catch (_: InsufficientFundsException) {
                 swapRepository.clearQuote()
                 zashiProposalRepository.clear()

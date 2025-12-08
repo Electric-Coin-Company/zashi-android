@@ -16,6 +16,7 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.SwapQuote
 import co.electriccoin.zcash.ui.common.model.WalletAccount
@@ -28,20 +29,36 @@ import org.zecdev.zip321.ZIP321
 import java.math.BigDecimal
 
 interface ProposalDataSource {
-    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
+    @Throws(
+        TransactionProposalNotCreatedException::class,
+        InsufficientFundsException::class,
+        TexUnsupportedOnKSException::class
+    )
     suspend fun createProposal(account: WalletAccount, send: ZecSend): RegularTransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
+    @Throws(
+        TransactionProposalNotCreatedException::class,
+        InsufficientFundsException::class,
+        TexUnsupportedOnKSException::class
+    )
     suspend fun createZip321Proposal(account: WalletAccount, zip321Uri: String): Zip321TransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
+    @Throws(
+        TransactionProposalNotCreatedException::class,
+        InsufficientFundsException::class,
+        TexUnsupportedOnKSException::class
+    )
     suspend fun createExactInputProposal(
         account: WalletAccount,
         send: ZecSend,
         quote: SwapQuote,
     ): ExactInputSwapTransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
+    @Throws(
+        TransactionProposalNotCreatedException::class,
+        InsufficientFundsException::class,
+        TexUnsupportedOnKSException::class
+    )
     suspend fun createExactOutputProposal(
         account: WalletAccount,
         send: ZecSend,
@@ -66,56 +83,50 @@ interface ProposalDataSource {
 }
 
 class TransactionProposalNotCreatedException(
-    reason: Exception
-) : Exception(reason)
+    cause: Exception
+) : Exception(cause)
 
 class InsufficientFundsException : Exception()
+
+class TexUnsupportedOnKSException : Exception("TEX addresses are unsupported on Keystone")
 
 @Suppress("TooManyFunctions")
 class ProposalDataSourceImpl(
     private val synchronizerProvider: SynchronizerProvider,
 ) : ProposalDataSource {
-    override suspend fun createProposal(
-        account: WalletAccount,
-        send: ZecSend
-    ): RegularTransactionProposal =
+    override suspend fun createProposal(account: WalletAccount, send: ZecSend): RegularTransactionProposal =
         withContext(Dispatchers.IO) {
-            getOrThrow {
+            getOrThrow { synchronizer ->
+                validate(account, synchronizer, send.destination.address)
                 RegularTransactionProposal(
                     destination = send.destination,
                     amount = send.amount,
                     memo = send.memo,
-                    proposal =
-                        synchronizerProvider.getSynchronizer().proposeSend(
-                            account = account.sdkAccount,
-                            send = send
-                        ),
+                    proposal = synchronizer.proposeSend(account = account.sdkAccount, send = send),
                 )
             }
         }
 
     override suspend fun createZip321Proposal(account: WalletAccount, zip321Uri: String): Zip321TransactionProposal =
         withContext(Dispatchers.IO) {
-            getOrThrow {
-                val synchronizer = synchronizerProvider.getSynchronizer()
-
-                val request =
-                    getOrThrow {
-                        ZIP321.request(uriString = zip321Uri, validatingRecipients = null)
-                    }
+            getOrThrow { synchronizer ->
                 val payment =
-                    when (request) {
+                    when (val request = ZIP321.request(uriString = zip321Uri, validatingRecipients = null)) {
                         is ZIP321.ParserResult.Request -> request.paymentRequest.payments[0]
                         else -> throw TransactionProposalNotCreatedException(
                             IllegalArgumentException("Invalid ZIP321 URI"),
                         )
                     }
 
+                validate(account, synchronizer, payment.recipientAddress.value)
+
+                val destination =
+                    synchronizer
+                        .validateAddress(payment.recipientAddress.value)
+                        .toWalletAddress(payment.recipientAddress.value)
+
                 Zip321TransactionProposal(
-                    destination =
-                        synchronizer
-                            .validateAddress(payment.recipientAddress.value)
-                            .toWalletAddress(payment.recipientAddress.value),
+                    destination = destination,
                     amount = payment.nonNegativeAmount.value.convertZecToZatoshi(),
                     memo = Memo(payment.memo?.data?.decodeToString() ?: ""),
                     proposal = synchronizer.proposeFulfillingPaymentUri(account = account.sdkAccount, uri = zip321Uri),
@@ -129,12 +140,13 @@ class ProposalDataSourceImpl(
         quote: SwapQuote,
     ): ExactInputSwapTransactionProposal =
         withContext(Dispatchers.IO) {
-            getOrThrow {
+            getOrThrow { synchronizer ->
+                validate(account, synchronizer, send.destination.address)
                 ExactInputSwapTransactionProposal(
                     destination = send.destination,
                     amount = send.amount,
                     memo = send.memo,
-                    proposal = synchronizerProvider.getSynchronizer().proposeSend(account.sdkAccount, send),
+                    proposal = synchronizer.proposeSend(account.sdkAccount, send),
                     quote = quote,
                 )
             }
@@ -146,12 +158,13 @@ class ProposalDataSourceImpl(
         quote: SwapQuote,
     ): ExactOutputSwapTransactionProposal =
         withContext(Dispatchers.IO) {
-            getOrThrow {
+            getOrThrow { synchronizer ->
+                validate(account, synchronizer, send.destination.address)
                 ExactOutputSwapTransactionProposal(
                     destination = send.destination,
                     amount = send.amount,
                     memo = send.memo,
-                    proposal = synchronizerProvider.getSynchronizer().proposeSend(account.sdkAccount, send),
+                    proposal = synchronizer.proposeSend(account.sdkAccount, send),
                     quote = quote,
                 )
             }
@@ -159,9 +172,9 @@ class ProposalDataSourceImpl(
 
     override suspend fun createShieldProposal(account: WalletAccount): ShieldTransactionProposal =
         withContext(Dispatchers.IO) {
-            getOrThrow {
+            getOrThrow { synchronizer ->
                 val newProposal =
-                    synchronizerProvider.getSynchronizer().proposeShielding(
+                    synchronizer.proposeShielding(
                         account = account.sdkAccount,
                         shieldingThreshold = Zatoshi(DEFAULT_SHIELDING_THRESHOLD),
                         // Using empty string for memo to clear the default memo prefix value defined in the SDK
@@ -172,7 +185,7 @@ class ProposalDataSourceImpl(
 
                 newProposal
                     ?.let { ShieldTransactionProposal(proposal = it) }
-                    ?: throw NullPointerException("transparent balance  is zero or below `shieldingThreshold`")
+                    ?: throw NullPointerException("transparent balance is zero or below `shieldingThreshold`")
             }
         }
 
@@ -214,6 +227,20 @@ class ProposalDataSourceImpl(
                 .getSynchronizer()
                 .redactPcztForSigner(pczt)
         }
+
+    /**
+     * @throws TexUnsupportedOnKSException if the address is a TEX address and the account is a Keystone account
+     */
+    @Throws(TexUnsupportedOnKSException::class)
+    private suspend fun validate(
+        account: WalletAccount,
+        synchronizer: Synchronizer,
+        address: String
+    ) {
+        if (account is KeystoneAccount && synchronizer.validateAddress(address) == AddressType.Tex) {
+            throw TexUnsupportedOnKSException()
+        }
+    }
 
     @Suppress("CyclomaticComplexMethod", "TooGenericExceptionCaught")
     private suspend fun submitTransactionInternal(
@@ -287,9 +314,10 @@ class ProposalDataSourceImpl(
         }
 
     @Suppress("TooGenericExceptionCaught")
-    private inline fun <T : Any> getOrThrow(block: () -> T): T =
+    private suspend inline fun <T : Any> getOrThrow(block: (Synchronizer) -> T): T =
         try {
-            block()
+            val synchronizer = synchronizerProvider.getSynchronizer()
+            block(synchronizer)
         } catch (e: TransactionEncoderException.ProposalFromParametersException) {
             val message = e.rootCause.message ?: ""
             if (message.contains("Insufficient balance", true) ||
@@ -299,6 +327,10 @@ class ProposalDataSourceImpl(
             } else {
                 throw TransactionProposalNotCreatedException(e)
             }
+        } catch (e: TexUnsupportedOnKSException) {
+            throw e
+        } catch (e: TransactionProposalNotCreatedException) {
+            throw e
         } catch (e: Exception) {
             throw TransactionProposalNotCreatedException(e)
         }
@@ -308,7 +340,8 @@ class ProposalDataSourceImpl(
             AddressType.Unified -> WalletAddress.Unified.new(value)
             AddressType.Shielded -> WalletAddress.Sapling.new(value)
             AddressType.Transparent -> WalletAddress.Transparent.new(value)
-            else -> error("Invalid address type")
+            AddressType.Tex -> WalletAddress.Tex.new(value)
+            is AddressType.Invalid -> error("Invalid address type")
         }
 }
 
