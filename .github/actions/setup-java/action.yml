@@ -1,0 +1,18 @@
+name: 'Setup Java from gradle.properties'
+description: 'Sets up Java using version specified in gradle.properties'
+runs:
+  using: "composite"
+  steps:
+    - name: Extract Java version from gradle.properties
+      shell: bash
+      id: java-version
+      run: |
+        JAVA_VERSION=$(grep '^JVM_TOOLCHAIN=' gradle.properties | cut -d'=' -f2)
+        echo "version=$JAVA_VERSION" >> $GITHUB_OUTPUT
+        echo "Using Java version: $JAVA_VERSION"
+
+    - name: Set up Java
+      uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165
+      with:
+        distribution: 'temurin'
+        java-version: ${{ steps.java-version.outputs.version }}

@@ -72,13 +72,10 @@ jobs:
           gpg --import private.pgp
 
       - name: Set up Java
-        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165
+        uses: ./.github/actions/setup-java
         timeout-minutes: 1
-        with:
-          distribution: 'temurin'
-          java-version: 17
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: ./.github/actions/setup-gradle
         timeout-minutes: 10
         with:
           gradle-home-cache-cleanup: true

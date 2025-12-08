@@ -64,7 +64,7 @@ jobs:
         }}"
         run: echo "defined=true" >> $GITHUB_OUTPUT
 
-  build_and_deploy:
+  build:
     if: needs.check_secrets.outputs.has-secrets == 'true'
     needs: [validate_gradle_wrapper, check_secrets]
     environment: deployment
@@ -80,13 +80,10 @@ jobs:
           ref: main
           fetch-depth: 0  # To fetch all commits
       - name: Set up Java
-        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165
+        uses: ./.github/actions/setup-java
         timeout-minutes: 1
-        with:
-          distribution: 'temurin'
-          java-version: 17
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: ./.github/actions/setup-gradle
         timeout-minutes: 10
         with:
           gradle-home-cache-cleanup: true
@@ -132,18 +129,9 @@ jobs:
         shell: bash
         run: |
           echo ${SIGNING_KEYSTORE_BASE_64} | base64 --decode > ${SIGNING_KEY_PATH}
-      - name: Upload to Play Store
+      - name: Build release artifacts
         timeout-minutes: 25
         env:
-          # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
-          # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
-          # Note that these properties are not currently used due to #1033
-          # ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
-          # ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_KEY_FILE_PATH: ${{ steps.auth_google_play.outputs.credentials_file_path }}
-          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
-          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY: ${{ secrets.GOOGLE_PLAY_PUBLISHER_API_KEY }}
-          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_TRACK: internal
-          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_STATUS: completed
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ format('{0}/release.jks', env.home) }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
@@ -151,7 +139,7 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
           ORG_GRADLE_PROJECT_ZCASH_CMC_KEY: ${{ secrets.CMC_PUBLISHABLE_KEY }}
         run: |
-          ./gradlew :app:publishToGooglePlay
+          ./gradlew :app:bundleZcashmainnetStoreRelease :app:packageZcashmainnetStoreReleaseUniversalApk
       - name: Collect Artifacts
         timeout-minutes: 1
         env:
@@ -169,11 +157,8 @@ jobs:
           name: Binaries
           path: ~/artifacts
 
-# Due to how the Gradle publishing plugin works, this scan happens after the upload to Google Play.
-# Rather than being preventative, this is primarily an "early warning system" to verify that our
-# binaries aren't being misclassified as malware.
   antivirus:
-    needs: [build_and_deploy]
+    needs: [build]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -189,8 +174,67 @@ jobs:
         timeout-minutes: 1
         run: |
           unzip binaries.zip
-      - name: Antivirus
+      - name: Antivirus scan
         timeout-minutes: 12
         with:
           path-to-scan: .
         uses: ./.github/actions/antivirus
+
+  deploy:
+    needs: [antivirus]
+    environment: deployment
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        timeout-minutes: 1
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Set up Java
+        uses: ./.github/actions/setup-java
+        timeout-minutes: 1
+      - name: Set up Gradle
+        uses: ./.github/actions/setup-gradle
+        timeout-minutes: 10
+        with:
+          gradle-home-cache-cleanup: true
+      - name: Set Env
+        shell: bash
+        run: |
+          echo "home=${HOME}" >> "$GITHUB_ENV"
+      - name: Export Signing Key
+        env:
+          SIGNING_KEYSTORE_BASE_64: ${{ secrets.UPLOAD_KEYSTORE_BASE_64 }}
+          SIGNING_KEY_PATH: ${{ format('{0}/release.jks', env.home) }}
+        shell: bash
+        run: |
+          echo ${SIGNING_KEYSTORE_BASE_64} | base64 --decode > ${SIGNING_KEY_PATH}
+      - name: Download release artifact
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        with:
+          name: Binaries
+      - name: Unzip artifacts
+        timeout-minutes: 1
+        run: |
+          unzip binaries.zip
+      - name: Upload to Play Store
+        timeout-minutes: 10
+        env:
+          # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
+          # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
+          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY }}
+          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY: ${{ secrets.GOOGLE_PLAY_PUBLISHER_API_KEY }}
+          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_TRACK: internal
+          ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_STATUS: completed
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ format('{0}/release.jks', env.home) }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: ${{ secrets.UPLOAD_KEY_ALIAS_PASSWORD }}
+          ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
+          ORG_GRADLE_PROJECT_ZCASH_CMC_KEY: ${{ secrets.CMC_PUBLISHABLE_KEY }}
+        run: |
+          ./gradlew :app:publishToGooglePlay
