@@ -78,7 +78,7 @@ fun SlippagePicker(
             state.amount in
             listOf(BigDecimal("0.5"), BigDecimal(1), BigDecimal(2))
         ) {
-            haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+            runCatching { haptic.performHapticFeedback(HapticFeedbackType.SegmentTick) }
         }
     }
     val selection by remember(state.amount, isTextFieldFocused) {
@@ -137,7 +137,7 @@ fun SlippagePicker(
                 isSelected = selection is Selection.ByButton1 && !isTextFieldFocused,
                 onClick = {
                     if (selection !is Selection.ByButton1 || isTextFieldFocused) {
-                        haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                        runCatching { haptic.performHapticFeedback(HapticFeedbackType.SegmentTick) }
                     }
 
                     focusManager.clearFocus(true)
@@ -150,7 +150,7 @@ fun SlippagePicker(
                 isSelected = selection is Selection.ByButton2 && !isTextFieldFocused,
                 onClick = {
                     if (selection !is Selection.ByButton2 || isTextFieldFocused) {
-                        haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                        runCatching { haptic.performHapticFeedback(HapticFeedbackType.SegmentTick) }
                     }
                     focusManager.clearFocus(true)
                     textFieldInnerState = createTextFieldInnerState(null)
@@ -162,7 +162,7 @@ fun SlippagePicker(
                 isSelected = selection is Selection.ByButton3 && !isTextFieldFocused,
                 onClick = {
                     if (selection !is Selection.ByButton3 || isTextFieldFocused) {
-                        haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                        runCatching { haptic.performHapticFeedback(HapticFeedbackType.SegmentTick) }
                     }
                     focusManager.clearFocus(true)
                     textFieldInnerState = createTextFieldInnerState(null)
