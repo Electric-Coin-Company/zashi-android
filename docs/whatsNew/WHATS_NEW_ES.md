@@ -11,6 +11,24 @@ Supported section titles:
 directly impact users rather than highlighting other key architectural updates.**
 
 ## [Unreleased]
+
+## [2.4.9 (1387)] - 2025-12-09
+
+### Añadido:
+- Mejoramos el manejo de errores, facilitando su comprensión y resolución.
+- Añadimos una opción para activar la protección de Tor en el proceso de Restauración.
+
+### Cambiado:
+- Añadimos un botón de swap.
+- Mejoramos el rendimiento de Conversión de Moneda.
+- Movimos la función Pagar con Flexa a Más opciones.
+- Eliminamos la integración de Coinbase Onramp.
+- Mejoramos la experiencia de Restablecer Zashi.
+
+### Corregido:
+- Solucionamos problemas reportados por los usuarios.
+- Implementamos una función para recuperar los datos de las transacciones.
+
             
 ## [2.4.9 (1386)] - 2025-12-04
 
