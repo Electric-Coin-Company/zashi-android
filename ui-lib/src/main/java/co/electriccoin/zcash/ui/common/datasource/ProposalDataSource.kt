@@ -16,8 +16,10 @@ import cash.z.ecc.android.sdk.model.ZecSend
 import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.model.NetworkDimension
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.SwapQuote
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +27,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import org.zecdev.zip321.ZIP321
+import org.zecdev.zip321.parser.ParserContext
 import java.math.BigDecimal
 
 interface ProposalDataSource {
@@ -101,7 +104,15 @@ class ProposalDataSourceImpl(
 
                 val request =
                     getOrThrow {
-                        ZIP321.request(uriString = zip321Uri, validatingRecipients = null)
+                        ZIP321.request(
+                            uriString = zip321Uri,
+                            context =
+                                when (VersionInfo.NETWORK_DIMENSION) {
+                                    NetworkDimension.MAINNET -> ParserContext.MAINNET
+                                    NetworkDimension.TESTNET -> ParserContext.TESTNET
+                                },
+                            validatingRecipients = null
+                        )
                     }
                 val payment =
                     when (request) {
@@ -116,7 +127,11 @@ class ProposalDataSourceImpl(
                         synchronizer
                             .validateAddress(payment.recipientAddress.value)
                             .toWalletAddress(payment.recipientAddress.value),
-                    amount = payment.nonNegativeAmount.value.convertZecToZatoshi(),
+                    amount =
+                        payment.nonNegativeAmount
+                            ?.toZecValueString()
+                            ?.toBigDecimal()
+                            .convertZecToZatoshi(),
                     memo = Memo(payment.memo?.data?.decodeToString() ?: ""),
                     proposal = synchronizer.proposeFulfillingPaymentUri(account = account.sdkAccount, uri = zip321Uri),
                 )

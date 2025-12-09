@@ -1,6 +1,5 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import PaymentRequest
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.model.Zatoshi
 import kotlinx.coroutines.CoroutineScope
@@ -9,6 +8,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import org.zecdev.zip321.model.PaymentRequest
 
 class PrefillSendUseCase {
     private val bus = Channel<PrefillSendData>()
@@ -34,7 +34,12 @@ class PrefillSendUseCase {
             val request = value.payments.firstOrNull()
             bus.send(
                 PrefillSendData.All(
-                    amount = request?.nonNegativeAmount?.value?.convertZecToZatoshi() ?: Zatoshi(0),
+                    amount =
+                        request
+                            ?.nonNegativeAmount
+                            ?.toZecValueString()
+                            ?.toBigDecimal()
+                            ?.convertZecToZatoshi() ?: Zatoshi(0),
                     address = request?.recipientAddress?.value,
                     fee = null,
                     memos =
