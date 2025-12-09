@@ -16,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
@@ -70,6 +71,7 @@ class AddressBookRepositoryImpl(
 
     private val mutex = Mutex()
 
+    @Suppress("TooGenericExceptionCaught")
     @OptIn(ExperimentalCoroutinesApi::class)
     private val addressBook =
         accountDataSource
@@ -78,7 +80,9 @@ class AddressBookRepositoryImpl(
             .map { getAddressBookKey(it ?: return@map null) }
             .distinctUntilChanged()
             .flatMapLatest { if (it == null) flowOf(null) else addressBookDataSource.observe(it) }
-            .shareIn(
+            .catch {
+                // do nothing
+            }.shareIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(0, 0),
                 replay = 1
@@ -139,22 +143,32 @@ class AddressBookRepositoryImpl(
                 it.find { contact -> contact.address == address }
             }.distinctUntilChanged()
 
+    @Suppress("TooGenericExceptionCaught")
     override fun delete() {
         scope.launch {
             mutex.withLock {
-                val account = accountDataSource.getZashiAccount()
-                val key = getAddressBookKey(account)
-                addressBookDataSource.delete(key)
+                try {
+                    val account = accountDataSource.getZashiAccount()
+                    val key = getAddressBookKey(account)
+                    addressBookDataSource.delete(key)
+                } catch (e: Exception) {
+                    Twig.error(e) { "Unable to delete Address Book" }
+                }
             }
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun updateAB(block: suspend (AddressBookKey) -> Unit) {
         scope.launch {
             mutex.withLock {
-                val selectedAccount = accountDataSource.getZashiAccount()
-                val key = getAddressBookKey(selectedAccount)
-                block(key)
+                try {
+                    val selectedAccount = accountDataSource.getZashiAccount()
+                    val key = getAddressBookKey(selectedAccount)
+                    block(key)
+                } catch (e: Exception) {
+                    Twig.error(e) { "Unable to update Address Book" }
+                }
             }
         }
     }
