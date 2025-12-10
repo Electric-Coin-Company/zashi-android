@@ -1,6 +1,7 @@
 package co.electriccoin.zcash.ui.common.repository
 
 import cash.z.ecc.android.sdk.model.Zatoshi
+import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.MetadataDataSource
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
@@ -21,6 +22,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
@@ -93,6 +95,7 @@ class MetadataRepositoryImpl(
 
     private val mutex = Mutex()
 
+    @Suppress("TooGenericExceptionCaught")
     @OptIn(ExperimentalCoroutinesApi::class)
     private val metadata =
         accountDataSource
@@ -101,7 +104,9 @@ class MetadataRepositoryImpl(
             .map { getMetadataKey(it ?: return@map null) }
             .distinctUntilChanged()
             .flatMapLatest { if (it == null) flowOf(null) else metadataDataSource.observe(it) }
-            .shareIn(
+            .catch {
+                // do nothing
+            }.shareIn(
                 scope = scope,
                 started = SharingStarted.WhileSubscribed(0, 0),
                 replay = 1
@@ -267,23 +272,33 @@ class MetadataRepositoryImpl(
                     ?.toSimpleAssetSet()
             }.distinctUntilChanged()
 
+    @Suppress("TooGenericExceptionCaught")
     override fun delete() {
         scope.launch {
             mutex.withLock {
                 accountDataSource.getAllAccounts().forEach {
-                    val key = getMetadataKey(it)
-                    metadataDataSource.delete(key)
+                    try {
+                        val key = getMetadataKey(it)
+                        metadataDataSource.delete(key)
+                    } catch (e: Exception) {
+                        Twig.error(e) { "Unable to delete Metadata" }
+                    }
                 }
             }
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun updateMetadata(block: suspend (MetadataKey) -> Unit) {
         scope.launch {
             mutex.withLock {
-                val selectedAccount = accountDataSource.getSelectedAccount()
-                val key = getMetadataKey(selectedAccount)
-                block(key)
+                try {
+                    val selectedAccount = accountDataSource.getSelectedAccount()
+                    val key = getMetadataKey(selectedAccount)
+                    block(key)
+                } catch (e: Exception) {
+                    Twig.error(e) { "Unable to update Metadata" }
+                }
             }
         }
     }
