@@ -128,7 +128,7 @@ class OnZip321ScannedUseCase(
                             ?.let { listOf(it) }
                 )
             )
-            navigationRouter.forward(ReviewTransactionArgs)
+            navigationRouter.replace(ReviewTransactionArgs)
         } catch (_: TexUnsupportedOnKSException) {
             navigationRouter.forward(TEXUnsupportedArgs)
             keystoneProposalRepository.clear()
@@ -136,16 +136,16 @@ class OnZip321ScannedUseCase(
         } catch (_: InsufficientFundsException) {
             zashiProposalRepository.clear()
             keystoneProposalRepository.clear()
-            navigationRouter.forward(InsufficientFundsArgs)
+            navigationRouter.replace(InsufficientFundsArgs)
         } catch (_: TransactionProposalNotCreatedException) {
+            zashiProposalRepository.clear()
+            keystoneProposalRepository.clear()
             prefillSend.requestFromZip321(zip321.payment)
             navigationRouter.back()
-            zashiProposalRepository.clear()
-            keystoneProposalRepository.clear()
         } catch (e: Exception) {
-            navigateToErrorUseCase(ErrorArgs.General(e))
             zashiProposalRepository.clear()
             keystoneProposalRepository.clear()
+            navigateToErrorUseCase(ErrorArgs.General(e)) { replace(it) }
         }
     }
 

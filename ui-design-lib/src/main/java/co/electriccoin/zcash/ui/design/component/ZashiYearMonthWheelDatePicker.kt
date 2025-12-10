@@ -292,7 +292,7 @@ private fun WheelLazyList(
         snapshotFlow { state.firstVisibleItemIndex }
             .drop(1)
             .collect {
-                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                runCatching { haptic.performHapticFeedback(HapticFeedbackType.LongPress) }
             }
     }
     Box(

@@ -17,8 +17,10 @@ import cash.z.ecc.android.sdk.model.proposeSend
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
+import co.electriccoin.zcash.ui.common.model.NetworkDimension
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.SwapQuote
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.model.WalletAccount
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +28,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import org.zecdev.zip321.ZIP321
+import org.zecdev.zip321.parser.ParserContext
 import java.math.BigDecimal
 
 interface ProposalDataSource {
@@ -111,7 +114,19 @@ class ProposalDataSourceImpl(
         withContext(Dispatchers.IO) {
             getOrThrow { synchronizer ->
                 val payment =
-                    when (val request = ZIP321.request(uriString = zip321Uri, validatingRecipients = null)) {
+                    when (
+                        val request =
+                            ZIP321
+                                .request(
+                                    uriString = zip321Uri,
+                                    context =
+                                        when (VersionInfo.NETWORK_DIMENSION) {
+                                            NetworkDimension.MAINNET -> ParserContext.MAINNET
+                                            NetworkDimension.TESTNET -> ParserContext.TESTNET
+                                        },
+                                    validatingRecipients = null
+                                )
+                    ) {
                         is ZIP321.ParserResult.Request -> request.paymentRequest.payments[0]
                         else -> throw TransactionProposalNotCreatedException(
                             IllegalArgumentException("Invalid ZIP321 URI"),
@@ -127,7 +142,11 @@ class ProposalDataSourceImpl(
 
                 Zip321TransactionProposal(
                     destination = destination,
-                    amount = payment.nonNegativeAmount.value.convertZecToZatoshi(),
+                    amount =
+                        payment.nonNegativeAmount
+                            ?.toZecValueString()
+                            ?.toBigDecimal()
+                            .convertZecToZatoshi(),
                     memo = Memo(payment.memo?.data?.decodeToString() ?: ""),
                     proposal = synchronizer.proposeFulfillingPaymentUri(account = account.sdkAccount, uri = zip321Uri),
                 )

@@ -50,7 +50,7 @@ fun ZashiIconButton(
             onClick =
                 if (state.hapticFeedbackType != null) {
                     {
-                        haptic.performHapticFeedback(state.hapticFeedbackType)
+                        runCatching { haptic.performHapticFeedback(state.hapticFeedbackType) }
                         state.onClick()
                     }
                 } else {
@@ -99,7 +99,7 @@ fun ZashiImageButton(
                 onClick =
                     if (state.hapticFeedbackType != null) {
                         {
-                            haptic.performHapticFeedback(state.hapticFeedbackType)
+                            runCatching { haptic.performHapticFeedback(state.hapticFeedbackType) }
                             state.onClick()
                         }
                     } else {

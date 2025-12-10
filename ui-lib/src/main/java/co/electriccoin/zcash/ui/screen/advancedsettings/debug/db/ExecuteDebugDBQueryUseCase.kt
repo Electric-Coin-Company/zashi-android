@@ -6,6 +6,8 @@ import co.electriccoin.zcash.ui.common.repository.BiometricRequest
 import co.electriccoin.zcash.ui.common.repository.BiometricsCancelledException
 import co.electriccoin.zcash.ui.common.repository.BiometricsFailureException
 import co.electriccoin.zcash.ui.design.util.stringRes
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class ExecuteDebugDBQueryUseCase(
     private val synchronizerProvider: SynchronizerProvider,
@@ -21,7 +23,9 @@ class ExecuteDebugDBQueryUseCase(
                     )
                 )
 
-            synchronizerProvider.getSynchronizer().debugQuery(query)
+            withContext(Dispatchers.IO) {
+                synchronizerProvider.getSynchronizer().debugQuery(query)
+            }
         } catch (_: BiometricsFailureException) {
             null
         } catch (_: BiometricsCancelledException) {
