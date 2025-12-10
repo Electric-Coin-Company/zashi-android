@@ -69,4 +69,17 @@
     <string name="send_confirmation_pay_with_keystone">Pagar con Keystone</string>
     <string name="send_confirmation_pay">Pagar</string>
 
+    <!-- Pending states -->
+    <string name="send_confirmation_pending_transaction_title">Transaction Pending</string>
+    <string name="send_confirmation_pending_transaction_subtitle">Your transaction is being processed.</string>
+    <string name="send_confirmation_pending_swap_title">Swap Pending</string>
+    <string name="send_confirmation_pending_swap_subtitle">Follow its status on the transaction screen.</string>
+    <string name="send_confirmation_pending_payment_title">Payment Pending</string>
+    <string name="send_confirmation_pending_payment_subtitle">Follow its status on the transaction screen.</string>
+    <string name="send_confirmation_pending_shielding_title">Shielding Pending</string>
+    <string name="send_confirmation_pending_shielding_subtitle">Your shielding transaction is being processed.</string>
+
+    <!-- Cross-chain payment success -->
+    <string name="send_confirmation_success_cross_chain_subtitle">Has iniciado un pago entre cadenas exitosamente. Sigue su estado en la pantalla de transacciones.</string>
+
 </resources>
