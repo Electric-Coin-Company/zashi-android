@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.math.BigDecimal
 
 internal class ScanGenericAddressVM(
     private val args: ScanGenericAddressArgs,
@@ -66,7 +67,9 @@ internal class ScanGenericAddressVM(
                 .recipientAddress.value
         val amount =
             result.payment.payments[0]
-                .nonNegativeAmount.value
+                .nonNegativeAmount
+                ?.toZecValueString()
+                ?.toBigDecimal() ?: BigDecimal.ZERO
         navigateToScanAddress.onScanned(
             address = address,
             amount = amount,
