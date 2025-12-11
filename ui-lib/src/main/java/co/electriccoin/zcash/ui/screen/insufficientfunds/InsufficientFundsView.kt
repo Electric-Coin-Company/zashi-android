@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.insufficientfunds
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -32,20 +33,29 @@ fun InsufficientFundsView(
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
     ZashiScreenModalBottomSheet(
-        sheetState = sheetState,
         state = state,
-    ) {
-        Content(modifier = Modifier.weight(1f, false), state = it)
-    }
+        sheetState = sheetState,
+        content = { state, contentPadding ->
+            Content(modifier = Modifier.weight(1f, false), state = state, contentPadding = contentPadding)
+        },
+    )
 }
 
 @Composable
-private fun Content(state: InsufficientFundsState, modifier: Modifier = Modifier) {
+private fun Content(
+    state: InsufficientFundsState,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier =
             modifier
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+                .padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = contentPadding.calculateBottomPadding()
+                )
     ) {
         Image(
             painter = painterResource(R.drawable.ic_swap_quote_error),

@@ -2,11 +2,9 @@ package co.electriccoin.zcash.ui.screen.deletewallet
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,21 +32,30 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResetZashiConfirmationView(state: ResetZashiConfirmationState?) {
-    ZashiScreenModalBottomSheet(state = state) {
+    ZashiScreenModalBottomSheet(state = state, content = { state, contentPadding ->
         Content(
             modifier = Modifier.weight(1f, false),
-            state = it
+            state = state,
+            contentPadding = contentPadding
         )
-    }
+    })
 }
 
 @Composable
-private fun Content(state: ResetZashiConfirmationState, modifier: Modifier = Modifier) {
+private fun Content(
+    state: ResetZashiConfirmationState,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier =
             modifier
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp),
+                .padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = contentPadding.calculateBottomPadding()
+                ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -88,9 +95,6 @@ private fun Content(state: ResetZashiConfirmationState, modifier: Modifier = Mod
                     onClick = state.onCancel
                 ),
             defaultPrimaryColors = ZashiButtonDefaults.primaryColors()
-        )
-        androidx.compose.foundation.layout.Spacer(
-            modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars)
         )
     }
 }

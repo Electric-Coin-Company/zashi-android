@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.error
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -37,19 +38,27 @@ fun BottomSheetErrorView(
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
-        content = {
-            BottomSheetContent(it, modifier = Modifier.weight(1f, false))
+        content = { state, contentPadding ->
+            BottomSheetContent(state, contentPadding, modifier = Modifier.weight(1f, false))
         },
     )
 }
 
 @Composable
-fun BottomSheetContent(state: ErrorState, modifier: Modifier = Modifier) {
+fun BottomSheetContent(
+    state: ErrorState,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier =
             modifier
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+                .padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = contentPadding.calculateBottomPadding()
+                )
     ) {
         Image(
             painter = painterResource(R.drawable.ic_error_warning),
