@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
-import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.TextFieldState
 import co.electriccoin.zcash.ui.design.util.stringRes
@@ -18,8 +17,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class DebugDBVM(
-    private val synchronizerProvider: SynchronizerProvider,
     private val navigationRouter: NavigationRouter,
+    private val executeDebugDBQuery: ExecuteDebugDBQueryUseCase
 ) : ViewModel() {
     private val output = MutableStateFlow<String?>(null)
 
@@ -58,7 +57,6 @@ class DebugDBVM(
 
     private fun onQueryChanged(newQuery: String) = query.update { newQuery }
 
-    @Suppress("TooGenericExceptionCaught")
     private fun onExecuteClick() {
         if (executeJob?.isActive == true) return
         executeJob =
@@ -67,12 +65,9 @@ class DebugDBVM(
                 if (currentQuery.isBlank()) {
                     output.update { "Please enter a query" }
                 } else {
-                    try {
-                        val synchronizer = synchronizerProvider.getSynchronizer()
-                        val result = synchronizer.debugQuery(currentQuery)
+                    val result = executeDebugDBQuery(currentQuery)
+                    if (result != null) {
                         output.update { result }
-                    } catch (e: Exception) {
-                        output.update { "Error: ${e.message}" }
                     }
                 }
             }
