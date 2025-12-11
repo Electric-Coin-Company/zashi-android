@@ -74,13 +74,10 @@ jobs:
         with:
           fetch-depth: 0
       - name: Set up Java
-        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e
+        uses: ./.github/actions/setup-java
         timeout-minutes: 1
-        with:
-          distribution: 'temurin'
-          java-version: 17
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: ./.github/actions/setup-gradle
         timeout-minutes: 5
       - name: Check properties
         timeout-minutes: 4
@@ -99,13 +96,10 @@ jobs:
         with:
           fetch-depth: 0 # to fetch all commits
       - name: Set up Java
-        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e
+        uses: ./.github/actions/setup-java
         timeout-minutes: 1
-        with:
-          distribution: 'temurin'
-          java-version: 17
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: ./.github/actions/setup-gradle
         timeout-minutes: 5
       - name: Detekt
         timeout-minutes: 10
@@ -141,13 +135,10 @@ jobs:
         with:
           fetch-depth: 0 # to fetch all commits
       - name: Set up Java
-        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e
+        uses: ./.github/actions/setup-java
         timeout-minutes: 1
-        with:
-          distribution: 'temurin'
-          java-version: 17
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: ./.github/actions/setup-gradle
         timeout-minutes: 5
       - name: Ktlint
         timeout-minutes: 4
@@ -183,13 +174,10 @@ jobs:
         with:
           fetch-depth: 0 # to fetch all commits
       - name: Set up Java
-        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e
+        uses: ./.github/actions/setup-java
         timeout-minutes: 1
-        with:
-          distribution: 'temurin'
-          java-version: 17
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: ./.github/actions/setup-gradle
         timeout-minutes: 5
       - name: Android Lint
         timeout-minutes: 15
@@ -228,13 +216,10 @@ jobs:
         with:
           fetch-depth: 0 # to fetch all commits
       - name: Set up Java
-        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e
+        uses: ./.github/actions/setup-java
         timeout-minutes: 1
-        with:
-          distribution: 'temurin'
-          java-version: 17
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: ./.github/actions/setup-gradle
         timeout-minutes: 5
       - name: Test
         timeout-minutes: 10
@@ -274,13 +259,10 @@ jobs:
         with:
           fetch-depth: 0 # to fetch all commits
       - name: Set up Java
-        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e
+        uses: ./.github/actions/setup-java
         timeout-minutes: 1
-        with:
-          distribution: 'temurin'
-          java-version: 17
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: ./.github/actions/setup-gradle
         timeout-minutes: 5
       - name: Build
         timeout-minutes: 20
@@ -340,13 +322,10 @@ jobs:
         with:
           fetch-depth: 0 # to fetch all commits
       - name: Set up Java
-        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e
+        uses: ./.github/actions/setup-java
         timeout-minutes: 1
-        with:
-          distribution: 'temurin'
-          java-version: 17
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: ./.github/actions/setup-gradle
         timeout-minutes: 5
       - name: Build and test
         timeout-minutes: 30
@@ -390,13 +369,10 @@ jobs:
         with:
           fetch-depth: 0 # to fetch all commits
       - name: Set up Java
-        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e
+        uses: ./.github/actions/setup-java
         timeout-minutes: 1
-        with:
-          distribution: 'temurin'
-          java-version: 17
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: ./.github/actions/setup-gradle
         timeout-minutes: 5
       - name: Build and test
         timeout-minutes: 30
@@ -443,13 +419,10 @@ jobs:
         with:
           fetch-depth: 0 # to fetch all commits
       - name: Set up Java
-        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e
+        uses: ./.github/actions/setup-java
         timeout-minutes: 1
-        with:
-          distribution: 'temurin'
-          java-version: 17
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: ./.github/actions/setup-gradle
         timeout-minutes: 5
       - name: Export Google Services JSON
         env:
@@ -500,13 +473,10 @@ jobs:
         with:
           fetch-depth: 0 # to fetch all commits
       - name: Set up Java
-        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e
+        uses: ./.github/actions/setup-java
         timeout-minutes: 1
-        with:
-          distribution: 'temurin'
-          java-version: 17
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: ./.github/actions/setup-gradle
         timeout-minutes: 5
       - name: Export Google Services JSON
         env:
@@ -571,6 +541,28 @@ jobs:
         run: |
           ./gradlew clean :app:assembleZcashmainnetFossRelease
 
+      - name: Check APK size
+        timeout-minutes: 1
+        run: |
+          echo "## APK Size Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Variant | Size (MB) | Path |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|-----------|------|" >> $GITHUB_STEP_SUMMARY
+
+          for apk in app/build/outputs/apk_from_bundle/*/*/*.apk app/build/outputs/apk/*/*/*.apk; do
+            if [ -f "$apk" ]; then
+              SIZE_BYTES=$(stat -c%s "$apk" 2>/dev/null || stat -f%z "$apk")
+              SIZE_MB=$(echo "scale=2; $SIZE_BYTES / 1048576" | bc)
+              BASENAME=$(basename "$apk")
+              echo "| $BASENAME | $SIZE_MB | \`$apk\` |" >> $GITHUB_STEP_SUMMARY
+
+              # Warn if APK exceeds 100MB
+              if [ $(echo "$SIZE_MB > 100" | bc) -eq 1 ]; then
+                echo "::warning::APK $BASENAME is larger than 100MB ($SIZE_MB MB)"
+              fi
+            fi
+          done
+
       - name: Upload Artifacts
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
         timeout-minutes: 2
@@ -594,13 +586,10 @@ jobs:
         with:
           fetch-depth: 0 # to fetch all commits
       - name: Set up Java
-        uses: actions/setup-java@f2beeb24e141e01a676f977032f5a29d81c9e27e
+        uses: ./.github/actions/setup-java
         timeout-minutes: 1
-        with:
-          distribution: 'temurin'
-          java-version: 17
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
+        uses: ./.github/actions/setup-gradle
         timeout-minutes: 5
       - name: Authenticate to Google Cloud for Firebase Test Lab
         id: auth_test_lab
