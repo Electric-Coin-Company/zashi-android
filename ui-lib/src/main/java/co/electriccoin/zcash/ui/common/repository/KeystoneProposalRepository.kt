@@ -9,6 +9,7 @@ import co.electriccoin.zcash.ui.common.datasource.ExactInputSwapTransactionPropo
 import co.electriccoin.zcash.ui.common.datasource.ExactOutputSwapTransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.InsufficientFundsException
 import co.electriccoin.zcash.ui.common.datasource.ProposalDataSource
+import co.electriccoin.zcash.ui.common.datasource.TexUnsupportedOnKSException
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposal
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.datasource.Zip321TransactionProposal
@@ -38,16 +39,32 @@ interface KeystoneProposalRepository {
 
     val submitState: Flow<SubmitProposalState?>
 
-    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
+    @Throws(
+        TransactionProposalNotCreatedException::class,
+        InsufficientFundsException::class,
+        TexUnsupportedOnKSException::class
+    )
     suspend fun createProposal(zecSend: ZecSend)
 
-    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
+    @Throws(
+        TransactionProposalNotCreatedException::class,
+        InsufficientFundsException::class,
+        TexUnsupportedOnKSException::class
+    )
     suspend fun createExactInputSwapProposal(zecSend: ZecSend, quote: SwapQuote): ExactInputSwapTransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
+    @Throws(
+        TransactionProposalNotCreatedException::class,
+        InsufficientFundsException::class,
+        TexUnsupportedOnKSException::class
+    )
     suspend fun createExactOutputSwapProposal(zecSend: ZecSend, quote: SwapQuote): ExactOutputSwapTransactionProposal
 
-    @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)
+    @Throws(
+        TransactionProposalNotCreatedException::class,
+        InsufficientFundsException::class,
+        TexUnsupportedOnKSException::class
+    )
     suspend fun createZip321Proposal(zip321Uri: String): Zip321TransactionProposal
 
     @Throws(TransactionProposalNotCreatedException::class, InsufficientFundsException::class)

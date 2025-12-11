@@ -3,6 +3,7 @@ package co.electriccoin.zcash.ui.common.usecase
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.datasource.AccountDataSource
 import co.electriccoin.zcash.ui.common.datasource.InsufficientFundsException
+import co.electriccoin.zcash.ui.common.datasource.TexUnsupportedOnKSException
 import co.electriccoin.zcash.ui.common.datasource.TransactionProposalNotCreatedException
 import co.electriccoin.zcash.ui.common.model.KeystoneAccount
 import co.electriccoin.zcash.ui.common.model.ZashiAccount
@@ -19,6 +20,7 @@ import co.electriccoin.zcash.ui.screen.scan.ScanFlow.ADDRESS_BOOK
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow.HOMEPAGE
 import co.electriccoin.zcash.ui.screen.scan.ScanFlow.SEND
 import co.electriccoin.zcash.ui.screen.send.Send
+import co.electriccoin.zcash.ui.screen.texunsupported.TEXUnsupportedArgs
 
 class OnZip321ScannedUseCase(
     private val keystoneProposalRepository: KeystoneProposalRepository,
@@ -79,6 +81,10 @@ class OnZip321ScannedUseCase(
                 )
             )
             navigationRouter.replace(Send(), ReviewTransactionArgs)
+        } catch (_: TexUnsupportedOnKSException) {
+            navigationRouter.forward(TEXUnsupportedArgs)
+            keystoneProposalRepository.clear()
+            zashiProposalRepository.clear()
         } catch (_: InsufficientFundsException) {
             zashiProposalRepository.clear()
             keystoneProposalRepository.clear()
@@ -122,20 +128,24 @@ class OnZip321ScannedUseCase(
                             ?.let { listOf(it) }
                 )
             )
-            navigationRouter.forward(ReviewTransactionArgs)
+            navigationRouter.replace(ReviewTransactionArgs)
+        } catch (_: TexUnsupportedOnKSException) {
+            navigationRouter.forward(TEXUnsupportedArgs)
+            keystoneProposalRepository.clear()
+            zashiProposalRepository.clear()
         } catch (_: InsufficientFundsException) {
             zashiProposalRepository.clear()
             keystoneProposalRepository.clear()
-            navigationRouter.forward(InsufficientFundsArgs)
+            navigationRouter.replace(InsufficientFundsArgs)
         } catch (_: TransactionProposalNotCreatedException) {
+            zashiProposalRepository.clear()
+            keystoneProposalRepository.clear()
             prefillSend.requestFromZip321(zip321.payment)
             navigationRouter.back()
-            zashiProposalRepository.clear()
-            keystoneProposalRepository.clear()
         } catch (e: Exception) {
-            navigateToErrorUseCase(ErrorArgs.General(e))
             zashiProposalRepository.clear()
             keystoneProposalRepository.clear()
+            navigateToErrorUseCase(ErrorArgs.General(e)) { replace(it) }
         }
     }
 

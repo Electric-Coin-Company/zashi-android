@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
@@ -45,15 +47,28 @@ internal fun IntegrationsDialogView(
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
-        content = {
-            BottomSheetContent(it)
+        content = { state, contentPadding ->
+            BottomSheetContent(
+                state = state,
+                contentPadding = contentPadding,
+                modifier = Modifier.weight(1f, false)
+            )
         },
     )
 }
 
 @Composable
-fun BottomSheetContent(state: IntegrationsState) {
-    Column {
+fun BottomSheetContent(
+    state: IntegrationsState,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier =
+            modifier
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = contentPadding.calculateBottomPadding())
+    ) {
         IntegrationItems(state, contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp))
         if (state.showFooter) {
             Spacer(16.dp)

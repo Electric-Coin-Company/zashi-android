@@ -96,7 +96,7 @@ fun Option(
                 onClick
             } else {
                 {
-                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    runCatching { haptic.performHapticFeedback(HapticFeedbackType.SegmentTick) }
                     onClick()
                 }
             }

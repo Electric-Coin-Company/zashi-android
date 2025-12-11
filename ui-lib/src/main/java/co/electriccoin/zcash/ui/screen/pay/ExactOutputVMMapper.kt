@@ -18,6 +18,7 @@ import co.electriccoin.zcash.ui.design.component.TextSelection
 import co.electriccoin.zcash.ui.design.util.StringResource
 import co.electriccoin.zcash.ui.design.util.StringResourceColor
 import co.electriccoin.zcash.ui.design.util.StyledStringResource
+import co.electriccoin.zcash.ui.design.util.isServiceUnavailable
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicNumber
@@ -27,7 +28,6 @@ import co.electriccoin.zcash.ui.screen.swap.SwapErrorFooterState
 import co.electriccoin.zcash.ui.screen.swap.convertZecToZatoshi
 import co.electriccoin.zcash.ui.util.CURRENCY_TICKER
 import io.ktor.client.plugins.ResponseException
-import io.ktor.http.HttpStatusCode
 import java.math.BigDecimal
 import java.math.MathContext
 
@@ -288,7 +288,8 @@ internal class ExactOutputVMMapper {
 
         val isServiceUnavailableError =
             state.swapAssets.error is ResponseException &&
-                state.swapAssets.error.response.status == HttpStatusCode.ServiceUnavailable
+                state.swapAssets.error.response.status
+                    .isServiceUnavailable()
 
         return SwapErrorFooterState(
             title =
@@ -314,7 +315,8 @@ internal class ExactOutputVMMapper {
         onTryAgainClick: () -> Unit
     ): ButtonState? {
         if (state.swapAssets.error is ResponseException &&
-            state.swapAssets.error.response.status == HttpStatusCode.ServiceUnavailable
+            state.swapAssets.error.response.status
+                .isServiceUnavailable()
         ) {
             return null
         }

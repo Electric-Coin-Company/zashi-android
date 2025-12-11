@@ -13,12 +13,12 @@ import co.electriccoin.zcash.ui.design.component.ButtonState
 import co.electriccoin.zcash.ui.design.component.ButtonStyle
 import co.electriccoin.zcash.ui.design.component.SwapQuoteHeaderState
 import co.electriccoin.zcash.ui.design.component.SwapTokenAmountState
+import co.electriccoin.zcash.ui.design.util.isServiceUnavailable
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.design.util.stringResByDateTime
 import co.electriccoin.zcash.ui.design.util.stringResByDynamicCurrencyNumber
 import co.electriccoin.zcash.ui.design.util.stringResByNumber
 import io.ktor.client.plugins.ResponseException
-import io.ktor.http.HttpStatusCode
 import java.time.Instant
 import java.time.ZoneId
 
@@ -36,9 +36,7 @@ class CommonTransactionDetailMapper {
     fun createTransactionDetailErrorFooter(error: Exception?): ErrorFooter? {
         if (error == null) return null
 
-        val isServiceUnavailableError =
-            error is ResponseException &&
-                error.response.status == HttpStatusCode.ServiceUnavailable
+        val isServiceUnavailableError = error is ResponseException && error.response.status.isServiceUnavailable()
 
         return ErrorFooter(
             title =
@@ -57,9 +55,7 @@ class CommonTransactionDetailMapper {
     }
 
     fun createTransactionDetailErrorButtonState(error: Exception?, reloadHandle: ReloadHandle): ButtonState? {
-        val isServiceUnavailableError =
-            error is ResponseException &&
-                error.response.status == HttpStatusCode.ServiceUnavailable
+        val isServiceUnavailableError = error is ResponseException && error.response.status.isServiceUnavailable()
 
         return if (isServiceUnavailableError) {
             null

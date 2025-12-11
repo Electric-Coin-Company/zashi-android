@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.swap.lock
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -37,29 +38,36 @@ import co.electriccoin.zcash.ui.screen.swap.quote.SwapQuoteInfoItem
 @Composable
 internal fun EphemeralLockView(state: EphemeralLockState?) {
     ZashiScreenModalBottomSheet(
-        state = state
-    ) {
-        Content(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f, false),
-            state = it
-        )
-    }
+        state = state,
+        content = { state, contentPadding ->
+            Content(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f, false),
+                state = state,
+                contentPadding = contentPadding
+            )
+        }
+    )
 }
 
 @Suppress("MagicNumber")
 @Composable
 private fun Content(
     state: EphemeralLockState,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier =
             modifier
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+                .padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = contentPadding.calculateBottomPadding()
+                )
     ) {
         Image(
             modifier = Modifier.align(Alignment.CenterHorizontally),

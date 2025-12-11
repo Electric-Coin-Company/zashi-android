@@ -12,19 +12,19 @@ class NavigateToErrorUseCase(
 ) {
     private var args: ErrorArgs? = null
 
-    operator fun invoke(args: ErrorArgs) {
+    operator fun invoke(args: ErrorArgs, navigate: NavigationRouter.(Any) -> Unit = { forward(it) }) {
         this.args = args
         when (args) {
-            is ErrorArgs.ShieldingError -> navigationRouter.forward(ErrorDialog)
-            is ErrorArgs.SyncError -> navigateToSyncError(args)
-            is ErrorArgs.General -> navigationRouter.forward(ErrorDialog)
-            is ErrorArgs.ShieldingGeneralError -> navigationRouter.forward(ErrorDialog)
-            is ErrorArgs.SynchronizerTorInitError -> navigationRouter.forward(ErrorDialog)
+            is ErrorArgs.ShieldingError -> navigationRouter.navigate(ErrorDialog)
+            is ErrorArgs.SyncError -> navigateToSyncError(args, navigate)
+            is ErrorArgs.General -> navigationRouter.navigate(ErrorDialog)
+            is ErrorArgs.ShieldingGeneralError -> navigationRouter.navigate(ErrorDialog)
+            is ErrorArgs.SynchronizerTorInitError -> navigationRouter.navigate(ErrorDialog)
         }
     }
 
     @Suppress("MagicNumber")
-    private fun navigateToSyncError(args: ErrorArgs.SyncError) {
+    private fun navigateToSyncError(args: ErrorArgs.SyncError, navigate: NavigationRouter.(Any) -> Unit) {
         val showSyncError =
             args.synchronizerError.cause
                 ?.getCausesAsSequence()
@@ -50,9 +50,9 @@ class NavigateToErrorUseCase(
                 }
 
         if (showSyncError) {
-            navigationRouter.forward(SyncErrorArgs)
+            navigationRouter.navigate(SyncErrorArgs)
         } else {
-            navigationRouter.forward(ErrorBottomSheet)
+            navigationRouter.navigate(ErrorBottomSheet)
         }
     }
 

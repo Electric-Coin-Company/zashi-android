@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
@@ -44,19 +46,35 @@ fun ShieldFundsInfoView(
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
     ZashiScreenModalBottomSheet(
-        sheetState = sheetState,
         state = state,
-    ) {
-        Content(it)
-    }
+        sheetState = sheetState,
+        content = { state, contentPadding ->
+            Content(
+                modifier =
+                    Modifier
+                        .weight(1f, false),
+                state = state,
+                contentPadding = contentPadding
+            )
+        }
+    )
 }
 
 @Composable
-private fun Content(state: ShieldFundsInfoState) {
+private fun Content(
+    state: ShieldFundsInfoState,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier =
-            Modifier
-                .padding(horizontal = 24.dp)
+            modifier
+                .verticalScroll(rememberScrollState())
+                .padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = contentPadding.calculateBottomPadding()
+                )
     ) {
         Image(
             painter = painterResource(R.drawable.ic_info_shield),

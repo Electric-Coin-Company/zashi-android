@@ -2,6 +2,7 @@ package co.electriccoin.zcash.ui.screen.error
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -37,8 +38,12 @@ fun SyncErrorView(
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
-        content = {
-            SyncErrorContent(state = it, modifier = Modifier.weight(1f, false))
+        content = { state, contentPadding ->
+            SyncErrorContent(
+                state = state,
+                contentPadding = contentPadding,
+                modifier = Modifier.weight(1f, false)
+            )
         },
     )
 }
@@ -46,13 +51,18 @@ fun SyncErrorView(
 @Composable
 fun SyncErrorContent(
     state: SyncErrorState,
+    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier =
             modifier
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp),
+                .padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = contentPadding.calculateBottomPadding()
+                ),
     ) {
         Image(
             painter = painterResource(R.drawable.ic_swap_quote_error),

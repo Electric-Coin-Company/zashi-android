@@ -52,19 +52,27 @@ fun SpendableBalanceView(
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
-        content = {
-            BottomSheetContent(it, modifier = Modifier.weight(1f, false))
+        content = { state, contentPadding ->
+            BottomSheetContent(state, contentPadding, modifier = Modifier.weight(1f, false))
         },
     )
 }
 
 @Composable
-fun BottomSheetContent(state: SpendableBalanceState, modifier: Modifier = Modifier) {
+fun BottomSheetContent(
+    state: SpendableBalanceState,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier =
             modifier
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+                .padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = contentPadding.calculateBottomPadding()
+                )
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),

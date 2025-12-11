@@ -1,10 +1,7 @@
 package co.electriccoin.zcash.ui.screen.advancedsettings.debug.text
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
@@ -30,33 +27,32 @@ fun DebugTextView(
 ) {
     ZashiScreenModalBottomSheet(
         state = state,
-        includeBottomPadding = false
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .weight(1f, false)
-                    .verticalScroll(rememberScrollState())
-                    .padding(start = 24.dp, end = 24.dp)
-                    .windowInsetsPadding(WindowInsets.systemBars)
-        ) {
-            Text(
-                text = it.title.getValue(),
-                color = ZashiColors.Text.textPrimary,
-                style = ZashiTypography.textXl,
-                fontWeight = FontWeight.SemiBold
-            )
-            Spacer(12.dp)
-            SelectionContainer {
+        content = { state, contentPadding ->
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f, false)
+                        .verticalScroll(rememberScrollState())
+                        .padding(start = 24.dp, end = 24.dp, bottom = contentPadding.calculateBottomPadding())
+            ) {
                 Text(
-                    text = it.text.getValue(),
-                    style = ZashiTypography.textMd,
-                    color = ZashiColors.Text.textPrimary
+                    text = state.title.getValue(),
+                    color = ZashiColors.Text.textPrimary,
+                    style = ZashiTypography.textXl,
+                    fontWeight = FontWeight.SemiBold
                 )
+                Spacer(12.dp)
+                SelectionContainer {
+                    Text(
+                        text = state.text.getValue(),
+                        style = ZashiTypography.textMd,
+                        color = ZashiColors.Text.textPrimary
+                    )
+                }
+                Spacer(24.dp)
             }
-            Spacer(24.dp)
         }
-    }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
