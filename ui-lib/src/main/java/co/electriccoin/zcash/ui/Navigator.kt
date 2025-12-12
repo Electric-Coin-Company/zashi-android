@@ -18,6 +18,8 @@ import kotlinx.serialization.serializer
 
 interface Navigator {
     suspend fun executeCommand(command: NavigationCommand)
+
+    suspend fun executeCommand(command: CustomNavigationCommand)
 }
 
 class NavigatorImpl(
@@ -55,6 +57,14 @@ class NavigatorImpl(
             NavigationCommand.Back -> navController.popBackStack()
             is NavigationCommand.BackTo -> backTo(command)
             NavigationCommand.BackToRoot -> backToRoot()
+        }
+    }
+
+    override suspend fun executeCommand(command: CustomNavigationCommand) {
+        val current = navController.currentBackStackEntry
+        val new = command.block(current)
+        if (new != null) {
+            executeCommand(new)
         }
     }
 

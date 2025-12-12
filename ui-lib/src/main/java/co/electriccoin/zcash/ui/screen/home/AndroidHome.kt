@@ -51,4 +51,4 @@ internal fun AndroidHome() {
 }
 
 @Serializable
-object Home
+object HomeArgs

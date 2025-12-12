@@ -43,7 +43,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -59,15 +61,24 @@ class HomeVM(
     private val navigateToNearPay: NavigateToNearPayUseCase,
     private val navigateToSwap: NavigateToSwapUseCase
 ) : ViewModel() {
+    private val messageData =
+        getHomeMessage
+            .observe()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Eagerly,
+                initialValue = null
+            )
+
     private val messageState =
         combine(
-            getHomeMessage.observe(),
+            messageData,
             shieldFundsInfoProvider.observe(),
         ) { message, isShieldFundsInfoEnabled ->
             createMessageState(message, isShieldFundsInfoEnabled)
         }.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Eagerly,
+            started = SharingStarted.WhileSubscribed(0, 0),
             initialValue = null
         )
 
@@ -202,6 +213,13 @@ class HomeVM(
 
             null -> null
         }
+
+    init {
+        messageData
+            .onEach {
+                navigateToError.navigateAutomaticallyToSyncError(it)
+            }.launchIn(viewModelScope)
+    }
 
     private fun onCrashReportMessageClick() = navigationRouter.forward(CrashReportOptIn)
 

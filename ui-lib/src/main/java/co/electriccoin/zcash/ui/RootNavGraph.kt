@@ -57,7 +57,10 @@ fun RootNavGraph(
 
     LaunchedEffect(navigationRouter) {
         navigationRouter.observePipeline().collect {
-            navigator.executeCommand(it)
+            when (it) {
+                is CustomNavigationCommand -> navigator.executeCommand(it)
+                is NavigationCommand -> navigator.executeCommand(it)
+            }
         }
     }
 
