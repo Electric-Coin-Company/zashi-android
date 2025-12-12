@@ -1,5 +1,6 @@
 package co.electriccoin.zcash.ui
 
+import androidx.navigation.NavBackStackEntry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -35,22 +36,24 @@ interface NavigationRouter {
 
     fun backTo(route: KClass<*>)
 
+    fun custom(block: (NavBackStackEntry?) -> NavigationCommand?)
+
     /**
      * Pop all screens from backstack except for the root.
      */
     fun backToRoot()
 
-    fun observePipeline(): Flow<NavigationCommand>
+    fun observePipeline(): Flow<BaseNavigationCommand>
 }
 
 class NavigationRouterImpl : NavigationRouter {
     private var job: Job? = null
 
-    private var lastNavCommand: NavigationCommand? = null
+    private var lastNavCommand: BaseNavigationCommand? = null
 
     private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
-    private val channel = Channel<NavigationCommand>()
+    private val channel = Channel<BaseNavigationCommand>()
 
     override fun forward(vararg routes: Any) = navigateWithBackoff(NavigationCommand.Forward(routes.toList()))
 
@@ -62,11 +65,14 @@ class NavigationRouterImpl : NavigationRouter {
 
     override fun backTo(route: KClass<*>) = navigateWithBackoff(NavigationCommand.BackTo(route))
 
+    override fun custom(block: (NavBackStackEntry?) -> NavigationCommand?) =
+        navigateWithBackoff(CustomNavigationCommand(block))
+
     override fun backToRoot() = navigateWithBackoff(NavigationCommand.BackToRoot)
 
     override fun observePipeline() = channel.receiveAsFlow()
 
-    private fun navigateWithBackoff(command: NavigationCommand) {
+    private fun navigateWithBackoff(command: BaseNavigationCommand) {
         if (job?.isActive == true && command == lastNavCommand) {
             return // skip if already running
         }
@@ -79,7 +85,13 @@ class NavigationRouterImpl : NavigationRouter {
     }
 }
 
-sealed interface NavigationCommand {
+sealed interface BaseNavigationCommand
+
+data class CustomNavigationCommand(
+    val block: (current: NavBackStackEntry?) -> NavigationCommand?
+) : BaseNavigationCommand
+
+sealed interface NavigationCommand : BaseNavigationCommand {
     data class Forward(
         val routes: List<Any>
     ) : NavigationCommand
