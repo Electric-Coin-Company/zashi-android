@@ -21,7 +21,6 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.advancedsettings.debug.DebugArgs
 import co.electriccoin.zcash.ui.screen.chooseserver.ChooseServerArgs
-import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsArgs
 import co.electriccoin.zcash.ui.screen.tor.settings.TorSettingsArgs
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -97,11 +96,6 @@ class AdvancedSettingsVM(
                         onClick = ::onPrivacyClick
                     ),
                     ListItemState(
-                        title = stringRes(R.string.advanced_settings_currency_conversion),
-                        bigIcon = imageRes(R.drawable.ic_advanced_settings_currency_conversion),
-                        onClick = ::onCurrencyConversionClick
-                    ),
-                    ListItemState(
                         title = stringRes(R.string.advanced_settings_crash_reporting),
                         bigIcon = imageRes(R.drawable.ic_advanced_settings_crash_reporting),
                         onClick = ::onCrashReportingClick
@@ -123,8 +117,6 @@ class AdvancedSettingsVM(
     fun onBack() = navigationRouter.back()
 
     private fun onChooseServerClick() = navigationRouter.forward(ChooseServerArgs)
-
-    private fun onCurrencyConversionClick() = navigationRouter.forward(ExchangeRateSettingsArgs)
 
     private fun onDebugMenuClick() = navigationRouter.forward(DebugArgs)
 
