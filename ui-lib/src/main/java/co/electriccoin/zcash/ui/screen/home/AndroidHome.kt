@@ -34,6 +34,7 @@ internal fun AndroidHome() {
     val appBarState by topAppBarVM.state.collectAsStateWithLifecycle()
     val balanceState by balanceWidgetVM.state.collectAsStateWithLifecycle()
     val state by homeVM.state.collectAsStateWithLifecycle()
+    homeVM.uiLifecyclePipeline.collectAsStateWithLifecycle()
     val transactionWidgetState by activityWidgetVM.state.collectAsStateWithLifecycle()
 
     state?.let {

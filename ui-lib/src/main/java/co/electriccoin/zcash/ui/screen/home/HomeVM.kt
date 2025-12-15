@@ -43,11 +43,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 @Suppress("TooManyFunctions")
 class HomeVM(
@@ -61,6 +62,8 @@ class HomeVM(
     private val navigateToNearPay: NavigateToNearPayUseCase,
     private val navigateToSwap: NavigateToSwapUseCase
 ) : ViewModel() {
+    private var hasSyncErrorBeenShown = false
+
     private val messageData =
         getHomeMessage
             .observe()
@@ -111,6 +114,22 @@ class HomeVM(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(ANDROID_STATE_FLOW_TIMEOUT),
                 initialValue = null
+            )
+
+    val uiLifecyclePipeline =
+        messageData
+            .onEach {
+                hasSyncErrorBeenShown =
+                    if (it is HomeMessageData.Error) {
+                        if (!hasSyncErrorBeenShown) navigateToError.navigateToSyncError(it) else false
+                    } else {
+                        false
+                    }
+            }.map { }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(1.seconds, Duration.ZERO),
+                initialValue = Unit
             )
 
     private var onPayButtonClickJob: Job? = null
@@ -213,13 +232,6 @@ class HomeVM(
 
             null -> null
         }
-
-    init {
-        messageData
-            .onEach {
-                navigateToError.navigateAutomaticallyToSyncError(it)
-            }.launchIn(viewModelScope)
-    }
 
     private fun onCrashReportMessageClick() = navigationRouter.forward(CrashReportOptIn)
 

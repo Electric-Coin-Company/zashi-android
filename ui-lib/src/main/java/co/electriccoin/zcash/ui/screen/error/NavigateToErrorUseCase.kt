@@ -1,15 +1,12 @@
 package co.electriccoin.zcash.ui.screen.error
 
-import androidx.navigation.NavDestination.Companion.hasRoute
 import co.electriccoin.lightwallet.client.model.ResponseException
 import co.electriccoin.lightwallet.client.model.UninitializedTorClientException
-import co.electriccoin.zcash.ui.NavigationCommand
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.SynchronizerError
 import co.electriccoin.zcash.ui.common.repository.HomeMessageData
 import co.electriccoin.zcash.ui.design.util.getCausesAsSequence
-import co.electriccoin.zcash.ui.screen.home.HomeArgs
 
 class NavigateToErrorUseCase(
     private val navigationRouter: NavigationRouter,
@@ -27,18 +24,17 @@ class NavigateToErrorUseCase(
         }
     }
 
-    fun navigateAutomaticallyToSyncError(message: HomeMessageData?) {
-        if (message is HomeMessageData.Error && isSyncError(message.synchronizerError)) {
-            navigationRouter.custom { entry ->
-                if (entry?.destination?.hasRoute<HomeArgs>() == true) {
-                    this.args = ErrorArgs.SyncError(message.synchronizerError)
-                    NavigationCommand.Forward(listOf(SyncErrorArgs))
-                } else {
-                    null
-                }
-            }
+    /**
+     * @return true if [message] is sync error and navigation to sync error screen was performed.
+     */
+    fun navigateToSyncError(message: HomeMessageData.Error): Boolean =
+        if (isSyncError(message.synchronizerError)) {
+            this.args = ErrorArgs.SyncError(message.synchronizerError)
+            navigationRouter.forward(SyncErrorArgs)
+            true
+        } else {
+            false
         }
-    }
 
     @Suppress("MagicNumber")
     private fun navigateToSyncError(args: ErrorArgs.SyncError, navigate: NavigationRouter.(Any) -> Unit) {
