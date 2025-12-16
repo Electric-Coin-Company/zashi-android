@@ -5,8 +5,9 @@ on:
     types:
       - published  # Runs only when a release is published
 
-permissions:  
+permissions:
   contents: write  # Grant write permissions to GITHUB_TOKEN
+  id-token: write  # Required for Workload Identity Federation
 
 jobs:
   validate_gradle_wrapper:
@@ -15,48 +16,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        timeout-minutes: 1
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Gradle Wrapper Validation
-        timeout-minutes: 1
         uses: gradle/actions/wrapper-validation@v5
 
-  check_secrets:
-    environment: deployment
-    permissions:
-      contents: read
-    runs-on: ubuntu-latest
-    outputs:
-      has-secrets: ${{ steps.check_secrets.outputs.defined }}
-    steps:
-      - id: check_secrets
-        env:
-          CMC_PUBLISHABLE_KEY: ${{ secrets.CMC_PUBLISHABLE_KEY }}
-          FLEXA_PUBLISHABLE_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
-        if: "${{
-          env.CMC_PUBLISHABLE_KEY != '' &&
-          env.FLEXA_PUBLISHABLE_KEY != ''
-        }}"
-        run: echo "defined=true" >> $GITHUB_OUTPUT
-
   release:
+    needs: [validate_gradle_wrapper]
     environment: deployment
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write  # Required for Workload Identity Federation
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
-            fetch-depth: 0 # to fetch all commits
-      - name: Set up Google Cloud SDK
+          fetch-depth: 0
+
+      - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v3
         with:
-          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-
-      - name: Configure gsutil
-        run: gcloud auth activate-service-account --key-file <(echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}')
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       - name: Download file from GCS
-        run: gsutil -q cp gs://${{ secrets.GCP_PROJECT_ID_PROD }}-apt-packages/encrypted_gpg.kms encrypted_gpg.kms
+        run: |
+          gcloud auth login --cred-file="$GOOGLE_APPLICATION_CREDENTIALS"
+          gsutil -q cp gs://${{ secrets.SOLANA_GCS_BUCKET }}/encrypted_gpg.kms encrypted_gpg.kms
 
       - name: Decrypt file using KMS
         run: |
@@ -73,10 +59,8 @@ jobs:
 
       - name: Set up Java
         uses: ./.github/actions/setup-java
-        timeout-minutes: 1
       - name: Set up Gradle
         uses: ./.github/actions/setup-gradle
-        timeout-minutes: 10
         with:
           gradle-home-cache-cleanup: true
       - name: Export Google Services JSON
@@ -90,11 +74,6 @@ jobs:
           mkdir -p app/src/release/
           echo ${FIREBASE_DEBUG_JSON_BASE64} | base64 --decode > app/src/debug/google-services.json
           echo ${FIREBASE_RELEASE_JSON_BASE64} | base64 --decode > app/src/release/google-services.json
-      - name: Set Env
-        shell: bash
-        run: |
-          echo "home=${HOME}" >> "$GITHUB_ENV"
-          
       - name: Export Signing Key
         env:
           # The upload key must be exported using `base64 -w 0 <filename.jks>` for use
@@ -105,13 +84,11 @@ jobs:
           # replaced once a year (and has a bunch of additional hassles associated with
           # replacing it.)
           SIGNING_KEYSTORE_BASE_64: ${{ secrets.UPLOAD_KEYSTORE_BASE_64 }}
-          SIGNING_KEY_PATH: ${{ format('{0}/release.jks', env.home) }}
         shell: bash
         run: |
-          echo ${SIGNING_KEYSTORE_BASE_64} | base64 --decode > ${SIGNING_KEY_PATH}
-          
+          echo ${SIGNING_KEYSTORE_BASE_64} | base64 --decode > ${{ runner.temp }}/release.jks
+
       - name: Build Store (Google play) APK
-        timeout-minutes: 25
         env:
           # TODO [#1033]: Use token-based authorization on Google Play for automated deployment
           # TODO [#1033]: https://github.com/Electric-Coin-Company/zashi-android/issues/1033
@@ -122,7 +99,7 @@ jobs:
           ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_PUBLISHER_API_KEY: ${{ secrets.GOOGLE_PLAY_PUBLISHER_API_KEY }}
           ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_TRACK: internal
           ORG_GRADLE_PROJECT_ZCASH_GOOGLE_PLAY_DEPLOY_STATUS: completed
-          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ format('{0}/release.jks', env.home) }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ runner.temp }}/release.jks
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: ${{ secrets.UPLOAD_KEY_ALIAS_PASSWORD }}
@@ -132,19 +109,16 @@ jobs:
           ./gradlew clean :app:bundleZcashmainnetStoreRelease :app:packageZcashmainnetStoreReleaseUniversalApk
 
       - name: Prepare Store (Google play) Artifacts
-        timeout-minutes: 1
         run: |
           mkdir artifacts/
           mv app/build/outputs/apk_from_bundle/*/app-zcashmainnet-store-release-universal.apk artifacts/app-zcashmainnet-google-play-store-release-universal.apk
 
       - name: Strip non-FOSS libraries
-        timeout-minutes: 10
         uses: ./.github/actions/foss/strip
 
       - name: Build FOSS (externallibs) APK
-        timeout-minutes: 25
         env:
-          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ format('{0}/release.jks', env.home) }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ runner.temp }}/release.jks
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: ${{ secrets.UPLOAD_KEY_ALIAS_PASSWORD }}
@@ -154,30 +128,26 @@ jobs:
           ./gradlew clean :app:assembleZcashmainnetFossRelease
 
       - name: Prepare FOSS (externallibs) Artifacts
-        timeout-minutes: 1
         run: |
           mv app/build/outputs/apk/zcashmainnetFoss/release/app-zcashmainnet-foss-release.apk artifacts/app-zcashmainnet-foss-release-full-externallibs.apk
 
       - name: Build FOSS (F-Droid) APK
-        timeout-minutes: 25
         env:
-          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ format('{0}/release.jks', env.home) }}
+          ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PATH: ${{ runner.temp }}/release.jks
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
           ORG_GRADLE_PROJECT_ZCASH_RELEASE_KEY_ALIAS_PASSWORD: ${{ secrets.UPLOAD_KEY_ALIAS_PASSWORD }}
           # ORG_GRADLE_PROJECT_ZCASH_FLEXA_KEY: ${{ secrets.FLEXA_PUBLISHABLE_KEY }}
           # ORG_GRADLE_PROJECT_ZCASH_CMC_KEY: ${{ secrets.CMC_PUBLISHABLE_KEY }}
-        run: |        
+        run: |
           ./gradlew clean :app:assembleZcashmainnetFossRelease
 
       - name: Prepare FOSS (F-Droid) artifacts
-        timeout-minutes: 1
-        run: |        
+        run: |
           mv app/build/outputs/apk/zcashmainnetFoss/release/app-zcashmainnet-foss-release.apk artifacts/
 
       - name: Prepare Signature artifacts
-        timeout-minutes: 1
-        run: |          
+        run: |
           cd artifacts/
           TAG=$(git describe --tags --abbrev=0)
           VERSION_CODE=$(echo "$TAG" | cut -d'-' -f2)
@@ -192,3 +162,167 @@ jobs:
           files: artifacts/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish_to_solana:
+    needs: [release]
+    environment: deployment
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write  # Required for Workload Identity Federation
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Get release tag
+        id: release_info
+        run: |
+          TAG=$(git describe --tags --abbrev=0)
+          VERSION_NAME=$(echo "$TAG" | sed 's/^v//' | cut -d'-' -f1)
+          VERSION_CODE=$(echo "$TAG" | cut -d'-' -f2)
+
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "version_name=${VERSION_NAME}" >> $GITHUB_OUTPUT
+          echo "version_code=${VERSION_CODE}" >> $GITHUB_OUTPUT
+
+          echo "Release Tag: ${TAG}"
+          echo "Version Name: ${VERSION_NAME}"
+          echo "Version Code: ${VERSION_CODE}"
+
+      - name: Download Release APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.release_info.outputs.tag }}"
+
+          mkdir -p stores/solana
+
+          gh release download "${TAG}" \
+            -p "app-zcashmainnet-foss-release-full-externallibs.apk" \
+            -D stores/solana/
+
+          mv stores/solana/app-zcashmainnet-foss-release-full-externallibs.apk \
+             stores/solana/solana.apk
+
+          echo "APK downloaded and renamed to solana.apk"
+          ls -lh stores/solana/solana.apk
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Download encrypted files from GCS
+        run: |
+          gcloud auth login --cred-file="$GOOGLE_APPLICATION_CREDENTIALS"
+
+          echo "Downloading encrypted files from gs://${{ secrets.SOLANA_GCS_BUCKET }}/"
+
+          gsutil cp gs://${{ secrets.SOLANA_GCS_BUCKET }}/encrypted_solana_keypair.kms /tmp/encrypted_solana_keypair.kms
+          gsutil cp gs://${{ secrets.SOLANA_GCS_BUCKET }}/encrypted_config.yaml.kms /tmp/encrypted_config.yaml.kms
+
+          echo "Files downloaded"
+
+      - name: Decrypt files using Cloud KMS
+        run: |
+          echo "Decrypting Solana keypair..."
+          gcloud kms decrypt \
+            --key=gpg \
+            --keyring=gpg \
+            --location=global \
+            --plaintext-file=/tmp/solana-keypair.json \
+            --ciphertext-file=/tmp/encrypted_solana_keypair.kms \
+            --project=${{ secrets.GCP_PROJECT_ID_PROD }}
+
+          echo "Decrypting config.yaml..."
+          gcloud kms decrypt \
+            --key=config \
+            --keyring=gpg \
+            --location=global \
+            --plaintext-file=/tmp/config.yaml \
+            --ciphertext-file=/tmp/encrypted_config.yaml.kms \
+            --project=${{ secrets.GCP_PROJECT_ID_PROD }}
+
+          echo "Files decrypted"
+
+          # Validate JSON and YAML
+          jq empty /tmp/solana-keypair.json || { echo "Invalid JSON in keypair"; exit 1; }
+          yq eval '.' /tmp/config.yaml > /dev/null || { echo "Invalid YAML in config"; exit 1; }
+
+      - name: Prepare config in stores directory
+        run: |
+          cp /tmp/config.yaml stores/solana/config.yaml
+          echo "Config copied to stores/solana/config.yaml"
+
+      - name: Update config.yaml with release information
+        run: |
+          chmod +x .github/scripts/update-solana-config-from-gcs.sh
+
+          .github/scripts/update-solana-config-from-gcs.sh \
+            "${{ steps.release_info.outputs.version_name }}" \
+            "${{ steps.release_info.outputs.version_code }}" \
+            "stores/solana/config.yaml" \
+            "stores/solana/release-notes-template.yaml" \
+            "docs/whatsNew/WHATS_NEW_EN.md"
+
+      - name: Create Solana dApp Store Release
+        working-directory: stores/solana
+        run: |
+          echo "Creating release on Solana dApp Store..."
+
+          npx @solana-mobile/dapp-store-cli@latest create release \
+            -k /tmp/solana-keypair.json \
+            -b $ANDROID_SDK_ROOT/build-tools/35.0.0 \
+            -u https://api.mainnet-beta.solana.com \
+            --config config.yaml
+
+          echo "Release created successfully"
+
+      - name: Publish Update to Solana dApp Store
+        working-directory: stores/solana
+        run: |
+          echo "Publishing update to Solana dApp Store..."
+
+          npx @solana-mobile/dapp-store-cli@latest publish update \
+            -k /tmp/solana-keypair.json \
+            -u https://api.mainnet-beta.solana.com \
+            --complies-with-solana-dapp-store-policies \
+            --requestor-is-authorized \
+            --config config.yaml
+
+          echo "Update published successfully"
+
+      - name: Display publish information
+        working-directory: stores/solana
+        run: |
+          echo "Solana dApp Store Publishing Complete"
+          echo "Release Address: $(yq eval '.release.address' config.yaml)"
+          echo "Version: $(yq eval '.release.android_details.version' config.yaml)"
+          echo "Version Code: $(yq eval '.release.android_details.version_code' config.yaml)"
+
+      - name: Re-encrypt and upload config.yaml to GCS
+        run: |
+          echo "Creating backup of current config..."
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          gsutil cp gs://${{ secrets.SOLANA_GCS_BUCKET }}/encrypted_config.yaml.kms \
+            gs://${{ secrets.SOLANA_GCS_BUCKET }}/backups/encrypted_config.yaml.kms.${TIMESTAMP} || \
+            echo "Warning: Could not create backup"
+
+          echo "Re-encrypting config.yaml..."
+          gcloud kms encrypt \
+            --key=config \
+            --keyring=gpg \
+            --location=global \
+            --plaintext-file=stores/solana/config.yaml \
+            --ciphertext-file=/tmp/encrypted_config_new.yaml.kms \
+            --project=${{ secrets.GCP_PROJECT_ID_PROD }}
+
+          echo "Uploading to GCS..."
+          gsutil cp /tmp/encrypted_config_new.yaml.kms \
+            gs://${{ secrets.SOLANA_GCS_BUCKET }}/encrypted_config.yaml.kms
+
+          echo "Config updated in GCS"
+          echo "Backup: gs://${{ secrets.SOLANA_GCS_BUCKET }}/backups/encrypted_config.yaml.kms.${TIMESTAMP}"
