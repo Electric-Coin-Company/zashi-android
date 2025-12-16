@@ -5,6 +5,7 @@ import co.electriccoin.lightwallet.client.model.UninitializedTorClientException
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.common.model.SubmitResult
 import co.electriccoin.zcash.ui.common.model.SynchronizerError
+import co.electriccoin.zcash.ui.common.repository.HomeMessageData
 import co.electriccoin.zcash.ui.design.util.getCausesAsSequence
 
 class NavigateToErrorUseCase(
@@ -23,38 +24,51 @@ class NavigateToErrorUseCase(
         }
     }
 
+    /**
+     * @return true if [message] is sync error and navigation to sync error screen was performed.
+     */
+    fun navigateToSyncError(message: HomeMessageData.Error): Boolean =
+        if (isSyncError(message.synchronizerError)) {
+            this.args = ErrorArgs.SyncError(message.synchronizerError)
+            navigationRouter.forward(SyncErrorArgs)
+            true
+        } else {
+            false
+        }
+
     @Suppress("MagicNumber")
     private fun navigateToSyncError(args: ErrorArgs.SyncError, navigate: NavigationRouter.(Any) -> Unit) {
-        val showSyncError =
-            args.synchronizerError.cause
-                ?.getCausesAsSequence()
-                .orEmpty()
-                .any { e ->
-                    when {
-                        e is ResponseException && e.code in 500..599 -> true
-
-                        e is ResponseException &&
-                            e.code == 3200 &&
-                            (500..599)
-                                .any { e.message.orEmpty().contains("$it", true) }
-                        -> true
-
-                        e is ResponseException &&
-                            e.code == 3200 &&
-                            e.message.orEmpty().contains("Tonic error: transport error", true)
-                        -> true
-
-                        e is UninitializedTorClientException -> true
-                        else -> false
-                    }
-                }
-
-        if (showSyncError) {
+        if (isSyncError(args.synchronizerError)) {
             navigationRouter.navigate(SyncErrorArgs)
         } else {
             navigationRouter.navigate(ErrorBottomSheet)
         }
     }
+
+    @Suppress("MagicNumber")
+    private fun isSyncError(synchronizerError: SynchronizerError): Boolean =
+        synchronizerError.cause
+            ?.getCausesAsSequence()
+            .orEmpty()
+            .any { e ->
+                when {
+                    e is ResponseException && e.code in 500..599 -> true
+
+                    e is ResponseException &&
+                        e.code == 3200 &&
+                        (500..599)
+                            .any { e.message.orEmpty().contains("$it", true) }
+                    -> true
+
+                    e is ResponseException &&
+                        e.code == 3200 &&
+                        e.message.orEmpty().contains("Tonic error: transport error", true)
+                    -> true
+
+                    e is UninitializedTorClientException -> true
+                    else -> false
+                }
+            }
 
     fun requireCurrentArgs() = args as ErrorArgs
 

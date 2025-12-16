@@ -55,7 +55,7 @@ import co.electriccoin.zcash.ui.screen.exportdata.WrapExportPrivateData
 import co.electriccoin.zcash.ui.screen.feedback.FeedbackArgs
 import co.electriccoin.zcash.ui.screen.feedback.FeedbackScreen
 import co.electriccoin.zcash.ui.screen.home.AndroidHome
-import co.electriccoin.zcash.ui.screen.home.Home
+import co.electriccoin.zcash.ui.screen.home.HomeArgs
 import co.electriccoin.zcash.ui.screen.home.backup.AndroidWalletBackupDetail
 import co.electriccoin.zcash.ui.screen.home.backup.AndroidWalletBackupInfo
 import co.electriccoin.zcash.ui.screen.home.backup.SeedBackupInfo
@@ -173,8 +173,8 @@ fun NavGraphBuilder.walletNavGraph(
     storageCheckViewModel: StorageCheckViewModel,
     navigationRouter: NavigationRouter,
 ) {
-    navigation<MainAppGraph>(startDestination = Home) {
-        composable<Home> {
+    navigation<MainAppGraph>(startDestination = HomeArgs) {
+        composable<HomeArgs> {
             AndroidHome()
             val isEnoughSpace by storageCheckViewModel.isEnoughSpace.collectAsStateWithLifecycle()
             if (isEnoughSpace == false) {
