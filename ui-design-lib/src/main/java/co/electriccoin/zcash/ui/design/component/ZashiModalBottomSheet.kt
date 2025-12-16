@@ -42,7 +42,6 @@ fun ZashiModalBottomSheet(
     sheetState: SheetState = rememberModalBottomSheetState(),
     properties: ModalBottomSheetProperties = ModalBottomSheetDefaults.properties,
     dragHandle: @Composable (() -> Unit)? = { ZashiModalBottomSheetDragHandle() },
-    contentWindowInsets: @Composable () -> WindowInsets = { BottomSheetDefaults.windowInsets },
     content: @Composable ColumnScope.() -> Unit,
 ) {
     ModalBottomSheet(
@@ -55,7 +54,7 @@ fun ZashiModalBottomSheet(
         dragHandle = dragHandle,
         properties = properties,
         content = content,
-        contentWindowInsets = contentWindowInsets
+        contentWindowInsets = { WindowInsets(0, 0, 0, 0) }
     )
 }
 

@@ -1,11 +1,14 @@
 package co.electriccoin.zcash.ui.common.usecase
 
-import PaymentRequest
 import cash.z.ecc.android.sdk.type.AddressType
 import co.electriccoin.zcash.spackle.Twig
+import co.electriccoin.zcash.ui.common.model.NetworkDimension
+import co.electriccoin.zcash.ui.common.model.VersionInfo
 import co.electriccoin.zcash.ui.common.provider.SynchronizerProvider
 import kotlinx.coroutines.runBlocking
 import org.zecdev.zip321.ZIP321
+import org.zecdev.zip321.model.PaymentRequest
+import org.zecdev.zip321.parser.ParserContext
 
 class Zip321ParseUriValidationUseCase(
     private val synchronizerProvider: SynchronizerProvider
@@ -17,6 +20,11 @@ class Zip321ParseUriValidationUseCase(
             runCatching {
                 ZIP321.request(
                     uriString = zip321Uri,
+                    context =
+                        when (VersionInfo.NETWORK_DIMENSION) {
+                            NetworkDimension.MAINNET -> ParserContext.MAINNET
+                            NetworkDimension.TESTNET -> ParserContext.TESTNET
+                        },
                     validatingRecipients = { address ->
                         // We should be fine with the blocking implementation here
                         runBlocking {

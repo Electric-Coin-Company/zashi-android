@@ -38,76 +38,81 @@ fun WalletBackupInfoView(
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
     ZashiScreenModalBottomSheet(
+        state = state,
         sheetState = sheetState,
-        state = state
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .weight(1f, false)
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp)
-        ) {
-            Image(
-                painter = painterResource(R.drawable.ic_info_backup),
-                contentDescription = null
-            )
-            Spacer(12.dp)
-            Text(
-                stringResource(R.string.home_info_backup_title),
-                color = ZashiColors.Text.textPrimary,
-                style = ZashiTypography.textXl,
-                fontWeight = FontWeight.SemiBold
-            )
-            Spacer(12.dp)
-            Text(
-                stringResource(R.string.home_info_backup_subtitle_1),
-                color = ZashiColors.Text.textTertiary,
-                style = ZashiTypography.textMd
-            )
-            Spacer(12.dp)
-            Text(
-                stringResource(R.string.home_info_backup_subtitle_2),
-                color = ZashiColors.Text.textTertiary,
-                style = ZashiTypography.textMd
-            )
-            Spacer(12.dp)
-            ZashiBulletText(
-                stringResource(R.string.home_info_backup_bullet_1),
-                stringResource(R.string.home_info_backup_bullet_2),
-                color = ZashiColors.Text.textTertiary
-            )
-            Spacer(12.dp)
-            Text(
-                stringResource(R.string.home_info_backup_message_1),
-                color = ZashiColors.Text.textTertiary,
-                style = ZashiTypography.textMd
-            )
-            Spacer(24.dp)
-            Text(
-                stringResource(R.string.home_info_backup_message_2),
-                color = ZashiColors.Text.textTertiary,
-                style = ZashiTypography.textMd
-            )
-            Spacer(32.dp)
-            it.checkboxState?.let { checkbox ->
-                ZashiCheckbox(
-                    state = checkbox
+        content = { state, contentPadding ->
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f, false)
+                        .verticalScroll(rememberScrollState())
+                        .padding(
+                            start = 24.dp,
+                            end = 24.dp,
+                            bottom = contentPadding.calculateBottomPadding()
+                        )
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_info_backup),
+                    contentDescription = null
                 )
                 Spacer(12.dp)
+                Text(
+                    stringResource(R.string.home_info_backup_title),
+                    color = ZashiColors.Text.textPrimary,
+                    style = ZashiTypography.textXl,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(12.dp)
+                Text(
+                    stringResource(R.string.home_info_backup_subtitle_1),
+                    color = ZashiColors.Text.textTertiary,
+                    style = ZashiTypography.textMd
+                )
+                Spacer(12.dp)
+                Text(
+                    stringResource(R.string.home_info_backup_subtitle_2),
+                    color = ZashiColors.Text.textTertiary,
+                    style = ZashiTypography.textMd
+                )
+                Spacer(12.dp)
+                ZashiBulletText(
+                    stringResource(R.string.home_info_backup_bullet_1),
+                    stringResource(R.string.home_info_backup_bullet_2),
+                    color = ZashiColors.Text.textTertiary
+                )
+                Spacer(12.dp)
+                Text(
+                    stringResource(R.string.home_info_backup_message_1),
+                    color = ZashiColors.Text.textTertiary,
+                    style = ZashiTypography.textMd
+                )
+                Spacer(24.dp)
+                Text(
+                    stringResource(R.string.home_info_backup_message_2),
+                    color = ZashiColors.Text.textTertiary,
+                    style = ZashiTypography.textMd
+                )
+                Spacer(32.dp)
+                state.checkboxState?.let { checkbox ->
+                    ZashiCheckbox(
+                        state = checkbox
+                    )
+                    Spacer(12.dp)
+                }
+                ZashiButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = state.secondaryButton,
+                    defaultPrimaryColors = ZashiButtonDefaults.secondaryColors()
+                )
+                Spacer(4.dp)
+                ZashiButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = state.primaryButton
+                )
             }
-            ZashiButton(
-                modifier = Modifier.fillMaxWidth(),
-                state = it.secondaryButton,
-                defaultPrimaryColors = ZashiButtonDefaults.secondaryColors()
-            )
-            Spacer(4.dp)
-            ZashiButton(
-                modifier = Modifier.fillMaxWidth(),
-                state = it.primaryButton
-            )
         }
-    }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

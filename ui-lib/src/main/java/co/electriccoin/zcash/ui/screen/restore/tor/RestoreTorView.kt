@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -52,17 +53,31 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 fun RestoreTorView(state: RestoreTorState?) {
     ZashiScreenModalBottomSheet(
         state = state,
-        content = { Content(modifier = Modifier.weight(1f, false), state = it) }
+        content = { state, contentPadding ->
+            Content(
+                modifier = Modifier.weight(1f, false),
+                state = state,
+                contentPadding = contentPadding
+            )
+        }
     )
 }
 
 @Composable
-private fun Content(state: RestoreTorState, modifier: Modifier = Modifier) {
+private fun Content(
+    state: RestoreTorState,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier =
             modifier
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+                .padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = contentPadding.calculateBottomPadding()
+                )
     ) {
         Image(
             painter = painterResource(R.drawable.ic_restore_tor_info),

@@ -1,11 +1,8 @@
 package co.electriccoin.zcash.ui.screen.hotfix.ephemeral
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,65 +48,63 @@ fun EphemeralHotfixView(
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
-        includeBottomPadding = false
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .weight(1f, false)
-                    .verticalScroll(rememberScrollState())
-                    .padding(start = 24.dp, end = 24.dp)
-                    .windowInsetsPadding(WindowInsets.systemBars)
-        ) {
-            Text(
-                it.title.getValue(),
-                color = ZashiColors.Text.textPrimary,
-                style = ZashiTypography.textXl,
-                fontWeight = FontWeight.SemiBold
-            )
-            Spacer(12.dp)
-            Text(
-                text = it.message.getValue(),
-                style = ZashiTypography.textSm,
-                color = ZashiColors.Text.textTertiary
-            )
-            Spacer(24.dp)
-            Text(
-                it.subtitle.getValue(),
-                style = ZashiTypography.textSm,
-                fontWeight = FontWeight.Medium,
-                color = ZashiColors.Inputs.Default.label
-            )
-            Spacer(6.dp)
-            ZashiAddressTextField(
-                modifier = Modifier.focusRequester(focusRequester),
-                state = it.address,
-                placeholder = {
-                    Text(text = "Enter or paste...")
+        content = { state, contentPadding ->
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f, false)
+                        .verticalScroll(rememberScrollState())
+                        .padding(start = 24.dp, end = 24.dp, bottom = contentPadding.calculateBottomPadding())
+            ) {
+                Text(
+                    state.title.getValue(),
+                    color = ZashiColors.Text.textPrimary,
+                    style = ZashiTypography.textXl,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Spacer(12.dp)
+                Text(
+                    text = state.message.getValue(),
+                    style = ZashiTypography.textSm,
+                    color = ZashiColors.Text.textTertiary
+                )
+                Spacer(24.dp)
+                Text(
+                    state.subtitle.getValue(),
+                    style = ZashiTypography.textSm,
+                    fontWeight = FontWeight.Medium,
+                    color = ZashiColors.Inputs.Default.label
+                )
+                Spacer(6.dp)
+                ZashiAddressTextField(
+                    modifier = Modifier.focusRequester(focusRequester),
+                    state = state.address,
+                    placeholder = {
+                        Text(text = "Enter or paste...")
+                    }
+                )
+
+                if (state.info != null) {
+                    Spacer(24.dp)
+                    ZashiInfoText(text = state.info.getValue())
+                    Spacer(24.dp)
+                } else {
+                    Spacer(32.dp)
                 }
-            )
 
-            if (it.info != null) {
-                Spacer(24.dp)
-                ZashiInfoText(text = it.info.getValue())
-                Spacer(24.dp)
-            } else {
-                Spacer(32.dp)
+                ZashiButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = state.button
+                )
             }
 
-            ZashiButton(
-                modifier = Modifier.fillMaxWidth(),
-                state = it.button
-            )
-            Spacer(24.dp)
-        }
-
-        LaunchedEffect(sheetState.currentValue) {
-            if (sheetState.currentValue == SheetValue.Expanded) {
-                onSheetOpen(focusRequester)
+            LaunchedEffect(sheetState.currentValue) {
+                if (sheetState.currentValue == SheetValue.Expanded) {
+                    onSheetOpen(focusRequester)
+                }
             }
         }
-    }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

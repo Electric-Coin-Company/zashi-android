@@ -12,6 +12,7 @@ import co.electriccoin.zcash.ui.design.util.imageRes
 import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.about.AboutArgs
 import co.electriccoin.zcash.ui.screen.advancedsettings.AdvancedSettingsArgs
+import co.electriccoin.zcash.ui.screen.exchangerate.settings.ExchangeRateSettingsArgs
 import co.electriccoin.zcash.ui.screen.feedback.FeedbackArgs
 import co.electriccoin.zcash.ui.screen.hotfix.enhancement.EnhancementHotfixArgs
 import co.electriccoin.zcash.ui.screen.hotfix.ephemeral.EphemeralHotfixArgs
@@ -39,6 +40,11 @@ class MoreVM(
                         onClick = ::onAddressBookClick
                     ),
                     ListItemState(
+                        title = stringRes(R.string.advanced_settings_currency_conversion),
+                        bigIcon = imageRes(R.drawable.ic_advanced_settings_currency_conversion),
+                        onClick = ::onCurrencyConversionClick
+                    ),
+                    ListItemState(
                         title = stringRes(R.string.settings_advanced_settings),
                         bigIcon = imageRes(R.drawable.ic_advanced_settings),
                         onClick = ::onAdvancedSettingsClick
@@ -62,6 +68,8 @@ class MoreVM(
             onVersionLongClick = ::onVersionLongClick,
             onVersionDoubleClick = ::onVersionDoubleClick
         )
+
+    private fun onCurrencyConversionClick() = navigationRouter.forward(ExchangeRateSettingsArgs)
 
     private fun onVersionLongClick() = navigationRouter.forward(EphemeralHotfixArgs(address = null))
 

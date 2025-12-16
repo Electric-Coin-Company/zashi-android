@@ -90,11 +90,12 @@ class TransactionRepositoryImpl(
 
                                 normalizedTransactions
                                     .mapLatest { transactions ->
+                                        val now = Instant.now()
                                         transactions
                                             .map { transaction ->
                                                 createTransaction(transaction, synchronizer)
                                             }.sortedByDescending { transaction ->
-                                                transaction.timestamp ?: Instant.now()
+                                                transaction.timestamp ?: now
                                             }
                                     }
                             }

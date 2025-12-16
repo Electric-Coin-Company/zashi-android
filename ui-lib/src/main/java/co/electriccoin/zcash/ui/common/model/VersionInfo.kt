@@ -26,7 +26,7 @@ data class VersionInfo(
     val network: ZcashNetwork,
 ) {
     companion object {
-        private val NETWORK_DIMENSION: NetworkDimension
+        val NETWORK_DIMENSION: NetworkDimension
             get() = NetworkDimension.entries.first { it.value == BuildConfig.FLAVOR_network }
 
         val DISTRIBUTION: DistributionDimension
@@ -81,7 +81,7 @@ enum class DistributionDimension(
     FOSS("foss")
 }
 
-private enum class NetworkDimension(
+enum class NetworkDimension(
     val value: String
 ) {
     MAINNET("zcashmainnet"),

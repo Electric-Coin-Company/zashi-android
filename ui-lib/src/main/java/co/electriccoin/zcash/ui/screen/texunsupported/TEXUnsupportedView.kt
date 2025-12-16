@@ -42,20 +42,33 @@ fun TEXUnsupportedView(
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
 ) {
     ZashiScreenModalBottomSheet(
-        sheetState = sheetState,
         state = state,
-    ) {
-        Content(modifier = Modifier.weight(1f, false), state = it)
-    }
+        sheetState = sheetState,
+        content = { state, contentPadding ->
+            Content(
+                modifier = Modifier.weight(1f, false),
+                state = state,
+                contentPadding = contentPadding
+            )
+        },
+    )
 }
 
 @Composable
-private fun Content(state: TEXUnsupportedState, modifier: Modifier = Modifier) {
+private fun Content(
+    state: TEXUnsupportedState,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier =
             modifier
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
+                .padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = contentPadding.calculateBottomPadding()
+                )
     ) {
         Image(
             painter = painterResource(R.drawable.ic_swap_quote_error),

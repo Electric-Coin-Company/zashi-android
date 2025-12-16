@@ -14,7 +14,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,7 +35,6 @@ import co.electriccoin.zcash.ui.design.component.listitem.ListItemState
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemColors
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDefaults
 import co.electriccoin.zcash.ui.design.component.listitem.ZashiListItemDesignType
-import co.electriccoin.zcash.ui.design.component.rememberModalBottomSheetState
 import co.electriccoin.zcash.ui.design.component.rememberScreenModalBottomSheetState
 import co.electriccoin.zcash.ui.design.newcomponent.PreviewScreens
 import co.electriccoin.zcash.ui.design.theme.ZcashTheme
@@ -59,15 +57,28 @@ internal fun AccountListView(
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
-        content = {
-            BottomSheetContent(it)
+        content = { state, contentPadding ->
+            BottomSheetContent(
+                state = state,
+                contentPadding = contentPadding,
+                modifier = Modifier.weight(1f, false)
+            )
         },
     )
 }
 
 @Composable
-private fun BottomSheetContent(state: AccountListState) {
-    Column {
+private fun BottomSheetContent(
+    state: AccountListState,
+    contentPadding: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier =
+            modifier
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = contentPadding.calculateBottomPadding())
+    ) {
         Text(
             modifier = Modifier.padding(horizontal = 24.dp),
             text = stringResource(co.electriccoin.zcash.ui.R.string.account_list_title),
@@ -76,34 +87,27 @@ private fun BottomSheetContent(state: AccountListState) {
             color = ZashiColors.Text.textPrimary
         )
         Spacer(Modifier.height(24.dp))
-        Column(
-            modifier =
-                Modifier
-                    .weight(1f, false)
-                    .verticalScroll(rememberScrollState())
-        ) {
-            state.items?.forEachIndexed { index, item ->
-                if (index != 0) {
-                    Spacer(Modifier.height(8.dp))
-                }
-
-                when (item) {
-                    is AccountListItem.Account ->
-                        ZashiAccountListItem(
-                            modifier = Modifier.padding(horizontal = 4.dp),
-                            state = item.state,
-                        )
-
-                    is AccountListItem.Other ->
-                        ZashiKeystonePromoListItem(item)
-                }
+        state.items?.forEachIndexed { index, item ->
+            if (index != 0) {
+                Spacer(Modifier.height(8.dp))
             }
-            if (state.isLoading) {
-                Spacer(Modifier.height(24.dp))
-                LottieProgress(
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+
+            when (item) {
+                is AccountListItem.Account ->
+                    ZashiAccountListItem(
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        state = item.state,
+                    )
+
+                is AccountListItem.Other ->
+                    ZashiKeystonePromoListItem(item)
             }
+        }
+        if (state.isLoading) {
+            Spacer(Modifier.height(24.dp))
+            LottieProgress(
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
         }
         if (state.addWalletButton != null) {
             Spacer(modifier = Modifier.height(32.dp))
@@ -270,13 +274,6 @@ private fun Preview() =
                     isLoading = false,
                     onBack = {},
                     addWalletButton = ButtonState(stringRes("Connect Hardware Wallet"))
-                ),
-            sheetState =
-                rememberModalBottomSheetState(
-                    skipHiddenState = true,
-                    skipPartiallyExpanded = true,
-                    initialValue = SheetValue.Expanded,
-                    confirmValueChange = { true }
                 )
         )
     }
@@ -313,13 +310,6 @@ private fun HardwareWalletAddedPreview() =
                     isLoading = false,
                     onBack = {},
                     addWalletButton = null
-                ),
-            sheetState =
-                rememberModalBottomSheetState(
-                    skipHiddenState = true,
-                    skipPartiallyExpanded = true,
-                    initialValue = SheetValue.Expanded,
-                    confirmValueChange = { true }
                 )
         )
     }

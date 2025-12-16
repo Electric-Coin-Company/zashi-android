@@ -23,7 +23,6 @@ import co.electriccoin.zcash.ui.design.util.stringRes
 import co.electriccoin.zcash.ui.screen.connectkeystone.ConnectKeystone
 import co.electriccoin.zcash.ui.screen.flexa.Flexa
 import co.electriccoin.zcash.ui.screen.more.MoreArgs
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
@@ -103,7 +102,7 @@ class IntegrationsVM(
                     bigIcon = imageRes(R.drawable.ic_integrations_more),
                     onClick = ::onMoreClick
                 ),
-            ).toImmutableList(),
+            ),
     )
 
     private fun onBack() = navigationRouter.back()

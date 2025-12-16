@@ -2,11 +2,14 @@ package co.electriccoin.zcash.ui.screen.transactionnote.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
@@ -49,9 +52,14 @@ internal fun TransactionNoteView(
     ZashiScreenModalBottomSheet(
         state = state,
         sheetState = sheetState,
-        content = {
+        content = { state, contentPadding ->
             val focusRequester = remember { FocusRequester() }
-            BottomSheetContent(it, focusRequester)
+            BottomSheetContent(
+                state = state,
+                contentPadding = contentPadding,
+                focusRequester = focusRequester,
+                modifier = Modifier.weight(1f, false)
+            )
             LaunchedEffect(sheetState.currentValue) {
                 if (sheetState.currentValue == SheetValue.Expanded) {
                     onSheetOpen(focusRequester)
@@ -62,8 +70,18 @@ internal fun TransactionNoteView(
 }
 
 @Composable
-private fun BottomSheetContent(state: TransactionNoteState, focusRequester: FocusRequester) {
-    Column {
+private fun BottomSheetContent(
+    state: TransactionNoteState,
+    contentPadding: PaddingValues,
+    focusRequester: FocusRequester,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier =
+            modifier
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = contentPadding.calculateBottomPadding())
+    ) {
         Text(
             modifier = Modifier.padding(horizontal = 24.dp),
             text = state.title.getValue(),

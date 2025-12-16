@@ -115,7 +115,7 @@ fun ZashiExpandedCheckboxListItem(
                 state.onClick
             } else {
                 {
-                    haptic.performHapticFeedback(state.hapticFeedbackType)
+                    runCatching { haptic.performHapticFeedback(state.hapticFeedbackType) }
                     state.onClick()
                 }
             },

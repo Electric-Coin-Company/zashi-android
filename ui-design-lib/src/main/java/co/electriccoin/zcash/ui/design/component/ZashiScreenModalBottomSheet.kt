@@ -3,10 +3,10 @@ package co.electriccoin.zcash.ui.design.component
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
@@ -17,7 +17,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
@@ -31,11 +30,9 @@ import co.electriccoin.zcash.ui.design.util.LocalNavRoute
 @Composable
 fun <T : ModalBottomSheetState> ZashiScreenModalBottomSheet(
     state: T?,
-    includeBottomPadding: Boolean = true,
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
     dragHandle: @Composable (() -> Unit)? = { ZashiModalBottomSheetDragHandle() },
-    contentWindowInsets: @Composable () -> WindowInsets = { BottomSheetDefaults.windowInsets },
-    content: @Composable ColumnScope.(state: T) -> Unit = {},
+    content: @Composable ColumnScope.(state: T, contentPadding: PaddingValues) -> Unit = { _, _ -> },
 ) {
     val parent = LocalView.current.parent
     SideEffect {
@@ -51,14 +48,12 @@ fun <T : ModalBottomSheetState> ZashiScreenModalBottomSheet(
                 BackHandler {
                     it.onBack()
                 }
-                content(it)
-                if (includeBottomPadding) {
-                    Spacer(24.dp)
-                    androidx.compose.foundation.layout.Spacer(
-                        modifier = Modifier.windowInsetsBottomHeight(WindowInsets.systemBars),
+                content(
+                    it,
+                    PaddingValues(
+                        bottom = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding() + 24.dp
                     )
-                }
-
+                )
                 LaunchedEffect(Unit) {
                     sheetState.show()
                 }
@@ -66,7 +61,6 @@ fun <T : ModalBottomSheetState> ZashiScreenModalBottomSheet(
                 HookupKeyboardController()
             },
             onDismissRequest = it.onBack,
-            contentWindowInsets = contentWindowInsets
         )
     }
 }
@@ -76,7 +70,7 @@ fun <T : ModalBottomSheetState> ZashiScreenModalBottomSheet(
 fun ZashiScreenModalBottomSheet(
     onDismissRequest: () -> Unit,
     sheetState: SheetState = rememberScreenModalBottomSheetState(),
-    content: @Composable () -> Unit = {},
+    content: @Composable ColumnScope.(contentPadding: PaddingValues) -> Unit = {},
 ) {
     ZashiScreenModalBottomSheet(
         state =
@@ -88,8 +82,8 @@ fun ZashiScreenModalBottomSheet(
                 }
             },
         sheetState = sheetState,
-        content = {
-            content()
+        content = { _, contentPadding ->
+            content(contentPadding)
             HookupKeyboardController()
         },
     )

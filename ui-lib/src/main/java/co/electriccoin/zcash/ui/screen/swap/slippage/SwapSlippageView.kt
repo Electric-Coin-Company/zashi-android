@@ -3,7 +3,6 @@ package co.electriccoin.zcash.ui.screen.swap.slippage
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -49,55 +48,54 @@ fun SwapSlippageView(state: SwapSlippageState?) {
     ZashiScreenModalBottomSheet(
         state = state,
         dragHandle = null,
-        includeBottomPadding = false,
-        contentWindowInsets = { WindowInsets(0.dp, 0.dp, 0.dp, 0.dp) }
-    ) { innerState ->
-        BlankBgScaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = { TopAppBar(innerState) }
-        ) { padding ->
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(padding.asScaffoldPaddingValues())
-            ) {
-                Text(
-                    text = stringResource(R.string.swap_slippage_title),
-                    style = ZashiTypography.header6,
-                    fontWeight = FontWeight.SemiBold,
-                    color = ZashiColors.Text.textPrimary
-                )
-                Spacer(8.dp)
-                Text(
-                    text = stringResource(R.string.swap_slippage_subtitle),
-                    style = ZashiTypography.textSm,
-                    color = ZashiColors.Text.textTertiary
-                )
-                Spacer(24.dp)
-                SlippagePicker(state = innerState.picker)
-                if (innerState.info != null) {
-                    Spacer(20.dp)
-                    SlippageInfoCard(innerState.info)
-                }
-                Spacer(1f)
-                if (innerState.footer != null) {
-                    Spacer(20.dp)
-                    ZashiInfoText(
-                        text = innerState.footer.getValue(),
-                        style = ZashiTypography.textXs,
+        content = { innerState, _ ->
+            BlankBgScaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = { TopAppBar(innerState) }
+            ) { padding ->
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(padding.asScaffoldPaddingValues())
+                ) {
+                    Text(
+                        text = stringResource(R.string.swap_slippage_title),
+                        style = ZashiTypography.header6,
+                        fontWeight = FontWeight.SemiBold,
+                        color = ZashiColors.Text.textPrimary
+                    )
+                    Spacer(8.dp)
+                    Text(
+                        text = stringResource(R.string.swap_slippage_subtitle),
+                        style = ZashiTypography.textSm,
                         color = ZashiColors.Text.textTertiary
                     )
+                    Spacer(24.dp)
+                    SlippagePicker(state = innerState.picker)
+                    if (innerState.info != null) {
+                        Spacer(20.dp)
+                        SlippageInfoCard(innerState.info)
+                    }
+                    Spacer(1f)
+                    if (innerState.footer != null) {
+                        Spacer(20.dp)
+                        ZashiInfoText(
+                            text = innerState.footer.getValue(),
+                            style = ZashiTypography.textXs,
+                            color = ZashiColors.Text.textTertiary
+                        )
+                    }
+                    Spacer(24.dp)
+                    ZashiButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        state = innerState.primary
+                    )
                 }
-                Spacer(24.dp)
-                ZashiButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = innerState.primary
-                )
             }
-        }
-    }
+        },
+    )
 }
 
 @Composable
