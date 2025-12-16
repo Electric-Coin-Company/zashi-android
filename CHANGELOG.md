@@ -6,6 +6,11 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.10 (1413)] - 2025-12-16
+
+### Changed:
+- Updated the solana store banner
+
 ## [2.4.10 (1412)] - 2025-12-16
 
 ### Added:
