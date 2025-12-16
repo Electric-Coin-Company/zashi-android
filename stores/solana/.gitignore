@@ -1,0 +1,17 @@
+# Solana dApp Store - Temporary and sensitive files
+# These files are generated during the GitHub Actions workflow
+# and should NOT be committed to the repository
+
+# Temporary APK (downloaded from release)
+solana.apk
+
+# Backup config files
+*.backup
+
+# Any other temporary files
+*.tmp
+*.temp
+
+# Config file (stored privately in GCS, NOT in repo)
+# Only media assets and release-notes-template.yaml are in the repo
+config.yaml

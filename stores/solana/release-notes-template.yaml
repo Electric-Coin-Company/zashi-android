@@ -1,0 +1,34 @@
+# Solana dApp Store Release Notes Template
+# This file is used by the GitHub Actions workflow to update config.yaml
+# The full config.yaml is stored privately in GCS
+
+# Media paths (relative to stores/solana/ directory)
+# Update these if you change media assets
+media:
+  app_icon: ./media/icon512.png
+  release_icon: ./media/icon512.png
+  banner: ./media/banner.png
+  screenshots:
+    - ./media/slide1.2.png
+    - ./media/slide2.2.png
+    - ./media/slide3.2.png
+    - ./media/slide4.2.png
+
+# Release notes for the current/next release
+# These will be extracted from GitHub Release notes
+# Expected format in GitHub Release:
+#
+# ## Added
+# - New feature X
+# - New feature Y
+#
+# ## Changed
+# - Updated component A
+# - Improved performance B
+#
+# ## Fixed
+# - Fixed bug #123
+# - Fixed crash on startup
+
+# The workflow will automatically extract these sections from the GitHub Release
+# and update config.yaml with them.

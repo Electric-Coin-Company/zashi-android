@@ -48,3 +48,6 @@ google-services.json
 .settings
 
 
+
+# Solana dApp Store config (stored privately in GCS)
+stores/config.yaml
