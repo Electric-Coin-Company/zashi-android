@@ -6,6 +6,22 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.10 (1412)] - 2025-12-16
+
+### Added:
+- We updated icons for Swap/Pay assets and chains.
+
+### Changed:
+- We introduced a new Pending state for transaction flows which replaced our Error states.
+- We made icon and copy updates.
+- We improved our error handling.
+- We moved Currency Conversion from Advanced Settings to More options.
+
+### Fixed:
+- We improved our error handling UI/UX.
+- We improved Sapling parameters download experience.
+- We fixed some user reported issues and crashes.
+
 ## [2.4.9 (1387)] - 2025-12-09
 
 ### Added:
