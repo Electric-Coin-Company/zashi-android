@@ -73,7 +73,7 @@ class OnZip321ScannedUseCase(
                 PrefillSendData.All(
                     amount = proposal.amount,
                     address = proposal.destination.address,
-                    fee = proposal.proposal.totalFeeRequired(),
+                    fee = null,
                     memos =
                         proposal.memo.value
                             .takeIf { it.isNotEmpty() }
@@ -121,7 +121,7 @@ class OnZip321ScannedUseCase(
                 PrefillSendData.All(
                     amount = proposal.amount,
                     address = proposal.destination.address,
-                    fee = proposal.proposal.totalFeeRequired(),
+                    fee = null,
                     memos =
                         proposal.memo.value
                             .takeIf { it.isNotEmpty() }
