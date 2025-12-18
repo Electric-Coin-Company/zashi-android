@@ -6,6 +6,16 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.11 (1418)] - 2025-12-18
+
+### Fixed:
+- 'View Transaction' & 'Check Status' buttons are now hidden if an error creating and sending a transaction occurred
+- Fixed a crash while navigating back after scanning zip321 with zero amount
+
+### Changed:
+- ZEC now shows at least 3 decimal points globally within the app
+- Small design updates on transaction detail screen
+
 ## [2.4.10 (1413)] - 2025-12-16
 
 ### Changed:
