@@ -84,16 +84,6 @@ fun SendShielded(
                             )
                     )
                     ZashiHorizontalDivider()
-                    TransactionDetailInfoRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        state =
-                            TransactionDetailInfoRowState(
-                                title =
-                                    stringRes(R.string.transaction_detail_info_transaction_fee),
-                                message = state.fee,
-                            )
-                    )
-                    ZashiHorizontalDivider()
                     CompositionLocalProvider(
                         LocalBalancesAvailable provides (state.isPending || LocalBalancesAvailable.current)
                     ) {
@@ -105,12 +95,22 @@ fun SendShielded(
                                         if (state.isPending) {
                                             stringRes(R.string.transaction_detail_info_transaction_status)
                                         } else {
-                                            stringRes(R.string.transaction_detail_info_transaction_completed)
+                                            stringRes(R.string.transaction_detail_info_timestamp)
                                         },
                                     message = state.completedTimestamp
                                 )
                         )
                     }
+                    ZashiHorizontalDivider()
+                    TransactionDetailInfoRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        state =
+                            TransactionDetailInfoRowState(
+                                title =
+                                    stringRes(R.string.transaction_detail_info_transaction_fee),
+                                message = state.fee,
+                            )
+                    )
                 }
             }
             if (state.note != null) {

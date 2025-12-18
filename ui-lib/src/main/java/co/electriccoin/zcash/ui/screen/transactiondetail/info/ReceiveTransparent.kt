@@ -64,7 +64,7 @@ fun ReceiveTransparent(
                                 if (state.isPending) {
                                     stringRes(R.string.transaction_detail_info_transaction_status)
                                 } else {
-                                    stringRes(R.string.transaction_detail_info_transaction_completed)
+                                    stringRes(R.string.transaction_detail_info_timestamp)
                                 },
                             message = state.completedTimestamp
                         )

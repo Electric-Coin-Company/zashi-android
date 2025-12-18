@@ -8,7 +8,6 @@ import cash.z.ecc.android.sdk.model.WalletAddress
 import cash.z.ecc.sdk.ANDROID_STATE_FLOW_TIMEOUT
 import co.electriccoin.zcash.ui.NavigationRouter
 import co.electriccoin.zcash.ui.R
-import co.electriccoin.zcash.ui.common.model.SwapMode
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_INPUT
 import co.electriccoin.zcash.ui.common.model.SwapMode.EXACT_OUTPUT
 import co.electriccoin.zcash.ui.common.model.SwapStatus.EXPIRED
@@ -336,11 +335,7 @@ class TransactionDetailVM(
             data.transaction.fee.takeIf { data.transaction !is ReceiveTransaction }
                 ?: return stringRes(R.string.transaction_detail_fee_minimal, CURRENCY_TICKER)
 
-        return if (feePaid.value < MIN_FEE_THRESHOLD) {
-            stringRes(R.string.transaction_detail_fee_minimal, CURRENCY_TICKER)
-        } else {
-            stringRes(R.string.transaction_detail_fee, stringRes(feePaid, HIDDEN), CURRENCY_TICKER)
-        }
+        return stringRes(feePaid)
     }
 
     private fun createTimestampStringRes(data: DetailedTransactionData) =
@@ -492,8 +487,8 @@ class TransactionDetailVM(
                                 ?.origin
                                 ?.tokenIcon ?: loadingImageRes(),
                             when (data.metadata.swapMetadata?.mode) {
-                                SwapMode.EXACT_INPUT -> imageRes(R.drawable.ic_transaction_sent)
-                                SwapMode.EXACT_OUTPUT -> imageRes(R.drawable.ic_transaction_paid)
+                                EXACT_INPUT -> imageRes(R.drawable.ic_transaction_sent)
+                                EXACT_OUTPUT -> imageRes(R.drawable.ic_transaction_paid)
                                 null -> imageRes(R.drawable.ic_transaction_sent)
                             },
                             data.metadata.swapMetadata
@@ -512,7 +507,6 @@ class TransactionDetailVM(
                         listOf(
                             imageRes(co.electriccoin.zcash.ui.design.R.drawable.ic_token_zec),
                             imageRes(R.drawable.ic_transaction_shielded),
-                            imageRes(R.drawable.ic_transaction_detail_shielded),
                         )
                 },
         )
@@ -524,5 +518,3 @@ class TransactionDetailVM(
             flipTransactionBookmark(transactionDetailArgs.transactionId)
         }
 }
-
-private const val MIN_FEE_THRESHOLD = 100000

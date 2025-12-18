@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="transaction_detail_fee">%1$s %2$s</string>
     <string name="transaction_detail_fee_minimal">&lt; 0.001 %s</string>
     <string name="transaction_detail_memo_view_less">Ver menos</string>
     <string name="transaction_detail_memo_view_more">Ver más</string>
     <string name="transaction_detail_memo_empty">Sin mensaje</string>
     <string name="transaction_detail_info_transaction_details">Detalles de la transacción</string>
     <string name="transaction_detail_info_transaction_id">ID de transacción</string>
-    <string name="transaction_detail_info_transaction_completed">Completada</string>
     <string name="transaction_detail_info_transaction_status">Estado</string>
     <string name="transaction_detail_info_transaction_fee">Comisión</string>
     <string name="transaction_detail_info_address">Dirección</string>
