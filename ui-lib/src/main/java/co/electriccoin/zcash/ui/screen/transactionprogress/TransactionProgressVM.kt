@@ -91,6 +91,7 @@ class TransactionProgressVM(
         result: SubmitResult
     ): TransactionProgressState {
         val isSuccess = result is SubmitResult.Success
+        val txId = result.txIds.lastOrNull()
 
         return TransactionProgressState(
             onBack = ::onCloseClick,
@@ -152,11 +153,16 @@ class TransactionProgressVM(
                     is ExactInputSwapTransactionProposal,
                     is ExactOutputSwapTransactionProposal -> null
 
-                    else ->
-                        ButtonState(
-                            text = stringRes(R.string.send_confirmation_success_view_trx),
-                            onClick = { onViewTransactionClick(result) }
-                        )
+                    else -> {
+                        if (txId != null) {
+                            ButtonState(
+                                text = stringRes(R.string.send_confirmation_success_view_trx),
+                                onClick = { onViewTransactionDetailClick(txId) }
+                            )
+                        } else {
+                            null
+                        }
+                    }
                 },
             secondaryButton =
                 when (proposal) {
@@ -174,11 +180,15 @@ class TransactionProgressVM(
                 when (proposal) {
                     is ExactInputSwapTransactionProposal,
                     is ExactOutputSwapTransactionProposal ->
-                        ButtonState(
-                            text = stringRes(R.string.send_confirmation_success_btn_check_status),
-                            onClick = { onViewTransactionClick(result) },
-                            style = ButtonStyle.PRIMARY
-                        )
+                        if (txId != null) {
+                            ButtonState(
+                                text = stringRes(R.string.send_confirmation_success_btn_check_status),
+                                onClick = { onViewTransactionDetailClick(txId) },
+                                style = ButtonStyle.PRIMARY
+                            )
+                        } else {
+                            null
+                        }
 
                     else ->
                         ButtonState(
@@ -189,11 +199,6 @@ class TransactionProgressVM(
                 },
             image = imageRes(listOf(R.drawable.ic_fist_punch, R.drawable.ic_face_star).random())
         )
-    }
-
-    private fun onViewTransactionClick(result: SubmitResult) {
-        val txId = result.txIds.lastOrNull()
-        if (txId == null) onCloseClick() else onViewTransactionDetailClick(txId)
     }
 
     private suspend fun getAddressAbbreviated(): StringResource {
