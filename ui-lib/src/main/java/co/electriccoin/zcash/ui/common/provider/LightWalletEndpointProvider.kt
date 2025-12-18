@@ -19,6 +19,9 @@ class LightWalletEndpointProvider(
                 LightWalletEndpoint(host = "eu.zec.rocks", port = 443, isSecure = true),
                 LightWalletEndpoint(host = "ap.zec.rocks", port = 443, isSecure = true),
                 LightWalletEndpoint(host = "eu.zec.stardust.rest", port = 443, isSecure = true),
+                LightWalletEndpoint(host = "eu2.zec.stardust.rest", port = 443, isSecure = true),
+                LightWalletEndpoint(host = "jp.zec.stardust.rest", port = 443, isSecure = true),
+                LightWalletEndpoint(host = "us.zec.stardust.rest", port = 443, isSecure = true),
             )
         } else {
             listOf(
