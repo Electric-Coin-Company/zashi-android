@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
       - name: Gradle Wrapper Validation
         timeout-minutes: 1
         uses: gradle/actions/wrapper-validation@v5
@@ -75,7 +75,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           ref: main
           fetch-depth: 0  # To fetch all commits
@@ -165,7 +165,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
       - name: Download release artifact
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
@@ -190,7 +190,7 @@ jobs:
     steps:
       - name: Checkout
         timeout-minutes: 1
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           ref: main
           fetch-depth: 0
