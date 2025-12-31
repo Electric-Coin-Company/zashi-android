@@ -1,4 +1,4 @@
-# Zashi Android Wallet
+## Zashi Android Wallet
 
 This is the official home of the Zashi Zcash wallet for Android, a no-frills
 Zcash mobile wallet leveraging the [Zcash Android SDK](https://github.com/Electric-Coin-Company/zcash-android-wallet-sdk).  
