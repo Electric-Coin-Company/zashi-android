@@ -170,6 +170,7 @@ jobs:
   publish_to_solana:
     needs: [release]
     environment: deployment
+    continue-on-error: true
     runs-on: ubuntu-latest
     permissions:
       contents: write
