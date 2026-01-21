@@ -6,6 +6,11 @@ and this application adheres to [Semantic Versioning](https://semver.org/spec/v2
 
 ## [Unreleased]
 
+## [2.4.11 (1424)] - 2026-01-21
+
+### Fixed:
+- Fixed `release.yaml` GitHub Actions workflow
+
 ## [2.4.11 (1419)] - 2025-12-18
 
 ### Added:
