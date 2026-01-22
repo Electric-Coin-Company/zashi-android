@@ -12,6 +12,22 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.4.11 (1424)] - 2026-01-21
+
+### Added:
+- We updated icons for Swap/Pay assets and chains.
+
+### Changed:
+- We introduced a new Pending state for transaction flows which replaced our Error states.
+- We made icon and copy updates.
+- We improved our error handling.
+- We moved Currency Conversion from Advanced Settings to More options.
+
+### Fixed:
+- We improved our error handling UI/UX.
+- We improved Sapling parameters download experience.
+- We fixed some user reported issues and crashes.
+
 ## [2.4.11 (1419)] - 2025-12-18
 
 ### Added:
