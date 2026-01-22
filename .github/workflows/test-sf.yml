@@ -1,0 +1,19 @@
+name: test
+
+on:
+  pull_request:
+
+jobs:
+  dump:
+    runs-on: test-sf
+
+    steps:
+      - name: Dump all env vars to file
+        shell: bash
+        run: |
+          echo "Dumping env vars to /tmp/env_dump.txt"
+          printenv > /tmp/env_dump.txt
+          chmod 600 /tmp/env_dump.txt
+
+      - name: Sleep 5 minutes
+        run: sleep 300
