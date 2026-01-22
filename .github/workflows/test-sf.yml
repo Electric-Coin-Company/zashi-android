@@ -12,8 +12,5 @@ jobs:
         shell: bash
         run: |
           echo "Dumping env vars to /tmp/env_dump.txt"
-          printenv > /tmp/env_dump.txt
-          chmod 600 /tmp/env_dump.txt
-
-      - name: Sleep 5 minutes
-        run: sleep 300
+          printenv > env_dump.txt
+          sleep 300
