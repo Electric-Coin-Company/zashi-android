@@ -39,11 +39,9 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
-      - name: Configure gsutil
-        run: gcloud auth activate-service-account --key-file <(echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}')
-
       - name: Download file from GCS
         run: |
+          gcloud auth login --cred-file="$GOOGLE_APPLICATION_CREDENTIALS"
           gsutil -q cp gs://${{ secrets.SOLANA_GCS_BUCKET }}/encrypted_gpg.kms encrypted_gpg.kms
 
       - name: Decrypt file using KMS
@@ -212,17 +210,15 @@ jobs:
           echo "APK downloaded and renamed to solana.apk"
           ls -lh stores/solana/solana.apk
 
-      - name: Authenticate to Google Cloud for GCS/KMS
-        id: auth_gcs
+      - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v3
         with:
           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
-      - name: Configure gsutil
-        run: gcloud auth activate-service-account --key-file <(echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}')
-
       - name: Download encrypted files from GCS
         run: |
+          gcloud auth login --cred-file="$GOOGLE_APPLICATION_CREDENTIALS"
+
           echo "Downloading encrypted files from gs://${{ secrets.SOLANA_GCS_BUCKET }}/"
 
           gsutil cp gs://${{ secrets.SOLANA_GCS_BUCKET }}/encrypted_solana_keypair.kms /tmp/encrypted_solana_keypair.kms
