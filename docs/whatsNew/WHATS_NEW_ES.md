@@ -12,6 +12,22 @@ directly impact users rather than highlighting other key architectural updates.*
 
 ## [Unreleased]
 
+## [2.4.11 (1426)] - 2026-01-28
+
+### Añadido:
+- Actualizamos los íconos para de Swap/Pay.
+
+### Cambiado:
+- Introdujimos nuevo estado Pendiente para los flujos de transacciones, que reemplazó nuestros estados de Error.
+- Actualizamos los íconos y las copias.
+- Mejoramos la gestión de errores.
+- Movimos la Conversión de Moneda de la Configuración Avanzada a Más opciones.
+
+### Corregido:
+- Mejoramos la UI/UX de gestión de errores.
+- Mejoramos la experiencia de descarga de parámetros de Sapling.
+- Corregimos varios problemas y fallos reportados.
+
 ## [2.4.11 (1424)] - 2026-01-21
 
 ### Añadido:
